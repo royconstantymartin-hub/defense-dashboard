@@ -1,34 +1,103 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Defense Dashboard Styles */
+
+.sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2 text-sm text-zinc-400 rounded-sm transition-colors duration-200;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
+.sidebar-link:hover {
+    @apply bg-zinc-800 text-white;
+}
+
+.sidebar-link.active {
+    @apply bg-zinc-800 text-white border-l-2 border-blue-500;
+}
+
+/* Metric card */
+.metric-card {
+    @apply bg-zinc-950 border border-zinc-800 p-4 transition-colors duration-200;
+}
+
+.metric-card:hover {
+    @apply border-zinc-700;
+}
+
+/* Table styling */
+.data-table {
+    @apply w-full text-sm;
+}
+
+.data-table th {
+    @apply text-left text-xs font-mono uppercase tracking-wider text-zinc-500 pb-3 border-b border-zinc-800;
+}
+
+.data-table td {
+    @apply py-3 border-b border-zinc-800/50;
+}
+
+.data-table tr:hover td {
+    @apply bg-zinc-900/50;
+}
+
+/* Chart container */
+.chart-container {
+    @apply bg-zinc-950 border border-zinc-800 p-4;
+}
+
+/* Input styling */
+.input-dark {
+    @apply bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 rounded-sm;
+}
+
+/* Button variants */
+.btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-sm px-4 py-2 text-sm transition-colors;
+}
+
+.btn-secondary {
+    @apply bg-zinc-800 hover:bg-zinc-700 text-white font-medium rounded-sm px-4 py-2 text-sm border border-zinc-700 transition-colors;
+}
+
+.btn-outline {
+    @apply bg-transparent border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500 rounded-sm px-4 py-2 text-sm transition-colors;
+}
+
+/* Animation keyframes */
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
     }
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
 }
 
-.App-link {
-    color: #61dafb;
-}
-
-@keyframes App-logo-spin {
+/* Fade in animation */
+@keyframes fadeIn {
     from {
-        transform: rotate(0deg);
+        opacity: 0;
+        transform: translateY(10px);
     }
     to {
-        transform: rotate(360deg);
+        opacity: 1;
+        transform: translateY(0);
     }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Stagger animation delay */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+
+/* Tooltip custom */
+.tooltip-dark {
+    @apply bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-sm shadow-xl;
 }
