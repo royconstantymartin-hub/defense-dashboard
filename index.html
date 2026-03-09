@@ -3,92 +3,62 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Defense Intelligence Hub — Static</title>
+    <title>Defense Intelligence Hub</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <div class="radar">◉</div>
+          <div class="brand-mark">◉</div>
           <div>
             <p class="brand-top">Defense Intelligence</p>
-            <p class="brand-bottom">Hub</p>
+            <p class="brand-name">Hub Terminal</p>
           </div>
         </div>
+
         <nav class="nav-group">
-          <p class="nav-title">Intelligence</p>
-          <a href="#" class="active">Dashboard</a>
-          <a href="#announcements">Announcements</a>
-          <a href="#mna">M&amp;A</a>
-          <a href="#follow">Follow</a>
-        </nav>
-        <nav class="nav-group">
-          <p class="nav-title">Data Domains</p>
-          <a href="#market">Market Data</a>
-          <a href="#expenditures">Expenditures</a>
-          <a href="#regulations">Regulations</a>
-          <a href="#products">Products</a>
+          <p class="nav-title">Workspace</p>
+          <button class="nav-link active" data-route="dashboard">Dashboard</button>
+          <button class="nav-link" data-route="announcements">Announcements</button>
+          <button class="nav-link" data-route="mna">M&amp;A Tracker</button>
+          <button class="nav-link" data-route="market">Market Data</button>
+          <button class="nav-link" data-route="companies">Companies</button>
+          <button class="nav-link" data-route="regulations">Regulations</button>
+          <button class="nav-link" data-route="products">Products</button>
+          <button class="nav-link" data-route="follow">Follow</button>
         </nav>
       </aside>
 
       <main class="main">
-        <header class="header">
+        <header class="topbar">
           <div>
-            <h1>Strategic Command Dashboard</h1>
-            <p>Trusted, source-traceable defense intelligence in a static local workspace.</p>
+            <h1 id="pageTitle">Strategic Command Dashboard</h1>
+            <p id="pageSubtitle">Traceable, high-signal defense intelligence workflow.</p>
           </div>
           <div class="search-wrap">
-            <input id="globalSearch" type="text" placeholder="Search company, country, source..." />
+            <input id="globalSearch" type="text" placeholder="Search company, ticker, country, product, source..." />
+            <div id="searchResults" class="search-results hidden"></div>
           </div>
         </header>
 
-        <section class="kpi-grid" id="kpis"></section>
-
-        <section class="panel-grid two-col">
-          <article class="panel" id="announcements">
-            <div class="panel-head"><h2>Announcements</h2></div>
-            <div id="announcementsList" class="list"></div>
-          </article>
-          <article class="panel" id="mna">
-            <div class="panel-head"><h2>Recent M&amp;A</h2></div>
-            <div id="mnaList" class="list"></div>
-          </article>
-        </section>
-
-        <section class="panel-grid three-col">
-          <article class="panel" id="market">
-            <div class="panel-head"><h2>Market Data</h2></div>
-            <div id="marketTable"></div>
-          </article>
-          <article class="panel" id="expenditures">
-            <div class="panel-head"><h2>Expenditures</h2></div>
-            <div id="expenditureTable"></div>
-          </article>
-          <article class="panel" id="regulations">
-            <div class="panel-head"><h2>Regulations</h2></div>
-            <div id="regulationList" class="list"></div>
-          </article>
-        </section>
-
-        <section class="panel-grid two-col">
-          <article class="panel" id="products">
-            <div class="panel-head"><h2>Products</h2></div>
-            <div id="productTable"></div>
-          </article>
-          <article class="panel" id="follow">
-            <div class="panel-head"><h2>Follow Module</h2></div>
-            <div class="follow-filter">
-              <button class="chip active" data-filter="all">All</button>
-              <button class="chip" data-filter="official">Official</button>
-              <button class="chip" data-filter="media">Media</button>
-              <button class="chip" data-filter="analysis">Commentary</button>
-            </div>
-            <div id="followList" class="list"></div>
-          </article>
-        </section>
+        <section id="dashboardView" class="view active"></section>
+        <section id="announcementsView" class="view"></section>
+        <section id="mnaView" class="view"></section>
+        <section id="marketView" class="view"></section>
+        <section id="companiesView" class="view"></section>
+        <section id="companyProfileView" class="view"></section>
+        <section id="countryView" class="view"></section>
+        <section id="regulationsView" class="view"></section>
+        <section id="productsView" class="view"></section>
+        <section id="followView" class="view"></section>
       </main>
     </div>
+
+    <dialog id="detailModal" class="detail-modal">
+      <div id="detailContent"></div>
+      <button id="closeModal" class="btn-close">Close</button>
+    </dialog>
 
     <script src="script.js"></script>
   </body>
