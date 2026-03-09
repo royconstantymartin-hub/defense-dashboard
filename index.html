@@ -1,15 +1,73 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Defense Dashboard Test</title>
-</head>
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Defense Intelligence Hub — plateforme de veille défense, marché, M&A, sources et suivi." />
+    <title>Defense Intelligence Hub</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navigation principale">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">◉</div>
+          <div>
+            <p class="brand-top">Defense Intelligence</p>
+            <p class="brand-name">Hub Terminal</p>
+          </div>
+        </div>
 
-<body>
+        <nav class="nav-group">
+          <p class="nav-title">Workspace</p>
+          <button class="nav-link active" data-route="dashboard" type="button">Dashboard</button>
+          <button class="nav-link" data-route="announcements" type="button">Announcements</button>
+          <button class="nav-link" data-route="mna" type="button">M&amp;A Tracker</button>
+          <button class="nav-link" data-route="market" type="button">Market Data</button>
+          <button class="nav-link" data-route="companies" type="button">Companies</button>
+          <button class="nav-link" data-route="regulations" type="button">Regulations</button>
+          <button class="nav-link" data-route="products" type="button">Products</button>
+          <button class="nav-link" data-route="follow" type="button">Follow</button>
+        </nav>
+      </aside>
 
-<h1>Defense Dashboard</h1>
-<p>GitHub Pages fonctionne.</p>
+      <main class="main" role="main">
+        <header class="topbar">
+          <div>
+            <h1 id="pageTitle">Strategic Command Dashboard</h1>
+            <p id="pageSubtitle">Traceable, high-signal defense intelligence workflow.</p>
+          </div>
 
-</body>
-</html>
+          <div class="search-wrap">
+            <label class="hidden" for="globalSearch">Recherche globale</label>
+            <input
+              id="globalSearch"
+              type="search"
+              placeholder="Rechercher entreprise, ticker, pays, produit, source..."
+              autocomplete="off"
+            />
+            <div id="searchResults" class="search-results hidden" role="listbox" aria-label="Résultats de recherche"></div>
+          </div>
+        </header>
+
+        <section id="dashboardView" class="view active" aria-label="Vue dashboard"></section>
+        <section id="announcementsView" class="view" aria-label="Vue announcements"></section>
+        <section id="mnaView" class="view" aria-label="Vue mna"></section>
+        <section id="marketView" class="view" aria-label="Vue market"></section>
+        <section id="companiesView" class="view" aria-label="Vue companies"></section>
+        <section id="companyProfileView" class="view" aria-label="Vue company profile"></section>
+        <section id="countryView" class="view" aria-label="Vue country"></section>
+        <section id="regulationsView" class="view" aria-label="Vue regulations"></section>
+        <section id="productsView" class="view" aria-label="Vue products"></section>
+        <section id="followView" class="view" aria-label="Vue follow"></section>
+      </main>
+    </div>
+
+    <dialog id="detailModal" class="detail-modal" aria-label="Détail intelligence">
+      <div id="detailContent"></div>
+      <button id="closeModal" class="btn-close" type="button">Fermer</button>
+    </dialog>
+
+    <script src="script.js"></script>
+  </body>
 </html>

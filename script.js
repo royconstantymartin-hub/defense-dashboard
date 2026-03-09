@@ -1,7 +1,7 @@
 const state = {
   route: 'dashboard',
   followTab: 'all',
-  marketSort: 'marketCap',
+  marketSort: 'marketCapUsd',
   marketDir: 'desc'
 };
 
@@ -82,6 +82,11 @@ const pageMeta = {
   follow:['Follow Workspace','Curated monitoring for official, media and commentary sources.']
 };
 
+
+const fxToUsd = { USD:1, EUR:1.09, GBP:1.28, SEK:0.095, NOK:0.094 };
+const toUsdCap = (company) => company.marketCap * (fxToUsd[company.currency] || 1);
+const formatUsdB = (value) => `$${value.toFixed(1)}B USD`;
+
 const byId = (id) => document.getElementById(id);
 const initials = (txt='') => txt.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase() || 'NA';
 const country = (code) => db.countries.find(c=>c.code===code);
@@ -109,7 +114,7 @@ function setRoute(route){
 }
 
 function renderDashboard(){
-  const topMarket = [...db.companies].filter(c=>c.listed).sort((a,b)=>b.marketCap-a.marketCap).slice(0,5);
+  const topMarket = [...db.companies].filter(c=>c.listed).sort((a,b)=>toUsdCap(b)-toUsdCap(a)).slice(0,5);
   byId('dashboardView').innerHTML = `
     <div class="kpi-grid">
       ${[
@@ -129,7 +134,7 @@ function renderDashboard(){
     </div>
     <div class="grid-3">
       <article class="panel"><h3>Top Listed by Market Cap</h3><div class="table-wrap"><table class="table"><thead><tr><th>Company</th><th>MCap</th><th>Ticker</th></tr></thead><tbody>
-      ${topMarket.map(c=>`<tr class="clickable" data-company="${c.id}"><td><div class="company-cell">${logoNode(c.name,c.logo)}${c.name}</div></td><td>${c.marketCap.toFixed(1)}B ${c.currency}</td><td>${c.ticker}</td></tr>`).join('')}
+      ${topMarket.map(c=>`<tr class="clickable" data-company="${c.id}"><td><div class="company-cell">${logoNode(c.name,c.logo)}${c.name}</div></td><td>${formatUsdB(toUsdCap(c))}</td><td>${c.ticker}</td></tr>`).join('')}
       </tbody></table></div></article>
       <article class="panel"><h3>Latest Regulations</h3><div class="table-wrap"><table class="table"><thead><tr><th>Regulation</th><th>Status</th></tr></thead><tbody>
       ${db.regulations.map(r=>`<tr><td>${r.title}</td><td><span class="badge ${r.status==='active'?'b-green':'b-amber'}">${r.status}</span></td></tr>`).join('')}</tbody></table></div></article>
@@ -155,21 +160,21 @@ function renderMna(){
 
 function renderMarket(){
   const listed = [...db.companies].filter(c=>c.listed);
-  listed.sort((a,b)=>(state.marketDir==='desc'?1:-1)*(b[state.marketSort]-a[state.marketSort]));
+  listed.sort((a,b)=>(state.marketDir==='desc'?1:-1)*((state.marketSort==='marketCapUsd'?toUsdCap(b):b[state.marketSort])-(state.marketSort==='marketCapUsd'?toUsdCap(a):a[state.marketSort])));
   byId('marketView').innerHTML = `<article class="panel"><h3>Listed Defense Companies</h3>
     <div class="filters">
       <input id="marketSearch" class="input" placeholder="Search company or ticker" />
       <select id="countryFilter" class="select"><option value="">All Countries</option>${[...new Set(listed.map(c=>c.country))].map(c=>`<option>${c}</option>`).join('')}</select>
       <select id="specFilter" class="select"><option value="">All Specializations</option>${[...new Set(listed.map(c=>c.specialization))].map(s=>`<option>${s}</option>`).join('')}</select>
     </div>
-    <div class="table-wrap"><table class="table"><thead><tr><th>Company</th><th class="clickable" data-sort="marketCap">Market Cap ↓</th><th>Ticker</th><th>Exchange</th><th>Price</th><th>Daily</th><th>Revenue</th><th>Specialization</th></tr></thead><tbody id="marketRows"></tbody></table></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Company</th><th class="clickable" data-sort="marketCapUsd">Market Cap (USD) ↓</th><th>Ticker</th><th>Exchange</th><th>Price</th><th>Daily</th><th>Revenue</th><th>Specialization</th></tr></thead><tbody id="marketRows"></tbody></table></div>
   </article>`;
   const drawRows = () => {
     const q = byId('marketSearch').value.toLowerCase();
     const cf = byId('countryFilter').value;
     const sf = byId('specFilter').value;
     const rows = listed.filter(c => (!q || `${c.name} ${c.ticker}`.toLowerCase().includes(q)) && (!cf || c.country===cf) && (!sf || c.specialization===sf));
-    byId('marketRows').innerHTML = rows.map(c=>`<tr class="clickable" data-company="${c.id}"><td><div class="company-cell">${logoNode(c.name,c.logo)}${c.name} <span class="flag">${country(c.country)?.flag||c.country}</span></div></td><td>${c.marketCap.toFixed(1)}B ${c.currency}</td><td>${c.ticker}</td><td>${c.exchange}</td><td>${c.price.toFixed(2)} ${c.currency}</td><td class="${c.change>=0?'up':'down'}">${c.change>=0?'+':''}${c.change}%</td><td>${c.revenue.toFixed(1)}B</td><td>${c.specialization}</td></tr>`).join('');
+    byId('marketRows').innerHTML = rows.map(c=>`<tr class="clickable" data-company="${c.id}"><td><div class="company-cell">${logoNode(c.name,c.logo)}${c.name} <span class="flag">${country(c.country)?.flag||c.country}</span></div></td><td>${formatUsdB(toUsdCap(c))}</td><td>${c.ticker}</td><td>${c.exchange}</td><td>${c.price.toFixed(2)} ${c.currency}</td><td class="${c.change>=0?'up':'down'}">${c.change>=0?'+':''}${c.change}%</td><td>${c.revenue.toFixed(1)}B</td><td>${c.specialization}</td></tr>`).join('');
   };
   drawRows();
   byId('marketSearch').addEventListener('input', drawRows);
@@ -179,7 +184,7 @@ function renderMarket(){
 
 function renderCompanies(){
   byId('companiesView').innerHTML = `<article class="panel"><h3>Company Intelligence Profiles</h3><div class="table-wrap"><table class="table"><thead><tr><th>Company</th><th>Country</th><th>Ticker</th><th>MCap</th><th>Specialization</th></tr></thead><tbody>
-  ${db.companies.map(c=>`<tr class="clickable" data-company="${c.id}"><td><div class="company-cell">${logoNode(c.name,c.logo)}${c.name}</div></td><td class="clickable" data-country="${c.country}">${country(c.country)?.flag||c.country} ${country(c.country)?.name||c.country}</td><td>${c.ticker}</td><td>${c.marketCap.toFixed(1)}B ${c.currency}</td><td>${c.specialization}</td></tr>`).join('')}
+  ${db.companies.map(c=>`<tr class="clickable" data-company="${c.id}"><td><div class="company-cell">${logoNode(c.name,c.logo)}${c.name}</div></td><td class="clickable" data-country="${c.country}">${country(c.country)?.flag||c.country} ${country(c.country)?.name||c.country}</td><td>${c.ticker}</td><td>${formatUsdB(toUsdCap(c))}</td><td>${c.specialization}</td></tr>`).join('')}
   </tbody></table></div></article>`;
 }
 
@@ -195,7 +200,7 @@ function renderCompanyProfile(companyId){
       <div class="company-cell">${logoNode(c.name,c.logo)}<div><strong>${c.name}</strong><div class="muted">${country(c.country)?.flag||c.country} ${country(c.country)?.name||c.country}</div></div></div>
       <p>${c.description}</p>
       <p><strong>Ticker/Exchange:</strong> ${c.ticker} / ${c.exchange}</p>
-      <p><strong>Market Cap:</strong> ${c.marketCap.toFixed(1)}B ${c.currency} · <strong>Price:</strong> ${c.price.toFixed(2)} ${c.currency}</p>
+      <p><strong>Market Cap (USD normalized):</strong> ${formatUsdB(toUsdCap(c))} · <strong>Reported:</strong> ${c.marketCap.toFixed(1)}B ${c.currency} · <strong>Price:</strong> ${c.price.toFixed(2)} ${c.currency}</p>
       <p><strong>Specialization:</strong> ${c.specialization}</p>
     </article>
     <article class="panel"><h3>Official & Social Links</h3>
@@ -320,7 +325,7 @@ function bindGlobal(){
     if(t.dataset.country) renderCountry(t.dataset.country);
     if(t.dataset.source) openSource(t.dataset.source);
     if(t.dataset.followtab){ state.followTab=t.dataset.followtab; renderFollow(); }
-    if(t.dataset.sort){ state.marketDir = state.marketDir==='desc'?'asc':'desc'; renderMarket(); }
+    if(t.dataset.sort){ state.marketSort = t.dataset.sort; state.marketDir = state.marketDir==='desc'?'asc':'desc'; renderMarket(); }
   });
   byId('closeModal').addEventListener('click',()=>byId('detailModal').close());
 }
