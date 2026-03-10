@@ -195,7 +195,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="pt-4">
             <div className="h-[200px]" data-testid="regional-chart">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={200}>
                 <PieChart>
                   <Pie
                     data={regionData}
@@ -261,7 +261,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="pt-4">
             <div className="h-[250px]" data-testid="expenditure-chart">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={200}>
                 <BarChart data={topExpenditures} layout="vertical">
                   <XAxis type="number" tick={{ fill: '#71717A', fontSize: 11 }} axisLine={false} tickLine={false} />
                   <YAxis 

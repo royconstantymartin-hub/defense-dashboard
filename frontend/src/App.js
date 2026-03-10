@@ -13,6 +13,7 @@ import MarketData from "@/pages/MarketData";
 import Expenditures from "@/pages/Expenditures";
 import Regulations from "@/pages/Regulations";
 import Products from "@/pages/Products";
+import Follow from "@/pages/Follow";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 
@@ -111,6 +112,7 @@ function App() {
             <Route path="expenditures" element={<Expenditures />} />
             <Route path="regulations" element={<Regulations />} />
             <Route path="products" element={<Products />} />
+            <Route path="follow" element={<Follow />} />
             <Route path="admin" element={<Admin />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -127,7 +127,7 @@ export default function MarketData() {
         </CardHeader>
         <CardContent className="pt-4">
           <div className="h-[250px]" data-testid="market-cap-chart">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={200}>
               <BarChart data={chartData}>
                 <XAxis 
                   dataKey="name" 

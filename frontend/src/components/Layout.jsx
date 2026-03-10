@@ -13,7 +13,8 @@ import {
   LogOut,
   User,
   Menu,
-  X
+  X,
+  Rss
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ const navItems = [
   { path: "/expenditures", icon: Globe, label: "Expenditures" },
   { path: "/regulations", icon: FileText, label: "Regulations" },
   { path: "/products", icon: Package, label: "Products" },
+  { path: "/follow", icon: Rss, label: "Follow" },
 ];
 
 export default function Layout() {

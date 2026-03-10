@@ -142,7 +142,7 @@ export default function Expenditures() {
           </CardHeader>
           <CardContent className="pt-4">
             <div className="h-[300px]" data-testid="top-countries-chart">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={200}>
                 <BarChart data={topCountries} layout="vertical">
                   <XAxis 
                     type="number" 
@@ -188,7 +188,7 @@ export default function Expenditures() {
           </CardHeader>
           <CardContent className="pt-4">
             <div className="h-[200px]" data-testid="regional-pie-chart">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={200}>
                 <PieChart>
                   <Pie
                     data={regionData}
