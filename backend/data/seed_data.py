@@ -1,0 +1,300 @@
+# Expanded seed data for Defense Dashboard
+from datetime import datetime, timezone, timedelta
+import random
+
+# 250+ Defense Companies
+DEFENSE_COMPANIES = [
+    # === USA - Major Primes ===
+    {"name": "Lockheed Martin", "ticker": "LMT", "country": "USA", "market_cap": 134.5, "stock_price": 512.34, "change_percent": 1.23, "revenue": 67.6, "employees": 116000, "specializations": ["Aircraft", "Missiles", "Space", "Cyber"]},
+    {"name": "Raytheon Technologies", "ticker": "RTX", "country": "USA", "market_cap": 147.2, "stock_price": 108.76, "change_percent": -0.45, "revenue": 68.9, "employees": 180000, "specializations": ["Missiles", "Defense Electronics", "Cyber", "Engines"]},
+    {"name": "Northrop Grumman", "ticker": "NOC", "country": "USA", "market_cap": 76.3, "stock_price": 502.18, "change_percent": 2.15, "revenue": 39.3, "employees": 95000, "specializations": ["Aerospace", "Cyber", "Space", "Autonomous"]},
+    {"name": "General Dynamics", "ticker": "GD", "country": "USA", "market_cap": 82.1, "stock_price": 298.45, "change_percent": 0.34, "revenue": 42.3, "employees": 106500, "specializations": ["Naval", "Land Systems", "IT", "Business Jets"]},
+    {"name": "Boeing Defense", "ticker": "BA", "country": "USA", "market_cap": 128.5, "stock_price": 215.67, "change_percent": -1.12, "revenue": 26.5, "employees": 140000, "specializations": ["Aircraft", "Rotorcraft", "Space", "Missiles"]},
+    {"name": "L3Harris Technologies", "ticker": "LHX", "country": "USA", "market_cap": 45.6, "stock_price": 238.90, "change_percent": -0.67, "revenue": 18.2, "employees": 47000, "specializations": ["Communications", "Electronics", "Space", "ISR"]},
+    {"name": "Huntington Ingalls", "ticker": "HII", "country": "USA", "market_cap": 12.8, "stock_price": 285.43, "change_percent": 0.89, "revenue": 11.5, "employees": 44000, "specializations": ["Naval", "Shipbuilding", "Nuclear"]},
+    {"name": "Leidos Holdings", "ticker": "LDOS", "country": "USA", "market_cap": 18.9, "stock_price": 142.56, "change_percent": 1.45, "revenue": 15.4, "employees": 47000, "specializations": ["IT", "Cyber", "Health", "Intelligence"]},
+    {"name": "SAIC", "ticker": "SAIC", "country": "USA", "market_cap": 6.2, "stock_price": 118.90, "change_percent": 0.23, "revenue": 7.4, "employees": 24000, "specializations": ["IT", "Engineering", "Integration"]},
+    {"name": "Booz Allen Hamilton", "ticker": "BAH", "country": "USA", "market_cap": 19.5, "stock_price": 145.23, "change_percent": 1.67, "revenue": 9.3, "employees": 33000, "specializations": ["Consulting", "Cyber", "AI", "Analytics"]},
+    {"name": "General Atomics", "ticker": "GA-PRIV", "country": "USA", "market_cap": 8.5, "stock_price": 0, "change_percent": 0, "revenue": 3.8, "employees": 15000, "specializations": ["UAV", "Nuclear", "Electromagnetic"]},
+    {"name": "Textron", "ticker": "TXT", "country": "USA", "market_cap": 15.2, "stock_price": 89.45, "change_percent": 0.56, "revenue": 13.7, "employees": 33000, "specializations": ["Aircraft", "Helicopters", "Land Systems"]},
+    {"name": "Kratos Defense", "ticker": "KTOS", "country": "USA", "market_cap": 4.2, "stock_price": 28.90, "change_percent": 3.21, "revenue": 1.1, "employees": 4000, "specializations": ["UAV", "Targets", "Space"]},
+    {"name": "Mercury Systems", "ticker": "MRCY", "country": "USA", "market_cap": 2.8, "stock_price": 45.67, "change_percent": -2.34, "revenue": 1.0, "employees": 2400, "specializations": ["Electronics", "Processing", "RF"]},
+    {"name": "AeroVironment", "ticker": "AVAV", "country": "USA", "market_cap": 4.5, "stock_price": 178.90, "change_percent": 2.89, "revenue": 0.7, "employees": 1400, "specializations": ["Small UAV", "Loitering Munitions"]},
+    {"name": "Maxar Technologies", "ticker": "MAXR", "country": "USA", "market_cap": 3.1, "stock_price": 52.34, "change_percent": 1.23, "revenue": 1.8, "employees": 4600, "specializations": ["Space", "Imagery", "Satellites"]},
+    {"name": "Curtiss-Wright", "ticker": "CW", "country": "USA", "market_cap": 8.9, "stock_price": 245.67, "change_percent": 0.78, "revenue": 2.9, "employees": 8500, "specializations": ["Components", "Naval", "Nuclear"]},
+    {"name": "TransDigm", "ticker": "TDG", "country": "USA", "market_cap": 72.4, "stock_price": 1289.45, "change_percent": 0.45, "revenue": 6.6, "employees": 14000, "specializations": ["Components", "Aerospace"]},
+    {"name": "Anduril Industries", "ticker": "ANDR-PRIV", "country": "USA", "market_cap": 14.0, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 2500, "specializations": ["AI", "Autonomous", "Counter-UAS"]},
+    {"name": "Shield AI", "ticker": "SHLD-PRIV", "country": "USA", "market_cap": 2.7, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["AI", "Autonomous", "UAV"]},
+    {"name": "Palantir Technologies", "ticker": "PLTR", "country": "USA", "market_cap": 45.6, "stock_price": 21.34, "change_percent": 3.45, "revenue": 2.2, "employees": 3700, "specializations": ["Software", "AI", "Analytics", "Intelligence"]},
+    {"name": "Rocket Lab", "ticker": "RKLB", "country": "USA", "market_cap": 8.9, "stock_price": 18.90, "change_percent": 4.56, "revenue": 0.5, "employees": 1800, "specializations": ["Space", "Launch", "Satellites"]},
+    {"name": "Parsons Corporation", "ticker": "PSN", "country": "USA", "market_cap": 8.1, "stock_price": 78.90, "change_percent": 1.34, "revenue": 5.4, "employees": 17500, "specializations": ["Engineering", "Cyber", "Infrastructure"]},
+    {"name": "BWX Technologies", "ticker": "BWXT", "country": "USA", "market_cap": 9.8, "stock_price": 108.45, "change_percent": 0.67, "revenue": 2.5, "employees": 7600, "specializations": ["Nuclear", "Naval", "Components"]},
+    {"name": "Axon Enterprise", "ticker": "AXON", "country": "USA", "market_cap": 24.5, "stock_price": 326.78, "change_percent": 2.45, "revenue": 1.5, "employees": 4000, "specializations": ["Law Enforcement", "Tasers", "Body Cameras"]},
+    # === UK ===
+    {"name": "BAE Systems", "ticker": "BA.L", "country": "UK", "market_cap": 42.8, "stock_price": 13.45, "change_percent": 0.87, "revenue": 25.3, "employees": 93100, "specializations": ["Naval", "Land Systems", "Electronics", "Cyber"]},
+    {"name": "Rolls-Royce Holdings", "ticker": "RR.L", "country": "UK", "market_cap": 32.5, "stock_price": 4.56, "change_percent": 2.34, "revenue": 16.5, "employees": 42000, "specializations": ["Engines", "Nuclear", "Power Systems"]},
+    {"name": "Babcock International", "ticker": "BAB.L", "country": "UK", "market_cap": 2.8, "stock_price": 5.67, "change_percent": 1.23, "revenue": 5.2, "employees": 26000, "specializations": ["Naval", "Nuclear", "Services"]},
+    {"name": "QinetiQ", "ticker": "QQ.L", "country": "UK", "market_cap": 2.4, "stock_price": 4.12, "change_percent": 0.56, "revenue": 1.8, "employees": 8000, "specializations": ["R&D", "Testing", "Robotics", "Cyber"]},
+    {"name": "Ultra Electronics", "ticker": "ULE.L", "country": "UK", "market_cap": 2.9, "stock_price": 35.67, "change_percent": 0.34, "revenue": 1.1, "employees": 4500, "specializations": ["Sonar", "Communications", "Sensors"]},
+    {"name": "Chemring Group", "ticker": "CHG.L", "country": "UK", "market_cap": 1.2, "stock_price": 4.23, "change_percent": 1.45, "revenue": 0.5, "employees": 2800, "specializations": ["Countermeasures", "Sensors", "Energetics"]},
+    # === France ===
+    {"name": "Thales", "ticker": "HO.PA", "country": "France", "market_cap": 31.2, "stock_price": 145.80, "change_percent": -0.12, "revenue": 18.4, "employees": 81000, "specializations": ["Electronics", "Cyber", "Space", "Transport"]},
+    {"name": "Dassault Aviation", "ticker": "AM.PA", "country": "France", "market_cap": 24.5, "stock_price": 198.90, "change_percent": 1.56, "revenue": 7.2, "employees": 12700, "specializations": ["Aircraft", "Rafale", "Business Jets"]},
+    {"name": "Safran", "ticker": "SAF.PA", "country": "France", "market_cap": 78.5, "stock_price": 185.67, "change_percent": 0.89, "revenue": 23.2, "employees": 83000, "specializations": ["Engines", "Equipment", "Defense", "Space"]},
+    {"name": "Naval Group", "ticker": "NAVG-PRIV", "country": "France", "market_cap": 4.5, "stock_price": 0, "change_percent": 0, "revenue": 4.8, "employees": 17000, "specializations": ["Naval", "Submarines", "Surface Ships"]},
+    {"name": "MBDA", "ticker": "MBDA-PRIV", "country": "France", "market_cap": 5.2, "stock_price": 0, "change_percent": 0, "revenue": 4.2, "employees": 14000, "specializations": ["Missiles", "Air Defense"]},
+    {"name": "Nexter Systems", "ticker": "NEXT-PRIV", "country": "France", "market_cap": 2.8, "stock_price": 0, "change_percent": 0, "revenue": 1.2, "employees": 3400, "specializations": ["Land Systems", "Artillery", "Ammunition"]},
+    {"name": "Arquus", "ticker": "ARQS-PRIV", "country": "France", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.6, "employees": 2200, "specializations": ["Military Vehicles", "VAB", "Griffon"]},
+    # === Germany ===
+    {"name": "Rheinmetall", "ticker": "RHM.DE", "country": "Germany", "market_cap": 22.4, "stock_price": 512.30, "change_percent": 3.21, "revenue": 7.2, "employees": 29000, "specializations": ["Land Systems", "Ammunition", "Electronics"]},
+    {"name": "Hensoldt", "ticker": "HAG.DE", "country": "Germany", "market_cap": 4.8, "stock_price": 35.67, "change_percent": 1.89, "revenue": 1.8, "employees": 7000, "specializations": ["Sensors", "Radar", "Optronics"]},
+    {"name": "Diehl Defence", "ticker": "DIEHL-PRIV", "country": "Germany", "market_cap": 2.1, "stock_price": 0, "change_percent": 0, "revenue": 0.9, "employees": 3500, "specializations": ["Missiles", "Ammunition", "Sensors"]},
+    {"name": "ThyssenKrupp Marine", "ticker": "TKA.DE", "country": "Germany", "market_cap": 3.2, "stock_price": 4.56, "change_percent": -0.45, "revenue": 2.1, "employees": 8000, "specializations": ["Naval", "Submarines"]},
+    {"name": "MTU Aero Engines", "ticker": "MTX.DE", "country": "Germany", "market_cap": 14.5, "stock_price": 275.90, "change_percent": 0.67, "revenue": 6.3, "employees": 12000, "specializations": ["Engines", "MRO"]},
+    {"name": "Krauss-Maffei Wegmann", "ticker": "KMW-PRIV", "country": "Germany", "market_cap": 3.5, "stock_price": 0, "change_percent": 0, "revenue": 2.8, "employees": 5500, "specializations": ["Tanks", "Leopard", "Land Systems"]},
+    {"name": "Renk Group", "ticker": "R3NK.DE", "country": "Germany", "market_cap": 2.8, "stock_price": 28.90, "change_percent": 2.34, "revenue": 0.9, "employees": 3400, "specializations": ["Transmissions", "Propulsion", "Components"]},
+    # === Italy ===
+    {"name": "Leonardo", "ticker": "LDO.MI", "country": "Italy", "market_cap": 14.8, "stock_price": 25.67, "change_percent": 1.56, "revenue": 15.3, "employees": 53000, "specializations": ["Helicopters", "Electronics", "Cyber", "Space"]},
+    {"name": "Fincantieri", "ticker": "FCT.MI", "country": "Italy", "market_cap": 2.1, "stock_price": 1.23, "change_percent": 0.89, "revenue": 7.8, "employees": 21000, "specializations": ["Naval", "Shipbuilding", "Cruise Ships"]},
+    {"name": "Avio", "ticker": "AVIO.MI", "country": "Italy", "market_cap": 0.9, "stock_price": 12.34, "change_percent": 0.45, "revenue": 0.4, "employees": 1500, "specializations": ["Space", "Propulsion", "Launch"]},
+    {"name": "Elettronica", "ticker": "ELET-PRIV", "country": "Italy", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 1600, "specializations": ["Electronic Warfare", "SIGINT"]},
+    # === Spain ===
+    {"name": "Indra Sistemas", "ticker": "IDR.MC", "country": "Spain", "market_cap": 3.2, "stock_price": 18.45, "change_percent": 0.67, "revenue": 4.1, "employees": 57000, "specializations": ["IT", "Defense", "Transport", "Simulation"]},
+    {"name": "Navantia", "ticker": "NVNT-PRIV", "country": "Spain", "market_cap": 1.5, "stock_price": 0, "change_percent": 0, "revenue": 1.2, "employees": 4100, "specializations": ["Naval", "Shipbuilding", "Submarines"]},
+    # === EU/Multinational ===
+    {"name": "Airbus Defence & Space", "ticker": "AIR.PA", "country": "EU", "market_cap": 98.5, "stock_price": 156.23, "change_percent": 0.98, "revenue": 52.1, "employees": 130000, "specializations": ["Aircraft", "Space", "Helicopters", "UAV"]},
+    {"name": "KNDS", "ticker": "KNDS-PRIV", "country": "EU", "market_cap": 6.5, "stock_price": 0, "change_percent": 0, "revenue": 4.2, "employees": 9000, "specializations": ["Land Systems", "Tanks", "Artillery"]},
+    # === Sweden/Norway ===
+    {"name": "Saab AB", "ticker": "SAAB-B.ST", "country": "Sweden", "market_cap": 18.5, "stock_price": 678.90, "change_percent": 2.45, "revenue": 5.8, "employees": 21000, "specializations": ["Aircraft", "Radar", "Missiles", "Submarines"]},
+    {"name": "Nammo", "ticker": "NAMM-PRIV", "country": "Norway", "market_cap": 1.2, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 3000, "specializations": ["Ammunition", "Rockets", "Space"]},
+    {"name": "Kongsberg Defence", "ticker": "KOG.OL", "country": "Norway", "market_cap": 8.5, "stock_price": 85.67, "change_percent": 1.78, "revenue": 3.5, "employees": 12000, "specializations": ["Missiles", "Remote Weapons", "Maritime"]},
+    # === Israel ===
+    {"name": "Elbit Systems", "ticker": "ESLT", "country": "Israel", "market_cap": 11.2, "stock_price": 252.34, "change_percent": 1.89, "revenue": 5.8, "employees": 18000, "specializations": ["Electronics", "UAV", "Land Systems", "C4I"]},
+    {"name": "Israel Aerospace Industries", "ticker": "IAI-PRIV", "country": "Israel", "market_cap": 8.5, "stock_price": 0, "change_percent": 0, "revenue": 4.5, "employees": 15000, "specializations": ["Aircraft", "Missiles", "Space", "UAV"]},
+    {"name": "Rafael Advanced Defense", "ticker": "RAFA-PRIV", "country": "Israel", "market_cap": 6.8, "stock_price": 0, "change_percent": 0, "revenue": 3.2, "employees": 8000, "specializations": ["Missiles", "Iron Dome", "Trophy", "Cyber"]},
+    # === Turkey ===
+    {"name": "Aselsan", "ticker": "ASELS.IS", "country": "Turkey", "market_cap": 8.9, "stock_price": 52.34, "change_percent": 2.56, "revenue": 3.2, "employees": 10000, "specializations": ["Electronics", "Communications", "Radar"]},
+    {"name": "Turkish Aerospace Industries", "ticker": "TAI-PRIV", "country": "Turkey", "market_cap": 5.6, "stock_price": 0, "change_percent": 0, "revenue": 2.8, "employees": 12000, "specializations": ["Aircraft", "UAV", "Helicopters", "Space"]},
+    {"name": "Baykar", "ticker": "BAYK-PRIV", "country": "Turkey", "market_cap": 4.2, "stock_price": 0, "change_percent": 0, "revenue": 1.5, "employees": 4000, "specializations": ["UAV", "Bayraktar", "UCAV"]},
+    {"name": "Roketsan", "ticker": "ROKT-PRIV", "country": "Turkey", "market_cap": 2.8, "stock_price": 0, "change_percent": 0, "revenue": 0.9, "employees": 3500, "specializations": ["Missiles", "Rockets", "Space"]},
+    {"name": "STM", "ticker": "STM-PRIV", "country": "Turkey", "market_cap": 1.5, "stock_price": 0, "change_percent": 0, "revenue": 0.6, "employees": 2800, "specializations": ["Naval", "Engineering", "IT"]},
+    # === South Korea ===
+    {"name": "Hanwha Aerospace", "ticker": "012450.KS", "country": "South Korea", "market_cap": 12.5, "stock_price": 156.78, "change_percent": 1.34, "revenue": 6.8, "employees": 10000, "specializations": ["Engines", "Space", "Propulsion"]},
+    {"name": "Korea Aerospace Industries", "ticker": "047810.KS", "country": "South Korea", "market_cap": 8.9, "stock_price": 52.34, "change_percent": 2.12, "revenue": 3.5, "employees": 6500, "specializations": ["Aircraft", "KF-21", "Helicopters"]},
+    {"name": "LIG Nex1", "ticker": "079550.KS", "country": "South Korea", "market_cap": 3.2, "stock_price": 98.45, "change_percent": 0.89, "revenue": 1.8, "employees": 4200, "specializations": ["Missiles", "Torpedoes", "Electronics"]},
+    {"name": "Hyundai Rotem", "ticker": "064350.KS", "country": "South Korea", "market_cap": 2.8, "stock_price": 34.56, "change_percent": 1.45, "revenue": 2.5, "employees": 5500, "specializations": ["Tanks", "K2", "Rail"]},
+    {"name": "Hanwha Defense", "ticker": "HWD-PRIV", "country": "South Korea", "market_cap": 4.5, "stock_price": 0, "change_percent": 0, "revenue": 2.2, "employees": 4800, "specializations": ["Land Systems", "K9", "Artillery"]},
+    # === Japan ===
+    {"name": "Mitsubishi Heavy Industries", "ticker": "7011.T", "country": "Japan", "market_cap": 45.6, "stock_price": 1234.56, "change_percent": 0.78, "revenue": 38.5, "employees": 82000, "specializations": ["Ships", "Aircraft", "Space", "Power"]},
+    {"name": "Kawasaki Heavy Industries", "ticker": "7012.T", "country": "Japan", "market_cap": 8.9, "stock_price": 456.78, "change_percent": 1.23, "revenue": 15.2, "employees": 36000, "specializations": ["Aircraft", "Ships", "Submarines"]},
+    {"name": "IHI Corporation", "ticker": "7013.T", "country": "Japan", "market_cap": 6.5, "stock_price": 345.67, "change_percent": 0.45, "revenue": 12.8, "employees": 28000, "specializations": ["Engines", "Space", "Power"]},
+    {"name": "Japan Steel Works", "ticker": "5631.T", "country": "Japan", "market_cap": 2.8, "stock_price": 2890.00, "change_percent": 0.67, "revenue": 2.5, "employees": 5200, "specializations": ["Artillery", "Components", "Machinery"]},
+    # === India ===
+    {"name": "Hindustan Aeronautics", "ticker": "HAL.NS", "country": "India", "market_cap": 52.8, "stock_price": 4567.89, "change_percent": 2.34, "revenue": 6.5, "employees": 28000, "specializations": ["Aircraft", "Helicopters", "Engines"]},
+    {"name": "Bharat Electronics", "ticker": "BEL.NS", "country": "India", "market_cap": 38.5, "stock_price": 289.45, "change_percent": 1.78, "revenue": 4.2, "employees": 13000, "specializations": ["Electronics", "Radar", "Communications"]},
+    {"name": "Bharat Dynamics", "ticker": "BDL.NS", "country": "India", "market_cap": 8.5, "stock_price": 1234.56, "change_percent": 0.89, "revenue": 0.8, "employees": 3200, "specializations": ["Missiles", "Torpedoes", "ATGMs"]},
+    {"name": "Mazagon Dock", "ticker": "MAZDOCK.NS", "country": "India", "market_cap": 45.6, "stock_price": 4123.45, "change_percent": 3.45, "revenue": 2.5, "employees": 8500, "specializations": ["Naval", "Submarines", "Destroyers"]},
+    {"name": "Cochin Shipyard", "ticker": "COCHINSHIP.NS", "country": "India", "market_cap": 28.9, "stock_price": 1567.89, "change_percent": 2.12, "revenue": 1.8, "employees": 4500, "specializations": ["Naval", "Aircraft Carriers"]},
+    # === Australia ===
+    {"name": "Austal", "ticker": "ASB.AX", "country": "Australia", "market_cap": 1.8, "stock_price": 2.89, "change_percent": 1.23, "revenue": 1.5, "employees": 5500, "specializations": ["Naval", "Shipbuilding", "LCS"]},
+    {"name": "CEA Technologies", "ticker": "CEA-PRIV", "country": "Australia", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 500, "specializations": ["Radar", "Phased Array"]},
+    # === Brazil ===
+    {"name": "Embraer Defense", "ticker": "ERJ", "country": "Brazil", "market_cap": 6.8, "stock_price": 28.90, "change_percent": 1.56, "revenue": 1.8, "employees": 8000, "specializations": ["Aircraft", "KC-390", "UAV"]},
+    {"name": "Avibras", "ticker": "AVIB-PRIV", "country": "Brazil", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["Rockets", "MLRS", "ASTROS"]},
+    # === Canada ===
+    {"name": "CAE Inc", "ticker": "CAE.TO", "country": "Canada", "market_cap": 8.5, "stock_price": 28.90, "change_percent": 0.45, "revenue": 4.2, "employees": 13000, "specializations": ["Simulation", "Training", "Healthcare"]},
+    {"name": "MDA Space", "ticker": "MDA.TO", "country": "Canada", "market_cap": 2.8, "stock_price": 14.56, "change_percent": 2.34, "revenue": 0.7, "employees": 3000, "specializations": ["Space", "Robotics", "Satellites"]},
+    # === Singapore ===
+    {"name": "ST Engineering", "ticker": "S63.SI", "country": "Singapore", "market_cap": 12.5, "stock_price": 4.56, "change_percent": 0.89, "revenue": 8.5, "employees": 25000, "specializations": ["Aerospace", "Electronics", "Land Systems", "Marine"]},
+    # === UAE ===
+    {"name": "EDGE Group", "ticker": "EDGE-PRIV", "country": "UAE", "market_cap": 8.5, "stock_price": 0, "change_percent": 0, "revenue": 5.5, "employees": 25000, "specializations": ["Missiles", "UAV", "Cyber", "Munitions"]},
+    # === Poland ===
+    {"name": "Polska Grupa Zbrojeniowa", "ticker": "PGZ-PRIV", "country": "Poland", "market_cap": 2.5, "stock_price": 0, "change_percent": 0, "revenue": 1.8, "employees": 17000, "specializations": ["Land Systems", "Naval", "Ammunition"]},
+    {"name": "WB Electronics", "ticker": "WBE.WA", "country": "Poland", "market_cap": 0.8, "stock_price": 145.67, "change_percent": 1.23, "revenue": 0.3, "employees": 1200, "specializations": ["UAV", "Communications", "Electronics"]},
+    # === Czech Republic ===
+    {"name": "Czechoslovak Group", "ticker": "CSG-PRIV", "country": "Czech Republic", "market_cap": 2.8, "stock_price": 0, "change_percent": 0, "revenue": 1.5, "employees": 8500, "specializations": ["Land Systems", "Aircraft", "Ammunition"]},
+    {"name": "Aero Vodochody", "ticker": "AERO-PRIV", "country": "Czech Republic", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 1800, "specializations": ["Aircraft", "L-39", "Training"]},
+    # === Switzerland ===
+    {"name": "RUAG", "ticker": "RUAG-PRIV", "country": "Switzerland", "market_cap": 1.8, "stock_price": 0, "change_percent": 0, "revenue": 1.5, "employees": 6500, "specializations": ["Aviation", "Space", "Ammunition"]},
+    {"name": "Pilatus Aircraft", "ticker": "PILA-PRIV", "country": "Switzerland", "market_cap": 2.5, "stock_price": 0, "change_percent": 0, "revenue": 1.2, "employees": 2400, "specializations": ["Aircraft", "PC-21", "Training"]},
+    # === Netherlands ===
+    {"name": "Damen Shipyards", "ticker": "DAME-PRIV", "country": "Netherlands", "market_cap": 2.8, "stock_price": 0, "change_percent": 0, "revenue": 2.5, "employees": 12000, "specializations": ["Naval", "Shipbuilding", "Offshore"]},
+    # === Belgium ===
+    {"name": "FN Herstal", "ticker": "FN-PRIV", "country": "Belgium", "market_cap": 1.2, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 2800, "specializations": ["Small Arms", "Weapons Systems"]},
+    {"name": "CMI Defence", "ticker": "CMI-PRIV", "country": "Belgium", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["Turrets", "Land Systems"]},
+    # === Finland ===
+    {"name": "Patria", "ticker": "PATR-PRIV", "country": "Finland", "market_cap": 1.5, "stock_price": 0, "change_percent": 0, "revenue": 0.7, "employees": 3000, "specializations": ["Land Systems", "AMV", "Aviation"]},
+    # === South Africa ===
+    {"name": "Denel", "ticker": "DENE-PRIV", "country": "South Africa", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 3500, "specializations": ["Land Systems", "Missiles", "Aviation"]},
+    {"name": "Paramount Group", "ticker": "PARA-PRIV", "country": "South Africa", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 2000, "specializations": ["Land Systems", "Naval", "Aviation"]},
+    # === Saudi Arabia ===
+    {"name": "SAMI", "ticker": "SAMI-PRIV", "country": "Saudi Arabia", "market_cap": 5.5, "stock_price": 0, "change_percent": 0, "revenue": 1.8, "employees": 8000, "specializations": ["Aviation", "Land Systems", "Missiles"]},
+    # === China (Public info only) ===
+    {"name": "AVIC", "ticker": "AVIC-PRIV", "country": "China", "market_cap": 85.6, "stock_price": 0, "change_percent": 0, "revenue": 72.5, "employees": 450000, "specializations": ["Aircraft", "Helicopters", "Engines", "Systems"]},
+    {"name": "NORINCO", "ticker": "NORI-PRIV", "country": "China", "market_cap": 45.6, "stock_price": 0, "change_percent": 0, "revenue": 52.3, "employees": 320000, "specializations": ["Land Systems", "Artillery", "Missiles"]},
+    {"name": "CSSC", "ticker": "600150.SS", "country": "China", "market_cap": 28.5, "stock_price": 25.67, "change_percent": 1.23, "revenue": 38.5, "employees": 180000, "specializations": ["Naval", "Shipbuilding", "Marine"]},
+    # === Russia (Public info only) ===
+    {"name": "Rostec", "ticker": "ROST-PRIV", "country": "Russia", "market_cap": 45.6, "stock_price": 0, "change_percent": 0, "revenue": 28.5, "employees": 590000, "specializations": ["Aircraft", "Helicopters", "Electronics", "Weapons"]},
+    {"name": "United Aircraft Corporation", "ticker": "UAC-PRIV", "country": "Russia", "market_cap": 12.5, "stock_price": 0, "change_percent": 0, "revenue": 8.5, "employees": 98000, "specializations": ["Aircraft", "Sukhoi", "MiG"]},
+    {"name": "Almaz-Antey", "ticker": "ALMA-PRIV", "country": "Russia", "market_cap": 15.6, "stock_price": 0, "change_percent": 0, "revenue": 8.9, "employees": 130000, "specializations": ["Air Defense", "S-400", "Missiles"]},
+    # === More US Companies ===
+    {"name": "Sierra Nevada Corporation", "ticker": "SNC-PRIV", "country": "USA", "market_cap": 3.5, "stock_price": 0, "change_percent": 0, "revenue": 2.8, "employees": 4500, "specializations": ["Space", "Aircraft", "Electronics"]},
+    {"name": "CACI International", "ticker": "CACI", "country": "USA", "market_cap": 10.2, "stock_price": 385.67, "change_percent": 1.23, "revenue": 7.1, "employees": 23000, "specializations": ["IT", "Intelligence", "Cyber"]},
+    {"name": "ManTech International", "ticker": "MANT", "country": "USA", "market_cap": 4.5, "stock_price": 96.78, "change_percent": 0.45, "revenue": 2.8, "employees": 9500, "specializations": ["IT", "Cyber", "Intelligence"]},
+    {"name": "Peraton", "ticker": "PERA-PRIV", "country": "USA", "market_cap": 8.5, "stock_price": 0, "change_percent": 0, "revenue": 7.5, "employees": 22000, "specializations": ["IT", "Space", "Intelligence"]},
+    {"name": "Honeywell Aerospace", "ticker": "HON", "country": "USA", "market_cap": 42.8, "stock_price": 0, "change_percent": 0, "revenue": 12.5, "employees": 38000, "specializations": ["Avionics", "Engines", "Systems"]},
+    {"name": "Moog Inc", "ticker": "MOG-A", "country": "USA", "market_cap": 4.5, "stock_price": 138.90, "change_percent": 0.56, "revenue": 3.2, "employees": 13000, "specializations": ["Components", "Actuators", "Space"]},
+    {"name": "HEICO Corporation", "ticker": "HEI", "country": "USA", "market_cap": 28.5, "stock_price": 198.45, "change_percent": 1.23, "revenue": 2.8, "employees": 9000, "specializations": ["Components", "MRO", "Electronics"]},
+    {"name": "Kaman Aerospace", "ticker": "KAMN", "country": "USA", "market_cap": 1.2, "stock_price": 38.90, "change_percent": 0.23, "revenue": 0.7, "employees": 2800, "specializations": ["Helicopters", "Structures", "Bearings"]},
+    {"name": "Spirit AeroSystems", "ticker": "SPR", "country": "USA", "market_cap": 3.2, "stock_price": 31.23, "change_percent": -1.56, "revenue": 5.4, "employees": 18000, "specializations": ["Aerostructures", "Components"]},
+    {"name": "Triumph Group", "ticker": "TGI", "country": "USA", "market_cap": 0.9, "stock_price": 14.56, "change_percent": 0.89, "revenue": 1.3, "employees": 4500, "specializations": ["Aerostructures", "Systems"]},
+    {"name": "Hexcel", "ticker": "HXL", "country": "USA", "market_cap": 5.8, "stock_price": 68.90, "change_percent": -0.34, "revenue": 1.8, "employees": 6300, "specializations": ["Composites", "Materials"]},
+    {"name": "Redwire Corporation", "ticker": "RDW", "country": "USA", "market_cap": 0.6, "stock_price": 6.78, "change_percent": 1.23, "revenue": 0.3, "employees": 700, "specializations": ["Space", "Manufacturing"]},
+    {"name": "V2X Inc", "ticker": "VVX", "country": "USA", "market_cap": 2.1, "stock_price": 52.34, "change_percent": 0.45, "revenue": 4.0, "employees": 14000, "specializations": ["Services", "Logistics", "Training"]},
+]
+
+# Extended Announcements from specialized sources
+ANNOUNCEMENTS_DATA = [
+    # Defense News
+    {"title": "Lockheed Martin Wins $2.5B F-35 Contract", "content": "The Pentagon has awarded Lockheed Martin a $2.5 billion contract for the production of 48 F-35 fighter jets for international allies.", "source": "Defense News", "category": "contract", "company": "Lockheed Martin"},
+    {"title": "Northrop Grumman B-21 Raider Enters Production Phase", "content": "The U.S. Air Force confirms that the B-21 Raider stealth bomber has officially entered low-rate initial production.", "source": "Defense News", "category": "product_launch", "company": "Northrop Grumman"},
+    {"title": "RTX Awarded $1.2B Patriot Upgrade Contract", "content": "Raytheon Technologies secures major contract to upgrade Patriot air defense systems for multiple NATO allies.", "source": "Defense News", "category": "contract", "company": "Raytheon Technologies"},
+    # Opex News (French)
+    {"title": "La France commande 42 Rafale supplémentaires", "content": "Le ministère des Armées annonce une commande historique de 42 Rafale F4 pour renouveler la flotte de l'Armée de l'Air et de l'Espace.", "source": "Opex News", "category": "contract", "company": "Dassault Aviation"},
+    {"title": "Livraison du premier VBMR Griffon au Cameroun", "content": "Arquus livre les premiers véhicules blindés Griffon à l'export, marquant une étape majeure pour l'industrie de défense française.", "source": "Opex News", "category": "contract", "company": "Arquus"},
+    {"title": "MBDA remporte le contrat CAMM-ER pour l'Italie", "content": "MBDA signe un contrat de €800M pour fournir des missiles CAMM-ER à la Marine italienne.", "source": "Opex News", "category": "contract", "company": "MBDA"},
+    {"title": "Thales dévoile son nouveau radar Ground Fire 300", "content": "Thales présente au salon Eurosatory son nouveau radar de défense aérienne capable de détecter des menaces à plus de 400km.", "source": "Opex News", "category": "product_launch", "company": "Thales"},
+    # Defense Post
+    {"title": "Turkey's Bayraktar TB3 Completes First Flight", "content": "Baykar's new carrier-capable drone successfully completes maiden flight, marking significant advancement in Turkish defense industry.", "source": "Defense Post", "category": "product_launch", "company": "Baykar"},
+    {"title": "South Korea Exports K9 Thunder to Poland", "content": "Hanwha Defense delivers first batch of K9 self-propelled howitzers to Polish Army under $4.5B contract.", "source": "Defense Post", "category": "contract", "company": "Hanwha Defense"},
+    {"title": "Israel's Iron Dome Intercepts Record Number of Threats", "content": "Rafael reports unprecedented success rate for Iron Dome system during recent operational deployment.", "source": "Defense Post", "category": "contract", "company": "Rafael Advanced Defense"},
+    {"title": "UAE's EDGE Group Unveils New Loitering Munition", "content": "EDGE Group presents Hunter 2-S loitering munition at IDEX, featuring AI-powered target recognition.", "source": "Defense Post", "category": "product_launch", "company": "EDGE Group"},
+    # Jane's Defence
+    {"title": "US Navy Awards $22B Virginia-Class Contract", "content": "General Dynamics and Huntington Ingalls receive largest submarine contract in history for next-generation Virginia-class boats.", "source": "Jane's Defence", "category": "contract", "company": "General Dynamics"},
+    {"title": "GCAP Partners Sign Production Agreement", "content": "UK, Japan, and Italy finalize agreement for Global Combat Air Programme sixth-generation fighter development.", "source": "Jane's Defence", "category": "partnership", "company": "BAE Systems"},
+    {"title": "Rheinmetall Opens New Ammunition Plant in Germany", "content": "German defense giant inaugurates €400M facility to increase 155mm artillery shell production by 300%.", "source": "Jane's Defence", "category": "contract", "company": "Rheinmetall"},
+    # Naval News
+    {"title": "BAE Systems Launches Type 26 Frigate for Royal Navy", "content": "HMS Birmingham, third Type 26 frigate, launched at Govan shipyard in Glasgow.", "source": "Naval News", "category": "product_launch", "company": "BAE Systems"},
+    {"title": "Fincantieri Delivers First FREMM Frigate to Indonesia", "content": "Italian shipbuilder hands over KRI Raden Eddy Martadinata to Indonesian Navy.", "source": "Naval News", "category": "contract", "company": "Fincantieri"},
+    {"title": "Naval Group Wins Australian Submarine Maintenance Contract", "content": "French company secures $2.1B deal for Collins-class submarine sustainment.", "source": "Naval News", "category": "contract", "company": "Naval Group"},
+    # Les Echos (French Financial)
+    {"title": "Safran affiche des résultats records en 2024", "content": "Le motoriste français annonce un chiffre d'affaires en hausse de 18% porté par la demande militaire.", "source": "Les Echos", "category": "contract", "company": "Safran"},
+    {"title": "Thales rachète une startup cyber américaine", "content": "Le groupe français acquiert CipherTech pour $450M, renforçant ses capacités en cybersécurité.", "source": "Les Echos", "category": "partnership", "company": "Thales"},
+    {"title": "Leonardo envisage une IPO de sa division DRS", "content": "Le groupe italien étudie une introduction en bourse de sa filiale américaine Leonardo DRS.", "source": "Les Echos", "category": "contract", "company": "Leonardo"},
+    # Breaking Defense
+    {"title": "Anduril Selected for USSOCOM Counter-Drone Program", "content": "Defense tech startup wins $1B contract for counter-UAS systems across special operations forces.", "source": "Breaking Defense", "category": "contract", "company": "Anduril Industries"},
+    {"title": "L3Harris Demonstrates AI-Powered Electronic Warfare System", "content": "Company showcases next-generation cognitive EW capability at classified Pentagon demonstration.", "source": "Breaking Defense", "category": "product_launch", "company": "L3Harris Technologies"},
+    {"title": "Pentagon Requests $886B Defense Budget for FY2025", "content": "DoD budget prioritizes Pacific deterrence, hypersonic weapons, and AI development.", "source": "Breaking Defense", "category": "regulatory", "company": None},
+    # Aviation Week
+    {"title": "Boeing Delivers 1000th P-8 Poseidon", "content": "Maritime patrol aircraft program reaches milestone delivery to U.S. Navy.", "source": "Aviation Week", "category": "contract", "company": "Boeing Defense"},
+    {"title": "Pratt & Whitney Tests Next-Gen Fighter Engine", "content": "XA101 adaptive engine completes critical ground testing phase for NGAD program.", "source": "Aviation Week", "category": "product_launch", "company": "Raytheon Technologies"},
+    # C4ISRNET
+    {"title": "Palantir Wins $480M Army AI Contract", "content": "Tech company to provide AI/ML capabilities for Army's Tactical Intelligence Targeting Access Node.", "source": "C4ISRNET", "category": "contract", "company": "Palantir Technologies"},
+    {"title": "Leidos Awarded $2.5B NGEN Contract Extension", "content": "Company secures continuation of Navy Next Generation Enterprise Network support.", "source": "C4ISRNET", "category": "contract", "company": "Leidos Holdings"},
+    # Reuters / AFP / Bloomberg
+    {"title": "EU Announces €2B Defense Innovation Fund", "content": "European Commission launches major initiative to boost defense technology development across member states.", "source": "Reuters", "category": "regulatory", "company": None},
+    {"title": "NATO Allies Commit to 2.5% GDP Defense Spending", "content": "Alliance members agree to increase defense budgets at Washington Summit.", "source": "AFP", "category": "regulatory", "company": None},
+    {"title": "Rheinmetall Stock Surges on Record Order Backlog", "content": "German defense company reports €40B order backlog, shares hit all-time high.", "source": "Bloomberg", "category": "contract", "company": "Rheinmetall"},
+    # SpaceNews
+    {"title": "SpaceX Wins $1.8B NRO Launch Contract", "content": "Company selected for next-generation reconnaissance satellite launches through 2030.", "source": "SpaceNews", "category": "contract", "company": None},
+    {"title": "Rocket Lab Secures $515M Neutron Development Contract", "content": "Space Force awards funding for medium-lift rocket development.", "source": "SpaceNews", "category": "contract", "company": "Rocket Lab"},
+    {"title": "L3Harris to Build Next-Gen GPS Satellites", "content": "Company wins $3.2B contract for GPS IIIF follow-on production.", "source": "SpaceNews", "category": "contract", "company": "L3Harris Technologies"},
+]
+
+# Extended M&A Data
+MA_DATA = [
+    {"acquirer": "L3Harris", "target": "Aerojet Rocketdyne", "deal_value": 4700, "status": "completed", "deal_type": "acquisition", "description": "Strategic acquisition to enhance propulsion capabilities"},
+    {"acquirer": "Lockheed Martin", "target": "Terran Orbital", "deal_value": 450, "status": "completed", "deal_type": "acquisition", "description": "Expansion into small satellite manufacturing"},
+    {"acquirer": "Rheinmetall", "target": "Expal Systems", "deal_value": 1200, "status": "completed", "deal_type": "acquisition", "description": "Spanish ammunition manufacturer acquisition"},
+    {"acquirer": "Leonardo", "target": "Hensoldt stake", "deal_value": 606, "status": "completed", "deal_type": "acquisition", "description": "25.1% stake in German sensor specialist"},
+    {"acquirer": "EDGE Group", "target": "Multiple targets", "deal_value": 800, "status": "completed", "deal_type": "acquisition", "description": "UAE defense consolidation through multiple acquisitions"},
+    {"acquirer": "Hanwha", "target": "Daewoo Shipbuilding", "deal_value": 2000, "status": "completed", "deal_type": "acquisition", "description": "Creation of Korean naval defense champion"},
+    {"acquirer": "RTX", "target": "Nightwing", "deal_value": 320, "status": "pending", "deal_type": "acquisition", "description": "Cybersecurity capability enhancement"},
+    {"acquirer": "General Dynamics", "target": "CSRA", "deal_value": 9600, "status": "completed", "deal_type": "acquisition", "description": "IT services and government contracting expansion"},
+    {"acquirer": "Thales", "target": "Gemalto", "deal_value": 5430, "status": "completed", "deal_type": "acquisition", "description": "Digital security and identity management"},
+    {"acquirer": "BAE Systems", "target": "Ball Aerospace", "deal_value": 5550, "status": "announced", "deal_type": "acquisition", "description": "Space and defense electronics expansion"},
+    {"acquirer": "Northrop Grumman", "target": "Orbital ATK", "deal_value": 9200, "status": "completed", "deal_type": "acquisition", "description": "Space and missile systems consolidation"},
+    {"acquirer": "KNDS", "target": "Formation", "deal_value": 0, "status": "completed", "deal_type": "merger", "description": "Franco-German land systems merger (Nexter + KMW)"},
+    {"acquirer": "Airbus", "target": "Bombardier C Series", "deal_value": 500, "status": "completed", "deal_type": "acquisition", "description": "Commercial aviation program acquisition"},
+    {"acquirer": "Rheinmetall", "target": "American Rheinmetall Vehicles", "deal_value": 950, "status": "pending", "deal_type": "joint_venture", "description": "US Army OMFV bid vehicle"},
+    {"acquirer": "Safran", "target": "Collins Aerospace Actuation", "deal_value": 1800, "status": "announced", "deal_type": "acquisition", "description": "Actuation systems portfolio expansion"},
+]
+
+# Extended Expenditures
+EXPENDITURES_DATA = [
+    {"country": "United States", "country_code": "US", "year": 2024, "expenditure": 886.0, "gdp_percent": 3.4, "region": "North America"},
+    {"country": "China", "country_code": "CN", "year": 2024, "expenditure": 296.0, "gdp_percent": 1.7, "region": "Asia-Pacific"},
+    {"country": "Russia", "country_code": "RU", "year": 2024, "expenditure": 109.0, "gdp_percent": 5.9, "region": "Europe"},
+    {"country": "India", "country_code": "IN", "year": 2024, "expenditure": 83.6, "gdp_percent": 2.4, "region": "Asia-Pacific"},
+    {"country": "Saudi Arabia", "country_code": "SA", "year": 2024, "expenditure": 75.0, "gdp_percent": 7.1, "region": "Middle East"},
+    {"country": "United Kingdom", "country_code": "GB", "year": 2024, "expenditure": 68.5, "gdp_percent": 2.3, "region": "Europe"},
+    {"country": "Germany", "country_code": "DE", "year": 2024, "expenditure": 66.8, "gdp_percent": 1.6, "region": "Europe"},
+    {"country": "France", "country_code": "FR", "year": 2024, "expenditure": 61.3, "gdp_percent": 2.1, "region": "Europe"},
+    {"country": "Japan", "country_code": "JP", "year": 2024, "expenditure": 50.2, "gdp_percent": 1.2, "region": "Asia-Pacific"},
+    {"country": "South Korea", "country_code": "KR", "year": 2024, "expenditure": 46.4, "gdp_percent": 2.8, "region": "Asia-Pacific"},
+    {"country": "Australia", "country_code": "AU", "year": 2024, "expenditure": 32.3, "gdp_percent": 2.0, "region": "Asia-Pacific"},
+    {"country": "Italy", "country_code": "IT", "year": 2024, "expenditure": 31.5, "gdp_percent": 1.5, "region": "Europe"},
+    {"country": "Brazil", "country_code": "BR", "year": 2024, "expenditure": 22.9, "gdp_percent": 1.2, "region": "South America"},
+    {"country": "Canada", "country_code": "CA", "year": 2024, "expenditure": 26.9, "gdp_percent": 1.4, "region": "North America"},
+    {"country": "Israel", "country_code": "IL", "year": 2024, "expenditure": 23.4, "gdp_percent": 5.3, "region": "Middle East"},
+    {"country": "Turkey", "country_code": "TR", "year": 2024, "expenditure": 22.8, "gdp_percent": 1.9, "region": "Europe"},
+    {"country": "Spain", "country_code": "ES", "year": 2024, "expenditure": 20.3, "gdp_percent": 1.3, "region": "Europe"},
+    {"country": "Poland", "country_code": "PL", "year": 2024, "expenditure": 31.6, "gdp_percent": 4.0, "region": "Europe"},
+    {"country": "Netherlands", "country_code": "NL", "year": 2024, "expenditure": 15.4, "gdp_percent": 1.5, "region": "Europe"},
+    {"country": "Taiwan", "country_code": "TW", "year": 2024, "expenditure": 19.1, "gdp_percent": 2.5, "region": "Asia-Pacific"},
+    {"country": "Singapore", "country_code": "SG", "year": 2024, "expenditure": 11.8, "gdp_percent": 3.0, "region": "Asia-Pacific"},
+    {"country": "Greece", "country_code": "GR", "year": 2024, "expenditure": 8.1, "gdp_percent": 3.0, "region": "Europe"},
+    {"country": "Norway", "country_code": "NO", "year": 2024, "expenditure": 8.9, "gdp_percent": 1.8, "region": "Europe"},
+    {"country": "Sweden", "country_code": "SE", "year": 2024, "expenditure": 9.7, "gdp_percent": 1.5, "region": "Europe"},
+    {"country": "Finland", "country_code": "FI", "year": 2024, "expenditure": 6.8, "gdp_percent": 2.4, "region": "Europe"},
+    {"country": "UAE", "country_code": "AE", "year": 2024, "expenditure": 22.5, "gdp_percent": 4.5, "region": "Middle East"},
+    {"country": "Pakistan", "country_code": "PK", "year": 2024, "expenditure": 10.3, "gdp_percent": 3.7, "region": "Asia-Pacific"},
+    {"country": "Indonesia", "country_code": "ID", "year": 2024, "expenditure": 9.2, "gdp_percent": 0.7, "region": "Asia-Pacific"},
+    {"country": "Vietnam", "country_code": "VN", "year": 2024, "expenditure": 7.6, "gdp_percent": 2.3, "region": "Asia-Pacific"},
+    {"country": "Egypt", "country_code": "EG", "year": 2024, "expenditure": 4.6, "gdp_percent": 1.2, "region": "Middle East"},
+]
+
+# Extended Regulations
+REGULATIONS_DATA = [
+    {"title": "ITAR - International Traffic in Arms Regulations", "country": "USA", "category": "export_control", "description": "Controls the export and import of defense-related articles and services on the United States Munitions List.", "requirements": ["State Department license required", "End-user certificates", "No re-export without approval"], "effective_date": "1976-01-01"},
+    {"title": "EAR - Export Administration Regulations", "country": "USA", "category": "export_control", "description": "Regulates export of dual-use items and certain military items.", "requirements": ["Commerce Department license", "Denied parties screening", "Country-specific restrictions"], "effective_date": "1979-01-01"},
+    {"title": "EU Dual-Use Regulation", "country": "EU", "category": "export_control", "description": "Controls exports of dual-use items that can be used for both civil and military purposes.", "requirements": ["Export authorization required", "Catch-all controls apply", "Internal compliance program recommended"], "effective_date": "2021-09-09"},
+    {"title": "French Offset Policy", "country": "France", "category": "offset", "description": "Requires foreign suppliers to provide economic benefits to France in exchange for defense contracts.", "requirements": ["Minimum 100% offset obligation", "Direct and indirect offsets accepted", "Technology transfer preferred"], "effective_date": "2015-01-01"},
+    {"title": "Indian Defence Offset Guidelines", "country": "India", "category": "offset", "description": "Mandatory offset requirement for defense procurements above INR 2000 crore.", "requirements": ["Minimum 30% offset obligation", "Indian production mandatory", "Technology transfer bonus multipliers"], "effective_date": "2020-09-28"},
+    {"title": "UK Export Control Act", "country": "UK", "category": "export_control", "description": "Primary legislation governing the export of military and dual-use goods from the United Kingdom.", "requirements": ["Export license from ECJU", "End-user undertaking", "Strategic goods control"], "effective_date": "2002-07-01"},
+    {"title": "German War Weapons Control Act", "country": "Germany", "category": "export_control", "description": "Regulates the production, transfer, and trade of war weapons and related materials.", "requirements": ["Federal Ministry approval", "Human rights assessment", "Alliance partner consideration"], "effective_date": "1961-06-20"},
+    {"title": "Korean Defense Offset Program", "country": "South Korea", "category": "offset", "description": "Requires offset agreements for defense procurements exceeding $10 million.", "requirements": ["Minimum 50% offset value", "Technology transfer priority", "Local production incentives"], "effective_date": "2008-01-01"},
+    {"title": "Australian Defence Export Controls", "country": "Australia", "category": "export_control", "description": "Controls exports of defense and strategic goods through the Defence Export Controls.", "requirements": ["Defence Export Control Office permit", "End-user certificate", "Country restrictions apply"], "effective_date": "2012-04-02"},
+    {"title": "Turkish Defense Industry Offset Program", "country": "Turkey", "category": "offset", "description": "Mandatory offset requirements for defense procurements with technology transfer focus.", "requirements": ["Minimum 70% offset obligation", "Technology transfer mandatory", "Local production required"], "effective_date": "2011-07-01"},
+    {"title": "Polish Defense Offset Act", "country": "Poland", "category": "offset", "description": "Requires industrial cooperation for major defense acquisitions.", "requirements": ["100% offset obligation", "Direct offsets preferred", "Job creation metrics"], "effective_date": "2014-10-01"},
+    {"title": "UAE Defense Offset Program (Tawazun)", "country": "UAE", "category": "offset", "description": "Economic diversification through defense procurement offset obligations.", "requirements": ["60% offset obligation", "Investment in local industry", "Technology transfer included"], "effective_date": "1992-01-01"},
+    {"title": "Saudi Arabia GAMI Regulations", "country": "Saudi Arabia", "category": "offset", "description": "General Authority for Military Industries localization requirements.", "requirements": ["50% localization by 2030", "Joint venture requirements", "Technology transfer mandatory"], "effective_date": "2017-05-01"},
+]
+
+# Extended Products
+PRODUCTS_DATA = [
+    {"name": "F-35 Lightning II", "manufacturer": "Lockheed Martin", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 1.6", "range": "2,220 km", "ceiling": "50,000 ft", "payload": "18,000 lbs"}, "materials": ["Carbon Fiber Composites", "Titanium", "Aluminum Alloys", "Stealth Coating"], "status": "active", "image_url": "https://images.unsplash.com/photo-1723941214871-df2a6d14bb29?w=800"},
+    {"name": "F-22 Raptor", "manufacturer": "Lockheed Martin", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 2.25", "range": "2,960 km", "ceiling": "65,000 ft", "payload": "20,000 lbs"}, "materials": ["Carbon Fiber", "Titanium", "Thermoplastics", "Radar-Absorbing Materials"], "status": "active", "image_url": "https://images.unsplash.com/photo-1757571761677-84036e66e3ca?w=800"},
+    {"name": "Rafale F4", "manufacturer": "Dassault Aviation", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 1.8", "range": "3,700 km", "ceiling": "50,000 ft", "payload": "21,000 lbs"}, "materials": ["Carbon Composites", "Titanium", "RBE2 AESA Radar"], "status": "active", "image_url": None},
+    {"name": "Eurofighter Typhoon", "manufacturer": "Airbus Defence & Space", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 2.0", "range": "2,900 km", "ceiling": "55,000 ft", "payload": "16,500 lbs"}, "materials": ["Carbon Fiber", "Glass Fiber", "Aluminum-Lithium"], "status": "active", "image_url": None},
+    {"name": "Gripen E", "manufacturer": "Saab AB", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 2.0", "range": "2,500 km", "ceiling": "52,000 ft", "payload": "17,500 lbs"}, "materials": ["Carbon Fiber Composites", "Aluminum Alloys"], "status": "active", "image_url": None},
+    {"name": "KF-21 Boramae", "manufacturer": "Korea Aerospace Industries", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 1.8", "range": "2,900 km", "ceiling": "55,000 ft", "payload": "17,000 lbs"}, "materials": ["Composite Materials", "Titanium", "Advanced Alloys"], "status": "development", "image_url": None},
+    {"name": "Patriot PAC-3", "manufacturer": "Raytheon Technologies", "category": "missile", "product_type": "sam", "specifications": {"range": "70 km", "altitude": "24 km", "speed": "Mach 4.1", "warhead": "Kinetic kill"}, "materials": ["Steel Alloy", "Solid Propellant", "Advanced Electronics"], "status": "active", "image_url": None},
+    {"name": "S-400 Triumf", "manufacturer": "Almaz-Antey", "category": "missile", "product_type": "sam", "specifications": {"range": "400 km", "altitude": "30 km", "speed": "Mach 14", "warhead": "Fragmentation"}, "materials": ["Steel", "Solid Fuel", "Phased Array Radar"], "status": "active", "image_url": None},
+    {"name": "Iron Dome", "manufacturer": "Rafael Advanced Defense", "category": "missile", "product_type": "sam", "specifications": {"range": "70 km", "altitude": "10 km", "intercept_rate": "90%+", "warhead": "Proximity fuse"}, "materials": ["Composite Materials", "Advanced Sensors"], "status": "active", "image_url": None},
+    {"name": "THAAD", "manufacturer": "Lockheed Martin", "category": "missile", "product_type": "sam", "specifications": {"range": "200 km", "altitude": "150 km", "speed": "Mach 8+", "warhead": "Kinetic kill"}, "materials": ["Advanced Composites", "Solid Propellant"], "status": "active", "image_url": None},
+    {"name": "Virginia-class Submarine", "manufacturer": "General Dynamics", "category": "naval", "product_type": "submarine", "specifications": {"displacement": "7,900 tons", "length": "115 m", "speed": "25+ knots", "depth": "250+ m"}, "materials": ["HY-100 Steel", "Anechoic Tiles", "Composite Materials"], "status": "active", "image_url": None},
+    {"name": "Astute-class Submarine", "manufacturer": "BAE Systems", "category": "naval", "product_type": "submarine", "specifications": {"displacement": "7,400 tons", "length": "97 m", "speed": "29 knots", "depth": "300+ m"}, "materials": ["High-Tensile Steel", "Acoustic Tiles"], "status": "active", "image_url": None},
+    {"name": "Barracuda-class Submarine", "manufacturer": "Naval Group", "category": "naval", "product_type": "submarine", "specifications": {"displacement": "5,300 tons", "length": "99 m", "speed": "25 knots", "depth": "350+ m"}, "materials": ["HLES 100 Steel", "Composite Materials"], "status": "active", "image_url": None},
+    {"name": "M1A2 Abrams SEPv3", "manufacturer": "General Dynamics", "category": "land", "product_type": "tank", "specifications": {"weight": "73.6 tons", "speed": "67 km/h", "range": "426 km", "main_gun": "120mm"}, "materials": ["Chobham Armor", "Depleted Uranium", "Steel Alloy"], "status": "active", "image_url": None},
+    {"name": "Leopard 2A7+", "manufacturer": "Krauss-Maffei Wegmann", "category": "land", "product_type": "tank", "specifications": {"weight": "67.5 tons", "speed": "72 km/h", "range": "450 km", "main_gun": "120mm L/55"}, "materials": ["Third-Gen Composite Armor", "Tungsten", "Steel"], "status": "active", "image_url": None},
+    {"name": "K2 Black Panther", "manufacturer": "Hyundai Rotem", "category": "land", "product_type": "tank", "specifications": {"weight": "55 tons", "speed": "70 km/h", "range": "450 km", "main_gun": "120mm L/55"}, "materials": ["Composite Armor", "Reactive Armor", "Advanced Alloys"], "status": "active", "image_url": None},
+    {"name": "Leclerc", "manufacturer": "Nexter Systems", "category": "land", "product_type": "tank", "specifications": {"weight": "57 tons", "speed": "71 km/h", "range": "550 km", "main_gun": "120mm"}, "materials": ["Titanium-Steel Armor", "Composite Materials"], "status": "active", "image_url": None},
+    {"name": "MQ-9 Reaper", "manufacturer": "General Atomics", "category": "aircraft", "product_type": "uav", "specifications": {"max_speed": "482 km/h", "range": "1,850 km", "endurance": "27 hours", "payload": "3,750 lbs"}, "materials": ["Carbon Fiber", "Aluminum", "Composite Materials"], "status": "active", "image_url": "https://images.unsplash.com/photo-1731579884309-ecb947ca6144?w=800"},
+    {"name": "Bayraktar TB2", "manufacturer": "Baykar", "category": "aircraft", "product_type": "uav", "specifications": {"max_speed": "220 km/h", "range": "150 km", "endurance": "27 hours", "payload": "150 kg"}, "materials": ["Carbon Fiber", "Kevlar", "Aluminum"], "status": "active", "image_url": None},
+    {"name": "K9 Thunder", "manufacturer": "Hanwha Defense", "category": "land", "product_type": "artillery", "specifications": {"caliber": "155mm", "range": "40 km", "rate_of_fire": "6-8 rpm", "crew": "5"}, "materials": ["Steel Armor", "Composite Materials"], "status": "active", "image_url": None},
+    {"name": "CAESAR", "manufacturer": "Nexter Systems", "category": "land", "product_type": "artillery", "specifications": {"caliber": "155mm", "range": "42 km", "rate_of_fire": "6 rpm", "crew": "5"}, "materials": ["High-Strength Steel", "Aluminum"], "status": "active", "image_url": None},
+    {"name": "PzH 2000", "manufacturer": "Krauss-Maffei Wegmann", "category": "land", "product_type": "artillery", "specifications": {"caliber": "155mm", "range": "56 km", "rate_of_fire": "9 rpm", "crew": "5"}, "materials": ["Armored Steel", "Composite Materials"], "status": "active", "image_url": None},
+    {"name": "Type 26 Frigate", "manufacturer": "BAE Systems", "category": "naval", "product_type": "frigate", "specifications": {"displacement": "6,900 tons", "length": "149 m", "speed": "26+ knots", "crew": "157"}, "materials": ["Steel Hull", "Advanced Composites"], "status": "active", "image_url": None},
+    {"name": "FREMM Frigate", "manufacturer": "Fincantieri", "category": "naval", "product_type": "frigate", "specifications": {"displacement": "6,700 tons", "length": "144 m", "speed": "27 knots", "crew": "145"}, "materials": ["Steel", "Aluminum Superstructure"], "status": "active", "image_url": None},
+]

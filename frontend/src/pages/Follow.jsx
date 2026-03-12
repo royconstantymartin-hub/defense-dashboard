@@ -35,7 +35,7 @@ const MOCK_TWITTER_POSTS = [
     platform: "twitter",
     author: {
       name: "U.S. Department of Defense",
-      handle: "@DeptofDefense",
+      handle: "DeptofDefense",
       avatar: null,
       verified: true,
       type: "institutional"
@@ -52,7 +52,7 @@ const MOCK_TWITTER_POSTS = [
     platform: "twitter",
     author: {
       name: "Lockheed Martin",
-      handle: "@LockheedMartin",
+      handle: "LockheedMartin",
       avatar: null,
       verified: true,
       type: "company"
@@ -69,7 +69,7 @@ const MOCK_TWITTER_POSTS = [
     platform: "twitter",
     author: {
       name: "NATO",
-      handle: "@NATO",
+      handle: "NATO",
       avatar: null,
       verified: true,
       type: "institutional"
@@ -86,7 +86,7 @@ const MOCK_TWITTER_POSTS = [
     platform: "twitter",
     author: {
       name: "Defense News",
-      handle: "@Defense_News",
+      handle: "Defense_News",
       avatar: null,
       verified: true,
       type: "media"
@@ -102,8 +102,42 @@ const MOCK_TWITTER_POSTS = [
     id: "tw5",
     platform: "twitter",
     author: {
+      name: "Opex360",
+      handle: "opaborex360",
+      avatar: null,
+      verified: true,
+      type: "media"
+    },
+    content: "🇫🇷 La France commande 42 Rafale F4 supplémentaires. Un contrat historique pour Dassault Aviation qui porte le carnet de commandes à un niveau record. Analyse complète sur opex360.com",
+    timestamp: "3h",
+    likes: 2341,
+    retweets: 892,
+    replies: 156,
+    url: "https://twitter.com/opex360"
+  },
+  {
+    id: "tw6",
+    platform: "twitter",
+    author: {
+      name: "The War Zone",
+      handle: "TheWarZone",
+      avatar: null,
+      verified: true,
+      type: "media"
+    },
+    content: "BREAKING: First images of B-21 Raider in flight testing over Edwards AFB. The stealth bomber represents a generational leap in penetrating strike capability. Full photo analysis in thread 🧵",
+    timestamp: "5h",
+    likes: 5678,
+    retweets: 2345,
+    replies: 423,
+    url: "https://twitter.com/TheWarZone"
+  },
+  {
+    id: "tw7",
+    platform: "twitter",
+    author: {
       name: "BAE Systems",
-      handle: "@BAaborSystems",
+      handle: "BAESystems",
       avatar: null,
       verified: true,
       type: "company"
@@ -116,11 +150,11 @@ const MOCK_TWITTER_POSTS = [
     url: "https://twitter.com/BAESystems"
   },
   {
-    id: "tw6",
+    id: "tw8",
     platform: "twitter",
     author: {
       name: "Dr. Mark Cancian",
-      handle: "@MarkCancian",
+      handle: "MarkCancian",
       avatar: null,
       verified: true,
       type: "analyst"
@@ -131,6 +165,74 @@ const MOCK_TWITTER_POSTS = [
     retweets: 456,
     replies: 67,
     url: "https://twitter.com/MarkCancian"
+  },
+  {
+    id: "tw9",
+    platform: "twitter",
+    author: {
+      name: "Defense Post",
+      handle: "DefensePost",
+      avatar: null,
+      verified: true,
+      type: "media"
+    },
+    content: "Turkey's Bayraktar TB3 carrier-capable drone completes first flight from TCG Anadolu. Major milestone for Turkish naval aviation capabilities. Video and analysis: defensepost.com/tb3-first-flight",
+    timestamp: "7h",
+    likes: 3456,
+    retweets: 1567,
+    replies: 234,
+    url: "https://twitter.com/DefensePost"
+  },
+  {
+    id: "tw10",
+    platform: "twitter",
+    author: {
+      name: "Ministère des Armées",
+      handle: "Abormeabors",
+      avatar: null,
+      verified: true,
+      type: "institutional"
+    },
+    content: "🇫🇷 Le ministère des Armées annonce le lancement du programme SCAF avec nos partenaires allemands et espagnols. Le démonstrateur volera en 2029. #SCAF #DefenseEuropeenne",
+    timestamp: "10h",
+    likes: 4521,
+    retweets: 1892,
+    replies: 312,
+    url: "https://twitter.com/Armees"
+  },
+  {
+    id: "tw11",
+    platform: "twitter",
+    author: {
+      name: "Breaking Defense",
+      handle: "BreakingDefense",
+      avatar: null,
+      verified: true,
+      type: "media"
+    },
+    content: "EXCLUSIVE: Anduril wins $1B USSOCOM counter-drone contract. Palmer Luckey's defense startup continues rapid expansion into DoD prime contractor territory.",
+    timestamp: "4h",
+    likes: 2134,
+    retweets: 987,
+    replies: 145,
+    url: "https://twitter.com/BreakingDefense"
+  },
+  {
+    id: "tw12",
+    platform: "twitter",
+    author: {
+      name: "Rheinmetall",
+      handle: "RheinmetallAG",
+      avatar: null,
+      verified: true,
+      type: "company"
+    },
+    content: "Record order backlog of €40B! We're expanding 155mm ammunition production by 300% to meet NATO demands. New plant in Germany now operational. #DefenseIndustry",
+    timestamp: "9h",
+    likes: 1876,
+    retweets: 765,
+    replies: 98,
+    url: "https://twitter.com/RheinmetallAG"
   }
 ];
 
@@ -140,7 +242,7 @@ const MOCK_LINKEDIN_POSTS = [
     platform: "linkedin",
     author: {
       name: "Thales Group",
-      handle: "thaborles",
+      handle: "thales",
       avatar: null,
       verified: true,
       type: "company"
@@ -174,7 +276,7 @@ const MOCK_LINKEDIN_POSTS = [
     platform: "linkedin",
     author: {
       name: "French Ministry of Armed Forces",
-      handle: "armaborefr",
+      handle: "armees-fr",
       avatar: null,
       verified: true,
       type: "institutional"
@@ -219,6 +321,91 @@ const MOCK_LINKEDIN_POSTS = [
     comments: 298,
     shares: 1023,
     url: "https://linkedin.com/company/raytheon"
+  },
+  {
+    id: "li6",
+    platform: "linkedin",
+    author: {
+      name: "Dassault Aviation",
+      handle: "dassault-aviation",
+      avatar: null,
+      verified: true,
+      type: "company"
+    },
+    content: "Le Rafale F4 franchit une nouvelle étape avec l'intégration du standard F4.2. Nouvelles capacités de guerre électronique, connectivité SCAF et armements de nouvelle génération. La France maintient son avance technologique.",
+    timestamp: "6h",
+    likes: 3234,
+    comments: 167,
+    shares: 456,
+    url: "https://linkedin.com/company/dassault-aviation"
+  },
+  {
+    id: "li7",
+    platform: "linkedin",
+    author: {
+      name: "Hanwha Defense",
+      handle: "hanwha-defense",
+      avatar: null,
+      verified: true,
+      type: "company"
+    },
+    content: "K9 Thunder deliveries to Poland accelerate! First batch of self-propelled howitzers handed over to Polish Army as part of historic $4.5B defense partnership. Korean defense exports reach new heights.",
+    timestamp: "4h",
+    likes: 2876,
+    comments: 123,
+    shares: 345,
+    url: "https://linkedin.com/company/hanwha-defense"
+  },
+  {
+    id: "li8",
+    platform: "linkedin",
+    author: {
+      name: "Les Echos - Industrie",
+      handle: "lesechos",
+      avatar: null,
+      verified: true,
+      type: "media"
+    },
+    content: "📈 Safran affiche des résultats records en 2024. Le motoriste français annonce un CA en hausse de 18%, porté par la demande militaire. Le carnet de commandes atteint €85 milliards. Analyse complète sur lesechos.fr",
+    timestamp: "12h",
+    likes: 1567,
+    comments: 78,
+    shares: 234,
+    url: "https://linkedin.com/company/les-echos"
+  },
+  {
+    id: "li9",
+    platform: "linkedin",
+    author: {
+      name: "Naval Group",
+      handle: "naval-group",
+      avatar: null,
+      verified: true,
+      type: "company"
+    },
+    content: "🚢 Successful sea trials for our latest Barracuda-class submarine! The Duguay-Trouin demonstrates exceptional stealth and endurance capabilities. French naval superiority continues with world-class submarine technology.",
+    timestamp: "1d",
+    likes: 4123,
+    comments: 234,
+    shares: 567,
+    url: "https://linkedin.com/company/naval-group"
+  },
+  {
+    id: "li10",
+    platform: "linkedin",
+    author: {
+      name: "Saab",
+      handle: "saab",
+      avatar: null,
+      verified: true,
+      type: "company"
+    },
+    content: "Gripen E enters service with Swedish Air Force! The most advanced version of our fighter combines cutting-edge sensors, electronic warfare, and network-centric capabilities. Ready to defend Nordic skies. 🇸🇪",
+    timestamp: "8h",
+    likes: 2987,
+    comments: 145,
+    shares: 398,
+    url: "https://linkedin.com/company/saab"
   }
 ];
 
