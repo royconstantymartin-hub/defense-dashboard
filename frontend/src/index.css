@@ -5,23 +5,20 @@
 @tailwind utilities;
 
 :root {
-    --background-base: #0A0A0B;
-    --background-surface: #121214;
-    --background-elevated: #1C1C1F;
-    --background-input: #27272A;
-    --text-primary: #FAFAFA;
-    --text-secondary: #A1A1AA;
-    --text-tertiary: #52525B;
-    --text-label: #71717A;
-    --accent-primary: #3B82F6;
-    --accent-secondary: #10B981;
-    --accent-alert: #EF4444;
-    --accent-warning: #F59E0B;
-    --chart-1: #3B82F6;
-    --chart-2: #10B981;
-    --chart-3: #F59E0B;
-    --chart-4: #EC4899;
-    --chart-5: #8B5CF6;
+    --background-base: #F8FAFC;
+    --background-surface: #FFFFFF;
+    --background-subtle: #F1F5F9;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-tertiary: #94A3B8;
+    --accent-primary: #7E22CE;
+    --accent-secondary: #A855F7;
+    --accent-light: #F3E8FF;
+    --border-default: #E2E8F0;
+    --border-focus: #7E22CE;
+    --success: #10B981;
+    --danger: #EF4444;
+    --warning: #F59E0B;
 }
 
 body {
@@ -45,7 +42,7 @@ code {
     font-family: 'JetBrains Mono', monospace;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Light theme */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -56,41 +53,41 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--background-input);
+    background: #CBD5E1;
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #3f3f46;
+    background: #94A3B8;
 }
 
 @layer base {
     :root {
-        --background: 240 5% 4%;
-        --foreground: 0 0% 98%;
-        --card: 240 5% 7%;
-        --card-foreground: 0 0% 98%;
-        --popover: 240 5% 7%;
-        --popover-foreground: 0 0% 98%;
-        --primary: 217 91% 60%;
+        --background: 210 40% 98%;
+        --foreground: 222 47% 11%;
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+        --primary: 271 81% 47%;
         --primary-foreground: 0 0% 100%;
-        --secondary: 240 4% 11%;
-        --secondary-foreground: 0 0% 98%;
-        --muted: 240 4% 11%;
-        --muted-foreground: 240 5% 65%;
-        --accent: 240 4% 11%;
-        --accent-foreground: 0 0% 98%;
+        --secondary: 210 40% 96%;
+        --secondary-foreground: 222 47% 11%;
+        --muted: 210 40% 96%;
+        --muted-foreground: 215 16% 47%;
+        --accent: 271 81% 95%;
+        --accent-foreground: 271 81% 47%;
         --destructive: 0 84% 60%;
         --destructive-foreground: 0 0% 98%;
-        --border: 240 4% 16%;
-        --input: 240 4% 16%;
-        --ring: 217 91% 60%;
-        --chart-1: 217 91% 60%;
+        --border: 214 32% 91%;
+        --input: 214 32% 91%;
+        --ring: 271 81% 47%;
+        --chart-1: 271 81% 47%;
         --chart-2: 160 84% 39%;
         --chart-3: 38 92% 50%;
         --chart-4: 330 81% 60%;
-        --chart-5: 262 83% 58%;
-        --radius: 0.25rem;
+        --chart-5: 271 91% 65%;
+        --radius: 0.5rem;
     }
 }
 
@@ -103,52 +100,95 @@ code {
     }
 }
 
-/* Data label styling */
+/* Data styling */
 .data-label {
-    @apply text-xs font-mono uppercase tracking-wider text-zinc-500;
+    @apply text-xs font-mono uppercase tracking-wider text-slate-500;
 }
 
 .data-value {
-    @apply text-2xl font-mono font-medium text-white;
+    @apply text-2xl font-mono font-semibold text-slate-900;
 }
 
-/* Card hover effect */
-.card-hover {
-    @apply transition-colors duration-200 hover:border-zinc-700;
+/* Card styling */
+.card-light {
+    @apply bg-white border border-slate-200 rounded-xl shadow-sm transition-all duration-300 hover:shadow-lg hover:border-purple-200;
 }
 
 /* Status badges */
 .badge-success {
-    @apply bg-green-500/10 text-green-500 border border-green-500/20 rounded-full px-2 py-0.5 text-xs font-mono;
+    @apply bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
 .badge-warning {
-    @apply bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-full px-2 py-0.5 text-xs font-mono;
+    @apply bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
 .badge-danger {
-    @apply bg-red-500/10 text-red-500 border border-red-500/20 rounded-full px-2 py-0.5 text-xs font-mono;
+    @apply bg-rose-50 text-rose-700 border border-rose-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
 .badge-neutral {
-    @apply bg-zinc-800 text-zinc-400 border border-zinc-700 rounded-full px-2 py-0.5 text-xs font-mono;
+    @apply bg-slate-50 text-slate-600 border border-slate-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
-/* Glow effects */
-.glow-blue {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+.badge-purple {
+    @apply bg-purple-50 text-purple-700 border border-purple-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
-.glow-green {
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Grid pattern for backgrounds */
-.grid-pattern {
-    background-image: 
-        linear-gradient(rgba(39, 39, 42, 0.5) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(39, 39, 42, 0.5) 1px, transparent 1px);
-    background-size: 40px 40px;
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Flag styling */
+.flag-icon {
+    @apply w-6 h-4 object-cover rounded-sm shadow-sm;
+}
+
+.flag-icon-lg {
+    @apply w-8 h-6 object-cover rounded-sm shadow-sm;
+}
+
+/* Company logo */
+.company-logo {
+    @apply w-8 h-8 rounded-lg object-contain bg-white shadow-sm border border-slate-100;
+}
+
+/* Interactive elements */
+.btn-primary {
+    @apply bg-purple-700 text-white hover:bg-purple-800 shadow-sm transition-all duration-200 font-medium px-6 py-2.5 rounded-lg active:scale-95;
+}
+
+.btn-secondary {
+    @apply bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 font-medium px-4 py-2 rounded-lg;
+}
+
+.btn-ghost {
+    @apply text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors font-medium px-4 py-2 rounded-lg;
+}
+
+/* Table styling */
+.table-light th {
+    @apply px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 text-left bg-slate-50;
+}
+
+.table-light td {
+    @apply px-6 py-4 text-sm text-slate-700;
+}
+
+.table-light tr {
+    @apply border-b border-slate-100 hover:bg-purple-50/30 transition-colors;
 }
 
 @layer base {

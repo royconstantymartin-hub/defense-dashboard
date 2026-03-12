@@ -9,9 +9,10 @@ import {
   Building2, 
   Newspaper, 
   Handshake,
-  Package,
   Globe,
-  ArrowRight
+  ArrowRight,
+  Clock,
+  Database
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
@@ -26,7 +27,33 @@ import {
   Cell
 } from "recharts";
 
-const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6', '#06B6D4', '#EF4444'];
+const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899'];
+
+// Country code mapping for flags
+const COUNTRY_FLAGS = {
+  "USA": "us", "UK": "gb", "France": "fr", "Germany": "de", "Italy": "it",
+  "EU": "eu", "Spain": "es", "Sweden": "se", "Norway": "no", "Israel": "il",
+  "Japan": "jp", "South Korea": "kr", "India": "in", "Australia": "au",
+  "Brazil": "br", "Canada": "ca", "Turkey": "tr", "UAE": "ae", "Singapore": "sg",
+  "China": "cn", "Russia": "ru", "Poland": "pl", "Czech Republic": "cz",
+  "Switzerland": "ch", "Netherlands": "nl", "Belgium": "be", "Finland": "fi",
+  "South Africa": "za", "Saudi Arabia": "sa", "United States": "us",
+  "United Kingdom": "gb"
+};
+
+// Company logo domains
+const COMPANY_LOGOS = {
+  "Lockheed Martin": "lockheedmartin.com",
+  "Raytheon Technologies": "rtx.com",
+  "Boeing Defense": "boeing.com",
+  "Northrop Grumman": "northropgrumman.com",
+  "General Dynamics": "gd.com",
+  "L3Harris Technologies": "l3harris.com",
+  "BAE Systems": "baesystems.com",
+  "Thales": "thalesgroup.com",
+  "Leonardo": "leonardo.com",
+  "Airbus Defence & Space": "airbus.com",
+};
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -57,10 +84,20 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
+  const getFlag = (country) => {
+    const code = COUNTRY_FLAGS[country];
+    return code ? `https://flagcdn.com/w40/${code}.png` : null;
+  };
+
+  const getLogo = (companyName) => {
+    const domain = COMPANY_LOGOS[companyName];
+    return domain ? `https://logo.clearbit.com/${domain}` : null;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -81,12 +118,19 @@ export default function Dashboard() {
   return (
     <div data-testid="dashboard-page" className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-white tracking-tight">
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
             Mission Control
           </h1>
-          <p className="text-zinc-500 text-sm mt-1">Global Defense Intelligence Overview</p>
+          <p className="text-slate-500 text-sm mt-1">Global Defense Intelligence Overview</p>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+          <Clock className="w-3.5 h-3.5" />
+          <span>Last updated: {new Date().toLocaleTimeString()}</span>
+          <span className="text-slate-300">|</span>
+          <Database className="w-3.5 h-3.5" />
+          <span>Source: Multiple</span>
         </div>
       </div>
 
@@ -124,13 +168,13 @@ export default function Dashboard() {
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Market Leaders */}
-        <Card className="lg:col-span-2 bg-zinc-950 border-zinc-800">
-          <CardHeader className="border-b border-zinc-800 pb-4">
+        <Card className="lg:col-span-2 bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
             <div className="flex items-center justify-between">
-              <CardTitle className="font-heading text-lg text-white">Market Leaders</CardTitle>
+              <CardTitle className="font-heading text-lg text-slate-900">Market Leaders</CardTitle>
               <Link 
                 to="/market-data" 
-                className="text-xs text-blue-500 hover:text-blue-400 flex items-center gap-1"
+                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
                 data-testid="view-all-market"
               >
                 View All <ArrowRight className="w-3 h-3" />
@@ -141,47 +185,70 @@ export default function Dashboard() {
             <div className="overflow-x-auto">
               <table className="w-full" data-testid="market-leaders-table">
                 <thead>
-                  <tr className="border-b border-zinc-800">
-                    <th className="text-left text-xs font-mono uppercase tracking-wider text-zinc-500 p-4">Company</th>
-                    <th className="text-right text-xs font-mono uppercase tracking-wider text-zinc-500 p-4">Ticker</th>
-                    <th className="text-right text-xs font-mono uppercase tracking-wider text-zinc-500 p-4">Market Cap</th>
-                    <th className="text-right text-xs font-mono uppercase tracking-wider text-zinc-500 p-4">Change</th>
+                  <tr className="border-b border-slate-100 bg-slate-50/30">
+                    <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Company</th>
+                    <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Ticker</th>
+                    <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Market Cap</th>
+                    <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Change</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {topPlayers.map((player, idx) => (
-                    <tr key={player.id} className="border-b border-zinc-800/50 hover:bg-zinc-900/50 transition-colors">
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <span className="w-6 h-6 bg-zinc-800 rounded-sm flex items-center justify-center text-xs font-mono text-zinc-400">
-                            {idx + 1}
-                          </span>
-                          <div>
-                            <p className="text-white font-medium text-sm">{player.name}</p>
-                            <p className="text-xs text-zinc-500">{player.country}</p>
+                  {topPlayers.map((player, idx) => {
+                    const logoUrl = getLogo(player.name);
+                    const flagUrl = getFlag(player.country);
+                    return (
+                      <tr key={player.id} className="border-b border-slate-100 hover:bg-purple-50/30 transition-colors">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
+                              {idx + 1}
+                            </span>
+                            {logoUrl ? (
+                              <img 
+                                src={logoUrl} 
+                                alt={player.name}
+                                className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100"
+                                onError={(e) => { e.target.style.display = 'none'; }}
+                              />
+                            ) : (
+                              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <Building2 className="w-4 h-4 text-purple-600" />
+                              </div>
+                            )}
+                            <div>
+                              <p className="text-slate-900 font-medium text-sm">{player.name}</p>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                {flagUrl && (
+                                  <img src={flagUrl} alt={player.country} className="w-4 h-3 object-cover rounded-sm" />
+                                )}
+                                <span className="text-xs text-slate-500">{player.country}</span>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="p-4 text-right">
-                        <span className="font-mono text-sm text-zinc-300">{player.ticker}</span>
-                      </td>
-                      <td className="p-4 text-right">
-                        <span className="font-mono text-sm text-white">${player.market_cap}B</span>
-                      </td>
-                      <td className="p-4 text-right">
-                        <span className={`font-mono text-sm flex items-center justify-end gap-1 ${
-                          player.change_percent >= 0 ? 'text-green-500' : 'text-red-500'
-                        }`}>
-                          {player.change_percent >= 0 ? (
-                            <TrendingUp className="w-3 h-3" />
-                          ) : (
-                            <TrendingDown className="w-3 h-3" />
-                          )}
-                          {player.change_percent >= 0 ? '+' : ''}{player.change_percent}%
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td className="p-4 text-right">
+                          <span className="font-mono text-sm text-purple-700 font-medium bg-purple-50 px-2 py-0.5 rounded">
+                            {player.ticker}
+                          </span>
+                        </td>
+                        <td className="p-4 text-right">
+                          <span className="font-mono text-sm text-slate-900 font-semibold">${player.market_cap}B</span>
+                        </td>
+                        <td className="p-4 text-right">
+                          <span className={`font-mono text-sm flex items-center justify-end gap-1 ${
+                            player.change_percent >= 0 ? 'text-emerald-600' : 'text-rose-600'
+                          }`}>
+                            {player.change_percent >= 0 ? (
+                              <TrendingUp className="w-3 h-3" />
+                            ) : (
+                              <TrendingDown className="w-3 h-3" />
+                            )}
+                            {player.change_percent >= 0 ? '+' : ''}{player.change_percent}%
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -189,9 +256,9 @@ export default function Dashboard() {
         </Card>
 
         {/* Regional Distribution */}
-        <Card className="bg-zinc-950 border-zinc-800">
-          <CardHeader className="border-b border-zinc-800 pb-4">
-            <CardTitle className="font-heading text-lg text-white">Regional Spending</CardTitle>
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
+            <CardTitle className="font-heading text-lg text-slate-900">Regional Spending</CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
             <div className="h-[200px]" data-testid="regional-chart">
@@ -214,9 +281,9 @@ export default function Dashboard() {
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         return (
-                          <div className="bg-zinc-900 border border-zinc-800 p-2 rounded-sm">
-                            <p className="text-white text-sm">{payload[0].name}</p>
-                            <p className="font-mono text-blue-500">${payload[0].value.toFixed(1)}B</p>
+                          <div className="bg-white border border-slate-200 p-3 rounded-lg shadow-lg">
+                            <p className="text-slate-900 text-sm font-medium">{payload[0].name}</p>
+                            <p className="font-mono text-purple-700 font-semibold">${payload[0].value.toFixed(1)}B</p>
                           </div>
                         );
                       }
@@ -234,9 +301,9 @@ export default function Dashboard() {
                       className="w-2 h-2 rounded-full" 
                       style={{ backgroundColor: COLORS[idx] }}
                     />
-                    <span className="text-zinc-400">{region.name}</span>
+                    <span className="text-slate-600">{region.name}</span>
                   </div>
-                  <span className="font-mono text-white">${region.value.toFixed(1)}B</span>
+                  <span className="font-mono text-slate-900 font-medium">${region.value.toFixed(1)}B</span>
                 </div>
               ))}
             </div>
@@ -247,13 +314,13 @@ export default function Dashboard() {
       {/* Bottom Section */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Top Expenditures Chart */}
-        <Card className="bg-zinc-950 border-zinc-800">
-          <CardHeader className="border-b border-zinc-800 pb-4">
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
             <div className="flex items-center justify-between">
-              <CardTitle className="font-heading text-lg text-white">Top Defense Budgets</CardTitle>
+              <CardTitle className="font-heading text-lg text-slate-900">Top Defense Budgets</CardTitle>
               <Link 
                 to="/expenditures" 
-                className="text-xs text-blue-500 hover:text-blue-400 flex items-center gap-1"
+                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
               >
                 View All <ArrowRight className="w-3 h-3" />
               </Link>
@@ -263,11 +330,17 @@ export default function Dashboard() {
             <div className="h-[250px]" data-testid="expenditure-chart">
               <ResponsiveContainer width="100%" height="100%" minWidth={200}>
                 <BarChart data={topExpenditures} layout="vertical">
-                  <XAxis type="number" tick={{ fill: '#71717A', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <XAxis 
+                    type="number" 
+                    tick={{ fill: '#64748B', fontSize: 11 }} 
+                    axisLine={false} 
+                    tickLine={false}
+                    tickFormatter={(v) => `$${v}B`}
+                  />
                   <YAxis 
                     type="category" 
                     dataKey="country_code" 
-                    tick={{ fill: '#A1A1AA', fontSize: 11 }} 
+                    tick={{ fill: '#64748B', fontSize: 11 }} 
                     axisLine={false} 
                     tickLine={false}
                     width={35}
@@ -276,17 +349,17 @@ export default function Dashboard() {
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         return (
-                          <div className="bg-zinc-900 border border-zinc-800 p-2 rounded-sm">
-                            <p className="text-white text-sm">{payload[0].payload.country}</p>
-                            <p className="font-mono text-blue-500">${payload[0].value}B</p>
-                            <p className="text-xs text-zinc-500">{payload[0].payload.gdp_percent}% of GDP</p>
+                          <div className="bg-white border border-slate-200 p-3 rounded-lg shadow-lg">
+                            <p className="text-slate-900 text-sm font-medium">{payload[0].payload.country}</p>
+                            <p className="font-mono text-purple-700 font-semibold">${payload[0].value}B</p>
+                            <p className="text-xs text-slate-500">{payload[0].payload.gdp_percent}% of GDP</p>
                           </div>
                         );
                       }
                       return null;
                     }}
                   />
-                  <Bar dataKey="expenditure" fill="#3B82F6" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="expenditure" fill="#7E22CE" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -294,46 +367,46 @@ export default function Dashboard() {
         </Card>
 
         {/* Recent Intel */}
-        <Card className="bg-zinc-950 border-zinc-800">
-          <CardHeader className="border-b border-zinc-800 pb-4">
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
             <div className="flex items-center justify-between">
-              <CardTitle className="font-heading text-lg text-white">Recent Intel</CardTitle>
+              <CardTitle className="font-heading text-lg text-slate-900">Recent Intel</CardTitle>
               <Link 
                 to="/announcements" 
-                className="text-xs text-blue-500 hover:text-blue-400 flex items-center gap-1"
+                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
               >
                 View All <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y divide-zinc-800" data-testid="recent-announcements">
+            <div className="divide-y divide-slate-100" data-testid="recent-announcements">
               {announcements.map((item) => (
-                <div key={item.id} className="p-4 hover:bg-zinc-900/50 transition-colors">
+                <div key={item.id} className="p-4 hover:bg-purple-50/30 transition-colors">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-zinc-800 rounded-sm flex items-center justify-center flex-shrink-0">
-                      <Newspaper className="w-4 h-4 text-zinc-400" />
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Newspaper className="w-4 h-4 text-purple-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm font-medium line-clamp-1">{item.title}</p>
-                      <p className="text-zinc-500 text-xs mt-1 line-clamp-2">{item.content}</p>
+                      <p className="text-slate-900 text-sm font-medium line-clamp-1">{item.title}</p>
+                      <p className="text-slate-500 text-xs mt-1 line-clamp-2">{item.content}</p>
                       <div className="flex items-center gap-2 mt-2">
-                        <span className={`text-xs font-mono px-2 py-0.5 rounded-full ${
-                          item.category === 'contract' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
-                          item.category === 'product_launch' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
-                          item.category === 'regulatory' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
-                          'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${
+                          item.category === 'contract' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                          item.category === 'product_launch' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                          item.category === 'regulatory' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                          'bg-slate-50 text-slate-600 border-slate-200'
                         }`}>
                           {item.category.replace('_', ' ').toUpperCase()}
                         </span>
-                        <span className="text-xs text-zinc-600">{item.source}</span>
+                        <span className="text-xs text-slate-500">{item.source}</span>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
               {announcements.length === 0 && (
-                <div className="p-8 text-center text-zinc-500">
+                <div className="p-8 text-center text-slate-500">
                   No recent announcements
                 </div>
               )}
@@ -347,28 +420,30 @@ export default function Dashboard() {
 
 function MetricCard({ label, value, subtext, icon: Icon, trend, positive, testId }) {
   return (
-    <div 
-      className="bg-zinc-950 border border-zinc-800 p-4 hover:border-zinc-700 transition-colors"
+    <Card 
+      className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300"
       data-testid={testId}
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-mono uppercase tracking-wider text-zinc-500">{label}</p>
-          <p className="text-2xl font-mono font-medium text-white mt-2">{value}</p>
-          {subtext && <p className="text-xs text-zinc-500 mt-1">{subtext}</p>}
-          {trend && (
-            <p className={`text-xs font-mono mt-2 flex items-center gap-1 ${
-              positive ? 'text-green-500' : 'text-red-500'
-            }`}>
-              {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-              {trend}
-            </p>
-          )}
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">{label}</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{value}</p>
+            {subtext && <p className="text-xs text-slate-500 mt-1">{subtext}</p>}
+            {trend && (
+              <p className={`text-xs font-mono mt-2 flex items-center gap-1 ${
+                positive ? 'text-emerald-600' : 'text-rose-600'
+              }`}>
+                {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                {trend}
+              </p>
+            )}
+          </div>
+          <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+            <Icon className="w-5 h-5 text-purple-600" />
+          </div>
         </div>
-        <div className="w-10 h-10 bg-zinc-800 rounded-sm flex items-center justify-center">
-          <Icon className="w-5 h-5 text-zinc-400" />
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

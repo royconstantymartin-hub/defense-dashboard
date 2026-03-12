@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -25,7 +24,8 @@ import {
   User,
   TrendingUp,
   Clock,
-  CheckCircle2
+  CheckCircle2,
+  Filter
 } from "lucide-react";
 
 // Mock data for social posts - Replace with real API integration
@@ -74,7 +74,7 @@ const MOCK_TWITTER_POSTS = [
       verified: true,
       type: "institutional"
     },
-    content: "🇪🇺 European allies commit to 2.5% GDP defense spending target by 2028. This historic agreement ensures collective security and burden-sharing across the Alliance. Read the full communiqué: nato.int/2024summit",
+    content: "European allies commit to 2.5% GDP defense spending target by 2028. This historic agreement ensures collective security and burden-sharing across the Alliance. Read the full communiqué: nato.int/2024summit",
     timestamp: "6h",
     likes: 8934,
     retweets: 4521,
@@ -91,7 +91,7 @@ const MOCK_TWITTER_POSTS = [
       verified: true,
       type: "media"
     },
-    content: "EXCLUSIVE: Rheinmetall announces €3.2B expansion of ammunition production capacity. CEO says move is 'essential for European security.' Full analysis and implications for NATO supply chains ⬇️",
+    content: "EXCLUSIVE: Rheinmetall announces €3.2B expansion of ammunition production capacity. CEO says move is 'essential for European security.' Full analysis and implications for NATO supply chains below",
     timestamp: "8h",
     likes: 1456,
     retweets: 723,
@@ -103,12 +103,12 @@ const MOCK_TWITTER_POSTS = [
     platform: "twitter",
     author: {
       name: "Opex360",
-      handle: "opaborex360",
+      handle: "opex360",
       avatar: null,
       verified: true,
       type: "media"
     },
-    content: "🇫🇷 La France commande 42 Rafale F4 supplémentaires. Un contrat historique pour Dassault Aviation qui porte le carnet de commandes à un niveau record. Analyse complète sur opex360.com",
+    content: "La France commande 42 Rafale F4 supplémentaires. Un contrat historique pour Dassault Aviation qui porte le carnet de commandes à un niveau record. Analyse complète sur opex360.com",
     timestamp: "3h",
     likes: 2341,
     retweets: 892,
@@ -125,7 +125,7 @@ const MOCK_TWITTER_POSTS = [
       verified: true,
       type: "media"
     },
-    content: "BREAKING: First images of B-21 Raider in flight testing over Edwards AFB. The stealth bomber represents a generational leap in penetrating strike capability. Full photo analysis in thread 🧵",
+    content: "BREAKING: First images of B-21 Raider in flight testing over Edwards AFB. The stealth bomber represents a generational leap in penetrating strike capability. Full photo analysis in thread",
     timestamp: "5h",
     likes: 5678,
     retweets: 2345,
@@ -142,7 +142,7 @@ const MOCK_TWITTER_POSTS = [
       verified: true,
       type: "company"
     },
-    content: "Our Type 26 frigate program reaches new milestone with the launch of HMS Birmingham. The most advanced anti-submarine warfare vessel ever built for the Royal Navy. 🚢 #Type26 #RoyalNavy",
+    content: "Our Type 26 frigate program reaches new milestone with the launch of HMS Birmingham. The most advanced anti-submarine warfare vessel ever built for the Royal Navy. #Type26 #RoyalNavy",
     timestamp: "12h",
     likes: 3210,
     retweets: 1102,
@@ -159,81 +159,13 @@ const MOCK_TWITTER_POSTS = [
       verified: true,
       type: "analyst"
     },
-    content: "Thread 🧵 on the implications of the latest DoD budget request: 1/ The $886B request prioritizes Pacific deterrence, but industrial base constraints remain the elephant in the room...",
+    content: "Thread on the implications of the latest DoD budget request: 1/ The $886B request prioritizes Pacific deterrence, but industrial base constraints remain the elephant in the room...",
     timestamp: "1d",
     likes: 892,
     retweets: 456,
     replies: 67,
     url: "https://twitter.com/MarkCancian"
   },
-  {
-    id: "tw9",
-    platform: "twitter",
-    author: {
-      name: "Defense Post",
-      handle: "DefensePost",
-      avatar: null,
-      verified: true,
-      type: "media"
-    },
-    content: "Turkey's Bayraktar TB3 carrier-capable drone completes first flight from TCG Anadolu. Major milestone for Turkish naval aviation capabilities. Video and analysis: defensepost.com/tb3-first-flight",
-    timestamp: "7h",
-    likes: 3456,
-    retweets: 1567,
-    replies: 234,
-    url: "https://twitter.com/DefensePost"
-  },
-  {
-    id: "tw10",
-    platform: "twitter",
-    author: {
-      name: "Ministère des Armées",
-      handle: "Abormeabors",
-      avatar: null,
-      verified: true,
-      type: "institutional"
-    },
-    content: "🇫🇷 Le ministère des Armées annonce le lancement du programme SCAF avec nos partenaires allemands et espagnols. Le démonstrateur volera en 2029. #SCAF #DefenseEuropeenne",
-    timestamp: "10h",
-    likes: 4521,
-    retweets: 1892,
-    replies: 312,
-    url: "https://twitter.com/Armees"
-  },
-  {
-    id: "tw11",
-    platform: "twitter",
-    author: {
-      name: "Breaking Defense",
-      handle: "BreakingDefense",
-      avatar: null,
-      verified: true,
-      type: "media"
-    },
-    content: "EXCLUSIVE: Anduril wins $1B USSOCOM counter-drone contract. Palmer Luckey's defense startup continues rapid expansion into DoD prime contractor territory.",
-    timestamp: "4h",
-    likes: 2134,
-    retweets: 987,
-    replies: 145,
-    url: "https://twitter.com/BreakingDefense"
-  },
-  {
-    id: "tw12",
-    platform: "twitter",
-    author: {
-      name: "Rheinmetall",
-      handle: "RheinmetallAG",
-      avatar: null,
-      verified: true,
-      type: "company"
-    },
-    content: "Record order backlog of €40B! We're expanding 155mm ammunition production by 300% to meet NATO demands. New plant in Germany now operational. #DefenseIndustry",
-    timestamp: "9h",
-    likes: 1876,
-    retweets: 765,
-    replies: 98,
-    url: "https://twitter.com/RheinmetallAG"
-  }
 ];
 
 const MOCK_LINKEDIN_POSTS = [
@@ -247,7 +179,7 @@ const MOCK_LINKEDIN_POSTS = [
       verified: true,
       type: "company"
     },
-    content: "🚀 Thales unveils next-generation radar system for European air defense. Our Ground Fire 300 represents a quantum leap in detection capabilities, offering 360° surveillance with unprecedented range and precision. This technology will be the cornerstone of European IAMD for the next 30 years.",
+    content: "Thales unveils next-generation radar system for European air defense. Our Ground Fire 300 represents a quantum leap in detection capabilities, offering 360° surveillance with unprecedented range and precision.",
     timestamp: "3h",
     likes: 2341,
     comments: 89,
@@ -264,7 +196,7 @@ const MOCK_LINKEDIN_POSTS = [
       verified: true,
       type: "company"
     },
-    content: "Excited to announce our partnership with @US Army on the Next Generation Combat Vehicle program. Our advanced sensor suite will provide unprecedented situational awareness for armored formations. #Defense #Innovation #NGCV",
+    content: "Excited to announce our partnership with @US Army on the Next Generation Combat Vehicle program. Our advanced sensor suite will provide unprecedented situational awareness for armored formations.",
     timestamp: "5h",
     likes: 1567,
     comments: 45,
@@ -281,7 +213,7 @@ const MOCK_LINKEDIN_POSTS = [
       verified: true,
       type: "institutional"
     },
-    content: "🇫🇷 La France renforce sa coopération avec l'Allemagne sur le SCAF (Système de Combat Aérien du Futur). Cette étape majeure consolide l'autonomie stratégique européenne. Le démonstrateur volera en 2029.",
+    content: "La France renforce sa coopération avec l'Allemagne sur le SCAF (Système de Combat Aérien du Futur). Cette étape majeure consolide l'autonomie stratégique européenne. Le démonstrateur volera en 2029.",
     timestamp: "8h",
     likes: 4521,
     comments: 234,
@@ -298,7 +230,7 @@ const MOCK_LINKEDIN_POSTS = [
       verified: true,
       type: "media"
     },
-    content: "📊 NEW REPORT: Global Defense Market Outlook 2024-2034. Key findings:\n• 4.2% CAGR projected\n• Asia-Pacific fastest growing region\n• Unmanned systems: 12% annual growth\n• Cyber & space: Critical investment areas\n\nDownload the executive summary →",
+    content: "NEW REPORT: Global Defense Market Outlook 2024-2034. Key findings:\n• 4.2% CAGR projected\n• Asia-Pacific fastest growing region\n• Unmanned systems: 12% annual growth\n• Cyber & space: Critical investment areas",
     timestamp: "1d",
     likes: 3892,
     comments: 156,
@@ -332,81 +264,13 @@ const MOCK_LINKEDIN_POSTS = [
       verified: true,
       type: "company"
     },
-    content: "Le Rafale F4 franchit une nouvelle étape avec l'intégration du standard F4.2. Nouvelles capacités de guerre électronique, connectivité SCAF et armements de nouvelle génération. La France maintient son avance technologique.",
+    content: "Le Rafale F4 franchit une nouvelle étape avec l'intégration du standard F4.2. Nouvelles capacités de guerre électronique, connectivité SCAF et armements de nouvelle génération.",
     timestamp: "6h",
     likes: 3234,
     comments: 167,
     shares: 456,
     url: "https://linkedin.com/company/dassault-aviation"
   },
-  {
-    id: "li7",
-    platform: "linkedin",
-    author: {
-      name: "Hanwha Defense",
-      handle: "hanwha-defense",
-      avatar: null,
-      verified: true,
-      type: "company"
-    },
-    content: "K9 Thunder deliveries to Poland accelerate! First batch of self-propelled howitzers handed over to Polish Army as part of historic $4.5B defense partnership. Korean defense exports reach new heights.",
-    timestamp: "4h",
-    likes: 2876,
-    comments: 123,
-    shares: 345,
-    url: "https://linkedin.com/company/hanwha-defense"
-  },
-  {
-    id: "li8",
-    platform: "linkedin",
-    author: {
-      name: "Les Echos - Industrie",
-      handle: "lesechos",
-      avatar: null,
-      verified: true,
-      type: "media"
-    },
-    content: "📈 Safran affiche des résultats records en 2024. Le motoriste français annonce un CA en hausse de 18%, porté par la demande militaire. Le carnet de commandes atteint €85 milliards. Analyse complète sur lesechos.fr",
-    timestamp: "12h",
-    likes: 1567,
-    comments: 78,
-    shares: 234,
-    url: "https://linkedin.com/company/les-echos"
-  },
-  {
-    id: "li9",
-    platform: "linkedin",
-    author: {
-      name: "Naval Group",
-      handle: "naval-group",
-      avatar: null,
-      verified: true,
-      type: "company"
-    },
-    content: "🚢 Successful sea trials for our latest Barracuda-class submarine! The Duguay-Trouin demonstrates exceptional stealth and endurance capabilities. French naval superiority continues with world-class submarine technology.",
-    timestamp: "1d",
-    likes: 4123,
-    comments: 234,
-    shares: 567,
-    url: "https://linkedin.com/company/naval-group"
-  },
-  {
-    id: "li10",
-    platform: "linkedin",
-    author: {
-      name: "Saab",
-      handle: "saab",
-      avatar: null,
-      verified: true,
-      type: "company"
-    },
-    content: "Gripen E enters service with Swedish Air Force! The most advanced version of our fighter combines cutting-edge sensors, electronic warfare, and network-centric capabilities. Ready to defend Nordic skies. 🇸🇪",
-    timestamp: "8h",
-    likes: 2987,
-    comments: 145,
-    shares: 398,
-    url: "https://linkedin.com/company/saab"
-  }
 ];
 
 const ACCOUNT_TYPES = [
@@ -424,7 +288,6 @@ export default function Follow() {
   const [allPosts, setAllPosts] = useState([]);
 
   useEffect(() => {
-    // Combine and sort posts by recency
     const combined = [...MOCK_TWITTER_POSTS, ...MOCK_LINKEDIN_POSTS].sort(() => Math.random() - 0.5);
     setAllPosts(combined);
   }, []);
@@ -466,11 +329,11 @@ export default function Follow() {
 
   const getTypeStyle = (type) => {
     switch (type) {
-      case "institutional": return "bg-blue-500/10 text-blue-500 border-blue-500/20";
-      case "company": return "bg-green-500/10 text-green-500 border-green-500/20";
-      case "analyst": return "bg-purple-500/10 text-purple-500 border-purple-500/20";
-      case "media": return "bg-amber-500/10 text-amber-500 border-amber-500/20";
-      default: return "bg-zinc-800 text-zinc-400 border-zinc-700";
+      case "institutional": return "bg-blue-50 text-blue-700 border-blue-200";
+      case "company": return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      case "analyst": return "bg-purple-50 text-purple-700 border-purple-200";
+      case "media": return "bg-amber-50 text-amber-700 border-amber-200";
+      default: return "bg-slate-100 text-slate-600 border-slate-200";
     }
   };
 
@@ -484,80 +347,100 @@ export default function Follow() {
   return (
     <div data-testid="follow-page" className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="font-heading text-3xl font-bold text-white tracking-tight">
-          Defense Intel Feed
-        </h1>
-        <p className="text-zinc-500 text-sm mt-1">Latest posts from defense industry leaders, institutions & analysts</p>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
+            Defense Intel Feed
+          </h1>
+          <p className="text-slate-500 text-sm mt-1">Latest posts from defense industry leaders, institutions & analysts</p>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+          <Clock className="w-3.5 h-3.5" />
+          <span>Updated: Now</span>
+          <span className="text-slate-300">|</span>
+          <span className="flex items-center gap-1.5 text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
+            <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse" />
+            Demo Mode
+          </span>
+        </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-zinc-950 border-zinc-800 p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#1DA1F2]/10 rounded-sm flex items-center justify-center">
-              <Twitter className="w-5 h-5 text-[#1DA1F2]" />
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#1DA1F2]/10 rounded-xl flex items-center justify-center">
+                <Twitter className="w-5 h-5 text-[#1DA1F2]" />
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-slate-500">X POSTS</p>
+                <p className="text-xl font-mono font-bold text-slate-900">{MOCK_TWITTER_POSTS.length}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-mono uppercase tracking-wider text-zinc-500">X POSTS</p>
-              <p className="text-xl font-mono font-medium text-white">{MOCK_TWITTER_POSTS.length}</p>
-            </div>
-          </div>
+          </CardContent>
         </Card>
-        <Card className="bg-zinc-950 border-zinc-800 p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#0A66C2]/10 rounded-sm flex items-center justify-center">
-              <Linkedin className="w-5 h-5 text-[#0A66C2]" />
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#0A66C2]/10 rounded-xl flex items-center justify-center">
+                <Linkedin className="w-5 h-5 text-[#0A66C2]" />
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-slate-500">LINKEDIN</p>
+                <p className="text-xl font-mono font-bold text-slate-900">{MOCK_LINKEDIN_POSTS.length}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-mono uppercase tracking-wider text-zinc-500">LINKEDIN</p>
-              <p className="text-xl font-mono font-medium text-white">{MOCK_LINKEDIN_POSTS.length}</p>
-            </div>
-          </div>
+          </CardContent>
         </Card>
-        <Card className="bg-zinc-950 border-zinc-800 p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-zinc-800 rounded-sm flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-green-500" />
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TRENDING</p>
+                <p className="text-xl font-mono font-bold text-slate-900">12</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-mono uppercase tracking-wider text-zinc-500">TRENDING</p>
-              <p className="text-xl font-mono font-medium text-white">12</p>
-            </div>
-          </div>
+          </CardContent>
         </Card>
-        <Card className="bg-zinc-950 border-zinc-800 p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-zinc-800 rounded-sm flex items-center justify-center">
-              <Clock className="w-5 h-5 text-zinc-400" />
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                <Clock className="w-5 h-5 text-slate-500" />
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-slate-500">UPDATED</p>
+                <p className="text-xl font-mono font-bold text-slate-900">Now</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-mono uppercase tracking-wider text-zinc-500">UPDATED</p>
-              <p className="text-xl font-mono font-medium text-white">Now</p>
-            </div>
-          </div>
+          </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
             placeholder="Search posts, accounts..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600"
+            className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"
             data-testid="search-posts"
           />
         </div>
         <Select value={accountType} onValueChange={setAccountType}>
-          <SelectTrigger className="w-full sm:w-48 bg-zinc-900 border-zinc-800 text-white" data-testid="account-type-filter">
+          <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700" data-testid="account-type-filter">
+            <Filter className="w-4 h-4 mr-2 text-slate-400" />
             <SelectValue placeholder="Source Type" />
           </SelectTrigger>
-          <SelectContent className="bg-zinc-900 border-zinc-800">
+          <SelectContent className="bg-white border-slate-200">
             {ACCOUNT_TYPES.map(type => (
-              <SelectItem key={type.value} value={type.value} className="text-white focus:bg-zinc-800">
+              <SelectItem key={type.value} value={type.value} className="text-slate-700 focus:bg-purple-50">
                 {type.label}
               </SelectItem>
             ))}
@@ -567,15 +450,15 @@ export default function Follow() {
 
       {/* Platform Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-zinc-900 border border-zinc-800 p-1">
-          <TabsTrigger value="all" className="data-[state=active]:bg-zinc-800">
+        <TabsList className="bg-slate-100 border border-slate-200 p-1">
+          <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm">
             All Platforms
           </TabsTrigger>
-          <TabsTrigger value="twitter" className="data-[state=active]:bg-zinc-800">
+          <TabsTrigger value="twitter" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm">
             <Twitter className="w-4 h-4 mr-2" />
             X / Twitter
           </TabsTrigger>
-          <TabsTrigger value="linkedin" className="data-[state=active]:bg-zinc-800">
+          <TabsTrigger value="linkedin" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm">
             <Linkedin className="w-4 h-4 mr-2" />
             LinkedIn
           </TabsTrigger>
@@ -588,7 +471,7 @@ export default function Follow() {
               return (
                 <Card 
                   key={post.id}
-                  className="bg-zinc-950 border-zinc-800 hover:border-zinc-700 transition-colors"
+                  className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300"
                   data-testid={`post-${post.id}`}
                 >
                   <CardContent className="p-5">
@@ -606,56 +489,56 @@ export default function Follow() {
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-white font-medium text-sm">{post.author.name}</span>
+                            <span className="text-slate-900 font-medium text-sm">{post.author.name}</span>
                             {post.author.verified && (
-                              <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                              <CheckCircle2 className="w-4 h-4 text-purple-600" />
                             )}
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-zinc-500 text-xs">@{post.author.handle}</span>
-                            <span className="text-zinc-600 text-xs">• {post.timestamp}</span>
+                            <span className="text-slate-500 text-xs">@{post.author.handle}</span>
+                            <span className="text-slate-400 text-xs">• {post.timestamp}</span>
                           </div>
                         </div>
                       </div>
-                      <span className={`text-xs font-mono px-2 py-0.5 rounded-full border ${getTypeStyle(post.author.type)}`}>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${getTypeStyle(post.author.type)}`}>
                         {post.author.type.toUpperCase()}
                       </span>
                     </div>
 
                     {/* Content */}
-                    <p className="text-zinc-300 text-sm leading-relaxed mb-4">
+                    <p className="text-slate-600 text-sm leading-relaxed mb-4">
                       {post.content}
                     </p>
 
                     {/* Engagement Stats */}
-                    <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                       <div className="flex items-center gap-4">
                         {post.platform === "twitter" ? (
                           <>
-                            <button className="flex items-center gap-1.5 text-zinc-500 hover:text-red-500 transition-colors">
+                            <button className="flex items-center gap-1.5 text-slate-400 hover:text-rose-500 transition-colors">
                               <Heart className="w-4 h-4" />
                               <span className="text-xs font-mono">{formatNumber(post.likes)}</span>
                             </button>
-                            <button className="flex items-center gap-1.5 text-zinc-500 hover:text-green-500 transition-colors">
+                            <button className="flex items-center gap-1.5 text-slate-400 hover:text-emerald-500 transition-colors">
                               <Repeat2 className="w-4 h-4" />
                               <span className="text-xs font-mono">{formatNumber(post.retweets)}</span>
                             </button>
-                            <button className="flex items-center gap-1.5 text-zinc-500 hover:text-blue-500 transition-colors">
+                            <button className="flex items-center gap-1.5 text-slate-400 hover:text-purple-500 transition-colors">
                               <MessageCircle className="w-4 h-4" />
                               <span className="text-xs font-mono">{formatNumber(post.replies)}</span>
                             </button>
                           </>
                         ) : (
                           <>
-                            <button className="flex items-center gap-1.5 text-zinc-500 hover:text-blue-500 transition-colors">
+                            <button className="flex items-center gap-1.5 text-slate-400 hover:text-purple-500 transition-colors">
                               <Heart className="w-4 h-4" />
                               <span className="text-xs font-mono">{formatNumber(post.likes)}</span>
                             </button>
-                            <button className="flex items-center gap-1.5 text-zinc-500 hover:text-blue-500 transition-colors">
+                            <button className="flex items-center gap-1.5 text-slate-400 hover:text-purple-500 transition-colors">
                               <MessageCircle className="w-4 h-4" />
                               <span className="text-xs font-mono">{formatNumber(post.comments)}</span>
                             </button>
-                            <button className="flex items-center gap-1.5 text-zinc-500 hover:text-blue-500 transition-colors">
+                            <button className="flex items-center gap-1.5 text-slate-400 hover:text-purple-500 transition-colors">
                               <Share className="w-4 h-4" />
                               <span className="text-xs font-mono">{formatNumber(post.shares)}</span>
                             </button>
@@ -666,7 +549,7 @@ export default function Follow() {
                         href={post.url} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-zinc-500 hover:text-white transition-colors"
+                        className="text-slate-400 hover:text-purple-600 transition-colors"
                       >
                         <ExternalLink className="w-4 h-4" />
                       </a>
@@ -678,7 +561,7 @@ export default function Follow() {
           </div>
 
           {filteredPosts.length === 0 && (
-            <div className="text-center py-12 text-zinc-500">
+            <div className="text-center py-12 text-slate-500 bg-white rounded-lg border border-slate-200">
               No posts found matching your criteria
             </div>
           )}
@@ -686,14 +569,14 @@ export default function Follow() {
       </Tabs>
 
       {/* API Notice */}
-      <Card className="bg-amber-500/5 border-amber-500/20">
+      <Card className="bg-amber-50 border-amber-200">
         <CardContent className="p-4 flex items-start gap-3">
-          <div className="w-8 h-8 bg-amber-500/10 rounded-sm flex items-center justify-center flex-shrink-0">
-            <Shield className="w-4 h-4 text-amber-500" />
+          <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Shield className="w-5 h-5 text-amber-600" />
           </div>
           <div>
-            <p className="text-amber-500 text-sm font-medium">Demo Mode</p>
-            <p className="text-zinc-400 text-xs mt-1">
+            <p className="text-amber-800 text-sm font-medium">Demo Mode Active</p>
+            <p className="text-amber-700 text-xs mt-1">
               Currently showing sample data. Connect your Twitter/X API keys in the Admin panel to enable real-time feeds from defense industry accounts.
             </p>
           </div>
