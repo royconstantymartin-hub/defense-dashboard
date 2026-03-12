@@ -43,11 +43,13 @@ Build a comprehensive defense industry dashboard with:
 
 ### Data Enrichment (✅ COMPLETE)
 - 118 defense companies (from original target of 250)
-- 102 products (from original 25)
+- **140 products** (from original 25) - with real images
 - 30 countries with expenditure data
 - 37 announcements from specialized sources
 - 17 M&A deals
 - 13 regulations
+- **Real account logos** on Follow page (Clearbit CDN)
+- **Product images** from Unsplash for key products
 
 ## API Endpoints
 

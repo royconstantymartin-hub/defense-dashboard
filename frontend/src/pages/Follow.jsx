@@ -29,6 +29,24 @@ import {
 } from "lucide-react";
 
 // Mock data for social posts - Replace with real API integration
+// Account Logos mapping
+const ACCOUNT_LOGOS = {
+  "DeptofDefense": "https://logo.clearbit.com/defense.gov",
+  "LockheedMartin": "https://logo.clearbit.com/lockheedmartin.com",
+  "NATO": "https://logo.clearbit.com/nato.int",
+  "Defense_News": "https://logo.clearbit.com/defensenews.com",
+  "opex360": "https://opex360.com/wp-content/uploads/2023/06/cropped-favicon-1-192x192.png",
+  "TheWarZone": "https://logo.clearbit.com/thedrive.com",
+  "BAESystems": "https://logo.clearbit.com/baesystems.com",
+  "MarkCancian": null,
+  "thales": "https://logo.clearbit.com/thalesgroup.com",
+  "leonardodrs": "https://logo.clearbit.com/leonardodrs.com",
+  "armees-fr": "https://upload.wikimedia.org/wikipedia/fr/thumb/1/16/Logo_du_minist%C3%A8re_des_Arm%C3%A9es.svg/200px-Logo_du_minist%C3%A8re_des_Arm%C3%A9es.svg.png",
+  "janes": "https://logo.clearbit.com/janes.com",
+  "raytheon": "https://logo.clearbit.com/rtx.com",
+  "dassault-aviation": "https://logo.clearbit.com/dassault-aviation.com"
+};
+
 const MOCK_TWITTER_POSTS = [
   {
     id: "tw1",
@@ -36,7 +54,7 @@ const MOCK_TWITTER_POSTS = [
     author: {
       name: "U.S. Department of Defense",
       handle: "DeptofDefense",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["DeptofDefense"],
       verified: true,
       type: "institutional"
     },
@@ -53,7 +71,7 @@ const MOCK_TWITTER_POSTS = [
     author: {
       name: "Lockheed Martin",
       handle: "LockheedMartin",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["LockheedMartin"],
       verified: true,
       type: "company"
     },
@@ -70,7 +88,7 @@ const MOCK_TWITTER_POSTS = [
     author: {
       name: "NATO",
       handle: "NATO",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["NATO"],
       verified: true,
       type: "institutional"
     },
@@ -87,7 +105,7 @@ const MOCK_TWITTER_POSTS = [
     author: {
       name: "Defense News",
       handle: "Defense_News",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["Defense_News"],
       verified: true,
       type: "media"
     },
@@ -104,7 +122,7 @@ const MOCK_TWITTER_POSTS = [
     author: {
       name: "Opex360",
       handle: "opex360",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["opex360"],
       verified: true,
       type: "media"
     },
@@ -121,7 +139,7 @@ const MOCK_TWITTER_POSTS = [
     author: {
       name: "The War Zone",
       handle: "TheWarZone",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["TheWarZone"],
       verified: true,
       type: "media"
     },
@@ -138,7 +156,7 @@ const MOCK_TWITTER_POSTS = [
     author: {
       name: "BAE Systems",
       handle: "BAESystems",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["BAESystems"],
       verified: true,
       type: "company"
     },
@@ -155,7 +173,7 @@ const MOCK_TWITTER_POSTS = [
     author: {
       name: "Dr. Mark Cancian",
       handle: "MarkCancian",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["MarkCancian"],
       verified: true,
       type: "analyst"
     },
@@ -175,7 +193,7 @@ const MOCK_LINKEDIN_POSTS = [
     author: {
       name: "Thales Group",
       handle: "thales",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["thales"],
       verified: true,
       type: "company"
     },
@@ -192,7 +210,7 @@ const MOCK_LINKEDIN_POSTS = [
     author: {
       name: "Leonardo DRS",
       handle: "leonardodrs",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["leonardodrs"],
       verified: true,
       type: "company"
     },
@@ -209,7 +227,7 @@ const MOCK_LINKEDIN_POSTS = [
     author: {
       name: "French Ministry of Armed Forces",
       handle: "armees-fr",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["armees-fr"],
       verified: true,
       type: "institutional"
     },
@@ -226,7 +244,7 @@ const MOCK_LINKEDIN_POSTS = [
     author: {
       name: "Jane's by S&P Global",
       handle: "janes",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["janes"],
       verified: true,
       type: "media"
     },
@@ -243,7 +261,7 @@ const MOCK_LINKEDIN_POSTS = [
     author: {
       name: "Raytheon",
       handle: "raytheon",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["raytheon"],
       verified: true,
       type: "company"
     },
@@ -260,7 +278,7 @@ const MOCK_LINKEDIN_POSTS = [
     author: {
       name: "Dassault Aviation",
       handle: "dassault-aviation",
-      avatar: null,
+      avatar: ACCOUNT_LOGOS["dassault-aviation"],
       verified: true,
       type: "company"
     },
@@ -478,9 +496,21 @@ export default function Follow() {
                     {/* Author Header */}
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                        {post.author.avatar ? (
+                          <img 
+                            src={post.author.avatar} 
+                            alt={post.author.name}
+                            className="w-12 h-12 rounded-full object-contain bg-white border border-slate-200"
+                            onError={(e) => { 
+                              e.target.onerror = null;
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div className={`w-12 h-12 rounded-full items-center justify-center ${
                           post.platform === "twitter" ? "bg-[#1DA1F2]/10" : "bg-[#0A66C2]/10"
-                        }`}>
+                        } ${post.author.avatar ? 'hidden' : 'flex'}`}>
                           {post.platform === "twitter" ? (
                             <Twitter className="w-6 h-6 text-[#1DA1F2]" />
                           ) : (
