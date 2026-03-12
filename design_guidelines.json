@@ -1,156 +1,173 @@
 {
-  "identity": {
-    "name": "E1 - The Anti-AI Designer",
-    "archetype": "The Performance Pro (Defense Edition)",
-    "vibe": "Tactical, Precision, Authority, Stealth",
-    "metaphor": "The War Room / Digital Cockpit"
-  },
-  "theme_strategy": {
-    "mode": "dark",
-    "philosophy": "Information Density & Optical Clarity. No decorative gradients. 1px borders. High contrast data.",
-    "emotional_goal": "Command & Control"
-  },
-  "colors": {
-    "palette": {
-      "background": {
-        "base": "#0A0A0B",
-        "surface": "#121214",
-        "surface_elevated": "#1C1C1F",
-        "input": "#27272A"
+  "design_system": {
+    "theme": "light",
+    "typography": {
+      "font_family": {
+        "heading": "Chivo, sans-serif",
+        "body": "Inter, sans-serif",
+        "mono": "JetBrains Mono, monospace"
       },
-      "text": {
-        "primary": "#FAFAFA",
-        "secondary": "#A1A1AA",
-        "tertiary": "#52525B",
-        "data_label": "#71717A"
-      },
-      "accents": {
-        "primary": "#3B82F6",
-        "secondary": "#10B981",
-        "alert": "#EF4444",
-        "warning": "#F59E0B",
-        "stealth": "#27272A"
-      },
-      "charts": {
-        "series_1": "#3B82F6",
-        "series_2": "#10B981",
-        "series_3": "#F59E0B",
-        "series_4": "#EC4899",
-        "series_5": "#8B5CF6",
-        "grid": "#27272A"
+      "scale": {
+        "h1": "text-4xl font-heading font-bold tracking-tight text-slate-900",
+        "h2": "text-3xl font-heading font-bold tracking-tight text-slate-900",
+        "h3": "text-2xl font-heading font-semibold tracking-tight text-slate-900",
+        "body": "text-base font-sans text-slate-600 leading-relaxed",
+        "caption": "text-sm font-sans text-slate-500",
+        "data": "text-sm font-mono font-medium text-slate-900"
       }
     },
-    "rules": [
-      "NEVER use pure black (#000000) for backgrounds. Use #0A0A0B.",
-      "Use 'Electric Blue' (#3B82F6) for primary actions.",
-      "Use 'Tactical Green' (#10B981) for positive trends.",
-      "Use 'Signal Red' (#EF4444) for threats/alerts.",
-      "Borders must be subtle: border-white/10 or border-zinc-800."
-    ]
-  },
-  "typography": {
-    "font_family": {
-      "headings": "Chivo, sans-serif",
-      "body": "Inter, sans-serif",
-      "mono": "JetBrains Mono, monospace"
+    "colors": {
+      "background": {
+        "app": "bg-slate-50",
+        "surface": "bg-white",
+        "subtle": "bg-slate-100"
+      },
+      "text": {
+        "primary": "text-slate-900",
+        "secondary": "text-slate-600",
+        "tertiary": "text-slate-400",
+        "inverse": "text-white"
+      },
+      "border": {
+        "default": "border-slate-200",
+        "focus": "border-purple-500",
+        "subtle": "border-slate-100"
+      },
+      "accent": {
+        "primary": "bg-purple-700",
+        "primary_hover": "hover:bg-purple-800",
+        "secondary": "bg-purple-100",
+        "text": "text-purple-700",
+        "border": "border-purple-200"
+      },
+      "status": {
+        "success": "text-emerald-600 bg-emerald-50 border-emerald-200",
+        "warning": "text-amber-600 bg-amber-50 border-amber-200",
+        "error": "text-rose-600 bg-rose-50 border-rose-200",
+        "neutral": "text-slate-600 bg-slate-50 border-slate-200"
+      },
+      "charts": {
+        "primary": "#7E22CE",
+        "secondary": "#A855F7",
+        "accent": "#F3E8FF",
+        "success": "#10B981",
+        "danger": "#EF4444",
+        "grid": "#E2E8F0"
+      }
     },
-    "scale": {
-      "h1": "text-4xl font-bold tracking-tight lg:text-5xl",
-      "h2": "text-3xl font-semibold tracking-tight",
-      "h3": "text-2xl font-semibold tracking-tight",
-      "body_lg": "text-lg leading-relaxed",
-      "body_base": "text-base leading-relaxed text-zinc-400",
-      "data_label": "text-xs font-mono uppercase tracking-wider text-zinc-500",
-      "data_value": "text-2xl font-mono font-medium text-white"
-    },
-    "rules": [
-      "Use 'Chivo' for all major headings to convey authority.",
-      "Use 'JetBrains Mono' for ALL numbers, financial data, and technical specs.",
-      "Use Uppercase + Wide Tracking for labels (e.g., 'MARKET CAP', 'YTD CHANGE')."
-    ]
-  },
-  "layout": {
-    "grid_system": "Bento Grid (High Density)",
-    "container": "max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8",
     "spacing": {
+      "container": "container mx-auto px-4 md:px-8 py-8",
       "section_gap": "gap-8",
-      "widget_gap": "gap-4",
-      "internal_padding": "p-6"
+      "card_padding": "p-6"
     },
-    "strategies": [
-      "DASHBOARD: Use a 12-column grid. Key metrics (Ticker tape) at top.",
-      "ANNOUNCEMENTS: 2-column layout. Left: List/Feed. Right: Detail View (Master-Detail pattern).",
-      "MARKET DATA: Dense table rows with sparklines.",
-      "PRODUCT PORTFOLIO: Masonry grid of cards with technical specs overlaid."
-    ]
-  },
-  "components": {
-    "card": {
-      "style": "bg-zinc-950 border border-zinc-800 shadow-none",
-      "header": "border-b border-zinc-800 p-4",
-      "content": "p-4",
-      "hover": "hover:border-zinc-700 transition-colors duration-200"
-    },
-    "button": {
-      "primary": "bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-sm px-4 py-2 text-sm shadow-[0_0_10px_rgba(59,130,246,0.2)]",
-      "secondary": "bg-zinc-800 hover:bg-zinc-700 text-white font-medium rounded-sm px-4 py-2 text-sm border border-zinc-700",
-      "outline": "bg-transparent border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500 rounded-sm"
-    },
-    "input": {
-      "style": "bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 rounded-sm"
-    },
-    "badge": {
-      "success": "bg-green-500/10 text-green-500 border border-green-500/20 rounded-full px-2 py-0.5 text-xs font-mono",
-      "warning": "bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-full px-2 py-0.5 text-xs font-mono",
-      "danger": "bg-red-500/10 text-red-500 border border-red-500/20 rounded-full px-2 py-0.5 text-xs font-mono",
-      "neutral": "bg-zinc-800 text-zinc-400 border border-zinc-700 rounded-full px-2 py-0.5 text-xs font-mono"
-    },
-    "charts": {
-      "library": "Recharts (via Shadcn)",
-      "style": "Minimalist. Remove grid lines (or make them very subtle #27272A). Use thick strokes (2px) for lines. Use gradients for area fills.",
-      "tooltip": "bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-sm shadow-xl"
+    "visual_enhancers": {
+      "radius": "rounded-lg",
+      "shadow": {
+        "default": "shadow-sm",
+        "hover": "shadow-lg shadow-slate-200/50",
+        "card": "shadow-[0_1px_3px_0_rgb(0,0,0,0.05)]"
+      },
+      "glass": "bg-white/80 backdrop-blur-md border border-white/20",
+      "borders": "border border-slate-200"
     }
   },
-  "visual_enhancers": {
-    "surface_effects": [
-      "Use 'Scanlines' overlay (subtle repeating linear gradient) on specific 'Technical' sections (optional).",
-      "Use 'Grid' background pattern for empty states."
-    ],
-    "borders": "1px solid #27272A (zinc-800). No rounded corners > 4px. Aim for 'Machined Metal' look.",
-    "shadows": "None or very subtle ambient (shadow-sm). Rely on borders for separation."
-  },
-  "images": {
-    "strategy": "Use abstract technical imagery or specific military hardware. Avoid stock people photos. Use logos as Typography if images unavailable.",
-    "placeholders": {
-      "hero_bg": "https://images.unsplash.com/photo-1757571761677-84036e66e3ca?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTF8MHwxfHNlYXJjaHw0fHxtb2Rlcm4lMjBmaWdodGVyJTIwamV0JTIwZGFyayUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzcyOTg1OTQwfDA&ixlib=rb-4.1.0&q=85",
-      "product_fighter": "https://images.unsplash.com/photo-1723941214871-df2a6d14bb29?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTF8MHwxfHNlYXJjaHwyfHxtb2Rlcm4lMjBmaWdodGVyJTIwamV0JTIwZGFyayUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzcyOTg1OTQwfDA&ixlib=rb-4.1.0&q=85",
-      "product_drone": "https://images.unsplash.com/photo-1731579884309-ecb947ca6144?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHw0fHxtaWxpdGFyeSUyMGRyb25lJTIwc3VydmVpbGxhbmNlfGVufDB8fHx8MTc3Mjk4NTk0MXww&ixlib=rb-4.1.0&q=85",
-      "map_viz": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072"
+  "components": {
+    "buttons": {
+      "primary": "bg-purple-700 text-white hover:bg-purple-800 shadow-sm transition-all duration-200 font-medium px-6 py-2.5 rounded-lg active:scale-95",
+      "secondary": "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 font-medium px-6 py-2.5 rounded-lg",
+      "ghost": "text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors font-medium px-4 py-2 rounded-lg"
     },
-    "logos_fallback": "Use styled text for logos: e.g., <span className='font-mono font-black tracking-widest text-zinc-500'>[ LOCKHEED ]</span>"
+    "cards": {
+      "base": "bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-purple-200",
+      "header": "px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50",
+      "body": "p-6"
+    },
+    "tables": {
+      "container": "w-full overflow-hidden rounded-lg border border-slate-200 bg-white",
+      "header_row": "bg-slate-50 border-b border-slate-200",
+      "header_cell": "px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 text-left",
+      "row": "border-b border-slate-100 hover:bg-purple-50/30 transition-colors last:border-0",
+      "cell": "px-6 py-4 text-sm text-slate-700 font-medium"
+    },
+    "badges": {
+      "base": "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
+      "market_cap": "bg-blue-50 text-blue-700 border-blue-200",
+      "change_up": "bg-emerald-50 text-emerald-700 border-emerald-200",
+      "change_down": "bg-rose-50 text-rose-700 border-rose-200"
+    }
   },
-  "accessibility": {
-    "contrast": "Ensure text-zinc-400 on bg-zinc-950 meets 4.5:1. If not, bump to text-zinc-300.",
-    "interactive": "Focus states must use ring-2 ring-blue-500 ring-offset-2 ring-offset-zinc-950."
+  "layout_strategy": {
+    "grid_system": "grid grid-cols-1 md:grid-cols-12 gap-6",
+    "bento_grid": {
+      "hero_map": "col-span-1 md:col-span-12 lg:col-span-8 row-span-2 min-h-[400px]",
+      "market_leaders": "col-span-1 md:col-span-6 lg:col-span-4 row-span-2",
+      "news_feed": "col-span-1 md:col-span-6 lg:col-span-4 row-span-2 overflow-y-auto max-h-[500px]",
+      "quick_stats": "col-span-1 md:col-span-3 lg:col-span-2 h-32"
+    }
   },
-  "instructions_to_main_agent": [
-    "1. SETUP: Ensure Tailwind config includes the 'Chivo' and 'JetBrains Mono' fonts. If not, add them via Google Fonts import in index.css.",
-    "2. THEME: Force DARK MODE by default. Add 'dark' class to html/body.",
-    "3. NAVIGATION: Create a Sidebar or Topbar that feels like a 'Console'. Use icons from Lucide-React (Shield, Radar, Activity, Globe, FileText, Settings).",
-    "4. DASHBOARD: The home page must be a 'Mission Control'. Top row: 4 key metrics (Market Pulse). Middle: Big Map or Main Chart. Bottom: Recent Intel Feed.",
-    "5. DATA: Use Mock Data that looks realistic (e.g., 'Lockheed Martin (LMT) +1.2%', 'DoD Contract #8829 awarded').",
-    "6. TABLES: Use Shadcn Table. Style it to look like a manifest. Condensed rows. Monospace numbers.",
-    "7. CHARTS: Use Recharts. Style: Dark tooltip, minimal axes, neon lines.",
-    "8. REGULATIONS: Use an 'Accordion' component for the Regulations Database (easy to scan headers, expand for details).",
-    "9. PORTFOLIO: Use a 'Card Grid' with image top, specs bottom (Speed, Range, Payload).",
-    "10. ADMIN: Simple CRUD tables. Keep it functional.",
-    "CRITICAL: Do not make it look like a generic SaaS. Make it look like a Tool for Professionals."
-  ],
-  "UNIVERSAL_GUIDELINES": [
-    "Avoid gradients on backgrounds. Use solid dark grays.",
-    "Use 1px borders to define structure.",
-    "Micro-interactions: Hovering a card should slightly lighten the border (zinc-800 -> zinc-600).",
-    "No rounded buttons. Use 'rounded-sm' or 'rounded-md' (max 4px).",
-    "Data density is good. Don't be afraid of small text (text-xs) for metadata."
+  "assets": {
+    "flags": {
+      "base_url": "https://flagcdn.com/w40/{code}.png",
+      "codes": {
+        "USA": "us",
+        "UK": "gb",
+        "France": "fr",
+        "Germany": "de",
+        "China": "cn",
+        "Russia": "ru",
+        "India": "in",
+        "Israel": "il",
+        "Japan": "jp",
+        "South Korea": "kr"
+      }
+    },
+    "logos": {
+      "base_url": "https://logo.clearbit.com/{domain}",
+      "companies": {
+        "Lockheed Martin": "lockheedmartin.com",
+        "Boeing": "boeing.com",
+        "Northrop Grumman": "northropgrumman.com",
+        "Raytheon": "rtx.com",
+        "General Dynamics": "gd.com",
+        "Airbus": "airbus.com",
+        "BAE Systems": "baesystems.com",
+        "L3Harris": "l3harris.com",
+        "Thales": "thalesgroup.com",
+        "Leonardo": "leonardo.com"
+      }
+    },
+    "images": {
+      "hero_bg": "https://images.unsplash.com/photo-1670140398922-044e47587de1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzR8MHwxfHNlYXJjaHwzfHxmaWdodGVyJTIwamV0JTIwbWlsaXRhcnklMjBkcm9uZSUyMGFpcmNyYWZ0JTIwY2FycmllciUyMHJhZGFyJTIwc3RhdGlvbnxlbnwwfHx8fDE3NzMzMDgzNzd8MA&ixlib=rb-4.1.0&q=85",
+      "news_1": "https://images.unsplash.com/photo-1636921994662-a4816dc24ca1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzR8MHwxfHNlYXJjaHwyfHxmaWdodGVyJTIwamV0JTIwbWlsaXRhcnklMjBkcm9uZSUyMGFpcmNyYWZ0JTIwY2FycmllciUyMHJhZGFyJTIwc3RhdGlvbnxlbnwwfHx8fDE3NzMzMDgzNzd8MA&ixlib=rb-4.1.0&q=85",
+      "product_1": "https://images.unsplash.com/photo-1584699092263-f3b8eaf97079?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzR8MHwxfHNlYXJjaHwxfHxmaWdodGVyJTIwamV0JTIwbWlsaXRhcnklMjBkcm9uZSUyMGFpcmNyYWZ0JTIwY2FycmllciUyMHJhZGFyJTIwc3RhdGlvbnxlbnwwfHx8fDE3NzMzMDgzNzd8MA&ixlib=rb-4.1.0&q=85"
+    }
+  },
+  "instructions_to_main_agent": {
+    "general": [
+      "Switch entire app to Light Mode. Remove all 'dark' class variants or hardcoded dark backgrounds.",
+      "Use 'Purple-700' (#7E22CE) as the primary accent color instead of blue or green.",
+      "Implement the Bento Grid layout for the main dashboard.",
+      "Use Chivo font for headings and Inter for body text.",
+      "Ensure all cards have a white background with a subtle border and shadow.",
+      "Replace generic icons with company logos and country flags where applicable."
+    ],
+    "pages": {
+      "market_data": "Create a sortable table with columns: Company, Ticker, Price, Change (%), Market Cap, P/E Ratio. Use red/green badges for changes.",
+      "expenditures": "Implement a Map view (use react-simple-maps or SVG) showing defense spending by country. Include a sidebar list with flags.",
+      "products": "Card grid comparison of defense products (Jets, Drones, Tanks). Use the product images provided.",
+      "announcements": "A vertical news feed list with timestamps and source attribution."
+    },
+    "accessibility": [
+      "Ensure text contrast ratio is at least 4.5:1 against the white background.",
+      "Add aria-labels to all icon buttons.",
+      "Focus states must be visible (purple ring)."
+    ]
+  },
+  "universal_guidelines": [
+    "Do not use gradients for backgrounds, keep it clean and flat.",
+    "Use generous padding (p-6 or p-8) inside cards.",
+    "Always use a clear visual hierarchy with typography scale.",
+    "Interactive elements must have hover and active states.",
+    "Use skeleton loaders for data fetching states."
   ]
 }
