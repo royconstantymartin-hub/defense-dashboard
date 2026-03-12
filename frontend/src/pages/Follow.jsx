@@ -551,10 +551,10 @@ export default function Follow() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Star className="w-5 h-5 text-purple-600 fill-purple-600" />
-              <CardTitle className="font-heading text-lg text-slate-900">Comptes Favoris</CardTitle>
+              <CardTitle className="font-heading text-lg text-slate-900">Favorite Accounts</CardTitle>
             </div>
             <span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
-              {favorites.length} comptes suivis
+              {favorites.length} accounts followed
             </span>
           </div>
         </CardHeader>
