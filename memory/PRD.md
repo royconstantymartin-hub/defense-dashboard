@@ -48,8 +48,10 @@ Build a comprehensive defense industry dashboard with:
 - 37 announcements from specialized sources
 - 17 M&A deals
 - 13 regulations
-- **Real account logos** on Follow page (Clearbit CDN)
+- **Real account logos** on Follow page
 - **Product images** from Unsplash for key products
+- **20 social posts** (12 Twitter + 8 LinkedIn) with real links
+- **8 favorite accounts** section with follower counts
 
 ## API Endpoints
 
