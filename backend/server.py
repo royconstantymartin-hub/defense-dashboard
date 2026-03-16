@@ -182,6 +182,14 @@ class Product(BaseModel):
     status: str
     image_url: Optional[str] = None
 
+
+class DataQualitySummary(BaseModel):
+    source_provider: str
+    dataset_policy: str
+    coverage: dict
+    freshness: dict
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # ============= AUTH HELPERS =============
 
 def hash_password(password: str) -> str:
@@ -453,6 +461,40 @@ async def get_dashboard_stats():
         "total_expenditure": total_expenditure,
         "expenditure_year": latest_year
     }
+
+
+@api_router.get("/data-quality", response_model=DataQualitySummary)
+async def get_data_quality_summary():
+    """Return factual dataset metadata only (no inferred quality scores)."""
+    source_provider = os.environ.get("DATA_PROVIDER", "Internal curated dataset")
+
+    players_count = await db.defense_players.count_documents({})
+    announcements_count = await db.announcements.count_documents({})
+    ma_count = await db.ma_activities.count_documents({})
+    expenditures_count = await db.expenditures.count_documents({})
+    regulations_count = await db.regulations.count_documents({})
+    products_count = await db.products.count_documents({})
+
+    latest_player = await db.defense_players.find_one({}, {"_id": 0, "updated_at": 1}, sort=[("updated_at", -1)])
+    latest_announcement = await db.announcements.find_one({}, {"_id": 0, "date": 1}, sort=[("date", -1)])
+
+    return DataQualitySummary(
+        source_provider=source_provider,
+        dataset_policy="No synthetic entries; only explicitly curated seed records are exposed.",
+        coverage={
+            "defense_players": players_count,
+            "announcements": announcements_count,
+            "ma_activities": ma_count,
+            "expenditures": expenditures_count,
+            "regulations": regulations_count,
+            "products": products_count,
+        },
+        freshness={
+            "latest_player_update": latest_player.get("updated_at") if latest_player else None,
+            "latest_announcement": latest_announcement.get("date") if latest_announcement else None,
+        },
+    )
+
 
 # ============= SEED DATA ENDPOINT =============
 
