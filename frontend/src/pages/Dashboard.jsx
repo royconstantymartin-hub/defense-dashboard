@@ -61,20 +61,23 @@ export default function Dashboard() {
   const [announcements, setAnnouncements] = useState([]);
   const [expenditures, setExpenditures] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dataQuality, setDataQuality] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, playersRes, announcementsRes, expendituresRes] = await Promise.all([
+        const [statsRes, playersRes, announcementsRes, expendituresRes, qualityRes] = await Promise.all([
           axios.get(`${API}/dashboard/stats`),
           axios.get(`${API}/defense-players`),
           axios.get(`${API}/announcements?limit=5`),
-          axios.get(`${API}/expenditures?year=2024`)
+          axios.get(`${API}/expenditures?year=2024`),
+          axios.get(`${API}/data-quality`)
         ]);
         setStats(statsRes.data);
         setPlayers(playersRes.data);
         setAnnouncements(announcementsRes.data);
         setExpenditures(expendituresRes.data);
+        setDataQuality(qualityRes.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -133,6 +136,29 @@ export default function Dashboard() {
           <span>Source: Multiple</span>
         </div>
       </div>
+
+
+      {/* Data trust bar */}
+      {dataQuality && (
+        <Card className="bg-gradient-to-r from-slate-900 to-slate-800 text-white border-0 shadow-sm" data-testid="data-quality-card">
+          <CardContent className="py-4 px-5">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-wider text-slate-300">Data Provenance</p>
+                <p className="text-sm text-slate-100 mt-1">
+                  Source: <span className="font-semibold">{dataQuality.source_provider}</span>
+                </p>
+                <p className="text-xs text-slate-300 mt-1">{dataQuality.dataset_policy}</p>
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                <div className="rounded-lg bg-white/10 border border-white/15 px-3 py-2">Products: <span className="font-semibold">{dataQuality.coverage?.products ?? 0}</span></div>
+                <div className="rounded-lg bg-white/10 border border-white/15 px-3 py-2">Players: <span className="font-semibold">{dataQuality.coverage?.defense_players ?? 0}</span></div>
+                <div className="rounded-lg bg-white/10 border border-white/15 px-3 py-2">Announcements: <span className="font-semibold">{dataQuality.coverage?.announcements ?? 0}</span></div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -417,6 +443,7 @@ export default function Dashboard() {
     </div>
   );
 }
+
 
 function MetricCard({ label, value, subtext, icon: Icon, trend, positive, testId }) {
   return (
