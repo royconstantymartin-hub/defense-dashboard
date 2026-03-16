@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "@/App";
+import { FALLBACK_API_DATA } from "@/data/fallbackApiData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -77,6 +78,9 @@ export default function Expenditures() {
         setFilteredExpenditures(response.data);
       } catch (error) {
         console.error("Error fetching expenditures:", error);
+        setExpenditures(FALLBACK_API_DATA.expenditures);
+        setFilteredExpenditures(FALLBACK_API_DATA.expenditures);
+
       } finally {
         setLoading(false);
       }

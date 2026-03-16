@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "@/App";
+import { FALLBACK_API_DATA } from "@/data/fallbackApiData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -54,6 +55,9 @@ export default function Announcements() {
         }
       } catch (error) {
         console.error("Error fetching announcements:", error);
+        setAnnouncements(FALLBACK_API_DATA.announcements);
+        setFilteredAnnouncements(FALLBACK_API_DATA.announcements);
+
       } finally {
         setLoading(false);
       }
