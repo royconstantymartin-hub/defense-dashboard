@@ -86,6 +86,8 @@ const AuthProvider = ({ children }) => {
 };
 
 function App() {
+  const basename = process.env.PUBLIC_URL || "/";
+
   useEffect(() => {
     // Seed data on first load
     const seedData = async () => {
@@ -100,7 +102,7 @@ function App() {
 
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <Toaster position="top-right" richColors />
         <Routes>
           <Route path="/login" element={<Login />} />

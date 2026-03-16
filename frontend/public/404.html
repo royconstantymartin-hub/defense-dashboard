@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <script>
+      (function () {
+        var l = window.location;
+        var segmentCount = 1;
+        var repoBase = l.pathname
+          .split('/')
+          .slice(0, 1 + segmentCount)
+          .join('/');
+
+        l.replace(
+          l.protocol +
+            '//' +
+            l.hostname +
+            (l.port ? ':' + l.port : '') +
+            repoBase +
+            '/?/' +
+            l.pathname.slice(1 + repoBase.length).replace(/&/g, '~and~') +
+            (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash,
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
