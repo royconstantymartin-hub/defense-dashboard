@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "@/App";
+import { FALLBACK_API_DATA } from "@/data/fallbackApiData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -81,6 +82,9 @@ export default function Products() {
         setFilteredProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
+        setProducts(FALLBACK_API_DATA.products);
+        setFilteredProducts(FALLBACK_API_DATA.products);
+
       } finally {
         setLoading(false);
       }

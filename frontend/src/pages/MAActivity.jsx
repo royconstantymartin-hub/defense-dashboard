@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "@/App";
+import { FALLBACK_API_DATA } from "@/data/fallbackApiData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -55,6 +56,9 @@ export default function MAActivity() {
         setFilteredActivities(response.data);
       } catch (error) {
         console.error("Error fetching M&A activities:", error);
+        setActivities(FALLBACK_API_DATA.ma_activities);
+        setFilteredActivities(FALLBACK_API_DATA.ma_activities);
+
       } finally {
         setLoading(false);
       }
