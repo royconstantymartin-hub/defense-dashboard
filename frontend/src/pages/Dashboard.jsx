@@ -15,6 +15,7 @@ import {
   Database
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { FALLBACK_DASHBOARD_DATA } from "@/data/dashboardFallback";
 import {
   BarChart,
   Bar,
@@ -66,13 +67,40 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, playersRes, announcementsRes, expendituresRes, qualityRes] = await Promise.all([
+        const fetchBundle = () => Promise.all([
           axios.get(`${API}/dashboard/stats`),
           axios.get(`${API}/defense-players`),
           axios.get(`${API}/announcements?limit=5`),
           axios.get(`${API}/expenditures?year=2024`),
-          axios.get(`${API}/data-quality`)
+          axios.get(`${API}/data-quality`),
         ]);
+
+        let [statsRes, playersRes, announcementsRes, expendituresRes, qualityRes] = await fetchBundle();
+
+        const apiLooksEmpty =
+          (statsRes.data?.players_count || 0) === 0 ||
+          (playersRes.data?.length || 0) === 0 ||
+          (expendituresRes.data?.length || 0) === 0;
+
+        if (apiLooksEmpty) {
+          await axios.post(`${API}/seed-data`).catch(() => null);
+          [statsRes, playersRes, announcementsRes, expendituresRes, qualityRes] = await fetchBundle();
+        }
+
+        const stillEmpty =
+          (statsRes.data?.players_count || 0) === 0 ||
+          (playersRes.data?.length || 0) === 0 ||
+          (expendituresRes.data?.length || 0) === 0;
+
+        if (stillEmpty) {
+          setStats(FALLBACK_DASHBOARD_DATA.stats);
+          setPlayers(FALLBACK_DASHBOARD_DATA.players);
+          setAnnouncements(FALLBACK_DASHBOARD_DATA.announcements);
+          setExpenditures(FALLBACK_DASHBOARD_DATA.expenditures);
+          setDataQuality(FALLBACK_DASHBOARD_DATA.dataQuality);
+          return;
+        }
+
         setStats(statsRes.data);
         setPlayers(playersRes.data);
         setAnnouncements(announcementsRes.data);
@@ -80,6 +108,11 @@ export default function Dashboard() {
         setDataQuality(qualityRes.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+        setStats(FALLBACK_DASHBOARD_DATA.stats);
+        setPlayers(FALLBACK_DASHBOARD_DATA.players);
+        setAnnouncements(FALLBACK_DASHBOARD_DATA.announcements);
+        setExpenditures(FALLBACK_DASHBOARD_DATA.expenditures);
+        setDataQuality(FALLBACK_DASHBOARD_DATA.dataQuality);
       } finally {
         setLoading(false);
       }

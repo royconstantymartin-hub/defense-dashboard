@@ -17,8 +17,21 @@ import Follow from "@/pages/Follow";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-export const API = `${BACKEND_URL}/api`;
+const DEFAULT_BACKEND_URL = "https://weapontech-analytics.preview.emergentagent.com";
+
+const resolveBackendUrl = () => {
+  const candidates = [
+    process.env.REACT_APP_BACKEND_URL,
+    process.env.REACT_APP_API_URL,
+    process.env.REACT_APP_BASE_API_URL,
+    DEFAULT_BACKEND_URL,
+  ];
+
+  const chosen = candidates.find((candidate) => typeof candidate === "string" && candidate.trim().length > 0);
+  return chosen.replace(/\/+$/, "");
+};
+
+export const API = `${resolveBackendUrl()}/api`;
 
 // Auth Context
 export const AuthContext = createContext(null);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "@/App";
+import { FALLBACK_API_DATA } from "@/data/fallbackApiData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -69,6 +70,9 @@ export default function Regulations() {
         setFilteredRegulations(response.data);
       } catch (error) {
         console.error("Error fetching regulations:", error);
+        setRegulations(FALLBACK_API_DATA.regulations);
+        setFilteredRegulations(FALLBACK_API_DATA.regulations);
+
       } finally {
         setLoading(false);
       }
