@@ -8,6 +8,28 @@ import os
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
+
+
+class TestDataQuality:
+    """Data quality API tests"""
+
+    def test_data_quality_summary(self):
+        """Test data quality transparency endpoint"""
+        response = requests.get(f"{BASE_URL}/api/data-quality")
+        assert response.status_code == 200
+        data = response.json()
+        required_fields = [
+            "source_provider",
+            "dataset_policy",
+            "coverage",
+            "freshness",
+            "generated_at",
+        ]
+        for field in required_fields:
+            assert field in data, f"Missing field: {field}"
+        print(f"✓ Data quality summary available from {data['source_provider']}")
+
+
 class TestHealthAndDashboard:
     """Health check and dashboard statistics tests"""
     
@@ -161,12 +183,12 @@ class TestProducts:
         print(f"✓ Manufacturer filter working: {len(data)} Lockheed Martin products")
     
     def test_product_count_over_100(self):
-        """Verify enriched product portfolio has 100+ products"""
+        """Verify curated product portfolio has 100+ products"""
         response = requests.get(f"{BASE_URL}/api/products")
         assert response.status_code == 200
         data = response.json()
         assert len(data) >= 100, f"Should have at least 100 products, got {len(data)}"
-        print(f"✓ Product portfolio enriched: {len(data)} products (target: 102)")
+        print(f"✓ Product portfolio curated: {len(data)} products (target: 100+)")
 
 
 class TestAnnouncements:
