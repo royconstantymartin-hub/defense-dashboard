@@ -558,11 +558,11 @@ export default function Products() {
       {/* Product Detail Modal */}
       {selectedProduct && (
         <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-start justify-center z-50 p-4 sm:py-8 overflow-y-auto"
           onClick={() => setSelectedProduct(null)}
         >
           <Card 
-            className="bg-white border-slate-200 w-full max-w-2xl my-8 shadow-2xl"
+            className="bg-white border-slate-200 w-full max-w-2xl shadow-2xl max-h-[calc(100vh-4rem)] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
             data-testid="product-detail-modal"
           >

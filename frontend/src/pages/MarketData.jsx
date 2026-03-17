@@ -422,11 +422,11 @@ export default function MarketData() {
       {/* Player Detail Modal */}
       {selectedPlayer && (
         <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-start justify-center z-50 p-4 sm:py-8 overflow-y-auto"
           onClick={() => setSelectedPlayer(null)}
         >
           <Card 
-            className="bg-white border-slate-200 w-full max-w-lg shadow-2xl"
+            className="bg-white border-slate-200 w-full max-w-lg shadow-2xl max-h-[calc(100vh-4rem)] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
             data-testid="player-detail-modal"
           >
