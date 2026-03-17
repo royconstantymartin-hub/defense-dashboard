@@ -3,20 +3,19 @@ name: Deploy frontend to GitHub Pages
 on:
   push:
     branches:
-      - main
-      - master
-      - work
+      - "**"
   workflow_dispatch:
 
 permissions:
   contents: write
-
+  pages: write
+  id-token: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -41,10 +40,23 @@ jobs:
           REACT_APP_BACKEND_URL: https://weapontech-analytics.preview.emergentagent.com
         run: npm run build
 
-      - name: Deploy to gh-pages branch
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/build
+
+      - name: Deploy to gh-pages branch (branch-source mode)
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: frontend/build
           publish_branch: gh-pages
           force_orphan: true
+
+  deploy-pages:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy with GitHub Pages Actions mode
+        id: deployment
+        uses: actions/deploy-pages@v4
