@@ -4,6 +4,7 @@ import { API } from "@/App";
 import { FALLBACK_API_DATA } from "@/data/fallbackApiData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -47,22 +48,66 @@ export default function MAActivity() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [previewItems, setPreviewItems] = useState([]);
+  const [selectedPreviewLinks, setSelectedPreviewLinks] = useState([]);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [importingPreview, setImportingPreview] = useState(false);
+  const [importSummary, setImportSummary] = useState(null);
+
+  const fetchActivities = async () => {
+    try {
+      const response = await axios.get(`${API}/ma-activities`);
+      setActivities(response.data);
+      setFilteredActivities(response.data);
+    } catch (error) {
+      console.error("Error fetching M&A activities:", error);
+      setActivities(FALLBACK_API_DATA.ma_activities);
+      setFilteredActivities(FALLBACK_API_DATA.ma_activities);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPreview = async () => {
+    setLoadingPreview(true);
+    setImportSummary(null);
+    try {
+      const response = await axios.get(`${API}/ma-activities/sources/the-defense-post/preview?limit=15`);
+      setPreviewItems(response.data);
+      setSelectedPreviewLinks(response.data.map((item) => item.link));
+    } catch (error) {
+      console.error("Error fetching preview:", error);
+      setPreviewItems([]);
+      setSelectedPreviewLinks([]);
+    } finally {
+      setLoadingPreview(false);
+    }
+  };
+
+  const togglePreviewLink = (link) => {
+    setSelectedPreviewLinks((current) =>
+      current.includes(link) ? current.filter((value) => value !== link) : [...current, link]
+    );
+  };
+
+  const importSelectedPreview = async () => {
+    const items = previewItems.filter((item) => selectedPreviewLinks.includes(item.link));
+    if (items.length === 0) return;
+    setImportingPreview(true);
+    setImportSummary(null);
+    try {
+      const response = await axios.post(`${API}/ma-activities/sources/the-defense-post/import`, { items });
+      setImportSummary(response.data);
+      await fetchActivities();
+      await fetchPreview();
+    } catch (error) {
+      console.error("Error importing preview:", error);
+    } finally {
+      setImportingPreview(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const response = await axios.get(`${API}/ma-activities`);
-        setActivities(response.data);
-        setFilteredActivities(response.data);
-      } catch (error) {
-        console.error("Error fetching M&A activities:", error);
-        setActivities(FALLBACK_API_DATA.ma_activities);
-        setFilteredActivities(FALLBACK_API_DATA.ma_activities);
-
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchActivities();
   }, []);
 
@@ -195,6 +240,84 @@ export default function MAActivity() {
           </SelectContent>
         </Select>
       </div>
+
+      <Card className="bg-white border-slate-200 shadow-sm" data-testid="the-defense-post-panel">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <CardTitle className="text-base">The Defense Post — Prévisualisation M&A</CardTitle>
+              <p className="text-xs text-slate-500 mt-1">
+                Étape 1: détecter automatiquement. Étape 2: valider manuellement. Étape 3: importer.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={fetchPreview}
+                disabled={loadingPreview}
+                data-testid="preview-refresh-btn"
+              >
+                {loadingPreview ? "Chargement..." : "Charger les annonces"}
+              </Button>
+              <Button
+                onClick={importSelectedPreview}
+                disabled={importingPreview || selectedPreviewLinks.length === 0}
+                data-testid="preview-import-btn"
+              >
+                {importingPreview ? "Import..." : `Importer la sélection (${selectedPreviewLinks.length})`}
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {importSummary && (
+            <div className="text-xs rounded-md border border-emerald-200 bg-emerald-50 text-emerald-700 px-3 py-2">
+              Import terminé — {importSummary.imported} importé(s), {importSummary.duplicates} doublon(s), {importSummary.skipped} ignoré(s).
+            </div>
+          )}
+
+          {previewItems.length === 0 ? (
+            <div className="text-sm text-slate-500 border border-dashed border-slate-200 rounded-md p-4">
+              Aucune prévisualisation chargée pour le moment.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {previewItems.map((item) => {
+                const isSelected = selectedPreviewLinks.includes(item.link);
+                return (
+                  <label
+                    key={item.link}
+                    className="flex items-start gap-3 border border-slate-200 rounded-md p-3 hover:bg-slate-50 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => togglePreviewLink(item.link)}
+                      className="mt-1"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-sm text-slate-900 font-medium">{item.title}</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        {item.acquirer && item.target
+                          ? `${item.acquirer} → ${item.target}`
+                          : "Acquéreur/cible non détectés automatiquement"}
+                      </p>
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-purple-600 hover:underline mt-1 inline-block"
+                      >
+                        Ouvrir la source
+                      </a>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Activities List */}
       <div className="space-y-4" data-testid="ma-activities-list">
