@@ -68,7 +68,7 @@ const db = {
   ]
 };
 
-const views = ['dashboard','announcements','mna','market','companies','companyProfile','country','regulations','products','follow'];
+const views = ['dashboard','announcements','mna','market','companies','companyProfile','country','regulations','products','follow','recentIntel'];
 const pageMeta = {
   dashboard:['Strategic Command Dashboard','Curated, clickable, source-traceable defense intelligence.'],
   announcements:['Announcements','Structured announcements with source provenance and detailed views.'],
@@ -79,7 +79,8 @@ const pageMeta = {
   country:['Country Brief','Country-linked spending, regulations, and announcements.'],
   regulations:['Regulations','Policy and compliance updates with trusted sources.'],
   products:['Products','Defense product tracking with source context.'],
-  follow:['Follow Workspace','Curated monitoring for official, media and commentary sources.']
+  follow:['Follow Workspace','Curated monitoring for official, media and commentary sources.'],
+  recentIntel:['Recent Intel','Live defense news feed from The Defense Post.']
 };
 
 
@@ -358,7 +359,51 @@ function bindSearch(){
   });
 }
 
+const INTEL_API = 'http://localhost:8000/api/recent-intel?limit=9';
+let intelRefreshTimer = null;
+
+function intelCardHTML(article) {
+  const img = article.image
+    ? `<img class="intel-img" src="${article.image}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    : '';
+  const placeholder = `<div class="intel-img-placeholder" ${article.image ? 'style="display:none"' : ''}>◉</div>`;
+  const date = article.published ? `<div class="intel-date">${article.published}</div>` : '';
+  return `
+    <article class="intel-card" onclick="window.open(${JSON.stringify(article.link)},'_blank')">
+      ${img}${placeholder}
+      <div class="intel-body">
+        ${date}
+        <div class="intel-title">${article.title}</div>
+        <div class="intel-summary">${article.summary}</div>
+        <div class="intel-footer">
+          <span class="intel-source">${article.source}</span>
+          <span class="intel-arrow">→</span>
+        </div>
+      </div>
+    </article>`;
+}
+
+async function fetchAndRenderIntel() {
+  const view = byId('recentIntelView');
+  view.innerHTML = '<div class="intel-spinner"></div>';
+  try {
+    const res = await fetch(INTEL_API);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const articles = await res.json();
+    view.innerHTML = `<article class="panel"><h3>Recent Intel — The Defense Post</h3><div class="intel-grid">${articles.map(intelCardHTML).join('')}</div></article>`;
+  } catch (err) {
+    view.innerHTML = `<div class="intel-error">Unable to load intel feed. Backend may be offline. (${err.message})</div>`;
+  }
+}
+
+function renderRecentIntel() {
+  fetchAndRenderIntel();
+  if (intelRefreshTimer) clearInterval(intelRefreshTimer);
+  intelRefreshTimer = setInterval(fetchAndRenderIntel, 5 * 60 * 1000);
+}
+
 renderCurrent();
 setRoute('dashboard');
 bindGlobal();
 bindSearch();
+renderRecentIntel();
