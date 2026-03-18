@@ -162,8 +162,18 @@ def company_detail(company_id: str) -> dict:
 
 
 _STOCK_TICKERS = [
+    # US – NYSE/NASDAQ
     {'yf': 'LMT',       'ticker': 'LMT',    'name': 'Lockheed Martin'},
     {'yf': 'RTX',       'ticker': 'RTX',    'name': 'RTX'},
+    {'yf': 'NOC',       'ticker': 'NOC',    'name': 'Northrop Grumman'},
+    {'yf': 'BA',        'ticker': 'BA',     'name': 'Boeing Defense'},
+    {'yf': 'GD',        'ticker': 'GD',     'name': 'General Dynamics'},
+    {'yf': 'LHX',       'ticker': 'LHX',    'name': 'L3Harris'},
+    {'yf': 'HII',       'ticker': 'HII',    'name': 'Huntington Ingalls'},
+    {'yf': 'TDG',       'ticker': 'TDG',    'name': 'TransDigm'},
+    {'yf': 'HEI',       'ticker': 'HEI',    'name': 'Heico'},
+    {'yf': 'LDOS',      'ticker': 'LDOS',   'name': 'Leidos'},
+    # Europe
     {'yf': 'BA.L',      'ticker': 'BA.',     'name': 'BAE Systems'},
     {'yf': 'HO.PA',     'ticker': 'HO',     'name': 'Thales'},
     {'yf': 'RHM.DE',    'ticker': 'RHM',    'name': 'Rheinmetall'},
