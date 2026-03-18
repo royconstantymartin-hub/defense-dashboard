@@ -1,0 +1,8 @@
+{
+  "name": "defense-dashboard-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix frontend install --legacy-peer-deps && npm --prefix frontend run build",
+    "test:backend": "pytest -q backend/tests/test_the_defense_post_scraper.py"
+  }
+}
