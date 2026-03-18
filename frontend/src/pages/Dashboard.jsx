@@ -70,12 +70,13 @@ export default function Dashboard() {
         const fetchBundle = () => Promise.all([
           axios.get(`${API}/dashboard/stats`),
           axios.get(`${API}/defense-players`),
+          axios.get(`${API}/announcements/external-preview?hours=24&limit=6`).catch(() => null),
           axios.get(`${API}/announcements?limit=5`),
           axios.get(`${API}/expenditures?year=2024`),
           axios.get(`${API}/data-quality`),
         ]);
 
-        let [statsRes, playersRes, announcementsRes, expendituresRes, qualityRes] = await fetchBundle();
+        let [statsRes, playersRes, externalAnnouncementsRes, announcementsRes, expendituresRes, qualityRes] = await fetchBundle();
 
         const apiLooksEmpty =
           (statsRes.data?.players_count || 0) === 0 ||
@@ -84,7 +85,7 @@ export default function Dashboard() {
 
         if (apiLooksEmpty) {
           await axios.post(`${API}/seed-data`).catch(() => null);
-          [statsRes, playersRes, announcementsRes, expendituresRes, qualityRes] = await fetchBundle();
+          [statsRes, playersRes, externalAnnouncementsRes, announcementsRes, expendituresRes, qualityRes] = await fetchBundle();
         }
 
         const stillEmpty =
@@ -103,7 +104,11 @@ export default function Dashboard() {
 
         setStats(statsRes.data);
         setPlayers(playersRes.data);
-        setAnnouncements(announcementsRes.data);
+        setAnnouncements(
+          externalAnnouncementsRes?.data?.length
+            ? externalAnnouncementsRes.data
+            : announcementsRes.data
+        );
         setExpenditures(expendituresRes.data);
         setDataQuality(qualityRes.data);
       } catch (error) {
@@ -447,7 +452,18 @@ export default function Dashboard() {
                       <Newspaper className="w-4 h-4 text-purple-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-slate-900 text-sm font-medium line-clamp-1">{item.title}</p>
+                      {item.source_url ? (
+                        <a
+                          href={item.source_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-slate-900 text-sm font-medium line-clamp-1 hover:text-purple-700 transition-colors"
+                        >
+                          {item.title}
+                        </a>
+                      ) : (
+                        <p className="text-slate-900 text-sm font-medium line-clamp-1">{item.title}</p>
+                      )}
                       <p className="text-slate-500 text-xs mt-1 line-clamp-2">{item.content}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${
