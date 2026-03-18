@@ -12,6 +12,9 @@ import uuid
 from datetime import datetime, timezone
 import jwt
 import bcrypt
+import requests
+import xml.etree.ElementTree as ET
+import re
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -190,6 +193,100 @@ class DataQualitySummary(BaseModel):
     freshness: dict
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+
+class ExternalMAItem(BaseModel):
+    title: str
+    link: str
+    published_at: Optional[datetime] = None
+    source: str = "The Defense Post"
+    deal_type: str = "acquisition"
+    status: str = "announced"
+    acquirer: Optional[str] = None
+    target: Optional[str] = None
+    confidence: str = "low"
+    notes: str
+
+
+DEFENSE_POST_RSS_URL = "https://thedefensepost.com/feed/"
+MA_KEYWORDS = (
+    "acquire",
+    "acquires",
+    "acquired",
+    "acquisition",
+    "merger",
+    "m&a",
+    "buyout",
+    "takes stake",
+)
+
+
+def _looks_like_ma(text: str) -> bool:
+    value = (text or "").lower()
+    return any(keyword in value for keyword in MA_KEYWORDS)
+
+
+def _extract_companies_from_title(title: str) -> tuple[Optional[str], Optional[str], str]:
+    cleaned = (title or "").strip()
+    patterns = [
+        r"^(?P<acquirer>.+?)\s+acquires\s+(?P<target>.+)$",
+        r"^(?P<acquirer>.+?)\s+to\s+acquire\s+(?P<target>.+)$",
+        r"^(?P<acquirer>.+?)\s+completes\s+acquisition\s+of\s+(?P<target>.+)$",
+        r"^(?P<acquirer>.+?)\s+to\s+buy\s+(?P<target>.+)$",
+    ]
+    for raw_pattern in patterns:
+        match = re.match(raw_pattern, cleaned, re.IGNORECASE)
+        if match:
+            acquirer = match.group("acquirer").strip(" -:")
+            target = match.group("target").strip(" -:")
+            return acquirer, target, "medium"
+    return None, None, "low"
+
+
+def _parse_pub_date(value: Optional[str]) -> Optional[datetime]:
+    if not value:
+        return None
+    value = value.strip()
+    # RFC 822 date format used by RSS feeds (e.g., Tue, 18 Mar 2025 12:00:00 +0000)
+    try:
+        return datetime.strptime(value, "%a, %d %b %Y %H:%M:%S %z")
+    except ValueError:
+        return None
+
+
+def fetch_the_defense_post_ma_preview(limit: int = 20) -> List[ExternalMAItem]:
+    response = requests.get(DEFENSE_POST_RSS_URL, timeout=15)
+    response.raise_for_status()
+    root = ET.fromstring(response.content)
+    items = root.findall("./channel/item")
+    results: List[ExternalMAItem] = []
+
+    for item in items:
+        title = item.findtext("title", default="").strip()
+        link = item.findtext("link", default="").strip()
+        pub_date = _parse_pub_date(item.findtext("pubDate"))
+        if not _looks_like_ma(title):
+            continue
+
+        acquirer, target, confidence = _extract_companies_from_title(title)
+        results.append(
+            ExternalMAItem(
+                title=title,
+                link=link,
+                published_at=pub_date,
+                acquirer=acquirer,
+                target=target,
+                confidence=confidence,
+                notes=(
+                    "Extraction automatique depuis le flux RSS public. "
+                    "Validation humaine recommandée avant insertion finale."
+                ),
+            )
+        )
+        if len(results) >= limit:
+            break
+
+    return results
+
 # ============= AUTH HELPERS =============
 
 def hash_password(password: str) -> str:
@@ -309,6 +406,23 @@ async def delete_ma_activity(activity_id: str, current_user: dict = Depends(get_
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Activity not found")
     return {"status": "deleted"}
+
+
+@api_router.get("/ma-activities/sources/the-defense-post/preview", response_model=List[ExternalMAItem])
+async def preview_the_defense_post_ma(limit: int = 10):
+    safe_limit = max(1, min(limit, 50))
+    try:
+        return fetch_the_defense_post_ma_preview(limit=safe_limit)
+    except requests.RequestException as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Impossible de récupérer The Defense Post pour le moment: {exc}",
+        ) from exc
+    except ET.ParseError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="Le flux RSS The Defense Post a renvoyé un format inattendu.",
+        ) from exc
 
 # ============= DEFENSE PLAYERS ROUTES =============
 
