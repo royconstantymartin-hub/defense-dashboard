@@ -86,6 +86,8 @@ class MAActivityCreate(BaseModel):
     status: str  # announced, pending, completed, cancelled
     deal_type: str  # acquisition, merger, joint_venture
     description: str
+    source: Optional[str] = None
+    source_url: Optional[str] = None
 
 class MAActivity(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -96,6 +98,8 @@ class MAActivity(BaseModel):
     status: str
     deal_type: str
     description: str
+    source: Optional[str] = None
+    source_url: Optional[str] = None
     announced_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 # Defense Player Model
@@ -207,6 +211,16 @@ class ExternalMAItem(BaseModel):
     notes: str
 
 
+class MAImportRequest(BaseModel):
+    items: List[ExternalMAItem]
+
+
+class MAImportResult(BaseModel):
+    imported: int
+    duplicates: int
+    skipped: int
+
+
 DEFENSE_POST_RSS_URL = "https://thedefensepost.com/feed/"
 MA_KEYWORDS = (
     "acquire",
@@ -286,6 +300,32 @@ def fetch_the_defense_post_ma_preview(limit: int = 20) -> List[ExternalMAItem]:
             break
 
     return results
+
+
+def _normalize_company_name(value: Optional[str]) -> Optional[str]:
+    if not value:
+        return None
+    cleaned = value.strip(" -:|")
+    return cleaned or None
+
+
+def _build_ma_activity_from_external(item: ExternalMAItem) -> Optional[MAActivity]:
+    acquirer = _normalize_company_name(item.acquirer)
+    target = _normalize_company_name(item.target)
+    if not acquirer or not target:
+        return None
+
+    return MAActivity(
+        acquirer=acquirer,
+        target=target,
+        deal_value=0.0,
+        status=item.status or "announced",
+        deal_type=item.deal_type or "acquisition",
+        description=item.title,
+        source=item.source or "The Defense Post",
+        source_url=item.link,
+        announced_date=item.published_at or datetime.now(timezone.utc),
+    )
 
 # ============= AUTH HELPERS =============
 
@@ -423,6 +463,36 @@ async def preview_the_defense_post_ma(limit: int = 10):
             status_code=502,
             detail="Le flux RSS The Defense Post a renvoyé un format inattendu.",
         ) from exc
+
+
+@api_router.post("/ma-activities/sources/the-defense-post/import", response_model=MAImportResult)
+async def import_the_defense_post_ma(data: MAImportRequest):
+    imported = 0
+    duplicates = 0
+    skipped = 0
+
+    for raw_item in data.items:
+        activity = _build_ma_activity_from_external(raw_item)
+        if not activity:
+            skipped += 1
+            continue
+
+        duplicate_query = {"source_url": activity.source_url} if activity.source_url else {
+            "acquirer": activity.acquirer,
+            "target": activity.target,
+            "description": activity.description,
+        }
+        existing = await db.ma_activities.find_one(duplicate_query, {"_id": 0})
+        if existing:
+            duplicates += 1
+            continue
+
+        doc = activity.model_dump()
+        doc["announced_date"] = doc["announced_date"].isoformat()
+        await db.ma_activities.insert_one(doc)
+        imported += 1
+
+    return MAImportResult(imported=imported, duplicates=duplicates, skipped=skipped)
 
 # ============= DEFENSE PLAYERS ROUTES =============
 

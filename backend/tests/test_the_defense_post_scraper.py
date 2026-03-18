@@ -7,7 +7,9 @@ os.environ.setdefault("MONGO_URL", "mongodb://localhost:27017")
 os.environ.setdefault("DB_NAME", "test_db")
 
 from server import (
+    ExternalMAItem,
     _extract_companies_from_title,
+    _build_ma_activity_from_external,
     _looks_like_ma,
     fetch_the_defense_post_ma_preview,
 )
@@ -62,3 +64,33 @@ def test_fetch_the_defense_post_ma_preview_filters_non_ma(monkeypatch):
     assert results[0].title == "Alpha Defense acquires Beta Systems"
     assert results[0].acquirer == "Alpha Defense"
     assert results[0].target == "Beta Systems"
+
+
+def test_build_ma_activity_from_external_returns_none_without_companies():
+    item = ExternalMAItem(
+        title="Defense company announces acquisition plan",
+        link="https://example.com/no-companies",
+        notes="test",
+        acquirer=None,
+        target=None,
+    )
+    result = _build_ma_activity_from_external(item)
+    assert result is None
+
+
+def test_build_ma_activity_from_external_maps_required_fields():
+    item = ExternalMAItem(
+        title="Alpha Defense acquires Beta Systems",
+        link="https://example.com/ma-2",
+        notes="test",
+        acquirer=" Alpha Defense ",
+        target=" Beta Systems ",
+        source="The Defense Post",
+    )
+    result = _build_ma_activity_from_external(item)
+
+    assert result is not None
+    assert result.acquirer == "Alpha Defense"
+    assert result.target == "Beta Systems"
+    assert result.deal_value == 0.0
+    assert result.source_url == "https://example.com/ma-2"
