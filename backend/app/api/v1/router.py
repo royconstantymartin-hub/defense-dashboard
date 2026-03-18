@@ -1,3 +1,5 @@
+import time
+
 from fastapi import APIRouter
 
 router = APIRouter()
@@ -157,6 +159,63 @@ def company_detail(company_id: str) -> dict:
         'recent_deals': [],
         'recent_products': [],
     }
+
+
+_STOCK_TICKERS = [
+    {'yf': 'LMT',       'ticker': 'LMT',    'name': 'Lockheed Martin'},
+    {'yf': 'RTX',       'ticker': 'RTX',    'name': 'RTX'},
+    {'yf': 'BA.L',      'ticker': 'BA.',     'name': 'BAE Systems'},
+    {'yf': 'HO.PA',     'ticker': 'HO',     'name': 'Thales'},
+    {'yf': 'RHM.DE',    'ticker': 'RHM',    'name': 'Rheinmetall'},
+    {'yf': 'LDO.MI',    'ticker': 'LDO',    'name': 'Leonardo'},
+    {'yf': 'SAAB-B.ST', 'ticker': 'SAAB-B', 'name': 'Saab'},
+    {'yf': 'KOG.OL',    'ticker': 'KOG',    'name': 'Kongsberg'},
+]
+_CACHE_TTL = 900  # 15 minutes
+_stock_cache: dict = {'data': None, 'ts': 0.0}
+
+
+@router.get('/stock-prices')
+def stock_prices() -> list[dict]:
+    now = time.time()
+    if _stock_cache['data'] and (now - _stock_cache['ts']) < _CACHE_TTL:
+        return _stock_cache['data']
+
+    try:
+        import yfinance as yf
+    except ImportError:
+        return _stock_cache['data'] or []
+
+    results = []
+    for entry in _STOCK_TICKERS:
+        try:
+            t = yf.Ticker(entry['yf'])
+            info = t.fast_info
+            hist = t.history(period='2d')
+            if len(hist) >= 2:
+                prev = float(hist['Close'].iloc[-2])
+                last = float(hist['Close'].iloc[-1])
+                change_pct = round((last - prev) / prev * 100, 2) if prev else 0.0
+            elif len(hist) == 1:
+                change_pct = 0.0
+                last = float(hist['Close'].iloc[-1])
+            else:
+                continue
+            results.append({
+                'ticker': entry['ticker'],
+                'company_name': entry['name'],
+                'price': round(last, 2),
+                'change_pct': change_pct,
+                'market_cap': round(float(info.market_cap or 0) / 1e9, 2),
+            })
+        except Exception:
+            continue
+
+    if results:
+        _stock_cache['data'] = results
+        _stock_cache['ts'] = now
+
+    return results or _stock_cache['data'] or []
 
 
 @router.get('/countries/{country_code}/detail')

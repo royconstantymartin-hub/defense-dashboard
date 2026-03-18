@@ -20,14 +20,14 @@ const db = {
     { code:'NO', name:'Norway', flag:'🇳🇴' }
   ],
   companies: [
-    { id:'c1', name:'Lockheed Martin', logo:'', country:'US', ticker:'LMT', exchange:'NYSE', price:468.21, change:1.2, marketCap:112.4, currency:'USD', revenue:67.6, specialization:'Aerospace / Missile Defense', website:'https://www.lockheedmartin.com/', ir:'https://investors.lockheedmartin.com/', linkedin:'https://www.linkedin.com/company/lockheed-martin/', x:'https://x.com/LockheedMartin', description:'Prime contractor across aerospace, missile defense and integrated mission systems.', listed:true },
-    { id:'c2', name:'RTX', logo:'', country:'US', ticker:'RTX', exchange:'NYSE', price:103.35, change:-0.8, marketCap:137.2, currency:'USD', revenue:68.9, specialization:'Aerospace / Propulsion', website:'https://www.rtx.com/', ir:'https://investors.rtx.com/', linkedin:'https://www.linkedin.com/company/rtx/', x:'https://x.com/RTX_News', description:'Major defense and aerospace supplier covering missiles, sensors and propulsion.', listed:true },
-    { id:'c3', name:'BAE Systems', logo:'', country:'GB', ticker:'BA.', exchange:'LSE', price:14.12, change:0.4, marketCap:44.8, currency:'GBP', revenue:27.3, specialization:'Naval / Air / Land', website:'https://www.baesystems.com/', ir:'https://investors.baesystems.com/', linkedin:'https://www.linkedin.com/company/bae-systems/', x:'https://x.com/BAESystemsplc', description:'Integrated defense prime with broad land, sea and air portfolio.', listed:true },
-    { id:'c4', name:'Thales', logo:'', country:'FR', ticker:'HO', exchange:'Euronext Paris', price:152.4, change:1.9, marketCap:32.2, currency:'EUR', revenue:18.4, specialization:'Defense Electronics', website:'https://www.thalesgroup.com/', ir:'https://www.thalesgroup.com/en/investor', linkedin:'https://www.linkedin.com/company/thales/', x:'https://x.com/thalesgroup', description:'Defense electronics and mission systems specialist.', listed:true },
-    { id:'c5', name:'Rheinmetall', logo:'', country:'DE', ticker:'RHM', exchange:'Xetra', price:497.0, change:2.3, marketCap:21.9, currency:'EUR', revenue:9.8, specialization:'Land Systems / Munitions', website:'https://www.rheinmetall.com/', ir:'https://www.rheinmetall.com/en/investor-relations', linkedin:'https://www.linkedin.com/company/rheinmetall/', x:'', description:'Land systems and munitions supplier driving European rearmament.', listed:true },
-    { id:'c6', name:'Leonardo', logo:'', country:'IT', ticker:'LDO', exchange:'Borsa Italiana', price:25.6, change:-0.4, marketCap:14.7, currency:'EUR', revenue:15.3, specialization:'Helicopters / Electronics', website:'https://www.leonardo.com/', ir:'https://www.leonardo.com/en/investors', linkedin:'https://www.linkedin.com/company/leonardo-company/', x:'', description:'European aerospace and defense contractor.', listed:true },
-    { id:'c7', name:'Saab', logo:'', country:'SE', ticker:'SAAB-B', exchange:'Nasdaq Stockholm', price:87.3, change:1.1, marketCap:13.1, currency:'SEK', revenue:6.2, specialization:'Air Defense / Sensors', website:'https://www.saab.com/', ir:'https://www.saab.com/investors', linkedin:'https://www.linkedin.com/company/saab/', x:'', description:'Swedish defense company focused on sensors and air/sea systems.', listed:true },
-    { id:'c8', name:'Kongsberg', logo:'', country:'NO', ticker:'KOG', exchange:'Oslo Børs', price:84.1, change:0.7, marketCap:12.4, currency:'NOK', revenue:4.9, specialization:'Naval / Missile / C2', website:'https://www.kongsberg.com/', ir:'https://www.kongsberg.com/investor-relations/', linkedin:'https://www.linkedin.com/company/kongsberg/', x:'', description:'Nordic defense and maritime systems provider.', listed:true }
+    { id:'c1', name:'Lockheed Martin', logo:'https://logo.clearbit.com/lockheedmartin.com', country:'US', ticker:'LMT', exchange:'NYSE', price:468.21, change:1.2, marketCap:112.4, currency:'USD', revenue:67.6, specialization:'Aerospace / Missile Defense', website:'https://www.lockheedmartin.com/', ir:'https://investors.lockheedmartin.com/', linkedin:'https://www.linkedin.com/company/lockheed-martin/', x:'https://x.com/LockheedMartin', description:'Prime contractor across aerospace, missile defense and integrated mission systems.', listed:true },
+    { id:'c2', name:'RTX', logo:'https://logo.clearbit.com/rtx.com', country:'US', ticker:'RTX', exchange:'NYSE', price:103.35, change:-0.8, marketCap:137.2, currency:'USD', revenue:68.9, specialization:'Aerospace / Propulsion', website:'https://www.rtx.com/', ir:'https://investors.rtx.com/', linkedin:'https://www.linkedin.com/company/rtx/', x:'https://x.com/RTX_News', description:'Major defense and aerospace supplier covering missiles, sensors and propulsion.', listed:true },
+    { id:'c3', name:'BAE Systems', logo:'https://logo.clearbit.com/baesystems.com', country:'GB', ticker:'BA.', exchange:'LSE', price:14.12, change:0.4, marketCap:44.8, currency:'GBP', revenue:27.3, specialization:'Naval / Air / Land', website:'https://www.baesystems.com/', ir:'https://investors.baesystems.com/', linkedin:'https://www.linkedin.com/company/bae-systems/', x:'https://x.com/BAESystemsplc', description:'Integrated defense prime with broad land, sea and air portfolio.', listed:true },
+    { id:'c4', name:'Thales', logo:'https://logo.clearbit.com/thalesgroup.com', country:'FR', ticker:'HO', exchange:'Euronext Paris', price:152.4, change:1.9, marketCap:32.2, currency:'EUR', revenue:18.4, specialization:'Defense Electronics', website:'https://www.thalesgroup.com/', ir:'https://www.thalesgroup.com/en/investor', linkedin:'https://www.linkedin.com/company/thales/', x:'https://x.com/thalesgroup', description:'Defense electronics and mission systems specialist.', listed:true },
+    { id:'c5', name:'Rheinmetall', logo:'https://logo.clearbit.com/rheinmetall.com', country:'DE', ticker:'RHM', exchange:'Xetra', price:497.0, change:2.3, marketCap:21.9, currency:'EUR', revenue:9.8, specialization:'Land Systems / Munitions', website:'https://www.rheinmetall.com/', ir:'https://www.rheinmetall.com/en/investor-relations', linkedin:'https://www.linkedin.com/company/rheinmetall/', x:'', description:'Land systems and munitions supplier driving European rearmament.', listed:true },
+    { id:'c6', name:'Leonardo', logo:'https://logo.clearbit.com/leonardocompany.com', country:'IT', ticker:'LDO', exchange:'Borsa Italiana', price:25.6, change:-0.4, marketCap:14.7, currency:'EUR', revenue:15.3, specialization:'Helicopters / Electronics', website:'https://www.leonardo.com/', ir:'https://www.leonardo.com/en/investors', linkedin:'https://www.linkedin.com/company/leonardo-company/', x:'', description:'European aerospace and defense contractor.', listed:true },
+    { id:'c7', name:'Saab', logo:'https://logo.clearbit.com/saab.com', country:'SE', ticker:'SAAB-B', exchange:'Nasdaq Stockholm', price:87.3, change:1.1, marketCap:13.1, currency:'SEK', revenue:6.2, specialization:'Air Defense / Sensors', website:'https://www.saab.com/', ir:'https://www.saab.com/investors', linkedin:'https://www.linkedin.com/company/saab/', x:'', description:'Swedish defense company focused on sensors and air/sea systems.', listed:true },
+    { id:'c8', name:'Kongsberg', logo:'https://logo.clearbit.com/kongsberg.com', country:'NO', ticker:'KOG', exchange:'Oslo Børs', price:84.1, change:0.7, marketCap:12.4, currency:'NOK', revenue:4.9, specialization:'Naval / Missile / C2', website:'https://www.kongsberg.com/', ir:'https://www.kongsberg.com/investor-relations/', linkedin:'https://www.linkedin.com/company/kongsberg/', x:'', description:'Nordic defense and maritime systems provider.', listed:true }
   ],
   announcements: [
     { id:'a1', title:'Lockheed awarded integrated air defense contract for Baltic program', companyId:'c1', country:'US', type:'contract', sourceId:'s1', publication_date:'2026-03-03', summary:'Multi-year contract for integrated sensors and battle management capabilities.', tags:['air defense','nato'], relatedProduct:'Aegis Next C2' },
@@ -98,7 +98,9 @@ const typeBadge = (type) => ({
 const dealStatusClass = (s)=>({ rumor:'b-amber', announced:'b-blue', pending:'b-amber', completed:'b-green', cancelled:'b-amber' }[s]||'b-blue');
 
 function logoNode(name, logo='') {
-  return logo ? `<span class="logo"><img src="${logo}" alt="${name}"/></span>` : `<span class="logo">${initials(name)}</span>`;
+  const ini = initials(name);
+  if(logo) return `<span class="logo logo-has-img"><img src="${logo}" alt="${name}" onerror="this.parentNode.textContent='${ini}';this.parentNode.classList.remove('logo-has-img')"/></span>`;
+  return `<span class="logo">${ini}</span>`;
 }
 function sourceBadge(srcId){
   const s = source(srcId);
@@ -160,14 +162,24 @@ function renderMna(){
 
 function renderMarket(){
   const listed = [...db.companies].filter(c=>c.listed);
-  listed.sort((a,b)=>(state.marketDir==='desc'?1:-1)*((state.marketSort==='marketCapUsd'?toUsdCap(b):b[state.marketSort])-(state.marketSort==='marketCapUsd'?toUsdCap(a):a[state.marketSort])));
+  const sortVal = (c) => state.marketSort==='marketCapUsd' ? toUsdCap(c) : c[state.marketSort];
+  listed.sort((a,b)=>(state.marketDir==='desc'?-1:1)*(sortVal(a)-sortVal(b)));
+
+  const sortGroups = [
+    { label:'Market Cap', opts:[{sort:'marketCapUsd',dir:'desc',label:'Largest first'},{sort:'marketCapUsd',dir:'asc',label:'Smallest first'}] },
+    { label:'Daily Change', opts:[{sort:'change',dir:'desc',label:'Biggest gainers'},{sort:'change',dir:'asc',label:'Biggest losers'}] }
+  ];
+
   byId('marketView').innerHTML = `<article class="panel"><h3>Listed Defense Companies</h3>
     <div class="filters">
       <input id="marketSearch" class="input" placeholder="Search company or ticker" />
       <select id="countryFilter" class="select"><option value="">All Countries</option>${[...new Set(listed.map(c=>c.country))].map(c=>`<option>${c}</option>`).join('')}</select>
       <select id="specFilter" class="select"><option value="">All Specializations</option>${[...new Set(listed.map(c=>c.specialization))].map(s=>`<option>${s}</option>`).join('')}</select>
     </div>
-    <div class="table-wrap"><table class="table"><thead><tr><th>Company</th><th class="clickable" data-sort="marketCapUsd">Market Cap (USD) ↓</th><th>Ticker</th><th>Exchange</th><th>Price</th><th>Daily</th><th>Revenue</th><th>Specialization</th></tr></thead><tbody id="marketRows"></tbody></table></div>
+    <div class="sort-controls">
+      ${sortGroups.map(g=>`<div class="sort-group"><span class="sort-group-label">${g.label}</span>${g.opts.map(o=>`<button class="sort-btn${state.marketSort===o.sort&&state.marketDir===o.dir?' active':''}" data-setsort="${o.sort}" data-setdir="${o.dir}">${o.label}</button>`).join('')}</div>`).join('')}
+    </div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Company</th><th>Market Cap (USD)</th><th>Ticker</th><th>Exchange</th><th>Price</th><th>Daily %</th><th>Revenue</th><th>Specialization</th></tr></thead><tbody id="marketRows"></tbody></table></div>
   </article>`;
   const drawRows = () => {
     const q = byId('marketSearch').value.toLowerCase();
@@ -315,7 +327,7 @@ function openModal(html){
 
 function bindGlobal(){
   document.body.addEventListener('click',(e)=>{
-    const t = e.target.closest('[data-route],[data-announcement],[data-deal],[data-company],[data-country],[data-go],[data-source],[data-followtab],[data-sort]');
+    const t = e.target.closest('[data-route],[data-announcement],[data-deal],[data-company],[data-country],[data-go],[data-source],[data-followtab],[data-sort],[data-setsort]');
     if(!t) return;
     if(t.dataset.route) setRoute(t.dataset.route);
     if(t.dataset.go){ setRoute(t.dataset.go); renderCurrent(); }
@@ -326,6 +338,7 @@ function bindGlobal(){
     if(t.dataset.source) openSource(t.dataset.source);
     if(t.dataset.followtab){ state.followTab=t.dataset.followtab; renderFollow(); }
     if(t.dataset.sort){ state.marketSort = t.dataset.sort; state.marketDir = state.marketDir==='desc'?'asc':'desc'; renderMarket(); }
+    if(t.dataset.setsort){ state.marketSort=t.dataset.setsort; state.marketDir=t.dataset.setdir||'desc'; renderMarket(); }
   });
   byId('closeModal').addEventListener('click',()=>byId('detailModal').close());
 }
@@ -358,7 +371,21 @@ function bindSearch(){
   });
 }
 
+async function fetchLiveStockPrices(){
+  try {
+    const res = await fetch('/api/v1/stock-prices', { signal: AbortSignal.timeout(8000) });
+    if(!res.ok) return;
+    const data = await res.json();
+    data.forEach(item => {
+      const c = db.companies.find(x => x.ticker === item.ticker);
+      if(c){ c.price = item.price; c.change = item.change_pct; if(item.market_cap > 0) c.marketCap = item.market_cap; }
+    });
+    renderCurrent();
+  } catch(_){ /* backend not running — use hardcoded data */ }
+}
+
 renderCurrent();
 setRoute('dashboard');
 bindGlobal();
 bindSearch();
+fetchLiveStockPrices();
