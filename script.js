@@ -1,6 +1,7 @@
 const state = {
   route: 'dashboard',
   followTab: 'all',
+  xFeedTab: 'all',
   marketSort: 'marketCapUsd',
   marketDir: 'desc'
 };
@@ -65,6 +66,17 @@ const db = {
     { id:'f3', name:'Defense News', kind:'media', class:'media', platform:'website', country:'US', description:'Defense-specialist reporting.', profile:'https://www.defensenews.com/', latest:'European procurement cycle analysis.' },
     { id:'f4', name:'Janes', kind:'media', class:'media', platform:'website', country:'GB', description:'Defense intelligence media outlet.', profile:'https://www.janes.com/', latest:'Ground systems export outlook.' },
     { id:'f5', name:'Strategic Defence Analysis Desk', kind:'analyst', class:'analysis', platform:'x', country:'GB', description:'Commentary and open-source analysis.', profile:'https://x.com/', latest:'No new post ingested; profile tracked.' }
+  ],
+  xPosts: [
+    { id:'xp1', displayName:'NATO ACT', handle:'NATO_ACT', profileUrl:'https://x.com/NATO_ACT', text:'We are pleased to announce the publication of the NATO Warfighting Capstone Concept companion document. This document outlines key capability priorities for Alliance transformation.', publishedAt:'2026-03-17T09:00:00Z', category:'institutional' },
+    { id:'xp2', displayName:'US Dept of Defense', handle:'DeptofDefense', profileUrl:'https://x.com/DeptofDefense', text:'Secretary of Defense announces new strategic guidance on integrated deterrence. The full statement covers all-domain operations, partner capacity building, and updated posture review findings.', publishedAt:'2026-03-16T14:30:00Z', category:'institutional' },
+    { id:'xp3', displayName:'European Defence Agency', handle:'EDA_Eu', profileUrl:'https://x.com/EDA_Eu', text:'EDA launches collaborative research programme on autonomous systems for maritime patrol. Participating nations: FR, DE, IT, ES, NL. Programme runs 2026\u20132029 with first deliverable in Q4 2026.', publishedAt:'2026-03-15T11:00:00Z', category:'institutional' },
+    { id:'xp4', displayName:'Lockheed Martin', handle:'LockheedMartin', profileUrl:'https://x.com/LockheedMartin', text:'Lockheed Martin has been awarded a contract to provide integrated air and missile defense capabilities for NATO\'s Baltic region. This award strengthens transatlantic security and Alliance readiness.', publishedAt:'2026-03-17T07:00:00Z', category:'industry' },
+    { id:'xp5', displayName:'Rheinmetall', handle:'Rheinmetall', profileUrl:'https://x.com/Rheinmetall', text:'Scaling production of 155mm artillery ammunition to meet European demand. Our D\u00fcsseldorf facility has tripled output since 2023. European security and sovereignty remain our core mission.', publishedAt:'2026-03-16T08:15:00Z', category:'industry' },
+    { id:'xp6', displayName:'BAE Systems', handle:'BAESystemsplc', profileUrl:'https://x.com/BAESystemsplc', text:'BAE Systems reports strong FY2025 results driven by naval backlog growth. Submarine programme deliveries remain on schedule. Order book stands at a record \u00a337B. Full results on our investor portal.', publishedAt:'2026-03-14T13:00:00Z', category:'industry' },
+    { id:'xp7', displayName:'RUSI', handle:'RUSI_org', profileUrl:'https://x.com/RUSI_org', text:'New analysis: European defense procurement cycles remain misaligned with operational urgency. Our latest report examines structural barriers and proposes a framework for accelerated acquisition. Read at rusi.org', publishedAt:'2026-03-17T10:30:00Z', category:'think_tanks' },
+    { id:'xp8', displayName:'CSIS Defense', handle:'CSISdefense', profileUrl:'https://x.com/CSISdefense', text:'CSIS publishes new defense industrial base assessment. Key finding: allied munitions stockpiles remain below NATO targets in 6 of 10 metrics. Full report available at csis.org', publishedAt:'2026-03-16T16:00:00Z', category:'think_tanks' },
+    { id:'xp9', displayName:'IISS', handle:'IISS_org', profileUrl:'https://x.com/IISS_org', text:'The Military Balance 2026 is now available. This year\'s edition covers 171 countries and features in-depth analysis of drone warfare, AI integration in C2 systems, and European rearmament trends.', publishedAt:'2026-03-13T09:00:00Z', category:'think_tanks' }
   ]
 };
 
@@ -87,6 +99,18 @@ const pageMeta = {
 const fxToUsd = { USD:1, EUR:1.09, GBP:1.28, SEK:0.095, NOK:0.094 };
 const toUsdCap = (company) => company.marketCap * (fxToUsd[company.currency] || 1);
 const formatUsdB = (value) => `$${value.toFixed(1)}B USD`;
+function relativeDate(iso) {
+  const d = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(d / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+function truncatePost(text, max = 280) {
+  return text.length <= max ? { body: text, cut: false } : { body: text.slice(0, max - 1) + '\u2026', cut: true };
+}
 
 const byId = (id) => document.getElementById(id);
 const initials = (txt='') => txt.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase() || 'NA';
@@ -252,12 +276,59 @@ function renderProducts(){
 
 function renderFollow(){
   const tabs = ['all','authority','company','executive','media','analyst'];
+  const xCats = [['all','All'],['industry','Industry'],['institutional','Institutional'],['think_tanks','Think Tanks']];
   const list = db.follow.filter(f=>state.followTab==='all' ? true : f.kind===state.followTab);
-  byId('followView').innerHTML = `<article class="panel"><h3>Follow Workspace</h3>
-    <div class="follow-tabs">${tabs.map(t=>`<button class="tab-btn ${state.followTab===t?'active':''}" data-followtab="${t}">${t}</button>`).join('')}</div>
-    <div class="table-wrap"><table class="table"><thead><tr><th>Entity</th><th>Type</th><th>Class</th><th>Platform</th><th>Country</th><th>Latest</th><th>Profile</th></tr></thead><tbody>
-    ${list.map(f=>`<tr><td><div class="company-cell">${logoNode(f.name)}${f.name}</div></td><td>${f.kind}</td><td><span class="badge ${f.class==='official'?'b-green':f.class==='media'?'b-purple':'b-amber'}">${f.class}</span></td><td>${f.platform}</td><td class="clickable" data-country="${f.country}">${country(f.country)?.flag||f.country}</td><td>${f.latest}</td><td><a class="link" href="${f.profile}" target="_blank">open</a></td></tr>`).join('')}
-    </tbody></table></div></article>`;
+  byId('followView').innerHTML = `
+    <article class="panel"><h3>Follow Workspace</h3>
+      <div class="follow-tabs">${tabs.map(t=>`<button class="tab-btn ${state.followTab===t?'active':''}" data-followtab="${t}">${t}</button>`).join('')}</div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Entity</th><th>Type</th><th>Class</th><th>Platform</th><th>Country</th><th>Latest</th><th>Profile</th></tr></thead><tbody>
+      ${list.map(f=>`<tr><td><div class="company-cell">${logoNode(f.name)}${f.name}</div></td><td>${f.kind}</td><td><span class="badge ${f.class==='official'?'b-green':f.class==='media'?'b-purple':'b-amber'}">${f.class}</span></td><td>${f.platform}</td><td class="clickable" data-country="${f.country}">${country(f.country)?.flag||f.country}</td><td>${f.latest}</td><td><a class="link" href="${f.profile}" target="_blank">open</a></td></tr>`).join('')}
+      </tbody></table></div>
+    </article>
+    <article class="panel">
+      <div class="x-feed-head">
+        <h3 style="margin:0">X Feed</h3>
+        <div class="follow-tabs" style="margin:0">${xCats.map(([k,v])=>`<button class="tab-btn ${state.xFeedTab===k?'active':''}" data-xfeedtab="${k}">${v}</button>`).join('')}</div>
+      </div>
+      <div id="xFeedContent" style="margin-top:8px">${renderXFeedContent()}</div>
+    </article>`;
+  if (!xFeedState.lastFetched) fetchXFeed();
+}
+
+function renderXFeedContent(){
+  if(xFeedState.status==='loading'){
+    const skel=`<div class="x-post-card x-skeleton"><div class="x-skel-row"></div><div class="x-skel-line"></div><div class="x-skel-line x-skel-short"></div><div class="x-skel-date"></div></div>`;
+    return `<div class="x-post-grid">${skel.repeat(3)}</div>`;
+  }
+  if(xFeedState.status==='error'){
+    return `<div class="x-feed-error">\u26a0 Failed to load feed. <button class="tab-btn" style="margin-left:8px" data-xfeedrefresh>Retry</button></div>`;
+  }
+  const posts=(xFeedState.data||[]).filter(p=>state.xFeedTab==='all'||p.category===state.xFeedTab);
+  if(!posts.length) return `<p class="muted" style="padding:10px 2px">No posts in this category.</p>`;
+  return `<div class="x-post-grid">${posts.map(p=>{
+    const {body,cut}=truncatePost(p.text);
+    return `<article class="x-post-card">
+      <div class="x-post-header"><span class="x-post-avatar">${initials(p.displayName)}</span><div><div class="x-post-name">${p.displayName}</div><div class="x-post-handle">@${p.handle}</div></div></div>
+      <p class="x-post-body">${body}${cut?` <a class="link" href="${p.profileUrl}" target="_blank">read more</a>`:''}</p>
+      <div class="x-post-footer"><span class="x-post-date">${relativeDate(p.publishedAt)}</span><a class="link x-post-xlink" href="${p.profileUrl}" target="_blank">\u2197 x.com</a></div>
+    </article>`;
+  }).join('')}</div>${xFeedState.lastFetched?`<p class="muted x-feed-meta">Updated ${relativeDate(xFeedState.lastFetched)}</p>`:''}`;
+}
+
+async function fetchXFeed(){
+  xFeedState.status='loading';
+  const el=byId('xFeedContent'); if(el) el.innerHTML=renderXFeedContent();
+  try{
+    await new Promise(r=>setTimeout(r,500));
+    xFeedState.data=db.xPosts;
+    xFeedState.status='ok';
+    xFeedState.lastFetched=new Date().toISOString();
+    xFeedState.error=null;
+  }catch(err){
+    xFeedState.status='error';
+    xFeedState.error=err.message;
+  }
+  const el2=byId('xFeedContent'); if(el2) el2.innerHTML=renderXFeedContent();
 }
 
 function openAnnouncement(id){
@@ -316,7 +387,7 @@ function openModal(html){
 
 function bindGlobal(){
   document.body.addEventListener('click',(e)=>{
-    const t = e.target.closest('[data-route],[data-announcement],[data-deal],[data-company],[data-country],[data-go],[data-source],[data-followtab],[data-sort]');
+    const t = e.target.closest('[data-route],[data-announcement],[data-deal],[data-company],[data-country],[data-go],[data-source],[data-followtab],[data-sort],[data-xfeedtab],[data-xfeedrefresh]');
     if(!t) return;
     if(t.dataset.route) setRoute(t.dataset.route);
     if(t.dataset.go){ setRoute(t.dataset.go); renderCurrent(); }
@@ -326,6 +397,8 @@ function bindGlobal(){
     if(t.dataset.country) renderCountry(t.dataset.country);
     if(t.dataset.source) openSource(t.dataset.source);
     if(t.dataset.followtab){ state.followTab=t.dataset.followtab; renderFollow(); }
+    if(t.dataset.xfeedtab!==undefined){ state.xFeedTab=t.dataset.xfeedtab; document.querySelectorAll('[data-xfeedtab]').forEach(b=>b.classList.toggle('active',b.dataset.xfeedtab===state.xFeedTab)); const el=byId('xFeedContent'); if(el) el.innerHTML=renderXFeedContent(); }
+    if(t.dataset.xfeedrefresh!==undefined) fetchXFeed();
     if(t.dataset.sort){ state.marketSort = t.dataset.sort; state.marketDir = state.marketDir==='desc'?'asc':'desc'; renderMarket(); }
   });
   byId('closeModal').addEventListener('click',()=>byId('detailModal').close());
