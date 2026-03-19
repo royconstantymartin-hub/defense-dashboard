@@ -55,10 +55,12 @@ const db = {
     { id:'e5', country:'IT', spend:39, gdp:1.8, year:2025, sourceId:'s4' }
   ],
   products: [
-    { id:'p1', name:'Aegis Next C2', companyId:'c1', category:'C2', status:'in service', sourceId:'s1' },
-    { id:'p2', name:'FalconEye ISR Suite', companyId:'c4', category:'ISR', status:'procurement', sourceId:'s5' },
-    { id:'p3', name:'Lynx IFV', companyId:'c5', category:'Land Platform', status:'procurement', sourceId:'s2' },
-    { id:'p4', name:'Giraffe X', companyId:'c7', category:'Radar', status:'development', sourceId:'s2' }
+    { id:'p1', name:'Ground Master 200', companyId:'c4', category:'Radar', status:'in service', sourceId:'s2', imageUrl:'https://upload.wikimedia.org/wikipedia/commons/5/56/GM200_in_Evreux.jpg', wikiUrl:'https://en.wikipedia.org/wiki/Ground_Master_200' },
+    { id:'p2', name:'Crotale NG', companyId:'c4', category:'Missile Defense', status:'in service', sourceId:'s2', imageUrl:'https://upload.wikimedia.org/wikipedia/commons/8/8f/Unit%C3%A9_de_tir_Crotale.jpg', wikiUrl:'https://en.wikipedia.org/wiki/Crotale_(missile)' },
+    { id:'p3', name:'Lynx KF41', companyId:'c5', category:'IFV', status:'in service', sourceId:'s2', imageUrl:'https://upload.wikimedia.org/wikipedia/commons/b/b5/Lynx_KF41.jpg', wikiUrl:'https://en.wikipedia.org/wiki/Lynx_(Rheinmetall_armoured_fighting_vehicle)' },
+    { id:'p4', name:'Puma IFV', companyId:'c5', category:'IFV', status:'in service', sourceId:'s2', imageUrl:'https://upload.wikimedia.org/wikipedia/commons/a/aa/Puma.IFV.JPG', wikiUrl:'https://en.wikipedia.org/wiki/Puma_(German_infantry_fighting_vehicle)' },
+    { id:'p5', name:'F-35 Lightning II', companyId:'c1', category:'Fighter Aircraft', status:'in service', sourceId:'s1', imageUrl:'https://upload.wikimedia.org/wikipedia/commons/d/db/New_era_in_combat_air_power_begins_with_F-35A_Lightning_II_151014-F-LS255-230.jpg', wikiUrl:'https://en.wikipedia.org/wiki/Lockheed_Martin_F-35_Lightning_II' },
+    { id:'p6', name:'PAC-3 MSE', companyId:'c1', category:'Missile Defense', status:'in service', sourceId:'s1', imageUrl:'https://upload.wikimedia.org/wikipedia/commons/5/5e/MIM-104_Patriot.JPG', wikiUrl:'https://en.wikipedia.org/wiki/MIM-104_Patriot' }
   ],
   follow: [
     { id:'f1', name:'NATO Allied Command Transformation', kind:'authority', class:'official', platform:'website', country:'BE', description:'Capability development and force transformation updates.', profile:'https://www.act.nato.int/', latest:'Updated integrated air defense guidance published.' },
@@ -269,8 +271,8 @@ function renderRegulations(){
 }
 
 function renderProducts(){
-  byId('productsView').innerHTML = `<article class="panel"><h3>Products</h3><div class="table-wrap"><table class="table"><thead><tr><th>Product</th><th>Company</th><th>Status</th><th>Source</th></tr></thead><tbody>
-  ${db.products.map(p=>`<tr><td>${p.name}</td><td class="clickable" data-company="${p.companyId}">${company(p.companyId).name}</td><td><span class="badge ${p.status==='in service'?'b-green':'b-purple'}">${p.status}</span></td><td>${sourceBadge(p.sourceId)}</td></tr>`).join('')}
+  byId('productsView').innerHTML = `<article class="panel"><h3>Products</h3><div class="table-wrap"><table class="table"><thead><tr><th>Product</th><th>Category</th><th>Company</th><th>Status</th><th>Source</th></tr></thead><tbody>
+  ${db.products.map(p=>`<tr><td><div style="display:flex;align-items:center;gap:10px">${p.imageUrl?`<img src="${p.imageUrl}" alt="${p.name}" style="width:64px;height:40px;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,0.1);flex-shrink:0">`:'<div style="width:64px;height:40px;border-radius:4px;border:1px solid rgba(255,255,255,0.1);background:#0f1624;flex-shrink:0"></div>'}<span>${p.wikiUrl?`<a href="${p.wikiUrl}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${p.name}</a>`:p.name}</span></div></td><td>${p.category}</td><td class="clickable" data-company="${p.companyId}">${company(p.companyId).name}</td><td><span class="badge ${p.status==='in service'?'b-green':'b-purple'}">${p.status}</span></td><td>${sourceBadge(p.sourceId)}</td></tr>`).join('')}
   </tbody></table></div></article>`;
 }
 
