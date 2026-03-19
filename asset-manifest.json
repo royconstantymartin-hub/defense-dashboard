@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/defense-dashboard/static/css/main.5dea3801.css",
+    "main.js": "/defense-dashboard/static/js/main.cb511aef.js",
+    "index.html": "/defense-dashboard/index.html",
+    "main.5dea3801.css.map": "/defense-dashboard/static/css/main.5dea3801.css.map",
+    "main.cb511aef.js.map": "/defense-dashboard/static/js/main.cb511aef.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5dea3801.css",
+    "static/js/main.cb511aef.js"
+  ]
+}
