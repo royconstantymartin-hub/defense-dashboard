@@ -125,6 +125,18 @@ export const companies: Company[] = [
     segment: 'Aerospace & Missile Defense',
     status: 'Public',
   },
+  {
+    id: 'cmp-rhein',
+    name: 'Rheinmetall',
+    country_code: 'DE',
+    country_name: 'Germany',
+    website_url: 'https://www.rheinmetall.com/',
+    investor_relations_url: 'https://www.rheinmetall.com/en/investor-relations',
+    linkedin_url: 'https://www.linkedin.com/company/rheinmetall/',
+    short_description: 'Land systems and munitions provider for European modernization programs.',
+    segment: 'Land Systems',
+    status: 'Public',
+  },
 ];
 
 export const announcementRows: AnnouncementRow[] = [
@@ -150,8 +162,66 @@ export const regulationRows: RegulationRow[] = [
 ];
 
 export const productRows: ProductRow[] = [
-  { id: 'p1', name: 'Aquila Radar Block II', category: 'Sensors', manufacturer: 'Thales', status: 'Procurement', source: srcJanes },
-  { id: 'p2', name: 'PAC-Next Interceptor', category: 'Missile Defense', manufacturer: 'Lockheed Martin', status: 'In Service', source: srcDod },
+  {
+    id: 'p-gm200',
+    name: 'Ground Master 200',
+    category: 'Radar',
+    manufacturer: 'Thales',
+    status: 'In Service',
+    source: srcJanes,
+    image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/56/GM200_in_Evreux.jpg',
+    wikipedia_url: 'https://en.wikipedia.org/wiki/Ground_Master_200',
+  },
+  {
+    id: 'p-crotale',
+    name: 'Crotale NG',
+    category: 'Missile Defense',
+    manufacturer: 'Thales',
+    status: 'In Service',
+    source: srcJanes,
+    image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/8f/Unit%C3%A9_de_tir_Crotale.jpg',
+    wikipedia_url: 'https://en.wikipedia.org/wiki/Crotale_(missile)',
+  },
+  {
+    id: 'p-lynx-kf41',
+    name: 'Lynx KF41',
+    category: 'IFV',
+    manufacturer: 'Rheinmetall',
+    status: 'In Service',
+    source: srcJanes,
+    image_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b5/Lynx_KF41.jpg',
+    wikipedia_url: 'https://en.wikipedia.org/wiki/Lynx_(Rheinmetall_armoured_fighting_vehicle)',
+  },
+  {
+    id: 'p-puma',
+    name: 'Puma IFV',
+    category: 'IFV',
+    manufacturer: 'Rheinmetall',
+    status: 'In Service',
+    source: srcJanes,
+    image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/aa/Puma.IFV.JPG',
+    wikipedia_url: 'https://en.wikipedia.org/wiki/Puma_(German_infantry_fighting_vehicle)',
+  },
+  {
+    id: 'p-f35',
+    name: 'F-35 Lightning II',
+    category: 'Fighter Aircraft',
+    manufacturer: 'Lockheed Martin',
+    status: 'In Service',
+    source: srcDod,
+    image_url: 'https://upload.wikimedia.org/wikipedia/commons/d/db/New_era_in_combat_air_power_begins_with_F-35A_Lightning_II_151014-F-LS255-230.jpg',
+    wikipedia_url: 'https://en.wikipedia.org/wiki/Lockheed_Martin_F-35_Lightning_II',
+  },
+  {
+    id: 'p-pac3',
+    name: 'PAC-3 MSE',
+    category: 'Missile Defense',
+    manufacturer: 'Lockheed Martin',
+    status: 'In Service',
+    source: srcDod,
+    image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/MIM-104_Patriot.JPG',
+    wikipedia_url: 'https://en.wikipedia.org/wiki/MIM-104_Patriot',
+  },
 ];
 
 export const followEntities: FollowEntity[] = [
