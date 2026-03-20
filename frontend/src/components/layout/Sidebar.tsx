@@ -30,7 +30,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-full border-b border-border bg-[#070b12] p-4 lg:h-screen lg:w-72 lg:border-b-0 lg:border-r">
+    <aside className="w-full border-b border-border bg-panel p-4 lg:h-screen lg:w-72 lg:border-b-0 lg:border-r">
       <div className="mb-6 flex items-center gap-3 rounded-lg border border-border bg-panel p-3">
         <div className="rounded-md bg-accent/20 p-2 text-accent">
           <Radar size={18} />

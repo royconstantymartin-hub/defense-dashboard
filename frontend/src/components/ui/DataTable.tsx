@@ -42,7 +42,7 @@ export function DataTable<T extends { id?: string | number } & Record<string, Ce
     <div className="overflow-hidden rounded-xl border border-border bg-panel">
       <div className="max-h-[420px] overflow-auto">
         <table className="w-full border-collapse text-sm">
-          <thead className="sticky top-0 bg-[#0f1624] text-xs uppercase tracking-[0.1em] text-textMuted">
+          <thead className="sticky top-0 bg-panelSoft text-xs uppercase tracking-[0.1em] text-textMuted">
             <tr>
               {columns.map((column) => (
                 <th key={String(column.key)} className="border-b border-border px-4 py-3 text-left font-medium">
@@ -69,7 +69,7 @@ export function DataTable<T extends { id?: string | number } & Record<string, Ce
               <tr
                 key={index}
                 onClick={() => rowLinkBase && row.id && router.push(`${rowLinkBase}/${row.id}`)}
-                className="border-b border-border/70 text-text transition hover:bg-[#121a2a]"
+                className="border-b border-border/70 text-text transition hover:bg-panel"
               >
                 {columns.map((column) => (
                   <td key={String(column.key)} className="px-4 py-3 align-middle">

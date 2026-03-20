@@ -10,7 +10,7 @@ export function FollowFeedList({ items }: { items: FollowItem[] }) {
   }
 
   return (
-    <div className="rounded-lg border border-border bg-[#0d131f]">
+    <div className="rounded-lg border border-border bg-panel">
       <div className="divide-y divide-border">
         {items.map((item) => (
           <div key={item.id} className="flex items-start gap-2.5 p-2.5">

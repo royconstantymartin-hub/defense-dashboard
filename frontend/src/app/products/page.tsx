@@ -21,7 +21,7 @@ export default function ProductsPage() {
             render: (row) => (
               <div className="flex items-center gap-3">
                 {row.image_url ? (
-                  <div className="relative h-10 w-16 flex-shrink-0 overflow-hidden rounded border border-border bg-[#0f1624]">
+                  <div className="relative h-10 w-16 flex-shrink-0 overflow-hidden rounded border border-border bg-panelSoft">
                     <Image
                       src={row.image_url}
                       alt={row.name}
@@ -32,7 +32,7 @@ export default function ProductsPage() {
                     />
                   </div>
                 ) : (
-                  <div className="h-10 w-16 flex-shrink-0 rounded border border-border bg-[#0f1624]" />
+                  <div className="h-10 w-16 flex-shrink-0 rounded border border-border bg-panelSoft" />
                 )}
                 <span>
                   {row.wikipedia_url ? (
