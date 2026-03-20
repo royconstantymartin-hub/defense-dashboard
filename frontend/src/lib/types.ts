@@ -100,11 +100,22 @@ export type ProductRow = {
   id: string;
   name: string;
   category: string;
+  subcategory?: string;
   manufacturer: string;
   status: string;
   source: SourceMeta;
   image_url?: string;
   wikipedia_url?: string;
+};
+
+export type MarketLeader = {
+  rank: number;
+  name: string;
+  country_code: string;
+  ticker: string;
+  market_cap: string;
+  change: string;
+  change_direction: 'up' | 'down';
 };
 
 export type FollowEntity = {
