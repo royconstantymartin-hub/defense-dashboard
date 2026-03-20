@@ -6,6 +6,8 @@ const state = {
   marketDir: 'desc'
 };
 
+const xFeedState = { status: 'idle', data: null, lastFetched: null, error: null };
+
 const db = {
   sources: [
     { id:'s1', source_name:'US Department of Defense', source_type:'official', publisher:'DoD', source_url:'https://www.defense.gov/News/Releases/', source_title:'DoD Release', publication_date:'2026-03-03', retrieved_at:'2026-03-03', last_verified_at:'2026-03-03', trust_tier:'official', source_logo_url:'' },
