@@ -13,7 +13,7 @@ function SourceClass(entity: FollowEntity) {
 
 export function FollowEntityCard({ entity }: { entity: FollowEntity }) {
   return (
-    <article className="rounded-lg border border-border bg-[#0d131f] p-2.5">
+    <article className="rounded-lg border border-border bg-panel p-2.5">
       <div className="flex items-start gap-2.5">
         <CompanyLogoAvatar name={entity.entity_name} logoUrl={entity.logo_url || entity.avatar_url} size="sm" />
         <div className="min-w-0 flex-1">
