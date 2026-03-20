@@ -16,7 +16,7 @@ export default function DashboardPage() {
     <main className="container space-y-4">
       <PageHeader title="Strategic Command Center" subtitle="Real-time defense intelligence with traceable sources and curated monitoring." />
 
-      <section className="rounded-2xl border border-border bg-gradient-to-r from-panel via-[#10192a] to-[#0f1727] p-5 shadow-panel">
+      <section className="rounded-2xl border border-border bg-gradient-to-r from-panel via-panelSoft to-panel p-5 shadow-panel">
         <p className="text-xs uppercase tracking-[0.16em] text-textMuted">Operational overview</p>
         <p className="mt-2 text-sm text-textMuted">Every signal below links to a source record with trust tier and open-source URL.</p>
       </section>

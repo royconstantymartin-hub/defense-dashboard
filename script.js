@@ -7,6 +7,7 @@ const state = {
 };
 
 const xFeedState = { status: 'idle', data: null, lastFetched: null, error: null };
+const intelState = { status: 'idle', data: null, error: null };
 
 const db = {
   sources: [
@@ -424,14 +425,64 @@ function bindGlobal(){
     if(t.dataset.followtab){ state.followTab=t.dataset.followtab; renderFollow(); }
     if(t.dataset.xfeedtab!==undefined){ state.xFeedTab=t.dataset.xfeedtab; document.querySelectorAll('[data-xfeedtab]').forEach(b=>b.classList.toggle('active',b.dataset.xfeedtab===state.xFeedTab)); const el=byId('xFeedContent'); if(el) el.innerHTML=renderXFeedContent(); }
     if(t.dataset.xfeedrefresh!==undefined) fetchXFeed();
+    if(t.dataset.intelrefresh!==undefined){ intelState.status='idle'; fetchIntelFeed(); }
     if(t.dataset.sort){ state.marketSort = t.dataset.sort; state.marketDir = state.marketDir==='desc'?'asc':'desc'; renderMarket(); }
     if(t.dataset.setsort){ state.marketSort=t.dataset.setsort; state.marketDir=t.dataset.setdir||'desc'; renderMarket(); }
   });
   byId('closeModal').addEventListener('click',()=>byId('detailModal').close());
 }
 
+function renderRecentIntel(){
+  const el = byId('recentIntelView');
+  if (!el) return;
+  el.innerHTML = `<div id="intelContent">${renderIntelContent()}</div>`;
+  if (intelState.status === 'idle') fetchIntelFeed();
+}
+
+function renderIntelContent(){
+  if (intelState.status === 'idle' || intelState.status === 'loading') {
+    return `<div class="intel-spinner">Loading latest defense intel…</div>`;
+  }
+  if (intelState.status === 'error') {
+    return `<div class="intel-error">⚠ Could not load feed: ${intelState.error} <button class="tab-btn" style="margin-left:8px" data-intelrefresh>Retry</button></div>`;
+  }
+  const articles = intelState.data || [];
+  if (!articles.length) return `<p class="muted" style="padding:10px 2px">No articles found.</p>`;
+  return `<div class="intel-grid">${articles.map(a => `
+    <a class="intel-card" href="${a.link}" target="_blank" rel="noopener" style="text-decoration:none">
+      ${a.image
+        ? `<img class="intel-img" src="${a.image}" alt="" loading="lazy">`
+        : `<div class="intel-img-placeholder">📰</div>`}
+      <div class="intel-body">
+        <span class="intel-date">${a.published || ''}</span>
+        <div class="intel-title">${a.title}</div>
+        <div class="intel-summary">${a.summary}</div>
+        <div class="intel-footer">
+          <span class="intel-source">${a.source}</span>
+          <span class="intel-arrow">↗</span>
+        </div>
+      </div>
+    </a>`).join('')}</div>`;
+}
+
+async function fetchIntelFeed(){
+  intelState.status = 'loading';
+  const el = byId('intelContent'); if (el) el.innerHTML = renderIntelContent();
+  try {
+    const res = await fetch('/api/v1/recent-intel', { signal: AbortSignal.timeout(12000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    intelState.data = await res.json();
+    intelState.status = 'ok';
+    intelState.error = null;
+  } catch(err) {
+    intelState.status = 'error';
+    intelState.error = err.message;
+  }
+  const el2 = byId('intelContent'); if (el2) el2.innerHTML = renderIntelContent();
+}
+
 function renderCurrent(){
-  renderDashboard(); renderAnnouncements(); renderMna(); renderMarket(); renderCompanies(); renderRegulations(); renderProducts(); renderFollow();
+  renderDashboard(); renderAnnouncements(); renderMna(); renderMarket(); renderCompanies(); renderRegulations(); renderProducts(); renderFollow(); renderRecentIntel();
 }
 
 function bindSearch(){
