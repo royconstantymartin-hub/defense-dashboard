@@ -1,3 +1,5 @@
+import type React from 'react';
+
 export type Trend = {
   direction: 'up' | 'down';
   value: string;
@@ -7,6 +9,9 @@ export type Kpi = {
   label: string;
   value: string;
   trend?: Trend;
+  subtitle?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon?: React.ComponentType<{ size?: number }>;
 };
 
 export type SourceType = 'official' | 'media' | 'filing' | 'dataset' | 'social' | 'analyst';
