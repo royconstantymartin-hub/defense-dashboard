@@ -84,6 +84,25 @@ body { margin: 0; font-family: Inter, Segoe UI, Arial, sans-serif; background: v
 .detail-block h4 { margin: 0 0 6px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
 .link { color: var(--blue); text-decoration: none; }
 .btn-close { margin-top: 10px; background: var(--panel-soft); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+/* Recent Intel feed */
+.intel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.intel-card { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); overflow: hidden; cursor: pointer; display: flex; flex-direction: column; transition: border-color .15s; }
+.intel-card:hover { border-color: var(--blue); }
+.intel-card:hover .intel-arrow { color: var(--blue); }
+.intel-img { width: 100%; height: 150px; object-fit: cover; display: block; background: var(--panel-soft); }
+.intel-img-placeholder { width: 100%; height: 150px; background: var(--panel-soft); display: flex; align-items: center; justify-content: center; color: var(--line); font-size: 28px; }
+.intel-body { padding: 10px; display: flex; flex-direction: column; flex: 1; gap: 5px; }
+.intel-date { font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.intel-title { font-size: 13px; font-weight: 600; line-height: 1.35; color: var(--text); }
+.intel-summary { font-size: 11px; color: var(--muted); line-height: 1.5; flex: 1; }
+.intel-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.intel-source { font-size: 10px; color: var(--blue); border: 1px solid rgba(77,139,255,.4); border-radius: 999px; padding: 2px 7px; text-transform: uppercase; letter-spacing: .05em; }
+.intel-arrow { font-size: 14px; color: var(--muted); }
+.intel-spinner { display: flex; align-items: center; justify-content: center; min-height: 180px; color: var(--muted); font-size: 13px; gap: 8px; }
+.intel-spinner::before { content: ''; width: 18px; height: 18px; border: 2px solid var(--line); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.intel-error { border: 1px solid rgba(255,103,103,.3); border-radius: 10px; background: rgba(255,103,103,.07); padding: 14px; color: var(--red); font-size: 13px; }
+
 @media (max-width: 1200px) {
   .app-shell { grid-template-columns: 1fr; }
   .sidebar { border-right: 0; border-bottom: 1px solid var(--line); }

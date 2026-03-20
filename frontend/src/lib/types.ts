@@ -98,6 +98,8 @@ export type ProductRow = {
   manufacturer: string;
   status: string;
   source: SourceMeta;
+  image_url?: string;
+  wikipedia_url?: string;
 };
 
 export type FollowEntity = {
