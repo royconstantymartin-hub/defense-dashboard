@@ -14,7 +14,7 @@ import { announcementRows, dashboardKpis, expenditureRows, maRows, companies, re
 export default function DashboardPage() {
   return (
     <main className="container space-y-4">
-      <PageHeader title="Strategic Command Center" subtitle="Real-time defense intelligence with traceable sources and curated monitoring." />
+      <PageHeader title="Mission Control" subtitle="Global Defense Intelligence Overview" />
 
       <section className="rounded-2xl border border-border bg-gradient-to-r from-panel via-panelSoft to-panel p-5 shadow-panel">
         <p className="text-xs uppercase tracking-[0.16em] text-textMuted">Operational overview</p>

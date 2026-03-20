@@ -1,3 +1,4 @@
+import { DollarSign, Globe2, Building2, Handshake } from 'lucide-react';
 import type {
   AnnouncementRow,
   Company,
@@ -48,10 +49,10 @@ const srcSipri: SourceMeta = {
 };
 
 export const dashboardKpis: Kpi[] = [
-  { label: 'Tracked Defense Companies', value: '1,284', trend: { direction: 'up', value: '+3.2%' } },
-  { label: 'Open M&A Situations', value: '46', trend: { direction: 'up', value: '+8.1%' } },
-  { label: 'Verified Sources (30d)', value: '312', trend: { direction: 'up', value: '+11.4%' } },
-  { label: 'Active Follow Entities', value: '198', trend: { direction: 'up', value: '+2.1%' } }
+  { label: 'Total Market Cap', value: '$2,081.2B', trend: { direction: 'up', value: '+2.4%' }, icon: DollarSign },
+  { label: 'Global Expenditure', value: '$2,089B', subtitle: 'FY 2024', icon: Globe2 },
+  { label: 'Active Players', value: '118', icon: Building2 },
+  { label: 'M&A Activities', value: '17', icon: Handshake },
 ];
 
 export const countries: Country[] = [
