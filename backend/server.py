@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi.responses import FileResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -545,3 +546,16 @@ logger = logging.getLogger(__name__)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
+# Serve React frontend (catch-all — must be last)
+STATIC_DIR = Path(__file__).parent / "static"
+
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    if not STATIC_DIR.exists():
+        raise HTTPException(status_code=404, detail="Frontend not built")
+    file_path = STATIC_DIR / full_path
+    # Prevent path traversal
+    if STATIC_DIR in file_path.parents and file_path.exists() and file_path.is_file():
+        return FileResponse(str(file_path))
+    return FileResponse(str(STATIC_DIR / "index.html"))
