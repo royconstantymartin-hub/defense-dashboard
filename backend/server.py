@@ -18,7 +18,7 @@ load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
+client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=5000)
 db = client[os.environ['DB_NAME']]
 
 # JWT Configuration
@@ -519,6 +519,10 @@ async def seed_data():
 @api_router.get("/")
 async def root():
     return {"message": "Defense Dashboard API"}
+
+@app.get("/")
+async def health():
+    return {"status": "ok"}
 
 # Include the router in the main app
 app.include_router(api_router)
