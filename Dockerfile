@@ -9,6 +9,9 @@ RUN npm install --legacy-peer-deps
 COPY frontend/ .
 
 ENV REACT_APP_BACKEND_URL=""
+ENV CI=false
+ENV GENERATE_SOURCEMAP=false
+ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN npm run build
 
 # Stage 2: Python backend
