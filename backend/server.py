@@ -658,9 +658,19 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+async def _initial_scrape_if_empty():
+    """Run one scrape in the background on cold start when the collection is empty."""
+    try:
+        count = await db.news_articles.count_documents({})
+        if count == 0:
+            logger.info("news_articles collection is empty — running initial scrape")
+            await run_news_scraper_job()
+    except Exception as exc:
+        logger.error("Initial scrape error: %s", exc)
+
 @app.on_event("startup")
 async def startup_event():
-    """Create news_articles indexes and start the daily scraper scheduler."""
+    """Create news_articles indexes, start scheduler, and auto-scrape if empty."""
     try:
         await db.news_articles.create_index([("url", 1)], unique=True)
         await db.news_articles.create_index([("publishedAt", -1)])
@@ -672,6 +682,9 @@ async def startup_event():
     scheduler.add_job(run_news_scraper_job, "cron", hour=7, minute=0, id="daily_news_scraper")
     scheduler.start()
     logger.info("News scraper scheduler started — runs daily at 07:00 UTC")
+
+    # Kick off a background scrape so articles appear immediately on first deploy
+    asyncio.create_task(_initial_scrape_if_empty())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
