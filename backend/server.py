@@ -521,7 +521,7 @@ async def seed_data():
 async def root():
     return {"message": "Defense Dashboard API"}
 
-@app.get("/")
+@app.get("/health")
 async def health():
     return {"status": "ok"}
 
