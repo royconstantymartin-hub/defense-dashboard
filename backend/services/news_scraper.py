@@ -46,6 +46,56 @@ def assign_category(title: str) -> str:
     return "INDUSTRY"
 
 
+# ── Defense relevance scoring ────────────────────────────────────────────────
+
+# (term → base points). Title matches count double.
+_RELEVANCE_TERMS: Dict[str, int] = {
+    # Core domain — 10 pts
+    "defense": 10, "defence": 10, "military": 10, "pentagon": 10, "nato": 10,
+    "ministry of defense": 10, "ministry of defence": 10,
+    # Major platforms — 9 pts
+    "hypersonic": 9, "stealth": 9, "f-35": 9, "icbm": 9, "submarine": 9,
+    # Platforms — 8 pts
+    "missile": 8, "fighter": 8, "drone": 8, "aircraft": 8, "frigate": 8,
+    "destroyer": 8, "tank": 8, "cyber": 8, "satellite": 8,
+    # Operations — 8 pts
+    "combat": 8, "deploy": 8, "troops": 8, "war": 8, "conflict": 8,
+    "strike": 8, "operation": 7,
+    # Services — 8 pts
+    "army": 8, "navy": 8, "air force": 8, "marine corps": 8, "coast guard": 7,
+    # Procurement — 7 pts
+    "contract": 7, "procurement": 7, "award": 7, "acquisition": 7,
+    "billion": 5, "million": 4,
+    # Key companies — 7 pts
+    "lockheed": 7, "raytheon": 7, "northrop": 7, "bae systems": 7,
+    "rheinmetall": 7, "thales": 7, "dassault": 7, "leonardo": 7,
+    "boeing defense": 7, "general dynamics": 7,
+    # Technology — 7 pts
+    "autonomous": 7, "surveillance": 7, "intelligence": 6, "electronic warfare": 8,
+    "space force": 8, "reconnaissance": 7,
+    # Hot geopolitical — 6 pts
+    "ukraine": 6, "taiwan": 6, "russia": 5, "china": 5, "israel": 5,
+    # Generic defense
+    "weapon": 6, "armament": 7, "ammunition": 6, "warship": 7,
+}
+
+
+def compute_relevance_score(title: str, summary: str) -> int:
+    """
+    Return a 0-100 defense relevance score.
+    Title keyword matches are worth 2×; summary matches are worth 1×.
+    """
+    title_l = title.lower()
+    summary_l = summary.lower()
+    score = 0
+    for term, pts in _RELEVANCE_TERMS.items():
+        if term in title_l:
+            score += pts * 2
+        elif term in summary_l:
+            score += pts
+    return min(100, score)
+
+
 # ── Similarity / dedup helpers ───────────────────────────────────────────────
 
 def word_overlap_ratio(t1: str, t2: str) -> float:
@@ -166,14 +216,16 @@ def _fetch_rss(source: Dict) -> List[Dict]:
             url = getattr(entry, "link", "").strip()
             if not title or not url:
                 continue
+            summary = _extract_summary(entry)
             articles.append({
-                "title":       title,
-                "url":         url,
-                "image":       _extract_image_from_entry(entry),
-                "summary":     _extract_summary(entry),
-                "source":      source["name"],
-                "publishedAt": _parse_entry_date(entry),
-                "category":    assign_category(title),
+                "title":          title,
+                "url":            url,
+                "image":          _extract_image_from_entry(entry),
+                "summary":        summary,
+                "source":         source["name"],
+                "publishedAt":    _parse_entry_date(entry),
+                "category":       assign_category(title),
+                "relevanceScore": compute_relevance_score(title, summary),
             })
 
         logger.info("[%s] Fetched %d articles via RSS", source["name"], len(articles))
@@ -220,13 +272,14 @@ def _scrape_nato() -> List[Dict]:
                     pass
 
             articles.append({
-                "title":       title,
-                "url":         href,
-                "image":       None,
-                "summary":     "",
-                "source":      "NATO",
-                "publishedAt": pub_date,
-                "category":    assign_category(title),
+                "title":          title,
+                "url":            href,
+                "image":          None,
+                "summary":        "",
+                "source":         "NATO",
+                "publishedAt":    pub_date,
+                "category":       assign_category(title),
+                "relevanceScore": compute_relevance_score(title, ""),
             })
 
         logger.info("[NATO] Scraped %d articles", len(articles))
@@ -272,13 +325,14 @@ def _scrape_janes() -> List[Dict]:
                     image_url = src
 
             articles.append({
-                "title":       title,
-                "url":         href,
-                "image":       image_url,
-                "summary":     "",
-                "source":      "Janes",
-                "publishedAt": datetime.now(timezone.utc),
-                "category":    assign_category(title),
+                "title":          title,
+                "url":            href,
+                "image":          image_url,
+                "summary":        "",
+                "source":         "Janes",
+                "publishedAt":    datetime.now(timezone.utc),
+                "category":       assign_category(title),
+                "relevanceScore": compute_relevance_score(title, ""),
             })
 
         logger.info("[Janes] Scraped %d articles", len(articles))
