@@ -547,6 +547,11 @@ logger = logging.getLogger(__name__)
 async def shutdown_db_client():
     client.close()
 
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
 # Serve React frontend (catch-all — must be last)
 STATIC_DIR = Path(__file__).parent / "static"
 
