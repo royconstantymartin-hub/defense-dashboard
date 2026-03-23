@@ -17,8 +17,10 @@ import {
   Rss,
   RefreshCw,
   TrendingUp,
+  LogIn,
 } from "lucide-react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/App";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -172,6 +174,7 @@ function RelevanceLegend() {
 
 export default function Announcements() {
   const { token } = useAuth();
+  const navigate = useNavigate();
 
   const [articles, setArticles]           = useState([]);
   const [loading, setLoading]             = useState(true);
@@ -262,8 +265,8 @@ export default function Announcements() {
             </span>
           )}
 
-          {/* Manual scrape trigger (auth-gated) */}
-          {token && (
+          {/* Manual scrape trigger — always visible; redirects to login if not authed */}
+          {token ? (
             <button
               onClick={triggerScrape}
               disabled={scraping}
@@ -271,6 +274,15 @@ export default function Announcements() {
             >
               <RefreshCw className={`w-4 h-4 ${scraping ? "animate-spin" : ""}`} />
               {scraping ? "Scraping…" : "Refresh now"}
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/login")}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
+              title="Log in to trigger a manual scrape"
+            >
+              <LogIn className="w-4 h-4" />
+              Log in to refresh
             </button>
           )}
         </div>
