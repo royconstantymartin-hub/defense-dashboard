@@ -557,14 +557,15 @@ async def run_news_scraper_job() -> dict:
             try:
                 pub_at = article.get("publishedAt", scraped_at)
                 doc = {
-                    "title":       article.get("title", ""),
-                    "url":         article.get("url", ""),
-                    "image":       article.get("image"),
-                    "summary":     article.get("summary", ""),
-                    "source":      article.get("source", ""),
-                    "publishedAt": pub_at.isoformat() if isinstance(pub_at, datetime) else pub_at,
-                    "scrapedAt":   scraped_at.isoformat(),
-                    "category":    article.get("category", "INDUSTRY"),
+                    "title":          article.get("title", ""),
+                    "url":            article.get("url", ""),
+                    "image":          article.get("image"),
+                    "summary":        article.get("summary", ""),
+                    "source":         article.get("source", ""),
+                    "publishedAt":    pub_at.isoformat() if isinstance(pub_at, datetime) else pub_at,
+                    "scrapedAt":      scraped_at.isoformat(),
+                    "category":       article.get("category", "INDUSTRY"),
+                    "relevanceScore": article.get("relevanceScore", 0),
                 }
                 await db.news_articles.update_one(
                     {"url": doc["url"]},
@@ -592,18 +593,22 @@ async def run_news_scraper_job() -> dict:
 
 @api_router.get("/news")
 async def get_news():
-    """Return articles scraped in the last 24 h; falls back to the most recent 15."""
+    """
+    Return up to 15 articles scraped in the last 24 h, sorted by defense
+    relevance score (desc) then publication date (desc).
+    Falls back to the most recent 15 when the DB has no fresh articles.
+    """
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
 
     articles = await db.news_articles.find(
         {"scrapedAt": {"$gte": cutoff}},
         {"_id": 0},
-    ).sort("publishedAt", -1).limit(15).to_list(15)
+    ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(15).to_list(15)
 
     if not articles:
         articles = await db.news_articles.find(
             {}, {"_id": 0}
-        ).sort("publishedAt", -1).limit(15).to_list(15)
+        ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(15).to_list(15)
 
     # Normalise datetime strings for JSON serialisation
     for a in articles:
@@ -614,6 +619,8 @@ async def get_news():
                     a[field] = datetime.fromisoformat(val)
                 except Exception:
                     a[field] = datetime.now(timezone.utc)
+        # Ensure relevanceScore is always present
+        a.setdefault("relevanceScore", 0)
 
     return articles
 
