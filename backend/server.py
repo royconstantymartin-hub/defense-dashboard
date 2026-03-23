@@ -10,9 +10,11 @@ from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+import asyncio
 import jwt
 import bcrypt
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -32,6 +34,7 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
+scheduler = AsyncIOScheduler(timezone="UTC")
 
 # ============= MODELS =============
 
@@ -182,6 +185,18 @@ class Product(BaseModel):
     materials: List[str]
     status: str
     image_url: Optional[str] = None
+
+# News Article Model
+class NewsArticle(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    title: str
+    url: str
+    image: Optional[str] = None
+    summary: str = ""
+    source: str
+    publishedAt: datetime
+    scrapedAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    category: str = "INDUSTRY"
 
 # ============= AUTH HELPERS =============
 
@@ -515,6 +530,99 @@ async def seed_data():
     
     return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count}
 
+# ============= NEWS SCRAPER JOB =============
+
+async def run_news_scraper_job() -> dict:
+    """Run the scraper pipeline, deduplicate, and upsert results into MongoDB."""
+    from services.news_scraper import scrape_all_sources, deduplicate_articles
+
+    logger.info("News scraper job started")
+    try:
+        raw_articles = await asyncio.to_thread(scrape_all_sources)
+        articles_found = len(raw_articles)
+
+        unique_articles = deduplicate_articles(raw_articles)
+        duplicates_removed = articles_found - len(unique_articles)
+
+        # Sort by date descending, keep top 15
+        unique_articles.sort(
+            key=lambda x: x.get("publishedAt", datetime.min.replace(tzinfo=timezone.utc)),
+            reverse=True,
+        )
+        unique_articles = unique_articles[:15]
+
+        scraped_at = datetime.now(timezone.utc)
+        saved = 0
+        for article in unique_articles:
+            try:
+                pub_at = article.get("publishedAt", scraped_at)
+                doc = {
+                    "title":       article.get("title", ""),
+                    "url":         article.get("url", ""),
+                    "image":       article.get("image"),
+                    "summary":     article.get("summary", ""),
+                    "source":      article.get("source", ""),
+                    "publishedAt": pub_at.isoformat() if isinstance(pub_at, datetime) else pub_at,
+                    "scrapedAt":   scraped_at.isoformat(),
+                    "category":    article.get("category", "INDUSTRY"),
+                }
+                await db.news_articles.update_one(
+                    {"url": doc["url"]},
+                    {"$set": doc},
+                    upsert=True,
+                )
+                saved += 1
+            except Exception as exc:
+                logger.error("Error saving article '%s': %s", article.get("title", ""), exc)
+
+        stats = {
+            "sources_attempted": 7,
+            "articles_found":    articles_found,
+            "duplicates_removed": duplicates_removed,
+            "articles_saved":    saved,
+        }
+        logger.info("News scraper job complete: %s", stats)
+        return stats
+
+    except Exception as exc:
+        logger.error("News scraper job failed: %s", exc)
+        raise
+
+# ============= NEWS ROUTES =============
+
+@api_router.get("/news")
+async def get_news():
+    """Return articles scraped in the last 24 h; falls back to the most recent 15."""
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+
+    articles = await db.news_articles.find(
+        {"scrapedAt": {"$gte": cutoff}},
+        {"_id": 0},
+    ).sort("publishedAt", -1).limit(15).to_list(15)
+
+    if not articles:
+        articles = await db.news_articles.find(
+            {}, {"_id": 0}
+        ).sort("publishedAt", -1).limit(15).to_list(15)
+
+    # Normalise datetime strings for JSON serialisation
+    for a in articles:
+        for field in ("publishedAt", "scrapedAt"):
+            val = a.get(field)
+            if isinstance(val, str):
+                try:
+                    a[field] = datetime.fromisoformat(val)
+                except Exception:
+                    a[field] = datetime.now(timezone.utc)
+
+    return articles
+
+@api_router.post("/admin/scrape-news")
+async def trigger_scrape(current_user: dict = Depends(get_current_user)):
+    """Manually trigger the news scraper (requires authentication)."""
+    stats = await run_news_scraper_job()
+    return {"status": "ok", **stats}
+
 # ============= ROOT =============
 
 @api_router.get("/")
@@ -543,9 +651,25 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+@app.on_event("startup")
+async def startup_event():
+    """Create news_articles indexes and start the daily scraper scheduler."""
+    try:
+        await db.news_articles.create_index([("url", 1)], unique=True)
+        await db.news_articles.create_index([("publishedAt", -1)])
+        await db.news_articles.create_index([("scrapedAt", -1)])
+        logger.info("news_articles indexes ready")
+    except Exception as exc:
+        logger.warning("Index creation warning: %s", exc)
+
+    scheduler.add_job(run_news_scraper_job, "cron", hour=7, minute=0, id="daily_news_scraper")
+    scheduler.start()
+    logger.info("News scraper scheduler started — runs daily at 07:00 UTC")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+    scheduler.shutdown(wait=False)
 
 if __name__ == "__main__":
     import uvicorn
