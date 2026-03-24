@@ -81,6 +81,7 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedManufacturer, setSelectedManufacturer] = useState("all");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showComparison, setShowComparison] = useState(false);
@@ -367,7 +368,7 @@ export default function Products() {
               className={`bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer overflow-hidden ${
                 isSelectedForCompare ? 'ring-2 ring-purple-500 border-purple-500' : ''
               }`}
-              onClick={() => compareMode ? toggleProductForCompare(product) : setSelectedProduct(product)}
+              onClick={(e) => compareMode ? toggleProductForCompare(product) : (setPopupPosition({ x: e.clientX, y: e.clientY }), setSelectedProduct(product))}
               data-testid={`product-card-${product.id}`}
             >
               {/* Image or Placeholder */}
@@ -563,15 +564,27 @@ export default function Products() {
         </div>
       )}
 
-      {/* Product Detail Modal */}
+      {/* Product Detail Popup */}
       {selectedProduct && (
-        <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto"
-          onClick={() => setSelectedProduct(null)}
-        >
-          <Card 
-            className="bg-white border-slate-200 w-full max-w-2xl my-8 shadow-2xl"
+        <>
+          <div
+            className="fixed inset-0 z-50"
+            onClick={() => setSelectedProduct(null)}
+          />
+          <div
+            className="fixed z-50 w-96 max-h-[85vh] overflow-y-auto shadow-2xl rounded-lg"
+            style={(() => {
+              const W = 384, margin = 12;
+              const left = popupPosition.x + 16 + W > window.innerWidth
+                ? popupPosition.x - W - 8
+                : popupPosition.x + 16;
+              const top = Math.max(margin, Math.min(popupPosition.y - 40, window.innerHeight - 520 - margin));
+              return { left, top };
+            })()}
             onClick={(e) => e.stopPropagation()}
+          >
+          <Card
+            className="bg-white border-slate-200 w-full shadow-none"
             data-testid="product-detail-modal"
           >
             {/* Header Image */}
@@ -662,7 +675,8 @@ export default function Products() {
               </div>
             </CardContent>
           </Card>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
