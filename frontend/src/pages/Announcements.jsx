@@ -82,6 +82,14 @@ function relativeTime(dateStr) {
   } catch { return ""; }
 }
 
+// Map source name → language for display fallback (old articles without field)
+const FR_SOURCES = new Set(["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos"]);
+
+function resolveLanguage(article) {
+  if (article.language === "fr" || article.language === "en") return article.language;
+  return FR_SOURCES.has(article.source) ? "fr" : "en";
+}
+
 function langFlag(lang) {
   return lang === "fr" ? "🇫🇷" : "🇬🇧";
 }
@@ -162,9 +170,11 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary }
           <span className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">NEW</span>
         )}
         {/* Language flag */}
-        <span className="absolute bottom-2 right-2 text-base leading-none" title={article.language === "fr" ? "French" : "English"}>
-          {langFlag(article.language)}
-        </span>
+        {(() => { const lang = resolveLanguage(article); return (
+          <span className="absolute bottom-2 right-2 text-base leading-none" title={lang === "fr" ? "French" : "English"}>
+            {langFlag(lang)}
+          </span>
+        ); })()}
       </a>
 
       {/* Body */}
