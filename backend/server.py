@@ -592,25 +592,39 @@ async def run_news_scraper_job() -> dict:
 # ============= NEWS ROUTES =============
 
 @api_router.get("/news")
-async def get_news():
+async def get_news(
+    language: Optional[str] = None,
+    region: Optional[str] = None,
+    limit: int = 30,
+):
     """
-    Return up to 15 articles scraped in the last 24 h, sorted by defense
-    relevance score (desc) then publication date (desc).
-    Falls back to the most recent 15 when the DB has no fresh articles.
+    Return up to `limit` articles (max 50) sorted by relevance then date.
+    Optional filters: language ("en"|"fr"), region ("us"|"europe"|"asia-pacific"|…).
+    Falls back to latest articles when no fresh ones exist.
     """
+    limit = min(max(limit, 1), 50)
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
 
+    query: dict = {"scrapedAt": {"$gte": cutoff}}
+    if language and language != "all":
+        query["language"] = language
+    if region and region != "all":
+        query["region"] = region
+
     articles = await db.news_articles.find(
-        {"scrapedAt": {"$gte": cutoff}},
-        {"_id": 0},
-    ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(15).to_list(15)
+        query, {"_id": 0}
+    ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(limit).to_list(limit)
 
     if not articles:
+        fb_query: dict = {}
+        if language and language != "all":
+            fb_query["language"] = language
+        if region and region != "all":
+            fb_query["region"] = region
         articles = await db.news_articles.find(
-            {}, {"_id": 0}
-        ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(15).to_list(15)
+            fb_query, {"_id": 0}
+        ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(limit).to_list(limit)
 
-    # Normalise datetime strings for JSON serialisation
     for a in articles:
         for field in ("publishedAt", "scrapedAt"):
             val = a.get(field)
@@ -619,10 +633,110 @@ async def get_news():
                     a[field] = datetime.fromisoformat(val)
                 except Exception:
                     a[field] = datetime.now(timezone.utc)
-        # Ensure relevanceScore is always present
         a.setdefault("relevanceScore", 0)
+        a.setdefault("language", "en")
+        a.setdefault("region", "global")
 
     return articles
+
+
+# ============= BOOKMARKS =============
+
+class BookmarkIn(BaseModel):
+    article: dict
+
+@api_router.get("/bookmarks")
+async def get_bookmarks(current_user: dict = Depends(get_current_user)):
+    """Return all bookmarks for the authenticated user."""
+    user_id = current_user["sub"]
+    bookmarks = await db.bookmarks.find(
+        {"userId": user_id}, {"_id": 0}
+    ).sort("bookmarkedAt", -1).to_list(200)
+    return bookmarks
+
+@api_router.post("/bookmarks", status_code=201)
+async def add_bookmark(data: BookmarkIn, current_user: dict = Depends(get_current_user)):
+    """Bookmark an article (idempotent — returns 201 or 200 if already exists)."""
+    user_id = current_user["sub"]
+    url = data.article.get("url", "")
+    if not url:
+        raise HTTPException(status_code=400, detail="Article URL is required")
+    existing = await db.bookmarks.find_one({"userId": user_id, "article.url": url})
+    if existing:
+        return {"status": "exists"}
+    await db.bookmarks.insert_one({
+        "id": str(uuid.uuid4()),
+        "userId": user_id,
+        "article": data.article,
+        "bookmarkedAt": datetime.now(timezone.utc).isoformat(),
+    })
+    return {"status": "created"}
+
+@api_router.delete("/bookmarks")
+async def remove_bookmark(url: str, current_user: dict = Depends(get_current_user)):
+    """Remove a bookmarked article by URL."""
+    user_id = current_user["sub"]
+    await db.bookmarks.delete_one({"userId": user_id, "article.url": url})
+    return {"status": "deleted"}
+
+
+# ============= AI SUMMARY =============
+
+class AISummaryIn(BaseModel):
+    url: str
+    title: str
+    summary: str = ""
+
+@api_router.post("/news/ai-summary")
+async def get_ai_summary(data: AISummaryIn, current_user: dict = Depends(get_current_user)):
+    """
+    Generate a 3-bullet AI brief for an article using Claude.
+    Result is cached in the news_articles document.
+    """
+    # Check cache first
+    cached = await db.news_articles.find_one({"url": data.url}, {"aiSummary": 1})
+    if cached and cached.get("aiSummary"):
+        return {"bullets": cached["aiSummary"]}
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=503, detail="AI summary not configured (missing ANTHROPIC_API_KEY)")
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=api_key)
+        message = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            messages=[{
+                "role": "user",
+                "content": (
+                    "You are a defense intelligence analyst. "
+                    "Given this article, provide exactly 3 concise key takeaways as bullet points. "
+                    "Be factual and specific. Return only the 3 lines, each starting with '• '.\n\n"
+                    f"Title: {data.title}\n"
+                    f"Summary: {data.summary}"
+                ),
+            }]
+        )
+        raw = message.content[0].text.strip()
+        bullets = [
+            line.lstrip("•").lstrip("-").strip()
+            for line in raw.split("\n")
+            if line.strip() and not line.strip().isspace()
+        ][:3]
+
+        # Cache in DB
+        await db.news_articles.update_one(
+            {"url": data.url},
+            {"$set": {"aiSummary": bullets}},
+        )
+        return {"bullets": bullets}
+
+    except Exception as exc:
+        logger.error("AI summary error: %s", exc)
+        raise HTTPException(status_code=500, detail=f"AI summary failed: {exc}")
+
 
 @api_router.post("/admin/scrape-news")
 async def trigger_scrape(current_user: dict = Depends(get_current_user)):
@@ -675,7 +789,11 @@ async def startup_event():
         await db.news_articles.create_index([("url", 1)], unique=True)
         await db.news_articles.create_index([("publishedAt", -1)])
         await db.news_articles.create_index([("scrapedAt", -1)])
-        logger.info("news_articles indexes ready")
+        await db.news_articles.create_index([("language", 1)])
+        await db.news_articles.create_index([("region", 1)])
+        await db.bookmarks.create_index([("userId", 1)])
+        await db.bookmarks.create_index([("userId", 1), ("article.url", 1)], unique=True)
+        logger.info("news_articles + bookmarks indexes ready")
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
 

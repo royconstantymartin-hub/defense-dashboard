@@ -30,11 +30,22 @@ HEADERS = {
 # ── Category keyword matching ────────────────────────────────────────────────
 
 CATEGORY_KEYWORDS: Dict[str, List[str]] = {
-    "CONTRACT":   ["contract", "award", "deal", "billion", "million", "procurement"],
-    "REGULATORY": ["nato", "eu", "law", "regulation", "policy", "spending", "gdp"],
-    "M&A":        ["acquisition", "merger", "acquires", "buys", "takeover"],
-    "TECHNOLOGY": ["ai", "drone", "cyber", "satellite", "hypersonic", "autonomous"],
-    "CONFLICT":   ["war", "operation", "strike", "deploy", "troops", "combat"],
+    "CONTRACT":    ["contract", "award", "deal", "procurement", "tender", "bid",
+                    "contrat", "marché", "appel d'offres", "commande"],
+    "TECHNOLOGY":  ["ai", "drone", "cyber", "satellite", "hypersonic", "autonomous",
+                    "robot", "electronic warfare", "directed energy", "space",
+                    "intelligence artificielle", "spatial", "cyberattaque", "missile"],
+    "CONFLICT":    ["war", "operation", "strike", "deploy", "troops", "combat", "battle",
+                    "offensive", "ceasefire", "attack", "hostilities",
+                    "guerre", "opération", "attaque", "conflit", "déploiement", "frappe"],
+    "POLICY":      ["nato", "eu", "law", "regulation", "policy", "spending", "gdp",
+                    "budget", "legislation", "congress", "parliament", "defence review",
+                    "otan", "loi", "politique", "budget défense", "lpm", "programmation"],
+    "M&A":         ["acquisition", "merger", "acquires", "buys", "takeover", "joint venture",
+                    "fusion", "rachat", "cession"],
+    "GEOPOLITICS": ["sanctions", "diplomacy", "talks", "summit", "alliance", "tensions",
+                    "treaty", "agreement", "bilateral", "multilateral",
+                    "sanctions", "diplomatie", "sommet", "alliance", "accord", "tensions"],
 }
 
 
@@ -44,6 +55,36 @@ def assign_category(title: str) -> str:
         if any(kw in t for kw in keywords):
             return cat
     return "INDUSTRY"
+
+
+# ── Region detection ─────────────────────────────────────────────────────────
+
+_REGION_PATTERNS: Dict[str, List[str]] = {
+    "us":          ["united states", "pentagon", "congress", "senate", "white house",
+                    "us army", "us navy", "us air force", "u.s.", "american defense",
+                    "department of defense", "lockheed", "raytheon", "northrop", "washington dc"],
+    "europe":      ["europe", "nato", "ukraine", "russia", "france", "germany",
+                    "britain", " uk ", "united kingdom", "poland", "finland", "sweden",
+                    "european union", "eu defense", "paris", "berlin", "london",
+                    "macron", "scholz", "zelensky", "putin", "balkans"],
+    "asia-pacific":["china", "taiwan", "japan", "south korea", "india", "pacific",
+                    "indo-pacific", "pla ", "beijing", "tokyo", "seoul", "new delhi",
+                    "south china sea", "dprk", "north korea", "australia"],
+    "middle-east": ["israel", "iran", "syria", "saudi", "middle east", "iraq",
+                    "yemen", "hamas", "hezbollah", "gaza", "tehran", "tel aviv",
+                    "gulf", "persian gulf", "idf"],
+    "africa":      ["africa", "sahel", "nigeria", "somalia", "mali", "senegal",
+                    "ethiopia", "sudan", "burkina", "niger"],
+}
+
+
+def detect_region_from_text(title: str, summary: str = "") -> Optional[str]:
+    """Return the most likely region based on keyword hits, or None if ambiguous."""
+    text = (title + " " + summary).lower()
+    for region, patterns in _REGION_PATTERNS.items():
+        if any(p in text for p in patterns):
+            return region
+    return None
 
 
 # ── Defense relevance scoring ────────────────────────────────────────────────
@@ -77,6 +118,15 @@ _RELEVANCE_TERMS: Dict[str, int] = {
     "ukraine": 6, "taiwan": 6, "russia": 5, "china": 5, "israel": 5,
     # Generic defense
     "weapon": 6, "armament": 7, "ammunition": 6, "warship": 7,
+    # French defense terms
+    "défense": 10, "militaire": 10, "armée": 10, "marine nationale": 10,
+    "armée de l'air": 10, "armée de terre": 8, "gendarmerie": 5,
+    "missile": 8, "sous-marin": 9, "frégate": 8, "porte-avions": 9,
+    "guerre": 8, "opération": 7, "déploiement": 7, "renseignement": 7,
+    "otan": 10, "ukraine": 6, "russie": 5, "chine": 5, "taiwan": 6,
+    "airbus defense": 7, "dassault": 7, "thales": 7, "safran": 7, "mbda": 8,
+    "budget défense": 10, "lpm": 10, "contrat": 6, "acquisition": 7,
+    "cyber": 8, "drone": 8, "surveillance": 7, "espace": 5,
 }
 
 
@@ -217,6 +267,10 @@ def _fetch_rss(source: Dict) -> List[Dict]:
             if not title or not url:
                 continue
             summary = _extract_summary(entry)
+            src_lang   = source.get("language", "en")
+            src_region = source.get("region", "global")
+            # For global sources try to narrow down region from content
+            region = (detect_region_from_text(title, summary) or src_region) if src_region == "global" else src_region
             articles.append({
                 "title":          title,
                 "url":            url,
@@ -226,6 +280,8 @@ def _fetch_rss(source: Dict) -> List[Dict]:
                 "publishedAt":    _parse_entry_date(entry),
                 "category":       assign_category(title),
                 "relevanceScore": compute_relevance_score(title, summary),
+                "language":       src_lang,
+                "region":         region,
             })
 
         logger.info("[%s] Fetched %d articles via RSS", source["name"], len(articles))
@@ -280,6 +336,8 @@ def _scrape_nato() -> List[Dict]:
                 "publishedAt":    pub_date,
                 "category":       assign_category(title),
                 "relevanceScore": compute_relevance_score(title, ""),
+                "language":       "en",
+                "region":         "europe",
             })
 
         logger.info("[NATO] Scraped %d articles", len(articles))
@@ -324,6 +382,7 @@ def _scrape_janes() -> List[Dict]:
                 if src and src.startswith("http"):
                     image_url = src
 
+            region = detect_region_from_text(title) or "global"
             articles.append({
                 "title":          title,
                 "url":            href,
@@ -333,6 +392,8 @@ def _scrape_janes() -> List[Dict]:
                 "publishedAt":    datetime.now(timezone.utc),
                 "category":       assign_category(title),
                 "relevanceScore": compute_relevance_score(title, ""),
+                "language":       "en",
+                "region":         region,
             })
 
         logger.info("[Janes] Scraped %d articles", len(articles))
@@ -345,11 +406,21 @@ def _scrape_janes() -> List[Dict]:
 # ── RSS source registry ──────────────────────────────────────────────────────
 
 RSS_SOURCES: List[Dict] = [
-    {"name": "Breaking Defense",       "url": "https://breakingdefense.com/feed/"},
-    {"name": "Defense Post",           "url": "https://thedefensepost.com/feed/"},
-    {"name": "Defense News",           "url": "https://www.defensenews.com/arc/outboundfeeds/rss/"},
-    {"name": "Defense Industry Daily", "url": "https://www.defenseindustrydaily.com/feed/"},
-    {"name": "Opex360",                "url": "https://www.opex360.com/feed/"},
+    # ── Defense specialty — English ─────────────────────────────────────────
+    {"name": "Breaking Defense",       "url": "https://breakingdefense.com/feed/",                          "language": "en", "region": "us"},
+    {"name": "Defense Post",           "url": "https://thedefensepost.com/feed/",                           "language": "en", "region": "global"},
+    {"name": "Defense News",           "url": "https://www.defensenews.com/arc/outboundfeeds/rss/",         "language": "en", "region": "us"},
+    {"name": "Defense Industry Daily", "url": "https://www.defenseindustrydaily.com/feed/",                 "language": "en", "region": "us"},
+    # ── Defense specialty — French ──────────────────────────────────────────
+    {"name": "Opex360",                "url": "https://www.opex360.com/feed/",                              "language": "fr", "region": "europe"},
+    {"name": "Meta-Défense",           "url": "https://meta-defense.fr/feed/",                              "language": "fr", "region": "europe"},
+    # ── Mainstream — English ────────────────────────────────────────────────
+    {"name": "BBC News",               "url": "http://feeds.bbci.co.uk/news/world/rss.xml",                 "language": "en", "region": "global"},
+    {"name": "The Guardian",           "url": "https://www.theguardian.com/world/rss",                      "language": "en", "region": "global"},
+    # ── Mainstream — French ─────────────────────────────────────────────────
+    {"name": "Le Monde",               "url": "https://www.lemonde.fr/rss/une.xml",                         "language": "fr", "region": "europe"},
+    {"name": "Le Figaro",              "url": "https://www.lefigaro.fr/rss/figaro_monde.xml",               "language": "fr", "region": "europe"},
+    {"name": "Les Echos",              "url": "https://www.lesechos.fr/arc/outboundfeeds/rss/",             "language": "fr", "region": "europe"},
 ]
 
 HTML_SCRAPERS = [_scrape_nato, _scrape_janes]
