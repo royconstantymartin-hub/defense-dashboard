@@ -682,6 +682,15 @@ for _src, _rgn in _SOURCE_REGION_MAP.items():
     _REGION_SOURCES.setdefault(_rgn, []).append(_src)
 
 
+# Specialty sources are defence-focused — show even if relevance score is low.
+# Mainstream sources (BBC, Le Monde, etc.) must cross the relevance threshold.
+_SPECIALTY_SOURCES_LIST = [
+    "Breaking Defense", "Defense Post", "Defense News",
+    "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
+]
+_MIN_MAINSTREAM_SCORE = 15
+
+
 def _build_news_query(
     language: Optional[str],
     region: Optional[str],
@@ -692,6 +701,12 @@ def _build_news_query(
     and old articles (without those fields, identified by source name).
     """
     conditions: list = [{"scrapedAt": {"$gte": cutoff}}]
+
+    # Always enforce: specialty sources OR sufficient relevance score
+    conditions.append({"$or": [
+        {"source": {"$in": _SPECIALTY_SOURCES_LIST}},
+        {"relevanceScore": {"$gte": _MIN_MAINSTREAM_SCORE}},
+    ]})
 
     if language == "fr":
         conditions.append({"$or": [
