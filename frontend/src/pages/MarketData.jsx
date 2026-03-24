@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -77,10 +78,11 @@ const COMPANY_LOGOS = {
 };
 
 export default function MarketData() {
+  const [searchParams] = useSearchParams();
   const [players, setPlayers] = useState([]);
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [sortBy, setSortBy] = useState("market_cap_desc");
   const [selectedPlayer, setSelectedPlayer] = useState(null);

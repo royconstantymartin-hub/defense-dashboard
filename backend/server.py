@@ -535,14 +535,16 @@ async def seed_data():
             doc['date'] = doc['date'].isoformat()
             await db.announcements.insert_one(doc)
     
-    # Seed M&A Activities
+    # Seed M&A Activities — upsert so enriched fields are applied to existing docs
     for m in MA_DATA:
-        existing = await db.ma_activities.find_one({"acquirer": m['acquirer'], "target": m['target']})
-        if not existing:
-            activity = MAActivity(**m)
-            doc = activity.model_dump()
-            doc['announced_date'] = doc['announced_date'].isoformat()
-            await db.ma_activities.insert_one(doc)
+        activity = MAActivity(**m)
+        doc = activity.model_dump()
+        doc['announced_date'] = doc['announced_date'].isoformat()
+        await db.ma_activities.update_one(
+            {"acquirer": m['acquirer'], "target": m['target']},
+            {"$set": doc},
+            upsert=True,
+        )
     
     # Seed Expenditures
     for e in EXPENDITURES_DATA:
