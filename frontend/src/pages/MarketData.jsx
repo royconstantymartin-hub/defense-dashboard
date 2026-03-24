@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -12,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, TrendingUp, TrendingDown, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database } from "lucide-react";
+import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -20,7 +19,11 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell
+  Cell,
+  LineChart,
+  Line,
+  CartesianGrid,
+  ReferenceLine,
 } from "recharts";
 
 const COUNTRIES = [
@@ -47,7 +50,6 @@ const SORT_OPTIONS = [
   { value: "name_asc", label: "Name (A-Z)" },
 ];
 
-// Country code mapping for flags
 const COUNTRY_FLAGS = {
   "USA": "us", "UK": "gb", "France": "fr", "Germany": "de", "Italy": "it",
   "EU": "eu", "Spain": "es", "Sweden": "se", "Norway": "no", "Israel": "il",
@@ -58,7 +60,6 @@ const COUNTRY_FLAGS = {
   "South Africa": "za", "Saudi Arabia": "sa"
 };
 
-// Company logo domains
 const COMPANY_LOGOS = {
   "Lockheed Martin": "lockheedmartin.com",
   "Raytheon Technologies": "rtx.com",
@@ -77,6 +78,190 @@ const COMPANY_LOGOS = {
   "Elbit Systems": "elbitsystems.com",
 };
 
+const HISTORY_PERIODS = [
+  { value: "1d", label: "1D" },
+  { value: "1w", label: "1W" },
+  { value: "1mo", label: "1M" },
+  { value: "1y", label: "1Y" },
+];
+
+function formatHistoryTime(isoStr, period) {
+  const d = new Date(isoStr);
+  if (period === "1d") return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  if (period === "1w") return d.toLocaleDateString([], { weekday: "short", hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleDateString([], { month: "short", day: "numeric" });
+}
+
+// Stock History Chart Modal
+function StockChartModal({ player, liveData, onClose }) {
+  const [period, setPeriod] = useState("1d");
+  const [history, setHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  const fetchHistory = useCallback(async (p) => {
+    if (!player?.ticker || player.ticker === "Private" || player.ticker.includes("PRIV")) return;
+    setLoadingHistory(true);
+    try {
+      const res = await axios.get(`${API}/stock-history/${encodeURIComponent(player.ticker)}?period=${p}`);
+      setHistory(res.data.data || []);
+    } catch {
+      setHistory([]);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, [player]);
+
+  useEffect(() => {
+    fetchHistory(period);
+  }, [period, fetchHistory]);
+
+  const live = liveData?.[player.ticker];
+  const displayPrice = live?.price ?? player.stock_price;
+  const displayChange = live?.change_percent ?? player.change_percent;
+  const isPositive = displayChange >= 0;
+
+  const chartMin = history.length ? Math.min(...history.map(d => d.price)) * 0.998 : undefined;
+  const chartMax = history.length ? Math.max(...history.map(d => d.price)) * 1.002 : undefined;
+  const openPrice = history.length ? history[0].price : null;
+
+  const chartData = history.map(d => ({
+    ...d,
+    label: formatHistoryTime(d.time, period),
+  }));
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-slate-900 text-sm">{player.name}</p>
+              <p className="text-xs font-mono text-purple-700">{player.ticker}</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Price + Change */}
+        <div className="px-6 pt-4 pb-2 flex items-end gap-4">
+          <p className="text-3xl font-mono font-bold text-slate-900">
+            {displayPrice > 0 ? `$${displayPrice.toFixed(2)}` : "Private"}
+          </p>
+          {displayPrice > 0 && (
+            <span className={`inline-flex items-center gap-1 font-mono text-sm px-2.5 py-1 rounded-full mb-1 ${
+              isPositive ? "text-emerald-700 bg-emerald-50" : "text-rose-700 bg-rose-50"
+            }`}>
+              {isPositive ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+              {isPositive ? "+" : ""}{displayChange.toFixed(2)}%
+            </span>
+          )}
+          {live && (
+            <span className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse inline-block" />
+              Live
+            </span>
+          )}
+        </div>
+
+        {/* Period selector */}
+        <div className="px-6 pb-3 flex gap-1">
+          {HISTORY_PERIODS.map(p => (
+            <button
+              key={p.value}
+              onClick={() => setPeriod(p.value)}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                period === p.value
+                  ? "bg-purple-700 text-white"
+                  : "text-slate-500 hover:bg-slate-100"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Chart */}
+        <div className="px-2 pb-6">
+          {loadingHistory ? (
+            <div className="h-52 flex items-center justify-center">
+              <div className="animate-spin w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full" />
+            </div>
+          ) : chartData.length === 0 ? (
+            <div className="h-52 flex items-center justify-center text-slate-400 text-sm">
+              No data available for this period
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={210}>
+              <LineChart data={chartData} margin={{ top: 4, right: 12, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                <XAxis
+                  dataKey="label"
+                  tick={{ fill: "#94A3B8", fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval="preserveStartEnd"
+                />
+                <YAxis
+                  domain={[chartMin, chartMax]}
+                  tick={{ fill: "#94A3B8", fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={v => `$${v.toFixed(0)}`}
+                  width={52}
+                />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-white border border-slate-200 rounded-lg px-3 py-2 shadow-lg text-sm">
+                          <p className="text-slate-500">{payload[0].payload.label}</p>
+                          <p className="font-mono font-bold text-slate-900">${payload[0].value.toFixed(2)}</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                {openPrice && (
+                  <ReferenceLine
+                    y={openPrice}
+                    stroke="#CBD5E1"
+                    strokeDasharray="4 4"
+                    strokeWidth={1}
+                  />
+                )}
+                <Line
+                  type="monotone"
+                  dataKey="price"
+                  stroke={isPositive ? "#059669" : "#E11D48"}
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4, fill: isPositive ? "#059669" : "#E11D48" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function MarketData() {
   const [searchParams] = useSearchParams();
   const [players, setPlayers] = useState([]);
@@ -86,6 +271,11 @@ export default function MarketData() {
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [sortBy, setSortBy] = useState("market_cap_desc");
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [chartPlayer, setChartPlayer] = useState(null);
+  // liveData: { [ticker]: { price, change_percent, prev_close } }
+  const [liveData, setLiveData] = useState({});
+  const [liveLoading, setLiveLoading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -102,36 +292,71 @@ export default function MarketData() {
     fetchPlayers();
   }, []);
 
+  // Fetch live prices whenever the players list changes
+  const fetchLivePrices = useCallback(async (playersList) => {
+    const publicTickers = playersList
+      .map(p => p.ticker)
+      .filter(t => t && t !== "Private" && !t.includes("PRIV"));
+    if (!publicTickers.length) return;
+
+    setLiveLoading(true);
+    try {
+      const chunkSize = 30;
+      const combined = {};
+      for (let i = 0; i < publicTickers.length; i += chunkSize) {
+        const chunk = publicTickers.slice(i, i + chunkSize);
+        const res = await axios.get(`${API}/stock-prices?tickers=${chunk.join(",")}`);
+        Object.assign(combined, res.data);
+      }
+      setLiveData(combined);
+      setLastUpdated(new Date());
+    } catch (err) {
+      console.error("Live price fetch error:", err);
+    } finally {
+      setLiveLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (players.length > 0) {
+      fetchLivePrices(players);
+      // Refresh every hour
+      const interval = setInterval(() => fetchLivePrices(players), 60 * 60 * 1000);
+      return () => clearInterval(interval);
+    }
+  }, [players, fetchLivePrices]);
+
   useEffect(() => {
     let filtered = [...players];
-    
+
     if (selectedCountry !== "all") {
       filtered = filtered.filter(p => p.country === selectedCountry);
     }
-    
+
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(term) || 
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(term) ||
         p.ticker.toLowerCase().includes(term)
       );
     }
-    
-    // Sorting
+
     filtered.sort((a, b) => {
+      const changeA = liveData[a.ticker]?.change_percent ?? a.change_percent;
+      const changeB = liveData[b.ticker]?.change_percent ?? b.change_percent;
       switch (sortBy) {
         case "market_cap_desc": return b.market_cap - a.market_cap;
         case "market_cap_asc": return a.market_cap - b.market_cap;
-        case "change_desc": return b.change_percent - a.change_percent;
-        case "change_asc": return a.change_percent - b.change_percent;
+        case "change_desc": return changeB - changeA;
+        case "change_asc": return changeA - changeB;
         case "revenue_desc": return b.revenue - a.revenue;
         case "name_asc": return a.name.localeCompare(b.name);
         default: return 0;
       }
     });
-    
+
     setFilteredPlayers(filtered);
-  }, [searchTerm, selectedCountry, sortBy, players]);
+  }, [searchTerm, selectedCountry, sortBy, players, liveData]);
 
   const totalMarketCap = filteredPlayers.reduce((sum, p) => sum + p.market_cap, 0);
   const totalRevenue = filteredPlayers.reduce((sum, p) => sum + p.revenue, 0);
@@ -140,24 +365,20 @@ export default function MarketData() {
   const chartData = filteredPlayers.slice(0, 10).map(p => ({
     name: p.ticker || p.name.substring(0, 8),
     value: p.market_cap,
-    change: p.change_percent
+    change: liveData[p.ticker]?.change_percent ?? p.change_percent,
   }));
 
   const getFlag = (country) => {
     const code = COUNTRY_FLAGS[country];
-    if (code) {
-      return `https://flagcdn.com/w40/${code}.png`;
-    }
-    return null;
+    return code ? `https://flagcdn.com/w40/${code}.png` : null;
   };
 
   const getLogo = (companyName) => {
     const domain = COMPANY_LOGOS[companyName];
-    if (domain) {
-      return `https://logo.clearbit.com/${domain}`;
-    }
-    return null;
+    return domain ? `https://logo.clearbit.com/${domain}` : null;
   };
+
+  const isPrivate = (ticker) => !ticker || ticker === "Private" || ticker.includes("PRIV");
 
   if (loading) {
     return (
@@ -175,14 +396,25 @@ export default function MarketData() {
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
             Market Data
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Defense Industry Market Capitalization & Financials</p>
+          <p className="text-slate-500 text-sm mt-1">Defense Industry Market Capitalization & Live Stock Prices</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+          {liveLoading ? (
+            <RefreshCw className="w-3.5 h-3.5 animate-spin text-purple-500" />
+          ) : (
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+          )}
+          <span>
+            {lastUpdated
+              ? `Live · Updated ${lastUpdated.toLocaleTimeString()}`
+              : "Loading live prices…"}
+          </span>
+          <span className="text-slate-300">|</span>
           <Clock className="w-3.5 h-3.5" />
-          <span>Last updated: {new Date().toLocaleTimeString()}</span>
+          <span>Refreshes every hour</span>
           <span className="text-slate-300">|</span>
           <Database className="w-3.5 h-3.5" />
-          <span>Source: Public filings, Bloomberg, Reuters</span>
+          <span>Yahoo Finance</span>
         </div>
       </div>
 
@@ -193,7 +425,7 @@ export default function MarketData() {
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL MARKET CAP</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalMarketCap.toFixed(1)}B</p>
             <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> +2.4% this week
+              <TrendingUp className="w-3 h-3" /> Defense sector
             </p>
           </CardContent>
         </Card>
@@ -229,15 +461,15 @@ export default function MarketData() {
           <div className="h-[280px]" data-testid="market-cap-chart">
             <ResponsiveContainer width="100%" height="100%" minWidth={200}>
               <BarChart data={chartData}>
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fill: '#64748B', fontSize: 11 }} 
-                  axisLine={false} 
+                <XAxis
+                  dataKey="name"
+                  tick={{ fill: '#64748B', fontSize: 11 }}
+                  axisLine={false}
                   tickLine={false}
                 />
-                <YAxis 
-                  tick={{ fill: '#94A3B8', fontSize: 11 }} 
-                  axisLine={false} 
+                <YAxis
+                  tick={{ fill: '#94A3B8', fontSize: 11 }}
+                  axisLine={false}
                   tickLine={false}
                   tickFormatter={(v) => `$${v}B`}
                 />
@@ -250,7 +482,7 @@ export default function MarketData() {
                           <p className="text-slate-900 font-medium text-sm">{data.name}</p>
                           <p className="text-purple-700 font-mono font-semibold">${data.value}B</p>
                           <p className={`font-mono text-sm ${data.change >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                            {data.change >= 0 ? '+' : ''}{data.change}%
+                            {data.change >= 0 ? '+' : ''}{data.change.toFixed(2)}%
                           </p>
                         </div>
                       );
@@ -260,8 +492,8 @@ export default function MarketData() {
                 />
                 <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                   {chartData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
+                    <Cell
+                      key={`cell-${index}`}
                       fill={entry.change >= 0 ? '#7E22CE' : '#A855F7'}
                     />
                   ))}
@@ -323,7 +555,10 @@ export default function MarketData() {
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Stock Price</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Market Cap</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Revenue</th>
-                  <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Change</th>
+                  <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">
+                    Change
+                    <span className="ml-1 text-purple-500 normal-case font-normal">(click for chart)</span>
+                  </th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Specializations</th>
                 </tr>
               </thead>
@@ -331,21 +566,28 @@ export default function MarketData() {
                 {filteredPlayers.map((player, idx) => {
                   const flagUrl = getFlag(player.country);
                   const logoUrl = getLogo(player.name);
+                  const live = liveData[player.ticker];
+                  const displayPrice = live?.price ?? player.stock_price;
+                  const displayChange = live?.change_percent ?? player.change_percent;
+                  const isPos = displayChange >= 0;
+                  const priceChanged = live?.price != null && Math.abs(live.price - player.stock_price) > 0.01;
+
                   return (
-                    <tr 
-                      key={player.id} 
+                    <tr
+                      key={player.id}
                       className="border-b border-slate-100 hover:bg-purple-50/50 transition-colors cursor-pointer"
                       onClick={() => setSelectedPlayer(player)}
                       data-testid={`player-row-${player.id}`}
                     >
+                      {/* Company */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
                             {idx + 1}
                           </span>
                           {logoUrl ? (
-                            <img 
-                              src={logoUrl} 
+                            <img
+                              src={logoUrl}
                               alt={player.name}
                               className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100"
                               onError={(e) => { e.target.style.display = 'none'; }}
@@ -366,40 +608,66 @@ export default function MarketData() {
                           </div>
                         </div>
                       </td>
+
+                      {/* Ticker */}
                       <td className="p-4">
                         <span className="font-mono text-sm text-purple-700 font-medium bg-purple-50 px-2 py-0.5 rounded">
                           {player.ticker}
                         </span>
                       </td>
+
+                      {/* Stock Price — live when available */}
                       <td className="p-4 text-right">
-                        <span className="font-mono text-sm text-slate-900 font-medium">
-                          {player.stock_price > 0 ? `$${player.stock_price.toFixed(2)}` : 'Private'}
-                        </span>
+                        {isPrivate(player.ticker) ? (
+                          <span className="font-mono text-sm text-slate-400">Private</span>
+                        ) : (
+                          <span className={`font-mono text-sm font-medium ${priceChanged ? "text-purple-700" : "text-slate-900"}`}>
+                            {displayPrice > 0 ? `$${displayPrice.toFixed(2)}` : "—"}
+                            {priceChanged && (
+                              <span className="ml-1 text-xs text-purple-400">live</span>
+                            )}
+                          </span>
+                        )}
                       </td>
+
+                      {/* Market Cap */}
                       <td className="p-4 text-right">
                         <span className="font-mono text-sm text-slate-900 font-semibold">${player.market_cap}B</span>
                       </td>
+
+                      {/* Revenue */}
                       <td className="p-4 text-right">
                         <span className="font-mono text-sm text-slate-600">${player.revenue}B</span>
                       </td>
+
+                      {/* Change — clickable to open chart */}
                       <td className="p-4 text-right">
-                        <span className={`inline-flex items-center gap-1 font-mono text-sm px-2 py-0.5 rounded-full ${
-                          player.change_percent >= 0 
-                            ? 'text-emerald-700 bg-emerald-50' 
-                            : 'text-rose-700 bg-rose-50'
-                        }`}>
-                          {player.change_percent >= 0 ? (
-                            <ArrowUp className="w-3 h-3" />
-                          ) : (
-                            <ArrowDown className="w-3 h-3" />
-                          )}
-                          {player.change_percent >= 0 ? '+' : ''}{player.change_percent}%
-                        </span>
+                        {isPrivate(player.ticker) ? (
+                          <span className="text-slate-400 text-sm">—</span>
+                        ) : (
+                          <button
+                            className={`inline-flex items-center gap-1 font-mono text-sm px-2 py-0.5 rounded-full transition-all hover:scale-105 hover:shadow-md cursor-pointer ${
+                              isPos
+                                ? "text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+                                : "text-rose-700 bg-rose-50 hover:bg-rose-100"
+                            }`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setChartPlayer(player);
+                            }}
+                            title="Click to view price chart"
+                          >
+                            {isPos ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+                            {isPos ? "+" : ""}{displayChange.toFixed(2)}%
+                          </button>
+                        )}
                       </td>
+
+                      {/* Specializations */}
                       <td className="p-4">
                         <div className="flex flex-wrap gap-1">
-                          {player.specializations.slice(0, 2).map((spec, idx) => (
-                            <span key={idx} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+                          {player.specializations.slice(0, 2).map((spec, i) => (
+                            <span key={i} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
                               {spec}
                             </span>
                           ))}
@@ -417,13 +685,22 @@ export default function MarketData() {
         </CardContent>
       </Card>
 
+      {/* Stock Chart Modal */}
+      {chartPlayer && (
+        <StockChartModal
+          player={chartPlayer}
+          liveData={liveData}
+          onClose={() => setChartPlayer(null)}
+        />
+      )}
+
       {/* Player Detail Modal */}
       {selectedPlayer && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedPlayer(null)}
         >
-          <Card 
+          <Card
             className="bg-white border-slate-200 w-full max-w-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             data-testid="player-detail-modal"
@@ -431,8 +708,8 @@ export default function MarketData() {
             <CardHeader className="border-b border-slate-100 bg-slate-50/50">
               <div className="flex items-center gap-4">
                 {getLogo(selectedPlayer.name) ? (
-                  <img 
-                    src={getLogo(selectedPlayer.name)} 
+                  <img
+                    src={getLogo(selectedPlayer.name)}
                     alt={selectedPlayer.name}
                     className="w-14 h-14 rounded-xl object-contain bg-white border border-slate-100 shadow-sm"
                   />
@@ -459,16 +736,44 @@ export default function MarketData() {
                 <div className="bg-slate-50 rounded-lg p-4">
                   <p className="text-xs font-medium uppercase tracking-wider text-slate-500">STOCK PRICE</p>
                   <p className="text-xl font-mono font-bold text-slate-900 mt-1">
-                    {selectedPlayer.stock_price > 0 ? `$${selectedPlayer.stock_price.toFixed(2)}` : 'Private'}
+                    {(() => {
+                      const live = liveData[selectedPlayer.ticker];
+                      const price = live?.price ?? selectedPlayer.stock_price;
+                      return price > 0 ? `$${price.toFixed(2)}` : "Private";
+                    })()}
                   </p>
+                  {liveData[selectedPlayer.ticker] && (
+                    <p className="text-xs text-purple-500 mt-1 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse inline-block" />
+                      Live price
+                    </p>
+                  )}
                 </div>
                 <div className="bg-slate-50 rounded-lg p-4">
-                  <p className="text-xs font-medium uppercase tracking-wider text-slate-500">CHANGE</p>
-                  <p className={`text-xl font-mono font-bold mt-1 ${
-                    selectedPlayer.change_percent >= 0 ? 'text-emerald-600' : 'text-rose-600'
-                  }`}>
-                    {selectedPlayer.change_percent >= 0 ? '+' : ''}{selectedPlayer.change_percent}%
-                  </p>
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-500">CHANGE (TODAY)</p>
+                  {(() => {
+                    const live = liveData[selectedPlayer.ticker];
+                    const change = live?.change_percent ?? selectedPlayer.change_percent;
+                    const pos = change >= 0;
+                    return (
+                      <div>
+                        <p className={`text-xl font-mono font-bold mt-1 ${pos ? "text-emerald-600" : "text-rose-600"}`}>
+                          {pos ? "+" : ""}{change.toFixed(2)}%
+                        </p>
+                        {!isPrivate(selectedPlayer.ticker) && (
+                          <button
+                            className="text-xs text-purple-600 underline mt-1 cursor-pointer"
+                            onClick={() => {
+                              setSelectedPlayer(null);
+                              setChartPlayer(selectedPlayer);
+                            }}
+                          >
+                            View chart →
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="bg-slate-50 rounded-lg p-4">
                   <p className="text-xs font-medium uppercase tracking-wider text-slate-500">MARKET CAP</p>
@@ -479,12 +784,12 @@ export default function MarketData() {
                   <p className="text-xl font-mono font-bold text-slate-900 mt-1">${selectedPlayer.revenue}B</p>
                 </div>
               </div>
-              
+
               <div>
                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500 mb-2">EMPLOYEES</p>
                 <p className="text-slate-900 font-medium">{selectedPlayer.employees.toLocaleString()}</p>
               </div>
-              
+
               <div>
                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500 mb-2">SPECIALIZATIONS</p>
                 <div className="flex flex-wrap gap-2">

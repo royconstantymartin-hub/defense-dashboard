@@ -15,6 +15,7 @@ import asyncio
 import jwt
 import bcrypt
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -396,6 +397,39 @@ async def delete_defense_player(player_id: str, current_user: dict = Depends(get
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Player not found")
     return {"status": "deleted"}
+
+# ============= LIVE STOCK PRICE ROUTES =============
+
+@api_router.get("/stock-prices")
+async def get_stock_prices(tickers: str):
+    """
+    Get live stock prices for multiple tickers (comma-separated).
+    Results are cached for 1 hour.
+    Private companies (ticker contains 'PRIV' or is 'Private') are skipped.
+    """
+    ticker_list = [
+        t.strip() for t in tickers.split(",")
+        if t.strip() and "PRIV" not in t.upper() and t.strip().upper() != "PRIVATE"
+    ]
+    if not ticker_list:
+        return {}
+    data = await get_bulk_prices(ticker_list)
+    return data
+
+
+@api_router.get("/stock-history/{ticker}")
+async def get_stock_history_route(ticker: str, period: str = "1d"):
+    """
+    Get historical price data for a ticker.
+    period: 1d (intraday 5m), 1w (5 days 1h), 1mo (daily), 1y (weekly)
+    Results are cached for 1 hour.
+    """
+    if period not in ("1d", "1w", "1mo", "1y"):
+        raise HTTPException(status_code=400, detail="period must be one of: 1d, 1w, 1mo, 1y")
+    data = await fetch_stock_history(ticker, period)
+    if data is None:
+        raise HTTPException(status_code=502, detail=f"Could not fetch data for ticker: {ticker}")
+    return {"ticker": ticker, "period": period, "data": data}
 
 # ============= EXPENDITURES ROUTES =============
 
