@@ -577,6 +577,21 @@ async def run_news_scraper_job() -> dict:
     """Run the scraper pipeline, deduplicate, and upsert results into MongoDB."""
     from services.news_scraper import scrape_all_sources, deduplicate_articles
 
+    # Sources whose content is defence-focused — no minimum score required
+    _SPECIALTY_SOURCES = {
+        "Breaking Defense", "Defense Post", "Defense News",
+        "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
+    }
+    _FR_SOURCES = {"Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos"}
+    _SOURCE_REGION = {
+        "Breaking Defense": "us",   "Defense News": "us",   "Defense Industry Daily": "us",
+        "Opex360": "europe",        "Meta-Défense": "europe",
+        "Le Monde": "europe",       "Le Figaro": "europe",  "Les Echos": "europe",
+        "NATO": "europe",
+        "Defense Post": "global",   "BBC News": "global",
+        "The Guardian": "global",   "Janes": "global",
+    }
+
     logger.info("News scraper job started")
     try:
         raw_articles = await asyncio.to_thread(scrape_all_sources)
@@ -585,28 +600,44 @@ async def run_news_scraper_job() -> dict:
         unique_articles = deduplicate_articles(raw_articles)
         duplicates_removed = articles_found - len(unique_articles)
 
-        # Sort by date descending, keep top 15
+        # Drop clearly off-topic articles from mainstream sources
+        MIN_MAINSTREAM_SCORE = 20
+        unique_articles = [
+            a for a in unique_articles
+            if a.get("source") in _SPECIALTY_SOURCES
+            or a.get("relevanceScore", 0) >= MIN_MAINSTREAM_SCORE
+        ]
+
+        # Sort by relevance (desc) then date (desc), keep top 40
         unique_articles.sort(
-            key=lambda x: x.get("publishedAt", datetime.min.replace(tzinfo=timezone.utc)),
+            key=lambda x: (
+                x.get("relevanceScore", 0),
+                x.get("publishedAt", datetime.min.replace(tzinfo=timezone.utc)),
+            ),
             reverse=True,
         )
-        unique_articles = unique_articles[:15]
+        unique_articles = unique_articles[:40]
 
         scraped_at = datetime.now(timezone.utc)
         saved = 0
         for article in unique_articles:
             try:
                 pub_at = article.get("publishedAt", scraped_at)
+                src    = article.get("source", "")
+                lang   = article.get("language") or ("fr" if src in _FR_SOURCES else "en")
+                region = article.get("region")   or _SOURCE_REGION.get(src, "global")
                 doc = {
                     "title":          article.get("title", ""),
                     "url":            article.get("url", ""),
                     "image":          article.get("image"),
                     "summary":        article.get("summary", ""),
-                    "source":         article.get("source", ""),
+                    "source":         src,
                     "publishedAt":    pub_at.isoformat() if isinstance(pub_at, datetime) else pub_at,
                     "scrapedAt":      scraped_at.isoformat(),
                     "category":       article.get("category", "INDUSTRY"),
                     "relevanceScore": article.get("relevanceScore", 0),
+                    "language":       lang,
+                    "region":         region,
                 }
                 await db.news_articles.update_one(
                     {"url": doc["url"]},
@@ -618,10 +649,10 @@ async def run_news_scraper_job() -> dict:
                 logger.error("Error saving article '%s': %s", article.get("title", ""), exc)
 
         stats = {
-            "sources_attempted": 7,
-            "articles_found":    articles_found,
+            "sources_attempted":  len(_SPECIALTY_SOURCES) + 3,  # specialty + mainstream
+            "articles_found":     articles_found,
             "duplicates_removed": duplicates_removed,
-            "articles_saved":    saved,
+            "articles_saved":     saved,
         }
         logger.info("News scraper job complete: %s", stats)
         return stats
@@ -632,6 +663,75 @@ async def run_news_scraper_job() -> dict:
 
 # ============= NEWS ROUTES =============
 
+# Source-level metadata used both for query fallback and response normalisation
+_FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos"]
+_FR_SOURCES_SET = set(_FR_SOURCES)
+_SOURCE_REGION_MAP: dict = {
+    "Breaking Defense": "us",   "Defense News": "us",   "Defense Industry Daily": "us",
+    "Opex360": "europe",        "Meta-Défense": "europe",
+    "Le Monde": "europe",       "Le Figaro": "europe",  "Les Echos": "europe",
+    "NATO": "europe",
+    "Defense Post": "global",   "BBC News": "global",
+    "The Guardian": "global",   "Janes": "global",
+}
+# Invert: region → list of sources whose default region is that value
+_REGION_SOURCES: dict = {}
+for _src, _rgn in _SOURCE_REGION_MAP.items():
+    _REGION_SOURCES.setdefault(_rgn, []).append(_src)
+
+
+def _build_news_query(
+    language: Optional[str],
+    region: Optional[str],
+    cutoff: str,
+) -> dict:
+    """
+    Build a MongoDB query that works for both new articles (with language/region fields)
+    and old articles (without those fields, identified by source name).
+    """
+    conditions: list = [{"scrapedAt": {"$gte": cutoff}}]
+
+    if language == "fr":
+        conditions.append({"$or": [
+            {"language": "fr"},
+            {"source": {"$in": _FR_SOURCES}, "language": {"$exists": False}},
+        ]})
+    elif language == "en":
+        conditions.append({"$or": [
+            {"language": "en"},
+            {"source": {"$nin": _FR_SOURCES}, "language": {"$exists": False}},
+        ]})
+
+    if region and region != "all":
+        src_for_region = _REGION_SOURCES.get(region, [])
+        region_or: list = [{"region": region}]
+        if src_for_region:
+            region_or.append({"source": {"$in": src_for_region}, "region": {"$exists": False}})
+        conditions.append({"$or": region_or})
+
+    return {"$and": conditions} if len(conditions) > 1 else conditions[0]
+
+
+def _normalise_article(a: dict) -> dict:
+    """Ensure every article has correct datetime, language, and region fields."""
+    for field in ("publishedAt", "scrapedAt"):
+        val = a.get(field)
+        if isinstance(val, str):
+            try:
+                a[field] = datetime.fromisoformat(val)
+            except Exception:
+                a[field] = datetime.now(timezone.utc)
+    a.setdefault("relevanceScore", 0)
+    # Derive language from source name when the field is absent (old articles)
+    src = a.get("source", "")
+    if not a.get("language"):
+        a["language"] = "fr" if src in _FR_SOURCES_SET else "en"
+    # Derive region from source name when the field is absent
+    if not a.get("region"):
+        a["region"] = _SOURCE_REGION_MAP.get(src, "global")
+    return a
+
+
 @api_router.get("/news")
 async def get_news(
     language: Optional[str] = None,
@@ -641,44 +741,24 @@ async def get_news(
     """
     Return up to `limit` articles (max 50) sorted by relevance then date.
     Optional filters: language ("en"|"fr"), region ("us"|"europe"|"asia-pacific"|…).
-    Falls back to latest articles when no fresh ones exist.
+    Falls back to the most recent batch when no fresh articles match.
     """
     limit = min(max(limit, 1), 50)
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
 
-    query: dict = {"scrapedAt": {"$gte": cutoff}}
-    if language and language != "all":
-        query["language"] = language
-    if region and region != "all":
-        query["region"] = region
-
+    query = _build_news_query(language, region, cutoff)
     articles = await db.news_articles.find(
         query, {"_id": 0}
     ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(limit).to_list(limit)
 
     if not articles:
-        fb_query: dict = {}
-        if language and language != "all":
-            fb_query["language"] = language
-        if region and region != "all":
-            fb_query["region"] = region
+        # Fallback: ignore time window but keep lang/region filters
+        fb_query = _build_news_query(language, region, "1970-01-01T00:00:00+00:00")
         articles = await db.news_articles.find(
             fb_query, {"_id": 0}
         ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(limit).to_list(limit)
 
-    for a in articles:
-        for field in ("publishedAt", "scrapedAt"):
-            val = a.get(field)
-            if isinstance(val, str):
-                try:
-                    a[field] = datetime.fromisoformat(val)
-                except Exception:
-                    a[field] = datetime.now(timezone.utc)
-        a.setdefault("relevanceScore", 0)
-        a.setdefault("language", "en")
-        a.setdefault("region", "global")
-
-    return articles
+    return [_normalise_article(a) for a in articles]
 
 
 # ============= BOOKMARKS =============
