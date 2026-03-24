@@ -560,12 +560,17 @@ async def seed_data():
             regulation = Regulation(**r)
             await db.regulations.insert_one(regulation.model_dump())
     
-    # Seed Products
+    # Seed Products (insert new, update image_url for existing)
     for p in PRODUCTS_DATA:
         existing = await db.products.find_one({"name": p['name']})
         if not existing:
             product = Product(**p)
             await db.products.insert_one(product.model_dump())
+        elif p.get('image_url') and existing.get('image_url') != p.get('image_url'):
+            await db.products.update_one(
+                {"name": p['name']},
+                {"$set": {"image_url": p['image_url']}}
+            )
     
     # Get counts
     players_count = await db.defense_players.count_documents({})
