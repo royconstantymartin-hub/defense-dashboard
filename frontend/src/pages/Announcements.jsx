@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/select";
 import {
   Search,
-  Calendar,
   ExternalLink,
   Filter,
   Rss,
@@ -19,7 +18,7 @@ import {
   TrendingUp,
   LogIn,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, formatDistanceToNow, differenceInHours } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/App";
 
@@ -54,6 +53,19 @@ function getRelevanceMeta(score) {
   return               { label: "Low",    color: "bg-slate-300"   };
 }
 
+// ── Helpers ── relative time ──────────────────────────────────────────────────
+
+function relativeTime(dateStr) {
+  try {
+    const d = new Date(dateStr);
+    const h = differenceInHours(new Date(), d);
+    if (h < 1)  return "Just now";
+    if (h < 24) return `${h}h ago`;
+    if (h < 48) return "Yesterday";
+    return format(d, "MMM d");
+  } catch { return ""; }
+}
+
 // ── Placeholder SVG ───────────────────────────────────────────────────────────
 
 function NewsPlaceholder({ source }) {
@@ -74,48 +86,55 @@ function NewsPlaceholder({ source }) {
 // ── NewsCard ──────────────────────────────────────────────────────────────────
 
 function SourceFavicon({ url, source }) {
-  const [faviconError, setFaviconError] = useState(false);
+  const [err, setErr] = useState(false);
   let domain = "";
   try { domain = new URL(url).hostname; } catch { /* empty */ }
 
+  // First letter of source name as fallback avatar
+  const initial = source ? source.charAt(0).toUpperCase() : "?";
   const faviconUrl = domain
-    ? `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
+    ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64`
     : null;
 
   return (
-    <span className="flex items-center gap-1.5 min-w-0">
-      {faviconUrl && !faviconError ? (
-        <img
-          src={faviconUrl}
-          alt=""
-          width={14}
-          height={14}
-          className="rounded-sm flex-shrink-0"
-          onError={() => setFaviconError(true)}
-        />
-      ) : (
-        <Rss className="w-3 h-3 text-slate-400 flex-shrink-0" />
-      )}
-      <span className="text-xs text-slate-500 font-medium truncate max-w-[120px]">{source}</span>
+    <span className="flex items-center gap-2 min-w-0">
+      <span className="w-5 h-5 rounded-md flex-shrink-0 overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
+        {faviconUrl && !err ? (
+          <img
+            src={faviconUrl}
+            alt=""
+            width={20}
+            height={20}
+            className="w-full h-full object-contain"
+            onError={() => setErr(true)}
+          />
+        ) : (
+          <span className="text-[9px] font-bold text-slate-500 leading-none">{initial}</span>
+        )}
+      </span>
+      <span className="text-xs text-slate-500 font-medium truncate max-w-[130px]">{source}</span>
     </span>
   );
 }
 
 function NewsCard({ article }) {
   const [imgError, setImgError] = useState(false);
-  const relevance = getRelevanceMeta(article.relevanceScore ?? 0);
+  const score = article.relevanceScore ?? 0;
+  const isNew = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
 
-  let dateLabel = "";
-  try {
-    dateLabel = format(new Date(article.publishedAt), "MMM dd, yyyy");
-  } catch { /* empty */ }
+  // Score badge: only show for high; medium gets a subtle dot; low hidden
+  const scoreBadge = score >= 70
+    ? <span className="absolute top-2 left-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">HIGH</span>
+    : score >= 35
+    ? <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-white" title={`Score ${score}`} />
+    : null;
 
   return (
     <a
       href={article.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md hover:border-slate-300 transition-all flex flex-col group cursor-pointer"
+      className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-lg hover:border-purple-200 transition-all flex flex-col group cursor-pointer"
     >
       {/* Cover image */}
       <div className="relative h-44 bg-slate-100 overflow-hidden flex-shrink-0">
@@ -130,21 +149,20 @@ function NewsCard({ article }) {
         ) : (
           <NewsPlaceholder source={article.source} />
         )}
-
-        {/* Relevance badge — top-right overlay */}
-        <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-slate-900/80 backdrop-blur-sm rounded-full px-2 py-1">
-          <span className={`w-1.5 h-1.5 rounded-full ${relevance.color}`} />
-          <span className="text-white text-xs font-medium">{article.relevanceScore ?? 0}</span>
-          <span className="text-slate-300 text-xs">/100</span>
-        </div>
+        {scoreBadge}
+        {isNew && (
+          <span className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">
+            NEW
+          </span>
+        )}
       </div>
 
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
-        {/* Source row — favicon + name + category */}
-        <div className="flex items-center justify-between gap-2 mb-2.5">
+        {/* Source row */}
+        <div className="flex items-center justify-between gap-2 mb-3">
           <SourceFavicon url={article.url} source={article.source} />
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full border flex-shrink-0 ${getCategoryStyle(article.category)}`}>
+          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0 uppercase tracking-wide ${getCategoryStyle(article.category)}`}>
             {article.category}
           </span>
         </div>
@@ -156,43 +174,22 @@ function NewsCard({ article }) {
 
         {/* Summary */}
         {article.summary && (
-          <p className="text-slate-500 text-xs mt-2 line-clamp-2 leading-relaxed">
+          <p className="text-slate-400 text-xs mt-2 line-clamp-2 leading-relaxed">
             {article.summary}
           </p>
         )}
 
         {/* Footer */}
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-          <span className="flex items-center gap-1 text-xs text-slate-400">
-            <Calendar className="w-3 h-3" />
-            {dateLabel}
+          <span className="text-xs text-slate-400">
+            {relativeTime(article.publishedAt)}
           </span>
-          <span className="flex items-center gap-1 text-xs font-medium text-purple-600 group-hover:text-purple-700 transition-colors">
+          <span className="flex items-center gap-1 text-xs font-medium text-purple-600 group-hover:gap-1.5 transition-all">
             Read more <ExternalLink className="w-3 h-3" />
           </span>
         </div>
       </div>
     </a>
-  );
-}
-
-// ── Relevance legend ──────────────────────────────────────────────────────────
-
-function RelevanceLegend() {
-  return (
-    <div className="flex items-center gap-4 text-xs text-slate-500">
-      <span className="font-medium text-slate-600">Relevance score:</span>
-      {[
-        { label: "High ≥ 70",  color: "bg-emerald-500" },
-        { label: "Medium ≥ 35", color: "bg-amber-400" },
-        { label: "Low < 35",   color: "bg-slate-300" },
-      ].map(({ label, color }) => (
-        <span key={label} className="flex items-center gap-1">
-          <span className={`w-2 h-2 rounded-full ${color}`} />
-          {label}
-        </span>
-      ))}
-    </div>
   );
 }
 
@@ -254,8 +251,7 @@ export default function Announcements() {
   });
 
   // Stats for header bar
-  const highCount   = articles.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
-  const mediumCount = articles.filter((a) => (a.relevanceScore ?? 0) >= 35 && (a.relevanceScore ?? 0) < 70).length;
+  const highCount = articles.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
 
   return (
     <div data-testid="announcements-page" className="space-y-6 animate-fade-in">
@@ -272,15 +268,13 @@ export default function Announcements() {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Stats pills */}
+          {/* Stats pill */}
           {articles.length > 0 && (
             <div className="flex items-center gap-2 text-xs bg-white border border-slate-200 rounded-lg px-3 py-2">
               <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
-              <span className="text-emerald-700 font-medium">{highCount} high</span>
-              <span className="text-slate-300">·</span>
-              <span className="text-amber-600 font-medium">{mediumCount} medium</span>
-              <span className="text-slate-300">·</span>
-              <span className="text-slate-500">{articles.length} total</span>
+              {highCount > 0 && <span className="text-emerald-700 font-semibold">{highCount} high priority</span>}
+              {highCount > 0 && <span className="text-slate-300">·</span>}
+              <span className="text-slate-500">{articles.length} articles</span>
             </div>
           )}
 
@@ -313,9 +307,6 @@ export default function Announcements() {
           )}
         </div>
       </div>
-
-      {/* ── Relevance legend ── */}
-      <RelevanceLegend />
 
       {/* ── Filters ── */}
       <div className="flex flex-col sm:flex-row gap-3">
