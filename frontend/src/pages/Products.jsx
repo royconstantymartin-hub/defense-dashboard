@@ -572,14 +572,18 @@ export default function Products() {
             onClick={() => setSelectedProduct(null)}
           />
           <div
-            className="fixed z-50 w-96 max-h-[85vh] overflow-y-auto shadow-2xl rounded-lg"
+            className="fixed z-50 w-96 overflow-y-auto shadow-2xl rounded-lg"
             style={(() => {
-              const W = 384, margin = 12;
-              const left = popupPosition.x + 16 + W > window.innerWidth
-                ? popupPosition.x - W - 8
-                : popupPosition.x + 16;
-              const top = Math.max(margin, Math.min(popupPosition.y - 40, window.innerHeight - 520 - margin));
-              return { left, top };
+              const W = 384, margin = 8, popupH = 480;
+              const { x, y } = popupPosition;
+              const left = x + 16 + W > window.innerWidth - margin
+                ? Math.max(margin, x - W - 8)
+                : x + 16;
+              // Show below cursor if enough space, otherwise above
+              const top = y + popupH + margin < window.innerHeight
+                ? y
+                : Math.max(margin, y - popupH);
+              return { left, top, maxHeight: popupH };
             })()}
             onClick={(e) => e.stopPropagation()}
           >
