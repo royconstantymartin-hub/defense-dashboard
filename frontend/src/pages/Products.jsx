@@ -83,7 +83,6 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedManufacturer, setSelectedManufacturer] = useState("all");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showComparison, setShowComparison]= useState(false);
@@ -375,22 +374,25 @@ export default function Products() {
               className={`bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer overflow-hidden ${
                 isSelectedForCompare ? 'ring-2 ring-purple-500 border-purple-500' : ''
               }`}
-              onClick={(e) => compareMode ? toggleProductForCompare(product) : (setPopupPosition({ x: e.clientX, y: e.clientY }), setSelectedProduct(product))}
+              onClick={(e) => compareMode ? toggleProductForCompare(product) : setSelectedProduct(product)}
               data-testid={`product-card-${product.id}`}
             >
               {/* Image or Placeholder */}
               <div className="h-40 bg-gradient-to-br from-slate-100 to-slate-50 relative">
                 {product.image_url ? (
-                  <img 
-                    src={product.image_url} 
+                  <img
+                    src={product.image_url}
                     alt={product.name}
                     className="w-full h-full object-cover"
+                    onError={(ev) => {
+                      ev.target.style.display = 'none';
+                      ev.target.nextSibling.style.display = 'flex';
+                    }}
                   />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Icon className="w-16 h-16 text-slate-300" />
-                  </div>
-                )}
+                ) : null}
+                <div className="w-full h-full items-center justify-center" style={{ display: product.image_url ? 'none' : 'flex' }}>
+                  <Icon className="w-16 h-16 text-slate-300" />
+                </div>
                 <span className={`absolute top-2 right-2 text-xs font-medium px-2 py-0.5 rounded-full border ${getStatusStyle(product.status)}`}>
                   {product.status.toUpperCase()}
                 </span>
@@ -486,20 +488,22 @@ export default function Products() {
                     {selectedForCompare.map(product => (
                       <th key={product.id} className="text-center p-4">
                         <div className="flex flex-col items-center gap-2">
-                          {product.image_url ? (
-                            <img 
-                              src={product.image_url} 
-                              alt={product.name}
-                              className="w-20 h-20 object-cover rounded-lg border border-slate-200"
-                            />
-                          ) : (
-                            <div className="w-20 h-20 bg-slate-100 rounded-lg flex items-center justify-center">
-                              {(() => {
-                                const Icon = getCategoryIcon(product.category);
-                                return <Icon className="w-10 h-10 text-slate-400" />;
-                              })()}
-                            </div>
-                          )}
+                          {(() => {
+                            const CmpIcon = getCategoryIcon(product.category);
+                            return (
+                              <div className="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden bg-slate-100 relative flex items-center justify-center">
+                                <CmpIcon className="w-10 h-10 text-slate-300 absolute" />
+                                {product.image_url && (
+                                  <img
+                                    src={product.image_url}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover relative z-10"
+                                    onError={(ev) => { ev.target.style.display = 'none'; }}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })()}
                           <span className="text-slate-900 font-medium text-sm">{product.name}</span>
                           <span className="text-xs text-slate-500">{product.manufacturer}</span>
                         </div>
@@ -576,45 +580,39 @@ export default function Products() {
         </div>
       )}
 
-      {/* Product Detail Popup */}
+      {/* Product Detail Modal */}
       {selectedProduct && (
-        <>
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedProduct(null)}
+        >
           <div
-            className="fixed inset-0 z-50"
-            onClick={() => setSelectedProduct(null)}
-          />
-          <div
-            className="fixed z-50 w-96 max-h-[85vh] overflow-y-auto shadow-2xl rounded-lg"
-            style={(() => {
-              const W = 384, margin = 12;
-              const left = popupPosition.x + 16 + W > window.innerWidth
-                ? popupPosition.x - W - 8
-                : popupPosition.x + 16;
-              const top = Math.max(margin, Math.min(popupPosition.y - 40, window.innerHeight - 520 - margin));
-              return { left, top };
-            })()}
+            className="w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl rounded-xl"
             onClick={(e) => e.stopPropagation()}
           >
           <Card
-            className="bg-white border-slate-200 w-full shadow-none"
+            className="bg-white border-slate-200 w-full shadow-none rounded-xl overflow-hidden"
             data-testid="product-detail-modal"
           >
             {/* Header Image */}
-            <div className="h-48 bg-gradient-to-br from-slate-100 to-slate-50 relative">
+            <div className="h-56 bg-gradient-to-br from-slate-100 to-slate-50 relative">
               {selectedProduct.image_url ? (
-                <img 
-                  src={selectedProduct.image_url} 
+                <img
+                  src={selectedProduct.image_url}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover"
+                  onError={(ev) => {
+                    ev.target.style.display = 'none';
+                    ev.target.nextSibling.style.display = 'flex';
+                  }}
                 />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  {(() => {
-                    const Icon = getCategoryIcon(selectedProduct.category);
-                    return <Icon className="w-24 h-24 text-slate-300" />;
-                  })()}
-                </div>
-              )}
+              ) : null}
+              <div className="w-full h-full items-center justify-center" style={{ display: selectedProduct.image_url ? 'none' : 'flex' }}>
+                {(() => {
+                  const Icon = getCategoryIcon(selectedProduct.category);
+                  return <Icon className="w-24 h-24 text-slate-300" />;
+                })()}
+              </div>
               <span className={`absolute top-4 right-4 text-xs font-medium px-3 py-1 rounded-full border ${getStatusStyle(selectedProduct.status)}`}>
                 {selectedProduct.status.toUpperCase()}
               </span>
@@ -693,7 +691,7 @@ export default function Products() {
             </CardContent>
           </Card>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
