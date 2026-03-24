@@ -403,12 +403,91 @@ def _scrape_janes() -> List[Dict]:
     return articles
 
 
+def _scrape_defensepost() -> List[Dict]:
+    """
+    Scrape The Defense Post homepage (RSS feed redirects to homepage HTML).
+    Selectors derived from Jannah/TieTheme WordPress template:
+      • li.post-item           — article container
+      • a.post-thumb           — thumbnail link carrying the article URL + image
+      • h2.post-title a        — title and canonical URL
+      • span.date.meta-item    — publication date text
+      • p.post-excerpt         — optional excerpt (featured article only)
+    """
+    articles: List[Dict] = []
+    url = "https://thedefensepost.com/"
+    try:
+        resp = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
+
+        items = soup.select("li.post-item")
+
+        for item in items[:20]:
+            title_tag = item.select_one("h2.post-title a") or item.select_one("h3.post-title a")
+            if not title_tag:
+                continue
+
+            title = title_tag.get_text(strip=True)
+            href  = title_tag.get("href", "").strip()
+            if not title or not href.startswith("http"):
+                continue
+
+            # Image — prefer the post-thumb img (higher resolution)
+            image_url: Optional[str] = None
+            thumb = item.select_one("a.post-thumb img")
+            if thumb:
+                # srcset first entry is usually the small size; pick largest available
+                srcset = thumb.get("srcset", "")
+                if srcset:
+                    srcs = [s.strip().split(" ")[0] for s in srcset.split(",") if s.strip()]
+                    image_url = srcs[-1] if srcs else None
+                if not image_url:
+                    image_url = thumb.get("src") or thumb.get("data-src")
+
+            # Date
+            pub_date = datetime.now(timezone.utc)
+            date_el = item.select_one("span.date") or item.select_one(".meta-item.tie-icon")
+            if date_el:
+                dt_text = date_el.get_text(strip=True)
+                try:
+                    from datetime import datetime as _dt
+                    pub_date = _dt.strptime(dt_text, "%B %d, %Y").replace(tzinfo=timezone.utc)
+                except Exception:
+                    pass
+
+            # Excerpt
+            summary = ""
+            excerpt_el = item.select_one("p.post-excerpt")
+            if excerpt_el:
+                summary = excerpt_el.get_text(strip=True)[:300]
+
+            region = detect_region_from_text(title, summary) or "global"
+            articles.append({
+                "title":          title,
+                "url":            href,
+                "image":          image_url,
+                "summary":        summary,
+                "source":         "The Defense Post",
+                "publishedAt":    pub_date,
+                "category":       assign_category(title),
+                "relevanceScore": compute_relevance_score(title, summary),
+                "language":       "en",
+                "region":         region,
+            })
+
+        logger.info("[The Defense Post] Scraped %d articles", len(articles))
+    except Exception as exc:
+        logger.error("[The Defense Post] HTML scrape failed: %s", exc)
+
+    return articles
+
+
 # ── RSS source registry ──────────────────────────────────────────────────────
 
 RSS_SOURCES: List[Dict] = [
     # ── Defense specialty — English ─────────────────────────────────────────
+    # Note: The Defense Post RSS redirects to homepage; scraped via _scrape_defensepost()
     {"name": "Breaking Defense",       "url": "https://breakingdefense.com/feed/",                          "language": "en", "region": "us"},
-    {"name": "Defense Post",           "url": "https://thedefensepost.com/feed/",                           "language": "en", "region": "global"},
     {"name": "Defense News",           "url": "https://www.defensenews.com/arc/outboundfeeds/rss/",         "language": "en", "region": "us"},
     {"name": "Defense Industry Daily", "url": "https://www.defenseindustrydaily.com/feed/",                 "language": "en", "region": "us"},
     # ── Defense specialty — French ──────────────────────────────────────────
@@ -423,7 +502,7 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Les Echos",              "url": "https://www.lesechos.fr/arc/outboundfeeds/rss/",             "language": "fr", "region": "europe"},
 ]
 
-HTML_SCRAPERS = [_scrape_nato, _scrape_janes]
+HTML_SCRAPERS = [_scrape_nato, _scrape_janes, _scrape_defensepost]
 
 
 # ── Public API ───────────────────────────────────────────────────────────────
