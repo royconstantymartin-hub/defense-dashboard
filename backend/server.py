@@ -87,6 +87,12 @@ class MAActivityCreate(BaseModel):
     status: str  # announced, pending, completed, cancelled
     deal_type: str  # acquisition, merger, joint_venture
     description: str
+    acquirer_country: Optional[str] = None   # ISO 3166-1 alpha-2
+    target_country: Optional[str] = None
+    acquirer_logo_domain: Optional[str] = None
+    target_logo_domain: Optional[str] = None
+    source_url: Optional[str] = None
+    rationale: Optional[str] = None          # 2-3 sentence strategic context
 
 class MAActivity(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -98,6 +104,12 @@ class MAActivity(BaseModel):
     deal_type: str
     description: str
     announced_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    acquirer_country: Optional[str] = None
+    target_country: Optional[str] = None
+    acquirer_logo_domain: Optional[str] = None
+    target_logo_domain: Optional[str] = None
+    source_url: Optional[str] = None
+    rationale: Optional[str] = None
 
 # Defense Player Model
 class DefensePlayerCreate(BaseModel):
@@ -303,6 +315,29 @@ async def get_ma_activities(status: Optional[str] = None, limit: int = 50):
             a['announced_date'] = datetime.fromisoformat(a['announced_date'])
     return activities
 
+@api_router.get("/ma-activities/historical", response_model=List[MAActivity])
+async def get_ma_historical(
+    acquirer: Optional[str] = None,
+    year: Optional[int] = None,
+    deal_type: Optional[str] = None,
+    limit: int = 200
+):
+    """Return all M&A activities for the historical 5-year table view."""
+    query: dict = {}
+    if acquirer:
+        query["acquirer"] = {"$regex": acquirer, "$options": "i"}
+    if deal_type:
+        query["deal_type"] = deal_type
+    if year:
+        from_dt = datetime(year, 1, 1, tzinfo=timezone.utc).isoformat()
+        to_dt = datetime(year, 12, 31, 23, 59, 59, tzinfo=timezone.utc).isoformat()
+        query["announced_date"] = {"$gte": from_dt, "$lte": to_dt}
+    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).limit(limit).to_list(limit)
+    for a in activities:
+        if isinstance(a['announced_date'], str):
+            a['announced_date'] = datetime.fromisoformat(a['announced_date'])
+    return activities
+
 @api_router.post("/ma-activities", response_model=MAActivity)
 async def create_ma_activity(data: MAActivityCreate, current_user: dict = Depends(get_current_user)):
     activity = MAActivity(**data.model_dump())
@@ -317,6 +352,12 @@ async def delete_ma_activity(activity_id: str, current_user: dict = Depends(get_
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Activity not found")
     return {"status": "deleted"}
+
+@api_router.post("/ma-activities/scrape")
+async def trigger_ma_scrape(current_user: dict = Depends(get_current_user)):
+    """Manually trigger the M&A scraper job."""
+    result = await run_ma_scraper_job()
+    return result
 
 # ============= DEFENSE PLAYERS ROUTES =============
 
@@ -630,6 +671,74 @@ async def trigger_scrape(current_user: dict = Depends(get_current_user)):
     stats = await run_news_scraper_job()
     return {"status": "ok", **stats}
 
+# ============= M&A SCRAPER JOB =============
+
+async def run_ma_scraper_job() -> dict:
+    """Scrape defense M&A signals from RSS feeds, deduplicate, and upsert into MongoDB."""
+    from services.ma_scraper import scrape_ma_signals, deduplicate_ma_signals
+
+    logger.info("M&A scraper job started")
+    try:
+        raw_signals = await asyncio.to_thread(scrape_ma_signals)
+        signals_found = len(raw_signals)
+
+        unique_signals = deduplicate_ma_signals(raw_signals)
+        duplicates_removed = signals_found - len(unique_signals)
+
+        scraped_at = datetime.now(timezone.utc)
+        saved = 0
+        for signal in unique_signals:
+            try:
+                # Upsert by (acquirer_norm, target_norm) key — never create hallucinated entries
+                key = {
+                    "acquirer_norm": signal.get("acquirer_norm", ""),
+                    "target_norm": signal.get("target_norm", ""),
+                }
+                if not key["acquirer_norm"] or not key["target_norm"]:
+                    continue  # skip if extraction failed
+
+                # Build the MAActivity doc — only fields extracted from real text
+                activity = MAActivity(
+                    acquirer=signal["acquirer"],
+                    target=signal["target"],
+                    deal_value=signal.get("deal_value", 0),
+                    status=signal.get("status", "announced"),
+                    deal_type=signal.get("deal_type", "acquisition"),
+                    description=signal.get("description", ""),
+                    announced_date=signal.get("announced_date", scraped_at),
+                    source_url=signal.get("source_url"),
+                    rationale=signal.get("rationale"),
+                    acquirer_country=signal.get("acquirer_country"),
+                    target_country=signal.get("target_country"),
+                    acquirer_logo_domain=signal.get("acquirer_logo_domain"),
+                    target_logo_domain=signal.get("target_logo_domain"),
+                )
+                doc = activity.model_dump()
+                doc["announced_date"] = doc["announced_date"].isoformat()
+                doc["acquirer_norm"] = key["acquirer_norm"]
+                doc["target_norm"] = key["target_norm"]
+                doc["scraped_at"] = scraped_at.isoformat()
+
+                existing = await db.ma_activities.find_one(key, {"_id": 0})
+                if not existing:
+                    await db.ma_activities.insert_one(doc)
+                    saved += 1
+                # Don't overwrite manually curated entries
+            except Exception as exc:
+                logger.error("Error saving M&A signal '%s': %s", signal.get("acquirer", ""), exc)
+
+        stats = {
+            "signals_found": signals_found,
+            "duplicates_removed": duplicates_removed,
+            "new_deals_saved": saved,
+        }
+        logger.info("M&A scraper job complete: %s", stats)
+        return stats
+
+    except Exception as exc:
+        logger.error("M&A scraper job failed: %s", exc)
+        return {"error": str(exc)}
+
 # ============= ROOT =============
 
 @api_router.get("/")
@@ -680,8 +789,9 @@ async def startup_event():
         logger.warning("Index creation warning: %s", exc)
 
     scheduler.add_job(run_news_scraper_job, "cron", hour=7, minute=0, id="daily_news_scraper")
+    scheduler.add_job(run_ma_scraper_job, "cron", hour=8, minute=0, id="daily_ma_scraper")
     scheduler.start()
-    logger.info("News scraper scheduler started — runs daily at 07:00 UTC")
+    logger.info("Schedulers started — news at 07:00 UTC, M&A at 08:00 UTC")
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())
