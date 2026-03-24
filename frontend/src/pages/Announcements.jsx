@@ -73,6 +73,34 @@ function NewsPlaceholder({ source }) {
 
 // ── NewsCard ──────────────────────────────────────────────────────────────────
 
+function SourceFavicon({ url, source }) {
+  const [faviconError, setFaviconError] = useState(false);
+  let domain = "";
+  try { domain = new URL(url).hostname; } catch { /* empty */ }
+
+  const faviconUrl = domain
+    ? `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
+    : null;
+
+  return (
+    <span className="flex items-center gap-1.5 min-w-0">
+      {faviconUrl && !faviconError ? (
+        <img
+          src={faviconUrl}
+          alt=""
+          width={14}
+          height={14}
+          className="rounded-sm flex-shrink-0"
+          onError={() => setFaviconError(true)}
+        />
+      ) : (
+        <Rss className="w-3 h-3 text-slate-400 flex-shrink-0" />
+      )}
+      <span className="text-xs text-slate-500 font-medium truncate max-w-[120px]">{source}</span>
+    </span>
+  );
+}
+
 function NewsCard({ article }) {
   const [imgError, setImgError] = useState(false);
   const relevance = getRelevanceMeta(article.relevanceScore ?? 0);
@@ -83,7 +111,12 @@ function NewsCard({ article }) {
   } catch { /* empty */ }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col group">
+    <a
+      href={article.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md hover:border-slate-300 transition-all flex flex-col group cursor-pointer"
+    >
       {/* Cover image */}
       <div className="relative h-44 bg-slate-100 overflow-hidden flex-shrink-0">
         {!imgError && article.image ? (
@@ -108,18 +141,16 @@ function NewsCard({ article }) {
 
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
-        {/* Category + source */}
-        <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${getCategoryStyle(article.category)}`}>
+        {/* Source row — favicon + name + category */}
+        <div className="flex items-center justify-between gap-2 mb-2.5">
+          <SourceFavicon url={article.url} source={article.source} />
+          <span className={`text-xs font-medium px-2 py-0.5 rounded-full border flex-shrink-0 ${getCategoryStyle(article.category)}`}>
             {article.category}
-          </span>
-          <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full truncate max-w-[120px]">
-            {article.source}
           </span>
         </div>
 
         {/* Title */}
-        <h3 className="text-slate-900 font-semibold text-sm leading-snug line-clamp-2 flex-1">
+        <h3 className="text-slate-900 font-semibold text-sm leading-snug line-clamp-3 flex-1 group-hover:text-purple-700 transition-colors">
           {article.title}
         </h3>
 
@@ -136,17 +167,12 @@ function NewsCard({ article }) {
             <Calendar className="w-3 h-3" />
             {dateLabel}
           </span>
-          <a
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs font-medium text-purple-600 hover:text-purple-700 transition-colors"
-          >
+          <span className="flex items-center gap-1 text-xs font-medium text-purple-600 group-hover:text-purple-700 transition-colors">
             Read more <ExternalLink className="w-3 h-3" />
-          </a>
+          </span>
         </div>
       </div>
-    </div>
+    </a>
   );
 }
 
