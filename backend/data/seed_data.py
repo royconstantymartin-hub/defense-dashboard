@@ -208,32 +208,38 @@ MA_DATA = [
     {
         "acquirer": "Safran", "target": "Collins Aerospace Actuation",
         "deal_value": 1800, "status": "announced", "deal_type": "acquisition",
-        "description": "Actuation systems portfolio expansion",
+        "description": "Acquisition of RTX's actuation & flight-control systems business",
         "rationale": (
-            "Safran acquires Collins Aerospace's actuation and flight-control systems "
-            "business to become one of the world's top two actuation suppliers. The deal "
-            "adds landing-gear, flight-control and electromechanical actuation lines. "
-            "Regulatory reviews are underway in the US, EU, and UK."
+            "Safran signs a deal to acquire Collins Aerospace's (RTX subsidiary) actuation "
+            "and flight-control systems business for approximately $1.8 billion, announced "
+            "December 2024. The transaction would make Safran the world's second-largest "
+            "actuation supplier, adding landing-gear, flight-control and electromechanical "
+            "actuation lines. Regulatory reviews are running in parallel in the US, EU, and UK; "
+            "closing is expected in the second half of 2025."
         ),
         "acquirer_country": "FR", "target_country": "US",
         "acquirer_logo_domain": "safran-group.com",
         "target_logo_domain": "collinsaerospace.com",
-        "announced_date": datetime(2026, 3, 15, tzinfo=timezone.utc),
+        "source_url": "https://www.safran-group.com/media/safran-signs-agreement-acquire-rtx-actuation-flight-controls-business-20241205",
+        "announced_date": datetime(2024, 12, 5, tzinfo=timezone.utc),
     },
     {
         "acquirer": "Rheinmetall", "target": "American Rheinmetall Vehicles",
         "deal_value": 950, "status": "pending", "deal_type": "joint_venture",
-        "description": "US Army OMFV bid joint venture",
+        "description": "US Army OMFV bid joint venture (Lynx KF41)",
         "rationale": (
-            "Rheinmetall and its US subsidiary form a joint venture to compete for the "
-            "US Army's Optionally Manned Fighting Vehicle (OMFV) programme, based on "
-            "the Lynx KF41 IFV platform. The vehicle would be built in the United "
-            "States to satisfy Buy American requirements."
+            "Rheinmetall establishes American Rheinmetall Vehicles LLC, a US-based "
+            "joint venture, to compete for the US Army's Optionally Manned Fighting "
+            "Vehicle (OMFV) programme. The proposal is centred on the Lynx KF41 IFV "
+            "platform and a commitment to manufacture the vehicle in the United States "
+            "to comply with Buy American provisions. The estimated programme value "
+            "exceeds $45 billion over its lifetime."
         ),
         "acquirer_country": "DE", "target_country": "US",
         "acquirer_logo_domain": "rheinmetall.com",
         "target_logo_domain": "rheinmetall.com",
-        "announced_date": datetime(2026, 1, 20, tzinfo=timezone.utc),
+        "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2022/rheinmetall-establishes-american-rheinmetall-vehicles-llc",
+        "announced_date": datetime(2022, 9, 14, tzinfo=timezone.utc),
     },
     # ── 2024–2025 ─────────────────────────────────────────────────────────────
     {
@@ -249,6 +255,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "lockheedmartin.com",
         "target_logo_domain": "terranorbital.com",
+        "source_url": "https://news.lockheedmartin.com/2024-09-05-Lockheed-Martin-Completes-Acquisition-of-Terran-Orbital",
         "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
     },
     {
@@ -264,6 +271,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "rtx.com",
         "target_logo_domain": "rtx.com",
+                "source_url": "https://investors.rtx.com/news-releases/news-release-details/rtx-completes-spin-off-nightwing",
         "announced_date": datetime(2024, 7, 18, tzinfo=timezone.utc),
     },
     {
@@ -279,6 +287,7 @@ MA_DATA = [
         "acquirer_country": "GB", "target_country": "US",
         "acquirer_logo_domain": "baesystems.com",
         "target_logo_domain": "ball.com",
+                "source_url": "https://www.baesystems.com/en/article/bae-systems-completes-acquisition-of-ball-aerospace",
         "announced_date": datetime(2023, 8, 28, tzinfo=timezone.utc),
     },
     {
@@ -294,6 +303,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "boeing.com",
         "target_logo_domain": "spiritaero.com",
+                "source_url": "https://investors.boeing.com/investors/news/press-release-details/2024/Boeing-and-Spirit-AeroSystems-Announce-Agreement/",
         "announced_date": datetime(2024, 7, 1, tzinfo=timezone.utc),
     },
     # ── 2022–2023 ─────────────────────────────────────────────────────────────
@@ -310,6 +320,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "aerojet.com",
+                "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
         "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
     },
     {
@@ -326,6 +337,7 @@ MA_DATA = [
         "acquirer_country": "DE", "target_country": "ES",
         "acquirer_logo_domain": "rheinmetall.com",
         "target_logo_domain": "maxamcorp.com",
+                "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2023/rheinmetall-acquires-expal-systems",
         "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
     },
     {
@@ -341,6 +353,7 @@ MA_DATA = [
         "acquirer_country": "KR", "target_country": "KR",
         "acquirer_logo_domain": "hanwha.com",
         "target_logo_domain": "hanwha.com",
+                "source_url": "https://www.hanwha.com/en/newsroom/press-releases/2023/hanwha-completes-acquisition-daewoo-shipbuilding",
         "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
     },
     {
@@ -356,6 +369,7 @@ MA_DATA = [
         "acquirer_country": "FR", "target_country": "US",
         "acquirer_logo_domain": "thalesgroup.com",
         "target_logo_domain": "imperva.com",
+                "source_url": "https://www.thalesgroup.com/en/worldwide/digital-identity-and-security/press-release/thales-completes-acquisition-imperva",
         "announced_date": datetime(2022, 12, 8, tzinfo=timezone.utc),
     },
     {
@@ -371,6 +385,7 @@ MA_DATA = [
         "acquirer_country": "GB", "target_country": "CZ",
         "acquirer_logo_domain": "baesystems.com",
         "target_logo_domain": "bisimulations.com",
+                "source_url": "https://www.baesystems.com/en/article/bae-systems-acquires-bohemia-interactive-simulations",
         "announced_date": datetime(2022, 4, 6, tzinfo=timezone.utc),
     },
     {
@@ -387,6 +402,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "GB",
         "acquirer_logo_domain": "parker.com",
         "target_logo_domain": "meggitt.com",
+                "source_url": "https://ir.parker.com/news-releases/news-release-details/parker-hannifin-completes-acquisition-meggitt-plc",
         "announced_date": datetime(2021, 8, 2, tzinfo=timezone.utc),
     },
     # ── 2021 ──────────────────────────────────────────────────────────────────
@@ -404,6 +420,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "teledyne.com",
         "target_logo_domain": "flir.com",
+                "source_url": "https://www.teledyne.com/en-us/about/news/2021/teledyne-technologies-completes-acquisition-of-flir-systems",
         "announced_date": datetime(2021, 1, 4, tzinfo=timezone.utc),
     },
     {
@@ -420,6 +437,7 @@ MA_DATA = [
         "acquirer_country": "GB", "target_country": "GB",
         "acquirer_logo_domain": "cobham.com",
         "target_logo_domain": "ultra.group",
+                "source_url": "https://www.cobham.com/about-cobham/media/press-releases/2022/cobham-completes-acquisition-ultra-electronics/",
         "announced_date": datetime(2021, 7, 16, tzinfo=timezone.utc),
     },
     {
@@ -436,6 +454,7 @@ MA_DATA = [
         "acquirer_country": "IT", "target_country": "DE",
         "acquirer_logo_domain": "leonardo.com",
         "target_logo_domain": "hensoldt.net",
+                "source_url": "https://www.leonardo.com/en/press-release-detail/-/detail/leonardo-acquires-25-1-stake-in-hensoldt",
         "announced_date": datetime(2020, 12, 10, tzinfo=timezone.utc),
     },
     {
@@ -451,6 +470,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "mrcy.com",
         "target_logo_domain": "mrcy.com",
+                "source_url": "https://ir.mrcy.com/news-releases/news-release-details/mercury-systems-completes-acquisition-physical-optics-corporation",
         "announced_date": datetime(2021, 2, 23, tzinfo=timezone.utc),
     },
     {
@@ -466,6 +486,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "shield.ai",
         "target_logo_domain": "shield.ai",
+                "source_url": "https://shield.ai/shield-ai-acquires-heron-systems",
         "announced_date": datetime(2021, 3, 25, tzinfo=timezone.utc),
     },
     {
@@ -481,6 +502,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "saic.com",
         "target_logo_domain": "saic.com",
+                "source_url": "https://investors.saic.com/news-releases/news-release-details/saic-completes-acquisition-halfaker-and-associates",
         "announced_date": datetime(2021, 10, 1, tzinfo=timezone.utc),
     },
     {
@@ -497,6 +519,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "DE",
         "acquirer_logo_domain": "avinc.com",
         "target_logo_domain": "telerob.com",
+                "source_url": "https://ir.avinc.com/news-releases/news-release-details/aerovironment-completes-acquisition-telerob",
         "announced_date": datetime(2021, 8, 16, tzinfo=timezone.utc),
     },
     # ── 2020 ──────────────────────────────────────────────────────────────────
@@ -514,6 +537,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "rtx.com",
         "target_logo_domain": "rtx.com",
+                "source_url": "https://investors.rtx.com/news-releases/news-release-details/raytheon-united-technologies-complete-merger-transaction",
         "announced_date": datetime(2020, 4, 3, tzinfo=timezone.utc),
     },
     {
@@ -530,6 +554,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "GB",
         "acquirer_logo_domain": "adventinternational.com",
         "target_logo_domain": "cobham.com",
+                "source_url": "https://www.cobham.com/about-cobham/media/press-releases/2020/advent-completes-acquisition-cobham/",
         "announced_date": datetime(2019, 7, 25, tzinfo=timezone.utc),
     },
     {
@@ -546,6 +571,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "GB",
         "acquirer_logo_domain": "transdigm.com",
         "target_logo_domain": "transdigm.com",
+                "source_url": "https://ir.transdigm.com/news-releases/news-release-details/transdigm-completes-acquisition-cobham-advanced-electronic",
         "announced_date": datetime(2020, 11, 4, tzinfo=timezone.utc),
     },
     # ── 2019 ──────────────────────────────────────────────────────────────────
@@ -562,6 +588,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "l3harris.com",
+                "source_url": "https://www.l3harris.com/newsroom/press-release/2019/06/l3-technologies-harris-corporation-merge-become-l3harris",
         "announced_date": datetime(2019, 6, 29, tzinfo=timezone.utc),
     },
     {
@@ -578,6 +605,7 @@ MA_DATA = [
         "acquirer_country": "FR", "target_country": "NL",
         "acquirer_logo_domain": "thalesgroup.com",
         "target_logo_domain": "thalesgroup.com",
+                "source_url": "https://www.thalesgroup.com/en/group/journalist/press_release/thales-finalizes-acquisition-gemalto",
         "announced_date": datetime(2017, 12, 17, tzinfo=timezone.utc),
     },
     {
@@ -593,6 +621,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "saic.com",
         "target_logo_domain": "saic.com",
+                "source_url": "https://investors.saic.com/news-releases/news-release-details/saic-completes-acquisition-engility",
         "announced_date": datetime(2018, 9, 10, tzinfo=timezone.utc),
     },
     {
@@ -609,6 +638,7 @@ MA_DATA = [
         "acquirer_country": "AE", "target_country": "AE",
         "acquirer_logo_domain": "edgegroup.ae",
         "target_logo_domain": "edgegroup.ae",
+                "source_url": "https://www.edgegroup.ae/en/media/press-release/edge-launches-uae-advanced-technology-group",
         "announced_date": datetime(2019, 11, 6, tzinfo=timezone.utc),
     },
     # ── 2018 ──────────────────────────────────────────────────────────────────
@@ -625,6 +655,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "northropgrumman.com",
         "target_logo_domain": "northropgrumman.com",
+                "source_url": "https://news.northropgrumman.com/news/releases/northrop-grumman-completes-acquisition-orbital-atk",
         "announced_date": datetime(2018, 6, 6, tzinfo=timezone.utc),
     },
     {
@@ -640,6 +671,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "gd.com",
         "target_logo_domain": "gd.com",
+                "source_url": "https://www.gd.com/news/pressreleases/2018/general-dynamics-completes-acquisition-csra",
         "announced_date": datetime(2018, 4, 2, tzinfo=timezone.utc),
     },
     {
@@ -656,6 +688,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "transdigm.com",
         "target_logo_domain": "transdigm.com",
+                "source_url": "https://ir.transdigm.com/news-releases/news-release-details/transdigm-group-completes-acquisition-esterline-technologies",
         "announced_date": datetime(2018, 10, 10, tzinfo=timezone.utc),
     },
     {
@@ -671,6 +704,7 @@ MA_DATA = [
         "acquirer_country": "FR", "target_country": "CA",
         "acquirer_logo_domain": "airbus.com",
         "target_logo_domain": "airbus.com",
+                "source_url": "https://www.airbus.com/en/newsroom/press-releases/2018-01-airbus-bombardier-c-series-partnership",
         "announced_date": datetime(2018, 1, 16, tzinfo=timezone.utc),
     },
     # ── Historical context ────────────────────────────────────────────────────
@@ -688,7 +722,137 @@ MA_DATA = [
         "acquirer_country": "DE", "target_country": "FR",
         "acquirer_logo_domain": "knds.de",
         "target_logo_domain": "knds.de",
+        "source_url": "https://www.knds.com/en/about/history",
         "announced_date": datetime(2015, 7, 1, tzinfo=timezone.utc),
+    },
+]
+
+# ── Participations, minority stakes, strategic investments and JVs ─────────
+# Includes corporate venture investments, equity stakes and bilateral JVs
+# that do not constitute full acquisitions.
+MA_EXTRA_DEALS = [
+    {
+        "acquirer": "Dassault Aviation", "target": "Harmattan.ai",
+        "deal_value": 0, "status": "completed", "deal_type": "strategic_investment",
+        "description": "Strategic minority stake in French AI-powered C2 startup",
+        "rationale": (
+            "Dassault Aviation takes a minority strategic stake in Harmattan.ai, a "
+            "French defence AI start-up specialising in AI-assisted command-and-control "
+            "decision support systems. The investment is part of Dassault's broader "
+            "strategy to embed AI natively into its future combat-aircraft and C2 "
+            "programmes. Harmattan.ai's software integrates with Dassault's FCAS and "
+            "Rafale upgrade roadmap, notably the F4 and F5 standard evolutions."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "dassault-aviation.com",
+        "target_logo_domain": "harmattan.ai",
+        "source_url": "https://www.dassault-aviation.com/en/group/press/press-kits/",
+        "announced_date": datetime(2024, 6, 17, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Rheinmetall + BAE Systems", "target": "RBSL (Rheinmetall BAE Systems Land)",
+        "deal_value": 0, "status": "completed", "deal_type": "joint_venture",
+        "description": "50/50 JV for UK land vehicle programmes (Ajax, Boxer, OMFV)",
+        "rationale": (
+            "Rheinmetall and BAE Systems establish Rheinmetall BAE Systems Land (RBSL), "
+            "a 50/50 joint venture, to deliver the British Army's fleet of next-generation "
+            "armoured vehicles. RBSL holds the prime contract for the Ajax armoured cavalry "
+            "vehicle, acts as the UK national integrator for Boxer, and supports the "
+            "British Army's Challenger 3 upgrade programme."
+        ),
+        "acquirer_country": "DE", "target_country": "GB",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "baesystems.com",
+        "source_url": "https://www.baesystems.com/en/article/bae-systems-and-rheinmetall-form-joint-venture-to-address-uk-armoured-vehicle-requirements",
+        "announced_date": datetime(2019, 5, 8, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Airbus + Safran", "target": "ArianeGroup",
+        "deal_value": 0, "status": "completed", "deal_type": "joint_venture",
+        "description": "50/50 JV — European sovereign space-launch systems champion",
+        "rationale": (
+            "Airbus and Safran merge their space-propulsion and launch-vehicle activities "
+            "into ArianeGroup, a 50/50 joint holding company, creating Europe's sovereign "
+            "space-launch system prime. ArianeGroup controls Ariane 6 development and "
+            "production, the M51 ballistic missile for the French Navy (MSBS programme), "
+            "and a portfolio of space-propulsion products. The entity is the sole prime "
+            "contractor to ESA for Ariane launchers."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "safran-group.com",
+        "source_url": "https://www.arianegroup.com/en/press-releases/creation-arianegroup",
+        "announced_date": datetime(2015, 6, 23, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Anduril Industries", "target": "Area-I",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Acquisition of ALTIUS-600 swarming loitering munition maker",
+        "rationale": (
+            "Anduril Industries acquires Area-I, the developer of the ALTIUS-600 "
+            "air-launched swarming munition, to bolster its counter-UAS and strike "
+            "capability. Area-I's ALTIUS-600 had already been selected under the US "
+            "Air Force's LCAAT (Low-Cost Attributable Aircraft Technology) programme. "
+            "The acquisition accelerates Anduril's push into autonomous strike systems "
+            "alongside its Ghost and Roadrunner platforms."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "anduril.com",
+        "target_logo_domain": "anduril.com",
+        "source_url": "https://www.anduril.com/article/anduril-industries-acquires-area-i/",
+        "announced_date": datetime(2021, 6, 7, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Airbus + BAE Systems + Leonardo", "target": "MBDA",
+        "deal_value": 0, "status": "completed", "deal_type": "joint_venture",
+        "description": "Tri-national JV — Europe's largest missile systems integrator",
+        "rationale": (
+            "Airbus (37.5%), BAE Systems (37.5%) and Leonardo (25%) jointly own MBDA, "
+            "Europe's largest missile systems house. MBDA produces Meteor, Aster, "
+            "Brimstone, Exocet, Storm Shadow/SCALP and the Common Anti-air Modular "
+            "Missile (CAMM/Sky Sabre) families. The tri-national governance structure "
+            "ensures member nations retain export sovereignty while pooling R&D."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "mbda-systems.com",
+        "target_logo_domain": "mbda-systems.com",
+        "source_url": "https://www.mbda-systems.com/about-us/our-shareholders/",
+        "announced_date": datetime(2001, 12, 18, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Anduril Industries", "target": "Adranos",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "High-energy solid-fuel propulsion technology acquisition",
+        "rationale": (
+            "Anduril acquires Adranos, a developer of ALITEC solid-fuel propellant "
+            "offering significantly higher energy density than conventional hydroxyl-"
+            "terminated polybutadiene (HTPB) propellants. The acquisition gives "
+            "Anduril proprietary propulsion technology for its hypersonic and "
+            "long-range munitions programmes, reducing dependence on legacy suppliers."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "anduril.com",
+        "target_logo_domain": "anduril.com",
+        "source_url": "https://www.anduril.com/article/anduril-acquires-adranos/",
+        "announced_date": datetime(2023, 4, 12, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Leonardo DRS", "target": "RADA Electronic Industries",
+        "deal_value": 510, "status": "completed", "deal_type": "acquisition",
+        "description": "Israeli tactical radar maker merger with US defence prime",
+        "rationale": (
+            "Leonardo DRS merges with RADA Electronic Industries, an Israeli developer "
+            "of small tactical radars widely used for counter-drone and force-protection "
+            "missions, in an all-stock deal valuing RADA at approximately $510 million. "
+            "The combined entity strengthens Leonardo DRS's ground-based radar and EW "
+            "portfolio and provides RADA with the scale and US government relationships "
+            "to win larger prime contracts."
+        ),
+        "acquirer_country": "IT", "target_country": "IL",
+        "acquirer_logo_domain": "leonardodrs.com",
+        "target_logo_domain": "rada.com",
+        "source_url": "https://ir.leonardodrs.com/news-releases/news-release-details/leonardo-drs-and-rada-electronic-industries-complete-merger",
+        "announced_date": datetime(2022, 11, 28, tzinfo=timezone.utc),
     },
 ]
 

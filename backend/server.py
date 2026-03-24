@@ -515,7 +515,7 @@ async def get_dashboard_stats():
 
 @api_router.post("/seed-data")
 async def seed_data():
-    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA
+    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA
     
     # Seed Defense Players (250+ companies)
     for p in DEFENSE_COMPANIES:
@@ -536,7 +536,7 @@ async def seed_data():
             await db.announcements.insert_one(doc)
     
     # Seed M&A Activities — upsert so enriched fields are applied to existing docs
-    for m in MA_DATA:
+    for m in MA_DATA + MA_EXTRA_DEALS:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc['announced_date'] = doc['announced_date'].isoformat()
@@ -779,6 +779,31 @@ async def _initial_scrape_if_empty():
     except Exception as exc:
         logger.error("Initial scrape error: %s", exc)
 
+async def _migrate_ma_enrichments():
+    """
+    On startup, apply the latest seed-data enrichments to any existing MA documents.
+    Triggered whenever any document is missing the acquirer_country field (old format).
+    """
+    try:
+        stale = await db.ma_activities.count_documents({"acquirer_country": {"$exists": False}})
+        if stale == 0:
+            return
+        logger.info("MA migration: %d stale documents — applying enrichments from seed data", stale)
+        from data.seed_data import MA_DATA, MA_EXTRA_DEALS
+        all_deals = MA_DATA + MA_EXTRA_DEALS
+        for m in all_deals:
+            activity = MAActivity(**m)
+            doc = activity.model_dump()
+            doc["announced_date"] = doc["announced_date"].isoformat()
+            await db.ma_activities.update_one(
+                {"acquirer": m["acquirer"], "target": m["target"]},
+                {"$set": doc},
+                upsert=True,
+            )
+        logger.info("MA migration complete — enrichments applied")
+    except Exception as exc:
+        logger.error("MA migration error: %s", exc)
+
 @app.on_event("startup")
 async def startup_event():
     """Create news_articles indexes, start scheduler, and auto-scrape if empty."""
@@ -797,6 +822,8 @@ async def startup_event():
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())
+    # Apply MA enrichments (dates, countries, logos, rationale) to any stale DB docs
+    asyncio.create_task(_migrate_ma_enrichments())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

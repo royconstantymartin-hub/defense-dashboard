@@ -29,10 +29,12 @@ const STATUS_OPTIONS = [
 ];
 
 const DEAL_TYPE_OPTIONS = [
-  { value: "all", label: "All Types" },
-  { value: "acquisition", label: "Acquisition" },
-  { value: "merger", label: "Merger" },
-  { value: "joint_venture", label: "Joint Venture" },
+  { value: "all",                  label: "All Types" },
+  { value: "acquisition",          label: "Acquisition" },
+  { value: "merger",               label: "Merger" },
+  { value: "joint_venture",        label: "Joint Venture" },
+  { value: "strategic_investment", label: "Strategic Investment" },
+  { value: "minority_stake",       label: "Minority Stake" },
 ];
 
 const YEAR_OPTIONS = [
@@ -126,11 +128,10 @@ function getLogoDomain(activity, side) {
   return activity[domainField] || LOGO_FALLBACK[activity[nameField]] || null;
 }
 
-// ── Logo component — 3-tier fallback: Clearbit → Google favicon → initials ──
+// ── Logo component — 2-tier fallback: Clearbit → coloured initials ─────────
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  // 0 = try Clearbit, 1 = try Google favicon, 2 = show initials
-  const [tier, setTier] = useState(0);
+  const [failed, setFailed] = useState(false);
   const name    = activity[side === "acquirer" ? "acquirer" : "target"];
   const country = activity[side === "acquirer" ? "acquirer_country" : "target_country"];
   const domain  = getLogoDomain(activity, side);
@@ -138,40 +139,23 @@ function CompanyLogo({ activity, side, size = "md" }) {
   const textSize  = size === "sm" ? "text-[10px]" : "text-sm";
 
   const flag = country ? (
-    <span className="absolute -bottom-1 -right-1 text-xs leading-none">
-      {flagEmoji(country)}
-    </span>
+    <span className="absolute -bottom-1 -right-1 text-xs leading-none">{flagEmoji(country)}</span>
   ) : null;
 
-  if (domain && tier === 0) {
+  if (domain && !failed) {
     return (
       <div className="relative shrink-0">
         <img
           src={`https://logo.clearbit.com/${domain}`}
           alt={name}
-          className={`${sizeClass} rounded-xl object-contain bg-white border border-slate-100 shadow-sm`}
-          onError={() => setTier(1)}
+          className={`${sizeClass} rounded-xl object-contain bg-white border border-slate-100 shadow-sm p-0.5`}
+          onError={() => setFailed(true)}
         />
         {flag}
       </div>
     );
   }
 
-  if (domain && tier === 1) {
-    return (
-      <div className="relative shrink-0">
-        <img
-          src={`https://www.google.com/s2/favicons?domain=${domain}&sz=128`}
-          alt={name}
-          className={`${sizeClass} rounded-xl object-contain bg-white border border-slate-100 shadow-sm p-1`}
-          onError={() => setTier(2)}
-        />
-        {flag}
-      </div>
-    );
-  }
-
-  // Initials fallback
   return (
     <div className={`${sizeClass} ${avatarColor(name)} rounded-xl flex items-center justify-center relative shrink-0`}>
       <span className={`${textSize} font-bold text-white tracking-tight`}>{initials(name)}</span>
