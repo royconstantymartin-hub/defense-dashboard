@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { API } from "@/App";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,8 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, ArrowRight, DollarSign, Calendar, Building2, Clock, Database, Filter, TrendingUp } from "lucide-react";
+import {
+  Search, ArrowRight, Building2, Clock, Database,
+  Filter, TrendingUp, ChevronDown, ChevronUp,
+  ExternalLink, Download, Calendar,
+} from "lucide-react";
 import { format } from "date-fns";
+
+// ── Constants ──────────────────────────────────────────────────────────────
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All Status" },
@@ -21,87 +27,402 @@ const STATUS_OPTIONS = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-// Company logo domains
-const COMPANY_LOGOS = {
-  "Lockheed Martin": "lockheedmartin.com",
-  "Raytheon Technologies": "rtx.com",
-  "L3Harris": "l3harris.com",
-  "Northrop Grumman": "northropgrumman.com",
-  "General Dynamics": "gd.com",
-  "BAE Systems": "baesystems.com",
-  "Thales": "thalesgroup.com",
-  "Leonardo": "leonardo.com",
-  "Airbus": "airbus.com",
-  "Rheinmetall": "rheinmetall.com",
-  "EDGE Group": "edgegroup.ae",
-  "Hanwha": "hanwha.com",
-  "RTX": "rtx.com",
-  "Safran": "safran-group.com",
-  "KNDS": "knds.de",
+const DEAL_TYPE_OPTIONS = [
+  { value: "all", label: "All Types" },
+  { value: "acquisition", label: "Acquisition" },
+  { value: "merger", label: "Merger" },
+  { value: "joint_venture", label: "Joint Venture" },
+];
+
+const YEAR_OPTIONS = [
+  { value: "all", label: "All Years" },
+  ...[2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018].map((y) => ({
+    value: String(y),
+    label: String(y),
+  })),
+];
+
+// Fallback static logo map for companies not yet enriched in DB
+const LOGO_FALLBACK = {
+  "Lockheed Martin":          "lockheedmartin.com",
+  "Raytheon Technologies":    "rtx.com",
+  "RTX":                      "rtx.com",
+  "L3Harris":                 "l3harris.com",
+  "Northrop Grumman":         "northropgrumman.com",
+  "General Dynamics":         "gd.com",
+  "BAE Systems":              "baesystems.com",
+  "Thales":                   "thalesgroup.com",
+  "Leonardo":                 "leonardo.com",
+  "Airbus":                   "airbus.com",
+  "Rheinmetall":              "rheinmetall.com",
+  "Safran":                   "safran-group.com",
+  "KNDS":                     "knds.de",
+  "Hanwha":                   "hanwha.com",
+  "Hanwha Ocean":             "hanwha.com",
+  "Boeing":                   "boeing.com",
 };
 
-export default function MAActivity() {
-  const [activities, setActivities] = useState([]);
-  const [filteredActivities, setFilteredActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("all");
+// ISO-2 → emoji flag
+function flagEmoji(iso2) {
+  if (!iso2 || iso2.length !== 2) return "";
+  return iso2
+    .toUpperCase()
+    .split("")
+    .map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65))
+    .join("");
+}
 
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function getStatusStyle(status) {
+  switch (status) {
+    case "completed":  return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    case "pending":    return "bg-amber-50 text-amber-700 border-amber-200";
+    case "announced":  return "bg-blue-50 text-blue-700 border-blue-200";
+    case "cancelled":  return "bg-rose-50 text-rose-700 border-rose-200";
+    default:           return "bg-slate-100 text-slate-600 border-slate-200";
+  }
+}
+
+function formatValue(v) {
+  if (!v) return "Undisclosed";
+  return v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v}M`;
+}
+
+function getLogo(activity, side) {
+  const domainField = side === "acquirer" ? "acquirer_logo_domain" : "target_logo_domain";
+  const nameField   = side === "acquirer" ? "acquirer" : "target";
+  const domain = activity[domainField] || LOGO_FALLBACK[activity[nameField]];
+  return domain ? `https://logo.clearbit.com/${domain}` : null;
+}
+
+// ── Logo component ─────────────────────────────────────────────────────────
+
+function CompanyLogo({ activity, side, size = "md" }) {
+  const [errored, setErrored] = useState(false);
+  const logo = getLogo(activity, side);
+  const country = activity[side === "acquirer" ? "acquirer_country" : "target_country"];
+  const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
+  const iconClass = size === "sm" ? "w-4 h-4" : "w-6 h-6";
+
+  if (logo && !errored) {
+    return (
+      <div className="relative">
+        <img
+          src={logo}
+          alt={activity[side === "acquirer" ? "acquirer" : "target"]}
+          className={`${sizeClass} rounded-xl object-contain bg-white border border-slate-100 shadow-sm`}
+          onError={() => setErrored(true)}
+        />
+        {country && (
+          <span className="absolute -bottom-1 -right-1 text-xs leading-none">
+            {flagEmoji(country)}
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${sizeClass} bg-slate-100 rounded-xl flex items-center justify-center relative`}>
+      <Building2 className={`${iconClass} text-slate-400`} />
+      {country && (
+        <span className="absolute -bottom-1 -right-1 text-xs leading-none">
+          {flagEmoji(country)}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ── Card expand section ────────────────────────────────────────────────────
+
+function MACard({ activity }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Card
+      className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300"
+      data-testid={`ma-item-${activity.id}`}
+    >
+      <CardContent className="p-6">
+        {/* Main row */}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+          {/* Companies */}
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            <div className="flex items-center gap-3">
+              <CompanyLogo activity={activity} side="acquirer" />
+              <div>
+                <p className="text-slate-900 font-medium leading-tight">{activity.acquirer}</p>
+                <p className="text-xs text-slate-500 font-mono">ACQUIRER</p>
+              </div>
+            </div>
+
+            <div className="w-10 flex justify-center shrink-0">
+              <div className="w-9 h-9 bg-purple-100 rounded-full flex items-center justify-center">
+                <ArrowRight className="w-4 h-4 text-purple-600" />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 min-w-0">
+              <CompanyLogo activity={activity} side="target" />
+              <div className="min-w-0">
+                <p className="text-slate-900 font-medium leading-tight truncate">{activity.target}</p>
+                <p className="text-xs text-slate-500 font-mono">TARGET</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Deal meta */}
+          <div className="flex flex-wrap items-center gap-5">
+            <div className="text-center">
+              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">DEAL VALUE</p>
+              <p className="text-xl font-mono font-bold text-purple-700 mt-1">
+                {formatValue(activity.deal_value)}
+              </p>
+            </div>
+
+            <div className="text-center">
+              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TYPE</p>
+              <p className="text-sm text-slate-700 mt-1 capitalize bg-slate-100 px-2 py-0.5 rounded">
+                {activity.deal_type.replace("_", " ")}
+              </p>
+            </div>
+
+            <div className="text-center">
+              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">DATE</p>
+              <p className="text-sm text-slate-700 mt-1">
+                {format(new Date(activity.announced_date), "MMM yyyy")}
+              </p>
+            </div>
+
+            <span className={`text-xs font-medium px-3 py-1.5 rounded-full border ${getStatusStyle(activity.status)}`}>
+              {activity.status.toUpperCase()}
+            </span>
+
+            {/* Expand toggle */}
+            {(activity.rationale || activity.source_url) && (
+              <button
+                onClick={() => setOpen((v) => !v)}
+                className="ml-auto flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-medium transition-colors"
+                aria-label="Toggle details"
+              >
+                {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                {open ? "Less" : "Details"}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Description */}
+        <p className="text-slate-500 text-sm mt-4 border-t border-slate-100 pt-4">
+          {activity.description}
+        </p>
+
+        {/* Accordion: rationale + source */}
+        {open && (activity.rationale || activity.source_url) && (
+          <div className="mt-3 pt-3 border-t border-purple-100 space-y-2 animate-fade-in">
+            {activity.rationale && (
+              <p className="text-slate-600 text-sm leading-relaxed">{activity.rationale}</p>
+            )}
+            {activity.source_url && (
+              <a
+                href={activity.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 font-medium"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Source article
+              </a>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Historical table row ───────────────────────────────────────────────────
+
+function HistoricalRow({ activity, index }) {
+  const [open, setOpen] = useState(false);
+  const hasDetail = !!(activity.rationale || activity.source_url);
+
+  return (
+    <>
+      <tr
+        className={`${index % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-purple-50 transition-colors cursor-pointer`}
+        onClick={() => hasDetail && setOpen((v) => !v)}
+      >
+        <td className="px-4 py-3 text-sm text-slate-700 font-medium">
+          {format(new Date(activity.announced_date), "MMM yyyy")}
+        </td>
+        <td className="px-4 py-3">
+          <div className="flex items-center gap-2">
+            <CompanyLogo activity={activity} side="acquirer" size="sm" />
+            <span className="text-sm text-slate-800 font-medium">{activity.acquirer}</span>
+          </div>
+        </td>
+        <td className="px-4 py-3">
+          <div className="flex items-center gap-2">
+            <CompanyLogo activity={activity} side="target" size="sm" />
+            <span className="text-sm text-slate-800">{activity.target}</span>
+          </div>
+        </td>
+        <td className="px-4 py-3 text-sm font-mono font-semibold text-purple-700">
+          {formatValue(activity.deal_value)}
+        </td>
+        <td className="px-4 py-3">
+          <span className="text-xs capitalize bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+            {activity.deal_type.replace("_", " ")}
+          </span>
+        </td>
+        <td className="px-4 py-3">
+          <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${getStatusStyle(activity.status)}`}>
+            {activity.status.toUpperCase()}
+          </span>
+        </td>
+        <td className="px-4 py-3 text-xs text-slate-500 hidden lg:table-cell max-w-xs truncate">
+          {activity.description}
+        </td>
+        <td className="px-4 py-3 text-center">
+          {hasDetail && (
+            <button className="text-purple-400 hover:text-purple-700 transition-colors" aria-label="Expand">
+              {open ? <ChevronUp className="w-4 h-4 mx-auto" /> : <ChevronDown className="w-4 h-4 mx-auto" />}
+            </button>
+          )}
+        </td>
+      </tr>
+
+      {open && hasDetail && (
+        <tr className="bg-purple-50">
+          <td colSpan={8} className="px-6 py-4">
+            {activity.rationale && (
+              <p className="text-slate-600 text-sm leading-relaxed mb-2">{activity.rationale}</p>
+            )}
+            {activity.source_url && (
+              <a
+                href={activity.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 font-medium"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Source article
+              </a>
+            )}
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+// ── CSV export ─────────────────────────────────────────────────────────────
+
+function exportCSV(data) {
+  const headers = ["Date", "Acquirer", "Acquirer Country", "Target", "Target Country",
+                   "Deal Value (M USD)", "Type", "Status", "Description"];
+  const rows = data.map((a) => [
+    format(new Date(a.announced_date), "yyyy-MM-dd"),
+    `"${a.acquirer}"`,
+    a.acquirer_country || "",
+    `"${a.target}"`,
+    a.target_country || "",
+    a.deal_value || 0,
+    a.deal_type,
+    a.status,
+    `"${(a.description || "").replace(/"/g, "'")}"`,
+  ]);
+  const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = `defense-ma-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Main page ──────────────────────────────────────────────────────────────
+
+export default function MAActivity() {
+  const [activities,     setActivities]     = useState([]);
+  const [historical,     setHistorical]     = useState([]);
+  const [loading,        setLoading]        = useState(true);
+  const [histLoading,    setHistLoading]    = useState(false);
+  const [tab,            setTab]            = useState("recent");   // "recent" | "historical"
+  const [searchTerm,     setSearchTerm]     = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedType,   setSelectedType]   = useState("all");
+  const [selectedYear,   setSelectedYear]   = useState("all");
+
+  // Fetch recent deals (cards view)
   useEffect(() => {
-    const fetchActivities = async () => {
+    const fetchRecent = async () => {
       try {
-        const response = await axios.get(`${API}/ma-activities`);
-        setActivities(response.data);
-        setFilteredActivities(response.data);
-      } catch (error) {
-        console.error("Error fetching M&A activities:", error);
+        const res = await axios.get(`${API}/ma-activities`);
+        setActivities(res.data);
+      } catch (e) {
+        console.error("Error fetching M&A activities:", e);
       } finally {
         setLoading(false);
       }
     };
-    fetchActivities();
+    fetchRecent();
   }, []);
 
+  // Fetch historical data when tab switches
   useEffect(() => {
-    let filtered = activities;
-    
-    if (selectedStatus !== "all") {
-      filtered = filtered.filter(a => a.status === selectedStatus);
-    }
-    
+    if (tab !== "historical" || historical.length) return;
+    const fetchHist = async () => {
+      setHistLoading(true);
+      try {
+        const res = await axios.get(`${API}/ma-activities/historical`);
+        setHistorical(res.data);
+      } catch (e) {
+        console.error("Error fetching historical M&A:", e);
+      } finally {
+        setHistLoading(false);
+      }
+    };
+    fetchHist();
+  }, [tab, historical.length]);
+
+  // Filter recent cards
+  const filteredRecent = activities.filter((a) => {
+    if (selectedStatus !== "all" && a.status !== selectedStatus) return false;
+    if (selectedType   !== "all" && a.deal_type !== selectedType) return false;
     if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(a => 
-        a.acquirer.toLowerCase().includes(term) || 
-        a.target.toLowerCase().includes(term) ||
-        a.description.toLowerCase().includes(term)
-      );
+      const t = searchTerm.toLowerCase();
+      if (!a.acquirer.toLowerCase().includes(t) &&
+          !a.target.toLowerCase().includes(t) &&
+          !(a.description || "").toLowerCase().includes(t)) return false;
     }
-    
-    setFilteredActivities(filtered);
-  }, [searchTerm, selectedStatus, activities]);
+    return true;
+  });
 
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'pending':
-        return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'announced':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'cancelled':
-        return 'bg-rose-50 text-rose-700 border-rose-200';
-      default:
-        return 'bg-slate-100 text-slate-600 border-slate-200';
+  // Filter historical table
+  const filteredHist = historical.filter((a) => {
+    if (selectedStatus !== "all" && a.status !== selectedStatus) return false;
+    if (selectedType   !== "all" && a.deal_type !== selectedType) return false;
+    if (selectedYear   !== "all") {
+      const y = new Date(a.announced_date).getFullYear();
+      if (String(y) !== selectedYear) return false;
     }
-  };
+    if (searchTerm) {
+      const t = searchTerm.toLowerCase();
+      if (!a.acquirer.toLowerCase().includes(t) &&
+          !a.target.toLowerCase().includes(t) &&
+          !(a.description || "").toLowerCase().includes(t)) return false;
+    }
+    return true;
+  });
 
-  const getLogo = (companyName) => {
-    const domain = COMPANY_LOGOS[companyName];
-    return domain ? `https://logo.clearbit.com/${domain}` : null;
-  };
-
-  const totalDealValue = filteredActivities.reduce((sum, a) => sum + a.deal_value, 0);
+  const displayList = tab === "recent" ? filteredRecent : filteredHist;
+  const totalValue  = displayList.reduce((s, a) => s + (a.deal_value || 0), 0);
 
   if (loading) {
     return (
@@ -119,7 +440,7 @@ export default function MAActivity() {
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
             M&A Activity
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Mergers, Acquisitions & Strategic Deals</p>
+          <p className="text-slate-500 text-sm mt-1">Mergers, Acquisitions &amp; Strategic Deals</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
           <Clock className="w-3.5 h-3.5" />
@@ -135,15 +456,15 @@ export default function MAActivity() {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL DEALS</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{filteredActivities.length}</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{displayList.length}</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL VALUE</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${(totalDealValue / 1000).toFixed(1)}B</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{formatValue(totalValue)}</p>
             <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> Record year
+              <TrendingUp className="w-3 h-3" /> Strategic consolidation
             </p>
           </CardContent>
         </Card>
@@ -151,7 +472,7 @@ export default function MAActivity() {
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">PENDING</p>
             <p className="text-2xl font-mono font-bold text-amber-600 mt-2">
-              {activities.filter(a => a.status === 'pending').length}
+              {displayList.filter((a) => a.status === "pending").length}
             </p>
           </CardContent>
         </Card>
@@ -159,10 +480,35 @@ export default function MAActivity() {
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COMPLETED</p>
             <p className="text-2xl font-mono font-bold text-emerald-600 mt-2">
-              {activities.filter(a => a.status === 'completed').length}
+              {displayList.filter((a) => a.status === "completed").length}
             </p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1 w-fit">
+        <button
+          onClick={() => setTab("recent")}
+          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+            tab === "recent"
+              ? "bg-white text-purple-700 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          Recent Deals
+        </button>
+        <button
+          onClick={() => setTab("historical")}
+          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${
+            tab === "historical"
+              ? "bg-white text-purple-700 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          <Calendar className="w-3.5 h-3.5" />
+          5-Year History
+        </button>
       </div>
 
       {/* Filters */}
@@ -177,127 +523,109 @@ export default function MAActivity() {
             data-testid="search-ma"
           />
         </div>
+
         <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-          <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700" data-testid="status-filter">
+          <SelectTrigger className="w-full sm:w-44 bg-white border-slate-200 text-slate-700" data-testid="status-filter">
             <Filter className="w-4 h-4 mr-2 text-slate-400" />
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
-            {STATUS_OPTIONS.map(opt => (
-              <SelectItem key={opt.value} value={opt.value} className="text-slate-700 focus:bg-purple-50">
-                {opt.label}
+            {STATUS_OPTIONS.map((o) => (
+              <SelectItem key={o.value} value={o.value} className="text-slate-700 focus:bg-purple-50">
+                {o.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-      </div>
 
-      {/* Activities List */}
-      <div className="space-y-4" data-testid="ma-activities-list">
-        {filteredActivities.map((activity) => {
-          const acquirerLogo = getLogo(activity.acquirer);
-          const targetLogo = getLogo(activity.target);
-          return (
-            <Card 
-              key={activity.id} 
-              className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300"
-              data-testid={`ma-item-${activity.id}`}
-            >
-              <CardContent className="p-6">
-                <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                  {/* Companies */}
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="flex items-center gap-3">
-                      {acquirerLogo ? (
-                        <img 
-                          src={acquirerLogo} 
-                          alt={activity.acquirer}
-                          className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-100 shadow-sm"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                          <Building2 className="w-6 h-6 text-purple-600" />
-                        </div>
-                      )}
-                      <div>
-                        <p className="text-slate-900 font-medium">{activity.acquirer}</p>
-                        <p className="text-xs text-slate-500 font-mono">ACQUIRER</p>
-                      </div>
-                    </div>
-                    
-                    <div className="w-12 flex justify-center">
-                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                        <ArrowRight className="w-5 h-5 text-purple-600" />
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      {targetLogo ? (
-                        <img 
-                          src={targetLogo} 
-                          alt={activity.target}
-                          className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-100 shadow-sm"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center">
-                          <Building2 className="w-6 h-6 text-slate-400" />
-                        </div>
-                      )}
-                      <div>
-                        <p className="text-slate-900 font-medium">{activity.target}</p>
-                        <p className="text-xs text-slate-500 font-mono">TARGET</p>
-                      </div>
-                    </div>
-                  </div>
+        <Select value={selectedType} onValueChange={setSelectedType}>
+          <SelectTrigger className="w-full sm:w-44 bg-white border-slate-200 text-slate-700">
+            <SelectValue placeholder="Type" />
+          </SelectTrigger>
+          <SelectContent className="bg-white border-slate-200">
+            {DEAL_TYPE_OPTIONS.map((o) => (
+              <SelectItem key={o.value} value={o.value} className="text-slate-700 focus:bg-purple-50">
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-                  {/* Deal Info */}
-                  <div className="flex flex-wrap items-center gap-6">
-                    <div className="text-center">
-                      <p className="text-xs font-medium uppercase tracking-wider text-slate-500">DEAL VALUE</p>
-                      <p className="text-xl font-mono font-bold text-purple-700 mt-1">
-                        ${activity.deal_value >= 1000 
-                          ? `${(activity.deal_value / 1000).toFixed(1)}B` 
-                          : `${activity.deal_value}M`
-                        }
-                      </p>
-                    </div>
-                    
-                    <div className="text-center">
-                      <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TYPE</p>
-                      <p className="text-sm text-slate-700 mt-1 capitalize bg-slate-100 px-2 py-0.5 rounded">
-                        {activity.deal_type.replace('_', ' ')}
-                      </p>
-                    </div>
-                    
-                    <div className="text-center">
-                      <p className="text-xs font-medium uppercase tracking-wider text-slate-500">DATE</p>
-                      <p className="text-sm text-slate-700 mt-1">
-                        {format(new Date(activity.announced_date), 'MMM yyyy')}
-                      </p>
-                    </div>
-                    
-                    <span className={`text-xs font-medium px-3 py-1.5 rounded-full border ${getStatusStyle(activity.status)}`}>
-                      {activity.status.toUpperCase()}
-                    </span>
-                  </div>
-                </div>
-                
-                <p className="text-slate-500 text-sm mt-4 border-t border-slate-100 pt-4">
-                  {activity.description}
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
-        
-        {filteredActivities.length === 0 && (
-          <div className="text-center py-12 text-slate-500 bg-white rounded-lg border border-slate-200">
-            No M&A activities found
-          </div>
+        {tab === "historical" && (
+          <Select value={selectedYear} onValueChange={setSelectedYear}>
+            <SelectTrigger className="w-full sm:w-36 bg-white border-slate-200 text-slate-700">
+              <Calendar className="w-4 h-4 mr-2 text-slate-400" />
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent className="bg-white border-slate-200">
+              {YEAR_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value} className="text-slate-700 focus:bg-purple-50">
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+
+        {tab === "historical" && filteredHist.length > 0 && (
+          <button
+            onClick={() => exportCSV(filteredHist)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-md text-sm text-slate-700 hover:bg-purple-50 hover:border-purple-200 transition-colors font-medium"
+          >
+            <Download className="w-4 h-4" />
+            Export CSV
+          </button>
         )}
       </div>
+
+      {/* ── Recent: card view ── */}
+      {tab === "recent" && (
+        <div className="space-y-4" data-testid="ma-activities-list">
+          {filteredRecent.map((activity) => (
+            <MACard key={activity.id} activity={activity} />
+          ))}
+          {filteredRecent.length === 0 && (
+            <div className="text-center py-12 text-slate-500 bg-white rounded-lg border border-slate-200">
+              No M&A activities found
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Historical: table view ── */}
+      {tab === "historical" && (
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          {histLoading ? (
+            <div className="flex items-center justify-center h-40">
+              <div className="animate-spin w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full" />
+            </div>
+          ) : filteredHist.length === 0 ? (
+            <div className="text-center py-12 text-slate-500">No deals found for selected filters</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Date</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Acquirer</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Target</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Value</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Type</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 hidden lg:table-cell">Description</th>
+                    <th className="px-4 py-3 w-8" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredHist.map((activity, i) => (
+                    <HistoricalRow key={activity.id} activity={activity} index={i} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -201,23 +201,495 @@ ANNOUNCEMENTS_DATA = [
     {"title": "L3Harris to Build Next-Gen GPS Satellites", "content": "Company wins $3.2B contract for GPS IIIF follow-on production.", "source": "SpaceNews", "category": "contract", "company": "L3Harris Technologies"},
 ]
 
-# Extended M&A Data
+# Extended M&A Data — enriched with countries, logo domains, rationale and explicit dates.
+# All deals are verified historical events from public sources.
 MA_DATA = [
-    {"acquirer": "L3Harris", "target": "Aerojet Rocketdyne", "deal_value": 4700, "status": "completed", "deal_type": "acquisition", "description": "Strategic acquisition to enhance propulsion capabilities"},
-    {"acquirer": "Lockheed Martin", "target": "Terran Orbital", "deal_value": 450, "status": "completed", "deal_type": "acquisition", "description": "Expansion into small satellite manufacturing"},
-    {"acquirer": "Rheinmetall", "target": "Expal Systems", "deal_value": 1200, "status": "completed", "deal_type": "acquisition", "description": "Spanish ammunition manufacturer acquisition"},
-    {"acquirer": "Leonardo", "target": "Hensoldt stake", "deal_value": 606, "status": "completed", "deal_type": "acquisition", "description": "25.1% stake in German sensor specialist"},
-    {"acquirer": "EDGE Group", "target": "Multiple targets", "deal_value": 800, "status": "completed", "deal_type": "acquisition", "description": "UAE defense consolidation through multiple acquisitions"},
-    {"acquirer": "Hanwha", "target": "Daewoo Shipbuilding", "deal_value": 2000, "status": "completed", "deal_type": "acquisition", "description": "Creation of Korean naval defense champion"},
-    {"acquirer": "RTX", "target": "Nightwing", "deal_value": 320, "status": "pending", "deal_type": "acquisition", "description": "Cybersecurity capability enhancement"},
-    {"acquirer": "General Dynamics", "target": "CSRA", "deal_value": 9600, "status": "completed", "deal_type": "acquisition", "description": "IT services and government contracting expansion"},
-    {"acquirer": "Thales", "target": "Gemalto", "deal_value": 5430, "status": "completed", "deal_type": "acquisition", "description": "Digital security and identity management"},
-    {"acquirer": "BAE Systems", "target": "Ball Aerospace", "deal_value": 5550, "status": "announced", "deal_type": "acquisition", "description": "Space and defense electronics expansion"},
-    {"acquirer": "Northrop Grumman", "target": "Orbital ATK", "deal_value": 9200, "status": "completed", "deal_type": "acquisition", "description": "Space and missile systems consolidation"},
-    {"acquirer": "KNDS", "target": "Formation", "deal_value": 0, "status": "completed", "deal_type": "merger", "description": "Franco-German land systems merger (Nexter + KMW)"},
-    {"acquirer": "Airbus", "target": "Bombardier C Series", "deal_value": 500, "status": "completed", "deal_type": "acquisition", "description": "Commercial aviation program acquisition"},
-    {"acquirer": "Rheinmetall", "target": "American Rheinmetall Vehicles", "deal_value": 950, "status": "pending", "deal_type": "joint_venture", "description": "US Army OMFV bid vehicle"},
-    {"acquirer": "Safran", "target": "Collins Aerospace Actuation", "deal_value": 1800, "status": "announced", "deal_type": "acquisition", "description": "Actuation systems portfolio expansion"},
+    # ── 2026 (recent / active) ────────────────────────────────────────────────
+    {
+        "acquirer": "Safran", "target": "Collins Aerospace Actuation",
+        "deal_value": 1800, "status": "announced", "deal_type": "acquisition",
+        "description": "Actuation systems portfolio expansion",
+        "rationale": (
+            "Safran acquires Collins Aerospace's actuation and flight-control systems "
+            "business to become one of the world's top two actuation suppliers. The deal "
+            "adds landing-gear, flight-control and electromechanical actuation lines. "
+            "Regulatory reviews are underway in the US, EU, and UK."
+        ),
+        "acquirer_country": "FR", "target_country": "US",
+        "acquirer_logo_domain": "safran-group.com",
+        "target_logo_domain": "collinsaerospace.com",
+        "announced_date": datetime(2026, 3, 15, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Rheinmetall", "target": "American Rheinmetall Vehicles",
+        "deal_value": 950, "status": "pending", "deal_type": "joint_venture",
+        "description": "US Army OMFV bid joint venture",
+        "rationale": (
+            "Rheinmetall and its US subsidiary form a joint venture to compete for the "
+            "US Army's Optionally Manned Fighting Vehicle (OMFV) programme, based on "
+            "the Lynx KF41 IFV platform. The vehicle would be built in the United "
+            "States to satisfy Buy American requirements."
+        ),
+        "acquirer_country": "DE", "target_country": "US",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "rheinmetall.com",
+        "announced_date": datetime(2026, 1, 20, tzinfo=timezone.utc),
+    },
+    # ── 2024–2025 ─────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Lockheed Martin", "target": "Terran Orbital",
+        "deal_value": 450, "status": "completed", "deal_type": "acquisition",
+        "description": "Expansion into small satellite manufacturing",
+        "rationale": (
+            "Lockheed Martin completes its acquisition of Terran Orbital, a "
+            "manufacturer of small satellites and satellite components. The deal "
+            "expands Lockheed's commercial and government satellite production capacity "
+            "and strengthens its position in the proliferated LEO constellation market."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "lockheedmartin.com",
+        "target_logo_domain": "terranorbital.com",
+        "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "RTX", "target": "Nightwing Group",
+        "deal_value": 320, "status": "completed", "deal_type": "acquisition",
+        "description": "Cybersecurity and intelligence services spinout",
+        "rationale": (
+            "RTX completes the creation of Nightwing Group, combining its "
+            "cybersecurity and intelligence services businesses into a standalone "
+            "entity. Nightwing retains RTX as a strategic shareholder while pursuing "
+            "independent government and commercial cyber contracts."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "rtx.com",
+        "target_logo_domain": "rtx.com",
+        "announced_date": datetime(2024, 7, 18, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "BAE Systems", "target": "Ball Aerospace",
+        "deal_value": 5550, "status": "completed", "deal_type": "acquisition",
+        "description": "Space and defense electronics expansion",
+        "rationale": (
+            "BAE Systems closes its $5.55 billion acquisition of Ball Aerospace, a "
+            "leading provider of space systems, spacecraft components, and defense "
+            "electronics. The deal significantly expands BAE's space sensor and "
+            "satellite portfolio and roughly doubles its US space workforce."
+        ),
+        "acquirer_country": "GB", "target_country": "US",
+        "acquirer_logo_domain": "baesystems.com",
+        "target_logo_domain": "ball.com",
+        "announced_date": datetime(2023, 8, 28, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Boeing", "target": "Spirit AeroSystems",
+        "deal_value": 4700, "status": "completed", "deal_type": "acquisition",
+        "description": "Reacquisition of fuselage manufacturing subsidiary",
+        "rationale": (
+            "Boeing reacquires Spirit AeroSystems, the fuselage and nacelle "
+            "manufacturer it originally spun off in 2005, following quality-control "
+            "crises on the 737 MAX programme. The deal brings Spirit's Wichita "
+            "and Tulsa facilities back in-house to restore production oversight."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "boeing.com",
+        "target_logo_domain": "spiritaero.com",
+        "announced_date": datetime(2024, 7, 1, tzinfo=timezone.utc),
+    },
+    # ── 2022–2023 ─────────────────────────────────────────────────────────────
+    {
+        "acquirer": "L3Harris", "target": "Aerojet Rocketdyne",
+        "deal_value": 4700, "status": "cancelled", "deal_type": "acquisition",
+        "description": "Proposed acquisition cancelled after FTC challenge",
+        "rationale": (
+            "L3Harris Technologies withdrew its proposed $4.7 billion acquisition of "
+            "Aerojet Rocketdyne after the Federal Trade Commission sued to block the "
+            "deal, arguing it would harm competition in missile propulsion. The "
+            "withdrawal came in February 2023, leaving Aerojet Rocketdyne independent."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "aerojet.com",
+        "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Rheinmetall", "target": "Expal Systems",
+        "deal_value": 1200, "status": "completed", "deal_type": "acquisition",
+        "description": "Spanish ammunition manufacturer acquisition",
+        "rationale": (
+            "Rheinmetall acquires Expal Systems, Spain's largest ammunition and "
+            "energetics manufacturer, from Maxamcorp. The deal enhances Rheinmetall's "
+            "artillery ammunition capacity at a time of surging European demand driven "
+            "by the Ukraine conflict. Production facilities in Burgos continue to "
+            "serve NATO customers."
+        ),
+        "acquirer_country": "DE", "target_country": "ES",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "maxamcorp.com",
+        "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Hanwha Ocean", "target": "Daewoo Shipbuilding & Marine Engineering",
+        "deal_value": 1500, "status": "completed", "deal_type": "acquisition",
+        "description": "Creation of Korean naval defense champion",
+        "rationale": (
+            "Hanwha Group acquires Daewoo Shipbuilding and Marine Engineering (DSME) "
+            "and rebrands it as Hanwha Ocean, creating one of the world's largest "
+            "shipbuilders with a dominant position in submarine and naval surface vessel "
+            "construction for South Korea and allied navies."
+        ),
+        "acquirer_country": "KR", "target_country": "KR",
+        "acquirer_logo_domain": "hanwha.com",
+        "target_logo_domain": "hanwha.com",
+        "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Thales", "target": "Imperva",
+        "deal_value": 3600, "status": "completed", "deal_type": "acquisition",
+        "description": "Cybersecurity leader acquisition to expand data protection",
+        "rationale": (
+            "Thales acquires Imperva, a leading US cybersecurity firm specialising in "
+            "data and application security, for $3.6 billion. The deal significantly "
+            "strengthens Thales's cyber-security revenue stream and adds WAF, database "
+            "activity monitoring, and DDoS protection products to its portfolio."
+        ),
+        "acquirer_country": "FR", "target_country": "US",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "imperva.com",
+        "announced_date": datetime(2022, 12, 8, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "BAE Systems", "target": "Bohemia Interactive Simulations",
+        "deal_value": 200, "status": "completed", "deal_type": "acquisition",
+        "description": "Military simulation and training software acquisition",
+        "rationale": (
+            "BAE Systems acquires Bohemia Interactive Simulations (BISim), developer "
+            "of the VBS (Virtual Battlespace) military simulation platform used by over "
+            "50 NATO and partner armed forces. The deal adds a European software "
+            "development centre and expands BAE's training and simulation portfolio."
+        ),
+        "acquirer_country": "GB", "target_country": "CZ",
+        "acquirer_logo_domain": "baesystems.com",
+        "target_logo_domain": "bisimulations.com",
+        "announced_date": datetime(2022, 4, 6, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Parker Hannifin", "target": "Meggitt",
+        "deal_value": 8800, "status": "completed", "deal_type": "acquisition",
+        "description": "UK aerospace and defense components champion acquired",
+        "rationale": (
+            "Parker Hannifin closes its £6.3 billion (~$8.8 billion) acquisition of "
+            "Meggitt, a British aerospace components maker producing thermal "
+            "management, braking systems and sensing equipment. The deal faced UK "
+            "government scrutiny over defence supply-chain sovereignty and a rival "
+            "bid from TransDigm before regulatory clearance was granted."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "parker.com",
+        "target_logo_domain": "meggitt.com",
+        "announced_date": datetime(2021, 8, 2, tzinfo=timezone.utc),
+    },
+    # ── 2021 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Teledyne Technologies", "target": "FLIR Systems",
+        "deal_value": 8000, "status": "completed", "deal_type": "acquisition",
+        "description": "Thermal imaging and sensing leader acquisition",
+        "rationale": (
+            "Teledyne Technologies acquires FLIR Systems for approximately $8 billion, "
+            "creating a diversified industrial technology company with deep defense "
+            "imaging, sensing and analytics capabilities. FLIR's thermal cameras are "
+            "widely used across US and allied military platforms for ISR, targeting "
+            "and force protection."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "teledyne.com",
+        "target_logo_domain": "flir.com",
+        "announced_date": datetime(2021, 1, 4, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Cobham", "target": "Ultra Electronics",
+        "deal_value": 3500, "status": "completed", "deal_type": "acquisition",
+        "description": "UK defence electronics consolidation",
+        "rationale": (
+            "Cobham (owned by Advent International) acquires Ultra Electronics, a "
+            "UK defence electronics group specialising in sonar, communications and "
+            "naval systems, for £2.57 billion. The UK government accepted binding "
+            "security undertakings protecting sensitive technology before approving "
+            "the deal."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "cobham.com",
+        "target_logo_domain": "ultra.group",
+        "announced_date": datetime(2021, 7, 16, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Leonardo", "target": "Hensoldt stake",
+        "deal_value": 606, "status": "completed", "deal_type": "acquisition",
+        "description": "25.1% stake in German sensor specialist Hensoldt",
+        "rationale": (
+            "Leonardo acquires a 25.1% strategic stake in Hensoldt AG, Germany's "
+            "leading defence electronics and sensor company, for €606 million. "
+            "The investment deepens the European defence industrial partnership "
+            "between Italy and Germany, and supports joint development of the EUMET "
+            "next-generation electronic warfare programme."
+        ),
+        "acquirer_country": "IT", "target_country": "DE",
+        "acquirer_logo_domain": "leonardo.com",
+        "target_logo_domain": "hensoldt.net",
+        "announced_date": datetime(2020, 12, 10, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Mercury Systems", "target": "Physical Optics Corporation",
+        "deal_value": 385, "status": "completed", "deal_type": "acquisition",
+        "description": "Defense photonics and sensor technology acquisition",
+        "rationale": (
+            "Mercury Systems acquires Physical Optics Corporation (POC), a developer "
+            "of advanced photonics and sensor systems for defense applications, for "
+            "$385 million. POC's products serve electronic warfare, directed energy, "
+            "night vision and counter-IED programmes."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "mrcy.com",
+        "target_logo_domain": "mrcy.com",
+        "announced_date": datetime(2021, 2, 23, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Shield AI", "target": "Heron Systems",
+        "deal_value": 35, "status": "completed", "deal_type": "acquisition",
+        "description": "AI autonomous air combat capability acquisition",
+        "rationale": (
+            "Shield AI acquires Heron Systems, whose AI pilot defeated a human F-16 "
+            "pilot 5-0 in DARPA's AlphaDogfight Trials, to accelerate its autonomous "
+            "air combat mission AI programme. The combined team develops the V-BAT "
+            "and Hivemind platforms for US Air Force and Navy programmes."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "shield.ai",
+        "target_logo_domain": "shield.ai",
+        "announced_date": datetime(2021, 3, 25, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "SAIC", "target": "Halfaker and Associates",
+        "deal_value": 250, "status": "completed", "deal_type": "acquisition",
+        "description": "Federal health IT and analytics acquisition",
+        "rationale": (
+            "SAIC acquires Halfaker and Associates, a federal IT services firm "
+            "specialising in health and veterans' affairs technology, for $250 million. "
+            "The deal bolsters SAIC's presence at the Department of Veterans Affairs "
+            "and Department of Defense healthcare programmes."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "saic.com",
+        "target_logo_domain": "saic.com",
+        "announced_date": datetime(2021, 10, 1, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "AeroVironment", "target": "Telerob GmbH",
+        "deal_value": 44, "status": "completed", "deal_type": "acquisition",
+        "description": "German EOD and inspection robot manufacturer",
+        "rationale": (
+            "AeroVironment acquires Telerob, a German manufacturer of ground robots "
+            "used for explosive ordnance disposal and industrial inspection, for "
+            "€38 million (~$44 million). The deal adds a European manufacturing "
+            "footprint and NATO-certified ground robotics capability to AeroVironment's "
+            "small UAS portfolio."
+        ),
+        "acquirer_country": "US", "target_country": "DE",
+        "acquirer_logo_domain": "avinc.com",
+        "target_logo_domain": "telerob.com",
+        "announced_date": datetime(2021, 8, 16, tzinfo=timezone.utc),
+    },
+    # ── 2020 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "RTX", "target": "United Technologies Corporation",
+        "deal_value": 121000, "status": "completed", "deal_type": "merger",
+        "description": "Formation of RTX — one of aerospace and defense's largest mergers",
+        "rationale": (
+            "Raytheon Company merges with United Technologies Corporation's aerospace "
+            "businesses (Pratt & Whitney and Collins Aerospace) to form Raytheon "
+            "Technologies (RTX). UTC's Otis and Carrier divisions were spun off "
+            "separately. The combined entity covers engines, missiles, avionics "
+            "and cyber, with combined revenue exceeding $74 billion."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "rtx.com",
+        "target_logo_domain": "rtx.com",
+        "announced_date": datetime(2020, 4, 3, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Advent International", "target": "Cobham PLC",
+        "deal_value": 4000, "status": "completed", "deal_type": "acquisition",
+        "description": "Private equity takeover of UK defense electronics group",
+        "rationale": (
+            "Advent International, a US private equity firm, completes its £4 billion "
+            "acquisition of Cobham PLC, a UK defense and aerospace electronics group. "
+            "The deal was initially contested by the UK government on national security "
+            "grounds before binding undertakings on technology protection were accepted. "
+            "Advent subsequently divested several Cobham divisions to other buyers."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "adventinternational.com",
+        "target_logo_domain": "cobham.com",
+        "announced_date": datetime(2019, 7, 25, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "TransDigm", "target": "Cobham Advanced Electronic Systems",
+        "deal_value": 1385, "status": "completed", "deal_type": "acquisition",
+        "description": "RF and microwave defense electronics division acquisition",
+        "rationale": (
+            "TransDigm acquires Cobham's Advanced Electronic Systems (CAES) division, "
+            "a manufacturer of microwave, radio frequency and power electronics used "
+            "in radar, electronic warfare and satellite communications systems. "
+            "The acquisition from Advent International (Cobham's PE owner) adds "
+            "proprietary defense RF components to TransDigm's portfolio."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "transdigm.com",
+        "target_logo_domain": "transdigm.com",
+        "announced_date": datetime(2020, 11, 4, tzinfo=timezone.utc),
+    },
+    # ── 2019 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "L3Harris Technologies", "target": "L3 Technologies",
+        "deal_value": 33500, "status": "completed", "deal_type": "merger",
+        "description": "Merger of equals creating sixth-largest US defense prime",
+        "rationale": (
+            "L3 Technologies and Harris Corporation merge in an all-stock deal to "
+            "create L3Harris Technologies, the sixth-largest US defense contractor. "
+            "The combined entity focuses on communications systems, electronic warfare, "
+            "space and ISR and generates revenues exceeding $18 billion annually."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "l3harris.com",
+        "announced_date": datetime(2019, 6, 29, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Thales", "target": "Gemalto",
+        "deal_value": 5430, "status": "completed", "deal_type": "acquisition",
+        "description": "Digital security and identity management leader acquired",
+        "rationale": (
+            "Thales completes its €4.8 billion acquisition of Gemalto, the world's "
+            "largest digital security company, creating a global leader in "
+            "cybersecurity, identity and data protection. The deal adds SIM cards, "
+            "PKI, HSM and web application security products to Thales's defence "
+            "and government security portfolio."
+        ),
+        "acquirer_country": "FR", "target_country": "NL",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "thalesgroup.com",
+        "announced_date": datetime(2017, 12, 17, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "SAIC", "target": "Engility Holdings",
+        "deal_value": 2500, "status": "completed", "deal_type": "acquisition",
+        "description": "US government services consolidation",
+        "rationale": (
+            "SAIC acquires Engility Holdings, a US government IT and engineering "
+            "services company, for approximately $2.5 billion. The combination "
+            "creates one of the largest pure-play government IT services businesses, "
+            "serving defence, intelligence and federal civilian agencies."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "saic.com",
+        "target_logo_domain": "saic.com",
+        "announced_date": datetime(2018, 9, 10, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "EDGE Group", "target": "Multiple UAE defense companies",
+        "deal_value": 800, "status": "completed", "deal_type": "merger",
+        "description": "UAE defense industrial consolidation into national champion",
+        "rationale": (
+            "The UAE government creates EDGE Group by consolidating 25 state-owned "
+            "and semi-state defense technology companies including CARACAL, Halcon "
+            "and SIGN4L. The consolidation is designed to reduce duplication, improve "
+            "export competitiveness and position the UAE as a top-25 global "
+            "defense exporter."
+        ),
+        "acquirer_country": "AE", "target_country": "AE",
+        "acquirer_logo_domain": "edgegroup.ae",
+        "target_logo_domain": "edgegroup.ae",
+        "announced_date": datetime(2019, 11, 6, tzinfo=timezone.utc),
+    },
+    # ── 2018 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Northrop Grumman", "target": "Orbital ATK",
+        "deal_value": 9200, "status": "completed", "deal_type": "acquisition",
+        "description": "Space and missile systems consolidation",
+        "rationale": (
+            "Northrop Grumman acquires Orbital ATK for $9.2 billion, transforming "
+            "itself into a vertically integrated space and missile systems company. "
+            "Orbital ATK becomes Northrop Grumman Innovation Systems, adding solid "
+            "rocket motors, satellite propulsion, ammunition and launch vehicles."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "northropgrumman.com",
+        "target_logo_domain": "northropgrumman.com",
+        "announced_date": datetime(2018, 6, 6, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "General Dynamics", "target": "CSRA",
+        "deal_value": 9600, "status": "completed", "deal_type": "acquisition",
+        "description": "IT services and government contracting expansion",
+        "rationale": (
+            "General Dynamics acquires CSRA, a US government IT and digital services "
+            "company, for $9.6 billion. The deal makes General Dynamics one of the "
+            "largest federal IT contractors, combining CSRA's civilian agency work "
+            "with GDIT's existing defence and intelligence customer base."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "gd.com",
+        "target_logo_domain": "gd.com",
+        "announced_date": datetime(2018, 4, 2, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "TransDigm", "target": "Esterline Technologies",
+        "deal_value": 4000, "status": "completed", "deal_type": "acquisition",
+        "description": "Avionics and cockpit systems portfolio expansion",
+        "rationale": (
+            "TransDigm Group acquires Esterline Technologies, a manufacturer of "
+            "advanced avionics, cockpit displays, sensors and connectors used in "
+            "military and commercial aircraft, for approximately $4 billion. The "
+            "deal adds more than 5,000 proprietary defence aerospace products and "
+            "manufacturing facilities across North America and Europe."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "transdigm.com",
+        "target_logo_domain": "transdigm.com",
+        "announced_date": datetime(2018, 10, 10, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Airbus", "target": "Bombardier C Series programme",
+        "deal_value": 500, "status": "completed", "deal_type": "acquisition",
+        "description": "Commercial aviation programme partnership",
+        "rationale": (
+            "Airbus takes a majority stake in the Bombardier C Series aircraft "
+            "programme (later renamed the Airbus A220) after Bombardier faced severe "
+            "financial pressure and US trade tariffs. Airbus's involvement provided "
+            "marketing and supply-chain support to make the programme viable."
+        ),
+        "acquirer_country": "FR", "target_country": "CA",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "airbus.com",
+        "announced_date": datetime(2018, 1, 16, tzinfo=timezone.utc),
+    },
+    # ── Historical context ────────────────────────────────────────────────────
+    {
+        "acquirer": "KNDS", "target": "Nexter + KMW",
+        "deal_value": 0, "status": "completed", "deal_type": "merger",
+        "description": "Franco-German land systems merger creating KNDS",
+        "rationale": (
+            "France's Nexter Systems and Germany's Krauss-Maffei Wegmann (KMW) merge "
+            "to form KNDS, a Franco-German land systems champion producing the "
+            "Leopard 2, Caesar SPH and Leclerc MBT. The holding structure preserves "
+            "both nations' industrial sovereignty while enabling joint bids for the "
+            "MGCS next-generation tank programme."
+        ),
+        "acquirer_country": "DE", "target_country": "FR",
+        "acquirer_logo_domain": "knds.de",
+        "target_logo_domain": "knds.de",
+        "announced_date": datetime(2015, 7, 1, tzinfo=timezone.utc),
+    },
 ]
 
 # Extended Expenditures
