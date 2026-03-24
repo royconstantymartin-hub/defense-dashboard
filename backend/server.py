@@ -581,7 +581,7 @@ async def run_news_scraper_job() -> dict:
 
     # Sources whose content is defence-focused — no minimum score required
     _SPECIALTY_SOURCES = {
-        "Breaking Defense", "Defense Post", "Defense News",
+        "Breaking Defense", "The Defense Post", "Defense News",
         "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
     }
     _FR_SOURCES = {"Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos"}
@@ -590,8 +590,8 @@ async def run_news_scraper_job() -> dict:
         "Opex360": "europe",        "Meta-Défense": "europe",
         "Le Monde": "europe",       "Le Figaro": "europe",  "Les Echos": "europe",
         "NATO": "europe",
-        "Defense Post": "global",   "BBC News": "global",
-        "The Guardian": "global",   "Janes": "global",
+        "The Defense Post": "global", "BBC News": "global",
+        "The Guardian": "global",     "Janes": "global",
     }
 
     logger.info("News scraper job started")
@@ -673,8 +673,8 @@ _SOURCE_REGION_MAP: dict = {
     "Opex360": "europe",        "Meta-Défense": "europe",
     "Le Monde": "europe",       "Le Figaro": "europe",  "Les Echos": "europe",
     "NATO": "europe",
-    "Defense Post": "global",   "BBC News": "global",
-    "The Guardian": "global",   "Janes": "global",
+    "The Defense Post": "global", "BBC News": "global",
+    "The Guardian": "global",     "Janes": "global",
 }
 # Invert: region → list of sources whose default region is that value
 _REGION_SOURCES: dict = {}
@@ -685,7 +685,7 @@ for _src, _rgn in _SOURCE_REGION_MAP.items():
 # Specialty sources are defence-focused — show even if relevance score is low.
 # Mainstream sources (BBC, Le Monde, etc.) must cross the relevance threshold.
 _SPECIALTY_SOURCES_LIST = [
-    "Breaking Defense", "Defense Post", "Defense News",
+    "Breaking Defense", "The Defense Post", "Defense News",
     "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
 ]
 _MIN_MAINSTREAM_SCORE = 15
