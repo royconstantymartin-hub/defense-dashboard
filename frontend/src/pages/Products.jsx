@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Shield, GitCompare, X, Check, Clock, Database, ArrowUpDown, Filter } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Shield, GitCompare, X, Check, Clock, Database, ArrowUpDown, Filter, ExternalLink } from "lucide-react";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -74,6 +75,7 @@ const COMPANY_LOGOS = {
 };
 
 export default function Products() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,7 +86,12 @@ export default function Products() {
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
-  const [showComparison, setShowComparison] = useState(false);
+  const [showComparison, setShowComparison]= useState(false);
+
+  const goToCompanyProfile = (e, manufacturer) => {
+    e.stopPropagation();
+    navigate(`/market-data?q=${encodeURIComponent(manufacturer)}`);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -400,19 +407,24 @@ export default function Products() {
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
                     <h3 className="text-slate-900 font-medium text-sm">{product.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
+                    <button
+                      onClick={(e) => goToCompanyProfile(e, product.manufacturer)}
+                      className="flex items-center gap-1.5 mt-1 group text-left"
+                      title={`Voir la fiche ${product.manufacturer}`}
+                    >
                       {logoUrl && (
-                        <img 
-                          src={logoUrl} 
+                        <img
+                          src={logoUrl}
                           alt={product.manufacturer}
                           className="w-4 h-4 rounded object-contain"
                           onError={(e) => { e.target.style.display = 'none'; }}
                         />
                       )}
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 group-hover:text-purple-600 transition-colors">
                         {product.manufacturer}
                       </p>
-                    </div>
+                      <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-500 transition-colors" />
+                    </button>
                   </div>
                 </div>
                 
@@ -618,19 +630,24 @@ export default function Products() {
               {/* Title */}
               <div>
                 <h2 className="font-heading text-2xl font-bold text-slate-900">{selectedProduct.name}</h2>
-                <div className="flex items-center gap-2 mt-2">
+                <button
+                  onClick={(e) => goToCompanyProfile(e, selectedProduct.manufacturer)}
+                  className="flex items-center gap-2 mt-2 group text-left"
+                  title={`Voir la fiche ${selectedProduct.manufacturer}`}
+                >
                   {getLogo(selectedProduct.manufacturer) && (
-                    <img 
-                      src={getLogo(selectedProduct.manufacturer)} 
+                    <img
+                      src={getLogo(selectedProduct.manufacturer)}
                       alt={selectedProduct.manufacturer}
                       className="w-5 h-5 rounded object-contain"
                       onError={(e) => { e.target.style.display = 'none'; }}
                     />
                   )}
-                  <p className="text-slate-500">
+                  <p className="text-slate-500 group-hover:text-purple-600 transition-colors">
                     {selectedProduct.manufacturer}
                   </p>
-                </div>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-500 transition-colors" />
+                </button>
               </div>
               
               {/* Type Tags */}
