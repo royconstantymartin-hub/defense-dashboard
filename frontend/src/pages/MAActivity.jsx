@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,9 +12,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Search, ArrowRight, Building2, Clock, Database,
+  Search, ArrowRight, Clock, Database,
   Filter, TrendingUp, ChevronDown, ChevronUp,
-  ExternalLink, Download, Calendar,
+  ExternalLink, Download, Calendar, User,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -42,25 +43,55 @@ const YEAR_OPTIONS = [
   })),
 ];
 
-// Fallback static logo map for companies not yet enriched in DB
+// Static domain fallback for companies not yet enriched in DB
 const LOGO_FALLBACK = {
-  "Lockheed Martin":          "lockheedmartin.com",
-  "Raytheon Technologies":    "rtx.com",
-  "RTX":                      "rtx.com",
-  "L3Harris":                 "l3harris.com",
-  "Northrop Grumman":         "northropgrumman.com",
-  "General Dynamics":         "gd.com",
-  "BAE Systems":              "baesystems.com",
-  "Thales":                   "thalesgroup.com",
-  "Leonardo":                 "leonardo.com",
-  "Airbus":                   "airbus.com",
-  "Rheinmetall":              "rheinmetall.com",
-  "Safran":                   "safran-group.com",
-  "KNDS":                     "knds.de",
-  "Hanwha":                   "hanwha.com",
-  "Hanwha Ocean":             "hanwha.com",
-  "Boeing":                   "boeing.com",
+  "Lockheed Martin":                  "lockheedmartin.com",
+  "Raytheon Technologies":            "rtx.com",
+  "RTX":                              "rtx.com",
+  "L3Harris":                         "l3harris.com",
+  "L3Harris Technologies":            "l3harris.com",
+  "Northrop Grumman":                 "northropgrumman.com",
+  "General Dynamics":                 "gd.com",
+  "BAE Systems":                      "baesystems.com",
+  "Thales":                           "thalesgroup.com",
+  "Leonardo":                         "leonardo.com",
+  "Airbus":                           "airbus.com",
+  "Rheinmetall":                      "rheinmetall.com",
+  "Safran":                           "safran-group.com",
+  "KNDS":                             "knds.de",
+  "Hanwha":                           "hanwha.com",
+  "Hanwha Ocean":                     "hanwha.com",
+  "Boeing":                           "boeing.com",
+  "Teledyne Technologies":            "teledyne.com",
+  "FLIR Systems":                     "flir.com",
+  "Parker Hannifin":                  "parker.com",
+  "Meggitt":                          "meggitt.com",
+  "Cobham":                           "cobham.com",
+  "Ultra Electronics":                "ultra.group",
+  "TransDigm":                        "transdigm.com",
+  "Mercury Systems":                  "mrcy.com",
+  "AeroVironment":                    "avinc.com",
+  "Shield AI":                        "shield.ai",
+  "SAIC":                             "saic.com",
+  "Spirit AeroSystems":               "spiritaero.com",
+  "Collins Aerospace Actuation":      "collinsaerospace.com",
+  "Ball Aerospace":                   "ball.com",
+  "Terran Orbital":                   "terranorbital.com",
 };
+
+// Initials avatar colour palette (deterministic by name)
+const AVATAR_COLORS = [
+  "bg-purple-600", "bg-blue-600", "bg-emerald-600", "bg-amber-600",
+  "bg-rose-600",   "bg-indigo-600","bg-teal-600",   "bg-orange-600",
+];
+function avatarColor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+function initials(name) {
+  return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
 
 // ISO-2 → emoji flag
 function flagEmoji(iso2) {
@@ -89,49 +120,78 @@ function formatValue(v) {
   return v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v}M`;
 }
 
-function getLogo(activity, side) {
+function getLogoDomain(activity, side) {
   const domainField = side === "acquirer" ? "acquirer_logo_domain" : "target_logo_domain";
   const nameField   = side === "acquirer" ? "acquirer" : "target";
-  const domain = activity[domainField] || LOGO_FALLBACK[activity[nameField]];
-  return domain ? `https://logo.clearbit.com/${domain}` : null;
+  return activity[domainField] || LOGO_FALLBACK[activity[nameField]] || null;
 }
 
-// ── Logo component ─────────────────────────────────────────────────────────
+// ── Logo component — 3-tier fallback: Clearbit → Google favicon → initials ──
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  const [errored, setErrored] = useState(false);
-  const logo = getLogo(activity, side);
+  // 0 = try Clearbit, 1 = try Google favicon, 2 = show initials
+  const [tier, setTier] = useState(0);
+  const name    = activity[side === "acquirer" ? "acquirer" : "target"];
   const country = activity[side === "acquirer" ? "acquirer_country" : "target_country"];
+  const domain  = getLogoDomain(activity, side);
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
-  const iconClass = size === "sm" ? "w-4 h-4" : "w-6 h-6";
+  const textSize  = size === "sm" ? "text-[10px]" : "text-sm";
 
-  if (logo && !errored) {
+  const flag = country ? (
+    <span className="absolute -bottom-1 -right-1 text-xs leading-none">
+      {flagEmoji(country)}
+    </span>
+  ) : null;
+
+  if (domain && tier === 0) {
     return (
-      <div className="relative">
+      <div className="relative shrink-0">
         <img
-          src={logo}
-          alt={activity[side === "acquirer" ? "acquirer" : "target"]}
+          src={`https://logo.clearbit.com/${domain}`}
+          alt={name}
           className={`${sizeClass} rounded-xl object-contain bg-white border border-slate-100 shadow-sm`}
-          onError={() => setErrored(true)}
+          onError={() => setTier(1)}
         />
-        {country && (
-          <span className="absolute -bottom-1 -right-1 text-xs leading-none">
-            {flagEmoji(country)}
-          </span>
-        )}
+        {flag}
       </div>
     );
   }
 
+  if (domain && tier === 1) {
+    return (
+      <div className="relative shrink-0">
+        <img
+          src={`https://www.google.com/s2/favicons?domain=${domain}&sz=128`}
+          alt={name}
+          className={`${sizeClass} rounded-xl object-contain bg-white border border-slate-100 shadow-sm p-1`}
+          onError={() => setTier(2)}
+        />
+        {flag}
+      </div>
+    );
+  }
+
+  // Initials fallback
   return (
-    <div className={`${sizeClass} bg-slate-100 rounded-xl flex items-center justify-center relative`}>
-      <Building2 className={`${iconClass} text-slate-400`} />
-      {country && (
-        <span className="absolute -bottom-1 -right-1 text-xs leading-none">
-          {flagEmoji(country)}
-        </span>
-      )}
+    <div className={`${sizeClass} ${avatarColor(name)} rounded-xl flex items-center justify-center relative shrink-0`}>
+      <span className={`${textSize} font-bold text-white tracking-tight`}>{initials(name)}</span>
+      {flag}
     </div>
+  );
+}
+
+// ── Inline "View Profile" button ───────────────────────────────────────────
+
+function ProfileLink({ name }) {
+  const navigate = useNavigate();
+  return (
+    <button
+      onClick={() => navigate(`/market-data?q=${encodeURIComponent(name)}`)}
+      title={`View ${name} profile`}
+      className="text-slate-400 hover:text-purple-600 transition-colors"
+    >
+      <User className="w-3.5 h-3.5" />
+    </button>
   );
 }
 
@@ -153,7 +213,10 @@ function MACard({ activity }) {
             <div className="flex items-center gap-3">
               <CompanyLogo activity={activity} side="acquirer" />
               <div>
-                <p className="text-slate-900 font-medium leading-tight">{activity.acquirer}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-slate-900 font-medium leading-tight">{activity.acquirer}</p>
+                  <ProfileLink name={activity.acquirer} />
+                </div>
                 <p className="text-xs text-slate-500 font-mono">ACQUIRER</p>
               </div>
             </div>
@@ -167,7 +230,10 @@ function MACard({ activity }) {
             <div className="flex items-center gap-3 min-w-0">
               <CompanyLogo activity={activity} side="target" />
               <div className="min-w-0">
-                <p className="text-slate-900 font-medium leading-tight truncate">{activity.target}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-slate-900 font-medium leading-tight truncate">{activity.target}</p>
+                  <ProfileLink name={activity.target} />
+                </div>
                 <p className="text-xs text-slate-500 font-mono">TARGET</p>
               </div>
             </div>
@@ -262,12 +328,14 @@ function HistoricalRow({ activity, index }) {
           <div className="flex items-center gap-2">
             <CompanyLogo activity={activity} side="acquirer" size="sm" />
             <span className="text-sm text-slate-800 font-medium">{activity.acquirer}</span>
+            <ProfileLink name={activity.acquirer} />
           </div>
         </td>
         <td className="px-4 py-3">
           <div className="flex items-center gap-2">
             <CompanyLogo activity={activity} side="target" size="sm" />
             <span className="text-sm text-slate-800">{activity.target}</span>
+            <ProfileLink name={activity.target} />
           </div>
         </td>
         <td className="px-4 py-3 text-sm font-mono font-semibold text-purple-700">
