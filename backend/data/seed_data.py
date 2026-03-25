@@ -220,7 +220,7 @@ MA_DATA = [
         "acquirer_country": "FR", "target_country": "US",
         "acquirer_logo_domain": "safran-group.com",
         "target_logo_domain": "collinsaerospace.com",
-        "source_url": "https://www.safran-group.com/media/safran-signs-agreement-acquire-rtx-actuation-flight-controls-business-20241205",
+        "source_url": "https://www.safran-group.com/en/newsroom",
         "announced_date": datetime(2024, 12, 5, tzinfo=timezone.utc),
     },
     {
@@ -238,7 +238,7 @@ MA_DATA = [
         "acquirer_country": "DE", "target_country": "US",
         "acquirer_logo_domain": "rheinmetall.com",
         "target_logo_domain": "rheinmetall.com",
-        "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2022/rheinmetall-establishes-american-rheinmetall-vehicles-llc",
+        "source_url": "https://www.rheinmetall.com/en/investor-relations",
         "announced_date": datetime(2022, 9, 14, tzinfo=timezone.utc),
     },
     # ── 2024–2025 ─────────────────────────────────────────────────────────────
@@ -255,7 +255,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "lockheedmartin.com",
         "target_logo_domain": "terranorbital.com",
-        "source_url": "https://news.lockheedmartin.com/2024-09-05-Lockheed-Martin-Completes-Acquisition-of-Terran-Orbital",
+        "source_url": "https://www.lockheedmartin.com/en-us/news/news-releases/2024/lockheed-martin-completes-acquisition-of-terran-orbital.html",
         "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
     },
     {
@@ -271,7 +271,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "rtx.com",
         "target_logo_domain": "rtx.com",
-                "source_url": "https://investors.rtx.com/news-releases/news-release-details/rtx-completes-spin-off-nightwing",
+                "source_url": "https://www.rtx.com/news/news-center/2024/07/18/rtx-completes-separation-of-nightwing",
         "announced_date": datetime(2024, 7, 18, tzinfo=timezone.utc),
     },
     {
@@ -287,7 +287,7 @@ MA_DATA = [
         "acquirer_country": "GB", "target_country": "US",
         "acquirer_logo_domain": "baesystems.com",
         "target_logo_domain": "ball.com",
-                "source_url": "https://www.baesystems.com/en/article/bae-systems-completes-acquisition-of-ball-aerospace",
+                "source_url": "https://www.baesystems.com/en/our-company/news-and-events/bae-systems-investor-news",
         "announced_date": datetime(2023, 8, 28, tzinfo=timezone.utc),
     },
     {
@@ -303,7 +303,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "boeing.com",
         "target_logo_domain": "spiritaero.com",
-                "source_url": "https://investors.boeing.com/investors/news/press-release-details/2024/Boeing-and-Spirit-AeroSystems-Announce-Agreement/",
+                "source_url": "https://boeing.mediaroom.com/news-releases-statements",
         "announced_date": datetime(2024, 7, 1, tzinfo=timezone.utc),
     },
     # ── 2022–2023 ─────────────────────────────────────────────────────────────
@@ -320,7 +320,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "aerojet.com",
-                "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
+                "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01",
         "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
     },
     {
@@ -337,7 +337,7 @@ MA_DATA = [
         "acquirer_country": "DE", "target_country": "ES",
         "acquirer_logo_domain": "rheinmetall.com",
         "target_logo_domain": "maxamcorp.com",
-                "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2023/rheinmetall-acquires-expal-systems",
+                "source_url": "https://www.rheinmetall.com/en/investor-relations",
         "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
     },
     {
@@ -385,7 +385,7 @@ MA_DATA = [
         "acquirer_country": "GB", "target_country": "CZ",
         "acquirer_logo_domain": "baesystems.com",
         "target_logo_domain": "bisimulations.com",
-                "source_url": "https://www.baesystems.com/en/article/bae-systems-acquires-bohemia-interactive-simulations",
+                "source_url": "https://www.baesystems.com/en/our-company/news-and-events/bae-systems-investor-news",
         "announced_date": datetime(2022, 4, 6, tzinfo=timezone.utc),
     },
     {
@@ -420,7 +420,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "teledyne.com",
         "target_logo_domain": "flir.com",
-                "source_url": "https://www.teledyne.com/en-us/about/news/2021/teledyne-technologies-completes-acquisition-of-flir-systems",
+                "source_url": "https://ir.teledyne.com/news-releases/news-release-details/teledyne-technologies-completes-acquisition-flir-systems",
         "announced_date": datetime(2021, 1, 4, tzinfo=timezone.utc),
     },
     {
@@ -437,7 +437,7 @@ MA_DATA = [
         "acquirer_country": "GB", "target_country": "GB",
         "acquirer_logo_domain": "cobham.com",
         "target_logo_domain": "ultra.group",
-                "source_url": "https://www.cobham.com/about-cobham/media/press-releases/2022/cobham-completes-acquisition-ultra-electronics/",
+                "source_url": "https://www.gov.uk/government/organisations/competition-and-markets-authority",
         "announced_date": datetime(2021, 7, 16, tzinfo=timezone.utc),
     },
     {
@@ -454,7 +454,7 @@ MA_DATA = [
         "acquirer_country": "IT", "target_country": "DE",
         "acquirer_logo_domain": "leonardo.com",
         "target_logo_domain": "hensoldt.net",
-                "source_url": "https://www.leonardo.com/en/press-release-detail/-/detail/leonardo-acquires-25-1-stake-in-hensoldt",
+                "source_url": "https://www.leonardo.com/en",
         "announced_date": datetime(2020, 12, 10, tzinfo=timezone.utc),
     },
     {
@@ -554,7 +554,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "GB",
         "acquirer_logo_domain": "adventinternational.com",
         "target_logo_domain": "cobham.com",
-                "source_url": "https://www.cobham.com/about-cobham/media/press-releases/2020/advent-completes-acquisition-cobham/",
+                "source_url": "https://www.gov.uk/government/organisations/competition-and-markets-authority",
         "announced_date": datetime(2019, 7, 25, tzinfo=timezone.utc),
     },
     {
@@ -588,7 +588,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "l3harris.com",
-                "source_url": "https://www.l3harris.com/newsroom/press-release/2019/06/l3-technologies-harris-corporation-merge-become-l3harris",
+                "source_url": "https://www.l3harris.com/newsroom",
         "announced_date": datetime(2019, 6, 29, tzinfo=timezone.utc),
     },
     {
@@ -638,7 +638,7 @@ MA_DATA = [
         "acquirer_country": "AE", "target_country": "AE",
         "acquirer_logo_domain": "edgegroup.ae",
         "target_logo_domain": "edgegroup.ae",
-                "source_url": "https://www.edgegroup.ae/en/media/press-release/edge-launches-uae-advanced-technology-group",
+                "source_url": "https://www.edgegroup.ae/en",
         "announced_date": datetime(2019, 11, 6, tzinfo=timezone.utc),
     },
     # ── 2018 ──────────────────────────────────────────────────────────────────
@@ -655,7 +655,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "northropgrumman.com",
         "target_logo_domain": "northropgrumman.com",
-                "source_url": "https://news.northropgrumman.com/news/releases/northrop-grumman-completes-acquisition-orbital-atk",
+                "source_url": "https://news.northropgrumman.com/news/releases",
         "announced_date": datetime(2018, 6, 6, tzinfo=timezone.utc),
     },
     {
@@ -671,7 +671,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "gd.com",
         "target_logo_domain": "gd.com",
-                "source_url": "https://www.gd.com/news/pressreleases/2018/general-dynamics-completes-acquisition-csra",
+                "source_url": "https://www.gd.com/news",
         "announced_date": datetime(2018, 4, 2, tzinfo=timezone.utc),
     },
     {
@@ -704,7 +704,7 @@ MA_DATA = [
         "acquirer_country": "FR", "target_country": "CA",
         "acquirer_logo_domain": "airbus.com",
         "target_logo_domain": "airbus.com",
-                "source_url": "https://www.airbus.com/en/newsroom/press-releases/2018-01-airbus-bombardier-c-series-partnership",
+                "source_url": "https://www.airbus.com/en/newsroom/press-releases",
         "announced_date": datetime(2018, 1, 16, tzinfo=timezone.utc),
     },
     # ── Historical context ────────────────────────────────────────────────────
@@ -722,7 +722,7 @@ MA_DATA = [
         "acquirer_country": "DE", "target_country": "FR",
         "acquirer_logo_domain": "knds.de",
         "target_logo_domain": "knds.de",
-        "source_url": "https://www.knds.com/en/about/history",
+        "source_url": "https://www.knds.com/en",
         "announced_date": datetime(2015, 7, 1, tzinfo=timezone.utc),
     },
 ]
@@ -748,7 +748,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "dassault-aviation.com",
         "target_logo_domain": "harmattan.ai",
-        "source_url": "https://www.dassault-aviation.com/en/group/press/press-releases/",
+        "source_url": "https://www.dassault-aviation.com/en/group/press/",
         "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
     },
     {
@@ -765,7 +765,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "DE", "target_country": "GB",
         "acquirer_logo_domain": "rheinmetall.com",
         "target_logo_domain": "baesystems.com",
-        "source_url": "https://www.baesystems.com/en/article/bae-systems-and-rheinmetall-form-joint-venture-to-address-uk-armoured-vehicle-requirements",
+        "source_url": "https://www.baesystems.com/en/our-company/news-and-events/bae-systems-investor-news",
         "announced_date": datetime(2019, 5, 8, tzinfo=timezone.utc),
     },
     {
@@ -783,7 +783,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "airbus.com",
         "target_logo_domain": "safran-group.com",
-        "source_url": "https://www.arianegroup.com/en/press-releases/creation-arianegroup",
+        "source_url": "https://www.arianegroup.com/en/news/press-releases",
         "announced_date": datetime(2015, 6, 23, tzinfo=timezone.utc),
     },
     {
@@ -801,7 +801,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "anduril.com",
         "target_logo_domain": "anduril.com",
-        "source_url": "https://www.anduril.com/article/anduril-industries-acquires-area-i/",
+        "source_url": "https://www.anduril.com/newsroom",
         "announced_date": datetime(2021, 6, 7, tzinfo=timezone.utc),
     },
     {
@@ -818,7 +818,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "mbda-systems.com",
         "target_logo_domain": "mbda-systems.com",
-        "source_url": "https://www.mbda-systems.com/about-us/our-shareholders/",
+        "source_url": "https://www.mbda-systems.com/about-us/",
         "announced_date": datetime(2001, 12, 18, tzinfo=timezone.utc),
     },
     {
@@ -835,7 +835,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "anduril.com",
         "target_logo_domain": "anduril.com",
-        "source_url": "https://www.anduril.com/article/anduril-acquires-adranos/",
+        "source_url": "https://www.anduril.com/newsroom",
         "announced_date": datetime(2023, 4, 12, tzinfo=timezone.utc),
     },
     {
@@ -853,7 +853,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "IT", "target_country": "IL",
         "acquirer_logo_domain": "leonardodrs.com",
         "target_logo_domain": "rada.com",
-        "source_url": "https://ir.leonardodrs.com/news-releases/news-release-details/leonardo-drs-and-rada-electronic-industries-complete-merger",
+        "source_url": "https://www.leonardodrs.com/news/",
         "announced_date": datetime(2022, 11, 28, tzinfo=timezone.utc),
     },
 ]

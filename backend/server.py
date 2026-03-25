@@ -1043,14 +1043,12 @@ async def _apply_company_enrichments():
 
 async def _migrate_ma_enrichments():
     """
-    On startup, apply the latest seed-data enrichments to any existing MA documents.
-    Triggered whenever any document is missing the acquirer_country field (old format).
+    On startup, unconditionally upsert all seed-data enrichments into MA documents.
+    Runs every restart so that new fields (logo domains, source_url, rationale) are
+    always applied even if older enrichments already existed on the documents.
     """
     try:
-        stale = await db.ma_activities.count_documents({"acquirer_country": {"$exists": False}})
-        if stale == 0:
-            return
-        logger.info("MA migration: %d stale documents — applying enrichments from seed data", stale)
+        logger.info("MA migration: applying enrichments from seed data")
         from data.seed_data import MA_DATA, MA_EXTRA_DEALS
         all_deals = MA_DATA + MA_EXTRA_DEALS
         for m in all_deals:
@@ -1062,7 +1060,7 @@ async def _migrate_ma_enrichments():
                 {"$set": doc},
                 upsert=True,
             )
-        logger.info("MA migration complete — enrichments applied")
+        logger.info("MA migration complete — %d deals upserted", len(all_deals))
     except Exception as exc:
         logger.error("MA migration error: %s", exc)
 
