@@ -12,6 +12,7 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 import asyncio
+import re
 import jwt
 import bcrypt
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -137,6 +138,14 @@ class DefensePlayer(BaseModel):
     employees: int
     specializations: List[str]
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    # Enrichment fields (Crunchbase-style profile)
+    founded_year: Optional[int] = None
+    headquarters: Optional[str] = None
+    website: Optional[str] = None
+    linkedin: Optional[str] = None
+    funding_stage: Optional[str] = None
+    is_public: Optional[bool] = None
+    description: Optional[str] = None
 
 # Defense Expenditure Model
 class ExpenditureCreate(BaseModel):
@@ -398,38 +407,30 @@ async def delete_defense_player(player_id: str, current_user: dict = Depends(get
         raise HTTPException(status_code=404, detail="Player not found")
     return {"status": "deleted"}
 
-# ============= LIVE STOCK PRICE ROUTES =============
+@api_router.get("/companies/{name}")
+async def get_company_profile(name: str):
+    """Return Crunchbase-style company profile + related M&A activity."""
+    pattern = re.compile(re.escape(name), re.IGNORECASE)
+    player = await db.defense_players.find_one({"name": pattern}, {"_id": 0})
+    if not player:
+        # Partial match fallback
+        player = await db.defense_players.find_one(
+            {"name": {"$regex": re.escape(name), "$options": "i"}}, {"_id": 0}
+        )
+    if player and isinstance(player.get("updated_at"), str):
+        player["updated_at"] = datetime.fromisoformat(player["updated_at"])
 
-@api_router.get("/stock-prices")
-async def get_stock_prices(tickers: str):
-    """
-    Get live stock prices for multiple tickers (comma-separated).
-    Results are cached for 1 hour.
-    Private companies (ticker contains 'PRIV' or is 'Private') are skipped.
-    """
-    ticker_list = [
-        t.strip() for t in tickers.split(",")
-        if t.strip() and "PRIV" not in t.upper() and t.strip().upper() != "PRIVATE"
-    ]
-    if not ticker_list:
-        return {}
-    data = await get_bulk_prices(ticker_list)
-    return data
+    # Related M&A activities (acquirer or target)
+    ma_query = {"$or": [
+        {"acquirer": {"$regex": re.escape(name), "$options": "i"}},
+        {"target":   {"$regex": re.escape(name), "$options": "i"}},
+    ]}
+    ma = await db.ma_activities.find(ma_query, {"_id": 0}).sort("announced_date", -1).limit(10).to_list(10)
+    for a in ma:
+        if isinstance(a.get("announced_date"), str):
+            a["announced_date"] = datetime.fromisoformat(a["announced_date"])
 
-
-@api_router.get("/stock-history/{ticker}")
-async def get_stock_history_route(ticker: str, period: str = "1d"):
-    """
-    Get historical price data for a ticker.
-    period: 1d (intraday 5m), 1w (5 days 1h), 1mo (daily), 1y (weekly)
-    Results are cached for 1 hour.
-    """
-    if period not in ("1d", "1w", "1mo", "1y"):
-        raise HTTPException(status_code=400, detail="period must be one of: 1d, 1w, 1mo, 1y")
-    data = await fetch_stock_history(ticker, period)
-    if data is None:
-        raise HTTPException(status_code=502, detail=f"Could not fetch data for ticker: {ticker}")
-    return {"ticker": ticker, "period": period, "data": data}
+    return {"profile": player, "ma_activities": ma}
 
 # ============= EXPENDITURES ROUTES =============
 
@@ -1027,6 +1028,19 @@ async def _initial_scrape_if_empty():
     except Exception as exc:
         logger.error("Initial scrape error: %s", exc)
 
+async def _apply_company_enrichments():
+    """Upsert profile fields (founded_year, headquarters, website, …) from COMPANY_ENRICHMENTS."""
+    try:
+        from data.seed_data import COMPANY_ENRICHMENTS
+        for name, fields in COMPANY_ENRICHMENTS.items():
+            await db.defense_players.update_one(
+                {"name": {"$regex": f"^{re.escape(name)}$", "$options": "i"}},
+                {"$set": fields},
+            )
+        logger.info("Company enrichments applied: %d entries", len(COMPANY_ENRICHMENTS))
+    except Exception as exc:
+        logger.error("Company enrichments error: %s", exc)
+
 async def _migrate_ma_enrichments():
     """
     On startup, apply the latest seed-data enrichments to any existing MA documents.
@@ -1076,6 +1090,8 @@ async def startup_event():
     asyncio.create_task(_initial_scrape_if_empty())
     # Apply MA enrichments (dates, countries, logos, rationale) to any stale DB docs
     asyncio.create_task(_migrate_ma_enrichments())
+    # Apply company profile enrichments (founded_year, headquarters, website, …)
+    asyncio.create_task(_apply_company_enrichments())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

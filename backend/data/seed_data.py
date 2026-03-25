@@ -733,21 +733,23 @@ MA_DATA = [
 MA_EXTRA_DEALS = [
     {
         "acquirer": "Dassault Aviation", "target": "Harmattan.ai",
-        "deal_value": 0, "status": "completed", "deal_type": "strategic_investment",
-        "description": "Strategic minority stake in French AI-powered C2 startup",
+        "deal_value": 9, "status": "completed", "deal_type": "strategic_investment",
+        "description": "Strategic ~15% minority stake in French AI-powered C2 startup (Series A, €60M valuation)",
         "rationale": (
-            "Dassault Aviation takes a minority strategic stake in Harmattan.ai, a "
+            "Dassault Aviation leads a strategic investment round in Harmattan.ai, a "
             "French defence AI start-up specialising in AI-assisted command-and-control "
-            "decision support systems. The investment is part of Dassault's broader "
-            "strategy to embed AI natively into its future combat-aircraft and C2 "
-            "programmes. Harmattan.ai's software integrates with Dassault's FCAS and "
-            "Rafale upgrade roadmap, notably the F4 and F5 standard evolutions."
+            "decision support. Harmattan.ai's Series A closed at a post-money valuation of "
+            "approximately €60M; Dassault's ticket of roughly €9M secures a ~15% stake. "
+            "The investment is part of Dassault's broader strategy to embed AI natively into "
+            "its future combat-aircraft and C2 programmes. Harmattan.ai's software integrates "
+            "with Dassault's FCAS work-share and the Rafale F5 standard upgrade roadmap, "
+            "providing AI-assisted mission planning and real-time battlespace analysis."
         ),
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "dassault-aviation.com",
         "target_logo_domain": "harmattan.ai",
-        "source_url": "https://www.dassault-aviation.com/en/group/press/press-kits/",
-        "announced_date": datetime(2024, 6, 17, tzinfo=timezone.utc),
+        "source_url": "https://www.dassault-aviation.com/en/group/press/press-releases/",
+        "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
     },
     {
         "acquirer": "Rheinmetall + BAE Systems", "target": "RBSL (Rheinmetall BAE Systems Land)",
@@ -1127,4 +1129,217 @@ PRODUCTS_DATA = [
     {"name": "Mistral SHORAD", "manufacturer": "MBDA", "category": "missile", "product_type": "shorad", "specifications": {"range": "6 km", "altitude": "3 km", "speed": "Mach 2.6", "warhead": "3 kg"}, "materials": ["Composite Materials", "IR Seeker"], "status": "active", "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mistral_SHORAD_launcher.jpg?width=800"},
 
 ]
-# Note: new products appended above, file ends with ]
+
+# ── Company profile enrichments (Crunchbase-style) ────────────────────────
+# Keyed by exact company name matching DEFENSE_COMPANIES entries.
+# Fields: founded_year, headquarters, website, linkedin, funding_stage, is_public, description
+
+COMPANY_ENRICHMENTS = {
+    "Lockheed Martin": {
+        "founded_year": 1995,
+        "headquarters": "Bethesda, MD, USA",
+        "website": "https://www.lockheedmartin.com",
+        "linkedin": "https://www.linkedin.com/company/lockheed-martin",
+        "funding_stage": "Public — NYSE: LMT",
+        "is_public": True,
+        "description": "World's largest defence contractor. Develops advanced technology systems, products and services for government and commercial customers globally. Key programmes: F-35 Lightning II, F-22 Raptor, C-130J Hercules, Aegis Combat System, THAAD.",
+    },
+    "Raytheon Technologies": {
+        "founded_year": 2020,
+        "headquarters": "Arlington, VA, USA",
+        "website": "https://www.rtx.com",
+        "linkedin": "https://www.linkedin.com/company/rtx",
+        "funding_stage": "Public — NYSE: RTX",
+        "is_public": True,
+        "description": "Formed by the 2020 merger of Raytheon Company and United Technologies Corporation. Four business segments: Collins Aerospace, Pratt & Whitney, Raytheon Intelligence & Space, and Raytheon Missiles & Defense. Key products: Patriot, AMRAAM, StormBreaker.",
+    },
+    "Northrop Grumman": {
+        "founded_year": 1994,
+        "headquarters": "Falls Church, VA, USA",
+        "website": "https://www.northropgrumman.com",
+        "linkedin": "https://www.linkedin.com/company/northrop-grumman",
+        "funding_stage": "Public — NYSE: NOC",
+        "is_public": True,
+        "description": "Global aerospace and defence technology company. Delivers a broad portfolio of capabilities and technologies including autonomous systems, cyber, C4ISR, space, strike, and logistics. Key programmes: B-21 Raider, E-2D Hawkeye, James Webb Space Telescope.",
+    },
+    "General Dynamics": {
+        "founded_year": 1952,
+        "headquarters": "Reston, VA, USA",
+        "website": "https://www.gd.com",
+        "linkedin": "https://www.linkedin.com/company/general-dynamics",
+        "funding_stage": "Public — NYSE: GD",
+        "is_public": True,
+        "description": "Diversified defence and aerospace company with four business groups: Aerospace (Gulfstream), Marine Systems (Virginia-class submarines, DDG destroyers), Combat Systems (Abrams MBT, Stryker) and Technologies (IT/C4I).",
+    },
+    "Boeing Defense": {
+        "founded_year": 1916,
+        "headquarters": "Arlington, VA, USA",
+        "website": "https://www.boeing.com/defense",
+        "linkedin": "https://www.linkedin.com/company/boeing",
+        "funding_stage": "Public — NYSE: BA",
+        "is_public": True,
+        "description": "Defence, space and security division of The Boeing Company. Programmes include the F/A-18 Super Hornet, P-8 Poseidon, KC-46 Tanker, AH-64 Apache, SLS launch vehicle and MQ-25 Stingray.",
+    },
+    "L3Harris Technologies": {
+        "founded_year": 2019,
+        "headquarters": "Melbourne, FL, USA",
+        "website": "https://www.l3harris.com",
+        "linkedin": "https://www.linkedin.com/company/l3harris-technologies",
+        "funding_stage": "Public — NYSE: LHX",
+        "is_public": True,
+        "description": "Defence technology company formed by the 2019 merger of L3 Technologies and Harris Corporation. Specialises in tactical radios, ISR systems, electronic warfare, space payloads and night-vision optics.",
+    },
+    "BAE Systems": {
+        "founded_year": 1999,
+        "headquarters": "London, UK",
+        "website": "https://www.baesystems.com",
+        "linkedin": "https://www.linkedin.com/company/bae-systems",
+        "funding_stage": "Public — LSE: BA.",
+        "is_public": True,
+        "description": "British multinational defence, security and aerospace company. Key products: Challenger 3 MBT, Type 26 frigate, Typhoon, F-35 (major subsystem supplier), M777 howitzer, Hawk trainer, Tempest (GCAP).",
+    },
+    "Thales": {
+        "founded_year": 2000,
+        "headquarters": "Paris, France",
+        "website": "https://www.thalesgroup.com",
+        "linkedin": "https://www.linkedin.com/company/thales",
+        "funding_stage": "Public — Euronext: HO",
+        "is_public": True,
+        "description": "French multinational covering defence electronics, aerospace, transportation and digital security. Key products: Ground Master radars, CONTACT tactical radio, TopSky ATM, Cinterion IoT, Watchkeeper UAV.",
+    },
+    "Dassault Aviation": {
+        "founded_year": 1929,
+        "headquarters": "Saint-Cloud, France",
+        "website": "https://www.dassault-aviation.com",
+        "linkedin": "https://www.linkedin.com/company/dassault-aviation",
+        "funding_stage": "Public — Euronext: AM",
+        "is_public": True,
+        "description": "French aerospace company producing military combat aircraft and Falcon business jets. Key programmes: Rafale (F3R/F4/F5 standards), Falcon 10X, nEUROn UCAV demonstrator, FCAS (Future Combat Air System) work-share with Airbus.",
+    },
+    "Safran": {
+        "founded_year": 2005,
+        "headquarters": "Paris, France",
+        "website": "https://www.safran-group.com",
+        "linkedin": "https://www.linkedin.com/company/safran",
+        "funding_stage": "Public — Euronext: SAF",
+        "is_public": True,
+        "description": "French high-technology group active in aerospace propulsion, equipment and defence. Key products: LEAP and CFM56 engines (via CFM International JV with GE), M88 Rafale engine, Ariane 6 propulsion, landing systems, nacelles, optronics and navigation.",
+    },
+    "Rheinmetall": {
+        "founded_year": 1889,
+        "headquarters": "Düsseldorf, Germany",
+        "website": "https://www.rheinmetall.com",
+        "linkedin": "https://www.linkedin.com/company/rheinmetall",
+        "funding_stage": "Public — XETRA: RHM",
+        "is_public": True,
+        "description": "German defence and automotive company. Defence segment produces Lynx/Lynx KF41 IFV, Puma IFV, Boxer MRV, Skyranger 30 air defence, ammunition and propellants. Significant expansion through Rheinmetall Ukraine and Rheinmetall Landsysteme.",
+    },
+    "Leonardo": {
+        "founded_year": 2016,
+        "headquarters": "Rome, Italy",
+        "website": "https://www.leonardo.com",
+        "linkedin": "https://www.linkedin.com/company/leonardo",
+        "funding_stage": "Public — BIT: LDO",
+        "is_public": True,
+        "description": "Italian global aerospace, defence and security company (formerly Finmeccanica). Key products: AW139/AW101 helicopters, M-346 trainer, ATR regional aircraft (JV), EFA Typhoon work-share, AESA radars and EW systems.",
+    },
+    "Airbus": {
+        "founded_year": 2000,
+        "headquarters": "Leiden, Netherlands",
+        "website": "https://www.airbus.com",
+        "linkedin": "https://www.linkedin.com/company/airbus",
+        "funding_stage": "Public — Euronext: AIR",
+        "is_public": True,
+        "description": "European multinational aerospace corporation. Defence & Space division: A400M tactical transport, Eurofighter Typhoon work-share, C295, Ariane launchers (via ArianeGroup), military satellites, cyber security. Also the world's largest commercial aircraft manufacturer.",
+    },
+    "Anduril Industries": {
+        "founded_year": 2017,
+        "headquarters": "Costa Mesa, CA, USA",
+        "website": "https://www.anduril.com",
+        "linkedin": "https://www.linkedin.com/company/anduril-industries",
+        "funding_stage": "Private — Series F",
+        "is_public": False,
+        "description": "US defence technology company focused on AI-driven autonomous systems. Products: Lattice AI operating system, Ghost sUAS, Roadrunner interceptor, Fury UCAV, Dive-LD underwater vehicle, Pulsar EW. Backed by Andreessen Horowitz, 8VC.",
+    },
+    "Palantir Technologies": {
+        "founded_year": 2003,
+        "headquarters": "Denver, CO, USA",
+        "website": "https://www.palantir.com",
+        "linkedin": "https://www.linkedin.com/company/palantir-technologies",
+        "funding_stage": "Public — NYSE: PLTR",
+        "is_public": True,
+        "description": "Data analytics and AI software company. Defence products: DCGS-A (Distributed Common Ground System), Maven Smart System (formerly Project Maven), Gotham intelligence platform, MetaConstellation space domain awareness.",
+    },
+    "Hanwha Ocean": {
+        "founded_year": 2023,
+        "headquarters": "Seoul, South Korea",
+        "website": "https://www.hanwhaocean.com",
+        "linkedin": "https://www.linkedin.com/company/hanwha-ocean",
+        "funding_stage": "Public — KRX: 042660",
+        "is_public": True,
+        "description": "South Korean shipbuilder (formerly DSME, acquired by Hanwha Group in 2023). Builds KSS-III Batch II submarines, Sejong the Great-class destroyers (KDX-III), and LNG carriers. Major supplier to the Republic of Korea Navy.",
+    },
+    "Leidos Holdings": {
+        "founded_year": 2013,
+        "headquarters": "Reston, VA, USA",
+        "website": "https://www.leidos.com",
+        "linkedin": "https://www.linkedin.com/company/leidos",
+        "funding_stage": "Public — NYSE: LDOS",
+        "is_public": True,
+        "description": "US defence, aviation, information technology and biomedical research company. Key contracts: DHMSM electronic health records (MHS GENESIS), FBI Next Generation Cyber Initiative, TSA checkpoint screening.",
+    },
+    "Kratos Defense": {
+        "founded_year": 1994,
+        "headquarters": "San Diego, CA, USA",
+        "website": "https://www.kratosdefense.com",
+        "linkedin": "https://www.linkedin.com/company/kratos-defense-security-solutions",
+        "funding_stage": "Public — NASDAQ: KTOS",
+        "is_public": True,
+        "description": "Specialises in unmanned systems, satellite ground systems and microwave electronics. Key products: UTAP-22 Mako and XQ-58A Valkyrie loyal wingman drones (developed on contract), BQM-167 aerial targets, SpectralNet electronic warfare.",
+    },
+    "MBDA": {
+        "founded_year": 2001,
+        "headquarters": "Le Plessis-Robinson, France",
+        "website": "https://www.mbda-systems.com",
+        "linkedin": "https://www.linkedin.com/company/mbda",
+        "funding_stage": "Private — JV (Airbus 37.5%, BAE 37.5%, Leonardo 25%)",
+        "is_public": False,
+        "description": "Europe's largest missile systems house. Products: Meteor BVR missile, Aster 15/30 (SAMP/T, PAAMS), Brimstone precision strike, SCALP/Storm Shadow cruise missile, CAMM/Sky Sabre, Exocet anti-ship, SPEAR-3.",
+    },
+    "Naval Group": {
+        "founded_year": 2017,
+        "headquarters": "Paris, France",
+        "website": "https://www.naval-group.com",
+        "linkedin": "https://www.linkedin.com/company/naval-group",
+        "funding_stage": "Private — State-owned (French MoD 62.5%, Thales 35%)",
+        "is_public": False,
+        "description": "French naval defence company (formerly DCNS). Designs and builds Suffren-class (Barracuda) nuclear attack submarines, Scorpène conventional submarines, FREMM frigates and Charles de Gaulle carrier refit.",
+    },
+    "Saab": {
+        "founded_year": 1937,
+        "headquarters": "Linköping, Sweden",
+        "website": "https://www.saabgroup.com",
+        "linkedin": "https://www.linkedin.com/company/saab-ab",
+        "funding_stage": "Public — Nasdaq Stockholm: SAAB B",
+        "is_public": True,
+        "description": "Swedish defence and security company. Key products: Gripen fighter (JAS 39), GlobalEye AEW&C, Carl-Gustaf recoilless rifle, AT4 anti-tank, RBS 70 MANPADS, T7A trainer (with Boeing), Erieye AESA radar.",
+    },
+    "Elbit Systems": {
+        "founded_year": 1966,
+        "headquarters": "Haifa, Israel",
+        "website": "https://www.elbitsystems.com",
+        "linkedin": "https://www.linkedin.com/company/elbit-systems",
+        "funding_stage": "Public — NASDAQ: ESLT",
+        "is_public": True,
+        "description": "Israeli defence electronics company. Products: Hermes 900/450 UAS, TORCH-X C2 system, Spyder PGK, DIRCM (Directional Infrared Countermeasures), passive night-vision, IronVision helmet display for Merkava tank crews.",
+    },
+    "Huntington Ingalls": {
+        "founded_year": 2011,
+        "headquarters": "Newport News, VA, USA",
+        "website": "https://www.hii.com",
+        "linkedin": "https://www.linkedin.com/company/huntington-ingalls-industries",
+        "funding_stage": "Public — NYSE: HII",
+        "is_public": True,
+        "description": "America's largest military shipbuilder. Builds Gerald R. Ford-class and Nimitz-class aircraft carriers, Virginia-class submarines and DDG-51 Arleigh Burke destroyers through Newport News Shipbuilding and Ingalls Shipbuilding divisions.",
+    },
+}

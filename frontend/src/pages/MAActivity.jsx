@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
+import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -166,11 +166,10 @@ function CompanyLogo({ activity, side, size = "md" }) {
 
 // ── Inline "View Profile" button ───────────────────────────────────────────
 
-function ProfileLink({ name }) {
-  const navigate = useNavigate();
+function ProfileLink({ name, onOpen }) {
   return (
     <button
-      onClick={() => navigate(`/market-data?q=${encodeURIComponent(name)}`)}
+      onClick={(e) => { e.stopPropagation(); onOpen(name); }}
       title={`View ${name} profile`}
       className="text-slate-400 hover:text-purple-600 transition-colors"
     >
@@ -181,7 +180,7 @@ function ProfileLink({ name }) {
 
 // ── Card expand section ────────────────────────────────────────────────────
 
-function MACard({ activity }) {
+function MACard({ activity, onOpenProfile }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -199,7 +198,7 @@ function MACard({ activity }) {
               <div>
                 <div className="flex items-center gap-1.5">
                   <p className="text-slate-900 font-medium leading-tight">{activity.acquirer}</p>
-                  <ProfileLink name={activity.acquirer} />
+                  <ProfileLink name={activity.acquirer} onOpen={onOpenProfile} />
                 </div>
                 <p className="text-xs text-slate-500 font-mono">ACQUIRER</p>
               </div>
@@ -216,7 +215,7 @@ function MACard({ activity }) {
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
                   <p className="text-slate-900 font-medium leading-tight truncate">{activity.target}</p>
-                  <ProfileLink name={activity.target} />
+                  <ProfileLink name={activity.target} onOpen={onOpenProfile} />
                 </div>
                 <p className="text-xs text-slate-500 font-mono">TARGET</p>
               </div>
@@ -295,7 +294,7 @@ function MACard({ activity }) {
 
 // ── Historical table row ───────────────────────────────────────────────────
 
-function HistoricalRow({ activity, index }) {
+function HistoricalRow({ activity, index, onOpenProfile }) {
   const [open, setOpen] = useState(false);
   const hasDetail = !!(activity.rationale || activity.source_url);
 
@@ -312,14 +311,14 @@ function HistoricalRow({ activity, index }) {
           <div className="flex items-center gap-2">
             <CompanyLogo activity={activity} side="acquirer" size="sm" />
             <span className="text-sm text-slate-800 font-medium">{activity.acquirer}</span>
-            <ProfileLink name={activity.acquirer} />
+            <ProfileLink name={activity.acquirer} onOpen={onOpenProfile} />
           </div>
         </td>
         <td className="px-4 py-3">
           <div className="flex items-center gap-2">
             <CompanyLogo activity={activity} side="target" size="sm" />
             <span className="text-sm text-slate-800">{activity.target}</span>
-            <ProfileLink name={activity.target} />
+            <ProfileLink name={activity.target} onOpen={onOpenProfile} />
           </div>
         </td>
         <td className="px-4 py-3 text-sm font-mono font-semibold text-purple-700">
@@ -410,6 +409,7 @@ export default function MAActivity() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedType,   setSelectedType]   = useState("all");
   const [selectedYear,   setSelectedYear]   = useState("all");
+  const [profileName,    setProfileName]    = useState(null);
 
   // Fetch recent deals (cards view)
   useEffect(() => {
@@ -634,7 +634,7 @@ export default function MAActivity() {
       {tab === "recent" && (
         <div className="space-y-4" data-testid="ma-activities-list">
           {filteredRecent.map((activity) => (
-            <MACard key={activity.id} activity={activity} />
+            <MACard key={activity.id} activity={activity} onOpenProfile={setProfileName} />
           ))}
           {filteredRecent.length === 0 && (
             <div className="text-center py-12 text-slate-500 bg-white rounded-lg border border-slate-200">
@@ -670,7 +670,7 @@ export default function MAActivity() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredHist.map((activity, i) => (
-                    <HistoricalRow key={activity.id} activity={activity} index={i} />
+                    <HistoricalRow key={activity.id} activity={activity} index={i} onOpenProfile={setProfileName} />
                   ))}
                 </tbody>
               </table>
@@ -678,6 +678,12 @@ export default function MAActivity() {
           )}
         </div>
       )}
+
+      {/* Company profile slide-over */}
+      <CompanyProfileSheet
+        name={profileName}
+        onClose={() => setProfileName(null)}
+      />
     </div>
   );
 }
