@@ -16,6 +16,7 @@ import re
 import jwt
 import bcrypt
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -594,12 +595,17 @@ async def seed_data():
             regulation = Regulation(**r)
             await db.regulations.insert_one(regulation.model_dump())
     
-    # Seed Products
+    # Seed Products (insert new, update image_url for existing)
     for p in PRODUCTS_DATA:
         existing = await db.products.find_one({"name": p['name']})
         if not existing:
             product = Product(**p)
             await db.products.insert_one(product.model_dump())
+        elif p.get('image_url') and existing.get('image_url') != p.get('image_url'):
+            await db.products.update_one(
+                {"name": p['name']},
+                {"$set": {"image_url": p['image_url']}}
+            )
     
     # Get counts
     players_count = await db.defense_players.count_documents({})
@@ -613,6 +619,21 @@ async def run_news_scraper_job() -> dict:
     """Run the scraper pipeline, deduplicate, and upsert results into MongoDB."""
     from services.news_scraper import scrape_all_sources, deduplicate_articles
 
+    # Sources whose content is defence-focused — no minimum score required
+    _SPECIALTY_SOURCES = {
+        "Breaking Defense", "The Defense Post", "Defense News",
+        "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
+    }
+    _FR_SOURCES = {"Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos"}
+    _SOURCE_REGION = {
+        "Breaking Defense": "us",   "Defense News": "us",   "Defense Industry Daily": "us",
+        "Opex360": "europe",        "Meta-Défense": "europe",
+        "Le Monde": "europe",       "Le Figaro": "europe",  "Les Echos": "europe",
+        "NATO": "europe",
+        "The Defense Post": "global", "BBC News": "global",
+        "The Guardian": "global",     "Janes": "global",
+    }
+
     logger.info("News scraper job started")
     try:
         raw_articles = await asyncio.to_thread(scrape_all_sources)
@@ -621,28 +642,44 @@ async def run_news_scraper_job() -> dict:
         unique_articles = deduplicate_articles(raw_articles)
         duplicates_removed = articles_found - len(unique_articles)
 
-        # Sort by date descending, keep top 15
+        # Drop clearly off-topic articles from mainstream sources
+        MIN_MAINSTREAM_SCORE = 20
+        unique_articles = [
+            a for a in unique_articles
+            if a.get("source") in _SPECIALTY_SOURCES
+            or a.get("relevanceScore", 0) >= MIN_MAINSTREAM_SCORE
+        ]
+
+        # Sort by relevance (desc) then date (desc), keep top 40
         unique_articles.sort(
-            key=lambda x: x.get("publishedAt", datetime.min.replace(tzinfo=timezone.utc)),
+            key=lambda x: (
+                x.get("relevanceScore", 0),
+                x.get("publishedAt", datetime.min.replace(tzinfo=timezone.utc)),
+            ),
             reverse=True,
         )
-        unique_articles = unique_articles[:15]
+        unique_articles = unique_articles[:40]
 
         scraped_at = datetime.now(timezone.utc)
         saved = 0
         for article in unique_articles:
             try:
                 pub_at = article.get("publishedAt", scraped_at)
+                src    = article.get("source", "")
+                lang   = article.get("language") or ("fr" if src in _FR_SOURCES else "en")
+                region = article.get("region")   or _SOURCE_REGION.get(src, "global")
                 doc = {
                     "title":          article.get("title", ""),
                     "url":            article.get("url", ""),
                     "image":          article.get("image"),
                     "summary":        article.get("summary", ""),
-                    "source":         article.get("source", ""),
+                    "source":         src,
                     "publishedAt":    pub_at.isoformat() if isinstance(pub_at, datetime) else pub_at,
                     "scrapedAt":      scraped_at.isoformat(),
                     "category":       article.get("category", "INDUSTRY"),
                     "relevanceScore": article.get("relevanceScore", 0),
+                    "language":       lang,
+                    "region":         region,
                 }
                 await db.news_articles.update_one(
                     {"url": doc["url"]},
@@ -654,10 +691,10 @@ async def run_news_scraper_job() -> dict:
                 logger.error("Error saving article '%s': %s", article.get("title", ""), exc)
 
         stats = {
-            "sources_attempted": 7,
-            "articles_found":    articles_found,
+            "sources_attempted":  len(_SPECIALTY_SOURCES) + 3,  # specialty + mainstream
+            "articles_found":     articles_found,
             "duplicates_removed": duplicates_removed,
-            "articles_saved":    saved,
+            "articles_saved":     saved,
         }
         logger.info("News scraper job complete: %s", stats)
         return stats
@@ -668,38 +705,216 @@ async def run_news_scraper_job() -> dict:
 
 # ============= NEWS ROUTES =============
 
+# Source-level metadata used both for query fallback and response normalisation
+_FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos"]
+_FR_SOURCES_SET = set(_FR_SOURCES)
+_SOURCE_REGION_MAP: dict = {
+    "Breaking Defense": "us",   "Defense News": "us",   "Defense Industry Daily": "us",
+    "Opex360": "europe",        "Meta-Défense": "europe",
+    "Le Monde": "europe",       "Le Figaro": "europe",  "Les Echos": "europe",
+    "NATO": "europe",
+    "The Defense Post": "global", "BBC News": "global",
+    "The Guardian": "global",     "Janes": "global",
+}
+# Invert: region → list of sources whose default region is that value
+_REGION_SOURCES: dict = {}
+for _src, _rgn in _SOURCE_REGION_MAP.items():
+    _REGION_SOURCES.setdefault(_rgn, []).append(_src)
+
+
+# Specialty sources are defence-focused — show even if relevance score is low.
+# Mainstream sources (BBC, Le Monde, etc.) must cross the relevance threshold.
+_SPECIALTY_SOURCES_LIST = [
+    "Breaking Defense", "The Defense Post", "Defense News",
+    "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
+]
+_MIN_MAINSTREAM_SCORE = 15
+
+
+def _build_news_query(
+    language: Optional[str],
+    region: Optional[str],
+    cutoff: str,
+) -> dict:
+    """
+    Build a MongoDB query that works for both new articles (with language/region fields)
+    and old articles (without those fields, identified by source name).
+    """
+    conditions: list = [{"scrapedAt": {"$gte": cutoff}}]
+
+    # Always enforce: specialty sources OR sufficient relevance score
+    conditions.append({"$or": [
+        {"source": {"$in": _SPECIALTY_SOURCES_LIST}},
+        {"relevanceScore": {"$gte": _MIN_MAINSTREAM_SCORE}},
+    ]})
+
+    if language == "fr":
+        conditions.append({"$or": [
+            {"language": "fr"},
+            {"source": {"$in": _FR_SOURCES}, "language": {"$exists": False}},
+        ]})
+    elif language == "en":
+        conditions.append({"$or": [
+            {"language": "en"},
+            {"source": {"$nin": _FR_SOURCES}, "language": {"$exists": False}},
+        ]})
+
+    if region and region != "all":
+        src_for_region = _REGION_SOURCES.get(region, [])
+        region_or: list = [{"region": region}]
+        if src_for_region:
+            region_or.append({"source": {"$in": src_for_region}, "region": {"$exists": False}})
+        conditions.append({"$or": region_or})
+
+    return {"$and": conditions} if len(conditions) > 1 else conditions[0]
+
+
+def _normalise_article(a: dict) -> dict:
+    """Ensure every article has correct datetime, language, and region fields."""
+    for field in ("publishedAt", "scrapedAt"):
+        val = a.get(field)
+        if isinstance(val, str):
+            try:
+                a[field] = datetime.fromisoformat(val)
+            except Exception:
+                a[field] = datetime.now(timezone.utc)
+    a.setdefault("relevanceScore", 0)
+    # Derive language from source name when the field is absent (old articles)
+    src = a.get("source", "")
+    if not a.get("language"):
+        a["language"] = "fr" if src in _FR_SOURCES_SET else "en"
+    # Derive region from source name when the field is absent
+    if not a.get("region"):
+        a["region"] = _SOURCE_REGION_MAP.get(src, "global")
+    return a
+
+
 @api_router.get("/news")
-async def get_news():
+async def get_news(
+    language: Optional[str] = None,
+    region: Optional[str] = None,
+    limit: int = 30,
+):
     """
-    Return up to 15 articles scraped in the last 24 h, sorted by defense
-    relevance score (desc) then publication date (desc).
-    Falls back to the most recent 15 when the DB has no fresh articles.
+    Return up to `limit` articles (max 50) sorted by relevance then date.
+    Optional filters: language ("en"|"fr"), region ("us"|"europe"|"asia-pacific"|…).
+    Falls back to the most recent batch when no fresh articles match.
     """
+    limit = min(max(limit, 1), 50)
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
 
+    query = _build_news_query(language, region, cutoff)
     articles = await db.news_articles.find(
-        {"scrapedAt": {"$gte": cutoff}},
-        {"_id": 0},
-    ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(15).to_list(15)
+        query, {"_id": 0}
+    ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(limit).to_list(limit)
 
     if not articles:
+        # Fallback: ignore time window but keep lang/region filters
+        fb_query = _build_news_query(language, region, "1970-01-01T00:00:00+00:00")
         articles = await db.news_articles.find(
-            {}, {"_id": 0}
-        ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(15).to_list(15)
+            fb_query, {"_id": 0}
+        ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(limit).to_list(limit)
 
-    # Normalise datetime strings for JSON serialisation
-    for a in articles:
-        for field in ("publishedAt", "scrapedAt"):
-            val = a.get(field)
-            if isinstance(val, str):
-                try:
-                    a[field] = datetime.fromisoformat(val)
-                except Exception:
-                    a[field] = datetime.now(timezone.utc)
-        # Ensure relevanceScore is always present
-        a.setdefault("relevanceScore", 0)
+    return [_normalise_article(a) for a in articles]
 
-    return articles
+
+# ============= BOOKMARKS =============
+
+class BookmarkIn(BaseModel):
+    article: dict
+
+@api_router.get("/bookmarks")
+async def get_bookmarks(current_user: dict = Depends(get_current_user)):
+    """Return all bookmarks for the authenticated user."""
+    user_id = current_user["sub"]
+    bookmarks = await db.bookmarks.find(
+        {"userId": user_id}, {"_id": 0}
+    ).sort("bookmarkedAt", -1).to_list(200)
+    return bookmarks
+
+@api_router.post("/bookmarks", status_code=201)
+async def add_bookmark(data: BookmarkIn, current_user: dict = Depends(get_current_user)):
+    """Bookmark an article (idempotent — returns 201 or 200 if already exists)."""
+    user_id = current_user["sub"]
+    url = data.article.get("url", "")
+    if not url:
+        raise HTTPException(status_code=400, detail="Article URL is required")
+    existing = await db.bookmarks.find_one({"userId": user_id, "article.url": url})
+    if existing:
+        return {"status": "exists"}
+    await db.bookmarks.insert_one({
+        "id": str(uuid.uuid4()),
+        "userId": user_id,
+        "article": data.article,
+        "bookmarkedAt": datetime.now(timezone.utc).isoformat(),
+    })
+    return {"status": "created"}
+
+@api_router.delete("/bookmarks")
+async def remove_bookmark(url: str, current_user: dict = Depends(get_current_user)):
+    """Remove a bookmarked article by URL."""
+    user_id = current_user["sub"]
+    await db.bookmarks.delete_one({"userId": user_id, "article.url": url})
+    return {"status": "deleted"}
+
+
+# ============= AI SUMMARY =============
+
+class AISummaryIn(BaseModel):
+    url: str
+    title: str
+    summary: str = ""
+
+@api_router.post("/news/ai-summary")
+async def get_ai_summary(data: AISummaryIn, current_user: dict = Depends(get_current_user)):
+    """
+    Generate a 3-bullet AI brief for an article using Claude.
+    Result is cached in the news_articles document.
+    """
+    # Check cache first
+    cached = await db.news_articles.find_one({"url": data.url}, {"aiSummary": 1})
+    if cached and cached.get("aiSummary"):
+        return {"bullets": cached["aiSummary"]}
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=503, detail="AI summary not configured (missing ANTHROPIC_API_KEY)")
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=api_key)
+        message = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            messages=[{
+                "role": "user",
+                "content": (
+                    "You are a defense intelligence analyst. "
+                    "Given this article, provide exactly 3 concise key takeaways as bullet points. "
+                    "Be factual and specific. Return only the 3 lines, each starting with '• '.\n\n"
+                    f"Title: {data.title}\n"
+                    f"Summary: {data.summary}"
+                ),
+            }]
+        )
+        raw = message.content[0].text.strip()
+        bullets = [
+            line.lstrip("•").lstrip("-").strip()
+            for line in raw.split("\n")
+            if line.strip() and not line.strip().isspace()
+        ][:3]
+
+        # Cache in DB
+        await db.news_articles.update_one(
+            {"url": data.url},
+            {"$set": {"aiSummary": bullets}},
+        )
+        return {"bullets": bullets}
+
+    except Exception as exc:
+        logger.error("AI summary error: %s", exc)
+        raise HTTPException(status_code=500, detail=f"AI summary failed: {exc}")
+
 
 @api_router.post("/admin/scrape-news")
 async def trigger_scrape(current_user: dict = Depends(get_current_user)):
@@ -858,7 +1073,11 @@ async def startup_event():
         await db.news_articles.create_index([("url", 1)], unique=True)
         await db.news_articles.create_index([("publishedAt", -1)])
         await db.news_articles.create_index([("scrapedAt", -1)])
-        logger.info("news_articles indexes ready")
+        await db.news_articles.create_index([("language", 1)])
+        await db.news_articles.create_index([("region", 1)])
+        await db.bookmarks.create_index([("userId", 1)])
+        await db.bookmarks.create_index([("userId", 1), ("article.url", 1)], unique=True)
+        logger.info("news_articles + bookmarks indexes ready")
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
 

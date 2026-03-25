@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Shield, GitCompare, X, Check, Clock, Database, ArrowUpDown, Filter } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Shield, GitCompare, X, Check, Clock, Database, ArrowUpDown, Filter, ExternalLink } from "lucide-react";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -74,6 +75,7 @@ const COMPANY_LOGOS = {
 };
 
 export default function Products() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -83,7 +85,12 @@ export default function Products() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
-  const [showComparison, setShowComparison] = useState(false);
+  const [showComparison, setShowComparison]= useState(false);
+
+  const goToCompanyProfile = (e, manufacturer) => {
+    e.stopPropagation();
+    navigate(`/market-data?q=${encodeURIComponent(manufacturer)}`);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -367,22 +374,25 @@ export default function Products() {
               className={`bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer overflow-hidden ${
                 isSelectedForCompare ? 'ring-2 ring-purple-500 border-purple-500' : ''
               }`}
-              onClick={() => compareMode ? toggleProductForCompare(product) : setSelectedProduct(product)}
+              onClick={(e) => compareMode ? toggleProductForCompare(product) : setSelectedProduct(product)}
               data-testid={`product-card-${product.id}`}
             >
               {/* Image or Placeholder */}
               <div className="h-40 bg-gradient-to-br from-slate-100 to-slate-50 relative">
                 {product.image_url ? (
-                  <img 
-                    src={product.image_url} 
+                  <img
+                    src={product.image_url}
                     alt={product.name}
                     className="w-full h-full object-cover"
+                    onError={(ev) => {
+                      ev.target.style.display = 'none';
+                      ev.target.nextSibling.style.display = 'flex';
+                    }}
                   />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Icon className="w-16 h-16 text-slate-300" />
-                  </div>
-                )}
+                ) : null}
+                <div className="w-full h-full items-center justify-center" style={{ display: product.image_url ? 'none' : 'flex' }}>
+                  <Icon className="w-16 h-16 text-slate-300" />
+                </div>
                 <span className={`absolute top-2 right-2 text-xs font-medium px-2 py-0.5 rounded-full border ${getStatusStyle(product.status)}`}>
                   {product.status.toUpperCase()}
                 </span>
@@ -399,19 +409,24 @@ export default function Products() {
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
                     <h3 className="text-slate-900 font-medium text-sm">{product.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
+                    <button
+                      onClick={(e) => goToCompanyProfile(e, product.manufacturer)}
+                      className="flex items-center gap-1.5 mt-1 group text-left"
+                      title={`Voir la fiche ${product.manufacturer}`}
+                    >
                       {logoUrl && (
-                        <img 
-                          src={logoUrl} 
+                        <img
+                          src={logoUrl}
                           alt={product.manufacturer}
                           className="w-4 h-4 rounded object-contain"
                           onError={(e) => { e.target.style.display = 'none'; }}
                         />
                       )}
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 group-hover:text-purple-600 transition-colors">
                         {product.manufacturer}
                       </p>
-                    </div>
+                      <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-500 transition-colors" />
+                    </button>
                   </div>
                 </div>
                 
@@ -473,20 +488,22 @@ export default function Products() {
                     {selectedForCompare.map(product => (
                       <th key={product.id} className="text-center p-4">
                         <div className="flex flex-col items-center gap-2">
-                          {product.image_url ? (
-                            <img 
-                              src={product.image_url} 
-                              alt={product.name}
-                              className="w-20 h-20 object-cover rounded-lg border border-slate-200"
-                            />
-                          ) : (
-                            <div className="w-20 h-20 bg-slate-100 rounded-lg flex items-center justify-center">
-                              {(() => {
-                                const Icon = getCategoryIcon(product.category);
-                                return <Icon className="w-10 h-10 text-slate-400" />;
-                              })()}
-                            </div>
-                          )}
+                          {(() => {
+                            const CmpIcon = getCategoryIcon(product.category);
+                            return (
+                              <div className="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden bg-slate-100 relative flex items-center justify-center">
+                                <CmpIcon className="w-10 h-10 text-slate-300 absolute" />
+                                {product.image_url && (
+                                  <img
+                                    src={product.image_url}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover relative z-10"
+                                    onError={(ev) => { ev.target.style.display = 'none'; }}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })()}
                           <span className="text-slate-900 font-medium text-sm">{product.name}</span>
                           <span className="text-xs text-slate-500">{product.manufacturer}</span>
                         </div>
@@ -565,31 +582,37 @@ export default function Products() {
 
       {/* Product Detail Modal */}
       {selectedProduct && (
-        <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto"
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedProduct(null)}
         >
-          <Card 
-            className="bg-white border-slate-200 w-full max-w-2xl my-8 shadow-2xl"
+          <div
+            className="w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl rounded-xl"
             onClick={(e) => e.stopPropagation()}
+          >
+          <Card
+            className="bg-white border-slate-200 w-full shadow-none rounded-xl overflow-hidden"
             data-testid="product-detail-modal"
           >
             {/* Header Image */}
-            <div className="h-48 bg-gradient-to-br from-slate-100 to-slate-50 relative">
+            <div className="h-56 bg-gradient-to-br from-slate-100 to-slate-50 relative">
               {selectedProduct.image_url ? (
-                <img 
-                  src={selectedProduct.image_url} 
+                <img
+                  src={selectedProduct.image_url}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover"
+                  onError={(ev) => {
+                    ev.target.style.display = 'none';
+                    ev.target.nextSibling.style.display = 'flex';
+                  }}
                 />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  {(() => {
-                    const Icon = getCategoryIcon(selectedProduct.category);
-                    return <Icon className="w-24 h-24 text-slate-300" />;
-                  })()}
-                </div>
-              )}
+              ) : null}
+              <div className="w-full h-full items-center justify-center" style={{ display: selectedProduct.image_url ? 'none' : 'flex' }}>
+                {(() => {
+                  const Icon = getCategoryIcon(selectedProduct.category);
+                  return <Icon className="w-24 h-24 text-slate-300" />;
+                })()}
+              </div>
               <span className={`absolute top-4 right-4 text-xs font-medium px-3 py-1 rounded-full border ${getStatusStyle(selectedProduct.status)}`}>
                 {selectedProduct.status.toUpperCase()}
               </span>
@@ -605,19 +628,24 @@ export default function Products() {
               {/* Title */}
               <div>
                 <h2 className="font-heading text-2xl font-bold text-slate-900">{selectedProduct.name}</h2>
-                <div className="flex items-center gap-2 mt-2">
+                <button
+                  onClick={(e) => goToCompanyProfile(e, selectedProduct.manufacturer)}
+                  className="flex items-center gap-2 mt-2 group text-left"
+                  title={`Voir la fiche ${selectedProduct.manufacturer}`}
+                >
                   {getLogo(selectedProduct.manufacturer) && (
-                    <img 
-                      src={getLogo(selectedProduct.manufacturer)} 
+                    <img
+                      src={getLogo(selectedProduct.manufacturer)}
                       alt={selectedProduct.manufacturer}
                       className="w-5 h-5 rounded object-contain"
                       onError={(e) => { e.target.style.display = 'none'; }}
                     />
                   )}
-                  <p className="text-slate-500">
+                  <p className="text-slate-500 group-hover:text-purple-600 transition-colors">
                     {selectedProduct.manufacturer}
                   </p>
-                </div>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-500 transition-colors" />
+                </button>
               </div>
               
               {/* Type Tags */}
@@ -662,6 +690,7 @@ export default function Products() {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       )}
     </div>
