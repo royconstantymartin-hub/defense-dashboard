@@ -884,6 +884,21 @@ async def get_news(
     return [_normalise_article(a) for a in articles]
 
 
+@api_router.get("/news/company")
+async def get_company_news(name: str, limit: int = 5):
+    """
+    Return articles mentioning a company name (case-insensitive regex on title + summary).
+    Sorted by most recent first. Max 10 articles.
+    """
+    limit = min(max(limit, 1), 10)
+    regex = {"$regex": name, "$options": "i"}
+    query = {"$or": [{"title": regex}, {"summary": regex}]}
+    articles = await db.news_articles.find(
+        query, {"_id": 0}
+    ).sort("publishedAt", -1).limit(limit).to_list(limit)
+    return [_normalise_article(a) for a in articles]
+
+
 # ============= BOOKMARKS =============
 
 class BookmarkIn(BaseModel):

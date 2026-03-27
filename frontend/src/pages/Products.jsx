@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Shield, GitCompare, X, Check, Clock, Database, ArrowUpDown, Filter, ExternalLink } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio } from "lucide-react";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -20,7 +20,8 @@ const CATEGORIES = [
   { value: "naval", label: "Naval", icon: Ship },
   { value: "land", label: "Land Systems", icon: Target },
   { value: "missile", label: "Missiles", icon: Rocket },
-  { value: "cyber", label: "Cyber", icon: Cpu },
+  { value: "radar", label: "Radar Systems", icon: Radio },
+  { value: "cyber", label: "Cyber / EW", icon: Cpu },
   { value: "space", label: "Space", icon: Rocket },
 ];
 
@@ -36,7 +37,9 @@ const MANUFACTURERS = [
   { value: "Dassault Aviation", label: "Dassault Aviation" },
   { value: "MBDA", label: "MBDA" },
   { value: "Thales", label: "Thales" },
+  { value: "Leonardo", label: "Leonardo" },
   { value: "Rheinmetall", label: "Rheinmetall" },
+  { value: "Hensoldt", label: "Hensoldt" },
   { value: "General Atomics", label: "General Atomics" },
   { value: "Saab AB", label: "Saab AB" },
   { value: "Naval Group", label: "Naval Group" },
@@ -53,6 +56,7 @@ const MANUFACTURERS = [
   { value: "L3Harris Technologies", label: "L3Harris Technologies" },
   { value: "Hyundai Rotem", label: "Hyundai Rotem" },
   { value: "AeroVironment", label: "AeroVironment" },
+  { value: "Sikorsky", label: "Sikorsky" },
 ];
 
 // Company logo domains
@@ -72,6 +76,16 @@ const COMPANY_LOGOS = {
   "Rheinmetall": "rheinmetall.com",
   "Saab AB": "saab.com",
   "Naval Group": "naval-group.com",
+  "Hensoldt": "hensoldt.net",
+  "MBDA": "mbda-systems.com",
+  "Kongsberg Defence": "kongsberg.com",
+  "Hanwha Defense": "hanwha.com",
+  "Elbit Systems": "elbitsystems.com",
+  "Rafael Advanced Defense": "rafael.co.il",
+  "Israel Aerospace Industries": "iai.co.il",
+  "General Dynamics": "gd.com",
+  "Huntington Ingalls": "hii.com",
+  "Sikorsky": "lockheedmartin.com",
 };
 
 export default function Products() {
@@ -187,6 +201,7 @@ export default function Products() {
       case 'naval': return 'bg-cyan-50 text-cyan-700 border-cyan-200';
       case 'land': return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'missile': return 'bg-rose-50 text-rose-700 border-rose-200';
+      case 'radar': return 'bg-teal-50 text-teal-700 border-teal-200';
       case 'cyber': return 'bg-purple-50 text-purple-700 border-purple-200';
       case 'space': return 'bg-indigo-50 text-indigo-700 border-indigo-200';
       default: return 'bg-slate-50 text-slate-600 border-slate-200';
@@ -277,33 +292,49 @@ export default function Products() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
         <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL PRODUCTS</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{products.length}</p>
+          <CardContent className="p-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-1">{products.length}</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
+          <CardContent className="p-4">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">AIRCRAFT</p>
-            <p className="text-2xl font-mono font-bold text-blue-600 mt-2">
+            <p className="text-2xl font-mono font-bold text-blue-600 mt-1">
               {products.filter(p => p.category === 'aircraft').length}
             </p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">LAND SYSTEMS</p>
-            <p className="text-2xl font-mono font-bold text-amber-600 mt-2">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">MISSILES</p>
+            <p className="text-2xl font-mono font-bold text-rose-600 mt-1">
+              {products.filter(p => p.category === 'missile').length}
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">LAND</p>
+            <p className="text-2xl font-mono font-bold text-amber-600 mt-1">
               {products.filter(p => p.category === 'land').length}
             </p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">RADAR</p>
+            <p className="text-2xl font-mono font-bold text-teal-600 mt-1">
+              {products.filter(p => p.category === 'radar').length}
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardContent className="p-4">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">ACTIVE</p>
-            <p className="text-2xl font-mono font-bold text-emerald-600 mt-2">
+            <p className="text-2xl font-mono font-bold text-emerald-600 mt-1">
               {products.filter(p => p.status === 'active').length}
             </p>
           </CardContent>
@@ -580,54 +611,50 @@ export default function Products() {
         </div>
       )}
 
-      {/* Product Detail Modal */}
+      {/* Product Detail Modal – centered, clean, always accessible */}
       {selectedProduct && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedProduct(null)}
         >
           <div
-            className="w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl rounded-xl"
+            className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            style={{ maxHeight: 'min(90vh, 720px)' }}
             onClick={(e) => e.stopPropagation()}
-          >
-          <Card
-            className="bg-white border-slate-200 w-full shadow-none rounded-xl overflow-hidden"
             data-testid="product-detail-modal"
           >
-            {/* Header Image */}
-            <div className="h-56 bg-gradient-to-br from-slate-100 to-slate-50 relative">
-              {selectedProduct.image_url ? (
+            {/* Close button */}
+            <button
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-3 right-3 z-20 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors shadow-sm"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Header Image – fixed height, never collapses */}
+            <div className="h-52 bg-gradient-to-br from-slate-100 to-slate-50 flex-shrink-0 relative">
+              {selectedProduct.image_url && (
                 <img
                   src={selectedProduct.image_url}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover"
-                  onError={(ev) => {
-                    ev.target.style.display = 'none';
-                    ev.target.nextSibling.style.display = 'flex';
-                  }}
+                  onError={(ev) => { ev.target.style.display = 'none'; }}
                 />
-              ) : null}
-              <div className="w-full h-full items-center justify-center" style={{ display: selectedProduct.image_url ? 'none' : 'flex' }}>
-                {(() => {
-                  const Icon = getCategoryIcon(selectedProduct.category);
-                  return <Icon className="w-24 h-24 text-slate-300" />;
-                })()}
-              </div>
-              <span className={`absolute top-4 right-4 text-xs font-medium px-3 py-1 rounded-full border ${getStatusStyle(selectedProduct.status)}`}>
+              )}
+              {!selectedProduct.image_url && (() => {
+                const DIcon = getCategoryIcon(selectedProduct.category);
+                return <DIcon className="w-20 h-20 text-slate-200 absolute inset-0 m-auto" />;
+              })()}
+              <span className={`absolute top-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full border ${getStatusStyle(selectedProduct.status)}`}>
                 {selectedProduct.status.toUpperCase()}
               </span>
-              <button
-                onClick={() => setSelectedProduct(null)}
-                className="absolute top-4 left-4 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
             </div>
-            
-            <CardContent className="p-6 space-y-6">
-              {/* Title */}
+
+            {/* Scrollable body */}
+            <div className="overflow-y-auto flex-1 p-6 space-y-5">
+              {/* Title + manufacturer */}
               <div>
-                <h2 className="font-heading text-2xl font-bold text-slate-900">{selectedProduct.name}</h2>
+                <h2 className="font-heading text-xl font-bold text-slate-900 leading-tight">{selectedProduct.name}</h2>
                 <button
                   onClick={(e) => goToCompanyProfile(e, selectedProduct.manufacturer)}
                   className="flex items-center gap-2 mt-2 group text-left"
@@ -638,58 +665,51 @@ export default function Products() {
                       src={getLogo(selectedProduct.manufacturer)}
                       alt={selectedProduct.manufacturer}
                       className="w-5 h-5 rounded object-contain"
-                      onError={(e) => { e.target.style.display = 'none'; }}
+                      onError={(ev) => { ev.target.style.display = 'none'; }}
                     />
                   )}
-                  <p className="text-slate-500 group-hover:text-purple-600 transition-colors">
+                  <span className="text-sm text-slate-500 group-hover:text-purple-600 transition-colors">
                     {selectedProduct.manufacturer}
-                  </p>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-500 transition-colors" />
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-500 transition-colors" />
                 </button>
               </div>
-              
-              {/* Type Tags */}
+
+              {/* Tags */}
               <div className="flex flex-wrap gap-2">
-                <span className={`text-sm font-medium px-3 py-1 rounded-full border capitalize ${getCategoryColor(selectedProduct.category)}`}>
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full border capitalize ${getCategoryColor(selectedProduct.category)}`}>
                   {selectedProduct.category}
                 </span>
-                <span className="text-sm bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full capitalize">
-                  {selectedProduct.product_type.replace('_', ' ')}
+                <span className="text-xs bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-1 rounded-full capitalize">
+                  {selectedProduct.product_type.replace(/_/g, ' ')}
                 </span>
               </div>
-              
-              {/* Specifications */}
+
+              {/* Specs */}
               <div>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
-                  TECHNICAL SPECIFICATIONS
-                </h3>
-                <div className="grid grid-cols-2 gap-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Technical Specifications</p>
+                <div className="grid grid-cols-2 gap-2">
                   {Object.entries(selectedProduct.specifications).map(([key, value]) => (
-                    <div key={key} className="bg-slate-50 border border-slate-100 p-3 rounded-lg">
-                      <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-                        {key.replace('_', ' ')}
-                      </p>
-                      <p className="text-slate-900 font-mono mt-1">{value}</p>
+                    <div key={key} className="bg-slate-50 border border-slate-100 px-3 py-2.5 rounded-lg">
+                      <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{key.replace(/_/g, ' ')}</p>
+                      <p className="text-slate-900 font-mono text-sm mt-0.5">{value}</p>
                     </div>
                   ))}
                 </div>
               </div>
-              
+
               {/* Materials */}
               <div>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
-                  MATERIALS & COMPOSITES
-                </h3>
-                <div className="flex flex-wrap gap-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Materials & Composites</p>
+                <div className="flex flex-wrap gap-1.5">
                   {selectedProduct.materials.map((material, idx) => (
-                    <span key={idx} className="text-sm bg-purple-50 text-purple-700 border border-purple-200 px-3 py-1 rounded-full">
+                    <span key={idx} className="text-xs bg-purple-50 text-purple-700 border border-purple-100 px-2.5 py-1 rounded-full">
                       {material}
                     </span>
                   ))}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
           </div>
         </div>
       )}

@@ -20,8 +20,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
@@ -89,7 +89,17 @@ function formatHistoryTime(isoStr, period) {
   const d = new Date(isoStr);
   if (period === "1d") return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   if (period === "1w") return d.toLocaleDateString([], { weekday: "short", hour: "2-digit", minute: "2-digit" });
-  return d.toLocaleDateString([], { month: "short", day: "numeric" });
+  if (period === "1mo") return d.toLocaleDateString([], { month: "short", day: "numeric" });
+  return d.toLocaleDateString([], { month: "short", "year": "2-digit" });
+}
+
+function relativeTime(isoStr) {
+  const diff = Date.now() - new Date(isoStr).getTime();
+  const h = Math.floor(diff / 3600000);
+  if (h < 1) return "< 1h ago";
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  return `${d}d ago`;
 }
 
 // Stock History Chart Modal
@@ -97,6 +107,8 @@ function StockChartModal({ player, liveData, onClose }) {
   const [period, setPeriod] = useState("1d");
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [articles, setArticles] = useState([]);
+  const [loadingArticles, setLoadingArticles] = useState(false);
 
   const fetchHistory = useCallback(async (p) => {
     if (!player?.ticker || player.ticker === "Private" || player.ticker.includes("PRIV")) return;
@@ -111,6 +123,22 @@ function StockChartModal({ player, liveData, onClose }) {
     }
   }, [player]);
 
+  // Fetch company news once on mount
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setLoadingArticles(true);
+      try {
+        const res = await axios.get(`${API}/news/company?name=${encodeURIComponent(player.name)}&limit=5`);
+        setArticles(res.data || []);
+      } catch {
+        setArticles([]);
+      } finally {
+        setLoadingArticles(false);
+      }
+    };
+    fetchArticles();
+  }, [player.name]);
+
   useEffect(() => {
     fetchHistory(period);
   }, [period, fetchHistory]);
@@ -119,10 +147,20 @@ function StockChartModal({ player, liveData, onClose }) {
   const displayPrice = live?.price ?? player.stock_price;
   const displayChange = live?.change_percent ?? player.change_percent;
   const isPositive = displayChange >= 0;
+  const color = isPositive ? "#059669" : "#E11D48";
+  const colorLight = isPositive ? "#D1FAE5" : "#FFE4E6";
 
-  const chartMin = history.length ? Math.min(...history.map(d => d.price)) * 0.998 : undefined;
-  const chartMax = history.length ? Math.max(...history.map(d => d.price)) * 1.002 : undefined;
+  // Compute a tight domain with ~0.5% padding
+  const prices = history.map(d => d.price);
+  const chartMin = prices.length ? Math.min(...prices) * 0.995 : undefined;
+  const chartMax = prices.length ? Math.max(...prices) * 1.005 : undefined;
   const openPrice = history.length ? history[0].price : null;
+
+  // Reduce X-axis label density based on dataset size
+  const tickCount = history.length;
+  const xInterval = tickCount <= 12 ? 0
+    : tickCount <= 30 ? Math.floor(tickCount / 6)
+    : Math.floor(tickCount / 8);
 
   const chartData = history.map(d => ({
     ...d,
@@ -139,7 +177,7 @@ function StockChartModal({ player, liveData, onClose }) {
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
               <Building2 className="w-5 h-5 text-purple-600" />
@@ -196,7 +234,7 @@ function StockChartModal({ player, liveData, onClose }) {
         </div>
 
         {/* Chart */}
-        <div className="px-2 pb-6">
+        <div className="px-2 pb-4">
           {loadingHistory ? (
             <div className="h-52 flex items-center justify-center">
               <div className="animate-spin w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full" />
@@ -206,31 +244,46 @@ function StockChartModal({ player, liveData, onClose }) {
               No data available for this period
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={210}>
-              <LineChart data={chartData} margin={{ top: 4, right: 12, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={chartData} margin={{ top: 6, right: 12, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={color} stopOpacity={0.15} />
+                    <stop offset="95%" stopColor={color} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
                 <XAxis
                   dataKey="label"
                   tick={{ fill: "#94A3B8", fontSize: 10 }}
                   axisLine={false}
                   tickLine={false}
-                  interval="preserveStartEnd"
+                  interval={xInterval}
                 />
                 <YAxis
                   domain={[chartMin, chartMax]}
                   tick={{ fill: "#94A3B8", fontSize: 10 }}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={v => `$${v.toFixed(0)}`}
-                  width={52}
+                  tickFormatter={v => `$${v % 1 === 0 ? v : v.toFixed(1)}`}
+                  width={56}
                 />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
+                      const val = payload[0].value;
+                      const pct = openPrice
+                        ? (((val - openPrice) / openPrice) * 100).toFixed(2)
+                        : null;
                       return (
                         <div className="bg-white border border-slate-200 rounded-lg px-3 py-2 shadow-lg text-sm">
-                          <p className="text-slate-500">{payload[0].payload.label}</p>
-                          <p className="font-mono font-bold text-slate-900">${payload[0].value.toFixed(2)}</p>
+                          <p className="text-slate-400 text-xs mb-1">{payload[0].payload.label}</p>
+                          <p className="font-mono font-bold text-slate-900">${val.toFixed(2)}</p>
+                          {pct !== null && (
+                            <p className={`font-mono text-xs mt-0.5 ${parseFloat(pct) >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                              {parseFloat(pct) >= 0 ? "+" : ""}{pct}% vs open
+                            </p>
+                          )}
                         </div>
                       );
                     }
@@ -245,16 +298,63 @@ function StockChartModal({ player, liveData, onClose }) {
                     strokeWidth={1}
                   />
                 )}
-                <Line
+                <Area
                   type="monotone"
                   dataKey="price"
-                  stroke={isPositive ? "#059669" : "#E11D48"}
+                  stroke={color}
                   strokeWidth={2}
+                  fill="url(#priceGradient)"
                   dot={false}
-                  activeDot={{ r: 4, fill: isPositive ? "#059669" : "#E11D48" }}
+                  activeDot={{ r: 4, fill: color, strokeWidth: 0 }}
                 />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
+          )}
+        </div>
+
+        {/* Recent Articles */}
+        <div className="px-6 pb-6 border-t border-slate-100 pt-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+            Recent activity
+          </p>
+          {loadingArticles ? (
+            <div className="flex items-center gap-2 text-slate-400 text-sm py-4">
+              <div className="animate-spin w-4 h-4 border-2 border-slate-300 border-t-purple-500 rounded-full" />
+              Loading articles…
+            </div>
+          ) : articles.length === 0 ? (
+            <p className="text-slate-400 text-sm py-2">No recent articles found for this company.</p>
+          ) : (
+            <div className="space-y-2">
+              {articles.map((article, i) => (
+                <a
+                  key={i}
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors group"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-800 group-hover:text-purple-700 transition-colors line-clamp-2 leading-snug">
+                      {article.title}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-slate-400">{article.source}</span>
+                      <span className="text-slate-200">·</span>
+                      <span className="text-xs text-slate-400">{relativeTime(article.publishedAt)}</span>
+                    </div>
+                  </div>
+                  {article.image && (
+                    <img
+                      src={article.image}
+                      alt=""
+                      className="w-14 h-10 object-cover rounded-md flex-shrink-0 bg-slate-100"
+                      onError={e => { e.target.style.display = "none"; }}
+                    />
+                  )}
+                </a>
+              ))}
+            </div>
           )}
         </div>
       </div>
