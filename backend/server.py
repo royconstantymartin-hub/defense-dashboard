@@ -617,21 +617,30 @@ async def seed_data():
 
 async def run_news_scraper_job() -> dict:
     """Run the scraper pipeline, deduplicate, and upsert results into MongoDB."""
-    from services.news_scraper import scrape_all_sources, deduplicate_articles
+    from services.news_scraper import scrape_all_sources, cluster_articles
 
     # Sources whose content is defence-focused — no minimum score required
     _SPECIALTY_SOURCES = {
         "Breaking Defense", "The Defense Post", "Defense News",
         "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
+        "The War Zone", "Defense One", "Aviation Week",
+        "Army Technology", "Naval Technology",
     }
-    _FR_SOURCES = {"Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos"}
+    _FR_SOURCES = {
+        "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
+        "Usine Nouvelle", "Challenges", "La Tribune",
+    }
     _SOURCE_REGION = {
-        "Breaking Defense": "us",   "Defense News": "us",   "Defense Industry Daily": "us",
-        "Opex360": "europe",        "Meta-Défense": "europe",
-        "Le Monde": "europe",       "Le Figaro": "europe",  "Les Echos": "europe",
+        "Breaking Defense": "us",     "Defense News": "us",   "Defense Industry Daily": "us",
+        "Defense One": "us",
+        "Opex360": "europe",          "Meta-Défense": "europe",
+        "Le Monde": "europe",         "Le Figaro": "europe",  "Les Echos": "europe",
+        "Usine Nouvelle": "europe",   "Challenges": "europe", "La Tribune": "europe",
         "NATO": "europe",
         "The Defense Post": "global", "BBC News": "global",
         "The Guardian": "global",     "Janes": "global",
+        "The War Zone": "global",     "Aviation Week": "global",
+        "Army Technology": "global",  "Naval Technology": "global",
     }
 
     logger.info("News scraper job started")
@@ -639,7 +648,7 @@ async def run_news_scraper_job() -> dict:
         raw_articles = await asyncio.to_thread(scrape_all_sources)
         articles_found = len(raw_articles)
 
-        unique_articles = deduplicate_articles(raw_articles)
+        unique_articles = cluster_articles(raw_articles)
         duplicates_removed = articles_found - len(unique_articles)
 
         # Drop clearly off-topic articles from mainstream sources
@@ -650,7 +659,7 @@ async def run_news_scraper_job() -> dict:
             or a.get("relevanceScore", 0) >= MIN_MAINSTREAM_SCORE
         ]
 
-        # Sort by relevance (desc) then date (desc), keep top 40
+        # Sort by relevance (desc) then date (desc), keep top 80
         unique_articles.sort(
             key=lambda x: (
                 x.get("relevanceScore", 0),
@@ -658,7 +667,7 @@ async def run_news_scraper_job() -> dict:
             ),
             reverse=True,
         )
-        unique_articles = unique_articles[:40]
+        unique_articles = unique_articles[:80]
 
         scraped_at = datetime.now(timezone.utc)
         saved = 0
@@ -680,6 +689,8 @@ async def run_news_scraper_job() -> dict:
                     "relevanceScore": article.get("relevanceScore", 0),
                     "language":       lang,
                     "region":         region,
+                    "source_count":   article.get("source_count", 1),
+                    "covered_by":     article.get("covered_by", [src]),
                 }
                 await db.news_articles.update_one(
                     {"url": doc["url"]},
@@ -706,15 +717,20 @@ async def run_news_scraper_job() -> dict:
 # ============= NEWS ROUTES =============
 
 # Source-level metadata used both for query fallback and response normalisation
-_FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos"]
+_FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
+                   "Usine Nouvelle", "Challenges", "La Tribune"]
 _FR_SOURCES_SET = set(_FR_SOURCES)
 _SOURCE_REGION_MAP: dict = {
-    "Breaking Defense": "us",   "Defense News": "us",   "Defense Industry Daily": "us",
-    "Opex360": "europe",        "Meta-Défense": "europe",
-    "Le Monde": "europe",       "Le Figaro": "europe",  "Les Echos": "europe",
+    "Breaking Defense": "us",     "Defense News": "us",   "Defense Industry Daily": "us",
+    "Defense One": "us",
+    "Opex360": "europe",          "Meta-Défense": "europe",
+    "Le Monde": "europe",         "Le Figaro": "europe",  "Les Echos": "europe",
+    "Usine Nouvelle": "europe",   "Challenges": "europe", "La Tribune": "europe",
     "NATO": "europe",
     "The Defense Post": "global", "BBC News": "global",
     "The Guardian": "global",     "Janes": "global",
+    "The War Zone": "global",     "Aviation Week": "global",
+    "Army Technology": "global",  "Naval Technology": "global",
 }
 # Invert: region → list of sources whose default region is that value
 _REGION_SOURCES: dict = {}
@@ -727,6 +743,8 @@ for _src, _rgn in _SOURCE_REGION_MAP.items():
 _SPECIALTY_SOURCES_LIST = [
     "Breaking Defense", "The Defense Post", "Defense News",
     "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
+    "The War Zone", "Defense One", "Aviation Week",
+    "Army Technology", "Naval Technology",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 
@@ -800,7 +818,7 @@ async def get_news(
     Optional filters: language ("en"|"fr"), region ("us"|"europe"|"asia-pacific"|…).
     Falls back to the most recent batch when no fresh articles match.
     """
-    limit = min(max(limit, 1), 50)
+    limit = min(max(limit, 1), 80)
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
 
     query = _build_news_query(language, region, cutoff)
@@ -1094,10 +1112,11 @@ async def startup_event():
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
 
-    scheduler.add_job(run_news_scraper_job, "cron", hour=7, minute=0, id="daily_news_scraper")
-    scheduler.add_job(run_ma_scraper_job, "cron", hour=8, minute=0, id="daily_ma_scraper")
+    scheduler.add_job(run_news_scraper_job, "cron", hour=7,  minute=0, id="morning_news_scraper")
+    scheduler.add_job(run_news_scraper_job, "cron", hour=19, minute=0, id="evening_news_scraper")
+    scheduler.add_job(run_ma_scraper_job,   "cron", hour=8,  minute=0, id="daily_ma_scraper")
     scheduler.start()
-    logger.info("Schedulers started — news at 07:00 UTC, M&A at 08:00 UTC")
+    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, M&A at 08:00 UTC")
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())

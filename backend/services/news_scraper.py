@@ -28,24 +28,37 @@ HEADERS = {
 }
 
 # ── Category keyword matching ────────────────────────────────────────────────
+# Order matters: first match wins. CONFLICT and M&A are checked before TECHNOLOGY
+# so that "drone strike" → CONFLICT (not TECHNOLOGY) and "acquires" → M&A.
 
 CATEGORY_KEYWORDS: Dict[str, List[str]] = {
+    "CONFLICT":    ["war", "operation", "strike", "killed", "kills", "deploy", "troops",
+                    "combat", "battle", "offensive", "ceasefire", "attack", "hostilities",
+                    "bombing", "shelling", "airstrike", "air strike", "casualties",
+                    "guerre", "opération", "attaque", "conflit", "déploiement", "frappe",
+                    "tués", "blessés", "bombardement"],
+    "M&A":         ["acquisition", "merger", "acquires", "acquis", "buys", "takeover",
+                    "joint venture", "agrees to buy", "agrees to acquire", "strategic investment",
+                    "stake in", "divests", "divestiture", "spin-off", "completes purchase",
+                    "signs agreement to acquire",
+                    "fusion", "rachat", "cession", "cède", "prise de participation",
+                    "investissement stratégique", "cession d'actifs"],
     "CONTRACT":    ["contract", "award", "deal", "procurement", "tender", "bid",
-                    "contrat", "marché", "appel d'offres", "commande"],
-    "TECHNOLOGY":  ["ai", "drone", "cyber", "satellite", "hypersonic", "autonomous",
-                    "robot", "electronic warfare", "directed energy", "space",
-                    "intelligence artificielle", "spatial", "cyberattaque", "missile"],
-    "CONFLICT":    ["war", "operation", "strike", "deploy", "troops", "combat", "battle",
-                    "offensive", "ceasefire", "attack", "hostilities",
-                    "guerre", "opération", "attaque", "conflit", "déploiement", "frappe"],
+                    "ordered", "orders", "purchase agreement",
+                    "contrat", "marché", "appel d'offres", "commande", "livraison"],
+    "GEOPOLITICS": ["sanctions", "diplomacy", "talks", "summit", "alliance", "tensions",
+                    "treaty", "bilateral", "multilateral", "partnership", "cooperation",
+                    "diplomatie", "sommet", "accord", "partenariat", "coopération"],
     "POLICY":      ["nato", "eu", "law", "regulation", "policy", "spending", "gdp",
                     "budget", "legislation", "congress", "parliament", "defence review",
+                    "white paper", "strategy",
                     "otan", "loi", "politique", "budget défense", "lpm", "programmation"],
-    "M&A":         ["acquisition", "merger", "acquires", "buys", "takeover", "joint venture",
-                    "fusion", "rachat", "cession"],
-    "GEOPOLITICS": ["sanctions", "diplomacy", "talks", "summit", "alliance", "tensions",
-                    "treaty", "agreement", "bilateral", "multilateral",
-                    "sanctions", "diplomatie", "sommet", "alliance", "accord", "tensions"],
+    "TECHNOLOGY":  ["ai ", "artificial intelligence", "cyber", "satellite", "hypersonic",
+                    "autonomous", "robot", "electronic warfare", "directed energy",
+                    "space launch", "quantum", "radar", "stealth", "sensors",
+                    "drone technology", "uav", "ugv", "usv",
+                    "intelligence artificielle", "spatial", "cyberattaque",
+                    "guerre électronique", "énergie dirigée"],
 }
 
 
@@ -146,41 +159,78 @@ def compute_relevance_score(title: str, summary: str) -> int:
     return min(100, score)
 
 
-# ── Similarity / dedup helpers ───────────────────────────────────────────────
+# ── Similarity / clustering helpers ─────────────────────────────────────────
+
+# Stop words filtered out before computing similarity so that "US Army seeks
+# sled-mounted air defense" and "US Army considers sled-mounted air defense"
+# cluster correctly despite different verbs.
+_STOP_WORDS = {
+    "the", "a", "an", "to", "in", "of", "and", "or", "for", "is", "at",
+    "by", "on", "with", "from", "its", "it", "that", "this", "has", "was",
+    "will", "be", "as", "are", "have", "had", "not", "new", "says", "said",
+    "would", "could", "should", "over", "up", "into", "after", "against",
+    "amid", "two", "three", "four", "five", "six",
+    # French
+    "le", "la", "les", "un", "une", "des", "du", "de", "et", "en", "au",
+    "aux", "sur", "par", "pour", "qui", "que", "se", "sa", "son", "ses",
+}
+
+
+def _content_words(text: str) -> set:
+    return set(re.findall(r"\w+", text.lower())) - _STOP_WORDS
+
 
 def word_overlap_ratio(t1: str, t2: str) -> float:
-    """Jaccard word overlap between two title strings."""
-    w1 = set(re.findall(r"\w+", t1.lower()))
-    w2 = set(re.findall(r"\w+", t2.lower()))
+    """Jaccard overlap on content words (stop words excluded)."""
+    w1 = _content_words(t1)
+    w2 = _content_words(t2)
     if not w1 or not w2:
         return 0.0
     return len(w1 & w2) / len(w1 | w2)
 
 
-def deduplicate_articles(articles: List[Dict]) -> List[Dict]:
+def cluster_articles(articles: List[Dict]) -> List[Dict]:
     """
-    Remove duplicates by:
-      1. Exact URL match
-      2. Title Jaccard similarity > 0.80
+    Group articles that cover the same story into clusters (Jaccard ≥ 0.50 on
+    content words). For each cluster keep the article with the highest relevance
+    score as the representative and annotate it with:
+      - source_count  : number of distinct sources covering the story
+      - covered_by    : list of source names in the cluster
+
+    This replaces simple deduplication: instead of discarding near-duplicate
+    articles we *surface* multi-source coverage as a hotness signal.
     """
     seen_urls: set = set()
-    seen_titles: List[str] = []
-    unique: List[Dict] = []
+    clusters: List[List[Dict]] = []
 
     for article in articles:
         url = article.get("url", "")
-        title = article.get("title", "")
-
         if url in seen_urls:
             continue
-        if any(word_overlap_ratio(title, t) > 0.8 for t in seen_titles):
-            continue
-
         seen_urls.add(url)
-        seen_titles.append(title)
-        unique.append(article)
 
-    return unique
+        title = article.get("title", "")
+        matched: Optional[List[Dict]] = None
+        for cluster in clusters:
+            rep_title = cluster[0].get("title", "")
+            if word_overlap_ratio(title, rep_title) >= 0.50:
+                matched = cluster
+                break
+
+        if matched is not None:
+            matched.append(article)
+        else:
+            clusters.append([article])
+
+    result: List[Dict] = []
+    for cluster in clusters:
+        best = max(cluster, key=lambda a: a.get("relevanceScore", 0))
+        best = best.copy()
+        best["source_count"] = len(cluster)
+        best["covered_by"] = sorted({a.get("source", "") for a in cluster if a.get("source")})
+        result.append(best)
+
+    return result
 
 
 # ── RSS / Atom helpers ───────────────────────────────────────────────────────
@@ -487,19 +537,28 @@ def _scrape_defensepost() -> List[Dict]:
 RSS_SOURCES: List[Dict] = [
     # ── Defense specialty — English ─────────────────────────────────────────
     # Note: The Defense Post RSS redirects to homepage; scraped via _scrape_defensepost()
-    {"name": "Breaking Defense",       "url": "https://breakingdefense.com/feed/",                          "language": "en", "region": "us"},
-    {"name": "Defense News",           "url": "https://www.defensenews.com/arc/outboundfeeds/rss/",         "language": "en", "region": "us"},
-    {"name": "Defense Industry Daily", "url": "https://www.defenseindustrydaily.com/feed/",                 "language": "en", "region": "us"},
+    {"name": "Breaking Defense",       "url": "https://breakingdefense.com/feed/",                                    "language": "en", "region": "us"},
+    {"name": "Defense News",           "url": "https://www.defensenews.com/arc/outboundfeeds/rss/",                   "language": "en", "region": "us"},
+    {"name": "Defense Industry Daily", "url": "https://www.defenseindustrydaily.com/feed/",                           "language": "en", "region": "us"},
+    {"name": "The War Zone",           "url": "https://www.thedrive.com/the-war-zone/feed",                           "language": "en", "region": "global"},
+    {"name": "Defense One",            "url": "https://www.defenseone.com/rss/all/",                                  "language": "en", "region": "us"},
+    {"name": "Aviation Week",          "url": "https://aviationweek.com/rss/defense-space",                           "language": "en", "region": "global"},
+    {"name": "Army Technology",        "url": "https://www.army-technology.com/feed/",                                "language": "en", "region": "global"},
+    {"name": "Naval Technology",       "url": "https://www.naval-technology.com/feed/",                               "language": "en", "region": "global"},
     # ── Defense specialty — French ──────────────────────────────────────────
-    {"name": "Opex360",                "url": "https://www.opex360.com/feed/",                              "language": "fr", "region": "europe"},
-    {"name": "Meta-Défense",           "url": "https://meta-defense.fr/feed/",                              "language": "fr", "region": "europe"},
+    {"name": "Opex360",                "url": "https://www.opex360.com/feed/",                                        "language": "fr", "region": "europe"},
+    {"name": "Meta-Défense",           "url": "https://meta-defense.fr/feed/",                                        "language": "fr", "region": "europe"},
     # ── Mainstream — English ────────────────────────────────────────────────
-    {"name": "BBC News",               "url": "http://feeds.bbci.co.uk/news/world/rss.xml",                 "language": "en", "region": "global"},
-    {"name": "The Guardian",           "url": "https://www.theguardian.com/world/rss",                      "language": "en", "region": "global"},
+    {"name": "BBC News",               "url": "http://feeds.bbci.co.uk/news/world/rss.xml",                           "language": "en", "region": "global"},
+    {"name": "The Guardian",           "url": "https://www.theguardian.com/world/rss",                                "language": "en", "region": "global"},
     # ── Mainstream — French ─────────────────────────────────────────────────
-    {"name": "Le Monde",               "url": "https://www.lemonde.fr/rss/une.xml",                         "language": "fr", "region": "europe"},
-    {"name": "Le Figaro",              "url": "https://www.lefigaro.fr/rss/figaro_monde.xml",               "language": "fr", "region": "europe"},
-    {"name": "Les Echos",              "url": "https://www.lesechos.fr/arc/outboundfeeds/rss/",             "language": "fr", "region": "europe"},
+    {"name": "Le Monde",               "url": "https://www.lemonde.fr/rss/une.xml",                                   "language": "fr", "region": "europe"},
+    {"name": "Le Figaro",              "url": "https://www.lefigaro.fr/rss/figaro_monde.xml",                         "language": "fr", "region": "europe"},
+    {"name": "Les Echos",              "url": "https://www.lesechos.fr/arc/outboundfeeds/rss/",                       "language": "fr", "region": "europe"},
+    # ── French business & industry press ────────────────────────────────────
+    {"name": "Usine Nouvelle",         "url": "https://www.usinenouvelle.com/secteurs/aeronautique-et-defense.rss",   "language": "fr", "region": "europe"},
+    {"name": "Challenges",             "url": "https://www.challenges.fr/economie/rss.xml",                          "language": "fr", "region": "europe"},
+    {"name": "La Tribune",             "url": "https://www.latribune.fr/rss/industrie-et-innovation.rss",            "language": "fr", "region": "europe"},
 ]
 
 HTML_SCRAPERS = [_scrape_nato, _scrape_janes, _scrape_defensepost]
