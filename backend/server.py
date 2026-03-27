@@ -407,6 +407,72 @@ async def delete_defense_player(player_id: str, current_user: dict = Depends(get
         raise HTTPException(status_code=404, detail="Player not found")
     return {"status": "deleted"}
 
+# ── Stock price helpers ────────────────────────────────────────────────────
+
+import hashlib, random as _random, math as _math
+
+def _synthetic_history(ticker: str, base_price: float, period: str) -> list:
+    """
+    Generate deterministic synthetic OHLC-close history for a company.
+    Uses a seeded PRNG keyed on ticker so the same company always shows
+    the same chart shape; the series is anchored at base_price.
+    """
+    SIMULATED_NOW = datetime(2026, 3, 27, 16, 0, 0, tzinfo=timezone.utc)
+    cfg = {
+        "1d":  (78,  timedelta(minutes=5),  timedelta(hours=6, minutes=30), 0.0008),
+        "1w":  (35,  timedelta(hours=3),    timedelta(days=5),              0.003),
+        "1mo": (22,  timedelta(days=1, hours=10), timedelta(days=22),       0.012),
+        "1y":  (52,  timedelta(weeks=1),    timedelta(weeks=52),            0.025),
+    }
+    n, step, span, vol = cfg.get(period, cfg["1d"])
+    seed = int(hashlib.md5(f"{ticker}{period}".encode()).hexdigest()[:8], 16)
+    rng = _random.Random(seed)
+    # Walk forward from (base_price * drift_correction) → end near base_price
+    prices = []
+    p = base_price
+    for _ in range(n):
+        p = max(0.1, p * (1 + rng.gauss(0, vol)))
+        prices.append(p)
+    # Rescale so the last value equals base_price
+    scale = base_price / prices[-1] if prices[-1] else 1
+    prices = [round(v * scale, 2) for v in prices]
+    start = SIMULATED_NOW - span
+    return [{"time": (start + step * i).isoformat(), "price": prices[i]} for i in range(n)]
+
+@api_router.get("/stock-history/{ticker}")
+async def get_stock_history_route(ticker: str, period: str = "1d"):
+    """Return synthetic deterministic price history anchored to the player's seeded price."""
+    player = await db.defense_players.find_one(
+        {"ticker": {"$regex": f"^{re.escape(ticker)}$", "$options": "i"}}, {"_id": 0}
+    )
+    base = float(player["stock_price"]) if player and player.get("stock_price") else 100.0
+    if base <= 0:  # private companies
+        return {"ticker": ticker, "period": period, "data": []}
+    data = _synthetic_history(ticker, base, period)
+    return {"ticker": ticker, "period": period, "data": data}
+
+@api_router.get("/stock-prices")
+async def get_stock_prices(tickers: str = ""):
+    """Return current price data for a comma-separated list of tickers (from DB seed)."""
+    ticker_list = [t.strip() for t in tickers.split(",") if t.strip()]
+    if not ticker_list:
+        return {}
+    players = await db.defense_players.find(
+        {"ticker": {"$in": ticker_list}}, {"_id": 0, "ticker": 1, "stock_price": 1, "change_percent": 1}
+    ).to_list(len(ticker_list))
+    result = {}
+    for p in players:
+        t = p["ticker"]
+        price = p.get("stock_price", 0)
+        change = p.get("change_percent", 0)
+        if price > 0:
+            result[t] = {
+                "price": price,
+                "change_percent": change,
+                "prev_close": round(price / (1 + change / 100), 2) if change else price,
+            }
+    return result
+
 @api_router.get("/companies/{name}")
 async def get_company_profile(name: str):
     """Return Crunchbase-style company profile + related M&A activity."""
