@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
@@ -481,9 +482,9 @@ export default function Products() {
         </div>
       )}
 
-      {/* Comparison Modal */}
-      {showComparison && (
-        <div 
+      {/* Comparison Modal – portaled to body to escape CSS transform containing block */}
+      {showComparison && createPortal(
+        <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto"
           onClick={() => setShowComparison(false)}
         >
@@ -608,11 +609,12 @@ export default function Products() {
               </table>
             </CardContent>
           </Card>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Product Detail Modal – centered, clean, always accessible */}
-      {selectedProduct && (
+      {/* Product Detail Modal – portaled to body to escape CSS transform containing block */}
+      {selectedProduct && createPortal(
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedProduct(null)}
@@ -711,7 +713,8 @@ export default function Products() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

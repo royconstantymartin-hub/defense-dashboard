@@ -1163,6 +1163,23 @@ async def _migrate_ma_enrichments():
     except Exception as exc:
         logger.error("MA migration error: %s", exc)
 
+async def _apply_product_images():
+    """On startup, apply image_url from seed data to existing products that lack one."""
+    try:
+        from data.seed_data import PRODUCTS_DATA
+        updated = 0
+        for p in PRODUCTS_DATA:
+            if p.get("image_url"):
+                result = await db.products.update_one(
+                    {"name": p["name"], "$or": [{"image_url": None}, {"image_url": {"$exists": False}}]},
+                    {"$set": {"image_url": p["image_url"]}}
+                )
+                if result.modified_count:
+                    updated += 1
+        logger.info("Product image migration complete — %d products updated", updated)
+    except Exception as exc:
+        logger.error("Product image migration error: %s", exc)
+
 @app.on_event("startup")
 async def startup_event():
     """Create news_articles indexes, start scheduler, and auto-scrape if empty."""
@@ -1190,6 +1207,8 @@ async def startup_event():
     asyncio.create_task(_migrate_ma_enrichments())
     # Apply company profile enrichments (founded_year, headquarters, website, …)
     asyncio.create_task(_apply_company_enrichments())
+    # Apply image URLs to products that are missing them
+    asyncio.create_task(_apply_product_images())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
