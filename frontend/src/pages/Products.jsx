@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -60,6 +60,148 @@ const MANUFACTURERS = [
   { value: "Sikorsky", label: "Sikorsky" },
 ];
 
+// Wikipedia article title overrides for products whose names differ from their article titles
+const WIKI_TITLES = {
+  "F-35 Lightning II": "Lockheed Martin F-35 Lightning II",
+  "F-22 Raptor": "Lockheed Martin F-22 Raptor",
+  "Rafale F4": "Dassault Rafale",
+  "Eurofighter Typhoon": "Eurofighter Typhoon",
+  "Gripen E": "Saab JAS 39 Gripen",
+  "KF-21 Boramae": "KAI KF-21 Boramae",
+  "Patriot PAC-3": "MIM-104 Patriot",
+  "S-400 Triumf": "S-400 missile system",
+  "Iron Dome": "Iron Dome",
+  "THAAD": "Terminal High Altitude Area Defense",
+  "Virginia-class Submarine": "Virginia-class submarine",
+  "Astute-class Submarine": "Astute-class submarine",
+  "Barracuda-class Submarine": "Suffren-class submarine",
+  "M1A2 Abrams SEPv3": "M1 Abrams",
+  "Leopard 2A7+": "Leopard 2",
+  "K2 Black Panther": "K2 Black Panther",
+  "Leclerc": "AMX-56 Leclerc",
+  "MQ-9 Reaper": "General Atomics MQ-9 Reaper",
+  "Bayraktar TB2": "Bayraktar TB2",
+  "K9 Thunder": "K9 Thunder",
+  "CAESAR": "CAESAR howitzer",
+  "PzH 2000": "Panzerhaubitze 2000",
+  "Type 26 Frigate": "Type 26 frigate",
+  "FREMM Frigate": "FREMM multipurpose frigate",
+  "F-15EX Eagle II": "McDonnell Douglas F-15 Eagle",
+  "F/A-18E/F Super Hornet": "Boeing F/A-18E/F Super Hornet",
+  "Su-57 Felon": "Sukhoi Su-57",
+  "J-20 Mighty Dragon": "Chengdu J-20",
+  "HAL Tejas Mk2": "HAL Tejas",
+  "B-21 Raider": "Northrop Grumman B-21 Raider",
+  "B-2 Spirit": "Northrop Grumman B-2 Spirit",
+  "A-10 Thunderbolt II": "Fairchild Republic A-10 Thunderbolt II",
+  "AH-64E Apache Guardian": "Boeing AH-64 Apache",
+  "UH-60M Black Hawk": "Sikorsky UH-60 Black Hawk",
+  "NH90": "NHIndustries NH90",
+  "Tigre HAD": "Eurocopter Tiger",
+  "CH-47F Chinook": "Boeing CH-47 Chinook",
+  "V-22 Osprey": "Bell Boeing V-22 Osprey",
+  "C-17 Globemaster III": "Boeing C-17 Globemaster III",
+  "A400M Atlas": "Airbus A400M Atlas",
+  "KC-46 Pegasus": "Boeing KC-46 Pegasus",
+  "MQ-4C Triton": "Northrop Grumman MQ-4C Triton",
+  "RQ-4 Global Hawk": "Northrop Grumman RQ-4 Global Hawk",
+  "XQ-58 Valkyrie": "Kratos XQ-58 Valkyrie",
+  "Bayraktar TB3": "Bayraktar TB3",
+  "Switchblade 600": "AeroVironment Switchblade",
+  "Tomahawk Block V": "Tomahawk (missile)",
+  "SCALP/Storm Shadow": "Storm Shadow",
+  "AGM-158 JASSM-ER": "AGM-158 JASSM",
+  "Meteor BVRAAM": "MBDA Meteor",
+  "AIM-120D AMRAAM": "AIM-120 AMRAAM",
+  "Hellfire AGM-114R": "AGM-114 Hellfire",
+  "Javelin FGM-148": "FGM-148 Javelin",
+  "NSM Naval Strike Missile": "Naval Strike Missile",
+  "Harpoon Block II": "AGM-84 Harpoon",
+  "ASTER 30 SAMP/T": "Aster 30",
+  "David's Sling": "David's Sling",
+  "AGM-183A ARRW": "AGM-183 ARRW",
+  "Kinzhal": "Kh-47M2 Kinzhal",
+  "Arleigh Burke Flight III": "Arleigh Burke-class destroyer",
+  "Type 45 Daring-class": "Type 45 destroyer",
+  "Horizon-class Frigate": "Horizon-class frigate",
+  "Mistral-class LHD": "Mistral-class amphibious assault ship",
+  "Gerald R. Ford-class": "Gerald R. Ford-class aircraft carrier",
+  "Queen Elizabeth-class": "Queen Elizabeth-class aircraft carrier",
+  "Charles de Gaulle": "French aircraft carrier Charles de Gaulle",
+  "Columbia-class Submarine": "Columbia-class submarine",
+  "Dreadnought-class Submarine": "Dreadnought-class submarine",
+  "Le Triomphant-class": "Le Triomphant-class submarine",
+  "Challenger 3": "Challenger 2",
+  "T-14 Armata": "T-14 Armata",
+  "Merkava Mk 4M": "Merkava",
+  "VBCI": "VBCI",
+  "CV90 Mk IV": "CV90",
+  "Puma IFV": "Puma (IFV)",
+  "Boxer MRAV": "Boxer (armoured fighting vehicle)",
+  "Stryker ICVV": "Stryker",
+  "M270 MLRS": "M270 Multiple Launch Rocket System",
+  "HIMARS": "M142 HIMARS",
+  "ARCHER 155mm": "Archer artillery system",
+  "GPS III Satellite": "GPS Block III",
+  "SBIRS GEO": "Space Based Infrared System",
+  "X-37B Space Plane": "Boeing X-37",
+  "AN/ALQ-99 Jammer": "EA-18G Growler",
+  "F-16 Block 70/72": "General Dynamics F-16 Fighting Falcon",
+  "E-7A Wedgetail": "Boeing E-7",
+  "P-8A Poseidon": "Boeing P-8 Poseidon",
+  "E-2D Advanced Hawkeye": "Northrop Grumman E-2 Hawkeye",
+  "KC-135 Stratotanker": "Boeing KC-135 Stratotanker",
+  "MQ-1C Gray Eagle": "General Atomics MQ-1C Gray Eagle",
+  "Namer APC": "Namer",
+  "Bradley M2A4": "M2 Bradley",
+  "Zumwalt-class Destroyer": "Zumwalt-class destroyer",
+  "Starstreak HVM": "Starstreak",
+  "BrahMos": "BrahMos",
+  "SM-6 Standard Missile": "RIM-174 Standard ERAM",
+  "Arjun Mk-1A": "Arjun (tank)",
+  "Su-35S Flanker-E": "Sukhoi Su-35",
+  "Tornado IDS": "Panavia Tornado",
+  "AV-8B Harrier II": "McDonnell Douglas AV-8B Harrier II",
+  "Heron TP": "IAI Heron",
+  "Wing Loong II": "CAIG Wing Loong II",
+  "AC-130J Ghostrider": "Lockheed AC-130",
+  "Taurus KEPD 350": "Taurus (missile)",
+  "IRIS-T SLM": "IRIS-T",
+  "Arrow 3": "Arrow 3",
+  "Barak 8 LRSAM": "Barak 8",
+  "RIM-161 SM-3": "RIM-161 Standard Missile 3",
+  "Type 055 Destroyer": "Type 055 destroyer",
+  "INS Vikrant": "INS Vikrant (2013)",
+  "K21 IFV": "K21 infantry fighting vehicle",
+  "JLTV": "Joint Light Tactical Vehicle",
+  "M109A7 Paladin": "M109 howitzer",
+  "AS-90 Braveheart": "AS-90",
+  "SPY-6 AMDR": "AN/SPY-6",
+  "AN/TPY-2": "AN/TPY-2",
+  "EA-18G Growler": "Boeing EA-18G Growler",
+  "RC-135V/W Rivet Joint": "Boeing RC-135",
+  "Exocet MM40 Block 3": "Exocet",
+  "RBS-15 Mk4": "RBS-15",
+  "Visby-class Corvette": "Visby-class corvette",
+  "Type 212 Submarine": "Type 212 submarine",
+  "Soryu-class Submarine": "Sōryū-class submarine",
+  "AGM-88G AARGM-ER": "AGM-88 HARM",
+  "SSBN Le Terrible": "Le Triomphant-class submarine",
+  "Marder IFV": "Marder (IFV)",
+  "AMX-10RC": "AMX-10 RC",
+  "Altay Tank": "Altay (tank)",
+  "Sa'ar 6 Corvette": "Sa'ar 6-class corvette",
+  "Gowind-class Corvette": "Gowind-class corvette",
+  "Constellation-class Frigate": "Constellation-class frigate",
+  "MEKO A-200": "MEKO",
+  "Independence-class LCS": "Independence-class littoral combat ship",
+  "NASAMS": "NASAMS",
+  "Mistral MANPADS": "Mistral (missile)",
+  "Stinger FIM-92": "FIM-92 Stinger",
+  "Spike NLOS": "Spike (missile)",
+  "Spike ER2": "Spike (missile)",
+};
+
 // Company logo domains
 const COMPANY_LOGOS = {
   "Lockheed Martin": "lockheedmartin.com",
@@ -101,6 +243,36 @@ export default function Products() {
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showComparison, setShowComparison]= useState(false);
+
+  // Wikipedia image fallback: fetched client-side when DB image_url is missing or broken
+  const [wikiImages, setWikiImages] = useState({});   // productId → url
+  const [failedPrimary, setFailedPrimary] = useState(new Set()); // productIds where image_url 404'd
+  const fetchedIds = useRef(new Set());
+
+  const fetchWikiImage = useCallback(async (productId, productName) => {
+    if (fetchedIds.current.has(productId)) return;
+    fetchedIds.current.add(productId);
+    const title = (WIKI_TITLES[productName] || productName).replace(/ /g, '_');
+    try {
+      const r = await fetch(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
+      );
+      if (r.ok) {
+        const d = await r.json();
+        if (d.thumbnail?.source) {
+          const src = d.thumbnail.source.replace(/\/\d+px-/, '/600px-');
+          setWikiImages(prev => ({ ...prev, [productId]: src }));
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Auto-fetch Wikipedia images for all products missing an image_url
+  useEffect(() => {
+    filteredProducts.forEach(p => {
+      if (!p.image_url) fetchWikiImage(p.id, p.name);
+    });
+  }, [filteredProducts, fetchWikiImage]);
 
   const goToCompanyProfile = (e, manufacturer) => {
     e.stopPropagation();
@@ -411,20 +583,34 @@ export default function Products() {
             >
               {/* Image or Placeholder */}
               <div className="h-40 bg-gradient-to-br from-slate-100 to-slate-50 relative">
-                {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    onError={(ev) => {
-                      ev.target.style.display = 'none';
-                      ev.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                ) : null}
-                <div className="w-full h-full items-center justify-center" style={{ display: product.image_url ? 'none' : 'flex' }}>
-                  <Icon className="w-16 h-16 text-slate-300" />
-                </div>
+                {(() => {
+                  const primaryFailed = failedPrimary.has(product.id);
+                  const imgSrc = primaryFailed
+                    ? wikiImages[product.id]
+                    : (product.image_url || wikiImages[product.id]);
+                  return imgSrc ? (
+                    <img
+                      src={imgSrc}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      onError={(ev) => {
+                        if (!primaryFailed && imgSrc === product.image_url) {
+                          // Primary URL broke — fetch Wikipedia and re-render
+                          setFailedPrimary(prev => new Set([...prev, product.id]));
+                          fetchWikiImage(product.id, product.name);
+                        } else {
+                          // Wiki image also failed — just show icon
+                          ev.target.style.display = 'none';
+                          if (ev.target.nextSibling) ev.target.nextSibling.style.display = 'flex';
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Icon className="w-16 h-16 text-slate-300" />
+                    </div>
+                  );
+                })()}
                 <span className={`absolute top-2 right-2 text-xs font-medium px-2 py-0.5 rounded-full border ${getStatusStyle(product.status)}`}>
                   {product.status.toUpperCase()}
                 </span>
@@ -635,15 +821,28 @@ export default function Products() {
 
             {/* Header Image – fixed height, never collapses */}
             <div className="h-52 bg-gradient-to-br from-slate-100 to-slate-50 flex-shrink-0 relative">
-              {selectedProduct.image_url && (
-                <img
-                  src={selectedProduct.image_url}
-                  alt={selectedProduct.name}
-                  className="w-full h-full object-cover"
-                  onError={(ev) => { ev.target.style.display = 'none'; }}
-                />
-              )}
-              {!selectedProduct.image_url && (() => {
+              {(() => {
+                const modalPrimaryFailed = failedPrimary.has(selectedProduct.id);
+                const modalImgSrc = modalPrimaryFailed
+                  ? wikiImages[selectedProduct.id]
+                  : (selectedProduct.image_url || wikiImages[selectedProduct.id]);
+                if (modalImgSrc) {
+                  return (
+                    <img
+                      src={modalImgSrc}
+                      alt={selectedProduct.name}
+                      className="w-full h-full object-cover"
+                      onError={(ev) => {
+                        if (!modalPrimaryFailed && modalImgSrc === selectedProduct.image_url) {
+                          setFailedPrimary(prev => new Set([...prev, selectedProduct.id]));
+                          fetchWikiImage(selectedProduct.id, selectedProduct.name);
+                        } else {
+                          ev.target.style.display = 'none';
+                        }
+                      }}
+                    />
+                  );
+                }
                 const DIcon = getCategoryIcon(selectedProduct.category);
                 return <DIcon className="w-20 h-20 text-slate-200 absolute inset-0 m-auto" />;
               })()}
