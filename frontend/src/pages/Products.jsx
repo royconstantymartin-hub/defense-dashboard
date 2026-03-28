@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio } from "lucide-react";
+import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -240,6 +241,7 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedManufacturer, setSelectedManufacturer] = useState("all");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [profileName, setProfileName] = useState(null);
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showComparison, setShowComparison]= useState(false);
@@ -276,7 +278,7 @@ export default function Products() {
 
   const goToCompanyProfile = (e, manufacturer) => {
     e.stopPropagation();
-    navigate(`/market-data?q=${encodeURIComponent(manufacturer)}`);
+    setProfileName(manufacturer);
   };
 
   useEffect(() => {
@@ -629,21 +631,23 @@ export default function Products() {
                     <h3 className="text-slate-900 font-medium text-sm">{product.name}</h3>
                     <button
                       onClick={(e) => goToCompanyProfile(e, product.manufacturer)}
-                      className="flex items-center gap-1.5 mt-1 group text-left"
-                      title={`Voir la fiche ${product.manufacturer}`}
+                      className="flex items-center gap-1.5 mt-1.5 group text-left bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg px-2 py-1 transition-all"
+                      title={`View ${product.manufacturer} profile`}
                     >
-                      {logoUrl && (
+                      {logoUrl ? (
                         <img
                           src={logoUrl}
                           alt={product.manufacturer}
-                          className="w-4 h-4 rounded object-contain"
+                          className="w-4 h-4 rounded object-contain shrink-0"
                           onError={(e) => { e.target.style.display = 'none'; }}
                         />
+                      ) : (
+                        <Building2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-500 shrink-0 transition-colors" />
                       )}
-                      <p className="text-xs text-slate-500 group-hover:text-purple-600 transition-colors">
+                      <p className="text-xs text-slate-600 group-hover:text-purple-700 font-medium transition-colors truncate max-w-[120px]">
                         {product.manufacturer}
                       </p>
-                      <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-500 transition-colors" />
+                      <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-500 transition-colors shrink-0" />
                     </button>
                   </div>
                 </div>
@@ -858,18 +862,20 @@ export default function Products() {
                 <h2 className="font-heading text-xl font-bold text-slate-900 leading-tight">{selectedProduct.name}</h2>
                 <button
                   onClick={(e) => goToCompanyProfile(e, selectedProduct.manufacturer)}
-                  className="flex items-center gap-2 mt-2 group text-left"
-                  title={`Voir la fiche ${selectedProduct.manufacturer}`}
+                  className="flex items-center gap-2 mt-2 group text-left bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg px-2.5 py-1.5 transition-all"
+                  title={`View ${selectedProduct.manufacturer} profile`}
                 >
-                  {getLogo(selectedProduct.manufacturer) && (
+                  {getLogo(selectedProduct.manufacturer) ? (
                     <img
                       src={getLogo(selectedProduct.manufacturer)}
                       alt={selectedProduct.manufacturer}
-                      className="w-5 h-5 rounded object-contain"
+                      className="w-5 h-5 rounded object-contain shrink-0"
                       onError={(ev) => { ev.target.style.display = 'none'; }}
                     />
+                  ) : (
+                    <Building2 className="w-4 h-4 text-slate-400 group-hover:text-purple-500 shrink-0 transition-colors" />
                   )}
-                  <span className="text-sm text-slate-500 group-hover:text-purple-600 transition-colors">
+                  <span className="text-sm text-slate-600 group-hover:text-purple-700 font-medium transition-colors">
                     {selectedProduct.manufacturer}
                   </span>
                   <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-500 transition-colors" />
@@ -915,6 +921,9 @@ export default function Products() {
         </div>,
         document.body
       )}
+
+      {/* Company Profile Sheet */}
+      <CompanyProfileSheet name={profileName} onClose={() => setProfileName(null)} />
     </div>
   );
 }
