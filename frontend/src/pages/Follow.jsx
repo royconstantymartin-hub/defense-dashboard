@@ -556,6 +556,176 @@ const PODCASTS = [
   },
 ];
 
+const THINK_TANK_PUBS = [
+  // ── French think tanks ──────────────────────────────────────────────────────
+  {
+    id: "tt-fr1",
+    org: "IRSEM",
+    fullName: "Institut de Recherche Stratégique de l'École Militaire",
+    lang: "fr",
+    title: "Dissuasion nucléaire et coopération européenne : vers une doctrine commune ?",
+    date: "Mars 2025",
+    topics: ["nucléaire", "Europe", "doctrine"],
+    url: "https://www.irsem.fr/publications.html",
+    accent: "bg-blue-700",
+  },
+  {
+    id: "tt-fr2",
+    org: "IRSEM",
+    fullName: "Institut de Recherche Stratégique de l'École Militaire",
+    lang: "fr",
+    title: "L'intelligence artificielle dans les systèmes d'armes autonomes : enjeux éthiques et juridiques",
+    date: "Fév. 2025",
+    topics: ["IA", "systèmes autonomes", "droit"],
+    url: "https://www.irsem.fr/publications.html",
+    accent: "bg-blue-700",
+  },
+  {
+    id: "tt-fr3",
+    org: "IHEDN",
+    fullName: "Institut des Hautes Études de la Défense Nationale",
+    lang: "fr",
+    title: "Souveraineté industrielle de défense : bilan et perspectives pour la BITD française",
+    date: "Mars 2025",
+    topics: ["BITD", "souveraineté", "industrie"],
+    url: "https://www.ihedn.fr/publications",
+    accent: "bg-red-700",
+  },
+  {
+    id: "tt-fr4",
+    org: "IHEDN",
+    fullName: "Institut des Hautes Études de la Défense Nationale",
+    lang: "fr",
+    title: "Guerre cognitive et influence : les nouvelles formes de conflictualité",
+    date: "Jan. 2025",
+    topics: ["guerre cognitive", "influence", "information"],
+    url: "https://www.ihedn.fr/publications",
+    accent: "bg-red-700",
+  },
+  {
+    id: "tt-fr5",
+    org: "FRS",
+    fullName: "Fondation pour la Recherche Stratégique",
+    lang: "fr",
+    title: "Prolifération des missiles balistiques en Asie : dynamiques et réponses occidentales",
+    date: "Fév. 2025",
+    topics: ["missiles", "prolifération", "Asie"],
+    url: "https://www.frstrategie.org/publications",
+    accent: "bg-orange-700",
+  },
+  {
+    id: "tt-fr6",
+    org: "IFRI",
+    fullName: "Institut Français des Relations Internationales",
+    lang: "fr",
+    title: "Le réarmement européen face aux contraintes budgétaires et industrielles",
+    date: "Mars 2025",
+    topics: ["réarmement", "Europe", "budget"],
+    url: "https://www.ifri.org/fr/publications",
+    accent: "bg-teal-700",
+  },
+  {
+    id: "tt-fr7",
+    org: "IRIS",
+    fullName: "Institut de Relations Internationales et Stratégiques",
+    lang: "fr",
+    title: "Sahel 2025 : recomposition des présences militaires et enjeux sécuritaires",
+    date: "Jan. 2025",
+    topics: ["Sahel", "Afrique", "sécurité"],
+    url: "https://www.iris-france.org/publications/",
+    accent: "bg-violet-700",
+  },
+  // ── English / international think tanks ─────────────────────────────────────
+  {
+    id: "tt-en1",
+    org: "IISS",
+    fullName: "International Institute for Strategic Studies",
+    lang: "en",
+    title: "Military Balance 2025: Global Defence Spending Reaches Record $2.2 Trillion",
+    date: "Feb. 2025",
+    topics: ["defence spending", "military balance", "global"],
+    url: "https://www.iiss.org/publications/",
+    accent: "bg-slate-700",
+  },
+  {
+    id: "tt-en2",
+    org: "IISS",
+    fullName: "International Institute for Strategic Studies",
+    lang: "en",
+    title: "Ukraine War: Lessons Learned for NATO Force Posture and Doctrine",
+    date: "Mar. 2025",
+    topics: ["Ukraine", "NATO", "doctrine"],
+    url: "https://www.iiss.org/publications/",
+    accent: "bg-slate-700",
+  },
+  {
+    id: "tt-en3",
+    org: "RAND",
+    fullName: "RAND Corporation",
+    lang: "en",
+    title: "Autonomous Weapons and the Future of Deterrence: Risks and Opportunities",
+    date: "Mar. 2025",
+    topics: ["autonomous weapons", "deterrence", "AI"],
+    url: "https://www.rand.org/topics/defense-policy.html",
+    accent: "bg-amber-700",
+  },
+  {
+    id: "tt-en4",
+    org: "RAND",
+    fullName: "RAND Corporation",
+    lang: "en",
+    title: "European Defence Integration: Progress, Obstacles, and Pathways Forward",
+    date: "Jan. 2025",
+    topics: ["Europe", "integration", "CSDP"],
+    url: "https://www.rand.org/topics/defense-policy.html",
+    accent: "bg-amber-700",
+  },
+  {
+    id: "tt-en5",
+    org: "CSIS",
+    fullName: "Center for Strategic and International Studies",
+    lang: "en",
+    title: "Indo-Pacific Defense Architecture: Allies, Partners, and Emerging Threats",
+    date: "Feb. 2025",
+    topics: ["Indo-Pacific", "alliances", "China"],
+    url: "https://www.csis.org/topics/defense-security",
+    accent: "bg-sky-700",
+  },
+  {
+    id: "tt-en6",
+    org: "SIPRI",
+    fullName: "Stockholm International Peace Research Institute",
+    lang: "en",
+    title: "Yearbook 2025: Armaments, Disarmament and International Security",
+    date: "Mar. 2025",
+    topics: ["armaments", "disarmament", "nuclear"],
+    url: "https://www.sipri.org/publications/yearbook",
+    accent: "bg-emerald-700",
+  },
+  {
+    id: "tt-en7",
+    org: "Chatham House",
+    fullName: "Royal Institute of International Affairs",
+    lang: "en",
+    title: "NATO's Eastern Flank: Deterrence Credibility After the 2025 Summit",
+    date: "Jan. 2025",
+    topics: ["NATO", "deterrence", "Eastern Europe"],
+    url: "https://www.chathamhouse.org/topics/defence",
+    accent: "bg-indigo-700",
+  },
+  {
+    id: "tt-en8",
+    org: "Atlantic Council",
+    fullName: "Atlantic Council",
+    lang: "en",
+    title: "Defence Industrial Base in the Age of Great Power Competition",
+    date: "Feb. 2025",
+    topics: ["industry", "great power", "competition"],
+    url: "https://www.atlanticcouncil.org/programs/scowcroft-center-for-strategy-and-security/",
+    accent: "bg-rose-700",
+  },
+];
+
 export default function Follow() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -563,6 +733,7 @@ export default function Follow() {
   const [allPosts, setAllPosts] = useState([]);
   const [favorites, setFavorites] = useState(FAVORITE_ACCOUNTS);
   const [podcastLang, setPodcastLang] = useState("all");
+  const [thinkTankLang, setThinkTankLang] = useState("all");
 
   useEffect(() => {
     const combined = [...MOCK_TWITTER_POSTS, ...MOCK_LINKEDIN_POSTS].sort((a, b) => {
@@ -769,6 +940,82 @@ export default function Follow() {
                     <span>Écouter / Listen</span>
                     <ExternalLink className="w-3 h-3" />
                   </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Think Tank Publications */}
+      <Card className="bg-white border-slate-200 shadow-sm">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-purple-600" />
+              <CardTitle className="font-heading text-lg text-slate-900">Think Tank Publications</CardTitle>
+              <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                {thinkTankLang === "all" ? THINK_TANK_PUBS.length : THINK_TANK_PUBS.filter(p => p.lang === thinkTankLang).length} publications
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-slate-100 rounded-lg p-1">
+              {[
+                { value: "all", label: "Tous / All" },
+                { value: "fr", label: "🇫🇷 Français" },
+                { value: "en", label: "🇬🇧 English" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setThinkTankLang(opt.value)}
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition-all duration-150 ${
+                    thinkTankLang === opt.value
+                      ? "bg-white text-purple-700 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {THINK_TANK_PUBS.filter(p => thinkTankLang === "all" || p.lang === thinkTankLang).map((pub) => (
+              <a
+                key={pub.id}
+                href={pub.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col gap-3 p-4 rounded-xl border border-slate-200 bg-white hover:border-purple-300 hover:shadow-md transition-all duration-200"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <span className={`inline-block text-white text-xs font-bold px-2 py-0.5 rounded ${pub.accent} flex-shrink-0`}>
+                    {pub.org}
+                  </span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${
+                    pub.lang === "fr"
+                      ? "bg-blue-50 text-blue-700 border border-blue-200"
+                      : "bg-amber-50 text-amber-700 border border-amber-200"
+                  }`}>
+                    {pub.lang === "fr" ? "🇫🇷 FR" : "🇬🇧 EN"}
+                  </span>
+                </div>
+                <p className="text-slate-800 text-sm font-medium leading-snug line-clamp-3 flex-1">
+                  {pub.title}
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {pub.topics.map(t => (
+                    <span key={t} className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                  <span className="text-xs text-slate-400">{pub.date}</span>
+                  <span className="flex items-center gap-1 text-purple-600 text-xs font-medium group-hover:text-purple-700 transition-colors">
+                    Lire / Read <ExternalLink className="w-3 h-3" />
+                  </span>
                 </div>
               </a>
             ))}
