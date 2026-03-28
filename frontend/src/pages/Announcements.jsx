@@ -83,7 +83,10 @@ function relativeTime(dateStr) {
 }
 
 // Map source name → language for display fallback (old articles without field)
-const FR_SOURCES = new Set(["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos"]);
+const FR_SOURCES = new Set([
+  "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
+  "Usine Nouvelle", "Challenges", "La Tribune",
+]);
 
 function resolveLanguage(article) {
   if (article.language === "fr" || article.language === "en") return article.language;
@@ -136,10 +139,12 @@ function SourceFavicon({ url, source }) {
 
 // ── NewsCard ──────────────────────────────────────────────────────────────────
 
-function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary }) {
+function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, isHot }) {
   const [imgError, setImgError] = useState(false);
-  const score = article.relevanceScore ?? 0;
-  const isNew = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
+  const score      = article.relevanceScore ?? 0;
+  const isNew      = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
+  const srcCount   = article.source_count ?? 1;
+  const coveredBy  = article.covered_by ?? [];
 
   const scoreBadge = score >= 70
     ? <span className="absolute top-2 left-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">HIGH</span>
@@ -150,7 +155,11 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary }
   const showSummary = summaryState && (summaryState.loading || summaryState.bullets);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-lg hover:border-purple-200 transition-all flex flex-col group">
+    <div className={`rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-all flex flex-col group ${
+      isHot
+        ? "bg-white border-2 border-orange-300 hover:border-orange-400"
+        : "bg-white border border-slate-200 hover:border-purple-200"
+    }`}>
 
       {/* Cover image — clicking navigates to article */}
       <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative h-44 bg-slate-100 overflow-hidden flex-shrink-0 block">
@@ -168,6 +177,15 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary }
         {scoreBadge}
         {isNew && (
           <span className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">NEW</span>
+        )}
+        {/* Multi-source badge */}
+        {srcCount >= 2 && (
+          <span
+            className="absolute bottom-2 left-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide flex items-center gap-1"
+            title={`Covered by: ${coveredBy.join(", ")}`}
+          >
+            🔥 {srcCount} sources
+          </span>
         )}
         {/* Language flag */}
         {(() => { const lang = resolveLanguage(article); return (
@@ -298,7 +316,7 @@ export default function Announcements() {
   const fetchNews = useCallback(async (lang = "all", region = "all") => {
     setLoading(true);
     try {
-      const params = { limit: 40 };
+      const params = { limit: 80 };
       if (lang   !== "all") params.language = lang;
       if (region !== "all") params.region   = region;
       const resp = await axios.get(`${API}/news`, { params });
@@ -406,7 +424,9 @@ export default function Announcements() {
     return matchCat && matchSearch;
   });
 
-  const highCount = articles.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
+  const highCount  = articles.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
+  const hotArticles     = filtered.filter((a) => (a.source_count ?? 1) >= 2);
+  const regularArticles = filtered.filter((a) => (a.source_count ?? 1) < 2);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -549,21 +569,67 @@ export default function Announcements() {
               : "No articles match your filters"}
           </p>
           <p className="text-sm mt-1 text-slate-400">
-            The scraper runs automatically every day at 07:00 UTC.
+            The scraper runs automatically twice a day at 07:00 and 19:00 UTC.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((article, idx) => (
-            <NewsCard
-              key={article.url || idx}
-              article={article}
-              isBookmarked={bookmarkedUrls.has(article.url)}
-              onBookmark={toggleBookmark}
-              summaryState={summaries[article.url]}
-              onSummary={toggleSummary}
-            />
-          ))}
+        <div className="space-y-8">
+
+          {/* ── HOT section — multi-source stories ── */}
+          {hotArticles.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-base">🔥</span>
+                <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">
+                  Actualités chaudes
+                </h2>
+                <span className="text-xs text-slate-400 font-normal normal-case tracking-normal">
+                  — couvertes par plusieurs sources
+                </span>
+                <div className="flex-1 h-px bg-orange-200 ml-2" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {hotArticles.map((article, idx) => (
+                  <NewsCard
+                    key={article.url || `hot-${idx}`}
+                    article={article}
+                    isBookmarked={bookmarkedUrls.has(article.url)}
+                    onBookmark={toggleBookmark}
+                    summaryState={summaries[article.url]}
+                    onSummary={toggleSummary}
+                    isHot
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── All news ── */}
+          {regularArticles.length > 0 && (
+            <div>
+              {hotArticles.length > 0 && (
+                <div className="flex items-center gap-2 mb-4">
+                  <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">
+                    Toutes les news
+                  </h2>
+                  <div className="flex-1 h-px bg-slate-200 ml-2" />
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {regularArticles.map((article, idx) => (
+                  <NewsCard
+                    key={article.url || `reg-${idx}`}
+                    article={article}
+                    isBookmarked={bookmarkedUrls.has(article.url)}
+                    onBookmark={toggleBookmark}
+                    summaryState={summaries[article.url]}
+                    onSummary={toggleSummary}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
       )}
     </div>
