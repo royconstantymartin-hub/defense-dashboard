@@ -10,14 +10,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Search, 
-  Twitter, 
-  Linkedin, 
-  Heart, 
-  MessageCircle, 
-  Repeat2, 
-  Share, 
+import {
+  Search,
+  Twitter,
+  Linkedin,
+  Heart,
+  MessageCircle,
+  Repeat2,
+  Share,
   ExternalLink,
   Building2,
   Shield,
@@ -28,7 +28,10 @@ import {
   CheckCircle2,
   Filter,
   Plus,
-  X
+  X,
+  Headphones,
+  Mic,
+  Globe
 } from "lucide-react";
 
 // Favorite Accounts with real logos and links
@@ -470,12 +473,96 @@ const ACCOUNT_TYPES = [
   { value: "media", label: "Media" },
 ];
 
+const PODCASTS = [
+  {
+    id: "pod-fr1",
+    name: "Le Collimateur",
+    lang: "fr",
+    host: "IRSEM",
+    description: "Le podcast de l'Institut de recherche stratégique de l'École militaire (IRSEM). Analyses stratégiques, géopolitique et enjeux de défense.",
+    tags: ["stratégie", "géopolitique", "armées"],
+    url: "https://lecollimateur.fr",
+    coverColor: "from-blue-700 to-blue-900",
+  },
+  {
+    id: "pod-fr2",
+    name: "Ultima Ratio",
+    lang: "fr",
+    host: "CAESar Podcast",
+    description: "Podcast indépendant dédié aux questions de défense, d'armement et de stratégie militaire française et européenne.",
+    tags: ["armement", "stratégie", "Europe"],
+    url: "https://www.ultima-ratio.fr",
+    coverColor: "from-slate-700 to-slate-900",
+  },
+  {
+    id: "pod-fr3",
+    name: "Le Rubicon",
+    lang: "fr",
+    host: "Fondation pour la Recherche Stratégique",
+    description: "Décryptages géopolitiques et stratégiques par la Fondation pour la Recherche Stratégique. Crises, conflits et relations internationales.",
+    tags: ["géopolitique", "crises", "FRS"],
+    url: "https://www.frstrategie.org/le-rubicon",
+    coverColor: "from-red-700 to-red-900",
+  },
+  {
+    id: "pod-fr4",
+    name: "Guerre et Paix",
+    lang: "fr",
+    host: "France Culture",
+    description: "L'émission hebdomadaire de France Culture consacrée aux conflits internationaux, à la diplomatie et aux enjeux de sécurité mondiale.",
+    tags: ["diplomatie", "conflits", "France Culture"],
+    url: "https://www.radiofrance.fr/franceculture/podcasts/guerre-et-paix",
+    coverColor: "from-purple-700 to-purple-900",
+  },
+  {
+    id: "pod-en1",
+    name: "War on the Rocks",
+    lang: "en",
+    host: "Ryan Evans",
+    description: "Analysis and commentary on national security, defense, and foreign policy from top practitioners and scholars.",
+    tags: ["national security", "foreign policy", "strategy"],
+    url: "https://warontherocks.com/category/podcasts/",
+    coverColor: "from-amber-700 to-amber-900",
+  },
+  {
+    id: "pod-en2",
+    name: "Defense One Radio",
+    lang: "en",
+    host: "Defense One",
+    description: "Interviews with top defense officials, military leaders, and policy experts on the latest developments in U.S. and global defense.",
+    tags: ["Pentagon", "policy", "technology"],
+    url: "https://www.defenseone.com/feature/defense-one-radio/",
+    coverColor: "from-emerald-700 to-emerald-900",
+  },
+  {
+    id: "pod-en3",
+    name: "The Lawfare Podcast",
+    lang: "en",
+    host: "Lawfare Institute",
+    description: "Hard national security choices — law, policy, and the intersection of security and civil liberties.",
+    tags: ["law", "national security", "policy"],
+    url: "https://www.lawfaremedia.org/podcasts",
+    coverColor: "from-sky-700 to-sky-900",
+  },
+  {
+    id: "pod-en4",
+    name: "Sitrep",
+    lang: "en",
+    host: "Foreign Policy",
+    description: "Foreign Policy's daily briefing on the global situation report — geopolitics, conflict, and diplomacy.",
+    tags: ["geopolitics", "diplomacy", "daily"],
+    url: "https://foreignpolicy.com/podcasts/sitrep/",
+    coverColor: "from-indigo-700 to-indigo-900",
+  },
+];
+
 export default function Follow() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [accountType, setAccountType] = useState("all");
   const [allPosts, setAllPosts] = useState([]);
   const [favorites, setFavorites] = useState(FAVORITE_ACCOUNTS);
+  const [podcastLang, setPodcastLang] = useState("all");
 
   useEffect(() => {
     const combined = [...MOCK_TWITTER_POSTS, ...MOCK_LINKEDIN_POSTS].sort((a, b) => {
@@ -602,6 +689,87 @@ export default function Follow() {
                   <span className="text-xs text-slate-500">{account.followers} followers</span>
                 </div>
                 <ExternalLink className="w-4 h-4 text-slate-300 group-hover:text-purple-500 transition-colors ml-2" />
+              </a>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Podcasts Section */}
+      <Card className="bg-white border-slate-200 shadow-sm">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Headphones className="w-5 h-5 text-purple-600" />
+              <CardTitle className="font-heading text-lg text-slate-900">Defense Podcasts</CardTitle>
+              <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                {podcastLang === "all" ? PODCASTS.length : PODCASTS.filter(p => p.lang === podcastLang).length} podcasts
+              </span>
+            </div>
+            {/* Language Filter */}
+            <div className="flex items-center gap-1.5 bg-slate-100 rounded-lg p-1">
+              {[
+                { value: "all", label: "Tous / All" },
+                { value: "fr", label: "🇫🇷 Français" },
+                { value: "en", label: "🇬🇧 English" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setPodcastLang(opt.value)}
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition-all duration-150 ${
+                    podcastLang === opt.value
+                      ? "bg-white text-purple-700 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {PODCASTS.filter(p => podcastLang === "all" || p.lang === podcastLang).map((podcast) => (
+              <a
+                key={podcast.id}
+                href={podcast.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col rounded-xl overflow-hidden border border-slate-200 hover:border-purple-300 hover:shadow-lg transition-all duration-200"
+              >
+                {/* Cover gradient */}
+                <div className={`bg-gradient-to-br ${podcast.coverColor} p-4 flex items-center gap-3`}>
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <Mic className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-white font-semibold text-sm leading-tight truncate">{podcast.name}</p>
+                    <p className="text-white/70 text-xs truncate">{podcast.host}</p>
+                  </div>
+                </div>
+                {/* Body */}
+                <div className="flex flex-col gap-2 p-3 bg-white flex-1">
+                  <p className="text-slate-600 text-xs leading-relaxed line-clamp-3">{podcast.description}</p>
+                  <div className="flex flex-wrap gap-1 mt-auto">
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                      podcast.lang === "fr"
+                        ? "bg-blue-50 text-blue-700 border border-blue-200"
+                        : "bg-amber-50 text-amber-700 border border-amber-200"
+                    }`}>
+                      {podcast.lang === "fr" ? "🇫🇷 FR" : "🇬🇧 EN"}
+                    </span>
+                    {podcast.tags.slice(0, 2).map(tag => (
+                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1 text-purple-600 text-xs font-medium group-hover:text-purple-700 transition-colors mt-1">
+                    <span>Écouter / Listen</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </div>
+                </div>
               </a>
             ))}
           </div>
