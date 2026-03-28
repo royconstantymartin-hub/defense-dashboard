@@ -58,22 +58,22 @@ const COMPANY_LOGOS = {
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [players, setPlayers] = useState([]);
-  const [announcements, setAnnouncements] = useState([]);
+  const [recentNews, setRecentNews] = useState([]);
   const [expenditures, setExpenditures] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsRes, playersRes, announcementsRes, expendituresRes] = await Promise.all([
+        const [statsRes, playersRes, newsRes, expendituresRes] = await Promise.all([
           axios.get(`${API}/dashboard/stats`),
           axios.get(`${API}/defense-players`),
-          axios.get(`${API}/announcements?limit=5`),
+          axios.get(`${API}/news?limit=5`),
           axios.get(`${API}/expenditures?year=2024`)
         ]);
         setStats(statsRes.data);
         setPlayers(playersRes.data);
-        setAnnouncements(announcementsRes.data);
+        setRecentNews(newsRes.data);
         setExpenditures(expendituresRes.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -371,8 +371,8 @@ export default function Dashboard() {
           <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
             <div className="flex items-center justify-between">
               <CardTitle className="font-heading text-lg text-slate-900">Recent Intel</CardTitle>
-              <Link 
-                to="/announcements" 
+              <Link
+                to="/news"
                 className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
               >
                 View All <ArrowRight className="w-3 h-3" />
@@ -381,33 +381,44 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-slate-100" data-testid="recent-announcements">
-              {announcements.map((item) => (
-                <div key={item.id} className="p-4 hover:bg-purple-50/30 transition-colors">
+              {recentNews.map((item, idx) => (
+                <a
+                  key={item.url || idx}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-4 hover:bg-purple-50/30 transition-colors"
+                >
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Newspaper className="w-4 h-4 text-purple-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-slate-900 text-sm font-medium line-clamp-1">{item.title}</p>
-                      <p className="text-slate-500 text-xs mt-1 line-clamp-2">{item.content}</p>
+                      <p className="text-slate-900 text-sm font-medium line-clamp-2">{item.title}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${
-                          item.category === 'contract' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                          item.category === 'product_launch' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                          item.category === 'regulatory' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                          item.category === 'CONTRACT'    ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                          item.category === 'TECHNOLOGY'  ? 'bg-purple-50  text-purple-700  border-purple-200' :
+                          item.category === 'CONFLICT'    ? 'bg-red-50     text-red-700     border-red-200'    :
+                          item.category === 'POLICY'      ? 'bg-amber-50   text-amber-700   border-amber-200'  :
+                          item.category === 'GEOPOLITICS' ? 'bg-sky-50     text-sky-700     border-sky-200'    :
+                          item.category === 'M&A'         ? 'bg-blue-50    text-blue-700    border-blue-200'   :
                           'bg-slate-50 text-slate-600 border-slate-200'
                         }`}>
-                          {item.category.replace('_', ' ').toUpperCase()}
+                          {item.category || 'INDUSTRY'}
                         </span>
                         <span className="text-xs text-slate-500">{item.source}</span>
+                        {item.source_count > 1 && (
+                          <span className="text-xs text-orange-500 font-medium">🔥 {item.source_count} sources</span>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
+                </a>
               ))}
-              {announcements.length === 0 && (
+              {recentNews.length === 0 && (
                 <div className="p-8 text-center text-slate-500">
-                  No recent announcements
+                  No recent news
                 </div>
               )}
             </div>
