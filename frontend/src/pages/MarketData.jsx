@@ -145,7 +145,12 @@ function StockChartModal({ player, liveData, onClose }) {
 
   const live = liveData?.[player.ticker];
   const displayPrice = live?.price ?? player.stock_price;
-  const displayChange = live?.change_percent ?? player.change_percent;
+  const liveChange = live?.change_percent ?? player.change_percent;
+  // For non-1D periods, compute change from history data
+  const periodChange = history.length >= 2
+    ? ((history[history.length - 1].price - history[0].price) / history[0].price) * 100
+    : liveChange;
+  const displayChange = period === "1d" ? liveChange : periodChange;
   const isPositive = displayChange >= 0;
   const color = isPositive ? "#059669" : "#E11D48";
   const colorLight = isPositive ? "#D1FAE5" : "#FFE4E6";
@@ -169,11 +174,11 @@ function StockChartModal({ player, liveData, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-start justify-center z-50 p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-auto overflow-hidden"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-y-auto max-h-[90vh]"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
