@@ -581,10 +581,10 @@ export default function Announcements() {
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-base">🔥</span>
                 <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">
-                  Actualités chaudes
+                  Breaking Intel
                 </h2>
                 <span className="text-xs text-slate-400 font-normal normal-case tracking-normal">
-                  — couvertes par plusieurs sources
+                  — covered by multiple sources
                 </span>
                 <div className="flex-1 h-px bg-orange-200 ml-2" />
               </div>
@@ -610,7 +610,7 @@ export default function Announcements() {
               {hotArticles.length > 0 && (
                 <div className="flex items-center gap-2 mb-4">
                   <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">
-                    Toutes les news
+                    All News
                   </h2>
                   <div className="flex-1 h-px bg-slate-200 ml-2" />
                 </div>
