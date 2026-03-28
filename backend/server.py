@@ -1164,19 +1164,194 @@ async def _migrate_ma_enrichments():
         logger.error("MA migration error: %s", exc)
 
 async def _apply_product_images():
-    """On startup, apply image_url from seed data to existing products that lack one."""
+    """
+    Fetch a Wikipedia thumbnail for every product and store it in the DB.
+    Runs on every startup; replaces any existing image_url so broken Wikimedia
+    hash-prefix URLs get corrected automatically.
+    Uses the Wikipedia REST summary API which always returns valid thumbnail URLs.
+    """
+    import asyncio
+    import requests as _req
+
+    # Some product names don't match Wikipedia article titles — map them here
+    WIKI_TITLE_OVERRIDES = {
+        "F-35 Lightning II": "Lockheed Martin F-35 Lightning II",
+        "F-22 Raptor": "Lockheed Martin F-22 Raptor",
+        "Rafale F4": "Dassault Rafale",
+        "Eurofighter Typhoon": "Eurofighter Typhoon",
+        "Gripen E": "Saab JAS 39 Gripen",
+        "KF-21 Boramae": "KAI KF-21 Boramae",
+        "Patriot PAC-3": "MIM-104 Patriot",
+        "S-400 Triumf": "S-400 missile system",
+        "Iron Dome": "Iron Dome",
+        "THAAD": "Terminal High Altitude Area Defense",
+        "Virginia-class Submarine": "Virginia-class submarine",
+        "Astute-class Submarine": "Astute-class submarine",
+        "Barracuda-class Submarine": "Suffren-class submarine",
+        "M1A2 Abrams SEPv3": "M1 Abrams",
+        "Leopard 2A7+": "Leopard 2",
+        "K2 Black Panther": "K2 Black Panther",
+        "Leclerc": "AMX-56 Leclerc",
+        "MQ-9 Reaper": "General Atomics MQ-9 Reaper",
+        "Bayraktar TB2": "Bayraktar TB2",
+        "K9 Thunder": "K9 Thunder",
+        "CAESAR": "CAESAR howitzer",
+        "PzH 2000": "Panzerhaubitze 2000",
+        "Type 26 Frigate": "Type 26 frigate",
+        "FREMM Frigate": "FREMM multipurpose frigate",
+        "F-15EX Eagle II": "McDonnell Douglas F-15 Eagle",
+        "F/A-18E/F Super Hornet": "Boeing F/A-18E/F Super Hornet",
+        "Su-57 Felon": "Sukhoi Su-57",
+        "J-20 Mighty Dragon": "Chengdu J-20",
+        "HAL Tejas Mk2": "HAL Tejas",
+        "B-21 Raider": "Northrop Grumman B-21 Raider",
+        "B-2 Spirit": "Northrop Grumman B-2 Spirit",
+        "A-10 Thunderbolt II": "Fairchild Republic A-10 Thunderbolt II",
+        "AH-64E Apache Guardian": "Boeing AH-64 Apache",
+        "UH-60M Black Hawk": "Sikorsky UH-60 Black Hawk",
+        "NH90": "NHIndustries NH90",
+        "Tigre HAD": "Eurocopter Tiger",
+        "CH-47F Chinook": "Boeing CH-47 Chinook",
+        "V-22 Osprey": "Bell Boeing V-22 Osprey",
+        "C-17 Globemaster III": "Boeing C-17 Globemaster III",
+        "A400M Atlas": "Airbus A400M Atlas",
+        "KC-46 Pegasus": "Boeing KC-46 Pegasus",
+        "MQ-4C Triton": "Northrop Grumman MQ-4C Triton",
+        "RQ-4 Global Hawk": "Northrop Grumman RQ-4 Global Hawk",
+        "XQ-58 Valkyrie": "Kratos XQ-58 Valkyrie",
+        "Bayraktar TB3": "Bayraktar TB3",
+        "Bayraktar Kizilelma": "Bayraktar Kızılelma",
+        "Shahed-136": "Shahed-136",
+        "Switchblade 600": "AeroVironment Switchblade",
+        "Tomahawk Block V": "Tomahawk (missile)",
+        "SCALP/Storm Shadow": "Storm Shadow",
+        "AGM-158 JASSM-ER": "AGM-158 JASSM",
+        "Meteor BVRAAM": "MBDA Meteor",
+        "AIM-120D AMRAAM": "AIM-120 AMRAAM",
+        "Hellfire AGM-114R": "AGM-114 Hellfire",
+        "Javelin FGM-148": "FGM-148 Javelin",
+        "NSM Naval Strike Missile": "Naval Strike Missile",
+        "Harpoon Block II": "AGM-84 Harpoon",
+        "ASTER 30 SAMP/T": "Aster 30",
+        "NASAMS": "NASAMS",
+        "David's Sling": "David's Sling",
+        "AGM-183A ARRW": "AGM-183 ARRW",
+        "Kinzhal": "Kh-47M2 Kinzhal",
+        "Arleigh Burke Flight III": "Arleigh Burke-class destroyer",
+        "Type 45 Daring-class": "Type 45 destroyer",
+        "Horizon-class Frigate": "Horizon-class frigate",
+        "Mistral-class LHD": "Mistral-class amphibious assault ship",
+        "Gerald R. Ford-class": "Gerald R. Ford-class aircraft carrier",
+        "Queen Elizabeth-class": "Queen Elizabeth-class aircraft carrier",
+        "Charles de Gaulle": "French aircraft carrier Charles de Gaulle",
+        "Columbia-class Submarine": "Columbia-class submarine",
+        "Le Triomphant-class": "Le Triomphant-class submarine",
+        "Challenger 3": "Challenger 2",
+        "T-14 Armata": "T-14 Armata",
+        "Merkava Mk 4M": "Merkava",
+        "VBCI": "VBCI",
+        "CV90 Mk IV": "CV90",
+        "Puma IFV": "Puma (IFV)",
+        "Boxer MRAV": "Boxer (armoured fighting vehicle)",
+        "Stryker ICVV": "Stryker",
+        "M270 MLRS": "M270 Multiple Launch Rocket System",
+        "HIMARS": "M142 HIMARS",
+        "ARCHER 155mm": "Archer artillery system",
+        "GPS III Satellite": "GPS Block III",
+        "SBIRS GEO": "Space Based Infrared System",
+        "X-37B Space Plane": "Boeing X-37",
+        "AN/ALQ-99 Jammer": "EA-18G Growler",
+        "F-16 Block 70/72": "General Dynamics F-16 Fighting Falcon",
+        "E-7A Wedgetail": "Boeing E-7",
+        "P-8A Poseidon": "Boeing P-8 Poseidon",
+        "E-2D Advanced Hawkeye": "Northrop Grumman E-2 Hawkeye",
+        "KC-135 Stratotanker": "Boeing KC-135 Stratotanker",
+        "MQ-1C Gray Eagle": "General Atomics MQ-1C Gray Eagle",
+        "AN/TPS-80 G/ATOR": "AN/TPS-80 G/ATOR",
+        "Namer APC": "Namer",
+        "Bradley M2A4": "M2 Bradley",
+        "Zumwalt-class Destroyer": "Zumwalt-class destroyer",
+        "LRASM AGM-158C": "AGM-158C LRASM",
+        "Starstreak HVM": "Starstreak",
+        "BrahMos": "BrahMos",
+        "SM-6 Standard Missile": "RIM-174 Standard ERAM",
+        "Arjun Mk-1A": "Arjun (tank)",
+        "Su-35S Flanker-E": "Sukhoi Su-35",
+        "Tornado IDS": "Panavia Tornado",
+        "AV-8B Harrier II": "McDonnell Douglas AV-8B Harrier II",
+        "Heron TP": "IAI Heron",
+        "Wing Loong II": "CAIG Wing Loong II",
+        "AC-130J Ghostrider": "Lockheed AC-130",
+        "Taurus KEPD 350": "Taurus (missile)",
+        "IRIS-T SLM": "IRIS-T",
+        "Arrow 3": "Arrow 3",
+        "Barak 8 LRSAM": "Barak 8",
+        "RIM-161 SM-3": "RIM-161 Standard Missile 3",
+        "Type 055 Destroyer": "Type 055 destroyer",
+        "INS Vikrant": "INS Vikrant (2013)",
+        "K21 IFV": "K21 infantry fighting vehicle",
+        "JLTV": "Joint Light Tactical Vehicle",
+        "M109A7 Paladin": "M109 howitzer",
+        "AS-90 Braveheart": "AS-90",
+        "Ground Master 400": "Thales Ground Master 400",
+        "SPY-6 AMDR": "AN/SPY-6",
+        "AN/TPY-2": "AN/TPY-2",
+        "EA-18G Growler": "Boeing EA-18G Growler",
+        "RC-135V/W Rivet Joint": "Boeing RC-135",
+        "Watchkeeper WK450": "Thales Watchkeeper",
+        "Crotale NG": "Crotale (missile)",
+        "Exocet MM40 Block 3": "Exocet",
+        "RBS-15 Mk4": "RBS-15",
+        "Visby-class Corvette": "Visby-class corvette",
+        "Type 212 Submarine": "Type 212 submarine",
+        "Soryu-class Submarine": "Sōryū-class submarine",
+        "AGM-88G AARGM-ER": "AGM-88 HARM",
+        "SSBN Le Terrible": "Le Triomphant-class submarine",
+        "Marder IFV": "Marder (IFV)",
+        "AMX-10RC": "AMX-10 RC",
+        "Altay Tank": "Altay (tank)",
+        "VT-4 Tank": "VT-4",
+        "Constellation-class Frigate": "Constellation-class frigate",
+        "Gowind-class Corvette": "Gowind-class corvette",
+        "Sa'ar 6 Corvette": "Sa'ar 6-class corvette",
+    }
+
+    def _fetch_wiki_thumb(product_name: str) -> Optional[str]:
+        """Synchronous Wikipedia REST API call — run in thread pool."""
+        title = WIKI_TITLE_OVERRIDES.get(product_name, product_name)
+        encoded = title.replace(" ", "_")
+        url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{encoded}"
+        headers = {"User-Agent": "DefenseIntelligenceHub/1.0 (internal dashboard)"}
+        try:
+            resp = _req.get(url, headers=headers, timeout=6)
+            if resp.status_code == 200:
+                data = resp.json()
+                if data.get("thumbnail"):
+                    src = data["thumbnail"]["source"]
+                    # Upscale thumbnail to ~600px for better quality
+                    for size in ["/320px-", "/200px-", "/150px-", "/100px-"]:
+                        src = src.replace(size, "/600px-")
+                    return src
+        except Exception:
+            pass
+        return None
+
     try:
-        from data.seed_data import PRODUCTS_DATA
+        products = await db.products.find({}).to_list(None)
+        logger.info("Wikipedia image migration: fetching images for %d products", len(products))
         updated = 0
-        for p in PRODUCTS_DATA:
-            if p.get("image_url"):
-                result = await db.products.update_one(
-                    {"name": p["name"], "$or": [{"image_url": None}, {"image_url": {"$exists": False}}]},
-                    {"$set": {"image_url": p["image_url"]}}
-                )
-                if result.modified_count:
+        sem = asyncio.Semaphore(8)  # max 8 concurrent requests
+
+        async def update_one(p):
+            nonlocal updated
+            async with sem:
+                img = await asyncio.to_thread(_fetch_wiki_thumb, p["name"])
+                if img:
+                    await db.products.update_one({"_id": p["_id"]}, {"$set": {"image_url": img}})
                     updated += 1
-        logger.info("Product image migration complete — %d products updated", updated)
+
+        await asyncio.gather(*[update_one(p) for p in products])
+        logger.info("Wikipedia image migration complete — %d/%d products updated", updated, len(products))
     except Exception as exc:
         logger.error("Product image migration error: %s", exc)
 
