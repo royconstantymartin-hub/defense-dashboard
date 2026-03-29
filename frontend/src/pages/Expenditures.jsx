@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, TrendingUp, DollarSign, Clock, Database, ArrowUpDown, Globe2 } from "lucide-react";
+import { Search, TrendingUp, DollarSign, Clock, Database, ArrowUpDown, Globe2, BarChart2, Percent } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -68,6 +68,7 @@ export default function Expenditures() {
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [sortBy, setSortBy] = useState("expenditure_desc");
   const [viewMode, setViewMode] = useState("table"); // "table" or "map"
+  const [chartMode, setChartMode] = useState("absolute"); // "absolute" | "gdp"
 
   useEffect(() => {
     const fetchExpenditures = async () => {
@@ -216,24 +217,56 @@ export default function Expenditures() {
         {/* Top Countries Bar Chart */}
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
-            <CardTitle className="font-heading text-lg text-slate-900">Top Spending Countries</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="font-heading text-lg text-slate-900">
+                {chartMode === "absolute" ? "Top pays — Budget absolu" : "Top pays — % du PIB"}
+              </CardTitle>
+              {/* Toggle absolu / % PIB */}
+              <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+                <button
+                  onClick={() => setChartMode("absolute")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    chartMode === "absolute"
+                      ? "bg-white text-purple-700 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <BarChart2 className="w-3.5 h-3.5" /> $B
+                </button>
+                <button
+                  onClick={() => setChartMode("gdp")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    chartMode === "gdp"
+                      ? "bg-white text-purple-700 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <Percent className="w-3.5 h-3.5" /> PIB
+                </button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="pt-4">
             <div className="h-[300px]" data-testid="top-countries-chart">
               <ResponsiveContainer width="100%" height="100%" minWidth={200}>
-                <BarChart data={topCountries} layout="vertical">
-                  <XAxis 
-                    type="number" 
-                    tick={{ fill: '#64748B', fontSize: 11 }} 
-                    axisLine={false} 
+                <BarChart
+                  data={chartMode === "gdp"
+                    ? [...filteredExpenditures].sort((a, b) => b.gdp_percent - a.gdp_percent).slice(0, 10)
+                    : topCountries}
+                  layout="vertical"
+                >
+                  <XAxis
+                    type="number"
+                    tick={{ fill: '#64748B', fontSize: 11 }}
+                    axisLine={false}
                     tickLine={false}
-                    tickFormatter={(v) => `$${v}B`}
+                    tickFormatter={chartMode === "gdp" ? (v) => `${v}%` : (v) => `$${v}B`}
                   />
-                  <YAxis 
-                    type="category" 
-                    dataKey="country_code" 
-                    tick={{ fill: '#64748B', fontSize: 11 }} 
-                    axisLine={false} 
+                  <YAxis
+                    type="category"
+                    dataKey="country_code"
+                    tick={{ fill: '#64748B', fontSize: 11 }}
+                    axisLine={false}
                     tickLine={false}
                     width={35}
                   />
@@ -248,17 +281,27 @@ export default function Expenditures() {
                               <span className="text-slate-900 font-medium text-sm">{data.country}</span>
                             </div>
                             <p className="text-purple-700 font-mono font-semibold">${data.expenditure}B</p>
-                            <p className="text-slate-500 text-xs">{data.gdp_percent}% of GDP</p>
+                            <p className="text-slate-500 text-xs">{data.gdp_percent}% du PIB</p>
                           </div>
                         );
                       }
                       return null;
                     }}
                   />
-                  <Bar dataKey="expenditure" fill="#7E22CE" radius={[0, 6, 6, 0]} />
+                  <Bar
+                    dataKey={chartMode === "gdp" ? "gdp_percent" : "expenditure"}
+                    fill="#7E22CE"
+                    radius={[0, 6, 6, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
+            {chartMode === "gdp" && (
+              <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-purple-400 inline-block" />
+                Ligne OTAN à 2% — les pays au-dessus sont en rouge dans le tableau
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -420,93 +463,40 @@ export default function Expenditures() {
         </CardContent>
       </Card>
 
-      {/* Map Visualization Placeholder */}
+      {/* Top 5 focus cards — données dynamiques */}
       <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
           <div className="flex items-center justify-between">
-            <CardTitle className="font-heading text-lg text-slate-900">Global Defense Spending Map</CardTitle>
-            <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-full border border-purple-200">
-              Interactive View
+            <CardTitle className="font-heading text-lg text-slate-900">Focus — Top 5 budgets mondiaux</CardTitle>
+            <span className="text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-200">
+              Source : SIPRI · {filteredExpenditures[0]?.year ?? 2024}
             </span>
           </div>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="relative w-full h-[350px] bg-gradient-to-br from-slate-50 to-purple-50/30 rounded-lg overflow-hidden border border-slate-100">
-            {/* Simple SVG World Map representation */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center space-y-4">
-                <Globe2 className="w-16 h-16 text-purple-300 mx-auto" />
-                <div>
-                  <p className="text-slate-600 font-medium">Global Defense Budget Distribution</p>
-                  <p className="text-sm text-slate-500 mt-1">Hover over countries for details</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Top 5 countries as positioned markers */}
-            <div className="absolute inset-0 pointer-events-none">
-              {/* USA */}
-              <div className="absolute left-[18%] top-[35%] transform -translate-x-1/2 -translate-y-1/2">
-                <div className="flex flex-col items-center gap-1 pointer-events-auto">
-                  <img src={getFlag("US")} alt="USA" className="w-8 h-6 rounded shadow-lg border-2 border-white" />
-                  <span className="text-xs font-mono bg-purple-700 text-white px-1.5 py-0.5 rounded">$886B</span>
-                </div>
-              </div>
-              {/* China */}
-              <div className="absolute left-[75%] top-[40%] transform -translate-x-1/2 -translate-y-1/2">
-                <div className="flex flex-col items-center gap-1 pointer-events-auto">
-                  <img src={getFlag("CN")} alt="China" className="w-8 h-6 rounded shadow-lg border-2 border-white" />
-                  <span className="text-xs font-mono bg-purple-600 text-white px-1.5 py-0.5 rounded">$296B</span>
-                </div>
-              </div>
-              {/* Russia */}
-              <div className="absolute left-[58%] top-[25%] transform -translate-x-1/2 -translate-y-1/2">
-                <div className="flex flex-col items-center gap-1 pointer-events-auto">
-                  <img src={getFlag("RU")} alt="Russia" className="w-8 h-6 rounded shadow-lg border-2 border-white" />
-                  <span className="text-xs font-mono bg-purple-500 text-white px-1.5 py-0.5 rounded">$109B</span>
-                </div>
-              </div>
-              {/* India */}
-              <div className="absolute left-[65%] top-[50%] transform -translate-x-1/2 -translate-y-1/2">
-                <div className="flex flex-col items-center gap-1 pointer-events-auto">
-                  <img src={getFlag("IN")} alt="India" className="w-8 h-6 rounded shadow-lg border-2 border-white" />
-                  <span className="text-xs font-mono bg-purple-400 text-white px-1.5 py-0.5 rounded">$83.6B</span>
-                </div>
-              </div>
-              {/* UK */}
-              <div className="absolute left-[45%] top-[28%] transform -translate-x-1/2 -translate-y-1/2">
-                <div className="flex flex-col items-center gap-1 pointer-events-auto">
-                  <img src={getFlag("GB")} alt="UK" className="w-8 h-6 rounded shadow-lg border-2 border-white" />
-                  <span className="text-xs font-mono bg-purple-400 text-white px-1.5 py-0.5 rounded">$68.5B</span>
-                </div>
-              </div>
-              {/* Saudi Arabia */}
-              <div className="absolute left-[55%] top-[48%] transform -translate-x-1/2 -translate-y-1/2">
-                <div className="flex flex-col items-center gap-1 pointer-events-auto">
-                  <img src={getFlag("SA")} alt="Saudi Arabia" className="w-8 h-6 rounded shadow-lg border-2 border-white" />
-                  <span className="text-xs font-mono bg-purple-400 text-white px-1.5 py-0.5 rounded">$75B</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Legend */}
-            <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 border border-slate-200 shadow-sm">
-              <p className="text-xs font-semibold text-slate-700 mb-2">Spending Level</p>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-purple-700"></span>
-                  <span className="text-xs text-slate-600">&gt; $500B</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-purple-500"></span>
-                  <span className="text-xs text-slate-600">$100B - $500B</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-purple-300"></span>
-                  <span className="text-xs text-slate-600">&lt; $100B</span>
-                </div>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
+            {[...expenditures]
+              .sort((a, b) => b.expenditure - a.expenditure)
+              .slice(0, 5)
+              .map((exp, i) => {
+                const shade = ["bg-purple-700", "bg-purple-600", "bg-purple-500", "bg-purple-400", "bg-purple-300"];
+                return (
+                  <div key={exp.id} className="flex flex-col items-center gap-2 text-center">
+                    <span className="text-xs font-mono text-slate-400 font-bold">#{i + 1}</span>
+                    <img
+                      src={getFlag(exp.country_code)}
+                      alt={exp.country}
+                      className="w-12 h-8 object-cover rounded shadow-md border-2 border-white"
+                      onError={e => { e.target.style.display = "none"; }}
+                    />
+                    <p className="text-xs font-semibold text-slate-700 leading-tight">{exp.country}</p>
+                    <span className={`text-xs font-mono text-white px-2 py-0.5 rounded ${shade[i]}`}>
+                      ${exp.expenditure}B
+                    </span>
+                    <span className="text-[10px] text-slate-400">{exp.gdp_percent}% du PIB</span>
+                  </div>
+                );
+              })}
           </div>
         </CardContent>
       </Card>

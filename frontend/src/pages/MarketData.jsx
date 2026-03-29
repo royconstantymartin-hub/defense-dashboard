@@ -51,6 +51,21 @@ const SORT_OPTIONS = [
   { value: "name_asc", label: "Name (A-Z)" },
 ];
 
+// Canonical segment labels for the filter
+// Values must match strings that appear in player.specializations arrays
+const SEGMENTS = [
+  { value: "all",        label: "Tous les segments" },
+  { value: "aerospace",  label: "Aérospatial" },
+  { value: "naval",      label: "Naval" },
+  { value: "land",       label: "Terrestre" },
+  { value: "missiles",   label: "Missiles" },
+  { value: "cyber",      label: "Cyber / EW" },
+  { value: "space",      label: "Espace" },
+  { value: "services",   label: "Services / Conseil" },
+  { value: "logistics",  label: "Logistique / MRO" },
+  { value: "electronics","label": "Électronique défense" },
+];
+
 const COUNTRY_FLAGS = {
   "USA": "us", "UK": "gb", "France": "fr", "Germany": "de", "Italy": "it",
   "EU": "eu", "Spain": "es", "Sweden": "se", "Norway": "no", "Israel": "il",
@@ -406,6 +421,7 @@ export default function MarketData() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [selectedCountry, setSelectedCountry] = useState("all");
+  const [selectedSegment, setSelectedSegment] = useState("all");
   const [sortBy, setSortBy] = useState("market_cap_desc");
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [chartPlayer, setChartPlayer] = useState(null);
@@ -471,11 +487,20 @@ export default function MarketData() {
       filtered = filtered.filter(p => p.country === selectedCountry);
     }
 
+    if (selectedSegment !== "all") {
+      filtered = filtered.filter(p =>
+        Array.isArray(p.specializations) &&
+        p.specializations.some(s => s.toLowerCase().includes(selectedSegment.toLowerCase()))
+      );
+    }
+
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(term) ||
-        p.ticker.toLowerCase().includes(term)
+        p.ticker.toLowerCase().includes(term) ||
+        (Array.isArray(p.specializations) &&
+          p.specializations.some(s => s.toLowerCase().includes(term)))
       );
     }
 
@@ -494,7 +519,7 @@ export default function MarketData() {
     });
 
     setFilteredPlayers(filtered);
-  }, [searchTerm, selectedCountry, sortBy, players, liveData]);
+  }, [searchTerm, selectedCountry, selectedSegment, sortBy, players, liveData]);
 
   const totalMarketCap = filteredPlayers.reduce((sum, p) => sum + p.market_cap, 0);
   const totalRevenue = filteredPlayers.reduce((sum, p) => sum + p.revenue, 0);
@@ -569,9 +594,9 @@ export default function MarketData() {
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COMBINED REVENUE</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">REVENUS AGRÉGÉS</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalRevenue.toFixed(1)}B</p>
-            <p className="text-xs text-slate-500 mt-1">TTM Revenue</p>
+            <p className="text-xs text-slate-400 mt-1">Données base — non actualisées en temps réel</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
@@ -643,11 +668,11 @@ export default function MarketData() {
       </Card>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
+      <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
-            placeholder="Search by company or ticker..."
+            placeholder="Société, ticker, segment…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"
@@ -655,7 +680,7 @@ export default function MarketData() {
           />
         </div>
         <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-          <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700" data-testid="country-filter">
+          <SelectTrigger className="w-full sm:w-44 bg-white border-slate-200 text-slate-700" data-testid="country-filter">
             <SelectValue placeholder="Country" />
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
@@ -666,8 +691,20 @@ export default function MarketData() {
             ))}
           </SelectContent>
         </Select>
+        <Select value={selectedSegment} onValueChange={setSelectedSegment}>
+          <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700" data-testid="segment-filter">
+            <SelectValue placeholder="Segment" />
+          </SelectTrigger>
+          <SelectContent className="bg-white border-slate-200">
+            {SEGMENTS.map(s => (
+              <SelectItem key={s.value} value={s.value} className="text-slate-700 focus:bg-purple-50">
+                {s.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-slate-700" data-testid="sort-filter">
+          <SelectTrigger className="w-full sm:w-52 bg-white border-slate-200 text-slate-700" data-testid="sort-filter">
             <ArrowUpDown className="w-4 h-4 mr-2 text-slate-400" />
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
@@ -679,6 +716,27 @@ export default function MarketData() {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Active filter summary */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs text-slate-500">{filteredPlayers.length} société{filteredPlayers.length > 1 ? "s" : ""}</span>
+        {selectedSegment !== "all" && (
+          <span className="flex items-center gap-1 text-xs bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-medium">
+            {SEGMENTS.find(s => s.value === selectedSegment)?.label}
+            <button onClick={() => setSelectedSegment("all")} className="hover:text-purple-900 ml-0.5">
+              <X className="w-3 h-3" />
+            </button>
+          </span>
+        )}
+        {selectedCountry !== "all" && (
+          <span className="flex items-center gap-1 text-xs bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
+            {selectedCountry}
+            <button onClick={() => setSelectedCountry("all")} className="hover:text-slate-900 ml-0.5">
+              <X className="w-3 h-3" />
+            </button>
+          </span>
+        )}
       </div>
 
       {/* Players Table */}
