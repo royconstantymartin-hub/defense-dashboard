@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
-import { API } from "@/App";
+import { API, useAuth, useT } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   TrendingUp,
@@ -14,6 +14,8 @@ import {
   Clock,
   Database,
   Zap,
+  Info,
+  Settings,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
@@ -57,6 +59,11 @@ const COMPANY_LOGOS = {
 };
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const tBannerTitle   = useT({ en: "Database not initialized",   fr: "Base de données non initialisée" });
+  const tBannerDesc    = useT({ en: "The dashboard is empty. An administrator must initialize the database to load reference data (companies, M&A, contracts, expenditures…).", fr: "Le dashboard est vide. Pour charger les données de référence (entreprises, M&A, contrats, dépenses…), un administrateur doit initialiser la base de données." });
+  const tBannerAdmin   = useT({ en: "Admin → Seed",               fr: "Admin → Seed" });
+  const tBannerContact = useT({ en: "Contact an admin",           fr: "Contacter un admin" });
   const [stats, setStats] = useState(null);
   const [players, setPlayers] = useState([]);
   const [recentNews, setRecentNews] = useState([]);
@@ -164,6 +171,28 @@ export default function Dashboard() {
           <span>SIPRI · Yahoo Finance · Presse spécialisée</span>
         </div>
       </div>
+
+      {/* Onboarding banner — shown when DB is empty */}
+      {stats?.players_count === 0 && (
+        <div className="flex items-start gap-4 bg-amber-50 border border-amber-200 rounded-xl px-5 py-4">
+          <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="flex-1 space-y-1">
+            <p className="text-sm font-semibold text-amber-800">{tBannerTitle}</p>
+            <p className="text-xs text-amber-700">{tBannerDesc}</p>
+          </div>
+          {user?.role === "admin" ? (
+            <Link
+              to="/admin"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition-colors whitespace-nowrap"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              {tBannerAdmin}
+            </Link>
+          ) : (
+            <span className="text-xs text-amber-600 whitespace-nowrap">{tBannerContact}</span>
+          )}
+        </div>
+      )}
 
       {/* "Cette semaine" summary strip */}
       <div className="bg-gradient-to-r from-purple-50 to-slate-50 border border-purple-100 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center">

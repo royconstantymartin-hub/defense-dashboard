@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { API, useAuth } from "@/App";
+import { API, useAuth, useT } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,15 +20,18 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { 
-  Plus, 
-  Trash2, 
-  Newspaper, 
-  Handshake, 
-  Building2, 
-  Globe, 
-  FileText, 
+  Plus,
+  Trash2,
+  Newspaper,
+  Handshake,
+  Building2,
+  Globe,
+  FileText,
   Package,
-  Lock
+  Lock,
+  Database,
+  RefreshCw,
+  CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -36,9 +39,40 @@ import { Link } from "react-router-dom";
 export default function Admin() {
   const { user, token } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [seeding, setSeeding] = useState(false);
+  const [seedResult, setSeedResult] = useState(null);
+
+  const tDbTab      = useT({ en: "Database",                                    fr: "Base de données" });
+  const tDbTitle    = useT({ en: "Database Initialization",                     fr: "Initialisation de la base de données" });
+  const tDbDesc     = useT({ en: "Load reference data: companies, M&A, expenditures, regulations, contracts, products.", fr: "Charge les données de référence : entreprises, M&A, dépenses, réglementations, contrats, produits." });
+  const tNote1      = useT({ en: "• Idempotent — existing entries are not overwritten",       fr: "• Opération idempotente — les entrées existantes ne sont pas écrasées" });
+  const tNote2      = useT({ en: "• M&A records are upserted (existing data enriched)",       fr: "• Les M&A sont upsertés (enrichissement des données existantes)" });
+  const tNote3      = useT({ en: "• Admin role required",                                     fr: "• Rôle admin requis" });
+  const tSeedBtn    = useT({ en: "Initialize Database",                          fr: "Initialiser la base de données" });
+  const tSeeding    = useT({ en: "Initializing…",                                fr: "Initialisation en cours…" });
+  const tSeedOk     = useT({ en: "Success",                                      fr: "Succès" });
+  const tCompanies  = useT({ en: "companies",                                    fr: "entreprises" });
+  const tAnnoun     = useT({ en: "announcements",                                fr: "annonces" });
+  const tContracts  = useT({ en: "contracts",                                    fr: "contrats" });
 
   const authHeaders = {
     Authorization: `Bearer ${token}`
+  };
+
+  const handleSeed = async () => {
+    setSeeding(true);
+    setSeedResult(null);
+    try {
+      const res = await axios.post(`${API}/seed-data`, {}, { headers: authHeaders });
+      setSeedResult({ ok: true, data: res.data });
+      toast.success(tSeedOk);
+    } catch (err) {
+      const msg = err.response?.data?.detail || err.message;
+      setSeedResult({ ok: false, msg });
+      toast.error(msg);
+    } finally {
+      setSeeding(false);
+    }
   };
 
   if (!user) {
@@ -70,7 +104,11 @@ export default function Admin() {
 
       {/* Tabs */}
       <Tabs defaultValue="announcements" className="space-y-6">
-        <TabsList className="bg-zinc-900 border border-zinc-800 p-1">
+        <TabsList className="bg-zinc-900 border border-zinc-800 p-1 flex-wrap h-auto gap-1">
+          <TabsTrigger value="database" className="data-[state=active]:bg-zinc-800">
+            <Database className="w-4 h-4 mr-2" />
+            {tDbTab}
+          </TabsTrigger>
           <TabsTrigger value="announcements" className="data-[state=active]:bg-zinc-800">
             <Newspaper className="w-4 h-4 mr-2" />
             Announcements
@@ -96,6 +134,54 @@ export default function Admin() {
             Products
           </TabsTrigger>
         </TabsList>
+
+        {/* Database Tab */}
+        <TabsContent value="database">
+          <div className="space-y-6 max-w-2xl">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-600/20 rounded-lg">
+                  <Database className="w-5 h-5 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold">{tDbTitle}</h3>
+                  <p className="text-zinc-400 text-sm">{tDbDesc}</p>
+                </div>
+              </div>
+              <div className="bg-zinc-800/60 border border-zinc-700 rounded-lg p-4 text-xs text-zinc-400 space-y-1">
+                <p>{tNote1}</p>
+                <p>{tNote2}</p>
+                <p>{tNote3}</p>
+              </div>
+              <button
+                onClick={handleSeed}
+                disabled={seeding}
+                className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                {seeding
+                  ? <><RefreshCw className="w-4 h-4 animate-spin" /> {tSeeding}</>
+                  : <><Database className="w-4 h-4" /> {tSeedBtn}</>
+                }
+              </button>
+              {seedResult && (
+                <div className={`flex items-start gap-2 text-sm rounded-lg p-3 border ${
+                  seedResult.ok
+                    ? "bg-emerald-900/30 border-emerald-700 text-emerald-300"
+                    : "bg-red-900/30 border-red-700 text-red-300"
+                }`}>
+                  <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+                  {seedResult.ok ? (
+                    <span>
+                      {tSeedOk} — {seedResult.data.companies} {tCompanies} · {seedResult.data.announcements} {tAnnoun} · {seedResult.data.contracts} {tContracts}
+                    </span>
+                  ) : (
+                    <span>{seedResult.msg}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </TabsContent>
 
         {/* Announcements Tab */}
         <TabsContent value="announcements">

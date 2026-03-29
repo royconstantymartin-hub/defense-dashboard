@@ -23,6 +23,7 @@ import {
   ChevronDown,
   Globe,
   MapPin,
+  Download,
 } from "lucide-react";
 import { format, formatDistanceToNow, differenceInHours } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -428,6 +429,25 @@ export default function Announcements() {
   const hotArticles     = filtered.filter((a) => (a.source_count ?? 1) >= 2);
   const regularArticles = filtered.filter((a) => (a.source_count ?? 1) < 2);
 
+  const exportCSV = () => {
+    const headers = ["Titre", "Source", "Catégorie", "Date", "URL"];
+    const rows = filtered.map((a) => [
+      `"${(a.title || "").replace(/"/g, '""')}"`,
+      `"${a.source || ""}"`,
+      a.category || "",
+      a.publishedAt ? new Date(a.publishedAt).toISOString().slice(0, 10) : "",
+      a.url || "",
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `news-export_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -445,6 +465,15 @@ export default function Announcements() {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
+          {filtered.length > 0 && (
+            <button
+              onClick={exportCSV}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              Export CSV
+            </button>
+          )}
           {articles.length > 0 && (
             <div className="flex items-center gap-2 text-xs bg-white border border-slate-200 rounded-lg px-3 py-2">
               <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />

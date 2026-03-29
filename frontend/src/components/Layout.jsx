@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { useAuth } from "@/App";
+import { useAuth, useLang } from "@/App";
 import { 
   Shield, 
   Activity, 
@@ -44,6 +44,7 @@ const navItems = [
 export default function Layout() {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { lang, setLang } = useLang();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -180,6 +181,21 @@ export default function Layout() {
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Language toggle */}
+            <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden text-xs font-semibold">
+              <button
+                onClick={() => setLang("en")}
+                className={`px-2.5 py-1.5 transition-colors ${lang === "en" ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-100"}`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLang("fr")}
+                className={`px-2.5 py-1.5 transition-colors ${lang === "fr" ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-100"}`}
+              >
+                FR
+              </button>
+            </div>
             <button className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors relative">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-purple-600 rounded-full" />
