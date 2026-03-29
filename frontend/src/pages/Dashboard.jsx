@@ -70,33 +70,35 @@ export default function Dashboard() {
   const [recentMA, setRecentMA] = useState([]);
   const [expenditures, setExpenditures] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   // Timestamp set once at fetch time — not on every render
   const [fetchedAt, setFetchedAt] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [statsRes, playersRes, newsRes, expendituresRes, maRes] = await Promise.all([
-          axios.get(`${API}/dashboard/stats`),
-          axios.get(`${API}/defense-players`),
-          axios.get(`${API}/news?limit=5`),
-          axios.get(`${API}/expenditures?year=2024`),
-          axios.get(`${API}/ma-activities`),
-        ]);
-        setStats(statsRes.data);
-        setPlayers(playersRes.data);
-        setRecentNews(newsRes.data);
-        setExpenditures(expendituresRes.data);
-        setRecentMA(maRes.data);
-        setFetchedAt(new Date());
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const fetchData = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const [statsRes, playersRes, newsRes, expendituresRes, maRes] = await Promise.all([
+        axios.get(`${API}/dashboard/stats`),
+        axios.get(`${API}/defense-players`),
+        axios.get(`${API}/news?limit=5`),
+        axios.get(`${API}/expenditures?year=2024`),
+        axios.get(`${API}/ma-activities`),
+      ]);
+      setStats(statsRes.data);
+      setPlayers(playersRes.data);
+      setRecentNews(newsRes.data);
+      setExpenditures(expendituresRes.data);
+      setRecentMA(maRes.data);
+      setFetchedAt(new Date());
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchData(); }, []);
 
   const getFlag = (country) => {
     const code = COUNTRY_FLAGS[country];
@@ -136,6 +138,15 @@ export default function Dashboard() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
+        <p className="font-medium">Failed to load dashboard data.</p>
+        <button onClick={fetchData} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">Retry</button>
+      </div>
+    );
+  }
+
   const topPlayers = players.slice(0, 5);
   const topExpenditures = expenditures.slice(0, 7);
 
@@ -163,12 +174,12 @@ export default function Dashboard() {
           <Clock className="w-3.5 h-3.5" />
           <span>
             {fetchedAt
-              ? `Données chargées à ${fetchedAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
-              : "Chargement…"}
+              ? `Data loaded at ${fetchedAt.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`
+              : "Loading…"}
           </span>
           <span className="text-slate-300">|</span>
           <Database className="w-3.5 h-3.5" />
-          <span>SIPRI · Yahoo Finance · Presse spécialisée</span>
+          <span>SIPRI · Yahoo Finance · Defense press</span>
         </div>
       </div>
 
@@ -194,18 +205,18 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* "Cette semaine" summary strip */}
+      {/* This week summary strip */}
       <div className="bg-gradient-to-r from-purple-50 to-slate-50 border border-purple-100 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-purple-600" />
-          <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">Cette semaine</span>
+          <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">This week</span>
         </div>
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-1.5">
             <span className={`text-sm font-mono font-bold ${weeklyMA.length > 0 ? "text-purple-700" : "text-slate-400"}`}>
               {weeklyMA.length}
             </span>
-            <span className="text-xs text-slate-500">deal{weeklyMA.length !== 1 ? "s" : ""} M&amp;A</span>
+            <span className="text-xs text-slate-500">M&amp;A deal{weeklyMA.length !== 1 ? "s" : ""}</span>
             {weeklyMA.length > 0 && (
               <Link to="/ma-activity" className="text-[10px] text-purple-500 hover:text-purple-700 font-medium ml-1">→</Link>
             )}
@@ -215,18 +226,18 @@ export default function Dashboard() {
             <span className={`text-sm font-mono font-bold ${contractNews.length > 0 ? "text-emerald-700" : "text-slate-400"}`}>
               {contractNews.length}
             </span>
-            <span className="text-xs text-slate-500">actualité{contractNews.length !== 1 ? "s" : ""} contrats</span>
+            <span className="text-xs text-slate-500">contract {contractNews.length !== 1 ? "updates" : "update"}</span>
           </div>
           <div className="w-px h-4 bg-slate-200 self-center" />
           <div className="flex items-center gap-1.5">
             <span className={`text-sm font-mono font-bold ${recentNews.length > 0 ? "text-slate-700" : "text-slate-400"}`}>
               {recentNews.length}
             </span>
-            <span className="text-xs text-slate-500">news indexées</span>
+            <span className="text-xs text-slate-500">indexed news</span>
           </div>
         </div>
         {weeklyMA.length === 0 && weeklyNews.length === 0 && (
-          <span className="text-xs text-slate-400 ml-auto">Aucun mouvement notable détecté cette semaine</span>
+          <span className="text-xs text-slate-400 ml-auto">No notable activity detected this week</span>
         )}
       </div>
 
@@ -237,7 +248,7 @@ export default function Dashboard() {
             label="TOTAL MARKET CAP"
             value={`$${(stats?.total_market_cap || 0).toFixed(1)}B`}
             icon={DollarSign}
-            subtext="Capitalisation agrégée"
+            subtext="Aggregated market cap"
             testId="metric-market-cap"
           />
         </Link>
@@ -252,18 +263,18 @@ export default function Dashboard() {
         </Link>
         <Link to="/market-data">
           <MetricCard
-            label="ACTEURS RECENSÉS"
+            label="TRACKED PLAYERS"
             value={stats?.players_count || 0}
-            subtext="Industriels & contractants"
+            subtext="Defense contractors & industry"
             icon={Building2}
             testId="metric-players"
           />
         </Link>
         <Link to="/ma-activity">
           <MetricCard
-            label="M&A SUIVIS"
+            label="M&A TRACKED"
             value={stats?.ma_count || 0}
-            subtext="Deals en base"
+            subtext="Deals in database"
             icon={Handshake}
             testId="metric-ma"
           />

@@ -18,12 +18,12 @@ import {
 // No scraped content — users navigate directly to the primary source.
 
 const CATEGORIES = [
-  { id: "all",        label: "Toutes",              icon: Globe2 },
-  { id: "press",      label: "Presse spécialisée",  icon: Newspaper },
-  { id: "institution",label: "Institutions",        icon: ShieldCheck },
-  { id: "thinktank",  label: "Think tanks",         icon: BookOpen },
-  { id: "market",     label: "Données marché",      icon: BarChart3 },
-  { id: "industry",   label: "Industriels",         icon: Building2 },
+  { id: "all",        label: "All",             icon: Globe2 },
+  { id: "press",      label: "Specialty Press", icon: Newspaper },
+  { id: "institution",label: "Institutions",    icon: ShieldCheck },
+  { id: "thinktank",  label: "Think Tanks",     icon: BookOpen },
+  { id: "market",     label: "Market Data",     icon: BarChart3 },
+  { id: "industry",   label: "Industry",        icon: Building2 },
 ];
 
 const SOURCES = [
@@ -366,16 +366,16 @@ export default function Follow() {
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
-            Sources de référence
+            Reference Sources
           </h1>
           <p className="text-slate-500 text-sm mt-1">
-            Catalogue de sources vérifiées — presse, institutions, think tanks, données marché
+            Curated source catalogue — press, institutions, think tanks, market data
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 max-w-sm">
           <span className="text-amber-500">ℹ</span>
           <span>
-            Ces sources sont des liens directs vers les publications primaires. Aucun contenu n'est reproduit ici.
+            These are direct links to primary publications. No content is reproduced here.
           </span>
         </div>
       </div>
@@ -385,7 +385,7 @@ export default function Follow() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
-            placeholder="Rechercher une source, un tag..."
+            placeholder="Search a source, tag..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="pl-9 border-slate-200 text-sm"
@@ -414,7 +414,7 @@ export default function Follow() {
 
       {/* Results count */}
       <p className="text-xs text-slate-400">
-        {filtered.length} source{filtered.length > 1 ? "s" : ""} affichée{filtered.length > 1 ? "s" : ""}
+        {filtered.length} source{filtered.length > 1 ? "s" : ""} shown
       </p>
 
       {/* Source grid */}
@@ -462,7 +462,7 @@ export default function Follow() {
                   <div className="flex items-center gap-1 flex-wrap justify-end">
                     {source.paywall && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 font-medium">
-                        Payant
+                        Paid
                       </span>
                     )}
                     {source.tags.slice(0, 2).map(tag => (
@@ -485,7 +485,7 @@ export default function Follow() {
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-slate-400">
           <Search className="w-8 h-8 mb-3 opacity-40" />
-          <p className="text-sm">Aucune source ne correspond à cette recherche.</p>
+          <p className="text-sm">No sources match this search.</p>
         </div>
       )}
     </div>

@@ -64,26 +64,27 @@ export default function Expenditures() {
   const [expenditures, setExpenditures] = useState([]);
   const [filteredExpenditures, setFilteredExpenditures] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [sortBy, setSortBy] = useState("expenditure_desc");
-  const [viewMode, setViewMode] = useState("table"); // "table" or "map"
   const [chartMode, setChartMode] = useState("absolute"); // "absolute" | "gdp"
 
-  useEffect(() => {
-    const fetchExpenditures = async () => {
-      try {
-        const response = await axios.get(`${API}/expenditures`);
-        setExpenditures(response.data);
-        setFilteredExpenditures(response.data);
-      } catch (error) {
-        console.error("Error fetching expenditures:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchExpenditures();
-  }, []);
+  const fetchExpenditures = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const response = await axios.get(`${API}/expenditures`);
+      setExpenditures(response.data);
+      setFilteredExpenditures(response.data);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchExpenditures(); }, []);
 
   useEffect(() => {
     let filtered = [...expenditures];
@@ -154,6 +155,17 @@ export default function Expenditures() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
+        <p className="font-medium">Failed to load expenditure data.</p>
+        <button onClick={fetchExpenditures} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div data-testid="expenditures-page" className="space-y-6 animate-fade-in">
       {/* Header */}
@@ -167,13 +179,13 @@ export default function Expenditures() {
         <div className="flex flex-col items-end gap-1">
           <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
             <Clock className="w-3.5 h-3.5" />
-            <span className="font-medium">Référence FY 2024</span>
+            <span className="font-medium">Reference FY 2024</span>
             <span className="text-slate-300">|</span>
             <Database className="w-3.5 h-3.5" />
-            <span>SIPRI Military Expenditure Database · IISS Military Balance · Rapports gouvernementaux nationaux</span>
+            <span>SIPRI Military Expenditure Database · IISS Military Balance · National government reports</span>
           </div>
           <p className="text-xs text-slate-400 text-right max-w-md">
-            Note : l'année de référence peut varier par pays selon la disponibilité des données officielles. Chiffres en milliards USD constants.
+            Note: reference year may vary by country based on official data availability. Figures in constant USD billions.
           </p>
         </div>
       </div>
@@ -185,7 +197,7 @@ export default function Expenditures() {
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL SPENDING</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalExpenditure.toFixed(0)}B</p>
             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> Variation vs N-1 non calculée
+              <TrendingUp className="w-3 h-3" /> YoY change not computed
             </p>
           </CardContent>
         </Card>
@@ -219,9 +231,9 @@ export default function Expenditures() {
           <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
             <div className="flex items-center justify-between">
               <CardTitle className="font-heading text-lg text-slate-900">
-                {chartMode === "absolute" ? "Top pays — Budget absolu" : "Top pays — % du PIB"}
+                {chartMode === "absolute" ? "Top Countries — Absolute Budget" : "Top Countries — % of GDP"}
               </CardTitle>
-              {/* Toggle absolu / % PIB */}
+              {/* Toggle absolute / % GDP */}
               <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
                 <button
                   onClick={() => setChartMode("absolute")}
@@ -241,7 +253,7 @@ export default function Expenditures() {
                       : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
-                  <Percent className="w-3.5 h-3.5" /> PIB
+                  <Percent className="w-3.5 h-3.5" /> GDP
                 </button>
               </div>
             </div>
@@ -281,7 +293,7 @@ export default function Expenditures() {
                               <span className="text-slate-900 font-medium text-sm">{data.country}</span>
                             </div>
                             <p className="text-purple-700 font-mono font-semibold">${data.expenditure}B</p>
-                            <p className="text-slate-500 text-xs">{data.gdp_percent}% du PIB</p>
+                            <p className="text-slate-500 text-xs">{data.gdp_percent}% of GDP</p>
                           </div>
                         );
                       }
@@ -299,7 +311,7 @@ export default function Expenditures() {
             {chartMode === "gdp" && (
               <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-purple-400 inline-block" />
-                Ligne OTAN à 2% — les pays au-dessus sont en rouge dans le tableau
+                NATO 2% target — countries above this threshold are highlighted in the table
               </p>
             )}
           </CardContent>
@@ -467,7 +479,7 @@ export default function Expenditures() {
       <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
           <div className="flex items-center justify-between">
-            <CardTitle className="font-heading text-lg text-slate-900">Focus — Top 5 budgets mondiaux</CardTitle>
+            <CardTitle className="font-heading text-lg text-slate-900">Focus — Top 5 Global Defense Budgets</CardTitle>
             <span className="text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-200">
               Source : SIPRI · {filteredExpenditures[0]?.year ?? 2024}
             </span>
@@ -493,7 +505,7 @@ export default function Expenditures() {
                     <span className={`text-xs font-mono text-white px-2 py-0.5 rounded ${shade[i]}`}>
                       ${exp.expenditure}B
                     </span>
-                    <span className="text-[10px] text-slate-400">{exp.gdp_percent}% du PIB</span>
+                    <span className="text-[10px] text-slate-400">{exp.gdp_percent}% of GDP</span>
                   </div>
                 );
               })}

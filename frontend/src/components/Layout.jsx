@@ -37,7 +37,7 @@ const navItems = [
   { path: "/regulations", icon: FileText, label: "Regulations" },
   { path: "/products", icon: Package, label: "Products" },
   { path: "/follow", icon: Rss, label: "Sources" },
-  { path: "/contracts", icon: FileCheck, label: "Contrats" },
+  { path: "/contracts", icon: FileCheck, label: "Contracts" },
   { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
 ];
 

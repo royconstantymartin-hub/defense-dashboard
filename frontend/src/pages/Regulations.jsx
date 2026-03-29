@@ -59,25 +59,27 @@ export default function Regulations() {
   const [regulations, setRegulations] = useState([]);
   const [filteredRegulations, setFilteredRegulations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCountry, setSelectedCountry] = useState("all");
-  const [sortBy, setSortBy] = useState("date_desc"); // date_desc | date_asc | country_asc
+  const [sortBy, setSortBy] = useState("date_desc");
 
-  useEffect(() => {
-    const fetchRegulations = async () => {
-      try {
-        const response = await axios.get(`${API}/regulations`);
-        setRegulations(response.data);
-        setFilteredRegulations(response.data);
-      } catch (error) {
-        console.error("Error fetching regulations:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRegulations();
-  }, []);
+  const fetchRegulations = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const response = await axios.get(`${API}/regulations`);
+      setRegulations(response.data);
+      setFilteredRegulations(response.data);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchRegulations(); }, []);
 
   useEffect(() => {
     let filtered = regulations;
@@ -140,6 +142,15 @@ export default function Regulations() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
+        <p className="font-medium">Failed to load regulations.</p>
+        <button onClick={fetchRegulations} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">Retry</button>
       </div>
     );
   }
@@ -239,12 +250,12 @@ export default function Regulations() {
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700">
             <ArrowUpDown className="w-4 h-4 mr-2 text-slate-400" />
-            <SelectValue placeholder="Trier par" />
+            <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
-            <SelectItem value="date_desc" className="text-slate-700 focus:bg-purple-50">Date (récent → ancien)</SelectItem>
-            <SelectItem value="date_asc" className="text-slate-700 focus:bg-purple-50">Date (ancien → récent)</SelectItem>
-            <SelectItem value="country_asc" className="text-slate-700 focus:bg-purple-50">Pays (A → Z)</SelectItem>
+            <SelectItem value="date_desc" className="text-slate-700 focus:bg-purple-50">Date (newest first)</SelectItem>
+            <SelectItem value="date_asc" className="text-slate-700 focus:bg-purple-50">Date (oldest first)</SelectItem>
+            <SelectItem value="country_asc" className="text-slate-700 focus:bg-purple-50">Country (A → Z)</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -284,7 +295,7 @@ export default function Regulations() {
                               navigate(`/expenditures?country=${encodeURIComponent(reg.country)}`);
                             }}
                             className="text-xs text-slate-500 flex items-center gap-1.5 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 px-2 py-0.5 rounded-full transition-colors"
-                            title={`Voir les dépenses de ${reg.country}`}
+                            title={`View ${reg.country} expenditures`}
                           >
                             {flagUrl && (
                               <img src={flagUrl} alt={reg.country} className="w-4 h-3 object-cover rounded-sm" />
@@ -294,7 +305,7 @@ export default function Regulations() {
                           </button>
                           {isRecent && (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wide">
-                              Récent
+                              Recent
                             </span>
                           )}
                         </div>

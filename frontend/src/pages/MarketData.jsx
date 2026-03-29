@@ -272,15 +272,15 @@ function StockChartModal({ player, liveData, onClose }) {
           ) : dataSource === "private" ? (
             <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
               <span className="text-2xl">🔒</span>
-              <p className="font-medium text-slate-500">Société non cotée</p>
-              <p className="text-xs text-center max-w-xs">Aucune donnée de marché disponible pour les entreprises privées.</p>
+              <p className="font-medium text-slate-500">Unlisted company</p>
+              <p className="text-xs text-center max-w-xs">No market data available for private companies.</p>
             </div>
           ) : dataSource === "unavailable" || chartData.length === 0 ? (
             <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
               <span className="text-2xl">📊</span>
-              <p className="font-medium text-slate-500">Données de marché indisponibles</p>
+              <p className="font-medium text-slate-500">Market data unavailable</p>
               <p className="text-xs text-center max-w-xs px-4">
-                {dataMessage || "Les données historiques ne sont pas disponibles pour ce ticker sur Yahoo Finance."}
+                {dataMessage || "Historical data is not available for this ticker on Yahoo Finance."}
               </p>
             </div>
           ) : (
@@ -720,7 +720,7 @@ export default function MarketData() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
-            placeholder="Société, ticker, segment…"
+            placeholder="Company, ticker, segment…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"

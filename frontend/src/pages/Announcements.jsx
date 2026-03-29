@@ -430,7 +430,7 @@ export default function Announcements() {
   const regularArticles = filtered.filter((a) => (a.source_count ?? 1) < 2);
 
   const exportCSV = () => {
-    const headers = ["Titre", "Source", "Catégorie", "Date", "URL"];
+    const headers = ["Title", "Source", "Category", "Date", "URL"];
     const rows = filtered.map((a) => [
       `"${(a.title || "").replace(/"/g, '""')}"`,
       `"${a.source || ""}"`,
