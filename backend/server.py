@@ -86,8 +86,8 @@ class MAActivityCreate(BaseModel):
     acquirer: str
     target: str
     deal_value: float  # in millions USD
-    status: str  # announced, pending, completed, cancelled
-    deal_type: str  # acquisition, merger, joint_venture
+    status: str  # announced, pending, under_review, completed, active, cancelled, dissolved, exited
+    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake
     description: str
     acquirer_country: Optional[str] = None   # ISO 3166-1 alpha-2
     target_country: Optional[str] = None
@@ -95,6 +95,10 @@ class MAActivityCreate(BaseModel):
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
     rationale: Optional[str] = None          # 2-3 sentence strategic context
+    # Enriched deal metadata
+    stake_percentage: Optional[float] = None  # % of capital acquired/invested (minority deals)
+    round_type: Optional[str] = None          # seed / series_a / series_b / series_c / growth / buyout
+    is_disclosed: bool = True                 # False when deal value is undisclosed
 
 class MAActivity(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -112,6 +116,10 @@ class MAActivity(BaseModel):
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
     rationale: Optional[str] = None
+    # Enriched deal metadata
+    stake_percentage: Optional[float] = None
+    round_type: Optional[str] = None
+    is_disclosed: bool = True
 
 # Defense Player Model
 class DefensePlayerCreate(BaseModel):

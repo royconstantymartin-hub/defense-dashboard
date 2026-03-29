@@ -36,6 +36,7 @@ HEADERS = {
 # ── Known defense company registry (name → (country_iso2, logo_domain)) ──────
 
 KNOWN_COMPANIES: Dict[str, Tuple[str, str]] = {
+    # ── US Primes ─────────────────────────────────────────────────────────────
     "lockheed martin":           ("US", "lockheedmartin.com"),
     "raytheon":                  ("US", "rtx.com"),
     "rtx":                       ("US", "rtx.com"),
@@ -55,11 +56,78 @@ KNOWN_COMPANIES: Dict[str, Tuple[str, str]] = {
     "mercury systems":           ("US", "mrcy.com"),
     "curtiss-wright":            ("US", "curtisswright.com"),
     "aerovironment":             ("US", "avinc.com"),
-    "anduril":                   ("US", "anduril.com"),
-    "palantir":                  ("US", "palantir.com"),
     "kratos":                    ("US", "kratosdefense.com"),
     "heico":                     ("US", "heico.com"),
     "spirit aerosystems":        ("US", "spiritaero.com"),
+    "collins aerospace":         ("US", "collinsaerospace.com"),
+    "ge aerospace":              ("US", "geaerospace.com"),
+    "meggitt":                   ("GB", "meggitt.com"),
+    "parker hannifin":           ("US", "parker.com"),
+    "flir":                      ("US", "flir.com"),
+    "teledyne flir":             ("US", "teledyne.com"),
+    "aerojet rocketdyne":        ("US", "aerojet.com"),
+    "orbital atk":               ("US", "northropgrumman.com"),
+    "terran orbital":            ("US", "terranorbital.com"),
+    "ball aerospace":            ("US", "ball.com"),
+    "imperva":                   ("US", "imperva.com"),
+    "csra":                      ("US", "gd.com"),
+    "engility":                  ("US", "leidos.com"),
+    "esterline":                 ("US", "transdigm.com"),
+    # ── US Defense Tech / New Primes ──────────────────────────────────────────
+    "anduril":                   ("US", "anduril.com"),
+    "anduril industries":        ("US", "anduril.com"),
+    "palantir":                  ("US", "palantir.com"),
+    "shield ai":                 ("US", "shield.ai"),
+    "rebellion defense":         ("US", "rebelliondefense.com"),
+    "epirus":                    ("US", "epirusinc.com"),
+    "hawkeye 360":               ("US", "he360.com"),
+    "dedrone":                   ("US", "dedrone.com"),
+    "joby aviation":             ("US", "jobyaviation.com"),
+    "archer aviation":           ("US", "archeraircraft.com"),
+    "hermeus":                   ("US", "hermeus.com"),
+    "sarcos technology":         ("US", "sarcos.com"),
+    "true anomaly":              ("US", "trueanomaly.com"),
+    "skydio":                    ("US", "skydio.com"),
+    "joby defense":              ("US", "jobyaviation.com"),
+    "ghost robotics":            ("US", "ghostrobotics.ai"),
+    "apptronik":                 ("US", "apptronik.com"),
+    "firestorm labs":            ("US", "firestormlabs.ai"),
+    "capella space":             ("US", "capellaspace.com"),
+    "iceye":                     ("FI", "iceye.com"),
+    "planet labs":               ("US", "planet.com"),
+    "spire global":              ("US", "spire.com"),
+    "rocket lab":                ("US", "rocketlabusa.com"),
+    "astra space":               ("US", "astra.com"),
+    "relativity space":          ("US", "relativityspace.com"),
+    "nuro":                      ("US", "nuro.ai"),
+    "saildrone":                 ("US", "saildrone.com"),
+    "xwing":                     ("US", "xwing.com"),
+    "kitty hawk":                ("US", "kittyhawk.aero"),
+    "nightwing":                 ("US", "nightwinggroup.com"),
+    # ── European Defense Tech ─────────────────────────────────────────────────
+    "helsing":                   ("DE", "helsing.ai"),
+    "milrem robotics":           ("EE", "milremrobotics.com"),
+    "tekever":                   ("PT", "tekever.com"),
+    "arquus":                    ("FR", "arquus-defense.com"),
+    "cilas":                     ("FR", "cilas.com"),
+    "mbda":                      ("FR", "mbda-systems.com"),
+    "harmattan.ai":              ("FR", "harmattan.ai"),
+    "preligens":                 ("FR", "preligens.com"),
+    "unseenlabs":                ("FR", "unseenlabs.com"),
+    "exail":                     ("FR", "exail.com"),
+    "eca group":                 ("FR", "ecagroup.com"),
+    "eurodrone":                 ("FR", "airbus.com"),
+    "knds":                      ("DE", "knds.de"),
+    "diehl":                     ("DE", "diehl.com"),
+    "hensoldt":                  ("DE", "hensoldt.net"),
+    "rheinmetall":               ("DE", "rheinmetall.com"),
+    "proxima fusion":            ("DE", "proximafusion.com"),
+    "aveillant":                 ("GB", "aveillant.com"),
+    "malloy aeronautics":        ("GB", "malloyaeronautics.com"),
+    "reaction engines":          ("GB", "reactionengines.co.uk"),
+    "open cosmos":               ("GB", "open-cosmos.com"),
+    "satavia":                   ("GB", "satavia.com"),
+    # ── European Primes ───────────────────────────────────────────────────────
     "bae systems":               ("GB", "baesystems.com"),
     "rolls-royce":               ("GB", "rolls-royce.com"),
     "cobham":                    ("GB", "cobham.com"),
@@ -71,45 +139,43 @@ KNOWN_COMPANIES: Dict[str, Tuple[str, str]] = {
     "safran":                    ("FR", "safran-group.com"),
     "naval group":               ("FR", "naval-group.com"),
     "airbus":                    ("FR", "airbus.com"),
-    "rheinmetall":               ("DE", "rheinmetall.com"),
-    "hensoldt":                  ("DE", "hensoldt.net"),
-    "knds":                      ("DE", "knds.de"),
     "leonardo":                  ("IT", "leonardo.com"),
-    "mbda":                      ("FR", "mbda-systems.com"),
+    "leonardo drs":              ("IT", "leonardodrs.com"),
     "saab":                      ("SE", "saabgroup.com"),
     "kongsberg":                 ("NO", "kongsberg.com"),
+    "expal systems":             ("ES", "maxamcorp.com"),
+    "gemalto":                   ("NL", "thalesgroup.com"),
+    "bohemia interactive":       ("CZ", "bisimulations.com"),
+    # ── Asia-Pacific & Other ──────────────────────────────────────────────────
     "hanwha":                    ("KR", "hanwha.com"),
     "hanwha ocean":              ("KR", "hanwha.com"),
     "israel aerospace":          ("IL", "iai.co.il"),
     "elbit":                     ("IL", "elbitsystems.com"),
     "rafael":                    ("IL", "rafael.co.il"),
-    "collins aerospace":         ("US", "collinsaerospace.com"),
-    "ge aerospace":              ("US", "geaerospace.com"),
-    "meggitt":                   ("GB", "meggitt.com"),
-    "parker hannifin":           ("US", "parker.com"),
-    "flir":                      ("US", "flir.com"),
-    "teledyne flir":             ("US", "teledyne.com"),
-    "aerojet rocketdyne":        ("US", "aerojet.com"),
-    "orbital atk":               ("US", "northropgrumman.com"),
-    "terran orbital":            ("US", "terranorbital.com"),
-    "ball aerospace":            ("US", "ball.com"),
-    "expal systems":             ("ES", "maxamcorp.com"),
-    "imperva":                   ("US", "imperva.com"),
-    "gemalto":                   ("NL", "thalesgroup.com"),
-    "csra":                      ("US", "gd.com"),
-    "engility":                  ("US", "leidos.com"),
-    "esterline":                 ("US", "transdigm.com"),
+    "rada electronic":           ("IL", "rada.com"),
     "daewoo shipbuilding":       ("KR", "hanwha.com"),
     "dsme":                      ("KR", "hanwha.com"),
-    "bohemia interactive":       ("CZ", "bisimulations.com"),
+    "edge group":                ("AE", "edgegroup.ae"),
+    "arianegroup":               ("FR", "arianegroup.com"),
+    "rbsl":                      ("GB", "rheinmetall.com"),
 }
 
 # ── M&A keyword patterns for article filtering ────────────────────────────────
 
 MA_TITLE_KEYWORDS = [
+    # Traditional M&A
     "acqui", "merger", "acquires", "acquire", "buys", "buy out",
     "takeover", "joint venture", "strategic partnership", "combines with",
     "merges with", "consolidat",
+    # Venture / startup funding
+    "series a", "series b", "series c", "series d",
+    "funding round", "raises", "seed round", "growth round",
+    "invests in", "investment in", "minority stake",
+    "takes stake", "equity stake", "strategic investment",
+    "venture arm", "backed by", "portfolio company",
+    # Structural deals
+    "spinoff", "spin-off", "divestiture", "divests",
+    "carve-out", "separates", "creates joint venture",
 ]
 
 # ── Value extraction ──────────────────────────────────────────────────────────
@@ -153,11 +219,45 @@ def _infer_status(text: str) -> str:
 
 def _infer_deal_type(text: str) -> str:
     t = text.lower()
-    if any(kw in t for kw in ["joint venture", "jv", "partnership"]):
+    if any(kw in t for kw in ["joint venture", "jv", "creates joint venture"]):
         return "joint_venture"
     if any(kw in t for kw in ["merger", "merges", "combines"]):
         return "merger"
+    if any(kw in t for kw in [
+        "series a", "series b", "series c", "series d",
+        "seed round", "funding round", "raises", "growth round",
+        "strategic investment", "backs", "backed by", "invests in",
+        "investment in", "venture arm",
+    ]):
+        return "strategic_investment"
+    if any(kw in t for kw in ["minority stake", "takes stake", "equity stake", "partial stake"]):
+        return "minority_stake"
+    if any(kw in t for kw in ["spinoff", "spin-off", "divestiture", "divests", "carve-out", "separates"]):
+        return "acquisition"  # treated as acquisition of the spun-out entity
     return "acquisition"
+
+
+def _infer_round_type(text: str) -> Optional[str]:
+    """Extract VC round type from free text. Returns None if not a VC deal."""
+    t = text.lower()
+    if "seed" in t:
+        return "seed"
+    for label in ("series a", "series b", "series c", "series d", "series e"):
+        if label in t:
+            return label.replace(" ", "_")
+    if any(kw in t for kw in ["growth round", "growth equity"]):
+        return "growth"
+    if any(kw in t for kw in ["buyout", "buy-out", "lbo"]):
+        return "buyout"
+    return None
+
+
+def _infer_stake_percentage(text: str) -> Optional[float]:
+    """Extract stake percentage from text, e.g. '15% stake', '~20%'."""
+    m = re.search(r"~?\s*(\d{1,3}(?:\.\d+)?)\s*%\s*(?:stake|equity|interest|ownership)", text, re.IGNORECASE)
+    if m:
+        return float(m.group(1))
+    return None
 
 # ── Company name extraction ───────────────────────────────────────────────────
 
@@ -287,27 +387,34 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
             acq_country, acq_logo = _lookup_company(acquirer)
             tgt_country, tgt_logo = _lookup_company(target)
 
-            deal_value = _parse_deal_value(title + " " + summary)
-            status = _infer_status(title + " " + summary)
-            deal_type = _infer_deal_type(title + " " + summary)
+            full_text = title + " " + summary
+            deal_value = _parse_deal_value(full_text)
+            status = _infer_status(full_text)
+            deal_type = _infer_deal_type(full_text)
+            round_type = _infer_round_type(full_text)
+            stake_pct = _infer_stake_percentage(full_text)
+            is_disclosed = deal_value > 0
 
             # Description: first 120 chars of title (actual scraped text)
             description = title[:120]
 
             signals.append({
-                "acquirer":          acquirer,
-                "target":            target,
-                "acquirer_norm":     _normalize_name(acquirer),
-                "target_norm":       _normalize_name(target),
-                "deal_value":        deal_value,
-                "status":            status,
-                "deal_type":         deal_type,
-                "description":       description,
-                "source_url":        link,   # always present — traceability guarantee
-                "rationale":         summary[:300] if summary else None,
-                "announced_date":    _parse_entry_date(entry),
-                "acquirer_country":  acq_country,
-                "target_country":    tgt_country,
+                "acquirer":             acquirer,
+                "target":               target,
+                "acquirer_norm":        _normalize_name(acquirer),
+                "target_norm":          _normalize_name(target),
+                "deal_value":           deal_value,
+                "status":               status,
+                "deal_type":            deal_type,
+                "round_type":           round_type,
+                "stake_percentage":     stake_pct,
+                "is_disclosed":         is_disclosed,
+                "description":          description,
+                "source_url":           link,   # always present — traceability guarantee
+                "rationale":            summary[:300] if summary else None,
+                "announced_date":       _parse_entry_date(entry),
+                "acquirer_country":     acq_country,
+                "target_country":       tgt_country,
                 "acquirer_logo_domain": acq_logo,
                 "target_logo_domain":   tgt_logo,
             })
@@ -320,11 +427,18 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
 # ── RSS sources ───────────────────────────────────────────────────────────────
 
 MA_RSS_SOURCES = [
+    # Traditional defense press
     ("Breaking Defense",       "https://breakingdefense.com/feed/"),
     ("Defense News",           "https://www.defensenews.com/arc/outboundfeeds/rss/"),
     ("Defense Industry Daily", "https://www.defenseindustrydaily.com/feed/"),
-    ("Reuters Business",       "https://feeds.reuters.com/reuters/businessNews"),
     ("Defense Post",           "https://thedefensepost.com/feed/"),
+    ("C4ISRNET",               "https://www.c4isrnet.com/arc/outboundfeeds/rss/"),
+    ("Defense One",            "https://www.defenseone.com/rss/all/"),
+    # Generalist / financial with M&A coverage
+    ("Reuters Business",       "https://feeds.reuters.com/reuters/businessNews"),
+    # Defense tech / startup ecosystem
+    ("SpaceNews",              "https://spacenews.com/feed/"),
+    ("The War Zone",           "https://www.thedrive.com/the-war-zone/feed"),
 ]
 
 # ── Public API ────────────────────────────────────────────────────────────────
