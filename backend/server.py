@@ -417,7 +417,7 @@ def _synthetic_history(ticker: str, base_price: float, period: str) -> list:
     Uses a seeded PRNG keyed on ticker so the same company always shows
     the same chart shape; the series is anchored at base_price.
     """
-    SIMULATED_NOW = datetime(2026, 3, 27, 16, 0, 0, tzinfo=timezone.utc)
+    SIMULATED_NOW = datetime.now(timezone.utc)
     cfg = {
         "1d":  (78,  timedelta(minutes=5),  timedelta(hours=6, minutes=30), 0.0008),
         "1w":  (35,  timedelta(hours=3),    timedelta(days=5),              0.003),
