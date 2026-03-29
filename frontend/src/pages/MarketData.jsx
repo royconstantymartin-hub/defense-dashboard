@@ -11,7 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X } from "lucide-react";
+import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle } from "lucide-react";
+import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import {
   BarChart,
   Bar,
@@ -377,6 +378,7 @@ export default function MarketData() {
   const [sortBy, setSortBy] = useState("market_cap_desc");
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [chartPlayer, setChartPlayer] = useState(null);
+  const [profileName, setProfileName] = useState(null);
   // liveData: { [ticker]: { price, change_percent, prev_close } }
   const [liveData, setLiveData] = useState({});
   const [liveLoading, setLiveLoading] = useState(false);
@@ -687,14 +689,19 @@ export default function MarketData() {
                       {/* Company */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
+                          <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium shrink-0">
                             {idx + 1}
                           </span>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setProfileName(player.name); }}
+                            className="flex items-center gap-2.5 group text-left"
+                            title={`View ${player.name} profile`}
+                          >
                           {logoUrl ? (
                             <img
                               src={logoUrl}
                               alt={player.name}
-                              className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100"
+                              className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 group-hover:border-purple-200 transition-colors shrink-0"
                               onError={(e) => { e.target.style.display = 'none'; }}
                             />
                           ) : (
@@ -702,15 +709,16 @@ export default function MarketData() {
                               <Building2 className="w-4 h-4 text-purple-600" />
                             </div>
                           )}
-                          <div>
-                            <p className="text-slate-900 font-medium text-sm">{player.name}</p>
-                            <div className="flex items-center gap-1.5 mt-0.5">
-                              {flagUrl && (
-                                <img src={flagUrl} alt={player.country} className="w-4 h-3 object-cover rounded-sm" />
-                              )}
-                              <span className="text-xs text-slate-500">{player.country}</span>
+                            <div>
+                              <p className="text-slate-900 group-hover:text-purple-700 font-medium text-sm transition-colors">{player.name}</p>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                {flagUrl && (
+                                  <img src={flagUrl} alt={player.country} className="w-4 h-3 object-cover rounded-sm" />
+                                )}
+                                <span className="text-xs text-slate-500">{player.country}</span>
+                              </div>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </td>
 
@@ -905,10 +913,21 @@ export default function MarketData() {
                   ))}
                 </div>
               </div>
+
+              <button
+                onClick={() => { setSelectedPlayer(null); setProfileName(selectedPlayer.name); }}
+                className="w-full flex items-center justify-center gap-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
+              >
+                <UserCircle className="w-4 h-4" />
+                View Full Company Profile
+              </button>
             </CardContent>
           </Card>
         </div>
       )}
+
+      {/* Company Profile Sheet */}
+      <CompanyProfileSheet name={profileName} onClose={() => setProfileName(null)} />
     </div>
   );
 }
