@@ -14,9 +14,12 @@ import {
 import {
   Search, ArrowRight, Clock, Database,
   Filter, TrendingUp, ChevronDown, ChevronUp,
-  ExternalLink, Download, Calendar, User,
+  ExternalLink, Download, Calendar, User, CheckCircle2, AlertCircle,
 } from "lucide-react";
 import { format } from "date-fns";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
+} from "recharts";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -249,6 +252,17 @@ function MACard({ activity, onOpenProfile }) {
               {activity.status.toUpperCase()}
             </span>
 
+            {/* Source reliability badge */}
+            {activity.source_url ? (
+              <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                <CheckCircle2 className="w-3 h-3" /> Sourcé
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                <AlertCircle className="w-3 h-3" /> Non sourcé
+              </span>
+            )}
+
             {/* Expand toggle */}
             {(activity.rationale || activity.source_url) && (
               <button
@@ -330,9 +344,20 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
           </span>
         </td>
         <td className="px-4 py-3">
-          <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${getStatusStyle(activity.status)}`}>
-            {activity.status.toUpperCase()}
-          </span>
+          <div className="flex flex-col gap-1">
+            <span className={`text-xs font-medium px-2.5 py-1 rounded-full border w-fit ${getStatusStyle(activity.status)}`}>
+              {activity.status.toUpperCase()}
+            </span>
+            {activity.source_url ? (
+              <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600">
+                <CheckCircle2 className="w-2.5 h-2.5" /> Sourcé
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-[10px] font-medium text-amber-500">
+                <AlertCircle className="w-2.5 h-2.5" /> Non sourcé
+              </span>
+            )}
+          </div>
         </td>
         <td className="px-4 py-3 text-xs text-slate-500 hidden lg:table-cell max-w-xs truncate">
           {activity.description}
@@ -476,6 +501,21 @@ export default function MAActivity() {
   const displayList = tab === "recent" ? filteredRecent : filteredHist;
   const totalValue  = displayList.reduce((s, a) => s + (a.deal_value || 0), 0);
 
+  // Quarterly deal timeline from all activities (not filtered — shows macro trend)
+  const quarterlyData = (() => {
+    const map = {};
+    activities.forEach((a) => {
+      const d = new Date(a.announced_date);
+      const q = `Q${Math.ceil((d.getMonth() + 1) / 3)} ${d.getFullYear()}`;
+      if (!map[q]) map[q] = { quarter: q, count: 0, value: 0, ts: d.getTime() };
+      map[q].count += 1;
+      map[q].value += a.deal_value || 0;
+    });
+    return Object.values(map)
+      .sort((a, b) => a.ts - b.ts)
+      .slice(-8); // last 8 quarters
+  })();
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -537,6 +577,67 @@ export default function MAActivity() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Quarterly deal activity chart */}
+      {quarterlyData.length > 1 && (
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm font-semibold text-slate-800">Activité trimestrielle</p>
+                <p className="text-xs text-slate-400 mt-0.5">Nombre de deals annoncés par trimestre</p>
+              </div>
+              <span className="text-xs text-slate-400 bg-slate-50 border border-slate-200 px-2 py-1 rounded">
+                8 derniers trimestres
+              </span>
+            </div>
+            <ResponsiveContainer width="100%" height={120}>
+              <BarChart data={quarterlyData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                <XAxis
+                  dataKey="quarter"
+                  tick={{ fill: "#94A3B8", fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fill: "#94A3B8", fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={24}
+                />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const d = payload[0].payload;
+                      return (
+                        <div className="bg-white border border-slate-200 rounded-lg px-3 py-2 shadow-lg text-xs">
+                          <p className="font-semibold text-slate-700">{d.quarter}</p>
+                          <p className="text-purple-700 font-mono">{d.count} deal{d.count > 1 ? "s" : ""}</p>
+                          {d.value > 0 && (
+                            <p className="text-slate-500">
+                              {d.value >= 1000 ? `$${(d.value / 1000).toFixed(1)}B` : `$${d.value}M`} total
+                            </p>
+                          )}
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                  {quarterlyData.map((entry, i) => (
+                    <Cell
+                      key={i}
+                      fill={i === quarterlyData.length - 1 ? "#7E22CE" : "#E9D5FF"}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Tabs */}
       <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1 w-fit">
