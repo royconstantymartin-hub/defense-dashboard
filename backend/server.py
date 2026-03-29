@@ -185,6 +185,44 @@ class Regulation(BaseModel):
     requirements: List[str]
     effective_date: str
 
+# ── Defense Contract Model ─────────────────────────────────────────────────
+class ContractCreate(BaseModel):
+    title: str
+    description: str
+    contracting_authority: str          # "DGA", "DoD", "MoD UK", "NATO NSPA"…
+    authority_country: str              # "France", "USA", "UK", "NATO", "EU"
+    authority_type: str                 # national | nato | eu | bilateral
+    category: str                       # aerospace | naval | land | cyber | services | logistics | space
+    amount_min: Optional[float] = None  # millions USD
+    amount_max: Optional[float] = None  # millions USD
+    status: str                         # open | awarded | closed | cancelled
+    publication_date: str               # ISO date string
+    deadline: Optional[str] = None      # ISO date — relevant for open tenders
+    awarded_to: Optional[str] = None    # company name when status = awarded
+    program: Optional[str] = None       # programme name (FCAS, MGCS, F-35…)
+    source_url: Optional[str] = None
+    reliability: str = "confirmed"      # confirmed | estimated
+
+class Contract(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    contracting_authority: str
+    authority_country: str
+    authority_type: str
+    category: str
+    amount_min: Optional[float] = None
+    amount_max: Optional[float] = None
+    status: str
+    publication_date: str
+    deadline: Optional[str] = None
+    awarded_to: Optional[str] = None
+    program: Optional[str] = None
+    source_url: Optional[str] = None
+    reliability: str = "confirmed"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Product Portfolio Model
 class ProductCreate(BaseModel):
     name: str
@@ -246,33 +284,65 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+# ── Simple in-memory rate limiter for auth endpoints ──────────────────────
+# Tracks failed attempts per IP: {ip: {"count": int, "reset_at": datetime}}
+_auth_attempts: dict = {}
+_AUTH_LIMIT = 10          # max attempts
+_AUTH_WINDOW = timedelta(minutes=15)
+
+def _check_rate_limit(request_ip: str):
+    now = datetime.now(timezone.utc)
+    entry = _auth_attempts.get(request_ip)
+    if entry:
+        if now < entry["reset_at"]:
+            if entry["count"] >= _AUTH_LIMIT:
+                raise HTTPException(
+                    status_code=429,
+                    detail=f"Too many attempts. Try again in {int((entry['reset_at'] - now).total_seconds() // 60) + 1} minutes."
+                )
+        else:
+            del _auth_attempts[request_ip]
+
+def _record_failed_attempt(request_ip: str):
+    now = datetime.now(timezone.utc)
+    entry = _auth_attempts.get(request_ip)
+    if entry and now < entry["reset_at"]:
+        entry["count"] += 1
+    else:
+        _auth_attempts[request_ip] = {"count": 1, "reset_at": now + _AUTH_WINDOW}
+
 # ============= AUTH ROUTES =============
 
+from fastapi import Request
+
 @api_router.post("/auth/register", response_model=TokenResponse)
-async def register(user_data: UserCreate):
+async def register(user_data: UserCreate, request: Request):
+    _check_rate_limit(request.client.host)
     existing = await db.users.find_one({"email": user_data.email}, {"_id": 0})
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
+
     user = User(email=user_data.email, name=user_data.name)
     user_dict = user.model_dump()
     user_dict['password_hash'] = hash_password(user_data.password)
     user_dict['created_at'] = user_dict['created_at'].isoformat()
-    
+
     await db.users.insert_one(user_dict)
     token = create_token(user.id, user.email, user.role)
-    
+
     return TokenResponse(
         access_token=token,
         user={"id": user.id, "email": user.email, "name": user.name, "role": user.role}
     )
 
 @api_router.post("/auth/login", response_model=TokenResponse)
-async def login(credentials: UserLogin):
+async def login(credentials: UserLogin, request: Request):
+    _check_rate_limit(request.client.host)
     user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     if not user or not verify_password(credentials.password, user['password_hash']):
+        _record_failed_attempt(request.client.host)
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    
+
     token = create_token(user['id'], user['email'], user['role'])
     return TokenResponse(
         access_token=token,
@@ -409,47 +479,31 @@ async def delete_defense_player(player_id: str, current_user: dict = Depends(get
 
 # ── Stock price helpers ────────────────────────────────────────────────────
 
-import hashlib, random as _random, math as _math
-
-def _synthetic_history(ticker: str, base_price: float, period: str) -> list:
-    """
-    Generate deterministic synthetic OHLC-close history for a company.
-    Uses a seeded PRNG keyed on ticker so the same company always shows
-    the same chart shape; the series is anchored at base_price.
-    """
-    SIMULATED_NOW = datetime.now(timezone.utc)
-    cfg = {
-        "1d":  (78,  timedelta(minutes=5),  timedelta(hours=6, minutes=30), 0.0008),
-        "1w":  (35,  timedelta(hours=3),    timedelta(days=5),              0.003),
-        "1mo": (22,  timedelta(days=1, hours=10), timedelta(days=22),       0.012),
-        "1y":  (52,  timedelta(weeks=1),    timedelta(weeks=52),            0.025),
-    }
-    n, step, span, vol = cfg.get(period, cfg["1d"])
-    seed = int(hashlib.md5(f"{ticker}{period}".encode()).hexdigest()[:8], 16)
-    rng = _random.Random(seed)
-    # Walk forward from (base_price * drift_correction) → end near base_price
-    prices = []
-    p = base_price
-    for _ in range(n):
-        p = max(0.1, p * (1 + rng.gauss(0, vol)))
-        prices.append(p)
-    # Rescale so the last value equals base_price
-    scale = base_price / prices[-1] if prices[-1] else 1
-    prices = [round(v * scale, 2) for v in prices]
-    start = SIMULATED_NOW - span
-    return [{"time": (start + step * i).isoformat(), "price": prices[i]} for i in range(n)]
-
 @api_router.get("/stock-history/{ticker}")
 async def get_stock_history_route(ticker: str, period: str = "1d"):
-    """Return synthetic deterministic price history anchored to the player's seeded price."""
+    """Return real price history from Yahoo Finance (via stock_service).
+    Returns data_source='live' when data is available, 'unavailable' otherwise.
+    Private companies (ticker <= 0 or marked PRIV) always return empty data."""
     player = await db.defense_players.find_one(
         {"ticker": {"$regex": f"^{re.escape(ticker)}$", "$options": "i"}}, {"_id": 0}
     )
-    base = float(player["stock_price"]) if player and player.get("stock_price") else 100.0
-    if base <= 0:  # private companies
-        return {"ticker": ticker, "period": period, "data": []}
-    data = _synthetic_history(ticker, base, period)
-    return {"ticker": ticker, "period": period, "data": data}
+    base_price = float(player["stock_price"]) if player and player.get("stock_price") else 0.0
+    # Private companies — no market data
+    if base_price <= 0 or "PRIV" in ticker.upper():
+        return {"ticker": ticker, "period": period, "data": [], "data_source": "private"}
+
+    data = await fetch_stock_history(ticker, period)
+
+    if not data:
+        return {
+            "ticker": ticker,
+            "period": period,
+            "data": [],
+            "data_source": "unavailable",
+            "message": "Données de marché indisponibles pour ce ticker. Vérifiez que la valeur est cotée sur Yahoo Finance."
+        }
+
+    return {"ticker": ticker, "period": period, "data": data, "data_source": "live"}
 
 @api_router.get("/stock-prices")
 async def get_stock_prices(tickers: str = ""):
@@ -578,6 +632,45 @@ async def delete_product(product_id: str, current_user: dict = Depends(get_curre
         raise HTTPException(status_code=404, detail="Product not found")
     return {"status": "deleted"}
 
+# ============= CONTRACTS ROUTES =============
+
+@api_router.get("/contracts", response_model=List[Contract])
+async def get_contracts(
+    status: Optional[str] = None,
+    authority_type: Optional[str] = None,
+    category: Optional[str] = None,
+    authority_country: Optional[str] = None,
+):
+    query = {}
+    if status and status != "all":
+        query["status"] = status
+    if authority_type and authority_type != "all":
+        query["authority_type"] = authority_type
+    if category and category != "all":
+        query["category"] = category
+    if authority_country and authority_country != "all":
+        query["authority_country"] = authority_country
+    contracts = await db.contracts.find(query, {"_id": 0}).sort("publication_date", -1).to_list(500)
+    for c in contracts:
+        if isinstance(c.get("created_at"), str):
+            c["created_at"] = datetime.fromisoformat(c["created_at"])
+    return contracts
+
+@api_router.post("/contracts", response_model=Contract)
+async def create_contract(data: ContractCreate, current_user: dict = Depends(get_current_user)):
+    contract = Contract(**data.model_dump())
+    doc = contract.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    await db.contracts.insert_one(doc)
+    return contract
+
+@api_router.delete("/contracts/{contract_id}")
+async def delete_contract(contract_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.contracts.delete_one({"id": contract_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    return {"status": "deleted"}
+
 # ============= DASHBOARD STATS =============
 
 @api_router.get("/dashboard/stats")
@@ -615,8 +708,10 @@ async def get_dashboard_stats():
 # ============= SEED DATA ENDPOINT =============
 
 @api_router.post("/seed-data")
-async def seed_data():
-    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA
+async def seed_data(current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
     
     # Seed Defense Players (250+ companies)
     for p in DEFENSE_COMPANIES:
@@ -673,11 +768,20 @@ async def seed_data():
                 {"$set": {"image_url": p['image_url']}}
             )
     
+    # Seed Contracts
+    for c in CONTRACTS_DATA:
+        existing = await db.contracts.find_one({"title": c['title']})
+        if not existing:
+            contract = Contract(**c)
+            doc = contract.model_dump()
+            await db.contracts.insert_one(doc)
+
     # Get counts
     players_count = await db.defense_players.count_documents({})
     announcements_count = await db.announcements.count_documents({})
-    
-    return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count}
+    contracts_count = await db.contracts.count_documents({})
+
+    return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count, "contracts": contracts_count}
 
 # ============= NEWS SCRAPER JOB =============
 

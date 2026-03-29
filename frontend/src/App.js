@@ -14,6 +14,8 @@ import Expenditures from "@/pages/Expenditures";
 import Regulations from "@/pages/Regulations";
 import Products from "@/pages/Products";
 import Follow from "@/pages/Follow";
+import Bookmarks from "@/pages/Bookmarks";
+import Contracts from "@/pages/Contracts";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 
@@ -86,17 +88,8 @@ const AuthProvider = ({ children }) => {
 };
 
 function App() {
-  useEffect(() => {
-    // Seed data on first load
-    const seedData = async () => {
-      try {
-        await axios.post(`${API}/seed-data`);
-      } catch (error) {
-        console.log("Data already seeded or error:", error.message);
-      }
-    };
-    seedData();
-  }, []);
+  // Seed data is now admin-only — auto-seeding removed.
+  // Use Admin Panel > "Seed Data" button to initialize the database.
 
   return (
     <AuthProvider>
@@ -113,6 +106,8 @@ function App() {
             <Route path="regulations" element={<Regulations />} />
             <Route path="products" element={<Products />} />
             <Route path="follow" element={<Follow />} />
+            <Route path="bookmarks" element={<Bookmarks />} />
+            <Route path="contracts" element={<Contracts />} />
             <Route path="admin" element={<Admin />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

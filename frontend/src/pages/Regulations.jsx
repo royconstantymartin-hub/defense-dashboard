@@ -16,7 +16,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Search, FileText, Globe, Calendar, CheckCircle2, Clock, Database, Filter, Shield } from "lucide-react";
+import { Search, FileText, Globe, Calendar, CheckCircle2, Clock, Database, Filter, Shield, ArrowUpDown, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories" },
@@ -54,12 +55,14 @@ const COUNTRY_FLAGS = {
 };
 
 export default function Regulations() {
+  const navigate = useNavigate();
   const [regulations, setRegulations] = useState([]);
   const [filteredRegulations, setFilteredRegulations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCountry, setSelectedCountry] = useState("all");
+  const [sortBy, setSortBy] = useState("date_desc"); // date_desc | date_asc | country_asc
 
   useEffect(() => {
     const fetchRegulations = async () => {
@@ -89,14 +92,29 @@ export default function Regulations() {
     
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(r => 
-        r.title.toLowerCase().includes(term) || 
-        r.description.toLowerCase().includes(term)
+      filtered = filtered.filter(r =>
+        r.title.toLowerCase().includes(term) ||
+        r.description.toLowerCase().includes(term) ||
+        r.country.toLowerCase().includes(term)
       );
     }
-    
+
+    // Sort
+    filtered = [...filtered].sort((a, b) => {
+      if (sortBy === "date_desc") {
+        return (new Date(b.effective_date || 0)) - (new Date(a.effective_date || 0));
+      }
+      if (sortBy === "date_asc") {
+        return (new Date(a.effective_date || 0)) - (new Date(b.effective_date || 0));
+      }
+      if (sortBy === "country_asc") {
+        return a.country.localeCompare(b.country);
+      }
+      return 0;
+    });
+
     setFilteredRegulations(filtered);
-  }, [searchTerm, selectedCategory, selectedCountry, regulations]);
+  }, [searchTerm, selectedCategory, selectedCountry, sortBy, regulations]);
 
   const getCategoryStyle = (category) => {
     switch (category) {
@@ -217,6 +235,18 @@ export default function Regulations() {
             ))}
           </SelectContent>
         </Select>
+
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700">
+            <ArrowUpDown className="w-4 h-4 mr-2 text-slate-400" />
+            <SelectValue placeholder="Trier par" />
+          </SelectTrigger>
+          <SelectContent className="bg-white border-slate-200">
+            <SelectItem value="date_desc" className="text-slate-700 focus:bg-purple-50">Date (récent → ancien)</SelectItem>
+            <SelectItem value="date_asc" className="text-slate-700 focus:bg-purple-50">Date (ancien → récent)</SelectItem>
+            <SelectItem value="country_asc" className="text-slate-700 focus:bg-purple-50">Pays (A → Z)</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Regulations Accordion */}
@@ -225,9 +255,13 @@ export default function Regulations() {
           <Accordion type="single" collapsible className="w-full">
             {filteredRegulations.map((reg) => {
               const flagUrl = getFlag(reg.country);
+              // "Récent" = effective_date within the last 12 months
+              const isRecent = reg.effective_date
+                && (new Date() - new Date(reg.effective_date)) < 365 * 24 * 3600 * 1000
+                && new Date(reg.effective_date) <= new Date();
               return (
-                <AccordionItem 
-                  key={reg.id} 
+                <AccordionItem
+                  key={reg.id}
                   value={reg.id}
                   className="border-b border-slate-100 last:border-0"
                   data-testid={`regulation-item-${reg.id}`}
@@ -242,12 +276,27 @@ export default function Regulations() {
                           <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${getCategoryStyle(reg.category)}`}>
                             {reg.category.replace('_', ' ').toUpperCase()}
                           </span>
-                          <span className="text-xs text-slate-500 flex items-center gap-1.5 bg-slate-100 px-2 py-0.5 rounded-full">
+                          {/* Clickable country badge → Expenditures filtered */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/expenditures?country=${encodeURIComponent(reg.country)}`);
+                            }}
+                            className="text-xs text-slate-500 flex items-center gap-1.5 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 px-2 py-0.5 rounded-full transition-colors"
+                            title={`Voir les dépenses de ${reg.country}`}
+                          >
                             {flagUrl && (
                               <img src={flagUrl} alt={reg.country} className="w-4 h-3 object-cover rounded-sm" />
                             )}
                             {reg.country}
-                          </span>
+                            <ExternalLink className="w-2.5 h-2.5 opacity-50" />
+                          </button>
+                          {isRecent && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wide">
+                              Récent
+                            </span>
+                          )}
                         </div>
                         <h3 className="text-slate-900 font-medium">{reg.title}</h3>
                       </div>

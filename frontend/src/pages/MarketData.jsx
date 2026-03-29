@@ -51,6 +51,21 @@ const SORT_OPTIONS = [
   { value: "name_asc", label: "Name (A-Z)" },
 ];
 
+// Canonical segment labels for the filter
+// Values must match strings that appear in player.specializations arrays
+const SEGMENTS = [
+  { value: "all",        label: "Tous les segments" },
+  { value: "aerospace",  label: "Aérospatial" },
+  { value: "naval",      label: "Naval" },
+  { value: "land",       label: "Terrestre" },
+  { value: "missiles",   label: "Missiles" },
+  { value: "cyber",      label: "Cyber / EW" },
+  { value: "space",      label: "Espace" },
+  { value: "services",   label: "Services / Conseil" },
+  { value: "logistics",  label: "Logistique / MRO" },
+  { value: "electronics","label": "Électronique défense" },
+];
+
 const COUNTRY_FLAGS = {
   "USA": "us", "UK": "gb", "France": "fr", "Germany": "de", "Italy": "it",
   "EU": "eu", "Spain": "es", "Sweden": "se", "Norway": "no", "Israel": "il",
@@ -107,18 +122,27 @@ function relativeTime(isoStr) {
 function StockChartModal({ player, liveData, onClose }) {
   const [period, setPeriod] = useState("1d");
   const [history, setHistory] = useState([]);
+  const [dataSource, setDataSource] = useState(null); // 'live' | 'unavailable' | 'private'
+  const [dataMessage, setDataMessage] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [articles, setArticles] = useState([]);
   const [loadingArticles, setLoadingArticles] = useState(false);
 
   const fetchHistory = useCallback(async (p) => {
-    if (!player?.ticker || player.ticker === "Private" || player.ticker.includes("PRIV")) return;
+    if (!player?.ticker || player.ticker === "Private" || player.ticker.includes("PRIV")) {
+      setDataSource("private");
+      return;
+    }
     setLoadingHistory(true);
     try {
       const res = await axios.get(`${API}/stock-history/${encodeURIComponent(player.ticker)}?period=${p}`);
       setHistory(res.data.data || []);
+      setDataSource(res.data.data_source || null);
+      setDataMessage(res.data.message || null);
     } catch {
       setHistory([]);
+      setDataSource("unavailable");
+      setDataMessage(null);
     } finally {
       setLoadingHistory(false);
     }
@@ -240,14 +264,24 @@ function StockChartModal({ player, liveData, onClose }) {
         </div>
 
         {/* Chart */}
-        <div className="px-2 pb-4">
+        <div className="px-2 pb-1">
           {loadingHistory ? (
             <div className="h-52 flex items-center justify-center">
               <div className="animate-spin w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full" />
             </div>
-          ) : chartData.length === 0 ? (
-            <div className="h-52 flex items-center justify-center text-slate-400 text-sm">
-              No data available for this period
+          ) : dataSource === "private" ? (
+            <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
+              <span className="text-2xl">🔒</span>
+              <p className="font-medium text-slate-500">Société non cotée</p>
+              <p className="text-xs text-center max-w-xs">Aucune donnée de marché disponible pour les entreprises privées.</p>
+            </div>
+          ) : dataSource === "unavailable" || chartData.length === 0 ? (
+            <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
+              <span className="text-2xl">📊</span>
+              <p className="font-medium text-slate-500">Données de marché indisponibles</p>
+              <p className="text-xs text-center max-w-xs px-4">
+                {dataMessage || "Les données historiques ne sont pas disponibles pour ce ticker sur Yahoo Finance."}
+              </p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={220}>
@@ -317,6 +351,18 @@ function StockChartModal({ player, liveData, onClose }) {
             </ResponsiveContainer>
           )}
         </div>
+        {/* Data source attribution */}
+        {dataSource === "live" && (
+          <div className="px-4 pb-3 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+            <span className="text-xs text-slate-400">Source : Yahoo Finance · Données en temps réel sous licence</span>
+          </div>
+        )}
+        {(dataSource === "unavailable" || (dataSource !== "private" && chartData.length === 0)) && (
+          <div className="px-4 pb-3">
+            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⚠ Cours non disponible — vérifiez le ticker ou la cotation</span>
+          </div>
+        )}
 
         {/* Recent Articles */}
         <div className="px-6 pb-6 border-t border-slate-100 pt-4">
@@ -375,6 +421,7 @@ export default function MarketData() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [selectedCountry, setSelectedCountry] = useState("all");
+  const [selectedSegment, setSelectedSegment] = useState("all");
   const [sortBy, setSortBy] = useState("market_cap_desc");
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [chartPlayer, setChartPlayer] = useState(null);
@@ -440,11 +487,20 @@ export default function MarketData() {
       filtered = filtered.filter(p => p.country === selectedCountry);
     }
 
+    if (selectedSegment !== "all") {
+      filtered = filtered.filter(p =>
+        Array.isArray(p.specializations) &&
+        p.specializations.some(s => s.toLowerCase().includes(selectedSegment.toLowerCase()))
+      );
+    }
+
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(term) ||
-        p.ticker.toLowerCase().includes(term)
+        p.ticker.toLowerCase().includes(term) ||
+        (Array.isArray(p.specializations) &&
+          p.specializations.some(s => s.toLowerCase().includes(term)))
       );
     }
 
@@ -463,7 +519,7 @@ export default function MarketData() {
     });
 
     setFilteredPlayers(filtered);
-  }, [searchTerm, selectedCountry, sortBy, players, liveData]);
+  }, [searchTerm, selectedCountry, selectedSegment, sortBy, players, liveData]);
 
   const totalMarketCap = filteredPlayers.reduce((sum, p) => sum + p.market_cap, 0);
   const totalRevenue = filteredPlayers.reduce((sum, p) => sum + p.revenue, 0);
@@ -538,9 +594,9 @@ export default function MarketData() {
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COMBINED REVENUE</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">REVENUS AGRÉGÉS</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalRevenue.toFixed(1)}B</p>
-            <p className="text-xs text-slate-500 mt-1">TTM Revenue</p>
+            <p className="text-xs text-slate-400 mt-1">Données base — non actualisées en temps réel</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
@@ -612,11 +668,11 @@ export default function MarketData() {
       </Card>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
+      <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
-            placeholder="Search by company or ticker..."
+            placeholder="Société, ticker, segment…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"
@@ -624,7 +680,7 @@ export default function MarketData() {
           />
         </div>
         <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-          <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700" data-testid="country-filter">
+          <SelectTrigger className="w-full sm:w-44 bg-white border-slate-200 text-slate-700" data-testid="country-filter">
             <SelectValue placeholder="Country" />
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
@@ -635,8 +691,20 @@ export default function MarketData() {
             ))}
           </SelectContent>
         </Select>
+        <Select value={selectedSegment} onValueChange={setSelectedSegment}>
+          <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700" data-testid="segment-filter">
+            <SelectValue placeholder="Segment" />
+          </SelectTrigger>
+          <SelectContent className="bg-white border-slate-200">
+            {SEGMENTS.map(s => (
+              <SelectItem key={s.value} value={s.value} className="text-slate-700 focus:bg-purple-50">
+                {s.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-slate-700" data-testid="sort-filter">
+          <SelectTrigger className="w-full sm:w-52 bg-white border-slate-200 text-slate-700" data-testid="sort-filter">
             <ArrowUpDown className="w-4 h-4 mr-2 text-slate-400" />
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
@@ -648,6 +716,27 @@ export default function MarketData() {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Active filter summary */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs text-slate-500">{filteredPlayers.length} société{filteredPlayers.length > 1 ? "s" : ""}</span>
+        {selectedSegment !== "all" && (
+          <span className="flex items-center gap-1 text-xs bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-medium">
+            {SEGMENTS.find(s => s.value === selectedSegment)?.label}
+            <button onClick={() => setSelectedSegment("all")} className="hover:text-purple-900 ml-0.5">
+              <X className="w-3 h-3" />
+            </button>
+          </span>
+        )}
+        {selectedCountry !== "all" && (
+          <span className="flex items-center gap-1 text-xs bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
+            {selectedCountry}
+            <button onClick={() => setSelectedCountry("all")} className="hover:text-slate-900 ml-0.5">
+              <X className="w-3 h-3" />
+            </button>
+          </span>
+        )}
       </div>
 
       {/* Players Table */}
