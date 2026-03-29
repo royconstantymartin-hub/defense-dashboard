@@ -34,7 +34,7 @@ const navItems = [
   { path: "/expenditures", icon: Globe, label: "Expenditures" },
   { path: "/regulations", icon: FileText, label: "Regulations" },
   { path: "/products", icon: Package, label: "Products" },
-  { path: "/follow", icon: Rss, label: "Follow" },
+  { path: "/follow", icon: Rss, label: "Sources" },
 ];
 
 export default function Layout() {

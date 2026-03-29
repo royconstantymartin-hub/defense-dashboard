@@ -107,18 +107,27 @@ function relativeTime(isoStr) {
 function StockChartModal({ player, liveData, onClose }) {
   const [period, setPeriod] = useState("1d");
   const [history, setHistory] = useState([]);
+  const [dataSource, setDataSource] = useState(null); // 'live' | 'unavailable' | 'private'
+  const [dataMessage, setDataMessage] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [articles, setArticles] = useState([]);
   const [loadingArticles, setLoadingArticles] = useState(false);
 
   const fetchHistory = useCallback(async (p) => {
-    if (!player?.ticker || player.ticker === "Private" || player.ticker.includes("PRIV")) return;
+    if (!player?.ticker || player.ticker === "Private" || player.ticker.includes("PRIV")) {
+      setDataSource("private");
+      return;
+    }
     setLoadingHistory(true);
     try {
       const res = await axios.get(`${API}/stock-history/${encodeURIComponent(player.ticker)}?period=${p}`);
       setHistory(res.data.data || []);
+      setDataSource(res.data.data_source || null);
+      setDataMessage(res.data.message || null);
     } catch {
       setHistory([]);
+      setDataSource("unavailable");
+      setDataMessage(null);
     } finally {
       setLoadingHistory(false);
     }
@@ -240,14 +249,24 @@ function StockChartModal({ player, liveData, onClose }) {
         </div>
 
         {/* Chart */}
-        <div className="px-2 pb-4">
+        <div className="px-2 pb-1">
           {loadingHistory ? (
             <div className="h-52 flex items-center justify-center">
               <div className="animate-spin w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full" />
             </div>
-          ) : chartData.length === 0 ? (
-            <div className="h-52 flex items-center justify-center text-slate-400 text-sm">
-              No data available for this period
+          ) : dataSource === "private" ? (
+            <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
+              <span className="text-2xl">🔒</span>
+              <p className="font-medium text-slate-500">Société non cotée</p>
+              <p className="text-xs text-center max-w-xs">Aucune donnée de marché disponible pour les entreprises privées.</p>
+            </div>
+          ) : dataSource === "unavailable" || chartData.length === 0 ? (
+            <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
+              <span className="text-2xl">📊</span>
+              <p className="font-medium text-slate-500">Données de marché indisponibles</p>
+              <p className="text-xs text-center max-w-xs px-4">
+                {dataMessage || "Les données historiques ne sont pas disponibles pour ce ticker sur Yahoo Finance."}
+              </p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={220}>
@@ -317,6 +336,18 @@ function StockChartModal({ player, liveData, onClose }) {
             </ResponsiveContainer>
           )}
         </div>
+        {/* Data source attribution */}
+        {dataSource === "live" && (
+          <div className="px-4 pb-3 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+            <span className="text-xs text-slate-400">Source : Yahoo Finance · Données en temps réel sous licence</span>
+          </div>
+        )}
+        {(dataSource === "unavailable" || (dataSource !== "private" && chartData.length === 0)) && (
+          <div className="px-4 pb-3">
+            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⚠ Cours non disponible — vérifiez le ticker ou la cotation</span>
+          </div>
+        )}
 
         {/* Recent Articles */}
         <div className="px-6 pb-6 border-t border-slate-100 pt-4">

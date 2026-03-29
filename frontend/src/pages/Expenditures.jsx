@@ -163,12 +163,17 @@ export default function Expenditures() {
           </h1>
           <p className="text-slate-500 text-sm mt-1">Global Military Spending by Country</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
-          <Clock className="w-3.5 h-3.5" />
-          <span>FY 2024</span>
-          <span className="text-slate-300">|</span>
-          <Database className="w-3.5 h-3.5" />
-          <span>Source: SIPRI, IISS, Gov Reports</span>
+        <div className="flex flex-col items-end gap-1">
+          <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+            <Clock className="w-3.5 h-3.5" />
+            <span className="font-medium">Référence FY 2024</span>
+            <span className="text-slate-300">|</span>
+            <Database className="w-3.5 h-3.5" />
+            <span>SIPRI Military Expenditure Database · IISS Military Balance · Rapports gouvernementaux nationaux</span>
+          </div>
+          <p className="text-xs text-slate-400 text-right max-w-md">
+            Note : l'année de référence peut varier par pays selon la disponibilité des données officielles. Chiffres en milliards USD constants.
+          </p>
         </div>
       </div>
 
@@ -178,8 +183,8 @@ export default function Expenditures() {
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL SPENDING</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalExpenditure.toFixed(0)}B</p>
-            <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> +3.2% YoY
+            <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" /> Variation vs N-1 non calculée
             </p>
           </CardContent>
         </Card>
