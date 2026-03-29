@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { API } from "@/App";
+import { API, useAuth } from "@/App";
 import {
   Sheet, SheetContent,
 } from "@/components/ui/sheet";
@@ -8,6 +8,7 @@ import { format, formatDistanceToNow } from "date-fns";
 import {
   Globe, Linkedin, MapPin, Calendar, ArrowRight, ExternalLink,
   Users, TrendingUp, DollarSign, Building2, Newspaper, X,
+  StickyNote, Send, Trash2, LogIn,
 } from "lucide-react";
 
 // ── helpers ────────────────────────────────────────────────────────────────
@@ -76,10 +77,60 @@ function relativeTime(isoStr) {
 // ── main component ─────────────────────────────────────────────────────────
 
 export default function CompanyProfileSheet({ name, onClose }) {
+  const { token, user } = useAuth();
   const [data, setData]         = useState(null);
   const [loading, setLoading]   = useState(false);
   const [articles, setArticles] = useState([]);
   const [logoDomain, setLogoDomain] = useState(null);
+
+  // Analyst notes
+  const [notes, setNotes]           = useState([]);
+  const [noteText, setNoteText]     = useState("");
+  const [notesLoading, setNotesLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const textareaRef = useRef(null);
+
+  // Load notes whenever the company changes and user is logged in
+  useEffect(() => {
+    if (!name || !token) { setNotes([]); return; }
+    setNotesLoading(true);
+    axios.get(`${API}/notes`, {
+      params: { company_name: name },
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => setNotes(r.data))
+      .catch(() => setNotes([]))
+      .finally(() => setNotesLoading(false));
+  }, [name, token]);
+
+  const submitNote = async () => {
+    const content = noteText.trim();
+    if (!content || !token) return;
+    setSubmitting(true);
+    try {
+      const res = await axios.post(`${API}/notes`,
+        { company_name: name, content },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setNotes((prev) => [res.data, ...prev]);
+      setNoteText("");
+    } catch { /* silent */ }
+    finally { setSubmitting(false); }
+  };
+
+  const deleteNote = async (noteId) => {
+    // Optimistic
+    setNotes((prev) => prev.filter((n) => n.id !== noteId));
+    try {
+      await axios.delete(`${API}/notes/${noteId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch {
+      // Refetch on error
+      axios.get(`${API}/notes`, { params: { company_name: name }, headers: { Authorization: `Bearer ${token}` } })
+        .then((r) => setNotes(r.data)).catch(() => {});
+    }
+  };
 
   useEffect(() => {
     if (!name) { setData(null); setArticles([]); return; }
@@ -363,6 +414,77 @@ export default function CompanyProfileSheet({ name, onClose }) {
                 </div>
               </div>
             )}
+
+            {/* ── Analyst Notes ── */}
+            <div className="px-6 py-5">
+              <div className="flex items-center gap-2 mb-3">
+                <StickyNote className="w-3.5 h-3.5 text-slate-400" />
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Analyst Notes</p>
+              </div>
+
+              {!token ? (
+                <div className="flex items-center gap-2 text-xs text-slate-400 py-2">
+                  <LogIn className="w-4 h-4" />
+                  <span>Log in to add notes</span>
+                </div>
+              ) : (
+                <>
+                  {/* Input */}
+                  <div className="flex gap-2 mb-4">
+                    <textarea
+                      ref={textareaRef}
+                      rows={2}
+                      value={noteText}
+                      onChange={(e) => setNoteText(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submitNote(); }}
+                      placeholder="Add an analyst note… (Ctrl+Enter to submit)"
+                      className="flex-1 text-sm text-slate-800 border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-purple-300 placeholder:text-slate-400"
+                    />
+                    <button
+                      onClick={submitNote}
+                      disabled={!noteText.trim() || submitting}
+                      className="self-end p-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white rounded-lg transition-colors"
+                      title="Submit note"
+                    >
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Notes list */}
+                  {notesLoading ? (
+                    <div className="flex justify-center py-4">
+                      <div className="animate-spin w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full" />
+                    </div>
+                  ) : notes.length === 0 ? (
+                    <p className="text-xs text-slate-400 py-1">No notes yet for this company.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {notes.map((note) => (
+                        <div key={note.id} className="bg-amber-50 border border-amber-100 rounded-xl p-3 group">
+                          <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">{note.content}</p>
+                          <div className="flex items-center justify-between mt-2">
+                            <div className="text-[10px] text-slate-400 flex items-center gap-1.5">
+                              <span className="font-medium text-slate-500">{note.user_name || "You"}</span>
+                              <span>·</span>
+                              <span>{formatDistanceToNow(new Date(note.created_at), { addSuffix: true })}</span>
+                            </div>
+                            {note.user_id === user?.id && (
+                              <button
+                                onClick={() => deleteNote(note.id)}
+                                className="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                                title="Delete note"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
 
           </div>
         )}
