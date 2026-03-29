@@ -15,7 +15,9 @@ import {
   Menu,
   X,
   Rss,
-  Bell
+  Bell,
+  Bookmark,
+  FileCheck
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -35,6 +37,8 @@ const navItems = [
   { path: "/regulations", icon: FileText, label: "Regulations" },
   { path: "/products", icon: Package, label: "Products" },
   { path: "/follow", icon: Rss, label: "Sources" },
+  { path: "/contracts", icon: FileCheck, label: "Contrats" },
+  { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
 ];
 
 export default function Layout() {

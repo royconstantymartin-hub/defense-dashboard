@@ -185,6 +185,44 @@ class Regulation(BaseModel):
     requirements: List[str]
     effective_date: str
 
+# ── Defense Contract Model ─────────────────────────────────────────────────
+class ContractCreate(BaseModel):
+    title: str
+    description: str
+    contracting_authority: str          # "DGA", "DoD", "MoD UK", "NATO NSPA"…
+    authority_country: str              # "France", "USA", "UK", "NATO", "EU"
+    authority_type: str                 # national | nato | eu | bilateral
+    category: str                       # aerospace | naval | land | cyber | services | logistics | space
+    amount_min: Optional[float] = None  # millions USD
+    amount_max: Optional[float] = None  # millions USD
+    status: str                         # open | awarded | closed | cancelled
+    publication_date: str               # ISO date string
+    deadline: Optional[str] = None      # ISO date — relevant for open tenders
+    awarded_to: Optional[str] = None    # company name when status = awarded
+    program: Optional[str] = None       # programme name (FCAS, MGCS, F-35…)
+    source_url: Optional[str] = None
+    reliability: str = "confirmed"      # confirmed | estimated
+
+class Contract(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    contracting_authority: str
+    authority_country: str
+    authority_type: str
+    category: str
+    amount_min: Optional[float] = None
+    amount_max: Optional[float] = None
+    status: str
+    publication_date: str
+    deadline: Optional[str] = None
+    awarded_to: Optional[str] = None
+    program: Optional[str] = None
+    source_url: Optional[str] = None
+    reliability: str = "confirmed"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Product Portfolio Model
 class ProductCreate(BaseModel):
     name: str
@@ -594,6 +632,45 @@ async def delete_product(product_id: str, current_user: dict = Depends(get_curre
         raise HTTPException(status_code=404, detail="Product not found")
     return {"status": "deleted"}
 
+# ============= CONTRACTS ROUTES =============
+
+@api_router.get("/contracts", response_model=List[Contract])
+async def get_contracts(
+    status: Optional[str] = None,
+    authority_type: Optional[str] = None,
+    category: Optional[str] = None,
+    authority_country: Optional[str] = None,
+):
+    query = {}
+    if status and status != "all":
+        query["status"] = status
+    if authority_type and authority_type != "all":
+        query["authority_type"] = authority_type
+    if category and category != "all":
+        query["category"] = category
+    if authority_country and authority_country != "all":
+        query["authority_country"] = authority_country
+    contracts = await db.contracts.find(query, {"_id": 0}).sort("publication_date", -1).to_list(500)
+    for c in contracts:
+        if isinstance(c.get("created_at"), str):
+            c["created_at"] = datetime.fromisoformat(c["created_at"])
+    return contracts
+
+@api_router.post("/contracts", response_model=Contract)
+async def create_contract(data: ContractCreate, current_user: dict = Depends(get_current_user)):
+    contract = Contract(**data.model_dump())
+    doc = contract.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    await db.contracts.insert_one(doc)
+    return contract
+
+@api_router.delete("/contracts/{contract_id}")
+async def delete_contract(contract_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.contracts.delete_one({"id": contract_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    return {"status": "deleted"}
+
 # ============= DASHBOARD STATS =============
 
 @api_router.get("/dashboard/stats")
@@ -634,7 +711,7 @@ async def get_dashboard_stats():
 async def seed_data(current_user: dict = Depends(get_current_user)):
     if current_user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin role required")
-    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA
+    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
     
     # Seed Defense Players (250+ companies)
     for p in DEFENSE_COMPANIES:
@@ -691,11 +768,20 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
                 {"$set": {"image_url": p['image_url']}}
             )
     
+    # Seed Contracts
+    for c in CONTRACTS_DATA:
+        existing = await db.contracts.find_one({"title": c['title']})
+        if not existing:
+            contract = Contract(**c)
+            doc = contract.model_dump()
+            await db.contracts.insert_one(doc)
+
     # Get counts
     players_count = await db.defense_players.count_documents({})
     announcements_count = await db.announcements.count_documents({})
-    
-    return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count}
+    contracts_count = await db.contracts.count_documents({})
+
+    return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count, "contracts": contracts_count}
 
 # ============= NEWS SCRAPER JOB =============
 
