@@ -29,8 +29,7 @@ import {
   Filter,
   Plus,
   X,
-  Headphones,
-  Mic
+  Headphones
 } from "lucide-react";
 
 // Favorite Accounts with real logos and links
@@ -487,102 +486,71 @@ const SpotifyIcon = ({ className }) => (
 );
 
 const PODCASTS = [
+const PODCASTS = [
   // ── French ──────────────────────────────────────────────────────────────────
   {
     id: "pod-fr1",
     name: "Le Collimateur",
-    initials: "LC",
     lang: "fr",
-    host: "Alexandre Jubelin · IFRI",
-    description: "Le podcast de référence sur les questions militaires et stratégiques : entretiens d'analyse, récits d'opérations, histoire militaire.",
-    tags: ["stratégie", "géopolitique"],
-    accent: "bg-blue-700",
-    apple: "https://podcasts.apple.com/fr/podcast/le-collimateur/id1449461859",
+    appleId: "1449461859",
+    appleLocale: "fr",
     spotify: "https://open.spotify.com/show/6E9OhYHyCZsn49M6IXiZnn",
   },
   {
     id: "pod-fr2",
     name: "Lignes de Défense",
-    initials: "LD",
     lang: "fr",
-    host: "Franck Alexandre · RFI",
-    description: "Chaque semaine, au cœur des enjeux de défense et de sécurité du XXIe siècle avec les acteurs d'un monde militaire en mutation.",
-    tags: ["défense", "sécurité"],
-    accent: "bg-sky-700",
-    apple: "https://podcasts.apple.com/fr/podcast/lignes-de-d%C3%A9fense/id1500237436",
+    appleId: "1500237436",
+    appleLocale: "fr",
     spotify: "https://open.spotify.com/show/4ZPryJsrk5sDjTb9eYmKLJ",
   },
   {
     id: "pod-fr3",
     name: "Defcast",
-    initials: "DC",
     lang: "fr",
-    host: "Ministère des Armées",
-    description: "Le podcast officiel des armées françaises : portraits de militaires, retours d'expérience et coulisses de la défense nationale.",
-    tags: ["armées", "opérations"],
-    accent: "bg-red-700",
-    apple: "https://podcasts.apple.com/fr/podcast/defcast/id1666221524",
+    appleId: "1666221524",
+    appleLocale: "fr",
     spotify: "https://open.spotify.com/show/2KkWv4G0OeBkNKGFbtFO2Z",
   },
   // ── English ─────────────────────────────────────────────────────────────────
   {
     id: "pod-en1",
     name: "War on the Rocks",
-    initials: "WR",
     lang: "en",
-    host: "Ryan Evans",
-    description: "Discussions with soldiers, spies, officials, and scholars on strategy, defense, and foreign affairs — often recorded at bars in world capitals.",
-    tags: ["strategy", "foreign policy"],
-    accent: "bg-amber-700",
-    apple: "https://podcasts.apple.com/us/podcast/war-on-the-rocks/id682478916",
+    appleId: "682478916",
+    appleLocale: "us",
     spotify: "https://open.spotify.com/show/5ec5TBvVh3w4aobgx0qgYj",
   },
   {
     id: "pod-en2",
     name: "Defense One Radio",
-    initials: "D1",
     lang: "en",
-    host: "Defense One",
-    description: "Interviews with top defense officials, military leaders, and policy experts on U.S. and global defense developments.",
-    tags: ["Pentagon", "policy"],
-    accent: "bg-emerald-700",
-    apple: "https://podcasts.apple.com/us/podcast/defense-one-radio/id1256043663",
+    appleId: "1256043663",
+    appleLocale: "us",
     spotify: "https://open.spotify.com/show/1FaUzawed2sv1va980Ux0n",
   },
   {
     id: "pod-en3",
     name: "The Lawfare Podcast",
-    initials: "LF",
     lang: "en",
-    host: "Lawfare Institute",
-    description: "Hard national security choices at the intersection of law, policy, and security. Daily episodes with leading experts.",
-    tags: ["law", "security"],
-    accent: "bg-slate-700",
-    apple: "https://podcasts.apple.com/us/podcast/the-lawfare-podcast/id498897343",
+    appleId: "498897343",
+    appleLocale: "us",
     spotify: "https://open.spotify.com/show/1saOaypBQZQU4ER3tM0VeU",
   },
   {
     id: "pod-en4",
     name: "Foreign Policy Live",
-    initials: "FP",
     lang: "en",
-    host: "Ravi Agrawal · Foreign Policy",
-    description: "Weekly conversations on world affairs with leading foreign-policy thinkers and practitioners. Your fix for smart global thinking.",
-    tags: ["geopolitics", "diplomacy"],
-    accent: "bg-indigo-700",
-    apple: "https://podcasts.apple.com/us/podcast/foreign-policy-live/id1034003458",
+    appleId: "1034003458",
+    appleLocale: "us",
     spotify: "https://open.spotify.com/show/4pbzJRK0uPozoTxxSZhpQS",
   },
   {
     id: "pod-en5",
     name: "BFBS Sitrep",
-    initials: "ST",
     lang: "en",
-    host: "Kate Gerbeau · BFBS",
-    description: "Award-winning discussion and analysis on defence, foreign policy, and the stories affecting the British Forces and beyond.",
-    tags: ["UK defence", "analysis"],
-    accent: "bg-purple-700",
-    apple: "https://podcasts.apple.com/us/podcast/bfbs-radio-sitrep/id314959811",
+    appleId: "314959811",
+    appleLocale: "gb",
     spotify: "https://open.spotify.com/show/6onIDs8nD58s8fbgyposAi",
   },
 ];
@@ -935,51 +903,30 @@ export default function Follow() {
             {PODCASTS.filter(p => podcastLang === "all" || p.lang === podcastLang).map((podcast) => (
               <div
                 key={podcast.id}
-                className="flex flex-col rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg hover:border-purple-300 transition-all duration-200"
+                className="flex flex-col rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-200"
               >
-                {/* Colored header */}
-                <div className={`${podcast.accent} px-4 pt-4 pb-3 flex items-start gap-3`}>
-                  <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0 text-white font-bold text-base tracking-tight">
-                    {podcast.initials}
-                  </div>
-                  <div className="flex-1 min-w-0 pt-0.5">
-                    <div className="flex items-start justify-between gap-1">
-                      <p className="text-white font-semibold text-sm leading-tight line-clamp-2">{podcast.name}</p>
-                      <span className="text-base flex-shrink-0 mt-0.5">{podcast.lang === "fr" ? "🇫🇷" : "🇬🇧"}</span>
-                    </div>
-                    <p className="text-white/70 text-xs mt-0.5 truncate">{podcast.host}</p>
-                  </div>
-                </div>
+                {/* Official Apple Podcasts embed — shows real artwork + play */}
+                <iframe
+                  allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
+                  frameBorder="0"
+                  height="180"
+                  className="w-full bg-transparent"
+                  sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+                  src={`https://embed.podcasts.apple.com/${podcast.appleLocale}/podcast/id${podcast.appleId}?theme=auto`}
+                  title={podcast.name}
+                />
 
-                {/* Body */}
-                <div className="flex flex-col flex-1 px-4 py-3 gap-3 bg-white">
-                  <p className="text-slate-500 text-xs leading-relaxed line-clamp-3 flex-1">
-                    {podcast.description}
-                  </p>
-
-                  {/* Platform buttons */}
-                  <div className="flex gap-2">
-                    <a
-                      href={podcast.apple}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#872EC4] hover:bg-[#7A20C0] text-white text-xs font-semibold transition-colors"
-                      title="Ouvrir dans Apple Podcasts"
-                    >
-                      <ApplePodcastsIcon className="w-3.5 h-3.5 flex-shrink-0" />
-                      <span>Apple</span>
-                    </a>
-                    <a
-                      href={podcast.spotify}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#1DB954] hover:bg-[#1aa348] text-white text-xs font-semibold transition-colors"
-                      title="Ouvrir dans Spotify"
-                    >
-                      <SpotifyIcon className="w-3.5 h-3.5 flex-shrink-0" />
-                      <span>Spotify</span>
-                    </a>
-                  </div>
+                {/* Spotify button */}
+                <div className="px-3 pb-3 pt-2 bg-white border-t border-slate-100">
+                  <a
+                    href={podcast.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-[#1DB954] hover:bg-[#1aa348] text-white text-xs font-semibold transition-colors"
+                  >
+                    <SpotifyIcon className="w-4 h-4 flex-shrink-0" />
+                    Écouter sur Spotify
+                  </a>
                 </div>
               </div>
             ))}
