@@ -487,93 +487,103 @@ const SpotifyIcon = ({ className }) => (
 );
 
 const PODCASTS = [
+  // ── French ──────────────────────────────────────────────────────────────────
   {
     id: "pod-fr1",
     name: "Le Collimateur",
+    initials: "LC",
     lang: "fr",
-    host: "IRSEM",
-    description: "Analyses stratégiques, géopolitique et enjeux de défense par l'Institut de recherche stratégique de l'École militaire.",
+    host: "Alexandre Jubelin · IFRI",
+    description: "Le podcast de référence sur les questions militaires et stratégiques : entretiens d'analyse, récits d'opérations, histoire militaire.",
     tags: ["stratégie", "géopolitique"],
-    accent: "bg-blue-600",
-    apple: "https://podcasts.apple.com/fr/podcast/le-collimateur/id1493669584",
-    spotify: "https://open.spotify.com/show/3UoHEbzSwK8ZqQjGaX9uWP",
+    accent: "bg-blue-700",
+    apple: "https://podcasts.apple.com/fr/podcast/le-collimateur/id1449461859",
+    spotify: "https://open.spotify.com/show/6E9OhYHyCZsn49M6IXiZnn",
   },
   {
     id: "pod-fr2",
-    name: "Ultima Ratio",
+    name: "Lignes de Défense",
+    initials: "LD",
     lang: "fr",
-    host: "CAESar Podcast",
-    description: "Podcast indépendant sur la défense, l'armement et la stratégie militaire française et européenne.",
-    tags: ["armement", "stratégie"],
-    accent: "bg-slate-700",
-    apple: "https://podcasts.apple.com/fr/podcast/ultima-ratio/id1441975736",
-    spotify: "https://open.spotify.com/show/0JCr2YzqRuSSPJLFN3KKPQ",
+    host: "Franck Alexandre · RFI",
+    description: "Chaque semaine, au cœur des enjeux de défense et de sécurité du XXIe siècle avec les acteurs d'un monde militaire en mutation.",
+    tags: ["défense", "sécurité"],
+    accent: "bg-sky-700",
+    apple: "https://podcasts.apple.com/fr/podcast/lignes-de-d%C3%A9fense/id1500237436",
+    spotify: "https://open.spotify.com/show/4ZPryJsrk5sDjTb9eYmKLJ",
   },
   {
     id: "pod-fr3",
-    name: "Le Rubicon",
+    name: "Defcast",
+    initials: "DC",
     lang: "fr",
-    host: "FRS",
-    description: "Décryptages géopolitiques et stratégiques par la Fondation pour la Recherche Stratégique. Crises, conflits, relations internationales.",
-    tags: ["géopolitique", "crises"],
-    accent: "bg-red-600",
-    apple: "https://podcasts.apple.com/fr/podcast/le-rubicon/id1448671352",
-    spotify: "https://open.spotify.com/show/4LHuFVAjFRJQe21l0VXxfP",
+    host: "Ministère des Armées",
+    description: "Le podcast officiel des armées françaises : portraits de militaires, retours d'expérience et coulisses de la défense nationale.",
+    tags: ["armées", "opérations"],
+    accent: "bg-red-700",
+    apple: "https://podcasts.apple.com/fr/podcast/defcast/id1666221524",
+    spotify: "https://open.spotify.com/show/2KkWv4G0OeBkNKGFbtFO2Z",
   },
-  {
-    id: "pod-fr4",
-    name: "Guerre et Paix",
-    lang: "fr",
-    host: "France Culture",
-    description: "L'émission de France Culture consacrée aux conflits internationaux, à la diplomatie et aux enjeux de sécurité mondiale.",
-    tags: ["diplomatie", "conflits"],
-    accent: "bg-purple-700",
-    apple: "https://podcasts.apple.com/fr/podcast/guerre-et-paix/id1481600891",
-    spotify: "https://open.spotify.com/show/2kwnNQgFpQq9vJIKFdh5gN",
-  },
+  // ── English ─────────────────────────────────────────────────────────────────
   {
     id: "pod-en1",
     name: "War on the Rocks",
+    initials: "WR",
     lang: "en",
     host: "Ryan Evans",
-    description: "Analysis and commentary on national security, defense, and foreign policy from top practitioners and scholars.",
-    tags: ["security", "strategy"],
+    description: "Discussions with soldiers, spies, officials, and scholars on strategy, defense, and foreign affairs — often recorded at bars in world capitals.",
+    tags: ["strategy", "foreign policy"],
     accent: "bg-amber-700",
-    apple: "https://podcasts.apple.com/us/podcast/war-on-the-rocks/id849681753",
-    spotify: "https://open.spotify.com/show/4CzKXlbPiGGDaHmM3rnD1i",
+    apple: "https://podcasts.apple.com/us/podcast/war-on-the-rocks/id682478916",
+    spotify: "https://open.spotify.com/show/5ec5TBvVh3w4aobgx0qgYj",
   },
   {
     id: "pod-en2",
     name: "Defense One Radio",
+    initials: "D1",
     lang: "en",
     host: "Defense One",
-    description: "Interviews with top defense officials, military leaders, and policy experts on U.S. and global defense.",
+    description: "Interviews with top defense officials, military leaders, and policy experts on U.S. and global defense developments.",
     tags: ["Pentagon", "policy"],
     accent: "bg-emerald-700",
-    apple: "https://podcasts.apple.com/us/podcast/defense-one-radio/id944488925",
-    spotify: "https://open.spotify.com/show/2MZt5H7T2BHJEPyPGNXbhH",
+    apple: "https://podcasts.apple.com/us/podcast/defense-one-radio/id1256043663",
+    spotify: "https://open.spotify.com/show/1FaUzawed2sv1va980Ux0n",
   },
   {
     id: "pod-en3",
     name: "The Lawfare Podcast",
+    initials: "LF",
     lang: "en",
     host: "Lawfare Institute",
-    description: "Hard national security choices — law, policy, and the intersection of security and civil liberties.",
+    description: "Hard national security choices at the intersection of law, policy, and security. Daily episodes with leading experts.",
     tags: ["law", "security"],
-    accent: "bg-sky-700",
-    apple: "https://podcasts.apple.com/us/podcast/the-lawfare-podcast/id757488095",
-    spotify: "https://open.spotify.com/show/1mMk7O42UDjjsxSK4fLkCQ",
+    accent: "bg-slate-700",
+    apple: "https://podcasts.apple.com/us/podcast/the-lawfare-podcast/id498897343",
+    spotify: "https://open.spotify.com/show/1saOaypBQZQU4ER3tM0VeU",
   },
   {
     id: "pod-en4",
-    name: "Sitrep",
+    name: "Foreign Policy Live",
+    initials: "FP",
     lang: "en",
-    host: "Foreign Policy",
-    description: "Foreign Policy's daily situation report on geopolitics, conflict, and diplomacy worldwide.",
+    host: "Ravi Agrawal · Foreign Policy",
+    description: "Weekly conversations on world affairs with leading foreign-policy thinkers and practitioners. Your fix for smart global thinking.",
     tags: ["geopolitics", "diplomacy"],
     accent: "bg-indigo-700",
-    apple: "https://podcasts.apple.com/us/podcast/sitrep/id1482512769",
-    spotify: "https://open.spotify.com/show/6JDJGe8fH0j2UePFhqMNs8",
+    apple: "https://podcasts.apple.com/us/podcast/foreign-policy-live/id1034003458",
+    spotify: "https://open.spotify.com/show/4pbzJRK0uPozoTxxSZhpQS",
+  },
+  {
+    id: "pod-en5",
+    name: "BFBS Sitrep",
+    initials: "ST",
+    lang: "en",
+    host: "Kate Gerbeau · BFBS",
+    description: "Award-winning discussion and analysis on defence, foreign policy, and the stories affecting the British Forces and beyond.",
+    tags: ["UK defence", "analysis"],
+    accent: "bg-purple-700",
+    apple: "https://podcasts.apple.com/us/podcast/bfbs-radio-sitrep/id314959811",
+    spotify: "https://open.spotify.com/show/6onIDs8nD58s8fbgyposAi",
   },
 ];
 
@@ -921,54 +931,52 @@ export default function Follow() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid sm:grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {PODCASTS.filter(p => podcastLang === "all" || p.lang === podcastLang).map((podcast) => (
               <div
                 key={podcast.id}
-                className="flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-white hover:border-purple-200 hover:shadow-sm transition-all duration-200"
+                className="flex flex-col rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg hover:border-purple-300 transition-all duration-200"
               >
-                {/* Cover square */}
-                <div className={`w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center ${podcast.accent}`}>
-                  <Mic className="w-6 h-6 text-white" />
+                {/* Colored header */}
+                <div className={`${podcast.accent} px-4 pt-4 pb-3 flex items-start gap-3`}>
+                  <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0 text-white font-bold text-base tracking-tight">
+                    {podcast.initials}
+                  </div>
+                  <div className="flex-1 min-w-0 pt-0.5">
+                    <div className="flex items-start justify-between gap-1">
+                      <p className="text-white font-semibold text-sm leading-tight line-clamp-2">{podcast.name}</p>
+                      <span className="text-base flex-shrink-0 mt-0.5">{podcast.lang === "fr" ? "🇫🇷" : "🇬🇧"}</span>
+                    </div>
+                    <p className="text-white/70 text-xs mt-0.5 truncate">{podcast.host}</p>
+                  </div>
                 </div>
 
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className="text-slate-900 font-semibold text-sm truncate">{podcast.name}</span>
-                    <span className={`text-xs px-1.5 py-0 rounded font-medium flex-shrink-0 ${
-                      podcast.lang === "fr"
-                        ? "bg-blue-50 text-blue-700"
-                        : "bg-amber-50 text-amber-700"
-                    }`}>
-                      {podcast.lang === "fr" ? "🇫🇷" : "🇬🇧"}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-400 mb-1.5">{podcast.host}</p>
-                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-2">{podcast.description}</p>
+                {/* Body */}
+                <div className="flex flex-col flex-1 px-4 py-3 gap-3 bg-white">
+                  <p className="text-slate-500 text-xs leading-relaxed line-clamp-3 flex-1">
+                    {podcast.description}
+                  </p>
 
                   {/* Platform buttons */}
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-2">
                     <a
                       href={podcast.apple}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={e => e.stopPropagation()}
-                      className="flex items-center gap-1 px-2 py-1 rounded-md bg-[#872EC4] hover:bg-[#7019B0] text-white text-xs font-medium transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#872EC4] hover:bg-[#7A20C0] text-white text-xs font-semibold transition-colors"
                       title="Ouvrir dans Apple Podcasts"
                     >
-                      <ApplePodcastsIcon className="w-3 h-3" />
+                      <ApplePodcastsIcon className="w-3.5 h-3.5 flex-shrink-0" />
                       <span>Apple</span>
                     </a>
                     <a
                       href={podcast.spotify}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={e => e.stopPropagation()}
-                      className="flex items-center gap-1 px-2 py-1 rounded-md bg-[#1DB954] hover:bg-[#17a349] text-white text-xs font-medium transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#1DB954] hover:bg-[#1aa348] text-white text-xs font-semibold transition-colors"
                       title="Ouvrir dans Spotify"
                     >
-                      <SpotifyIcon className="w-3 h-3" />
+                      <SpotifyIcon className="w-3.5 h-3.5 flex-shrink-0" />
                       <span>Spotify</span>
                     </a>
                   </div>
