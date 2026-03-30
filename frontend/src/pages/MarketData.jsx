@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
   BarChart,
   Bar,
@@ -101,12 +102,18 @@ const HISTORY_PERIODS = [
   { value: "1y", label: "1Y" },
 ];
 
+// All timestamps from the backend are UTC (ISO 8601 with offset).
+// Display times in Europe/Paris so they match what users see on financial sites.
+const PARIS_TZ = "Europe/Paris";
 function formatHistoryTime(isoStr, period) {
   const d = new Date(isoStr);
-  if (period === "1d") return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  if (period === "1w") return d.toLocaleDateString([], { weekday: "short", hour: "2-digit", minute: "2-digit" });
-  if (period === "1mo") return d.toLocaleDateString([], { month: "short", day: "numeric" });
-  return d.toLocaleDateString([], { month: "short", "year": "2-digit" });
+  if (period === "1d")
+    return d.toLocaleTimeString("fr-FR", { timeZone: PARIS_TZ, hour: "2-digit", minute: "2-digit" });
+  if (period === "1w")
+    return d.toLocaleString("fr-FR", { timeZone: PARIS_TZ, weekday: "short", hour: "2-digit", minute: "2-digit" });
+  if (period === "1mo")
+    return d.toLocaleDateString("fr-FR", { timeZone: PARIS_TZ, month: "short", day: "numeric" });
+  return d.toLocaleDateString("fr-FR", { timeZone: PARIS_TZ, month: "short", year: "2-digit" });
 }
 
 function relativeTime(isoStr) {
@@ -118,7 +125,7 @@ function relativeTime(isoStr) {
   return `${d}d ago`;
 }
 
-// Stock History Chart Modal
+// Stock History Chart — slides in from the right like CompanyProfileSheet
 function StockChartModal({ player, liveData, onClose }) {
   const [period, setPeriod] = useState("1d");
   const [history, setHistory] = useState([]);
@@ -198,14 +205,8 @@ function StockChartModal({ player, liveData, onClose }) {
   }));
 
   return (
-    <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-y-auto max-h-[90vh]"
-        onClick={e => e.stopPropagation()}
-      >
+    <Sheet open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto p-0 gap-0 flex flex-col [&>button:first-child]:hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
@@ -409,8 +410,8 @@ function StockChartModal({ player, liveData, onClose }) {
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -474,8 +475,8 @@ export default function MarketData() {
   useEffect(() => {
     if (players.length > 0) {
       fetchLivePrices(players);
-      // Refresh every hour
-      const interval = setInterval(() => fetchLivePrices(players), 60 * 60 * 1000);
+      // Refresh every 5 minutes
+      const interval = setInterval(() => fetchLivePrices(players), 5 * 60 * 1000);
       return () => clearInterval(interval);
     }
   }, [players, fetchLivePrices]);
@@ -574,7 +575,7 @@ export default function MarketData() {
           </span>
           <span className="text-slate-300">|</span>
           <Clock className="w-3.5 h-3.5" />
-          <span>Refreshes every hour</span>
+          <span>Refreshes every 5 min</span>
           <span className="text-slate-300">|</span>
           <Database className="w-3.5 h-3.5" />
           <span>Yahoo Finance</span>
