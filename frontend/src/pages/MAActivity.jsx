@@ -435,6 +435,7 @@ export default function MAActivity() {
   const [selectedType,   setSelectedType]   = useState("all");
   const [selectedYear,   setSelectedYear]   = useState("all");
   const [profileName,    setProfileName]    = useState(null);
+  const [fetchedAt,      setFetchedAt]      = useState(null);
 
   // Fetch recent deals (cards view)
   useEffect(() => {
@@ -442,6 +443,7 @@ export default function MAActivity() {
       try {
         const res = await axios.get(`${API}/ma-activities`);
         setActivities(res.data);
+        setFetchedAt(new Date());
       } catch (e) {
         console.error("Error fetching M&A activities:", e);
       } finally {
@@ -536,7 +538,7 @@ export default function MAActivity() {
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
           <Clock className="w-3.5 h-3.5" />
-          <span>Updated: {new Date().toLocaleDateString()}</span>
+          <span>{fetchedAt ? `Loaded at ${fetchedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Loading…"}</span>
           <span className="text-slate-300">|</span>
           <Database className="w-3.5 h-3.5" />
           <span>Bloomberg, Reuters, SEC</span>
