@@ -41,40 +41,28 @@ def _cache_valid(cache: dict, key: str, ttl: int) -> bool:
 # ---------------------------------------------------------------------------
 
 def _fetch_price_sync(ticker: str) -> Optional[dict]:
-    """Return current price + daily change % for a single ticker.
+    """Return official last-close price + daily change % for a single ticker.
 
-    Uses yfinance history to get an accurate intraday price and the
-    previous regular-market close so change_percent is never stale.
+    Uses daily OHLCV history (interval=1d) so that both the price and
+    the prev_close are the exchange's official closing auction prices —
+    exactly what Yahoo Finance and Google Finance display.
+    Using intraday (5m) candle closes for this calculation produced gaps
+    because candle closes differ from the closing-auction price.
     """
     try:
         t = yf.Ticker(ticker)
-        # Get last ~2 trading days of intraday data so we have both the
-        # current price (last 1m/5m candle) and yesterday's close.
-        hist = t.history(period="5d", interval="5m")
+        hist = t.history(period="5d", interval="1d")
         if hist is None or hist.empty:
             return None
 
-        # Normalize to UTC so comparisons are timezone-consistent
+        # Normalize index to UTC
         if hist.index.tz is None:
             hist.index = hist.index.tz_localize("UTC")
         else:
             hist.index = hist.index.tz_convert("UTC")
 
         price = round(float(hist["Close"].iloc[-1]), 2)
-
-        # Determine previous close: last Close of the calendar day before
-        # the most recent candle.
-        last_ts = hist.index[-1]
-        last_date = last_ts.date()
-        prev_day_data = hist[hist.index.date < last_date]
-        if not prev_day_data.empty:
-            prev_close = round(float(prev_day_data["Close"].iloc[-1]), 2)
-        else:
-            # Fallback to fast_info if history only covers today
-            fi = t.fast_info
-            pc = getattr(fi, "previous_close", None)
-            prev_close = round(float(pc), 2) if pc else price
-
+        prev_close = round(float(hist["Close"].iloc[-2]), 2) if len(hist) >= 2 else price
         change_pct = round(((price - prev_close) / prev_close) * 100, 2) if prev_close > 0 else 0.0
 
         return {
