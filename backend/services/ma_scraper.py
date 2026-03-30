@@ -427,18 +427,29 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
 # ── RSS sources ───────────────────────────────────────────────────────────────
 
 MA_RSS_SOURCES = [
-    # Traditional defense press
-    ("Breaking Defense",       "https://breakingdefense.com/feed/"),
-    ("Defense News",           "https://www.defensenews.com/arc/outboundfeeds/rss/"),
-    ("Defense Industry Daily", "https://www.defenseindustrydaily.com/feed/"),
-    ("Defense Post",           "https://thedefensepost.com/feed/"),
-    ("C4ISRNET",               "https://www.c4isrnet.com/arc/outboundfeeds/rss/"),
-    ("Defense One",            "https://www.defenseone.com/rss/all/"),
-    # Generalist / financial with M&A coverage
-    ("Reuters Business",       "https://feeds.reuters.com/reuters/businessNews"),
-    # Defense tech / startup ecosystem
-    ("SpaceNews",              "https://spacenews.com/feed/"),
-    ("The War Zone",           "https://www.thedrive.com/the-war-zone/feed"),
+    # ── Core defense press ────────────────────────────────────────────────────
+    ("Breaking Defense",        "https://breakingdefense.com/feed/"),
+    ("Defense News",            "https://www.defensenews.com/arc/outboundfeeds/rss/"),
+    ("Defense Industry Daily",  "https://www.defenseindustrydaily.com/feed/"),
+    ("Defense Post",            "https://thedefensepost.com/feed/"),
+    ("C4ISRNET",                "https://www.c4isrnet.com/arc/outboundfeeds/rss/"),
+    ("Defense One",             "https://www.defenseone.com/rss/all/"),
+    ("The War Zone",            "https://www.thedrive.com/the-war-zone/feed"),
+    # ── Naval & maritime ─────────────────────────────────────────────────────
+    ("USNI News",               "https://news.usni.org/feed"),
+    # ── Air & space ──────────────────────────────────────────────────────────
+    ("SpaceNews",               "https://spacenews.com/feed/"),
+    ("Air Force Magazine",      "https://www.airforcemag.com/feed/"),
+    ("Aviation Week",           "https://aviationweek.com/rss.xml"),
+    # ── Land systems ─────────────────────────────────────────────────────────
+    ("Army Recognition",        "https://www.armyrecognition.com/rss.xml"),
+    ("Army Technology",         "https://www.army-technology.com/feed/"),
+    # ── European defense ─────────────────────────────────────────────────────
+    ("Shephard Media",          "https://www.shephardmedia.com/rss/news/"),
+    ("Janes",                   "https://www.janes.com/feeds/news"),
+    # ── Financial / M&A generalist ───────────────────────────────────────────
+    ("Reuters Business",        "https://feeds.reuters.com/reuters/businessNews"),
+    ("Financial Times Defense", "https://www.ft.com/rss/home/uk"),
 ]
 
 # ── Public API ────────────────────────────────────────────────────────────────

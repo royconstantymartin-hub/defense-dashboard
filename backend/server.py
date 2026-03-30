@@ -393,10 +393,22 @@ async def delete_announcement(announcement_id: str, current_user: dict = Depends
 # ============= M&A ROUTES =============
 
 @api_router.get("/ma-activities", response_model=List[MAActivity])
-async def get_ma_activities(status: Optional[str] = None, limit: int = 50):
-    query = {}
+async def get_ma_activities(
+    status: Optional[str] = None,
+    limit: int = 100,
+    days: Optional[int] = 30,
+):
+    """
+    Return M&A deals sorted by announced_date DESC.
+    - days=30  (default) → last 30 days only
+    - days=0             → no date filter (all recent deals)
+    """
+    query: dict = {}
     if status:
         query["status"] = status
+    if days and days > 0:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+        query["announced_date"] = {"$gte": cutoff}
     activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).limit(limit).to_list(limit)
     for a in activities:
         if isinstance(a['announced_date'], str):
