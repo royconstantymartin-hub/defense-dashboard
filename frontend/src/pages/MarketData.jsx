@@ -55,16 +55,16 @@ const SORT_OPTIONS = [
 // Canonical segment labels for the filter
 // Values must match strings that appear in player.specializations arrays
 const SEGMENTS = [
-  { value: "all",        label: "Tous les segments" },
-  { value: "aerospace",  label: "Aérospatial" },
+  { value: "all",        label: "All segments" },
+  { value: "aerospace",  label: "Aerospace" },
   { value: "naval",      label: "Naval" },
-  { value: "land",       label: "Terrestre" },
+  { value: "land",       label: "Land" },
   { value: "missiles",   label: "Missiles" },
   { value: "cyber",      label: "Cyber / EW" },
-  { value: "space",      label: "Espace" },
-  { value: "services",   label: "Services / Conseil" },
-  { value: "logistics",  label: "Logistique / MRO" },
-  { value: "electronics","label": "Électronique défense" },
+  { value: "space",      label: "Space" },
+  { value: "services",   label: "Services / Consulting" },
+  { value: "logistics",  label: "Logistics / MRO" },
+  { value: "electronics","label": "Defense Electronics" },
 ];
 
 const COUNTRY_FLAGS = {
@@ -108,12 +108,12 @@ const PARIS_TZ = "Europe/Paris";
 function formatHistoryTime(isoStr, period) {
   const d = new Date(isoStr);
   if (period === "1d")
-    return d.toLocaleTimeString("fr-FR", { timeZone: PARIS_TZ, hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleTimeString("en-GB", { timeZone: PARIS_TZ, hour: "2-digit", minute: "2-digit" });
   if (period === "1w")
-    return d.toLocaleString("fr-FR", { timeZone: PARIS_TZ, weekday: "short", hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleString("en-GB", { timeZone: PARIS_TZ, weekday: "short", hour: "2-digit", minute: "2-digit" });
   if (period === "1mo")
-    return d.toLocaleDateString("fr-FR", { timeZone: PARIS_TZ, month: "short", day: "numeric" });
-  return d.toLocaleDateString("fr-FR", { timeZone: PARIS_TZ, month: "short", year: "2-digit" });
+    return d.toLocaleDateString("en-GB", { timeZone: PARIS_TZ, month: "short", day: "numeric" });
+  return d.toLocaleDateString("en-GB", { timeZone: PARIS_TZ, month: "short", year: "2-digit" });
 }
 
 function relativeTime(isoStr) {
@@ -273,15 +273,15 @@ function StockChartModal({ player, liveData, onClose }) {
           ) : dataSource === "private" ? (
             <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
               <span className="text-2xl">🔒</span>
-              <p className="font-medium text-slate-500">Société non cotée</p>
-              <p className="text-xs text-center max-w-xs">Aucune donnée de marché disponible pour les entreprises privées.</p>
+              <p className="font-medium text-slate-500">Private company</p>
+              <p className="text-xs text-center max-w-xs">No market data available for privately-held companies.</p>
             </div>
           ) : dataSource === "unavailable" || chartData.length === 0 ? (
             <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
               <span className="text-2xl">📊</span>
-              <p className="font-medium text-slate-500">Données de marché indisponibles</p>
+              <p className="font-medium text-slate-500">Market data unavailable</p>
               <p className="text-xs text-center max-w-xs px-4">
-                {dataMessage || "Les données historiques ne sont pas disponibles pour ce ticker sur Yahoo Finance."}
+                {dataMessage || "Historical data is not available for this ticker on Yahoo Finance."}
               </p>
             </div>
           ) : (
@@ -356,12 +356,12 @@ function StockChartModal({ player, liveData, onClose }) {
         {dataSource === "live" && (
           <div className="px-4 pb-3 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-            <span className="text-xs text-slate-400">Source : Yahoo Finance · Données en temps réel sous licence</span>
+            <span className="text-xs text-slate-400">Source: Yahoo Finance · Real-time data</span>
           </div>
         )}
         {(dataSource === "unavailable" || (dataSource !== "private" && chartData.length === 0)) && (
           <div className="px-4 pb-3">
-            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⚠ Cours non disponible — vérifiez le ticker ou la cotation</span>
+            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⚠ Price unavailable — check ticker or exchange listing</span>
           </div>
         )}
 
@@ -595,9 +595,9 @@ export default function MarketData() {
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">REVENUS AGRÉGÉS</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">AGGREGATE REVENUE</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalRevenue.toFixed(1)}B</p>
-            <p className="text-xs text-slate-400 mt-1">Données base — non actualisées en temps réel</p>
+            <p className="text-xs text-slate-400 mt-1">Base data — not real-time</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
@@ -673,7 +673,7 @@ export default function MarketData() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
-            placeholder="Société, ticker, segment…"
+            placeholder="Company, ticker, segment…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"
@@ -721,7 +721,7 @@ export default function MarketData() {
 
       {/* Active filter summary */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-slate-500">{filteredPlayers.length} société{filteredPlayers.length > 1 ? "s" : ""}</span>
+        <span className="text-xs text-slate-500">{filteredPlayers.length} compan{filteredPlayers.length > 1 ? "ies" : "y"}</span>
         {selectedSegment !== "all" && (
           <span className="flex items-center gap-1 text-xs bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-medium">
             {SEGMENTS.find(s => s.value === selectedSegment)?.label}
