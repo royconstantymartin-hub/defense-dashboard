@@ -64,7 +64,7 @@ const SEGMENTS = [
   { value: "space",      label: "Espace" },
   { value: "services",   label: "Services / Conseil" },
   { value: "logistics",  label: "Logistique / MRO" },
-  { value: "electronics","label": "Électronique défense" },
+  { value: "electronics", label: "Électronique défense" },
 ];
 
 const COUNTRY_FLAGS = {
