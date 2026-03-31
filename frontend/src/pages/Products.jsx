@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
 const CATEGORIES = [
@@ -24,7 +24,7 @@ const CATEGORIES = [
   { value: "missile", label: "Missiles", icon: Rocket },
   { value: "radar", label: "Radar Systems", icon: Radio },
   { value: "cyber", label: "Cyber / EW", icon: Cpu },
-  { value: "space", label: "Space", icon: Rocket },
+  { value: "space", label: "Space", icon: Satellite },
 ];
 
 const MANUFACTURERS = [
