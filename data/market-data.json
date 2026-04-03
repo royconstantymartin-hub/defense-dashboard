@@ -1,0 +1,6 @@
+{
+  "updated_at": "2026-03-19T08:00:00Z",
+  "count": 0,
+  "note": "Generated daily by GitHub Actions. Run scripts/fetch_market_data.py to update.",
+  "data": []
+}
