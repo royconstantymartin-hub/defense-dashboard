@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +14,10 @@ import {
   Clock,
   Database,
   Zap,
+  Search,
+  X,
 } from "lucide-react";
+import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Link } from "react-router-dom";
 import {
   BarChart,
@@ -66,6 +69,12 @@ export default function Dashboard() {
   // Timestamp set once at fetch time — not on every render
   const [fetchedAt, setFetchedAt] = useState(null);
 
+  // Company search
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const searchRef = useRef(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -90,6 +99,29 @@ export default function Dashboard() {
     };
     fetchData();
   }, []);
+
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSearch(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return players
+      .filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          (p.ticker && p.ticker.toLowerCase().includes(q))
+      )
+      .slice(0, 6);
+  }, [players, searchQuery]);
 
   const getFlag = (country) => {
     const code = COUNTRY_FLAGS[country];
@@ -152,16 +184,109 @@ export default function Dashboard() {
           </h1>
           <p className="text-slate-500 text-sm mt-1">Global Defense Intelligence Overview</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
-          <Clock className="w-3.5 h-3.5" />
-          <span>
-            {fetchedAt
-              ? `Données chargées à ${fetchedAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
-              : "Chargement…"}
-          </span>
-          <span className="text-slate-300">|</span>
-          <Database className="w-3.5 h-3.5" />
-          <span>SIPRI · Yahoo Finance · Presse spécialisée</span>
+
+        <div className="flex items-center gap-3">
+          {/* Company search */}
+          <div className="relative" ref={searchRef}>
+            <div className={`flex items-center gap-2 bg-white border rounded-lg px-3 py-2 transition-all duration-200 w-64 ${
+              showSearch ? "border-purple-400 ring-2 ring-purple-100" : "border-slate-200 hover:border-purple-300"
+            }`}>
+              <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <input
+                type="text"
+                placeholder={loading ? "Chargement…" : "Rechercher une société…"}
+                disabled={loading}
+                className="flex-1 text-sm text-slate-700 placeholder-slate-400 bg-transparent outline-none disabled:cursor-wait"
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setShowSearch(true); }}
+                onFocus={() => setShowSearch(true)}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => { setSearchQuery(""); setShowSearch(false); }}
+                  className="text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Dropdown results */}
+            {showSearch && searchQuery.trim() && (
+              <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                {searchResults.length > 0 ? (
+                  <>
+                    <div className="px-3 py-2 border-b border-slate-100 bg-slate-50">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                        {searchResults.length} résultat{searchResults.length > 1 ? "s" : ""}
+                      </p>
+                    </div>
+                    {searchResults.map((player) => {
+                      const logoUrl = getLogo(player.name);
+                      const flagUrl = getFlag(player.country);
+                      return (
+                        <button
+                          key={player.id}
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-purple-50 transition-colors text-left border-b border-slate-50 last:border-0"
+                          onClick={() => {
+                            setSelectedCompany(player.name);
+                            setShowSearch(false);
+                            setSearchQuery("");
+                          }}
+                        >
+                          {logoUrl ? (
+                            <img
+                              src={logoUrl}
+                              alt={player.name}
+                              className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 flex-shrink-0"
+                              onError={(e) => { e.target.style.display = "none"; }}
+                            />
+                          ) : (
+                            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <Building2 className="w-4 h-4 text-purple-600" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-900 truncate">{player.name}</p>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              {flagUrl && (
+                                <img src={flagUrl} alt={player.country} className="w-4 h-3 object-cover rounded-sm" />
+                              )}
+                              <span className="text-xs text-slate-500">{player.country}</span>
+                            </div>
+                          </div>
+                          {player.ticker && (
+                            <span className="font-mono text-xs text-purple-700 font-medium bg-purple-50 px-2 py-0.5 rounded flex-shrink-0">
+                              {player.ticker}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <div className="px-4 py-5 text-center">
+                    <p className="text-sm text-slate-500">
+                      Aucune société trouvée pour&nbsp;<span className="font-medium text-slate-700">"{searchQuery}"</span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Clock badge */}
+          <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+            <Clock className="w-3.5 h-3.5" />
+            <span>
+              {fetchedAt
+                ? `Données chargées à ${fetchedAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
+                : "Chargement…"}
+            </span>
+            <span className="text-slate-300">|</span>
+            <Database className="w-3.5 h-3.5" />
+            <span>SIPRI · Yahoo Finance · Presse spécialisée</span>
+          </div>
         </div>
       </div>
 
@@ -501,6 +626,14 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Company profile sheet — opened from search */}
+      {selectedCompany && (
+        <CompanyProfileSheet
+          name={selectedCompany}
+          onClose={() => setSelectedCompany(null)}
+        />
+      )}
     </div>
   );
 }

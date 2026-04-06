@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
   BarChart,
   Bar,
@@ -54,16 +55,16 @@ const SORT_OPTIONS = [
 // Canonical segment labels for the filter
 // Values must match strings that appear in player.specializations arrays
 const SEGMENTS = [
-  { value: "all",        label: "Tous les segments" },
-  { value: "aerospace",  label: "Aérospatial" },
+  { value: "all",        label: "All segments" },
+  { value: "aerospace",  label: "Aerospace" },
   { value: "naval",      label: "Naval" },
-  { value: "land",       label: "Terrestre" },
+  { value: "land",       label: "Land" },
   { value: "missiles",   label: "Missiles" },
   { value: "cyber",      label: "Cyber / EW" },
-  { value: "space",      label: "Espace" },
-  { value: "services",   label: "Services / Conseil" },
-  { value: "logistics",  label: "Logistique / MRO" },
-  { value: "electronics","label": "Électronique défense" },
+  { value: "space",      label: "Space" },
+  { value: "services",   label: "Services / Consulting" },
+  { value: "logistics",  label: "Logistics / MRO" },
+  { value: "electronics","label": "Defense Electronics" },
 ];
 
 const COUNTRY_FLAGS = {
@@ -101,12 +102,18 @@ const HISTORY_PERIODS = [
   { value: "1y", label: "1Y" },
 ];
 
+// All timestamps from the backend are UTC (ISO 8601 with offset).
+// Display times in Europe/Paris so they match what users see on financial sites.
+const PARIS_TZ = "Europe/Paris";
 function formatHistoryTime(isoStr, period) {
   const d = new Date(isoStr);
-  if (period === "1d") return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  if (period === "1w") return d.toLocaleDateString([], { weekday: "short", hour: "2-digit", minute: "2-digit" });
-  if (period === "1mo") return d.toLocaleDateString([], { month: "short", day: "numeric" });
-  return d.toLocaleDateString([], { month: "short", "year": "2-digit" });
+  if (period === "1d")
+    return d.toLocaleTimeString("en-GB", { timeZone: PARIS_TZ, hour: "2-digit", minute: "2-digit" });
+  if (period === "1w")
+    return d.toLocaleString("en-GB", { timeZone: PARIS_TZ, weekday: "short", hour: "2-digit", minute: "2-digit" });
+  if (period === "1mo")
+    return d.toLocaleDateString("en-GB", { timeZone: PARIS_TZ, month: "short", day: "numeric" });
+  return d.toLocaleDateString("en-GB", { timeZone: PARIS_TZ, month: "short", year: "2-digit" });
 }
 
 function relativeTime(isoStr) {
@@ -118,7 +125,7 @@ function relativeTime(isoStr) {
   return `${d}d ago`;
 }
 
-// Stock History Chart Modal
+// Stock History Chart — slides in from the right like CompanyProfileSheet
 function StockChartModal({ player, liveData, onClose }) {
   const [period, setPeriod] = useState("1d");
   const [history, setHistory] = useState([]);
@@ -198,14 +205,8 @@ function StockChartModal({ player, liveData, onClose }) {
   }));
 
   return (
-    <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-y-auto max-h-[90vh]"
-        onClick={e => e.stopPropagation()}
-      >
+    <Sheet open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto p-0 gap-0 flex flex-col [&>button:first-child]:hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
@@ -272,15 +273,15 @@ function StockChartModal({ player, liveData, onClose }) {
           ) : dataSource === "private" ? (
             <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
               <span className="text-2xl">🔒</span>
-              <p className="font-medium text-slate-500">Société non cotée</p>
-              <p className="text-xs text-center max-w-xs">Aucune donnée de marché disponible pour les entreprises privées.</p>
+              <p className="font-medium text-slate-500">Private company</p>
+              <p className="text-xs text-center max-w-xs">No market data available for privately-held companies.</p>
             </div>
           ) : dataSource === "unavailable" || chartData.length === 0 ? (
             <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
               <span className="text-2xl">📊</span>
-              <p className="font-medium text-slate-500">Données de marché indisponibles</p>
+              <p className="font-medium text-slate-500">Market data unavailable</p>
               <p className="text-xs text-center max-w-xs px-4">
-                {dataMessage || "Les données historiques ne sont pas disponibles pour ce ticker sur Yahoo Finance."}
+                {dataMessage || "Historical data is not available for this ticker on Yahoo Finance."}
               </p>
             </div>
           ) : (
@@ -355,12 +356,12 @@ function StockChartModal({ player, liveData, onClose }) {
         {dataSource === "live" && (
           <div className="px-4 pb-3 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-            <span className="text-xs text-slate-400">Source : Yahoo Finance · Données en temps réel sous licence</span>
+            <span className="text-xs text-slate-400">Source: Yahoo Finance · Real-time data</span>
           </div>
         )}
         {(dataSource === "unavailable" || (dataSource !== "private" && chartData.length === 0)) && (
           <div className="px-4 pb-3">
-            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⚠ Cours non disponible — vérifiez le ticker ou la cotation</span>
+            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⚠ Price unavailable — check ticker or exchange listing</span>
           </div>
         )}
 
@@ -409,8 +410,8 @@ function StockChartModal({ player, liveData, onClose }) {
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -474,8 +475,8 @@ export default function MarketData() {
   useEffect(() => {
     if (players.length > 0) {
       fetchLivePrices(players);
-      // Refresh every hour
-      const interval = setInterval(() => fetchLivePrices(players), 60 * 60 * 1000);
+      // Refresh every 5 minutes
+      const interval = setInterval(() => fetchLivePrices(players), 5 * 60 * 1000);
       return () => clearInterval(interval);
     }
   }, [players, fetchLivePrices]);
@@ -574,7 +575,7 @@ export default function MarketData() {
           </span>
           <span className="text-slate-300">|</span>
           <Clock className="w-3.5 h-3.5" />
-          <span>Refreshes every hour</span>
+          <span>Refreshes every 5 min</span>
           <span className="text-slate-300">|</span>
           <Database className="w-3.5 h-3.5" />
           <span>Yahoo Finance</span>
@@ -594,9 +595,9 @@ export default function MarketData() {
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">REVENUS AGRÉGÉS</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">AGGREGATE REVENUE</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalRevenue.toFixed(1)}B</p>
-            <p className="text-xs text-slate-400 mt-1">Données base — non actualisées en temps réel</p>
+            <p className="text-xs text-slate-400 mt-1">Base data — not real-time</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
@@ -672,7 +673,7 @@ export default function MarketData() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
-            placeholder="Société, ticker, segment…"
+            placeholder="Company, ticker, segment…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"
@@ -720,7 +721,7 @@ export default function MarketData() {
 
       {/* Active filter summary */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-slate-500">{filteredPlayers.length} société{filteredPlayers.length > 1 ? "s" : ""}</span>
+        <span className="text-xs text-slate-500">{filteredPlayers.length} compan{filteredPlayers.length > 1 ? "ies" : "y"}</span>
         {selectedSegment !== "all" && (
           <span className="flex items-center gap-1 text-xs bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-medium">
             {SEGMENTS.find(s => s.value === selectedSegment)?.label}

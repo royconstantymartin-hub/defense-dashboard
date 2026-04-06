@@ -16,7 +16,7 @@ import re
 import jwt
 import bcrypt
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history
+from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history, invalidate_cache as invalidate_stock_cache
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -1508,6 +1508,9 @@ async def startup_event():
     asyncio.create_task(_apply_company_enrichments())
     # Apply image URLs to products that are missing them
     asyncio.create_task(_apply_product_images())
+    # Always start with a fresh stock cache so stale values never survive restarts
+    invalidate_stock_cache()
+    logger.info("Stock price cache cleared on startup")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

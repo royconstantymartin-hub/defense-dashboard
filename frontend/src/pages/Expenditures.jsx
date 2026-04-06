@@ -299,7 +299,7 @@ export default function Expenditures() {
             {chartMode === "gdp" && (
               <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-purple-400 inline-block" />
-                Ligne OTAN à 2% — les pays au-dessus sont en rouge dans le tableau
+                NATO 2% target · amber ≥ 2.5% · red ≥ 4%
               </p>
             )}
           </CardContent>
