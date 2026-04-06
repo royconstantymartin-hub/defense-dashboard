@@ -1,20 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { API } from "@/App";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Search, ArrowRight, Clock, Database,
-  Filter, TrendingUp, ChevronDown, ChevronUp,
-  ExternalLink, Download, Calendar, User, CheckCircle2, AlertCircle,
+  Search, ArrowRight, ArrowLeftRight, Plus, CircleDot,
+  Clock, Database, Filter, TrendingUp, ChevronDown, ChevronUp,
+  ExternalLink, Download, Calendar, User, CheckCircle2, AlertCircle, AlertTriangle,
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -24,11 +20,15 @@ import {
 // ── Constants ──────────────────────────────────────────────────────────────
 
 const STATUS_OPTIONS = [
-  { value: "all", label: "All Status" },
-  { value: "announced", label: "Announced" },
-  { value: "pending", label: "Pending" },
-  { value: "completed", label: "Completed" },
-  { value: "cancelled", label: "Cancelled" },
+  { value: "all",          label: "All Statuses" },
+  { value: "announced",    label: "Announced" },
+  { value: "pending",      label: "Pending" },
+  { value: "under_review", label: "Under Review" },
+  { value: "completed",    label: "Completed" },
+  { value: "active",       label: "Active (JV/Structure)" },
+  { value: "cancelled",    label: "Cancelled" },
+  { value: "dissolved",    label: "Dissolved" },
+  { value: "exited",       label: "Exited" },
 ];
 
 const DEAL_TYPE_OPTIONS = [
@@ -43,45 +43,70 @@ const DEAL_TYPE_OPTIONS = [
 const YEAR_OPTIONS = [
   { value: "all", label: "All Years" },
   ...[2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018].map((y) => ({
-    value: String(y),
-    label: String(y),
+    value: String(y), label: String(y),
   })),
 ];
 
-// Static domain fallback for companies not yet enriched in DB
+const PERIOD_OPTIONS = [
+  { value: "7",  label: "7D" },
+  { value: "30", label: "30D" },
+  { value: "90", label: "90D" },
+  { value: "0",  label: "All" },
+];
+
 const LOGO_FALLBACK = {
-  "Lockheed Martin":                  "lockheedmartin.com",
-  "Raytheon Technologies":            "rtx.com",
-  "RTX":                              "rtx.com",
-  "L3Harris":                         "l3harris.com",
-  "L3Harris Technologies":            "l3harris.com",
-  "Northrop Grumman":                 "northropgrumman.com",
-  "General Dynamics":                 "gd.com",
-  "BAE Systems":                      "baesystems.com",
-  "Thales":                           "thalesgroup.com",
-  "Leonardo":                         "leonardo.com",
-  "Airbus":                           "airbus.com",
-  "Rheinmetall":                      "rheinmetall.com",
-  "Safran":                           "safran-group.com",
-  "KNDS":                             "knds.de",
-  "Hanwha":                           "hanwha.com",
-  "Hanwha Ocean":                     "hanwha.com",
-  "Boeing":                           "boeing.com",
-  "Teledyne Technologies":            "teledyne.com",
-  "FLIR Systems":                     "flir.com",
-  "Parker Hannifin":                  "parker.com",
-  "Meggitt":                          "meggitt.com",
-  "Cobham":                           "cobham.com",
-  "Ultra Electronics":                "ultra.group",
-  "TransDigm":                        "transdigm.com",
-  "Mercury Systems":                  "mrcy.com",
-  "AeroVironment":                    "avinc.com",
-  "Shield AI":                        "shield.ai",
-  "SAIC":                             "saic.com",
-  "Spirit AeroSystems":               "spiritaero.com",
-  "Collins Aerospace Actuation":      "collinsaerospace.com",
-  "Ball Aerospace":                   "ball.com",
-  "Terran Orbital":                   "terranorbital.com",
+  "Lockheed Martin":             "lockheedmartin.com",
+  "Raytheon Technologies":       "rtx.com",
+  "RTX":                         "rtx.com",
+  "RTX Ventures":                "rtx.com",
+  "L3Harris":                    "l3harris.com",
+  "L3Harris Technologies":       "l3harris.com",
+  "Northrop Grumman":            "northropgrumman.com",
+  "General Dynamics":            "gd.com",
+  "BAE Systems":                 "baesystems.com",
+  "Thales":                      "thalesgroup.com",
+  "Leonardo":                    "leonardo.com",
+  "Leonardo DRS":                "leonardodrs.com",
+  "Airbus":                      "airbus.com",
+  "Rheinmetall":                 "rheinmetall.com",
+  "Safran":                      "safran-group.com",
+  "KNDS":                        "knds.de",
+  "Hanwha":                      "hanwha.com",
+  "Hanwha Ocean":                "hanwha.com",
+  "Boeing":                      "boeing.com",
+  "Teledyne Technologies":       "teledyne.com",
+  "FLIR Systems":                "flir.com",
+  "Parker Hannifin":             "parker.com",
+  "Meggitt":                     "meggitt.com",
+  "Cobham":                      "cobham.com",
+  "Ultra Electronics":           "ultra.group",
+  "TransDigm":                   "transdigm.com",
+  "Mercury Systems":             "mrcy.com",
+  "AeroVironment":               "avinc.com",
+  "Shield AI":                   "shield.ai",
+  "SAIC":                        "saic.com",
+  "Spirit AeroSystems":          "spiritaero.com",
+  "Collins Aerospace Actuation": "collinsaerospace.com",
+  "Ball Aerospace":              "ball.com",
+  "Terran Orbital":              "terranorbital.com",
+  "Dassault Aviation":           "dassault-aviation.com",
+  "Dassault":                    "dassault-aviation.com",
+  "Naval Group":                 "naval-group.com",
+  "Anduril":                     "anduril.com",
+  "Anduril Industries":          "anduril.com",
+  "Palantir":                    "palantir.com",
+  "Kratos":                      "kratosdefense.com",
+  "Helsing":                     "helsing.ai",
+  "Milrem Robotics":             "milremrobotics.com",
+  "Preligens":                   "preligens.com",
+  "Capella Space":               "capellaspace.com",
+  "Epirus":                      "epirusinc.com",
+  "Harmattan.ai":                "harmattan.ai",
+  "ArianeGroup":                 "arianegroup.com",
+  "MBDA":                        "mbda-systems.com",
+  "RADA Electronic Industries":  "rada.com",
+  "Nightwing Group":             "nightwinggroup.com",
+  "Rebellion Defense":           "rebelliondefense.com",
 };
 
 // Initials avatar colour palette (deterministic by name)
@@ -112,17 +137,60 @@ function flagEmoji(iso2) {
 
 function getStatusStyle(status) {
   switch (status) {
-    case "completed":  return "bg-emerald-50 text-emerald-700 border-emerald-200";
-    case "pending":    return "bg-amber-50 text-amber-700 border-amber-200";
-    case "announced":  return "bg-blue-50 text-blue-700 border-blue-200";
-    case "cancelled":  return "bg-rose-50 text-rose-700 border-rose-200";
-    default:           return "bg-slate-100 text-slate-600 border-slate-200";
+    case "completed":    return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    case "active":       return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    case "pending":      return "bg-amber-50 text-amber-700 border-amber-200";
+    case "under_review": return "bg-orange-50 text-orange-700 border-orange-200";
+    case "announced":    return "bg-blue-50 text-blue-700 border-blue-200";
+    case "cancelled":    return "bg-rose-50 text-rose-700 border-rose-200";
+    case "dissolved":    return "bg-slate-100 text-slate-500 border-slate-200";
+    case "exited":       return "bg-purple-50 text-purple-700 border-purple-200";
+    default:             return "bg-slate-100 text-slate-600 border-slate-200";
   }
 }
 
-function formatValue(v) {
-  if (!v) return "Undisclosed";
-  return v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v}M`;
+function formatStatus(s) {
+  const map = { under_review: "Under Review", joint_venture: "Joint Venture" };
+  return map[s] ?? (s ? s.charAt(0).toUpperCase() + s.slice(1) : "");
+}
+
+function formatValue(dealValue, isDisclosed = true) {
+  if (!isDisclosed) return "Undisclosed";
+  if (!dealValue || dealValue === 0) return "—";
+  return dealValue >= 1000 ? `$${(dealValue / 1000).toFixed(1)}B` : `$${dealValue}M`;
+}
+
+function getDealLabels(dealType) {
+  switch (dealType) {
+    case "merger":               return { left: "PARTY A",    right: "PARTY B",       sep: "merger" };
+    case "joint_venture":        return { left: "CO-FOUNDER", right: "JV ENTITY",     sep: "jv" };
+    case "minority_stake":       return { left: "INVESTOR",   right: "PORTFOLIO CO.", sep: "invest" };
+    case "strategic_investment": return { left: "INVESTOR",   right: "PORTFOLIO CO.", sep: "invest" };
+    default:                     return { left: "ACQUIRER",   right: "TARGET",        sep: "arrow" };
+  }
+}
+
+function DealSep({ type }) {
+  const base = "w-9 h-9 rounded-full flex items-center justify-center";
+  if (type === "merger")  return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-blue-100`}><ArrowLeftRight className="w-4 h-4 text-blue-600" /></div></div>;
+  if (type === "jv")      return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-teal-100`}><Plus className="w-4 h-4 text-teal-600" /></div></div>;
+  if (type === "invest")  return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-emerald-100`}><CircleDot className="w-4 h-4 text-emerald-600" /></div></div>;
+  return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-purple-100`}><ArrowRight className="w-4 h-4 text-purple-600" /></div></div>;
+}
+
+function RoundBadge({ roundType }) {
+  const map = {
+    seed:     "bg-violet-50 text-violet-700 border-violet-200",
+    series_a: "bg-blue-50 text-blue-700 border-blue-200",
+    series_b: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    series_c: "bg-purple-50 text-purple-700 border-purple-200",
+    series_d: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200",
+    growth:   "bg-teal-50 text-teal-700 border-teal-200",
+    buyout:   "bg-amber-50 text-amber-700 border-amber-200",
+  };
+  const label = roundType?.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase());
+  if (!map[roundType]) return null;
+  return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${map[roundType]}`}>{label}</span>;
 }
 
 function getLogoDomain(activity, side) {
@@ -135,7 +203,7 @@ function getLogoDomain(activity, side) {
 
 function CompanyLogo({ activity, side, size = "md" }) {
   const [failed, setFailed] = useState(false);
-  const name    = activity[side === "acquirer" ? "acquirer" : "target"];
+  const name    = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const country = activity[side === "acquirer" ? "acquirer_country" : "target_country"];
   const domain  = getLogoDomain(activity, side);
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
@@ -185,6 +253,7 @@ function ProfileLink({ name, onOpen }) {
 
 function MACard({ activity, onOpenProfile }) {
   const [open, setOpen] = useState(false);
+  const labels = getDealLabels(activity.deal_type);
 
   return (
     <Card
@@ -192,7 +261,6 @@ function MACard({ activity, onOpenProfile }) {
       data-testid={`ma-item-${activity.id}`}
     >
       <CardContent className="p-6">
-        {/* Main row */}
         <div className="flex flex-col lg:flex-row lg:items-center gap-6">
           {/* Companies */}
           <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -203,15 +271,11 @@ function MACard({ activity, onOpenProfile }) {
                   <p className="text-slate-900 font-medium leading-tight">{activity.acquirer}</p>
                   <ProfileLink name={activity.acquirer} onOpen={onOpenProfile} />
                 </div>
-                <p className="text-xs text-slate-500 font-mono">ACQUIRER</p>
+                <p className="text-xs text-slate-500 font-mono">{labels.left}</p>
               </div>
             </div>
 
-            <div className="w-10 flex justify-center shrink-0">
-              <div className="w-9 h-9 bg-purple-100 rounded-full flex items-center justify-center">
-                <ArrowRight className="w-4 h-4 text-purple-600" />
-              </div>
-            </div>
+            <DealSep type={labels.sep} />
 
             <div className="flex items-center gap-3 min-w-0">
               <CompanyLogo activity={activity} side="target" />
@@ -220,7 +284,7 @@ function MACard({ activity, onOpenProfile }) {
                   <p className="text-slate-900 font-medium leading-tight truncate">{activity.target}</p>
                   <ProfileLink name={activity.target} onOpen={onOpenProfile} />
                 </div>
-                <p className="text-xs text-slate-500 font-mono">TARGET</p>
+                <p className="text-xs text-slate-500 font-mono">{labels.right}</p>
               </div>
             </div>
           </div>
@@ -230,14 +294,17 @@ function MACard({ activity, onOpenProfile }) {
             <div className="text-center">
               <p className="text-xs font-medium uppercase tracking-wider text-slate-500">DEAL VALUE</p>
               <p className="text-xl font-mono font-bold text-purple-700 mt-1">
-                {formatValue(activity.deal_value)}
+                {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
               </p>
+              {activity.stake_percentage != null && (
+                <p className="text-[10px] text-slate-400 font-mono mt-0.5">{activity.stake_percentage}% stake</p>
+              )}
             </div>
 
             <div className="text-center">
               <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TYPE</p>
               <p className="text-sm text-slate-700 mt-1 capitalize bg-slate-100 px-2 py-0.5 rounded">
-                {activity.deal_type.replace("_", " ")}
+                {activity.deal_type.replaceAll("_", " ")}
               </p>
             </div>
 
@@ -248,22 +315,23 @@ function MACard({ activity, onOpenProfile }) {
               </p>
             </div>
 
-            <span className={`text-xs font-medium px-3 py-1.5 rounded-full border ${getStatusStyle(activity.status)}`}>
-              {activity.status.toUpperCase()}
-            </span>
+            <div className="flex flex-col items-start gap-1.5">
+              <span className={`text-xs font-medium px-3 py-1.5 rounded-full border ${getStatusStyle(activity.status)}`}>
+                {formatStatus(activity.status)}
+              </span>
+              <RoundBadge roundType={activity.round_type} />
+            </div>
 
-            {/* Source reliability badge */}
             {activity.source_url ? (
               <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                <CheckCircle2 className="w-3 h-3" /> Sourcé
+                <CheckCircle2 className="w-3 h-3" /> Sourced
               </span>
             ) : (
               <span className="flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
-                <AlertCircle className="w-3 h-3" /> Non sourcé
+                <AlertCircle className="w-3 h-3" /> Unsourced
               </span>
             )}
 
-            {/* Expand toggle */}
             {(activity.rationale || activity.source_url) && (
               <button
                 onClick={() => setOpen((v) => !v)}
@@ -311,6 +379,7 @@ function MACard({ activity, onOpenProfile }) {
 function HistoricalRow({ activity, index, onOpenProfile }) {
   const [open, setOpen] = useState(false);
   const hasDetail = !!(activity.rationale || activity.source_url);
+  const labels = getDealLabels(activity.deal_type);
 
   return (
     <>
@@ -324,37 +393,51 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
         <td className="px-4 py-3">
           <div className="flex items-center gap-2">
             <CompanyLogo activity={activity} side="acquirer" size="sm" />
-            <span className="text-sm text-slate-800 font-medium">{activity.acquirer}</span>
+            <div>
+              <span className="text-sm text-slate-800 font-medium">{activity.acquirer}</span>
+              <p className="text-[10px] text-slate-400 font-mono">{labels.left}</p>
+            </div>
             <ProfileLink name={activity.acquirer} onOpen={onOpenProfile} />
           </div>
         </td>
         <td className="px-4 py-3">
           <div className="flex items-center gap-2">
             <CompanyLogo activity={activity} side="target" size="sm" />
-            <span className="text-sm text-slate-800">{activity.target}</span>
+            <div>
+              <span className="text-sm text-slate-800">{activity.target}</span>
+              <p className="text-[10px] text-slate-400 font-mono">{labels.right}</p>
+            </div>
             <ProfileLink name={activity.target} onOpen={onOpenProfile} />
           </div>
         </td>
         <td className="px-4 py-3 text-sm font-mono font-semibold text-purple-700">
-          {formatValue(activity.deal_value)}
+          <div>
+            {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
+            {activity.stake_percentage != null && (
+              <p className="text-[10px] text-slate-400 font-mono">{activity.stake_percentage}%</p>
+            )}
+          </div>
         </td>
         <td className="px-4 py-3">
-          <span className="text-xs capitalize bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
-            {activity.deal_type.replace("_", " ")}
-          </span>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs capitalize bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+              {activity.deal_type.replaceAll("_", " ")}
+            </span>
+            <RoundBadge roundType={activity.round_type} />
+          </div>
         </td>
         <td className="px-4 py-3">
           <div className="flex flex-col gap-1">
             <span className={`text-xs font-medium px-2.5 py-1 rounded-full border w-fit ${getStatusStyle(activity.status)}`}>
-              {activity.status.toUpperCase()}
+              {formatStatus(activity.status)}
             </span>
             {activity.source_url ? (
               <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600">
-                <CheckCircle2 className="w-2.5 h-2.5" /> Sourcé
+                <CheckCircle2 className="w-2.5 h-2.5" /> Sourced
               </span>
             ) : (
               <span className="flex items-center gap-1 text-[10px] font-medium text-amber-500">
-                <AlertCircle className="w-2.5 h-2.5" /> Non sourcé
+                <AlertCircle className="w-2.5 h-2.5" /> Unsourced
               </span>
             )}
           </div>
@@ -399,8 +482,11 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
 // ── CSV export ─────────────────────────────────────────────────────────────
 
 function exportCSV(data) {
-  const headers = ["Date", "Acquirer", "Acquirer Country", "Target", "Target Country",
-                   "Deal Value (M USD)", "Type", "Status", "Description"];
+  const headers = [
+    "Date", "Acquirer", "Acquirer Country", "Target", "Target Country",
+    "Deal Value (M USD)", "Is Disclosed", "Stake %", "Type", "Round",
+    "Status", "Description", "Rationale", "Source URL",
+  ];
   const rows = data.map((a) => [
     format(new Date(a.announced_date), "yyyy-MM-dd"),
     `"${a.acquirer}"`,
@@ -408,9 +494,14 @@ function exportCSV(data) {
     `"${a.target}"`,
     a.target_country || "",
     a.deal_value || 0,
+    a.is_disclosed ?? true,
+    a.stake_percentage ?? "",
     a.deal_type,
+    a.round_type || "",
     a.status,
     `"${(a.description || "").replace(/"/g, "'")}"`,
+    `"${(a.rationale || "").replace(/"/g, "'")}"`,
+    a.source_url || "",
   ]);
   const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
   const blob = new Blob([csv], { type: "text/csv" });
@@ -429,29 +520,33 @@ export default function MAActivity() {
   const [historical,     setHistorical]     = useState([]);
   const [loading,        setLoading]        = useState(true);
   const [histLoading,    setHistLoading]    = useState(false);
-  const [tab,            setTab]            = useState("recent");   // "recent" | "historical"
+  const [error,          setError]          = useState(null);
+  const [tab,            setTab]            = useState("recent");
   const [searchTerm,     setSearchTerm]     = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedType,   setSelectedType]   = useState("all");
   const [selectedYear,   setSelectedYear]   = useState("all");
   const [profileName,    setProfileName]    = useState(null);
+  const [period,         setPeriod]         = useState("30");
+  const [sortField,      setSortField]      = useState("announced_date");
+  const [sortDir,        setSortDir]        = useState("desc");
 
-  // Fetch recent deals (cards view)
-  useEffect(() => {
-    const fetchRecent = async () => {
-      try {
-        const res = await axios.get(`${API}/ma-activities`);
-        setActivities(res.data);
-      } catch (e) {
-        console.error("Error fetching M&A activities:", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRecent();
-  }, []);
+  const fetchRecent = async (days) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = days === "0" ? { days: 0 } : { days: Number(days) };
+      const res = await axios.get(`${API}/ma-activities`, { params });
+      setActivities(res.data);
+    } catch {
+      setError("Failed to load M&A deals. Check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Fetch historical data when tab switches
+  useEffect(() => { fetchRecent(period); }, [period]);
+
   useEffect(() => {
     if (tab !== "historical" || historical.length) return;
     const fetchHist = async () => {
@@ -459,8 +554,8 @@ export default function MAActivity() {
       try {
         const res = await axios.get(`${API}/ma-activities/historical`);
         setHistorical(res.data);
-      } catch (e) {
-        console.error("Error fetching historical M&A:", e);
+      } catch {
+        // silent — table shows empty state
       } finally {
         setHistLoading(false);
       }
@@ -468,8 +563,7 @@ export default function MAActivity() {
     fetchHist();
   }, [tab, historical.length]);
 
-  // Filter recent cards
-  const filteredRecent = activities.filter((a) => {
+  const applyFilters = (list) => list.filter((a) => {
     if (selectedStatus !== "all" && a.status !== selectedStatus) return false;
     if (selectedType   !== "all" && a.deal_type !== selectedType) return false;
     if (searchTerm) {
@@ -481,39 +575,41 @@ export default function MAActivity() {
     return true;
   });
 
-  // Filter historical table
-  const filteredHist = historical.filter((a) => {
-    if (selectedStatus !== "all" && a.status !== selectedStatus) return false;
-    if (selectedType   !== "all" && a.deal_type !== selectedType) return false;
-    if (selectedYear   !== "all") {
-      const y = new Date(a.announced_date).getFullYear();
-      if (String(y) !== selectedYear) return false;
-    }
-    if (searchTerm) {
-      const t = searchTerm.toLowerCase();
-      if (!a.acquirer.toLowerCase().includes(t) &&
-          !a.target.toLowerCase().includes(t) &&
-          !(a.description || "").toLowerCase().includes(t)) return false;
-    }
-    return true;
-  });
+  const filteredRecent = applyFilters(activities);
 
-  const displayList = tab === "recent" ? filteredRecent : filteredHist;
-  const totalValue  = displayList.reduce((s, a) => s + (a.deal_value || 0), 0);
+  const filteredHist = useMemo(() => {
+    let list = applyFilters(historical);
+    if (selectedYear !== "all")
+      list = list.filter((a) => String(new Date(a.announced_date).getFullYear()) === selectedYear);
+    return [...list].sort((a, b) => {
+      const va = sortField === "deal_value" ? (a.deal_value || 0) : new Date(a.announced_date).getTime();
+      const vb = sortField === "deal_value" ? (b.deal_value || 0) : new Date(b.announced_date).getTime();
+      return sortDir === "asc" ? va - vb : vb - va;
+    });
+  }, [historical, selectedStatus, selectedType, selectedYear, searchTerm, sortField, sortDir]);
 
-  // Quarterly deal timeline from all activities (not filtered — shows macro trend)
+  const handleSort = (field) => {
+    if (sortField === field) setSortDir((d) => d === "asc" ? "desc" : "asc");
+    else { setSortField(field); setSortDir("desc"); }
+  };
+
+  const displayList  = tab === "recent" ? filteredRecent : filteredHist;
+  const totalValue   = displayList.filter((a) => a.is_disclosed ?? true).reduce((s, a) => s + (a.deal_value || 0), 0);
+  const periodLabel  = PERIOD_OPTIONS.find((p) => p.value === period)?.label ?? "30D";
+  const lastDealDate = activities[0] ? format(new Date(activities[0].announced_date), "MMM d, yyyy") : null;
+
+  // Chart from historical if loaded, otherwise recent
+  const chartSource = historical.length > 0 ? historical : activities;
   const quarterlyData = (() => {
     const map = {};
-    activities.forEach((a) => {
+    chartSource.forEach((a) => {
       const d = new Date(a.announced_date);
       const q = `Q${Math.ceil((d.getMonth() + 1) / 3)} ${d.getFullYear()}`;
       if (!map[q]) map[q] = { quarter: q, count: 0, value: 0, ts: d.getTime() };
       map[q].count += 1;
       map[q].value += a.deal_value || 0;
     });
-    return Object.values(map)
-      .sort((a, b) => a.ts - b.ts)
-      .slice(-8); // last 8 quarters
+    return Object.values(map).sort((a, b) => a.ts - b.ts).slice(-8);
   })();
 
   if (loading) {
@@ -532,16 +628,43 @@ export default function MAActivity() {
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
             M&A Activity
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Mergers, Acquisitions &amp; Strategic Deals</p>
+          <p className="text-slate-500 text-sm mt-1">Mergers, Acquisitions &amp; Strategic Investments</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
-          <Clock className="w-3.5 h-3.5" />
-          <span>Updated: {new Date().toLocaleDateString()}</span>
-          <span className="text-slate-300">|</span>
-          <Database className="w-3.5 h-3.5" />
-          <span>Bloomberg, Reuters, SEC</span>
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Period selector */}
+          <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
+            {PERIOD_OPTIONS.map((p) => (
+              <button
+                key={p.value}
+                onClick={() => setPeriod(p.value)}
+                className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+                  period === p.value ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-800"
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+            <Clock className="w-3.5 h-3.5" />
+            <span>{lastDealDate ? `Latest: ${lastDealDate}` : "No deals in range"}</span>
+            <span className="text-slate-300">|</span>
+            <Database className="w-3.5 h-3.5" />
+            <span>17 RSS sources</span>
+          </div>
         </div>
       </div>
+
+      {/* Error state */}
+      {error && (
+        <div className="flex items-center gap-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl px-4 py-3 text-sm">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span>{error}</span>
+          <button onClick={() => fetchRecent(period)} className="ml-auto text-xs font-medium underline underline-offset-2">
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -549,6 +672,7 @@ export default function MAActivity() {
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL DEALS</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{displayList.length}</p>
+            <p className="text-xs text-slate-400 mt-1">{tab === "recent" ? `Last ${periodLabel}` : "Filtered"}</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
@@ -556,39 +680,41 @@ export default function MAActivity() {
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL VALUE</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{formatValue(totalValue)}</p>
             <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> Strategic consolidation
+              <TrendingUp className="w-3 h-3" /> Disclosed deals only
             </p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">PENDING</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">IN PROGRESS</p>
             <p className="text-2xl font-mono font-bold text-amber-600 mt-2">
-              {displayList.filter((a) => a.status === "pending").length}
+              {displayList.filter((a) => ["announced", "pending", "under_review"].includes(a.status)).length}
             </p>
+            <p className="text-xs text-slate-400 mt-1">Announced + Pending + Under Review</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COMPLETED</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">CLOSED</p>
             <p className="text-2xl font-mono font-bold text-emerald-600 mt-2">
-              {displayList.filter((a) => a.status === "completed").length}
+              {displayList.filter((a) => ["completed", "active"].includes(a.status)).length}
             </p>
+            <p className="text-xs text-slate-400 mt-1">Completed + Active structures</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Quarterly deal activity chart */}
+      {/* Quarterly chart */}
       {quarterlyData.length > 1 && (
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm font-semibold text-slate-800">Activité trimestrielle</p>
-                <p className="text-xs text-slate-400 mt-0.5">Nombre de deals annoncés par trimestre</p>
+                <p className="text-sm font-semibold text-slate-800">Quarterly Activity</p>
+                <p className="text-xs text-slate-400 mt-0.5">Deals announced per quarter</p>
               </div>
               <span className="text-xs text-slate-400 bg-slate-50 border border-slate-200 px-2 py-1 rounded">
-                8 derniers trimestres
+                {historical.length > 0 ? "Full history" : "Recent deals"} · last 8 quarters
               </span>
             </div>
             <ResponsiveContainer width="100%" height={120}>
@@ -644,23 +770,19 @@ export default function MAActivity() {
         <button
           onClick={() => setTab("recent")}
           className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-            tab === "recent"
-              ? "bg-white text-purple-700 shadow-sm"
-              : "text-slate-600 hover:text-slate-900"
+            tab === "recent" ? "bg-white text-purple-700 shadow-sm" : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          Recent Deals
+          Last {periodLabel}
         </button>
         <button
           onClick={() => setTab("historical")}
           className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${
-            tab === "historical"
-              ? "bg-white text-purple-700 shadow-sm"
-              : "text-slate-600 hover:text-slate-900"
+            tab === "historical" ? "bg-white text-purple-700 shadow-sm" : "text-slate-600 hover:text-slate-900"
           }`}
         >
           <Calendar className="w-3.5 h-3.5" />
-          5-Year History
+          Full History
         </button>
       </div>
 
@@ -734,13 +856,15 @@ export default function MAActivity() {
       {/* ── Recent: card view ── */}
       {tab === "recent" && (
         <div className="space-y-4" data-testid="ma-activities-list">
-          {filteredRecent.map((activity) => (
-            <MACard key={activity.id} activity={activity} onOpenProfile={setProfileName} />
-          ))}
-          {filteredRecent.length === 0 && (
-            <div className="text-center py-12 text-slate-500 bg-white rounded-lg border border-slate-200">
-              No M&A activities found
+          {filteredRecent.length === 0 ? (
+            <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
+              <p className="font-medium text-slate-700 mb-1">No deals in the last {periodLabel}</p>
+              <p className="text-sm text-slate-400">Try extending the period or clearing filters.</p>
             </div>
+          ) : (
+            filteredRecent.map((activity) => (
+              <MACard key={activity.id} activity={activity} onOpenProfile={setProfileName} />
+            ))
           )}
         </div>
       )}
@@ -759,10 +883,27 @@ export default function MAActivity() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Date</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Acquirer</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Target</th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Value</th>
+                    {[
+                      { label: "Date",  field: "announced_date" },
+                      { label: "Value", field: "deal_value" },
+                    ].reduce((acc, col) => {
+                      acc[col.field] = col;
+                      return acc;
+                    }, {}) && null /* trick to build map inline — headers below */}
+                    <th
+                      onClick={() => handleSort("announced_date")}
+                      className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 select-none"
+                    >
+                      Date {sortField === "announced_date" ? (sortDir === "asc" ? "↑" : "↓") : <span className="text-slate-300">↕</span>}
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Investor / Acquirer</th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Target / Portfolio</th>
+                    <th
+                      onClick={() => handleSort("deal_value")}
+                      className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 select-none"
+                    >
+                      Value {sortField === "deal_value" ? (sortDir === "asc" ? "↑" : "↓") : <span className="text-slate-300">↕</span>}
+                    </th>
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Type</th>
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 hidden lg:table-cell">Description</th>
