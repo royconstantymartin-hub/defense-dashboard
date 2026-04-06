@@ -353,7 +353,7 @@ MA_DATA = [
         "acquirer_country": "KR", "target_country": "KR",
         "acquirer_logo_domain": "hanwha.com",
         "target_logo_domain": "hanwha.com",
-                "source_url": "https://www.hanwha.com/en/newsroom/press-releases/2023/hanwha-completes-acquisition-daewoo-shipbuilding",
+                "source_url": "https://www.hanwha.com/en/newsroom",
         "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
     },
     {
@@ -402,7 +402,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "GB",
         "acquirer_logo_domain": "parker.com",
         "target_logo_domain": "meggitt.com",
-                "source_url": "https://ir.parker.com/news-releases/news-release-details/parker-hannifin-completes-acquisition-meggitt-plc",
+                "source_url": "https://www.parker.com/content/dam/Parker-com/literature/news",
         "announced_date": datetime(2021, 8, 2, tzinfo=timezone.utc),
     },
     # ── 2021 ──────────────────────────────────────────────────────────────────
@@ -420,7 +420,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "teledyne.com",
         "target_logo_domain": "flir.com",
-                "source_url": "https://ir.teledyne.com/news-releases/news-release-details/teledyne-technologies-completes-acquisition-flir-systems",
+                "source_url": "https://www.teledyne.com/en-us/news",
         "announced_date": datetime(2021, 1, 4, tzinfo=timezone.utc),
     },
     {
@@ -470,7 +470,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "mrcy.com",
         "target_logo_domain": "mrcy.com",
-                "source_url": "https://ir.mrcy.com/news-releases/news-release-details/mercury-systems-completes-acquisition-physical-optics-corporation",
+                "source_url": "https://www.mrcy.com/company/news",
         "announced_date": datetime(2021, 2, 23, tzinfo=timezone.utc),
     },
     {
@@ -486,7 +486,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "shield.ai",
         "target_logo_domain": "shield.ai",
-                "source_url": "https://shield.ai/shield-ai-acquires-heron-systems",
+                "source_url": "https://shield.ai/newsroom",
         "announced_date": datetime(2021, 3, 25, tzinfo=timezone.utc),
     },
     {
@@ -502,7 +502,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "saic.com",
         "target_logo_domain": "saic.com",
-                "source_url": "https://investors.saic.com/news-releases/news-release-details/saic-completes-acquisition-halfaker-and-associates",
+                "source_url": "https://www.saic.com/news",
         "announced_date": datetime(2021, 10, 1, tzinfo=timezone.utc),
     },
     {
@@ -519,7 +519,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "DE",
         "acquirer_logo_domain": "avinc.com",
         "target_logo_domain": "telerob.com",
-                "source_url": "https://ir.avinc.com/news-releases/news-release-details/aerovironment-completes-acquisition-telerob",
+                "source_url": "https://www.avinc.com/company/news",
         "announced_date": datetime(2021, 8, 16, tzinfo=timezone.utc),
     },
     # ── 2020 ──────────────────────────────────────────────────────────────────
@@ -537,7 +537,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "rtx.com",
         "target_logo_domain": "rtx.com",
-                "source_url": "https://investors.rtx.com/news-releases/news-release-details/raytheon-united-technologies-complete-merger-transaction",
+                "source_url": "https://www.rtx.com/news",
         "announced_date": datetime(2020, 4, 3, tzinfo=timezone.utc),
     },
     {
@@ -571,7 +571,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "GB",
         "acquirer_logo_domain": "transdigm.com",
         "target_logo_domain": "transdigm.com",
-                "source_url": "https://ir.transdigm.com/news-releases/news-release-details/transdigm-completes-acquisition-cobham-advanced-electronic",
+                "source_url": "https://www.transdigm.com/news",
         "announced_date": datetime(2020, 11, 4, tzinfo=timezone.utc),
     },
     # ── 2019 ──────────────────────────────────────────────────────────────────
@@ -621,7 +621,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "saic.com",
         "target_logo_domain": "saic.com",
-                "source_url": "https://investors.saic.com/news-releases/news-release-details/saic-completes-acquisition-engility",
+                "source_url": "https://www.saic.com/news",
         "announced_date": datetime(2018, 9, 10, tzinfo=timezone.utc),
     },
     {
@@ -688,7 +688,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "transdigm.com",
         "target_logo_domain": "transdigm.com",
-                "source_url": "https://ir.transdigm.com/news-releases/news-release-details/transdigm-group-completes-acquisition-esterline-technologies",
+                "source_url": "https://www.transdigm.com/news",
         "announced_date": datetime(2018, 10, 10, tzinfo=timezone.utc),
     },
     {
@@ -840,21 +840,20 @@ MA_EXTRA_DEALS = [
         "is_disclosed": True,
     },
     {
-        "acquirer": "Thales", "target": "Preligens",
+        "acquirer": "Safran", "target": "Preligens",
         "deal_value": 220, "status": "completed", "deal_type": "acquisition",
-        "description": "Full acquisition of French AI-powered geospatial intelligence startup",
+        "description": "Full acquisition of French AI-powered GEOINT startup — rebranded Safran AI",
         "rationale": (
-            "Thales acquires Preligens, a French AI startup specialising in automated satellite "
-            "image analysis and geospatial intelligence (GEOINT), for approximately €200M. "
-            "Preligens's Preligens Earth and Preligens Sky platforms use computer vision to "
-            "automatically detect and classify military assets in satellite imagery at scale. "
-            "The acquisition strengthens Thales's intelligence and surveillance systems portfolio "
-            "and positions it as a European leader in AI-powered GEOINT for defence and national security."
+            "Safran acquires Preligens, a French AI startup specialising in automated satellite "
+            "image analysis and geospatial intelligence (GEOINT). Preligens's Earth and Sky "
+            "platforms use computer vision to automatically detect and classify military assets "
+            "in satellite imagery at scale. Following the acquisition, Preligens was rebranded "
+            "Safran AI, anchoring Safran's push into AI-driven defence intelligence and ISR systems."
         ),
         "acquirer_country": "FR", "target_country": "FR",
-        "acquirer_logo_domain": "thalesgroup.com",
+        "acquirer_logo_domain": "safran-group.com",
         "target_logo_domain": "preligens.com",
-        "source_url": "https://www.thalesgroup.com/en/worldwide/defence/news",
+        "source_url": "https://www.safran-group.com/en/newsroom",
         "announced_date": datetime(2023, 10, 3, tzinfo=timezone.utc),
         "stake_percentage": 100.0,
         "round_type": None,
