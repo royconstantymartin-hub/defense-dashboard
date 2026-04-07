@@ -181,7 +181,3 @@ export function getClearbitUrl(name) {
   return domain ? `https://logo.clearbit.com/${domain}` : null;
 }
 
-export function getGoogleFaviconUrl(name) {
-  const domain = getLogoDomain(name);
-  return domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : null;
-}
