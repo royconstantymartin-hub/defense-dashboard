@@ -231,6 +231,28 @@ class Contract(BaseModel):
     reliability: str = "confirmed"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# ── Analyst Notes Models ───────────────────────────────────────────────────
+class NoteCreate(BaseModel):
+    company_name: str
+    content: str
+
+class CompanyNote(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    company_name: str
+    content: str
+    user_id: str = ""
+    user_name: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# ── Watchlist Models ────────────────────────────────────────────────────────
+class WatchlistEntry(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    company_name: str
+    added_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Product Portfolio Model
 class ProductCreate(BaseModel):
     name: str
@@ -1082,6 +1104,64 @@ async def remove_bookmark(url: str, current_user: dict = Depends(get_current_use
 
 
 # ============= AI SUMMARY =============
+
+# ── Analyst Notes Routes ───────────────────────────────────────────────────
+
+@api_router.get("/notes")
+async def get_notes(company_name: str, current_user: dict = Depends(get_current_user)):
+    """Return all analyst notes for a company (all team members)."""
+    notes = await db.company_notes.find(
+        {"company_name": company_name}, {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    return notes
+
+@api_router.post("/notes", status_code=201)
+async def create_note(data: NoteCreate, current_user: dict = Depends(get_current_user)):
+    note = CompanyNote(
+        company_name=data.company_name,
+        content=data.content.strip(),
+        user_id=current_user["sub"],
+        user_name=current_user.get("name", ""),
+    )
+    doc = note.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    await db.company_notes.insert_one(doc)
+    return doc
+
+@api_router.delete("/notes/{note_id}")
+async def delete_note(note_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.company_notes.delete_one(
+        {"id": note_id, "user_id": current_user["sub"]}  # owner only
+    )
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Note not found or not yours")
+    return {"status": "deleted"}
+
+# ── Watchlist Routes ────────────────────────────────────────────────────────
+
+@api_router.get("/watchlist")
+async def get_watchlist(current_user: dict = Depends(get_current_user)):
+    entries = await db.watchlist.find(
+        {"user_id": current_user["sub"]}, {"_id": 0}
+    ).to_list(500)
+    return [e["company_name"] for e in entries]
+
+@api_router.post("/watchlist", status_code=201)
+async def add_to_watchlist(company_name: str, current_user: dict = Depends(get_current_user)):
+    user_id = current_user["sub"]
+    existing = await db.watchlist.find_one({"user_id": user_id, "company_name": company_name})
+    if existing:
+        return {"status": "exists"}
+    entry = WatchlistEntry(user_id=user_id, company_name=company_name)
+    doc = entry.model_dump()
+    doc["added_at"] = doc["added_at"].isoformat()
+    await db.watchlist.insert_one(doc)
+    return {"status": "added"}
+
+@api_router.delete("/watchlist")
+async def remove_from_watchlist(company_name: str, current_user: dict = Depends(get_current_user)):
+    await db.watchlist.delete_one({"user_id": current_user["sub"], "company_name": company_name})
+    return {"status": "removed"}
 
 class AISummaryIn(BaseModel):
     url: str

@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import axios from "axios";
-import { API } from "@/App";
+import { API, useAuth, useT } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   TrendingUp,
@@ -14,8 +14,8 @@ import {
   Clock,
   Database,
   Zap,
-  Search,
-  X,
+  Info,
+  Settings,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Link } from "react-router-dom";
@@ -60,45 +60,46 @@ const COMPANY_LOGOS = {
 };
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const tBannerTitle   = useT({ en: "Database not initialized",   fr: "Base de données non initialisée" });
+  const tBannerDesc    = useT({ en: "The dashboard is empty. An administrator must initialize the database to load reference data (companies, M&A, contracts, expenditures…).", fr: "Le dashboard est vide. Pour charger les données de référence (entreprises, M&A, contrats, dépenses…), un administrateur doit initialiser la base de données." });
+  const tBannerAdmin   = useT({ en: "Admin → Seed",               fr: "Admin → Seed" });
+  const tBannerContact = useT({ en: "Contact an admin",           fr: "Contacter un admin" });
   const [stats, setStats] = useState(null);
   const [players, setPlayers] = useState([]);
   const [recentNews, setRecentNews] = useState([]);
   const [recentMA, setRecentMA] = useState([]);
   const [expenditures, setExpenditures] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   // Timestamp set once at fetch time — not on every render
   const [fetchedAt, setFetchedAt] = useState(null);
 
-  // Company search
-  const [selectedCompany, setSelectedCompany] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
-  const searchRef = useRef(null);
+  const fetchData = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const [statsRes, playersRes, newsRes, expendituresRes, maRes] = await Promise.all([
+        axios.get(`${API}/dashboard/stats`),
+        axios.get(`${API}/defense-players`),
+        axios.get(`${API}/news?limit=5`),
+        axios.get(`${API}/expenditures?year=2024`),
+        axios.get(`${API}/ma-activities`),
+      ]);
+      setStats(statsRes.data);
+      setPlayers(playersRes.data);
+      setRecentNews(newsRes.data);
+      setExpenditures(expendituresRes.data);
+      setRecentMA(maRes.data);
+      setFetchedAt(new Date());
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [statsRes, playersRes, newsRes, expendituresRes, maRes] = await Promise.all([
-          axios.get(`${API}/dashboard/stats`),
-          axios.get(`${API}/defense-players`),
-          axios.get(`${API}/news?limit=5`),
-          axios.get(`${API}/expenditures?year=2024`),
-          axios.get(`${API}/ma-activities`),
-        ]);
-        setStats(statsRes.data);
-        setPlayers(playersRes.data);
-        setRecentNews(newsRes.data);
-        setExpenditures(expendituresRes.data);
-        setRecentMA(maRes.data);
-        setFetchedAt(new Date());
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
 
   // Close search dropdown when clicking outside
   useEffect(() => {
@@ -161,6 +162,15 @@ export default function Dashboard() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
+        <p className="font-medium">Failed to load dashboard data.</p>
+        <button onClick={fetchData} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">Retry</button>
+      </div>
+    );
+  }
+
   const topPlayers = players.slice(0, 5);
   const topExpenditures = expenditures.slice(0, 7);
 
@@ -184,124 +194,53 @@ export default function Dashboard() {
           </h1>
           <p className="text-slate-500 text-sm mt-1">Global Defense Intelligence Overview</p>
         </div>
-
-        <div className="flex items-center gap-3">
-          {/* Company search */}
-          <div className="relative" ref={searchRef}>
-            <div className={`flex items-center gap-2 bg-white border rounded-lg px-3 py-2 transition-all duration-200 w-64 ${
-              showSearch ? "border-purple-400 ring-2 ring-purple-100" : "border-slate-200 hover:border-purple-300"
-            }`}>
-              <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
-              <input
-                type="text"
-                placeholder={loading ? "Chargement…" : "Rechercher une société…"}
-                disabled={loading}
-                className="flex-1 text-sm text-slate-700 placeholder-slate-400 bg-transparent outline-none disabled:cursor-wait"
-                value={searchQuery}
-                onChange={(e) => { setSearchQuery(e.target.value); setShowSearch(true); }}
-                onFocus={() => setShowSearch(true)}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => { setSearchQuery(""); setShowSearch(false); }}
-                  className="text-slate-400 hover:text-slate-600 transition-colors"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
-            {/* Dropdown results */}
-            {showSearch && searchQuery.trim() && (
-              <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
-                {searchResults.length > 0 ? (
-                  <>
-                    <div className="px-3 py-2 border-b border-slate-100 bg-slate-50">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                        {searchResults.length} résultat{searchResults.length > 1 ? "s" : ""}
-                      </p>
-                    </div>
-                    {searchResults.map((player) => {
-                      const logoUrl = getLogo(player.name);
-                      const flagUrl = getFlag(player.country);
-                      return (
-                        <button
-                          key={player.id}
-                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-purple-50 transition-colors text-left border-b border-slate-50 last:border-0"
-                          onClick={() => {
-                            setSelectedCompany(player.name);
-                            setShowSearch(false);
-                            setSearchQuery("");
-                          }}
-                        >
-                          {logoUrl ? (
-                            <img
-                              src={logoUrl}
-                              alt={player.name}
-                              className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 flex-shrink-0"
-                              onError={(e) => { e.target.style.display = "none"; }}
-                            />
-                          ) : (
-                            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <Building2 className="w-4 h-4 text-purple-600" />
-                            </div>
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-slate-900 truncate">{player.name}</p>
-                            <div className="flex items-center gap-1.5 mt-0.5">
-                              {flagUrl && (
-                                <img src={flagUrl} alt={player.country} className="w-4 h-3 object-cover rounded-sm" />
-                              )}
-                              <span className="text-xs text-slate-500">{player.country}</span>
-                            </div>
-                          </div>
-                          {player.ticker && (
-                            <span className="font-mono text-xs text-purple-700 font-medium bg-purple-50 px-2 py-0.5 rounded flex-shrink-0">
-                              {player.ticker}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </>
-                ) : (
-                  <div className="px-4 py-5 text-center">
-                    <p className="text-sm text-slate-500">
-                      Aucune société trouvée pour&nbsp;<span className="font-medium text-slate-700">"{searchQuery}"</span>
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Clock badge */}
-          <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
-            <Clock className="w-3.5 h-3.5" />
-            <span>
-              {fetchedAt
-                ? `Données chargées à ${fetchedAt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
-                : "Chargement…"}
-            </span>
-            <span className="text-slate-300">|</span>
-            <Database className="w-3.5 h-3.5" />
-            <span>SIPRI · Yahoo Finance · Presse spécialisée</span>
-          </div>
+        <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+          <Clock className="w-3.5 h-3.5" />
+          <span>
+            {fetchedAt
+              ? `Data loaded at ${fetchedAt.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`
+              : "Loading…"}
+          </span>
+          <span className="text-slate-300">|</span>
+          <Database className="w-3.5 h-3.5" />
+          <span>SIPRI · Yahoo Finance · Defense press</span>
         </div>
       </div>
 
-      {/* "Cette semaine" summary strip */}
+      {/* Onboarding banner — shown when DB is empty */}
+      {stats?.players_count === 0 && (
+        <div className="flex items-start gap-4 bg-amber-50 border border-amber-200 rounded-xl px-5 py-4">
+          <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="flex-1 space-y-1">
+            <p className="text-sm font-semibold text-amber-800">{tBannerTitle}</p>
+            <p className="text-xs text-amber-700">{tBannerDesc}</p>
+          </div>
+          {user?.role === "admin" ? (
+            <Link
+              to="/admin"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition-colors whitespace-nowrap"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              {tBannerAdmin}
+            </Link>
+          ) : (
+            <span className="text-xs text-amber-600 whitespace-nowrap">{tBannerContact}</span>
+          )}
+        </div>
+      )}
+
+      {/* This week summary strip */}
       <div className="bg-gradient-to-r from-purple-50 to-slate-50 border border-purple-100 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-purple-600" />
-          <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">Cette semaine</span>
+          <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">This week</span>
         </div>
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-1.5">
             <span className={`text-sm font-mono font-bold ${weeklyMA.length > 0 ? "text-purple-700" : "text-slate-400"}`}>
               {weeklyMA.length}
             </span>
-            <span className="text-xs text-slate-500">deal{weeklyMA.length !== 1 ? "s" : ""} M&amp;A</span>
+            <span className="text-xs text-slate-500">M&amp;A deal{weeklyMA.length !== 1 ? "s" : ""}</span>
             {weeklyMA.length > 0 && (
               <Link to="/ma-activity" className="text-[10px] text-purple-500 hover:text-purple-700 font-medium ml-1">→</Link>
             )}
@@ -311,18 +250,18 @@ export default function Dashboard() {
             <span className={`text-sm font-mono font-bold ${contractNews.length > 0 ? "text-emerald-700" : "text-slate-400"}`}>
               {contractNews.length}
             </span>
-            <span className="text-xs text-slate-500">actualité{contractNews.length !== 1 ? "s" : ""} contrats</span>
+            <span className="text-xs text-slate-500">contract {contractNews.length !== 1 ? "updates" : "update"}</span>
           </div>
           <div className="w-px h-4 bg-slate-200 self-center" />
           <div className="flex items-center gap-1.5">
             <span className={`text-sm font-mono font-bold ${recentNews.length > 0 ? "text-slate-700" : "text-slate-400"}`}>
               {recentNews.length}
             </span>
-            <span className="text-xs text-slate-500">news indexées</span>
+            <span className="text-xs text-slate-500">indexed news</span>
           </div>
         </div>
         {weeklyMA.length === 0 && weeklyNews.length === 0 && (
-          <span className="text-xs text-slate-400 ml-auto">Aucun mouvement notable détecté cette semaine</span>
+          <span className="text-xs text-slate-400 ml-auto">No notable activity detected this week</span>
         )}
       </div>
 
@@ -333,7 +272,7 @@ export default function Dashboard() {
             label="TOTAL MARKET CAP"
             value={`$${(stats?.total_market_cap || 0).toFixed(1)}B`}
             icon={DollarSign}
-            subtext="Capitalisation agrégée"
+            subtext="Aggregated market cap"
             testId="metric-market-cap"
           />
         </Link>
@@ -348,18 +287,18 @@ export default function Dashboard() {
         </Link>
         <Link to="/market-data">
           <MetricCard
-            label="ACTEURS RECENSÉS"
+            label="TRACKED PLAYERS"
             value={stats?.players_count || 0}
-            subtext="Industriels & contractants"
+            subtext="Defense contractors & industry"
             icon={Building2}
             testId="metric-players"
           />
         </Link>
         <Link to="/ma-activity">
           <MetricCard
-            label="M&A SUIVIS"
+            label="M&A TRACKED"
             value={stats?.ma_count || 0}
-            subtext="Deals en base"
+            subtext="Deals in database"
             icon={Handshake}
             testId="metric-ma"
           />

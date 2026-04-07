@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { API } from "@/App";
+import { API, useAuth } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle } from "lucide-react";
+import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle, Star } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
@@ -74,23 +74,16 @@ const SORT_OPTIONS = [
 // Canonical segment labels for the filter
 // Values must match strings that appear in player.specializations arrays
 const SEGMENTS = [
-  { value: "all",          label: "All segments" },
-  { value: "aerospace",    label: "Aerospace" },
-  { value: "aircraft",     label: "Aircraft" },
-  { value: "naval",        label: "Naval" },
-  { value: "land",         label: "Land Systems" },
-  { value: "missiles",     label: "Missiles" },
-  { value: "ammunition",   label: "Ammunition / Munitions" },
-  { value: "uav",          label: "UAV / Drones" },
-  { value: "cyber",        label: "Cyber / EW" },
-  { value: "space",        label: "Space / Satellites" },
-  { value: "nuclear",      label: "Nuclear" },
-  { value: "radar",        label: "Radar / Sensors" },
-  { value: "ai",           label: "AI / Software" },
-  { value: "electronics",  label: "Defense Electronics" },
-  { value: "simulation",   label: "Simulation / Training" },
-  { value: "services",     label: "Services / Consulting" },
-  { value: "logistics",    label: "Logistics / MRO" },
+  { value: "all",         label: "All Segments" },
+  { value: "aerospace",   label: "Aerospace" },
+  { value: "naval",       label: "Naval" },
+  { value: "land",        label: "Land / Armored" },
+  { value: "missiles",    label: "Missiles" },
+  { value: "cyber",       label: "Cyber / EW" },
+  { value: "space",       label: "Space" },
+  { value: "services",    label: "Services / Consulting" },
+  { value: "logistics",   label: "Logistics / MRO" },
+  { value: "electronics", label: "Defense Electronics" },
 ];
 
 const COUNTRY_FLAGS = {
@@ -457,8 +450,8 @@ function StockChartModal({ player, liveData, onClose }) {
           ) : dataSource === "private" ? (
             <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
               <span className="text-2xl">🔒</span>
-              <p className="font-medium text-slate-500">Private company</p>
-              <p className="text-xs text-center max-w-xs">No market data available for privately-held companies.</p>
+              <p className="font-medium text-slate-500">Unlisted company</p>
+              <p className="text-xs text-center max-w-xs">No market data available for private companies.</p>
             </div>
           ) : dataSource === "unavailable" || chartData.length === 0 ? (
             <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
@@ -600,6 +593,7 @@ function StockChartModal({ player, liveData, onClose }) {
 }
 
 export default function MarketData() {
+  const { token } = useAuth();
   const [searchParams] = useSearchParams();
   const [players, setPlayers] = useState([]);
   const [filteredPlayers, setFilteredPlayers] = useState([]);
@@ -607,6 +601,7 @@ export default function MarketData() {
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [selectedSegment, setSelectedSegment] = useState("all");
+  const [watchlistOnly, setWatchlistOnly] = useState(false);
   const [sortBy, setSortBy] = useState("market_cap_desc");
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [chartPlayer, setChartPlayer] = useState(null);
@@ -615,6 +610,48 @@ export default function MarketData() {
   const [liveData, setLiveData] = useState({});
   const [liveLoading, setLiveLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
+  // watchlist: Set of company names
+  const [watchlist, setWatchlist] = useState(new Set());
+
+  // Load watchlist (authenticated users only)
+  useEffect(() => {
+    if (!token) return;
+    axios.get(`${API}/watchlist`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => setWatchlist(new Set(r.data)))
+      .catch(() => {});
+  }, [token]);
+
+  const toggleWatch = async (e, companyName) => {
+    e.stopPropagation();
+    if (!token) return;
+    const isWatched = watchlist.has(companyName);
+    // Optimistic
+    setWatchlist((prev) => {
+      const next = new Set(prev);
+      isWatched ? next.delete(companyName) : next.add(companyName);
+      return next;
+    });
+    try {
+      if (isWatched) {
+        await axios.delete(`${API}/watchlist`, {
+          params: { company_name: companyName },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        await axios.post(`${API}/watchlist`, null, {
+          params: { company_name: companyName },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+    } catch {
+      // Revert on error
+      setWatchlist((prev) => {
+        const next = new Set(prev);
+        isWatched ? next.add(companyName) : next.delete(companyName);
+        return next;
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -679,6 +716,10 @@ export default function MarketData() {
       );
     }
 
+    if (watchlistOnly) {
+      filtered = filtered.filter(p => watchlist.has(p.name));
+    }
+
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(p =>
@@ -704,7 +745,7 @@ export default function MarketData() {
     });
 
     setFilteredPlayers(filtered);
-  }, [searchTerm, selectedCountry, selectedSegment, sortBy, players, liveData]);
+  }, [searchTerm, selectedCountry, selectedSegment, watchlistOnly, sortBy, players, liveData, watchlist]);
 
   const totalMarketCap = filteredPlayers.reduce((sum, p) => sum + p.market_cap, 0);
   const totalRevenue = filteredPlayers.reduce((sum, p) => sum + p.revenue, 0);
@@ -910,7 +951,20 @@ export default function MarketData() {
 
       {/* Active filter summary */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-slate-500">{filteredPlayers.length} compan{filteredPlayers.length > 1 ? "ies" : "y"}</span>
+        <span className="text-xs text-slate-500">{filteredPlayers.length} {filteredPlayers.length === 1 ? "company" : "companies"}</span>
+        {token && (
+          <button
+            onClick={() => setWatchlistOnly((v) => !v)}
+            className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${
+              watchlistOnly
+                ? "bg-amber-50 text-amber-700 border-amber-300"
+                : "bg-white text-slate-500 border-slate-200 hover:border-amber-300 hover:text-amber-600"
+            }`}
+          >
+            <Star className={`w-3 h-3 ${watchlistOnly ? "fill-amber-500 text-amber-500" : ""}`} />
+            Watchlist {watchlist.size > 0 && `(${watchlist.size})`}
+          </button>
+        )}
         {selectedSegment !== "all" && (
           <span className="flex items-center gap-1 text-xs bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-medium">
             {SEGMENTS.find(s => s.value === selectedSegment)?.label}
@@ -936,6 +990,7 @@ export default function MarketData() {
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4 w-8">{token ? "" : ""}</th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Company</th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Ticker</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Stock Price</th>
@@ -965,6 +1020,19 @@ export default function MarketData() {
                       onClick={() => setSelectedPlayer(player)}
                       data-testid={`player-row-${player.id}`}
                     >
+                      {/* Watchlist star */}
+                      <td className="p-4 w-8">
+                        {token && (
+                          <button
+                            onClick={(e) => toggleWatch(e, player.name)}
+                            title={watchlist.has(player.name) ? "Remove from watchlist" : "Add to watchlist"}
+                            className="p-1 rounded hover:bg-amber-50 transition-colors"
+                          >
+                            <Star className={`w-4 h-4 transition-colors ${watchlist.has(player.name) ? "fill-amber-400 text-amber-400" : "text-slate-300 hover:text-amber-400"}`} />
+                          </button>
+                        )}
+                      </td>
+
                       {/* Company */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
