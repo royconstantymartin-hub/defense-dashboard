@@ -39,11 +39,12 @@ function CompanyLogo({ name, domain, size = "lg" }) {
   const [failed, setFailed] = useState(false);
   const sizeClass = size === "lg" ? "w-16 h-16" : "w-10 h-10";
   const textClass = size === "lg" ? "text-xl" : "text-sm";
+  const logoUrl = domain ? `https://unavatar.io/${domain}?fallback=false` : null;
 
-  if (domain && !failed) {
+  if (logoUrl && !failed) {
     return (
       <img
-        src={`https://logo.clearbit.com/${domain}`}
+        src={logoUrl}
         alt={name}
         className={`${sizeClass} rounded-2xl object-contain bg-white border border-white/20 shadow-lg p-1.5`}
         onError={() => setFailed(true)}
