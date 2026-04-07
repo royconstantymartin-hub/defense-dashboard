@@ -278,6 +278,37 @@ function relativeTime(isoStr) {
   return `${d}d ago`;
 }
 
+// Logo with Clearbit → DuckDuckGo → Building2 fallback chain
+function LogoWithFallback({ name, clearbitUrl, ddgUrl }) {
+  const [src, setSrc] = useState(clearbitUrl || ddgUrl || null);
+  const [failed, setFailed] = useState(false);
+
+  const handleError = () => {
+    if (src === clearbitUrl && ddgUrl) {
+      setSrc(ddgUrl);
+    } else {
+      setFailed(true);
+    }
+  };
+
+  if (!src || failed) {
+    return (
+      <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+        <Building2 className="w-4 h-4 text-purple-600" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={name}
+      className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 shrink-0"
+      onError={handleError}
+    />
+  );
+}
+
 // Stock History Chart — slides in from the right like CompanyProfileSheet
 function StockChartModal({ player, liveData, onClose }) {
   const [period, setPeriod] = useState("1d");
@@ -695,6 +726,11 @@ export default function MarketData() {
     return domain ? `https://logo.clearbit.com/${domain}` : null;
   };
 
+  const getDdgLogo = (companyName) => {
+    const domain = COMPANY_LOGOS[companyName];
+    return domain ? `https://icons.duckduckgo.com/ip3/${domain}.ico` : null;
+  };
+
   const isPrivate = (ticker) => !ticker || ticker === "Private" || ticker.includes("PRIV");
 
   if (loading) {
@@ -940,23 +976,11 @@ export default function MarketData() {
                             className="flex items-center gap-2.5 group text-left"
                             title={`View ${player.name} profile`}
                           >
-                          {logoUrl ? (
-                            <img
-                              src={logoUrl}
-                              alt={player.name}
-                              className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 group-hover:border-purple-200 transition-colors shrink-0"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.nextSibling && (e.target.nextSibling.style.display = 'flex');
-                              }}
-                            />
-                          ) : null}
-                          <div
-                            className="w-8 h-8 bg-purple-100 rounded-lg items-center justify-center shrink-0"
-                            style={{ display: logoUrl ? 'none' : 'flex' }}
-                          >
-                            <Building2 className="w-4 h-4 text-purple-600" />
-                          </div>
+                          <LogoWithFallback
+                            name={player.name}
+                            clearbitUrl={logoUrl}
+                            ddgUrl={getDdgLogo(player.name)}
+                          />
                             <div>
                               <p className="text-slate-900 group-hover:text-purple-700 font-medium text-sm transition-colors">{player.name}</p>
                               <div className="flex items-center gap-1.5 mt-0.5">
