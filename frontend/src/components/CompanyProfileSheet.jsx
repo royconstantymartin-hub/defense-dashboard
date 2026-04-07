@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { API, useAuth } from "@/App";
+import { getLogoDomain } from "@/lib/companyLogos";
 import {
   Sheet, SheetContent,
 } from "@/components/ui/sheet";
@@ -172,13 +173,15 @@ export default function CompanyProfileSheet({ name, onClose }) {
   const p  = data?.profile;
   const ma = data?.ma_activities ?? [];
 
-  const resolvedDomain = logoDomain ?? (() => {
-    for (const a of ma) {
-      if (a.acquirer?.toLowerCase().includes(name?.toLowerCase() || "")) return a.acquirer_logo_domain;
-      if (a.target?.toLowerCase().includes(name?.toLowerCase() || ""))   return a.target_logo_domain;
-    }
-    return null;
-  })();
+  const resolvedDomain = logoDomain
+    ?? (() => {
+      for (const a of ma) {
+        if (a.acquirer?.toLowerCase().includes(name?.toLowerCase() || "")) return a.acquirer_logo_domain;
+        if (a.target?.toLowerCase().includes(name?.toLowerCase() || ""))   return a.target_logo_domain;
+      }
+      return null;
+    })()
+    ?? getLogoDomain(name);
 
   return (
     <Sheet open={!!name} onOpenChange={(open) => { if (!open) onClose(); }}>
