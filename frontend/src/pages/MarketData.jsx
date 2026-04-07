@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
+import { getClearbitUrl, getGoogleFaviconUrl } from "@/lib/companyLogos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -96,151 +97,6 @@ const COUNTRY_FLAGS = {
   "South Africa": "za", "Saudi Arabia": "sa"
 };
 
-const COMPANY_LOGOS = {
-  // USA
-  "Lockheed Martin": "lockheedmartin.com",
-  "Raytheon Technologies": "rtx.com",
-  "Boeing Defense": "boeing.com",
-  "Northrop Grumman": "northropgrumman.com",
-  "General Dynamics": "gd.com",
-  "L3Harris Technologies": "l3harris.com",
-  "Huntington Ingalls": "huntingtoningalls.com",
-  "Leidos Holdings": "leidos.com",
-  "SAIC": "saic.com",
-  "Booz Allen Hamilton": "boozallen.com",
-  "General Atomics": "ga.com",
-  "Textron": "textron.com",
-  "Kratos Defense": "kratosdefense.com",
-  "Mercury Systems": "mrcy.com",
-  "AeroVironment": "avinc.com",
-  "Maxar Technologies": "maxar.com",
-  "Curtiss-Wright": "curtisswright.com",
-  "TransDigm": "transdigm.com",
-  "Hexcel": "hexcel.com",
-  "Spirit AeroSystems": "spiritaero.com",
-  "Triumph Group": "triumphgroup.com",
-  "Parsons Corporation": "parsons.com",
-  "BWX Technologies": "bwxt.com",
-  "CACI International": "caci.com",
-  "ManTech International": "mantech.com",
-  "Palantir Technologies": "palantir.com",
-  "Rocket Lab": "rocketlabusa.com",
-  "Collins Aerospace": "collinsaerospace.com",
-  "Pratt & Whitney": "prattwhitney.com",
-  "General Electric Aviation": "ge.com",
-  "Honeywell Aerospace": "honeywell.com",
-  "Ball Aerospace": "ball.com",
-  "HEICO Corporation": "heico.com",
-  "Kaman Aerospace": "kaman.com",
-  "Astronics Corporation": "astronics.com",
-  "Sierra Nevada Corporation": "sncorp.com",
-  "Anduril Industries": "anduril.com",
-  "Shield AI": "shield.ai",
-  "Peraton": "peraton.com",
-  "V2X Inc": "v2x.com",
-  "Axon Enterprise": "axon.com",
-  "OSI Systems": "osi-systems.com",
-  "Redwire Corporation": "redwirespace.com",
-  "DRS Technologies": "leonardodrs.com",
-  "MDA Space": "mda.space",
-  "AAR Corp": "aarcorp.com",
-  "Ducommun": "ducommun.com",
-  "General Dynamics Mission Systems Canada": "gd.com",
-  "CAE Inc": "cae.com",
-  "Harris Corporation": "l3harris.com",
-  "Orbital ATK": "northropgrumman.com",
-  // UK
-  "BAE Systems": "baesystems.com",
-  "Rolls-Royce Holdings": "rolls-royce.com",
-  "Babcock International": "babcock.co.uk",
-  "QinetiQ": "qinetiq.com",
-  "Chemring Group": "chemring.co.uk",
-  "Ultra Electronics": "ultra.group",
-  "Meggitt": "meggitt.com",
-  "Cohort": "cohortplc.com",
-  // Europe
-  "Thales": "thalesgroup.com",
-  "Thales Nederland": "thalesgroup.com",
-  "Airbus Defence & Space": "airbus.com",
-  "Airbus Defence Spain": "airbus.com",
-  "Leonardo": "leonardo.com",
-  "Safran": "safran-group.com",
-  "Dassault Aviation": "dassault-aviation.com",
-  "MBDA": "mbda-systems.com",
-  "Naval Group": "naval-group.com",
-  "Nexter Systems": "knds.com",
-  "KNDS": "knds.com",
-  "Arquus": "arquus-defense.com",
-  "CS Group": "cs-group.com",
-  "Sofradir": "lynred.com",
-  "Rheinmetall": "rheinmetall.com",
-  "Krauss-Maffei Wegmann": "kmweg.de",
-  "Diehl Defence": "diehl.com",
-  "Hensoldt": "hensoldt.net",
-  "MTU Aero Engines": "mtu.de",
-  "Renk Group": "renk.eu",
-  "ThyssenKrupp Marine": "thyssenkrupp-marine-systems.com",
-  "Fincantieri": "fincantieri.com",
-  "Elettronica": "elt.it",
-  "Avio": "avio.com",
-  "Saab AB": "saab.com",
-  "Nammo": "nammo.com",
-  "Kongsberg Defence": "kongsberg.com",
-  "Patria": "patria.fi",
-  "Indra Sistemas": "indracompany.com",
-  "Navantia": "navantia.es",
-  "Damen Shipyards": "damen.com",
-  "CMI Defence": "cmigroupe.com",
-  "FN Herstal": "fnherstal.com",
-  "Pilatus Aircraft": "pilatus-aircraft.com",
-  "RUAG": "ruag.com",
-  "Polska Grupa Zbrojeniowa": "pgzsa.pl",
-  "WB Electronics": "wbelectronics.pl",
-  "Czechoslovak Group": "czechoslovakgroup.cz",
-  "Aero Vodochody": "aero.cz",
-  // Israel
-  "Elbit Systems": "elbitsystems.com",
-  "Israel Aerospace Industries": "iai.co.il",
-  "Rafael Advanced Defense": "rafael.co.il",
-  // Asia-Pacific
-  "Mitsubishi Heavy Industries": "mhi.com",
-  "Kawasaki Heavy Industries": "khi.co.jp",
-  "IHI Corporation": "ihi.co.jp",
-  "NEC Corporation": "nec.com",
-  "Fujitsu Defense": "fujitsu.com",
-  "Japan Steel Works": "jsw.co.jp",
-  "Hanwha Aerospace": "hanwhaaerospace.com",
-  "Hanwha Defense": "hanwhadefense.com",
-  "Korea Aerospace Industries": "koreaaero.com",
-  "Hyundai Rotem": "hyundai-rotem.com",
-  "LIG Nex1": "lignex1.com",
-  "ST Engineering": "stengg.com",
-  "Singapore Technologies Aerospace": "stengg.com",
-  "Bharat Electronics": "bel-india.in",
-  "Hindustan Aeronautics": "hal-india.co.in",
-  "Bharat Dynamics": "bdl-india.in",
-  "Mazagon Dock": "mazagondock.in",
-  "Cochin Shipyard": "cochinshipyard.in",
-  "BEML": "bemlindia.in",
-  "CEA Technologies": "ceatechnologies.com.au",
-  "Electro Optic Systems": "eos-aus.com",
-  "Austal": "austal.com",
-  // Middle East & Africa
-  "EDGE Group": "edgegroup.ae",
-  "Emirates Defence Industries": "edi.ae",
-  "SAMI": "sami.com.sa",
-  "Paramount Group": "paramountgroup.biz",
-  "Denel": "denel.co.za",
-  // Turkey & LatAm
-  "Turkish Aerospace Industries": "tai.com.tr",
-  "Aselsan": "aselsan.com",
-  "Roketsan": "roketsan.com.tr",
-  "STM": "stm.com.tr",
-  "Baykar": "baykartech.com",
-  "Taurus Armas": "taurusarmas.com.br",
-  "Embraer Defense": "embraer.com",
-};
-
 const HISTORY_PERIODS = [
   { value: "1d", label: "1D" },
   { value: "1w", label: "1W" },
@@ -271,7 +127,22 @@ function relativeTime(isoStr) {
   return `${d}d ago`;
 }
 
-// Logo with Clearbit → DuckDuckGo → Building2 fallback chain
+const AVATAR_COLORS = [
+  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
+  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
+  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
+  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
+];
+function avatarColor(name = "") {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+function initials(name = "") {
+  return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
+
+// Logo with Clearbit → Google Favicon (64px) → letter-avatar fallback chain
 function LogoWithFallback({ name, clearbitUrl, ddgUrl }) {
   const [src, setSrc] = useState(clearbitUrl || ddgUrl || null);
   const [failed, setFailed] = useState(false);
@@ -286,8 +157,8 @@ function LogoWithFallback({ name, clearbitUrl, ddgUrl }) {
 
   if (!src || failed) {
     return (
-      <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
-        <Building2 className="w-4 h-4 text-purple-600" />
+      <div className={`w-8 h-8 bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
+        <span className="text-[10px] font-bold text-white tracking-tight">{initials(name)}</span>
       </div>
     );
   }
@@ -762,15 +633,8 @@ export default function MarketData() {
     return code ? `https://flagcdn.com/w40/${code}.png` : null;
   };
 
-  const getLogo = (companyName) => {
-    const domain = COMPANY_LOGOS[companyName];
-    return domain ? `https://logo.clearbit.com/${domain}` : null;
-  };
-
-  const getDdgLogo = (companyName) => {
-    const domain = COMPANY_LOGOS[companyName];
-    return domain ? `https://icons.duckduckgo.com/ip3/${domain}.ico` : null;
-  };
+  const getLogo = (companyName) => getClearbitUrl(companyName);
+  const getDdgLogo = (companyName) => getGoogleFaviconUrl(companyName);
 
   const isPrivate = (ticker) => !ticker || ticker === "Private" || ticker.includes("PRIV");
 

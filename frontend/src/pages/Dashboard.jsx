@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import axios from "axios";
 import { API, useAuth, useT } from "@/App";
+import { getClearbitUrl } from "@/lib/companyLogos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   TrendingUp,
@@ -45,19 +46,6 @@ const COUNTRY_FLAGS = {
   "United Kingdom": "gb"
 };
 
-// Company logo domains
-const COMPANY_LOGOS = {
-  "Lockheed Martin": "lockheedmartin.com",
-  "Raytheon Technologies": "rtx.com",
-  "Boeing Defense": "boeing.com",
-  "Northrop Grumman": "northropgrumman.com",
-  "General Dynamics": "gd.com",
-  "L3Harris Technologies": "l3harris.com",
-  "BAE Systems": "baesystems.com",
-  "Thales": "thalesgroup.com",
-  "Leonardo": "leonardo.com",
-  "Airbus Defence & Space": "airbus.com",
-};
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -133,10 +121,7 @@ export default function Dashboard() {
     return code ? `https://flagcdn.com/w40/${code}.png` : null;
   };
 
-  const getLogo = (companyName) => {
-    const domain = COMPANY_LOGOS[companyName];
-    return domain ? `https://logo.clearbit.com/${domain}` : null;
-  };
+  const getLogo = (companyName) => getClearbitUrl(companyName);
 
   // "Cette semaine" — deals M&A et news des 7 derniers jours
   const weekAgo = useMemo(() => {
