@@ -169,15 +169,21 @@ export const COMPANY_LOGOS = {
   "CAE Inc": "cae.com",
 };
 
-/**
- * Returns a Clearbit logo URL for the given company name, or null if unknown.
- */
 export function getLogoDomain(name) {
   return COMPANY_LOGOS[name] ?? null;
 }
 
-export function getClearbitUrl(name) {
+/**
+ * Returns a logo URL for the given company name via unavatar.io,
+ * a free aggregator that tries multiple sources (favicon, DuckDuckGo, etc.).
+ * Falls back to null if the domain is unknown.
+ */
+export function getLogoUrl(name) {
   const domain = getLogoDomain(name);
-  return domain ? `https://logo.clearbit.com/${domain}` : null;
+  return domain ? `https://unavatar.io/${domain}?fallback=false` : null;
 }
 
+// Kept for backward compat — same as getLogoUrl
+export function getClearbitUrl(name) {
+  return getLogoUrl(name);
+}

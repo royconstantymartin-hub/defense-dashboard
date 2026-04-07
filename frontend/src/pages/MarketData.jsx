@@ -142,14 +142,15 @@ function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-// Logo: Clearbit → letter-avatar fallback
-function LogoWithFallback({ name, clearbitUrl }) {
+// Logo: unavatar.io → letter-avatar fallback
+// sizeClass defaults to table row size; pass override for modal/card use
+function LogoWithFallback({ name, clearbitUrl, sizeClass = "w-8 h-8", textClass = "text-[10px]", rounded = "rounded-lg" }) {
   const [failed, setFailed] = useState(false);
 
   if (!clearbitUrl || failed) {
     return (
-      <div className={`w-8 h-8 bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
-        <span className="text-[10px] font-bold text-white tracking-tight">{initials(name)}</span>
+      <div className={`${sizeClass} bg-gradient-to-br ${avatarColor(name)} ${rounded} flex items-center justify-center shrink-0`}>
+        <span className={`${textClass} font-bold text-white tracking-tight`}>{initials(name)}</span>
       </div>
     );
   }
@@ -158,7 +159,7 @@ function LogoWithFallback({ name, clearbitUrl }) {
     <img
       src={clearbitUrl}
       alt={name}
-      className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 shrink-0"
+      className={`${sizeClass} ${rounded} object-contain bg-white border border-slate-100 shrink-0`}
       onError={() => setFailed(true)}
     />
   );
@@ -1013,17 +1014,13 @@ export default function MarketData() {
           >
             <CardHeader className="border-b border-slate-100 bg-slate-50/50">
               <div className="flex items-center gap-4">
-                {getLogo(selectedPlayer.name) ? (
-                  <img
-                    src={getLogo(selectedPlayer.name)}
-                    alt={selectedPlayer.name}
-                    className="w-14 h-14 rounded-xl object-contain bg-white border border-slate-100 shadow-sm"
-                  />
-                ) : (
-                  <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <Building2 className="w-7 h-7 text-purple-600" />
-                  </div>
-                )}
+                <LogoWithFallback
+                  name={selectedPlayer.name}
+                  clearbitUrl={getLogo(selectedPlayer.name)}
+                  sizeClass="w-14 h-14"
+                  textClass="text-sm"
+                  rounded="rounded-xl"
+                />
                 <div>
                   <CardTitle className="font-heading text-xl text-slate-900">{selectedPlayer.name}</CardTitle>
                   <div className="flex items-center gap-2 mt-1">
