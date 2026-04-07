@@ -74,6 +74,10 @@ export default function Dashboard() {
   const [error, setError] = useState(false);
   // Timestamp set once at fetch time — not on every render
   const [fetchedAt, setFetchedAt] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const searchRef = useRef(null);
 
   const fetchData = async () => {
     setLoading(true);
