@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import axios from "axios";
 import { API, useAuth, useT } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +17,7 @@ import {
   Info,
   Settings,
 } from "lucide-react";
+import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Link } from "react-router-dom";
 import {
   BarChart,
@@ -99,6 +100,29 @@ export default function Dashboard() {
   };
 
   useEffect(() => { fetchData(); }, []);
+
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSearch(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return players
+      .filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          (p.ticker && p.ticker.toLowerCase().includes(q))
+      )
+      .slice(0, 6);
+  }, [players, searchQuery]);
 
   const getFlag = (country) => {
     const code = COUNTRY_FLAGS[country];
@@ -541,6 +565,14 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Company profile sheet — opened from search */}
+      {selectedCompany && (
+        <CompanyProfileSheet
+          name={selectedCompany}
+          onClose={() => setSelectedCompany(null)}
+        />
+      )}
     </div>
   );
 }

@@ -353,7 +353,7 @@ MA_DATA = [
         "acquirer_country": "KR", "target_country": "KR",
         "acquirer_logo_domain": "hanwha.com",
         "target_logo_domain": "hanwha.com",
-                "source_url": "https://www.hanwha.com/en/newsroom/press-releases/2023/hanwha-completes-acquisition-daewoo-shipbuilding",
+                "source_url": "https://www.hanwha.com/en/newsroom",
         "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
     },
     {
@@ -402,7 +402,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "GB",
         "acquirer_logo_domain": "parker.com",
         "target_logo_domain": "meggitt.com",
-                "source_url": "https://ir.parker.com/news-releases/news-release-details/parker-hannifin-completes-acquisition-meggitt-plc",
+                "source_url": "https://www.parker.com/content/dam/Parker-com/literature/news",
         "announced_date": datetime(2021, 8, 2, tzinfo=timezone.utc),
     },
     # ── 2021 ──────────────────────────────────────────────────────────────────
@@ -420,7 +420,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "teledyne.com",
         "target_logo_domain": "flir.com",
-                "source_url": "https://ir.teledyne.com/news-releases/news-release-details/teledyne-technologies-completes-acquisition-flir-systems",
+                "source_url": "https://www.teledyne.com/en-us/news",
         "announced_date": datetime(2021, 1, 4, tzinfo=timezone.utc),
     },
     {
@@ -470,7 +470,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "mrcy.com",
         "target_logo_domain": "mrcy.com",
-                "source_url": "https://ir.mrcy.com/news-releases/news-release-details/mercury-systems-completes-acquisition-physical-optics-corporation",
+                "source_url": "https://www.mrcy.com/company/news",
         "announced_date": datetime(2021, 2, 23, tzinfo=timezone.utc),
     },
     {
@@ -486,7 +486,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "shield.ai",
         "target_logo_domain": "shield.ai",
-                "source_url": "https://shield.ai/shield-ai-acquires-heron-systems",
+                "source_url": "https://shield.ai/newsroom",
         "announced_date": datetime(2021, 3, 25, tzinfo=timezone.utc),
     },
     {
@@ -502,7 +502,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "saic.com",
         "target_logo_domain": "saic.com",
-                "source_url": "https://investors.saic.com/news-releases/news-release-details/saic-completes-acquisition-halfaker-and-associates",
+                "source_url": "https://www.saic.com/news",
         "announced_date": datetime(2021, 10, 1, tzinfo=timezone.utc),
     },
     {
@@ -519,7 +519,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "DE",
         "acquirer_logo_domain": "avinc.com",
         "target_logo_domain": "telerob.com",
-                "source_url": "https://ir.avinc.com/news-releases/news-release-details/aerovironment-completes-acquisition-telerob",
+                "source_url": "https://www.avinc.com/company/news",
         "announced_date": datetime(2021, 8, 16, tzinfo=timezone.utc),
     },
     # ── 2020 ──────────────────────────────────────────────────────────────────
@@ -537,7 +537,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "rtx.com",
         "target_logo_domain": "rtx.com",
-                "source_url": "https://investors.rtx.com/news-releases/news-release-details/raytheon-united-technologies-complete-merger-transaction",
+                "source_url": "https://www.rtx.com/news",
         "announced_date": datetime(2020, 4, 3, tzinfo=timezone.utc),
     },
     {
@@ -571,7 +571,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "GB",
         "acquirer_logo_domain": "transdigm.com",
         "target_logo_domain": "transdigm.com",
-                "source_url": "https://ir.transdigm.com/news-releases/news-release-details/transdigm-completes-acquisition-cobham-advanced-electronic",
+                "source_url": "https://www.transdigm.com/news",
         "announced_date": datetime(2020, 11, 4, tzinfo=timezone.utc),
     },
     # ── 2019 ──────────────────────────────────────────────────────────────────
@@ -621,7 +621,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "saic.com",
         "target_logo_domain": "saic.com",
-                "source_url": "https://investors.saic.com/news-releases/news-release-details/saic-completes-acquisition-engility",
+                "source_url": "https://www.saic.com/news",
         "announced_date": datetime(2018, 9, 10, tzinfo=timezone.utc),
     },
     {
@@ -688,7 +688,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "transdigm.com",
         "target_logo_domain": "transdigm.com",
-                "source_url": "https://ir.transdigm.com/news-releases/news-release-details/transdigm-group-completes-acquisition-esterline-technologies",
+                "source_url": "https://www.transdigm.com/news",
         "announced_date": datetime(2018, 10, 10, tzinfo=timezone.utc),
     },
     {
@@ -750,6 +750,114 @@ MA_EXTRA_DEALS = [
         "target_logo_domain": "harmattan.ai",
         "source_url": "https://www.dassault-aviation.com/en/group/press/",
         "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
+        "stake_percentage": 15.0,
+        "round_type": "series_a",
+        "is_disclosed": True,
+    },
+    # ── Defense Tech Startup Investments ──────────────────────────────────────
+    {
+        "acquirer": "L3Harris", "target": "Helsing",
+        "deal_value": 50, "status": "completed", "deal_type": "strategic_investment",
+        "description": "Strategic co-investment in Helsing's €450M Series B — European AI-for-defence leader",
+        "rationale": (
+            "L3Harris participates as a strategic investor in Helsing's €450M Series B "
+            "financing round, the largest single defence AI funding round in European history. "
+            "Helsing, headquartered in Munich, develops AI systems for sensor fusion, electronic "
+            "warfare and autonomous mission management. L3Harris's ticket secures a minority "
+            "stake and a preferred partner relationship for integrating Helsing software into "
+            "L3Harris sensor payloads and EW systems deployed on NATO platforms."
+        ),
+        "acquirer_country": "US", "target_country": "DE",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "helsing.ai",
+        "source_url": "https://helsing.ai/news",
+        "announced_date": datetime(2024, 9, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_b",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Northrop Grumman", "target": "Epirus",
+        "deal_value": 0, "status": "completed", "deal_type": "strategic_investment",
+        "description": "Strategic investment in Epirus — high-power microwave counter-drone technology",
+        "rationale": (
+            "Northrop Grumman makes a strategic equity investment in Epirus, a US defense "
+            "tech startup developing the Leonidas high-power microwave (HPM) weapon system "
+            "for counter-drone and counter-electronics missions. The investment provides "
+            "Northrop with a preferred technology partner for directed-energy payloads, "
+            "complementing its Integrated Air and Missile Defense portfolio, while Epirus "
+            "gains access to Northrop's systems integration expertise and government customer relationships."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "northropgrumman.com",
+        "target_logo_domain": "epirusinc.com",
+        "source_url": "https://www.epirusinc.com/news",
+        "announced_date": datetime(2023, 11, 7, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "Airbus", "target": "Milrem Robotics",
+        "deal_value": 0, "status": "completed", "deal_type": "minority_stake",
+        "description": "Minority stake in Estonian autonomous ground vehicle pioneer",
+        "rationale": (
+            "Airbus Defence and Space acquires a minority equity stake in Milrem Robotics, "
+            "the Estonian developer of the THeMIS unmanned ground vehicle (UGV) platform "
+            "deployed by multiple NATO armies. The deal builds on an existing teaming "
+            "agreement for the iMUGS (integrated Modular Unmanned Ground System) EU-funded "
+            "programme, giving Airbus a foothold in the fast-growing autonomous land systems "
+            "market and Milrem access to Airbus's European government sales network."
+        ),
+        "acquirer_country": "FR", "target_country": "EE",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "milremrobotics.com",
+        "source_url": "https://www.milremrobotics.com/news/",
+        "announced_date": datetime(2024, 4, 22, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "RTX Ventures", "target": "Capella Space",
+        "deal_value": 15, "status": "completed", "deal_type": "strategic_investment",
+        "description": "Strategic investment in Capella's SAR satellite constellation — Series C participation",
+        "rationale": (
+            "RTX Ventures, the corporate venture arm of RTX, participates in Capella Space's "
+            "Series C funding round. Capella operates a commercial SAR (Synthetic Aperture Radar) "
+            "satellite constellation providing all-weather, day-night imagery for government and "
+            "commercial customers. The investment aligns with RTX's space intelligence strategy "
+            "and provides access to Capella's growing GEOINT data pipeline for integration with "
+            "RTX sensor systems and DARPA/NRO programme requirements."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "rtx.com",
+        "target_logo_domain": "capellaspace.com",
+        "source_url": "https://www.capellaspace.com/press-releases/",
+        "announced_date": datetime(2023, 6, 14, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_c",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Safran", "target": "Preligens",
+        "deal_value": 220, "status": "completed", "deal_type": "acquisition",
+        "description": "Full acquisition of French AI-powered GEOINT startup — rebranded Safran AI",
+        "rationale": (
+            "Safran acquires Preligens, a French AI startup specialising in automated satellite "
+            "image analysis and geospatial intelligence (GEOINT). Preligens's Earth and Sky "
+            "platforms use computer vision to automatically detect and classify military assets "
+            "in satellite imagery at scale. Following the acquisition, Preligens was rebranded "
+            "Safran AI, anchoring Safran's push into AI-driven defence intelligence and ISR systems."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "safran-group.com",
+        "target_logo_domain": "preligens.com",
+        "source_url": "https://www.safran-group.com/en/newsroom",
+        "announced_date": datetime(2023, 10, 3, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
     },
     {
         "acquirer": "Rheinmetall + BAE Systems", "target": "RBSL (Rheinmetall BAE Systems Land)",
@@ -767,10 +875,13 @@ MA_EXTRA_DEALS = [
         "target_logo_domain": "baesystems.com",
         "source_url": "https://www.baesystems.com/en/our-company/news-and-events/bae-systems-investor-news",
         "announced_date": datetime(2019, 5, 8, tzinfo=timezone.utc),
+        "stake_percentage": 50.0,
+        "round_type": None,
+        "is_disclosed": False,
     },
     {
         "acquirer": "Airbus + Safran", "target": "ArianeGroup",
-        "deal_value": 0, "status": "completed", "deal_type": "joint_venture",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
         "description": "50/50 JV — European sovereign space-launch systems champion",
         "rationale": (
             "Airbus and Safran merge their space-propulsion and launch-vehicle activities "
@@ -785,6 +896,9 @@ MA_EXTRA_DEALS = [
         "target_logo_domain": "safran-group.com",
         "source_url": "https://www.arianegroup.com/en/news/press-releases",
         "announced_date": datetime(2015, 6, 23, tzinfo=timezone.utc),
+        "stake_percentage": 50.0,
+        "round_type": None,
+        "is_disclosed": False,
     },
     {
         "acquirer": "Anduril Industries", "target": "Area-I",
@@ -803,10 +917,13 @@ MA_EXTRA_DEALS = [
         "target_logo_domain": "anduril.com",
         "source_url": "https://www.anduril.com/newsroom",
         "announced_date": datetime(2021, 6, 7, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
     },
     {
         "acquirer": "Airbus + BAE Systems + Leonardo", "target": "MBDA",
-        "deal_value": 0, "status": "completed", "deal_type": "joint_venture",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
         "description": "Tri-national JV — Europe's largest missile systems integrator",
         "rationale": (
             "Airbus (37.5%), BAE Systems (37.5%) and Leonardo (25%) jointly own MBDA, "
@@ -820,6 +937,9 @@ MA_EXTRA_DEALS = [
         "target_logo_domain": "mbda-systems.com",
         "source_url": "https://www.mbda-systems.com/about-us/",
         "announced_date": datetime(2001, 12, 18, tzinfo=timezone.utc),
+        "stake_percentage": 37.5,
+        "round_type": None,
+        "is_disclosed": False,
     },
     {
         "acquirer": "Anduril Industries", "target": "Adranos",
@@ -837,6 +957,9 @@ MA_EXTRA_DEALS = [
         "target_logo_domain": "anduril.com",
         "source_url": "https://www.anduril.com/newsroom",
         "announced_date": datetime(2023, 4, 12, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
     },
     {
         "acquirer": "Leonardo DRS", "target": "RADA Electronic Industries",
@@ -855,6 +978,9 @@ MA_EXTRA_DEALS = [
         "target_logo_domain": "rada.com",
         "source_url": "https://www.leonardodrs.com/news/",
         "announced_date": datetime(2022, 11, 28, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
     },
 ]
 

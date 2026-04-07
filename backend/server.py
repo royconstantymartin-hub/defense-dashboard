@@ -16,7 +16,7 @@ import re
 import jwt
 import bcrypt
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history
+from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history, invalidate_cache as invalidate_stock_cache
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -86,8 +86,8 @@ class MAActivityCreate(BaseModel):
     acquirer: str
     target: str
     deal_value: float  # in millions USD
-    status: str  # announced, pending, completed, cancelled
-    deal_type: str  # acquisition, merger, joint_venture
+    status: str  # announced, pending, under_review, completed, active, cancelled, dissolved, exited
+    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake
     description: str
     acquirer_country: Optional[str] = None   # ISO 3166-1 alpha-2
     target_country: Optional[str] = None
@@ -95,6 +95,10 @@ class MAActivityCreate(BaseModel):
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
     rationale: Optional[str] = None          # 2-3 sentence strategic context
+    # Enriched deal metadata
+    stake_percentage: Optional[float] = None  # % of capital acquired/invested (minority deals)
+    round_type: Optional[str] = None          # seed / series_a / series_b / series_c / growth / buyout
+    is_disclosed: bool = True                 # False when deal value is undisclosed
 
 class MAActivity(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -112,6 +116,10 @@ class MAActivity(BaseModel):
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
     rationale: Optional[str] = None
+    # Enriched deal metadata
+    stake_percentage: Optional[float] = None
+    round_type: Optional[str] = None
+    is_disclosed: bool = True
 
 # Defense Player Model
 class DefensePlayerCreate(BaseModel):
@@ -407,10 +415,22 @@ async def delete_announcement(announcement_id: str, current_user: dict = Depends
 # ============= M&A ROUTES =============
 
 @api_router.get("/ma-activities", response_model=List[MAActivity])
-async def get_ma_activities(status: Optional[str] = None, limit: int = 50):
-    query = {}
+async def get_ma_activities(
+    status: Optional[str] = None,
+    limit: int = 100,
+    days: Optional[int] = 30,
+):
+    """
+    Return M&A deals sorted by announced_date DESC.
+    - days=30  (default) → last 30 days only
+    - days=0             → no date filter (all recent deals)
+    """
+    query: dict = {}
     if status:
         query["status"] = status
+    if days and days > 0:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+        query["announced_date"] = {"$gte": cutoff}
     activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).limit(limit).to_list(limit)
     for a in activities:
         if isinstance(a['announced_date'], str):
@@ -1568,6 +1588,9 @@ async def startup_event():
     asyncio.create_task(_apply_company_enrichments())
     # Apply image URLs to products that are missing them
     asyncio.create_task(_apply_product_images())
+    # Always start with a fresh stock cache so stale values never survive restarts
+    invalidate_stock_cache()
+    logger.info("Stock price cache cleared on startup")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

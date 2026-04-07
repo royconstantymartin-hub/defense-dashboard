@@ -20,6 +20,7 @@ import {
   Download,
   ExternalLink,
   Filter,
+  Database,
 } from "lucide-react";
 
 // ── Translations ──────────────────────────────────────────────────────────────
@@ -76,14 +77,14 @@ const T = {
 };
 
 const CATEGORY_COLORS = {
-  aerospace: "bg-sky-500/10 text-sky-400",
-  naval:     "bg-blue-500/10 text-blue-400",
-  land:      "bg-amber-500/10 text-amber-400",
-  cyber:     "bg-purple-500/10 text-purple-400",
-  services:  "bg-slate-500/10 text-slate-400",
-  logistics: "bg-orange-500/10 text-orange-400",
-  space:     "bg-indigo-500/10 text-indigo-400",
-  missiles:  "bg-red-500/10 text-red-400",
+  aerospace: "bg-sky-50 text-sky-700",
+  naval:     "bg-blue-50 text-blue-700",
+  land:      "bg-amber-50 text-amber-700",
+  cyber:     "bg-purple-50 text-purple-700",
+  services:  "bg-slate-100 text-slate-600",
+  logistics: "bg-orange-50 text-orange-700",
+  space:     "bg-indigo-50 text-indigo-700",
+  missiles:  "bg-rose-50 text-rose-700",
 };
 
 function ContractCard({ contract }) {
@@ -121,14 +122,14 @@ function ContractCard({ contract }) {
   }
 
   return (
-    <Card className="bg-slate-800 border-slate-700 hover:border-slate-500 transition-colors">
-      <CardHeader className="pb-3">
+    <Card className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300">
+      <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-sm font-semibold text-white leading-snug">
+            <CardTitle className="text-sm font-semibold text-slate-900 leading-snug">
               {contract.title}
             </CardTitle>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               {contract.contracting_authority} · {contract.authority_country}
             </p>
           </div>
@@ -138,8 +139,8 @@ function ContractCard({ contract }) {
           </span>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <p className="text-xs text-slate-300 leading-relaxed line-clamp-3">
+      <CardContent className="space-y-3 pt-3">
+        <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
           {contract.description}
         </p>
         <div className="flex flex-wrap gap-2">
@@ -150,7 +151,7 @@ function ContractCard({ contract }) {
             {tAuthority[contract.authority_type] || contract.authority_type}
           </span>
           {contract.program && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-400">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">
               {contract.program}
             </span>
           )}
@@ -185,7 +186,7 @@ function ContractCard({ contract }) {
               {tOfficSrc}
             </a>
           ) : (
-            <span className="flex items-center gap-1 text-xs text-amber-500">
+            <span className="flex items-center gap-1 text-xs text-amber-600">
               <AlertCircle size={11} />
               {tNoSrc}
             </span>
@@ -322,9 +323,15 @@ export default function Contracts() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
+    <div data-testid="contracts-page" className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
+            Contracts & Tenders
+          </h1>
+          <p className="text-slate-500 text-sm mt-1">Defense procurement — reference for consultants &amp; industry</p>
+        </div>
         <div className="flex items-center gap-3">
           <div className="p-2 bg-blue-600/20 rounded-lg">
             <FileCheck className="text-blue-400" size={22} />
@@ -333,6 +340,14 @@ export default function Contracts() {
             <h1 className="text-2xl font-bold text-white">{tTitle}</h1>
             <p className="text-slate-400 text-sm">{tSubtitle}</p>
           </div>
+          <button
+            onClick={exportCSV}
+            disabled={filtered.length === 0}
+            className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 hover:border-purple-300 text-slate-700 text-sm rounded-lg transition-colors disabled:opacity-40"
+          >
+            <Download size={14} />
+            Export CSV
+          </button>
         </div>
         <button onClick={exportCSV}
           className="flex items-center gap-2 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded-lg transition-colors">

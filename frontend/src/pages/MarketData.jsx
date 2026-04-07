@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle, Star } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
   BarChart,
   Bar,
@@ -34,12 +35,31 @@ const COUNTRIES = [
   { value: "France", label: "🇫🇷 France" },
   { value: "Germany", label: "🇩🇪 Germany" },
   { value: "Italy", label: "🇮🇹 Italy" },
+  { value: "Spain", label: "🇪🇸 Spain" },
+  { value: "Sweden", label: "🇸🇪 Sweden" },
+  { value: "Norway", label: "🇳🇴 Norway" },
+  { value: "Finland", label: "🇫🇮 Finland" },
+  { value: "Netherlands", label: "🇳🇱 Netherlands" },
+  { value: "Belgium", label: "🇧🇪 Belgium" },
+  { value: "Switzerland", label: "🇨🇭 Switzerland" },
+  { value: "Poland", label: "🇵🇱 Poland" },
+  { value: "Czech Republic", label: "🇨🇿 Czech Republic" },
   { value: "EU", label: "🇪🇺 European Union" },
   { value: "Israel", label: "🇮🇱 Israel" },
+  { value: "Turkey", label: "🇹🇷 Turkey" },
+  { value: "UAE", label: "🇦🇪 UAE" },
+  { value: "Saudi Arabia", label: "🇸🇦 Saudi Arabia" },
+  { value: "India", label: "🇮🇳 India" },
   { value: "Japan", label: "🇯🇵 Japan" },
   { value: "South Korea", label: "🇰🇷 South Korea" },
-  { value: "Turkey", label: "🇹🇷 Turkey" },
-  { value: "India", label: "🇮🇳 India" },
+  { value: "Singapore", label: "🇸🇬 Singapore" },
+  { value: "Australia", label: "🇦🇺 Australia" },
+  { value: "Canada", label: "🇨🇦 Canada" },
+  { value: "Brazil", label: "🇧🇷 Brazil" },
+  { value: "South Africa", label: "🇿🇦 South Africa" },
+  { value: "China", label: "🇨🇳 China" },
+  { value: "Russia", label: "🇷🇺 Russia" },
+  { value: "Ukraine", label: "🇺🇦 Ukraine" },
 ];
 
 const SORT_OPTIONS = [
@@ -77,21 +97,148 @@ const COUNTRY_FLAGS = {
 };
 
 const COMPANY_LOGOS = {
+  // USA
   "Lockheed Martin": "lockheedmartin.com",
   "Raytheon Technologies": "rtx.com",
   "Boeing Defense": "boeing.com",
   "Northrop Grumman": "northropgrumman.com",
   "General Dynamics": "gd.com",
   "L3Harris Technologies": "l3harris.com",
+  "Huntington Ingalls": "huntingtoningalls.com",
+  "Leidos Holdings": "leidos.com",
+  "SAIC": "saic.com",
+  "Booz Allen Hamilton": "boozallen.com",
+  "General Atomics": "ga.com",
+  "Textron": "textron.com",
+  "Kratos Defense": "kratosdefense.com",
+  "Mercury Systems": "mrcy.com",
+  "AeroVironment": "avinc.com",
+  "Maxar Technologies": "maxar.com",
+  "Curtiss-Wright": "curtisswright.com",
+  "TransDigm": "transdigm.com",
+  "Hexcel": "hexcel.com",
+  "Spirit AeroSystems": "spiritaero.com",
+  "Triumph Group": "triumphgroup.com",
+  "Parsons Corporation": "parsons.com",
+  "BWX Technologies": "bwxt.com",
+  "CACI International": "caci.com",
+  "ManTech International": "mantech.com",
+  "Palantir Technologies": "palantir.com",
+  "Rocket Lab": "rocketlabusa.com",
+  "Collins Aerospace": "collinsaerospace.com",
+  "Pratt & Whitney": "prattwhitney.com",
+  "General Electric Aviation": "ge.com",
+  "Honeywell Aerospace": "honeywell.com",
+  "Ball Aerospace": "ball.com",
+  "HEICO Corporation": "heico.com",
+  "Kaman Aerospace": "kaman.com",
+  "Astronics Corporation": "astronics.com",
+  "Sierra Nevada Corporation": "sncorp.com",
+  "Anduril Industries": "anduril.com",
+  "Shield AI": "shield.ai",
+  "Peraton": "peraton.com",
+  "V2X Inc": "v2x.com",
+  "Axon Enterprise": "axon.com",
+  "OSI Systems": "osi-systems.com",
+  "Redwire Corporation": "redwirespace.com",
+  "DRS Technologies": "leonardodrs.com",
+  "MDA Space": "mda.space",
+  "AAR Corp": "aarcorp.com",
+  "Ducommun": "ducommun.com",
+  "General Dynamics Mission Systems Canada": "gd.com",
+  "CAE Inc": "cae.com",
+  "Harris Corporation": "l3harris.com",
+  "Orbital ATK": "northropgrumman.com",
+  // UK
   "BAE Systems": "baesystems.com",
+  "Rolls-Royce Holdings": "rolls-royce.com",
+  "Babcock International": "babcock.co.uk",
+  "QinetiQ": "qinetiq.com",
+  "Chemring Group": "chemring.co.uk",
+  "Ultra Electronics": "ultra.group",
+  "Meggitt": "meggitt.com",
+  "Cohort": "cohortplc.com",
+  // Europe
   "Thales": "thalesgroup.com",
-  "Leonardo": "leonardo.com",
+  "Thales Nederland": "thalesgroup.com",
   "Airbus Defence & Space": "airbus.com",
+  "Airbus Defence Spain": "airbus.com",
+  "Leonardo": "leonardo.com",
   "Safran": "safran-group.com",
   "Dassault Aviation": "dassault-aviation.com",
+  "MBDA": "mbda-systems.com",
+  "Naval Group": "naval-group.com",
+  "Nexter Systems": "knds.com",
+  "KNDS": "knds.com",
+  "Arquus": "arquus-defense.com",
+  "CS Group": "cs-group.com",
+  "Sofradir": "lynred.com",
   "Rheinmetall": "rheinmetall.com",
+  "Krauss-Maffei Wegmann": "kmweg.de",
+  "Diehl Defence": "diehl.com",
+  "Hensoldt": "hensoldt.net",
+  "MTU Aero Engines": "mtu.de",
+  "Renk Group": "renk.eu",
+  "ThyssenKrupp Marine": "thyssenkrupp-marine-systems.com",
+  "Fincantieri": "fincantieri.com",
+  "Elettronica": "elt.it",
+  "Avio": "avio.com",
   "Saab AB": "saab.com",
+  "Nammo": "nammo.com",
+  "Kongsberg Defence": "kongsberg.com",
+  "Patria": "patria.fi",
+  "Indra Sistemas": "indracompany.com",
+  "Navantia": "navantia.es",
+  "Damen Shipyards": "damen.com",
+  "CMI Defence": "cmigroupe.com",
+  "FN Herstal": "fnherstal.com",
+  "Pilatus Aircraft": "pilatus-aircraft.com",
+  "RUAG": "ruag.com",
+  "Polska Grupa Zbrojeniowa": "pgzsa.pl",
+  "WB Electronics": "wbelectronics.pl",
+  "Czechoslovak Group": "czechoslovakgroup.cz",
+  "Aero Vodochody": "aero.cz",
+  // Israel
   "Elbit Systems": "elbitsystems.com",
+  "Israel Aerospace Industries": "iai.co.il",
+  "Rafael Advanced Defense": "rafael.co.il",
+  // Asia-Pacific
+  "Mitsubishi Heavy Industries": "mhi.com",
+  "Kawasaki Heavy Industries": "khi.co.jp",
+  "IHI Corporation": "ihi.co.jp",
+  "NEC Corporation": "nec.com",
+  "Fujitsu Defense": "fujitsu.com",
+  "Japan Steel Works": "jsw.co.jp",
+  "Hanwha Aerospace": "hanwhaaerospace.com",
+  "Hanwha Defense": "hanwhadefense.com",
+  "Korea Aerospace Industries": "koreaaero.com",
+  "Hyundai Rotem": "hyundai-rotem.com",
+  "LIG Nex1": "lignex1.com",
+  "ST Engineering": "stengg.com",
+  "Singapore Technologies Aerospace": "stengg.com",
+  "Bharat Electronics": "bel-india.in",
+  "Hindustan Aeronautics": "hal-india.co.in",
+  "Bharat Dynamics": "bdl-india.in",
+  "Mazagon Dock": "mazagondock.in",
+  "Cochin Shipyard": "cochinshipyard.in",
+  "BEML": "bemlindia.in",
+  "CEA Technologies": "ceatechnologies.com.au",
+  "Electro Optic Systems": "eos-aus.com",
+  "Austal": "austal.com",
+  // Middle East & Africa
+  "EDGE Group": "edgegroup.ae",
+  "Emirates Defence Industries": "edi.ae",
+  "SAMI": "sami.com.sa",
+  "Paramount Group": "paramountgroup.biz",
+  "Denel": "denel.co.za",
+  // Turkey & LatAm
+  "Turkish Aerospace Industries": "tai.com.tr",
+  "Aselsan": "aselsan.com",
+  "Roketsan": "roketsan.com.tr",
+  "STM": "stm.com.tr",
+  "Baykar": "baykartech.com",
+  "Taurus Armas": "taurusarmas.com.br",
+  "Embraer Defense": "embraer.com",
 };
 
 const HISTORY_PERIODS = [
@@ -101,12 +248,18 @@ const HISTORY_PERIODS = [
   { value: "1y", label: "1Y" },
 ];
 
+// All timestamps from the backend are UTC (ISO 8601 with offset).
+// Display times in Europe/Paris so they match what users see on financial sites.
+const PARIS_TZ = "Europe/Paris";
 function formatHistoryTime(isoStr, period) {
   const d = new Date(isoStr);
-  if (period === "1d") return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  if (period === "1w") return d.toLocaleDateString([], { weekday: "short", hour: "2-digit", minute: "2-digit" });
-  if (period === "1mo") return d.toLocaleDateString([], { month: "short", day: "numeric" });
-  return d.toLocaleDateString([], { month: "short", "year": "2-digit" });
+  if (period === "1d")
+    return d.toLocaleTimeString("en-GB", { timeZone: PARIS_TZ, hour: "2-digit", minute: "2-digit" });
+  if (period === "1w")
+    return d.toLocaleString("en-GB", { timeZone: PARIS_TZ, weekday: "short", hour: "2-digit", minute: "2-digit" });
+  if (period === "1mo")
+    return d.toLocaleDateString("en-GB", { timeZone: PARIS_TZ, month: "short", day: "numeric" });
+  return d.toLocaleDateString("en-GB", { timeZone: PARIS_TZ, month: "short", year: "2-digit" });
 }
 
 function relativeTime(isoStr) {
@@ -118,7 +271,38 @@ function relativeTime(isoStr) {
   return `${d}d ago`;
 }
 
-// Stock History Chart Modal
+// Logo with Clearbit → DuckDuckGo → Building2 fallback chain
+function LogoWithFallback({ name, clearbitUrl, ddgUrl }) {
+  const [src, setSrc] = useState(clearbitUrl || ddgUrl || null);
+  const [failed, setFailed] = useState(false);
+
+  const handleError = () => {
+    if (src === clearbitUrl && ddgUrl) {
+      setSrc(ddgUrl);
+    } else {
+      setFailed(true);
+    }
+  };
+
+  if (!src || failed) {
+    return (
+      <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+        <Building2 className="w-4 h-4 text-purple-600" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={name}
+      className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 shrink-0"
+      onError={handleError}
+    />
+  );
+}
+
+// Stock History Chart — slides in from the right like CompanyProfileSheet
 function StockChartModal({ player, liveData, onClose }) {
   const [period, setPeriod] = useState("1d");
   const [history, setHistory] = useState([]);
@@ -198,14 +382,8 @@ function StockChartModal({ player, liveData, onClose }) {
   }));
 
   return (
-    <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-y-auto max-h-[90vh]"
-        onClick={e => e.stopPropagation()}
-      >
+    <Sheet open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto p-0 gap-0 flex flex-col [&>button:first-child]:hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
@@ -355,12 +533,12 @@ function StockChartModal({ player, liveData, onClose }) {
         {dataSource === "live" && (
           <div className="px-4 pb-3 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-            <span className="text-xs text-slate-400">Source : Yahoo Finance · Données en temps réel sous licence</span>
+            <span className="text-xs text-slate-400">Source: Yahoo Finance · Real-time data</span>
           </div>
         )}
         {(dataSource === "unavailable" || (dataSource !== "private" && chartData.length === 0)) && (
           <div className="px-4 pb-3">
-            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⚠ Cours non disponible — vérifiez le ticker ou la cotation</span>
+            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⚠ Price unavailable — check ticker or exchange listing</span>
           </div>
         )}
 
@@ -409,8 +587,8 @@ function StockChartModal({ player, liveData, onClose }) {
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -518,8 +696,8 @@ export default function MarketData() {
   useEffect(() => {
     if (players.length > 0) {
       fetchLivePrices(players);
-      // Refresh every hour
-      const interval = setInterval(() => fetchLivePrices(players), 60 * 60 * 1000);
+      // Refresh every 5 minutes
+      const interval = setInterval(() => fetchLivePrices(players), 5 * 60 * 1000);
       return () => clearInterval(interval);
     }
   }, [players, fetchLivePrices]);
@@ -589,6 +767,11 @@ export default function MarketData() {
     return domain ? `https://logo.clearbit.com/${domain}` : null;
   };
 
+  const getDdgLogo = (companyName) => {
+    const domain = COMPANY_LOGOS[companyName];
+    return domain ? `https://icons.duckduckgo.com/ip3/${domain}.ico` : null;
+  };
+
   const isPrivate = (ticker) => !ticker || ticker === "Private" || ticker.includes("PRIV");
 
   if (loading) {
@@ -622,7 +805,7 @@ export default function MarketData() {
           </span>
           <span className="text-slate-300">|</span>
           <Clock className="w-3.5 h-3.5" />
-          <span>Refreshes every hour</span>
+          <span>Refreshes every 5 min</span>
           <span className="text-slate-300">|</span>
           <Database className="w-3.5 h-3.5" />
           <span>Yahoo Finance</span>
@@ -642,9 +825,9 @@ export default function MarketData() {
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">REVENUS AGRÉGÉS</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">AGGREGATE REVENUE</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalRevenue.toFixed(1)}B</p>
-            <p className="text-xs text-slate-400 mt-1">Données base — non actualisées en temps réel</p>
+            <p className="text-xs text-slate-400 mt-1">Base data — not real-time</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
@@ -861,18 +1044,11 @@ export default function MarketData() {
                             className="flex items-center gap-2.5 group text-left"
                             title={`View ${player.name} profile`}
                           >
-                          {logoUrl ? (
-                            <img
-                              src={logoUrl}
-                              alt={player.name}
-                              className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 group-hover:border-purple-200 transition-colors shrink-0"
-                              onError={(e) => { e.target.style.display = 'none'; }}
-                            />
-                          ) : (
-                            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                              <Building2 className="w-4 h-4 text-purple-600" />
-                            </div>
-                          )}
+                          <LogoWithFallback
+                            name={player.name}
+                            clearbitUrl={logoUrl}
+                            ddgUrl={getDdgLogo(player.name)}
+                          />
                             <div>
                               <p className="text-slate-900 group-hover:text-purple-700 font-medium text-sm transition-colors">{player.name}</p>
                               <div className="flex items-center gap-1.5 mt-0.5">

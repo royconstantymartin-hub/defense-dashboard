@@ -333,7 +333,7 @@ export default function Regulations() {
                       
                       <div className="flex items-center gap-2 pt-2 text-sm text-slate-500 bg-slate-50 rounded-lg p-3">
                         <Calendar className="w-4 h-4" />
-                        <span>Effective Date: {reg.effective_date}</span>
+                        <span>Effective Date: {reg.effective_date ? new Date(reg.effective_date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "N/A"}</span>
                       </div>
                     </div>
                   </AccordionContent>
