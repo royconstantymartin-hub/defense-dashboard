@@ -34,6 +34,36 @@ import {
 
 const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899'];
 
+const AVATAR_COLORS = [
+  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
+  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
+  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
+  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
+];
+function avatarColor(name = "") {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+function initials(name = "") {
+  return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
+function CompanyLogoCell({ name, url }) {
+  const [failed, setFailed] = useState(false);
+  if (!url || failed) {
+    return (
+      <div className={`w-8 h-8 bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
+        <span className="text-[10px] font-bold text-white tracking-tight">{initials(name)}</span>
+      </div>
+    );
+  }
+  return (
+    <img src={url} alt={name}
+      className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 shrink-0"
+      onError={() => setFailed(true)} />
+  );
+}
+
 // Country code mapping for flags
 const COUNTRY_FLAGS = {
   "USA": "us", "UK": "gb", "France": "fr", "Germany": "de", "Italy": "it",
@@ -121,7 +151,6 @@ export default function Dashboard() {
     return code ? `https://flagcdn.com/w40/${code}.png` : null;
   };
 
-  const getLogo = (companyName) => getClearbitUrl(companyName);
 
   // "Cette semaine" — deals M&A et news des 7 derniers jours
   const weekAgo = useMemo(() => {
@@ -323,7 +352,6 @@ export default function Dashboard() {
                 </thead>
                 <tbody>
                   {topPlayers.map((player, idx) => {
-                    const logoUrl = getLogo(player.name);
                     const flagUrl = getFlag(player.country);
                     return (
                       <tr key={player.id} className="border-b border-slate-100 hover:bg-purple-50/30 transition-colors">
@@ -332,18 +360,7 @@ export default function Dashboard() {
                             <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
                               {idx + 1}
                             </span>
-                            {logoUrl ? (
-                              <img 
-                                src={logoUrl} 
-                                alt={player.name}
-                                className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100"
-                                onError={(e) => { e.target.style.display = 'none'; }}
-                              />
-                            ) : (
-                              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <Building2 className="w-4 h-4 text-purple-600" />
-                              </div>
-                            )}
+                            <CompanyLogoCell name={player.name} url={getClearbitUrl(player.name)} />
                             <div>
                               <p className="text-slate-900 font-medium text-sm">{player.name}</p>
                               <div className="flex items-center gap-1.5 mt-0.5">

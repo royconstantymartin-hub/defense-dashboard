@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getClearbitUrl, getGoogleFaviconUrl } from "@/lib/companyLogos";
+import { getClearbitUrl } from "@/lib/companyLogos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -142,20 +142,11 @@ function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-// Logo with Clearbit → Google Favicon (64px) → letter-avatar fallback chain
-function LogoWithFallback({ name, clearbitUrl, ddgUrl }) {
-  const [src, setSrc] = useState(clearbitUrl || ddgUrl || null);
+// Logo: Clearbit → letter-avatar fallback
+function LogoWithFallback({ name, clearbitUrl }) {
   const [failed, setFailed] = useState(false);
 
-  const handleError = () => {
-    if (src === clearbitUrl && ddgUrl) {
-      setSrc(ddgUrl);
-    } else {
-      setFailed(true);
-    }
-  };
-
-  if (!src || failed) {
+  if (!clearbitUrl || failed) {
     return (
       <div className={`w-8 h-8 bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
         <span className="text-[10px] font-bold text-white tracking-tight">{initials(name)}</span>
@@ -165,10 +156,10 @@ function LogoWithFallback({ name, clearbitUrl, ddgUrl }) {
 
   return (
     <img
-      src={src}
+      src={clearbitUrl}
       alt={name}
       className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 shrink-0"
-      onError={handleError}
+      onError={() => setFailed(true)}
     />
   );
 }
@@ -634,7 +625,6 @@ export default function MarketData() {
   };
 
   const getLogo = (companyName) => getClearbitUrl(companyName);
-  const getDdgLogo = (companyName) => getGoogleFaviconUrl(companyName);
 
   const isPrivate = (ticker) => !ticker || ticker === "Private" || ticker.includes("PRIV");
 
@@ -911,7 +901,6 @@ export default function MarketData() {
                           <LogoWithFallback
                             name={player.name}
                             clearbitUrl={logoUrl}
-                            ddgUrl={getDdgLogo(player.name)}
                           />
                             <div>
                               <p className="text-slate-900 group-hover:text-purple-700 font-medium text-sm transition-colors">{player.name}</p>
