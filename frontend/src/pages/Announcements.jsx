@@ -20,12 +20,12 @@ import {
   Bookmark,
   BookmarkCheck,
   Sparkles,
-  ChevronDown,
   Globe,
   MapPin,
   Download,
+  ChevronDown,
 } from "lucide-react";
-import { format, formatDistanceToNow, differenceInHours } from "date-fns";
+import { format, differenceInHours, differenceInDays } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/App";
 
@@ -79,6 +79,8 @@ function relativeTime(dateStr) {
     if (h < 1)  return "Just now";
     if (h < 24) return `${h}h ago`;
     if (h < 48) return "Yesterday";
+    const days = differenceInDays(new Date(), d);
+    if (days < 7) return `${days}d ago`;
     return format(d, "MMM d");
   } catch { return ""; }
 }
@@ -86,7 +88,8 @@ function relativeTime(dateStr) {
 // Map source name → language for display fallback (old articles without field)
 const FR_SOURCES = new Set([
   "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
-  "Usine Nouvelle", "Challenges", "La Tribune",
+  "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
+  "Air & Cosmos", "L'Agefi", "Capital", "BFM Business",
 ]);
 
 function resolveLanguage(article) {
@@ -97,6 +100,50 @@ function resolveLanguage(article) {
 function langFlag(lang) {
   return lang === "fr" ? "🇫🇷" : "🇬🇧";
 }
+
+/**
+ * Determine if an article qualifies as "Breaking Intel".
+ *
+ * Criteria — an article is Breaking Intel if it meets ANY of:
+ *   1. Covered by 2+ sources AND relevance ≥ 50
+ *      (multi-source = industry consensus on importance)
+ *   2. Relevance ≥ 80 AND category is major (CONTRACT / M&A / POLICY / TECHNOLOGY)
+ *      (very high-signal single-source story on a strategic topic)
+ *   3. Relevance ≥ 90 regardless of category
+ *      (exceptional news that would be top of any briefing)
+ */
+function isBreakingIntel(article) {
+  const score    = article.relevanceScore ?? 0;
+  const sources  = article.source_count  ?? 1;
+  const cat      = article.category      ?? "";
+
+  if (sources >= 2 && score >= 50) return true;
+  if (score >= 80 && ["CONTRACT", "M&A", "POLICY", "TECHNOLOGY"].includes(cat)) return true;
+  if (score >= 90) return true;
+  return false;
+}
+
+/**
+ * Bucket an article into a time band.
+ * Returns one of: "today" | "yesterday" | "this_week" | "earlier"
+ */
+function timeBand(dateStr) {
+  try {
+    const h    = differenceInHours(new Date(), new Date(dateStr));
+    const days = differenceInDays(new Date(), new Date(dateStr));
+    if (h < 24)        return "today";
+    if (h < 48)        return "yesterday";
+    if (days < 7)      return "this_week";
+    return "earlier";
+  } catch { return "earlier"; }
+}
+
+const TIME_BAND_LABELS = {
+  today:     "Today",
+  yesterday: "Yesterday",
+  this_week: "This Week",
+  earlier:   "Earlier",
+};
 
 // ── Placeholder SVG ───────────────────────────────────────────────────────────
 
@@ -162,7 +209,7 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
         : "bg-white border border-slate-200 hover:border-purple-200"
     }`}>
 
-      {/* Cover image — clicking navigates to article */}
+      {/* Cover image */}
       <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative h-44 bg-slate-100 overflow-hidden flex-shrink-0 block">
         {!imgError && article.image ? (
           <img
@@ -179,7 +226,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
         {isNew && (
           <span className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">NEW</span>
         )}
-        {/* Multi-source badge */}
         {srcCount >= 2 && (
           <span
             className="absolute bottom-2 left-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide flex items-center gap-1"
@@ -188,7 +234,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
             🔥 {srcCount} sources
           </span>
         )}
-        {/* Language flag */}
         {(() => { const lang = resolveLanguage(article); return (
           <span className="absolute bottom-2 right-2 text-base leading-none" title={lang === "fr" ? "French" : "English"}>
             {langFlag(lang)}
@@ -198,7 +243,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
 
       {/* Body */}
       <div className="p-4 flex flex-col flex-1">
-        {/* Source row */}
         <div className="flex items-center justify-between gap-2 mb-3">
           <SourceFavicon url={article.url} source={article.source} />
           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0 uppercase tracking-wide ${getCategoryStyle(article.category)}`}>
@@ -206,21 +250,18 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
           </span>
         </div>
 
-        {/* Title */}
         <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
           <h3 className="text-slate-900 font-semibold text-sm leading-snug line-clamp-3 group-hover:text-purple-700 transition-colors">
             {article.title}
           </h3>
         </a>
 
-        {/* Summary */}
         {article.summary && !showSummary && (
           <p className="text-slate-400 text-xs mt-2 line-clamp-2 leading-relaxed">
             {article.summary}
           </p>
         )}
 
-        {/* AI Summary panel */}
         {showSummary && (
           <div className="mt-3 bg-purple-50 border border-purple-100 rounded-lg p-3">
             {summaryState.loading ? (
@@ -243,12 +284,10 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
           </div>
         )}
 
-        {/* Footer actions */}
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 gap-2">
           <span className="text-xs text-slate-400">{relativeTime(article.publishedAt)}</span>
 
           <div className="flex items-center gap-1.5">
-            {/* AI Summary toggle */}
             <button
               onClick={(e) => { e.stopPropagation(); onSummary(article); }}
               title="AI Brief (3 key points)"
@@ -262,7 +301,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
               Brief
             </button>
 
-            {/* Bookmark */}
             <button
               onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
               title={isBookmarked ? "Remove bookmark" : "Save article"}
@@ -275,7 +313,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
               {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
             </button>
 
-            {/* Read more */}
             <a
               href={article.url}
               target="_blank"
@@ -291,6 +328,42 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
   );
 }
 
+// ── SectionHeader ─────────────────────────────────────────────────────────────
+
+function SectionHeader({ emoji, label, sublabel, color = "slate" }) {
+  const dividerColor = color === "orange" ? "bg-orange-200" : "bg-slate-200";
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      {emoji && <span className="text-base">{emoji}</span>}
+      <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">{label}</h2>
+      {sublabel && (
+        <span className="text-xs text-slate-400 font-normal normal-case tracking-normal">{sublabel}</span>
+      )}
+      <div className={`flex-1 h-px ${dividerColor} ml-2`} />
+    </div>
+  );
+}
+
+// ── ArticleGrid ───────────────────────────────────────────────────────────────
+
+function ArticleGrid({ articles, bookmarkedUrls, summaries, onBookmark, onSummary, isHot = false }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {articles.map((article, idx) => (
+        <NewsCard
+          key={article.url || `${isHot ? "hot" : "reg"}-${idx}`}
+          article={article}
+          isBookmarked={bookmarkedUrls.has(article.url)}
+          onBookmark={onBookmark}
+          summaryState={summaries[article.url]}
+          onSummary={onSummary}
+          isHot={isHot}
+        />
+      ))}
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function Announcements() {
@@ -299,29 +372,36 @@ export default function Announcements() {
 
   const [articles,      setArticles]      = useState([]);
   const [loading,       setLoading]       = useState(true);
+  const [loadingMore,   setLoadingMore]   = useState(false);
   const [scraping,      setScraping]      = useState(false);
   const [searchTerm,    setSearchTerm]    = useState("");
   const [selectedCat,   setSelectedCat]   = useState("all");
   const [selectedLang,  setSelectedLang]  = useState("all");
   const [selectedRegion,setSelectedRegion]= useState("all");
   const [lastUpdated,   setLastUpdated]   = useState(null);
+  // Whether to show the "Earlier" (>7 days) bucket
+  const [showEarlier,   setShowEarlier]   = useState(false);
+  // Offset for load-more older articles
+  const [olderOffset,   setOlderOffset]   = useState(0);
+  const [hasMore,       setHasMore]       = useState(false);
 
-  // Bookmarks — set of saved article URLs
   const [bookmarkedUrls, setBookmarkedUrls] = useState(new Set());
+  const [summaries,      setSummaries]      = useState({});
 
-  // AI summaries — url → { loading, bullets, error }
-  const [summaries, setSummaries] = useState({});
-
-  // ── Fetch news (server-side lang/region filter) ──────────────────────────
+  // ── Fetch news — last 7 days (168 h) ──────────────────────────────────────
 
   const fetchNews = useCallback(async (lang = "all", region = "all") => {
     setLoading(true);
+    setOlderOffset(0);
+    setHasMore(false);
+    setShowEarlier(false);
     try {
-      const params = { limit: 80 };
+      const params = { limit: 120, hours: 168 };
       if (lang   !== "all") params.language = lang;
       if (region !== "all") params.region   = region;
       const resp = await axios.get(`${API}/news`, { params });
       setArticles(resp.data);
+      setHasMore(resp.data.length >= 120);
       setLastUpdated(new Date());
     } catch (err) {
       console.error("Error fetching news:", err);
@@ -342,6 +422,36 @@ export default function Announcements() {
     fetchNews(selectedLang, region);
   };
 
+  // ── Load older articles (beyond 7-day window) ─────────────────────────────
+
+  const loadOlderArticles = async () => {
+    setLoadingMore(true);
+    const newOffset = olderOffset + 120;
+    try {
+      const params = { limit: 60, hours: 0, offset: newOffset };
+      if (selectedLang   !== "all") params.language = selectedLang;
+      if (selectedRegion !== "all") params.region   = selectedRegion;
+      const resp = await axios.get(`${API}/news`, { params });
+      if (resp.data.length > 0) {
+        setArticles((prev) => {
+          // Merge, dedup by URL
+          const existingUrls = new Set(prev.map((a) => a.url));
+          const newOnes = resp.data.filter((a) => !existingUrls.has(a.url));
+          return [...prev, ...newOnes];
+        });
+        setOlderOffset(newOffset);
+        setHasMore(resp.data.length >= 60);
+        setShowEarlier(true);
+      } else {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error("Error loading older articles:", err);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
   // ── Load bookmarks ────────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -355,31 +465,20 @@ export default function Announcements() {
 
   const toggleBookmark = async (article) => {
     if (!token) { navigate("/login"); return; }
-    const url = article.url;
+    const url  = article.url;
     const saved = bookmarkedUrls.has(url);
-
-    // Optimistic update
     setBookmarkedUrls((prev) => {
       const next = new Set(prev);
       saved ? next.delete(url) : next.add(url);
       return next;
     });
-
     try {
       if (saved) {
-        await axios.delete(`${API}/bookmarks`, {
-          params: { url },
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.delete(`${API}/bookmarks`, { params: { url }, headers: { Authorization: `Bearer ${token}` } });
       } else {
-        await axios.post(
-          `${API}/bookmarks`,
-          { article },
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        await axios.post(`${API}/bookmarks`, { article }, { headers: { Authorization: `Bearer ${token}` } });
       }
     } catch {
-      // Revert on error
       setBookmarkedUrls((prev) => {
         const next = new Set(prev);
         saved ? next.add(url) : next.delete(url);
@@ -393,13 +492,10 @@ export default function Announcements() {
   const toggleSummary = async (article) => {
     if (!token) { navigate("/login"); return; }
     const url = article.url;
-
-    // If already loaded, toggle off
     if (summaries[url]?.bullets) {
       setSummaries((prev) => { const n = { ...prev }; delete n[url]; return n; });
       return;
     }
-
     setSummaries((prev) => ({ ...prev, [url]: { loading: true } }));
     try {
       const resp = await axios.post(
@@ -425,9 +521,18 @@ export default function Announcements() {
     return matchCat && matchSearch;
   });
 
-  const highCount  = articles.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
-  const hotArticles     = filtered.filter((a) => (a.source_count ?? 1) >= 2);
-  const regularArticles = filtered.filter((a) => (a.source_count ?? 1) < 2);
+  // ── Section splits ────────────────────────────────────────────────────────
+
+  const breakingArticles  = filtered.filter(isBreakingIntel);
+  const regularArticles   = filtered.filter((a) => !isBreakingIntel(a));
+
+  // Time-band grouping for regular articles
+  const todayArticles     = regularArticles.filter((a) => timeBand(a.publishedAt) === "today");
+  const yesterdayArticles = regularArticles.filter((a) => timeBand(a.publishedAt) === "yesterday");
+  const weekArticles      = regularArticles.filter((a) => timeBand(a.publishedAt) === "this_week");
+  const earlierArticles   = regularArticles.filter((a) => timeBand(a.publishedAt) === "earlier");
+
+  const highCount = articles.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
 
   const exportCSV = () => {
     const headers = ["Title", "Source", "Category", "Date", "URL"];
@@ -446,6 +551,15 @@ export default function Announcements() {
     a.download = `news-export_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  // ── Shared card props ─────────────────────────────────────────────────────
+
+  const cardProps = {
+    bookmarkedUrls,
+    summaries,
+    onBookmark: toggleBookmark,
+    onSummary: toggleSummary,
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -487,7 +601,13 @@ export default function Announcements() {
           )}
           {token ? (
             <button
-              onClick={() => { setScraping(true); axios.post(`${API}/admin/scrape-news`, {}, { headers: { Authorization: `Bearer ${token}` } }).then(() => fetchNews(selectedLang, selectedRegion)).catch(console.error).finally(() => setScraping(false)); }}
+              onClick={() => {
+                setScraping(true);
+                axios.post(`${API}/admin/scrape-news`, {}, { headers: { Authorization: `Bearer ${token}` } })
+                  .then(() => fetchNews(selectedLang, selectedRegion))
+                  .catch(console.error)
+                  .finally(() => setScraping(false));
+              }}
               disabled={scraping}
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors disabled:opacity-50"
             >
@@ -602,62 +722,74 @@ export default function Announcements() {
           </p>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-10">
 
-          {/* ── HOT section — multi-source stories ── */}
-          {hotArticles.length > 0 && (
+          {/* ── BREAKING INTEL — multi-source + high-importance stories ── */}
+          {breakingArticles.length > 0 && (
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-base">🔥</span>
-                <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">
-                  Breaking Intel
-                </h2>
-                <span className="text-xs text-slate-400 font-normal normal-case tracking-normal">
-                  — covered by multiple sources
-                </span>
-                <div className="flex-1 h-px bg-orange-200 ml-2" />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {hotArticles.map((article, idx) => (
-                  <NewsCard
-                    key={article.url || `hot-${idx}`}
-                    article={article}
-                    isBookmarked={bookmarkedUrls.has(article.url)}
-                    onBookmark={toggleBookmark}
-                    summaryState={summaries[article.url]}
-                    onSummary={toggleSummary}
-                    isHot
-                  />
-                ))}
-              </div>
+              <SectionHeader
+                emoji="🔥"
+                label="Breaking Intel"
+                sublabel="— major contracts, deals &amp; strategic developments"
+                color="orange"
+              />
+              <ArticleGrid articles={breakingArticles} {...cardProps} isHot />
             </div>
           )}
 
-          {/* ── All news ── */}
-          {regularArticles.length > 0 && (
+          {/* ── TODAY ── */}
+          {todayArticles.length > 0 && (
             <div>
-              {hotArticles.length > 0 && (
-                <div className="flex items-center gap-2 mb-4">
-                  <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">
-                    All News
-                  </h2>
-                  <div className="flex-1 h-px bg-slate-200 ml-2" />
-                </div>
-              )}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {regularArticles.map((article, idx) => (
-                  <NewsCard
-                    key={article.url || `reg-${idx}`}
-                    article={article}
-                    isBookmarked={bookmarkedUrls.has(article.url)}
-                    onBookmark={toggleBookmark}
-                    summaryState={summaries[article.url]}
-                    onSummary={toggleSummary}
-                  />
-                ))}
-              </div>
+              <SectionHeader label="Today" sublabel={`— last 24 hours · ${todayArticles.length} articles`} />
+              <ArticleGrid articles={todayArticles} {...cardProps} />
             </div>
           )}
+
+          {/* ── YESTERDAY ── */}
+          {yesterdayArticles.length > 0 && (
+            <div>
+              <SectionHeader label="Yesterday" sublabel={`— ${yesterdayArticles.length} articles`} />
+              <ArticleGrid articles={yesterdayArticles} {...cardProps} />
+            </div>
+          )}
+
+          {/* ── THIS WEEK ── */}
+          {weekArticles.length > 0 && (
+            <div>
+              <SectionHeader label="This Week" sublabel={`— past 7 days · ${weekArticles.length} articles`} />
+              <ArticleGrid articles={weekArticles} {...cardProps} />
+            </div>
+          )}
+
+          {/* ── EARLIER (only shown after expanding) ── */}
+          {showEarlier && earlierArticles.length > 0 && (
+            <div>
+              <SectionHeader label="Earlier" sublabel={`— ${earlierArticles.length} older articles`} />
+              <ArticleGrid articles={earlierArticles} {...cardProps} />
+            </div>
+          )}
+
+          {/* ── Load older / Show more ── */}
+          <div className="flex justify-center pt-2">
+            {hasMore ? (
+              <button
+                onClick={loadOlderArticles}
+                disabled={loadingMore}
+                className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-purple-200 hover:text-purple-700 transition-colors disabled:opacity-50"
+              >
+                {loadingMore ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+                {loadingMore ? "Loading…" : "Load older articles"}
+              </button>
+            ) : articles.length > 0 ? (
+              <p className="text-xs text-slate-400">
+                All articles loaded · {articles.length} total
+              </p>
+            ) : null}
+          </div>
 
         </div>
       )}

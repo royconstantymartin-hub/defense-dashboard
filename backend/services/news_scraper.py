@@ -323,12 +323,13 @@ def _extract_summary(entry) -> str:
 def _fetch_rss(source: Dict) -> List[Dict]:
     """Fetch and parse an RSS/Atom feed. Returns list of article dicts."""
     articles: List[Dict] = []
+    max_items = source.get("max_items", 20)
     try:
         resp = requests.get(source["url"], headers=HEADERS, timeout=REQUEST_TIMEOUT)
         resp.raise_for_status()
         feed = feedparser.parse(resp.content)
 
-        for entry in feed.entries[:20]:
+        for entry in feed.entries[:max_items]:
             title = getattr(entry, "title", "").strip()
             url = getattr(entry, "link", "").strip()
             if not title or not url:
@@ -472,7 +473,7 @@ def _scrape_janes() -> List[Dict]:
 
 def _scrape_defensepost() -> List[Dict]:
     """
-    Scrape The Defense Post homepage (RSS feed redirects to homepage HTML).
+    Scrape The Defense Post homepage + page 2 for broader coverage.
     Selectors derived from Jannah/TieTheme WordPress template:
       • li.post-item           — article container
       • a.post-thumb           — thumbnail link carrying the article URL + image
@@ -481,71 +482,72 @@ def _scrape_defensepost() -> List[Dict]:
       • p.post-excerpt         — optional excerpt (featured article only)
     """
     articles: List[Dict] = []
-    url = "https://thedefensepost.com/"
-    try:
-        resp = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, "html.parser")
+    seen_urls: set = set()
 
-        items = soup.select("li.post-item")
+    for page_url in ["https://thedefensepost.com/", "https://thedefensepost.com/page/2/"]:
+        try:
+            resp = requests.get(page_url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
+            resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, "html.parser")
+            items = soup.select("li.post-item")
 
-        for item in items[:20]:
-            title_tag = item.select_one("h2.post-title a") or item.select_one("h3.post-title a")
-            if not title_tag:
-                continue
+            for item in items[:40]:
+                title_tag = item.select_one("h2.post-title a") or item.select_one("h3.post-title a")
+                if not title_tag:
+                    continue
 
-            title = title_tag.get_text(strip=True)
-            href  = title_tag.get("href", "").strip()
-            if not title or not href.startswith("http"):
-                continue
+                title = title_tag.get_text(strip=True)
+                href  = title_tag.get("href", "").strip()
+                if not title or not href.startswith("http") or href in seen_urls:
+                    continue
+                seen_urls.add(href)
 
-            # Image — prefer the post-thumb img (higher resolution)
-            image_url: Optional[str] = None
-            thumb = item.select_one("a.post-thumb img")
-            if thumb:
-                # srcset first entry is usually the small size; pick largest available
-                srcset = thumb.get("srcset", "")
-                if srcset:
-                    srcs = [s.strip().split(" ")[0] for s in srcset.split(",") if s.strip()]
-                    image_url = srcs[-1] if srcs else None
-                if not image_url:
-                    image_url = thumb.get("src") or thumb.get("data-src")
+                # Image — prefer the post-thumb img (higher resolution)
+                image_url: Optional[str] = None
+                thumb = item.select_one("a.post-thumb img")
+                if thumb:
+                    srcset = thumb.get("srcset", "")
+                    if srcset:
+                        srcs = [s.strip().split(" ")[0] for s in srcset.split(",") if s.strip()]
+                        image_url = srcs[-1] if srcs else None
+                    if not image_url:
+                        image_url = thumb.get("src") or thumb.get("data-src")
 
-            # Date
-            pub_date = datetime.now(timezone.utc)
-            date_el = item.select_one("span.date") or item.select_one(".meta-item.tie-icon")
-            if date_el:
-                dt_text = date_el.get_text(strip=True)
-                try:
-                    from datetime import datetime as _dt
-                    pub_date = _dt.strptime(dt_text, "%B %d, %Y").replace(tzinfo=timezone.utc)
-                except Exception:
-                    pass
+                # Date
+                pub_date = datetime.now(timezone.utc)
+                date_el = item.select_one("span.date") or item.select_one(".meta-item.tie-icon")
+                if date_el:
+                    dt_text = date_el.get_text(strip=True)
+                    try:
+                        from datetime import datetime as _dt
+                        pub_date = _dt.strptime(dt_text, "%B %d, %Y").replace(tzinfo=timezone.utc)
+                    except Exception:
+                        pass
 
-            # Excerpt
-            summary = ""
-            excerpt_el = item.select_one("p.post-excerpt")
-            if excerpt_el:
-                summary = excerpt_el.get_text(strip=True)[:300]
+                # Excerpt
+                summary = ""
+                excerpt_el = item.select_one("p.post-excerpt")
+                if excerpt_el:
+                    summary = excerpt_el.get_text(strip=True)[:300]
 
-            region = detect_region_from_text(title, summary) or "global"
-            articles.append({
-                "title":          title,
-                "url":            href,
-                "image":          image_url,
-                "summary":        summary,
-                "source":         "The Defense Post",
-                "publishedAt":    pub_date,
-                "category":       assign_category(title),
-                "relevanceScore": compute_relevance_score(title, summary),
-                "language":       "en",
-                "region":         region,
-            })
+                region = detect_region_from_text(title, summary) or "global"
+                articles.append({
+                    "title":          title,
+                    "url":            href,
+                    "image":          image_url,
+                    "summary":        summary,
+                    "source":         "The Defense Post",
+                    "publishedAt":    pub_date,
+                    "category":       assign_category(title),
+                    "relevanceScore": compute_relevance_score(title, summary),
+                    "language":       "en",
+                    "region":         region,
+                })
 
-        logger.info("[The Defense Post] Scraped %d articles", len(articles))
-    except Exception as exc:
-        logger.error("[The Defense Post] HTML scrape failed: %s", exc)
+        except Exception as exc:
+            logger.error("[The Defense Post] HTML scrape failed (%s): %s", page_url, exc)
 
+    logger.info("[The Defense Post] Scraped %d articles across pages", len(articles))
     return articles
 
 
@@ -553,7 +555,8 @@ def _scrape_defensepost() -> List[Dict]:
 
 RSS_SOURCES: List[Dict] = [
     # ── Defense specialty — English ─────────────────────────────────────────
-    # Note: The Defense Post RSS redirects to homepage; scraped via _scrape_defensepost()
+    # The Defense Post: try RSS feed first (may work); HTML scraper is additional fallback
+    {"name": "The Defense Post",          "url": "https://thedefensepost.com/feed/",                                          "language": "en", "region": "global", "max_items": 50},
     {"name": "Breaking Defense",          "url": "https://breakingdefense.com/feed/",                                         "language": "en", "region": "us"},
     {"name": "Defense News",              "url": "https://www.defensenews.com/arc/outboundfeeds/rss/",                        "language": "en", "region": "us"},
     {"name": "Defense Industry Daily",    "url": "https://www.defenseindustrydaily.com/feed/",                                "language": "en", "region": "us"},
@@ -582,9 +585,13 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Le Figaro",                 "url": "https://www.lefigaro.fr/rss/figaro_monde.xml",                              "language": "fr", "region": "europe"},
     {"name": "Les Echos",                 "url": "https://www.lesechos.fr/arc/outboundfeeds/rss/",                            "language": "fr", "region": "europe"},
     # ── French business & industry press (M&A / finance / defense industry) ─
-    {"name": "Usine Nouvelle",            "url": "https://www.usinenouvelle.com/secteurs/aeronautique-et-defense.rss",        "language": "fr", "region": "europe"},
+    # Usine Nouvelle: defense/aerospace section — targeted feed
+    {"name": "Usine Nouvelle",            "url": "https://www.usinenouvelle.com/secteurs/aeronautique-et-defense.rss",        "language": "fr", "region": "europe", "max_items": 30},
+    # Challenges: defense section + broader economy feed for M&A/budget coverage
+    {"name": "Challenges",               "url": "https://www.challenges.fr/defense/rss.xml",                                 "language": "fr", "region": "europe"},
     {"name": "Challenges",               "url": "https://www.challenges.fr/economie/rss.xml",                                "language": "fr", "region": "europe"},
     {"name": "La Tribune",               "url": "https://www.latribune.fr/rss/industrie-et-innovation.rss",                  "language": "fr", "region": "europe"},
+    {"name": "La Tribune Défense",        "url": "https://www.latribune.fr/rss/defense.rss",                                  "language": "fr", "region": "europe"},
     {"name": "L'Agefi",                  "url": "https://www.agefi.fr/rss/finance.rss",                                      "language": "fr", "region": "europe"},
     {"name": "Capital",                  "url": "https://www.capital.fr/rss",                                                 "language": "fr", "region": "europe"},
     {"name": "BFM Business",             "url": "https://bfmbusiness.bfmtv.com/rss/news-feed-bfmbusiness/",                  "language": "fr", "region": "europe"},

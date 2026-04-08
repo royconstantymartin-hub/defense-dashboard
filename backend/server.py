@@ -836,7 +836,9 @@ async def run_news_scraper_job() -> dict:
         "Breaking Defense", "The Defense Post", "Defense News",
         "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
         "The War Zone", "Defense One", "Aviation Week",
-        "Army Technology", "Naval Technology",
+        "Army Technology", "Naval Technology", "Airforce Technology",
+        "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
+        "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
     }
     _FR_SOURCES = {
         "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
@@ -871,7 +873,7 @@ async def run_news_scraper_job() -> dict:
             or a.get("relevanceScore", 0) >= MIN_MAINSTREAM_SCORE
         ]
 
-        # Sort by relevance (desc) then date (desc), keep top 80
+        # Sort by relevance (desc) then date (desc), keep top 150
         unique_articles.sort(
             key=lambda x: (
                 x.get("relevanceScore", 0),
@@ -879,7 +881,7 @@ async def run_news_scraper_job() -> dict:
             ),
             reverse=True,
         )
-        unique_articles = unique_articles[:80]
+        unique_articles = unique_articles[:150]
 
         scraped_at = datetime.now(timezone.utc)
         saved = 0
@@ -930,19 +932,23 @@ async def run_news_scraper_job() -> dict:
 
 # Source-level metadata used both for query fallback and response normalisation
 _FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
-                   "Usine Nouvelle", "Challenges", "La Tribune"]
+                   "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
+                   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business"]
 _FR_SOURCES_SET = set(_FR_SOURCES)
 _SOURCE_REGION_MAP: dict = {
-    "Breaking Defense": "us",     "Defense News": "us",   "Defense Industry Daily": "us",
-    "Defense One": "us",
-    "Opex360": "europe",          "Meta-Défense": "europe",
-    "Le Monde": "europe",         "Le Figaro": "europe",  "Les Echos": "europe",
-    "Usine Nouvelle": "europe",   "Challenges": "europe", "La Tribune": "europe",
-    "NATO": "europe",
+    "Breaking Defense": "us",     "Defense News": "us",          "Defense Industry Daily": "us",
+    "Defense One": "us",          "C4ISRNET": "us",              "National Defense Magazine": "us",
+    "Air Force Magazine": "us",
+    "Opex360": "europe",          "Meta-Défense": "europe",      "Air & Cosmos": "europe",
+    "Le Monde": "europe",         "Le Figaro": "europe",         "Les Echos": "europe",
+    "Usine Nouvelle": "europe",   "Challenges": "europe",        "La Tribune": "europe",
+    "La Tribune Défense": "europe", "L'Agefi": "europe",         "Capital": "europe",
+    "BFM Business": "europe",     "NATO": "europe",
     "The Defense Post": "global", "BBC News": "global",
     "The Guardian": "global",     "Janes": "global",
     "The War Zone": "global",     "Aviation Week": "global",
-    "Army Technology": "global",  "Naval Technology": "global",
+    "Army Technology": "global",  "Naval Technology": "global",  "Airforce Technology": "global",
+    "Shephard Media": "global",   "Flight Global": "global",     "SpaceNews": "global",
 }
 # Invert: region → list of sources whose default region is that value
 _REGION_SOURCES: dict = {}
@@ -956,7 +962,9 @@ _SPECIALTY_SOURCES_LIST = [
     "Breaking Defense", "The Defense Post", "Defense News",
     "Defense Industry Daily", "Opex360", "Meta-Défense", "NATO", "Janes",
     "The War Zone", "Defense One", "Aviation Week",
-    "Army Technology", "Naval Technology",
+    "Army Technology", "Naval Technology", "Airforce Technology",
+    "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
+    "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 
@@ -1024,21 +1032,31 @@ async def get_news(
     language: Optional[str] = None,
     region: Optional[str] = None,
     limit: int = 30,
+    hours: int = 168,
+    offset: int = 0,
 ):
     """
-    Return up to `limit` articles (max 50) sorted by relevance then date.
+    Return up to `limit` articles (max 150) sorted by relevance then date.
     Optional filters: language ("en"|"fr"), region ("us"|"europe"|"asia-pacific"|…).
+    `hours`: time window in hours (default 168 = 7 days). Use 0 for no time limit.
+    `offset`: skip first N results (for pagination).
     Falls back to the most recent batch when no fresh articles match.
     """
-    limit = min(max(limit, 1), 80)
-    cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+    limit = min(max(limit, 1), 150)
+    hours = max(0, min(hours, 8760))  # cap at 1 year
+    offset = max(0, offset)
+
+    if hours == 0:
+        cutoff = "1970-01-01T00:00:00+00:00"
+    else:
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
 
     query = _build_news_query(language, region, cutoff)
     articles = await db.news_articles.find(
         query, {"_id": 0}
-    ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(limit).to_list(limit)
+    ).sort([("relevanceScore", -1), ("publishedAt", -1)]).skip(offset).limit(limit).to_list(limit)
 
-    if not articles:
+    if not articles and offset == 0:
         # Fallback: ignore time window but keep lang/region filters
         fb_query = _build_news_query(language, region, "1970-01-01T00:00:00+00:00")
         articles = await db.news_articles.find(
