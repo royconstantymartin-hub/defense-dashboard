@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getLogoDomain } from "@/lib/companyLogos";
+import { getLogoUrl } from "@/lib/companyLogos";
 import {
   Sheet, SheetContent,
 } from "@/components/ui/sheet";
@@ -35,11 +35,11 @@ function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-function CompanyLogo({ name, domain, size = "lg" }) {
+function CompanyLogo({ name, size = "lg" }) {
   const [failed, setFailed] = useState(false);
   const sizeClass = size === "lg" ? "w-16 h-16" : "w-10 h-10";
   const textClass = size === "lg" ? "text-xl" : "text-sm";
-  const logoUrl = domain ? `https://unavatar.io/${domain}?fallback=false` : null;
+  const logoUrl = getLogoUrl(name);
 
   if (logoUrl && !failed) {
     return (
@@ -98,7 +98,6 @@ export default function CompanyProfileSheet({ name, onClose }) {
   const [data, setData]         = useState(null);
   const [loading, setLoading]   = useState(false);
   const [articles, setArticles] = useState([]);
-  const [logoDomain, setLogoDomain] = useState(null);
 
   // Analyst notes
   const [notes, setNotes]           = useState([]);
@@ -162,10 +161,6 @@ export default function CompanyProfileSheet({ name, onClose }) {
       .then(([profileRes, newsRes]) => {
         setData(profileRes.data);
         setArticles(newsRes.data || []);
-        const p = profileRes.data?.profile;
-        if (p) {
-          setLogoDomain(p.acquirer_logo_domain || p.target_logo_domain || null);
-        }
       })
       .catch((e) => console.error("CompanyProfileSheet fetch error:", e))
       .finally(() => setLoading(false));
@@ -173,16 +168,6 @@ export default function CompanyProfileSheet({ name, onClose }) {
 
   const p  = data?.profile;
   const ma = data?.ma_activities ?? [];
-
-  const resolvedDomain = logoDomain
-    ?? (() => {
-      for (const a of ma) {
-        if (a.acquirer?.toLowerCase().includes(name?.toLowerCase() || "")) return a.acquirer_logo_domain;
-        if (a.target?.toLowerCase().includes(name?.toLowerCase() || ""))   return a.target_logo_domain;
-      }
-      return null;
-    })()
-    ?? getLogoDomain(name);
 
   return (
     <Sheet open={!!name} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -199,7 +184,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
           </button>
 
           <div className="flex items-start gap-4">
-            <CompanyLogo name={name || ""} domain={resolvedDomain} size="lg" />
+            <CompanyLogo name={name || ""} size="lg" />
             <div className="flex-1 min-w-0">
               <h2 className="text-xl font-bold text-white leading-tight">{name}</h2>
               <div className="flex items-center gap-2 mt-1.5 flex-wrap">
