@@ -20,7 +20,6 @@ import {
   Download,
   ExternalLink,
   Filter,
-  Database,
 } from "lucide-react";
 
 // ── Translations ──────────────────────────────────────────────────────────────
@@ -77,14 +76,14 @@ const T = {
 };
 
 const CATEGORY_COLORS = {
-  aerospace: "bg-sky-50 text-sky-700",
-  naval:     "bg-blue-50 text-blue-700",
-  land:      "bg-amber-50 text-amber-700",
-  cyber:     "bg-purple-50 text-purple-700",
-  services:  "bg-slate-100 text-slate-600",
-  logistics: "bg-orange-50 text-orange-700",
-  space:     "bg-indigo-50 text-indigo-700",
-  missiles:  "bg-rose-50 text-rose-700",
+  aerospace: "bg-sky-50 text-sky-700 border-sky-200",
+  naval:     "bg-blue-50 text-blue-700 border-blue-200",
+  land:      "bg-amber-50 text-amber-700 border-amber-200",
+  cyber:     "bg-purple-50 text-purple-700 border-purple-200",
+  services:  "bg-slate-100 text-slate-600 border-slate-200",
+  logistics: "bg-orange-50 text-orange-700 border-orange-200",
+  space:     "bg-indigo-50 text-indigo-700 border-indigo-200",
+  missiles:  "bg-rose-50 text-rose-700 border-rose-200",
 };
 
 function ContractCard({ contract }) {
@@ -94,10 +93,10 @@ function ContractCard({ contract }) {
 
   const STATUS_ICON  = { open: Clock, awarded: CheckCircle2, closed: XCircle, cancelled: AlertCircle };
   const STATUS_COLOR = {
-    open:      "bg-blue-500/10 text-blue-400 border border-blue-500/20",
-    awarded:   "bg-green-500/10 text-green-400 border border-green-500/20",
-    closed:    "bg-slate-500/10 text-slate-400 border border-slate-500/20",
-    cancelled: "bg-red-500/10 text-red-400 border border-red-500/20",
+    open:      "bg-blue-50 text-blue-700 border border-blue-200",
+    awarded:   "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    closed:    "bg-slate-100 text-slate-500 border border-slate-200",
+    cancelled: "bg-rose-50 text-rose-600 border border-rose-200",
   };
 
   const StatusIcon = STATUS_ICON[contract.status] || XCircle;
@@ -122,8 +121,8 @@ function ContractCard({ contract }) {
   }
 
   return (
-    <Card className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300">
-      <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
+    <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg hover:border-purple-200 transition-all duration-300">
+      <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <CardTitle className="text-sm font-semibold text-slate-900 leading-snug">
@@ -144,44 +143,44 @@ function ContractCard({ contract }) {
           {contract.description}
         </p>
         <div className="flex flex-wrap gap-2">
-          <span className={`text-xs px-2 py-0.5 rounded-full ${CATEGORY_COLORS[contract.category] || "bg-slate-600 text-slate-300"}`}>
+          <span className={`text-xs px-2 py-0.5 rounded-full border ${CATEGORY_COLORS[contract.category] || "bg-slate-100 text-slate-600 border-slate-200"}`}>
             {tCategory[contract.category] || contract.category}
           </span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">
+          <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
             {tAuthority[contract.authority_type] || contract.authority_type}
           </span>
           {contract.program && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-mono">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-mono">
               {contract.program}
             </span>
           )}
         </div>
         <div className="grid grid-cols-2 gap-3 pt-1">
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">{tEstVal}</p>
-            <p className="text-xs font-mono text-white">{fmtAmount(contract.amount_min, contract.amount_max)}</p>
+            <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tEstVal}</p>
+            <p className="text-xs font-mono font-medium text-slate-900">{fmtAmount(contract.amount_min, contract.amount_max)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">{tPub}</p>
-            <p className="text-xs text-slate-300">{contract.publication_date?.slice(0, 10)}</p>
+            <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tPub}</p>
+            <p className="text-xs text-slate-600">{contract.publication_date?.slice(0, 10)}</p>
           </div>
           {contract.deadline && (
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">{tDeadline}</p>
-              <p className="text-xs text-slate-300">{contract.deadline?.slice(0, 10)}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tDeadline}</p>
+              <p className="text-xs text-slate-600">{contract.deadline?.slice(0, 10)}</p>
             </div>
           )}
           {contract.awarded_to && (
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">{tAwardedTo}</p>
-              <p className="text-xs text-emerald-400 font-medium">{contract.awarded_to}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tAwardedTo}</p>
+              <p className="text-xs text-emerald-600 font-medium">{contract.awarded_to}</p>
             </div>
           )}
         </div>
-        <div className="flex items-center justify-between pt-1 border-t border-slate-700">
+        <div className="flex items-center justify-between pt-2 border-t border-slate-100">
           {contract.source_url ? (
             <a href={contract.source_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors">
+              className="flex items-center gap-1 text-xs text-purple-700 hover:text-purple-900 transition-colors">
               <ExternalLink size={11} />
               {tOfficSrc}
             </a>
@@ -191,7 +190,7 @@ function ContractCard({ contract }) {
               {tNoSrc}
             </span>
           )}
-          <span className={`text-xs ${contract.reliability === "confirmed" ? "text-green-400" : "text-amber-400"}`}>
+          <span className={`text-xs font-medium ${contract.reliability === "confirmed" ? "text-emerald-600" : "text-amber-600"}`}>
             {contract.reliability === "confirmed" ? tConfirmed : tEstimated}
           </span>
         </div>
@@ -328,29 +327,15 @@ export default function Contracts() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
-            Contracts & Tenders
+            {tTitle}
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Defense procurement — reference for consultants &amp; industry</p>
+          <p className="text-slate-500 text-sm mt-1">{tSubtitle}</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-600/20 rounded-lg">
-            <FileCheck className="text-blue-400" size={22} />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-white">{tTitle}</h1>
-            <p className="text-slate-400 text-sm">{tSubtitle}</p>
-          </div>
-          <button
-            onClick={exportCSV}
-            disabled={filtered.length === 0}
-            className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 hover:border-purple-300 text-slate-700 text-sm rounded-lg transition-colors disabled:opacity-40"
-          >
-            <Download size={14} />
-            Export CSV
-          </button>
-        </div>
-        <button onClick={exportCSV}
-          className="flex items-center gap-2 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded-lg transition-colors">
+        <button
+          onClick={exportCSV}
+          disabled={filtered.length === 0}
+          className="flex items-center gap-2 px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-40 self-start lg:self-auto"
+        >
           <Download size={14} />
           {tExport}
         </button>
@@ -358,32 +343,32 @@ export default function Contracts() {
 
       {/* KPI bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-400 uppercase tracking-wide">{tTotal}</p>
-            <p className="text-2xl font-bold text-white mt-1">{kpis.total}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{tIndexed}</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tTotal}</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">{kpis.total}</p>
+            <p className="text-xs text-slate-400 mt-0.5">{tIndexed}</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-400 uppercase tracking-wide">{tOpen}</p>
-            <p className="text-2xl font-bold text-blue-400 mt-1">{kpis.open}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{tActiveTend}</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tOpen}</p>
+            <p className="text-2xl font-bold text-blue-600 mt-1">{kpis.open}</p>
+            <p className="text-xs text-slate-400 mt-0.5">{tActiveTend}</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-400 uppercase tracking-wide">{tAwarded}</p>
-            <p className="text-2xl font-bold text-green-400 mt-1">{kpis.awarded}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{tSigned}</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tAwarded}</p>
+            <p className="text-2xl font-bold text-emerald-600 mt-1">{kpis.awarded}</p>
+            <p className="text-xs text-slate-400 mt-0.5">{tSigned}</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-400 uppercase tracking-wide">{tTotalVal}</p>
-            <p className="text-2xl font-bold text-white mt-1">${kpis.midB}B</p>
-            <p className="text-xs text-slate-500 mt-0.5">{tMidpoint}</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tTotalVal}</p>
+            <p className="text-2xl font-bold text-purple-700 mt-1">${kpis.midB}B</p>
+            <p className="text-xs text-slate-400 mt-0.5">{tMidpoint}</p>
           </CardContent>
         </Card>
       </div>
@@ -392,21 +377,25 @@ export default function Contracts() {
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-48">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-          <Input placeholder={tSearchPh} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 bg-slate-800 border-slate-600 text-white placeholder:text-slate-400 text-sm" />
+          <Input
+            placeholder={tSearchPh}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 text-sm"
+          />
         </div>
         {[
-          { value: selectedStatus,   onChange: setSelectedStatus,   options: statusOptions    },
-          { value: selectedAuthority,onChange: setSelectedAuthority,options: authorityOptions },
-          { value: selectedCategory, onChange: setSelectedCategory, options: categoryOptions  },
+          { value: selectedStatus,    onChange: setSelectedStatus,    options: statusOptions    },
+          { value: selectedAuthority, onChange: setSelectedAuthority, options: authorityOptions },
+          { value: selectedCategory,  onChange: setSelectedCategory,  options: categoryOptions  },
         ].map((sel, i) => (
           <Select key={i} value={sel.value} onValueChange={sel.onChange}>
-            <SelectTrigger className="w-44 bg-slate-800 border-slate-600 text-white text-sm">
+            <SelectTrigger className="w-44 bg-white border-slate-200 text-slate-700 text-sm">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-slate-800 border-slate-600">
+            <SelectContent>
               {sel.options.map((o) => (
-                <SelectItem key={o.value} value={o.value} className="text-white hover:bg-slate-700">{o.label}</SelectItem>
+                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -414,8 +403,8 @@ export default function Contracts() {
       </div>
 
       {/* Source note */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-slate-800/60 border border-slate-700 rounded-lg text-xs text-slate-400">
-        <Filter size={12} className="text-slate-500 shrink-0" />
+      <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-500">
+        <Filter size={12} className="text-slate-400 shrink-0" />
         {tSourceNote}
       </div>
 
@@ -427,10 +416,10 @@ export default function Contracts() {
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-700" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-slate-500">
+        <div className="text-center py-16 text-slate-400">
           <FileCheck size={40} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">{tNoMatch}</p>
         </div>
