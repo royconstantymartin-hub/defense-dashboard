@@ -16,7 +16,6 @@ import {
   Rss,
   RefreshCw,
   TrendingUp,
-  LogIn,
   Bookmark,
   BookmarkCheck,
   Sparkles,
@@ -280,7 +279,7 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
               href={article.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs font-medium text-purple-600 hover:text-purple-800 transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white rounded-md text-xs font-semibold transition-colors shadow-sm"
             >
               Read <ExternalLink className="w-3 h-3" />
             </a>
@@ -496,11 +495,12 @@ export default function Announcements() {
             </button>
           ) : (
             <button
-              onClick={() => navigate("/login")}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
+              onClick={() => fetchNews(selectedLang, selectedRegion)}
+              disabled={loading}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-50"
             >
-              <LogIn className="w-4 h-4" />
-              Log in to refresh
+              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              Refresh Feed
             </button>
           )}
         </div>

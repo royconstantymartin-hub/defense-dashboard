@@ -6,6 +6,7 @@ Uses requests + feedparser + BeautifulSoup; no headless browser required.
 """
 import re
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
@@ -318,6 +319,53 @@ def _extract_summary(entry) -> str:
     return ""
 
 
+# ── OG image fallback ───────────────────────────────────────────────────────
+
+def _fetch_og_image(article_url: str) -> Optional[str]:
+    """Fetch the Open Graph / Twitter Card image from an article page.
+    Used as a fallback when the RSS entry carries no image metadata.
+    Short timeout (4 s) so it never blocks the scraper for long."""
+    try:
+        resp = requests.get(article_url, headers=HEADERS, timeout=4, stream=True)
+        resp.raise_for_status()
+        # Read only the first 32 KB — enough to find <meta> tags in <head>
+        chunk = resp.raw.read(32768).decode("utf-8", errors="ignore")
+        resp.close()
+        soup = BeautifulSoup(chunk, "html.parser")
+        for selector in [
+            {"property": "og:image"},
+            {"name": "og:image"},
+            {"property": "twitter:image"},
+            {"name": "twitter:image"},
+        ]:
+            tag = soup.find("meta", attrs=selector)
+            if tag:
+                content = tag.get("content", "")
+                if content and content.startswith("http"):
+                    return content
+    except Exception:
+        pass
+    return None
+
+
+def _enrich_images(articles: List[Dict]) -> None:
+    """For articles that have no image, try to fetch the OG image in parallel.
+    Mutates the list in place. Uses up to 8 threads."""
+    targets = [(i, a["url"]) for i, a in enumerate(articles) if not a.get("image") and a.get("url")]
+    if not targets:
+        return
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {pool.submit(_fetch_og_image, url): idx for idx, url in targets}
+        for future in as_completed(futures):
+            idx = futures[future]
+            try:
+                img = future.result()
+                if img:
+                    articles[idx]["image"] = img
+            except Exception:
+                pass
+
+
 # ── Per-source scrapers ──────────────────────────────────────────────────────
 
 def _fetch_rss(source: Dict) -> List[Dict]:
@@ -615,4 +663,11 @@ def scrape_all_sources() -> List[Dict]:
             logger.error("HTML scraper %s unexpected error: %s", scraper_fn.__name__, exc)
 
     logger.info("Total raw articles collected: %d", len(all_articles))
+
+    # Enrich articles that have no image with OG image from article page
+    missing_before = sum(1 for a in all_articles if not a.get("image"))
+    _enrich_images(all_articles)
+    missing_after = sum(1 for a in all_articles if not a.get("image"))
+    logger.info("OG image enrichment: %d/%d articles enriched", missing_before - missing_after, missing_before)
+
     return all_articles
