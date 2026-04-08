@@ -169,21 +169,97 @@ export const COMPANY_LOGOS = {
   "CAE Inc": "cae.com",
 };
 
+// Direct Wikipedia Commons logo URLs — most reliable source, never blocked by ad-blockers.
+// Special:FilePath redirects to the actual CDN URL transparently in <img> tags.
+const WP = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+export const COMPANY_WIKI_LOGOS = {
+  // USA
+  "Lockheed Martin":               WP + "Lockheed_Martin_logo.svg",
+  "Raytheon Technologies":         WP + "Raytheon_Technologies_logo.svg",
+  "Boeing Defense":                WP + "Boeing_Full_Logotype.svg",
+  "Northrop Grumman":              WP + "Northrop_Grumman_2011_logo.svg",
+  "General Dynamics":              WP + "General_Dynamics_logo.svg",
+  "L3Harris Technologies":         WP + "L3Harris_Technologies_logo.svg",
+  "Leidos Holdings":               WP + "Leidos_logo.svg",
+  "Booz Allen Hamilton":           WP + "Booz_Allen_Hamilton_logo.svg",
+  "SAIC":                          WP + "SAIC_logo.svg",
+  "Textron":                       WP + "Textron_logo.svg",
+  "Palantir Technologies":         WP + "Palantir_Technologies_logo.svg",
+  "Honeywell Aerospace":           WP + "Honeywell_logo.svg",
+  "General Electric Aviation":     WP + "General_Electric_logo.svg",
+  "Rolls-Royce Holdings":          WP + "Rolls-Royce_Holdings_logo.svg",
+  "TransDigm":                     WP + "TransDigm_logo.svg",
+  "Huntington Ingalls":            WP + "Huntington_Ingalls_Industries_logo.svg",
+  "Parsons Corporation":           WP + "Parsons_Corporation_logo.svg",
+  "Rocket Lab":                    WP + "Rocket_Lab_logo.svg",
+  "AeroVironment":                 WP + "AeroVironment_logo.svg",
+  // UK
+  "BAE Systems":                   WP + "BAE_Systems_logo.svg",
+  "Babcock International":         WP + "Babcock_International_Group_logo.svg",
+  "QinetiQ":                       WP + "QinetiQ_logo.svg",
+  // France
+  "Airbus Defence & Space":        WP + "Airbus_Logo_2017.svg",
+  "Airbus Defence Spain":          WP + "Airbus_Logo_2017.svg",
+  "Thales":                        WP + "Thales_logo.svg",
+  "Thales Nederland":              WP + "Thales_logo.svg",
+  "Safran":                        WP + "Safran_logo.svg",
+  "Dassault Aviation":             WP + "Logo_Dassault_Aviation.svg",
+  "Naval Group":                   WP + "Naval_Group_logo.svg",
+  "MBDA":                          WP + "MBDA_logo.svg",
+  // Germany
+  "Rheinmetall":                   WP + "Rheinmetall_logo.svg",
+  "Hensoldt":                      WP + "Hensoldt_logo.svg",
+  "MTU Aero Engines":              WP + "MTU_Aero_Engines_logo.svg",
+  // Italy
+  "Leonardo":                      WP + "Leonardo_(company)_logo.svg",
+  "Fincantieri":                   WP + "Fincantieri_logo.svg",
+  // Sweden / Norway
+  "Saab AB":                       WP + "Saab_group.svg",
+  "Kongsberg Defence":             WP + "Kongsberg_Gruppen_logo.svg",
+  "Nammo":                         WP + "Nammo_logo.svg",
+  // Spain
+  "Indra Sistemas":                WP + "Indra_Sistemas_logo.svg",
+  // Israel
+  "Elbit Systems":                 WP + "Elbit_Systems_logo.svg",
+  "Israel Aerospace Industries":   WP + "Israel_Aerospace_Industries_logo.svg",
+  // Japan
+  "Mitsubishi Heavy Industries":   WP + "Mitsubishi_Heavy_Industries_logo.svg",
+  "Kawasaki Heavy Industries":     WP + "Kawasaki_Heavy_Industries_logo.svg",
+  "IHI Corporation":               WP + "IHI_Corporation_logo.svg",
+  // South Korea
+  "Hanwha Aerospace":              WP + "Hanwha_logo.svg",
+  "Korea Aerospace Industries":    WP + "Korea_Aerospace_Industries_logo.svg",
+  // India
+  "Hindustan Aeronautics":         WP + "HAL_logo.svg",
+  "Bharat Electronics":            WP + "Bharat_Electronics_Limited_logo.png",
+  "Bharat Dynamics":               WP + "Bharat_Dynamics_Limited_logo.png",
+  "Mazagon Dock":                  WP + "Mazagon_Dock_Shipbuilders_logo.png",
+  // Singapore
+  "ST Engineering":                WP + "Singapore_Technologies_Engineering_logo.svg",
+  // Australia
+  "Austal":                        WP + "Austal_logo.svg",
+  // Turkey
+  "Turkish Aerospace Industries":  WP + "TUSAS_logo.svg",
+  "Aselsan":                       WP + "Aselsan_logo.svg",
+  "Baykar":                        WP + "Baykar_logo.png",
+  // Latin America
+  "Embraer Defense":               WP + "Embraer_logo.svg",
+};
+
 export function getLogoDomain(name) {
   return COMPANY_LOGOS[name] ?? null;
 }
 
 /**
- * Returns a logo URL for the given company name via unavatar.io,
- * a free aggregator that tries multiple sources (favicon, DuckDuckGo, etc.).
- * Falls back to null if the domain is unknown.
+ * Returns the best available logo URL for a company:
+ * 1. Wikipedia Commons (hardcoded, reliable, never blocked)
+ * 2. null (caller shows letter avatar)
  */
 export function getLogoUrl(name) {
-  const domain = getLogoDomain(name);
-  return domain ? `https://unavatar.io/${domain}?fallback=false` : null;
+  return COMPANY_WIKI_LOGOS[name] ?? null;
 }
 
-// Kept for backward compat — same as getLogoUrl
+// Kept for backward compat
 export function getClearbitUrl(name) {
   return getLogoUrl(name);
 }
