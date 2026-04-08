@@ -549,24 +549,60 @@ async def get_stock_history_route(ticker: str, period: str = "1d"):
 
 @api_router.get("/stock-prices")
 async def get_stock_prices(tickers: str = ""):
-    """Return current price data for a comma-separated list of tickers (from DB seed)."""
+    """Return current price data for a comma-separated list of tickers.
+    Public tickers are fetched live from Yahoo Finance (via stock_service, 5-min cache).
+    Private companies (stock_price <= 0 or ticker contains PRIV) fall back to DB seed data.
+    """
     ticker_list = [t.strip() for t in tickers.split(",") if t.strip()]
     if not ticker_list:
         return {}
+
+    # Load DB records to identify private companies
     players = await db.defense_players.find(
         {"ticker": {"$in": ticker_list}}, {"_id": 0, "ticker": 1, "stock_price": 1, "change_percent": 1}
     ).to_list(len(ticker_list))
+    db_map = {p["ticker"]: p for p in players}
+
+    public_tickers = [
+        t for t in ticker_list
+        if "PRIV" not in t.upper() and float((db_map.get(t) or {}).get("stock_price", 0) or 0) > 0
+    ]
+    private_tickers = [t for t in ticker_list if t not in public_tickers]
+
+    # Fetch live prices for public tickers
+    live_data = await get_bulk_prices(public_tickers) if public_tickers else {}
+
     result = {}
-    for p in players:
-        t = p["ticker"]
-        price = p.get("stock_price", 0)
-        change = p.get("change_percent", 0)
-        if price > 0:
-            result[t] = {
-                "price": price,
-                "change_percent": change,
-                "prev_close": round(price / (1 + change / 100), 2) if change else price,
-            }
+    # Live prices take priority
+    for t, data in live_data.items():
+        result[t] = {
+            "price": data["price"],
+            "change_percent": data["change_percent"],
+            "prev_close": data.get("prev_close", data["price"]),
+        }
+    # Fallback to DB for any public ticker that yfinance couldn't resolve + all private
+    for t in public_tickers:
+        if t not in result and t in db_map:
+            p = db_map[t]
+            price = p.get("stock_price", 0)
+            change = p.get("change_percent", 0)
+            if price > 0:
+                result[t] = {
+                    "price": price,
+                    "change_percent": change,
+                    "prev_close": round(price / (1 + change / 100), 2) if change else price,
+                }
+    for t in private_tickers:
+        if t in db_map:
+            p = db_map[t]
+            price = p.get("stock_price", 0)
+            change = p.get("change_percent", 0)
+            if price > 0:
+                result[t] = {
+                    "price": price,
+                    "change_percent": change,
+                    "prev_close": round(price / (1 + change / 100), 2) if change else price,
+                }
     return result
 
 @api_router.get("/companies/{name}")
