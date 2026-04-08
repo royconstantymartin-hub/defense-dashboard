@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -234,12 +234,16 @@ const COMPANY_LOGOS = {
 
 export default function Products() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedManufacturer, setSelectedManufacturer] = useState("all");
+  const [selectedManufacturer, setSelectedManufacturer] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("manufacturer") || "all";
+  });
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [profileName, setProfileName] = useState(null);
   const [compareMode, setCompareMode] = useState(false);
