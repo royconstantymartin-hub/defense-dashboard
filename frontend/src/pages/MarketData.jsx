@@ -216,13 +216,25 @@ function StockChartModal({ player, liveData, onClose }) {
   }, [period, fetchHistory]);
 
   const live = liveData?.[player.ticker];
-  const displayPrice = live?.price ?? player.stock_price;
+
+  // When live history is loaded, use its last point as the current price —
+  // more reliable than liveData which may still carry stale seed-DB values.
+  const historyPrice = dataSource === "live" && history.length
+    ? history[history.length - 1].price
+    : null;
+
+  const displayPrice = historyPrice ?? live?.price ?? player.stock_price;
+
+  // For 1D with live history: change = first → last point (vs open).
+  // For 1D without live history: fall back to liveData change_percent.
+  // For other periods: always compute from history range.
   const liveChange = live?.change_percent ?? player.change_percent;
-  // For non-1D periods, compute change from history data
   const periodChange = history.length >= 2
     ? ((history[history.length - 1].price - history[0].price) / history[0].price) * 100
     : liveChange;
-  const displayChange = period === "1d" ? liveChange : periodChange;
+  const displayChange = period !== "1d" ? periodChange
+    : historyPrice !== null       ? periodChange   // vs open, live
+    : liveChange;                                  // fallback
   const isPositive = displayChange >= 0;
   const color = isPositive ? "#059669" : "#E11D48";
   const colorLight = isPositive ? "#D1FAE5" : "#FFE4E6";
@@ -279,10 +291,10 @@ function StockChartModal({ player, liveData, onClose }) {
               {isPositive ? "+" : ""}{displayChange.toFixed(2)}%
             </span>
           )}
-          {live && (
+          {(historyPrice !== null || live) && (
             <span className="text-xs text-slate-400 mb-1 flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse inline-block" />
-              Live
+              {historyPrice !== null && period === "1d" ? "Live · vs open" : "Live"}
             </span>
           )}
         </div>
