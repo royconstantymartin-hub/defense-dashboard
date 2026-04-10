@@ -145,19 +145,18 @@ const TIME_BAND_LABELS = {
   earlier:   "Earlier",
 };
 
-// ── Placeholder SVG ───────────────────────────────────────────────────────────
+// ── Placeholder ───────────────────────────────────────────────────────────────
 
 function NewsPlaceholder({ source }) {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800">
-      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-        <polygon points="25,7 28,3 31,7 30,7 30,20 26,20 26,7" fill="#4f46e5" opacity="0.9" />
-        <rect x="20" y="20" width="16" height="16" rx="1" fill="#4f46e5" opacity="0.7" />
-        <circle cx="28" cy="42" r="6" fill="none" stroke="#4f46e5" strokeWidth="2" opacity="0.6" />
-        <line x1="28" y1="36" x2="28" y2="48" stroke="#4f46e5" strokeWidth="1.5" opacity="0.6" />
-        <line x1="22" y1="42" x2="34" y2="42" stroke="#4f46e5" strokeWidth="1.5" opacity="0.6" />
+    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.4">
+        <rect x="6" y="8" width="36" height="32" rx="3" stroke="white" strokeWidth="2" />
+        <line x1="12" y1="18" x2="36" y2="18" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <line x1="12" y1="24" x2="36" y2="24" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <line x1="12" y1="30" x2="26" y2="30" stroke="white" strokeWidth="2" strokeLinecap="round" />
       </svg>
-      <span className="text-slate-400 text-xs mt-2 font-medium">{source}</span>
+      <span className="text-slate-500 text-[11px] mt-3 font-semibold tracking-wide uppercase">{source}</span>
     </div>
   );
 }
@@ -172,15 +171,15 @@ function SourceFavicon({ url, source }) {
   const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : null;
 
   return (
-    <span className="flex items-center gap-2 min-w-0">
-      <span className="w-5 h-5 rounded-md flex-shrink-0 overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
+    <span className="flex items-center gap-1.5 min-w-0">
+      <span className="w-4 h-4 rounded flex-shrink-0 overflow-hidden bg-slate-100 flex items-center justify-center">
         {faviconUrl && !err ? (
-          <img src={faviconUrl} alt="" width={20} height={20} className="w-full h-full object-contain" onError={() => setErr(true)} />
+          <img src={faviconUrl} alt="" width={16} height={16} className="w-full h-full object-contain" onError={() => setErr(true)} />
         ) : (
-          <span className="text-[9px] font-bold text-slate-500 leading-none">{initial}</span>
+          <span className="text-[8px] font-bold text-slate-500 leading-none">{initial}</span>
         )}
       </span>
-      <span className="text-xs text-slate-500 font-medium truncate max-w-[130px]">{source}</span>
+      <span className="text-[11px] text-slate-500 font-semibold truncate max-w-[120px] uppercase tracking-wide">{source}</span>
     </span>
   );
 }
@@ -189,81 +188,96 @@ function SourceFavicon({ url, source }) {
 
 function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, isHot }) {
   const [imgError, setImgError] = useState(false);
-  const score      = article.relevanceScore ?? 0;
-  const isNew      = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
-  const srcCount   = article.source_count ?? 1;
-  const coveredBy  = article.covered_by ?? [];
-
-  const scoreBadge = score >= 70
-    ? <span className="absolute top-2 left-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">HIGH</span>
-    : score >= 35
-    ? <span className="absolute top-2 left-2 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-white" title={`Score ${score}`} />
-    : null;
+  const score     = article.relevanceScore ?? 0;
+  const isNew     = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
+  const srcCount  = article.source_count ?? 1;
+  const coveredBy = article.covered_by ?? [];
+  const lang      = resolveLanguage(article);
 
   const showSummary = summaryState && (summaryState.loading || summaryState.bullets);
 
   return (
-    <div className={`rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-all flex flex-col group ${
+    <div className={`rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-200 ${
       isHot
-        ? "bg-white border-2 border-orange-300 hover:border-orange-400"
-        : "bg-white border border-slate-200 hover:border-purple-200"
+        ? "bg-white border-2 border-orange-300 shadow-md hover:shadow-xl hover:border-orange-400 hover:-translate-y-0.5"
+        : "bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-purple-200 hover:-translate-y-0.5"
     }`}>
 
-      {/* Cover image */}
-      <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative h-44 bg-slate-100 overflow-hidden flex-shrink-0 block">
+      {/* ── Cover image ── */}
+      <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative block flex-shrink-0 overflow-hidden" style={{ height: "200px" }}>
         {!imgError && article.image ? (
           <img
             src={article.image}
             alt={article.title}
             loading="lazy"
             onError={() => setImgError(true)}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
           />
         ) : (
           <NewsPlaceholder source={article.source} />
         )}
-        {scoreBadge}
-        {isNew && (
-          <span className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">NEW</span>
-        )}
-        {srcCount >= 2 && (
-          <span
-            className="absolute bottom-2 left-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide flex items-center gap-1"
-            title={`Covered by: ${coveredBy.join(", ")}`}
-          >
-            🔥 {srcCount} sources
+
+        {/* Bottom scrim for badge legibility */}
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+
+        {/* Score badge — top left */}
+        {score >= 70 && (
+          <span className="absolute top-3 left-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow">
+            HIGH
           </span>
         )}
-        {(() => { const lang = resolveLanguage(article); return (
-          <span className="absolute bottom-2 right-2 text-base leading-none" title={lang === "fr" ? "French" : "English"}>
+
+        {/* NEW badge — top right */}
+        {isNew && (
+          <span className="absolute top-3 right-3 bg-purple-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow">
+            NEW
+          </span>
+        )}
+
+        {/* Bottom row: multi-source + lang flag */}
+        <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between">
+          {srcCount >= 2 ? (
+            <span
+              className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide flex items-center gap-1 shadow"
+              title={`Covered by: ${coveredBy.join(", ")}`}
+            >
+              🔥 {srcCount} sources
+            </span>
+          ) : <span />}
+          <span className="text-base leading-none drop-shadow" title={lang === "fr" ? "French" : "English"}>
             {langFlag(lang)}
           </span>
-        ); })()}
+        </div>
       </a>
 
-      {/* Body */}
-      <div className="p-4 flex flex-col flex-1">
-        <div className="flex items-center justify-between gap-2 mb-3">
+      {/* ── Body ── */}
+      <div className="p-4 flex flex-col flex-1 gap-3">
+
+        {/* Source + category row */}
+        <div className="flex items-center justify-between gap-2">
           <SourceFavicon url={article.url} source={article.source} />
-          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border flex-shrink-0 uppercase tracking-wide ${getCategoryStyle(article.category)}`}>
-            {article.category === "GEOPOLITICS" ? "GEO" : article.category}
+          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border flex-shrink-0 uppercase tracking-widest ${getCategoryStyle(article.category)}`}>
+            {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
           </span>
         </div>
 
-        <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
-          <h3 className="text-slate-900 font-semibold text-sm leading-snug line-clamp-3 group-hover:text-purple-700 transition-colors">
+        {/* Title — larger, bolder, clickable */}
+        <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1 group/title">
+          <h3 className="text-slate-900 font-bold text-[15px] leading-snug line-clamp-3 group-hover/title:text-purple-700 transition-colors duration-150">
             {article.title}
           </h3>
         </a>
 
+        {/* Summary excerpt */}
         {article.summary && !showSummary && (
-          <p className="text-slate-400 text-xs mt-2 line-clamp-2 leading-relaxed">
+          <p className="text-slate-500 text-[12px] leading-relaxed line-clamp-2">
             {article.summary}
           </p>
         )}
 
+        {/* AI Summary panel */}
         {showSummary && (
-          <div className="mt-3 bg-purple-50 border border-purple-100 rounded-lg p-3">
+          <div className="bg-purple-50 border border-purple-100 rounded-xl p-3">
             {summaryState.loading ? (
               <div className="flex items-center gap-2 text-purple-500 text-xs">
                 <Sparkles className="w-3.5 h-3.5 animate-pulse" />
@@ -284,42 +298,46 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
           </div>
         )}
 
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 gap-2">
-          <span className="text-xs text-slate-400">{relativeTime(article.publishedAt)}</span>
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2 mt-auto">
+          <span className="text-[11px] text-slate-400 font-medium">{relativeTime(article.publishedAt)}</span>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
+            {/* AI Brief */}
             <button
               onClick={(e) => { e.stopPropagation(); onSummary(article); }}
-              title="AI Brief (3 key points)"
-              className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors ${
+              title="AI Brief"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
                 showSummary
                   ? "bg-purple-100 text-purple-700"
-                  : "bg-slate-50 text-slate-500 hover:bg-purple-50 hover:text-purple-600"
+                  : "text-slate-400 hover:bg-purple-50 hover:text-purple-600"
               }`}
             >
               <Sparkles className="w-3 h-3" />
               Brief
             </button>
 
+            {/* Bookmark */}
             <button
               onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
-              title={isBookmarked ? "Remove bookmark" : "Save article"}
-              className={`p-1.5 rounded-md transition-colors ${
+              title={isBookmarked ? "Remove bookmark" : "Save"}
+              className={`p-1.5 rounded-lg transition-colors ${
                 isBookmarked
-                  ? "text-amber-500 bg-amber-50 hover:bg-amber-100"
-                  : "text-slate-400 hover:text-amber-500 hover:bg-amber-50"
+                  ? "text-amber-500 bg-amber-50"
+                  : "text-slate-300 hover:text-amber-500 hover:bg-amber-50"
               }`}
             >
               {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
             </button>
 
+            {/* Read CTA */}
             <a
               href={article.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs font-medium text-purple-600 hover:text-purple-800 transition-colors"
+              className="flex items-center gap-1 px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-purple-700 transition-colors"
             >
-              Read <ExternalLink className="w-3 h-3" />
+              Read <ExternalLink className="w-2.5 h-2.5" />
             </a>
           </div>
         </div>
