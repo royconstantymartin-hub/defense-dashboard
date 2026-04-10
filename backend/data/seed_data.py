@@ -982,6 +982,226 @@ MA_EXTRA_DEALS = [
         "round_type": None,
         "is_disclosed": True,
     },
+    # ── 2026 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "KNDS France", "target": "Texelis Defense",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "KNDS France acquires Texelis Defense — French military vehicle driveline specialist",
+        "rationale": (
+            "KNDS France (the French subsidiary of KNDS, parent company of Nexter Systems) acquires "
+            "Texelis Defense, a French manufacturer of hub-reduction drives, axles and driveline "
+            "systems for wheeled and tracked military vehicles. Texelis equipment equips the Leclerc "
+            "MBT, VAB, VBCI and Caesar self-propelled howitzer. The acquisition verticalises KNDS "
+            "France's supply chain for its key land platforms and strengthens French industrial "
+            "sovereignty in the land vehicle sector — a strategic priority under the LPM 2024-2030."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "knds.com",
+        "target_logo_domain": "texelis.com",
+        "source_url": "https://www.knds.com/en",
+        "announced_date": datetime(2025, 11, 5, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    # ── 2024 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "AeroVironment", "target": "Tomahawk Robotics",
+        "deal_value": 120, "status": "completed", "deal_type": "acquisition",
+        "description": "Multi-domain UGV control system maker acquired for $120M",
+        "rationale": (
+            "AeroVironment acquires Tomahawk Robotics for $120 million, expanding its portfolio "
+            "from small UAS into unmanned ground vehicle (UGV) command-and-control systems. "
+            "Tomahawk's flagship product — the Kinesis controller — provides a unified human-machine "
+            "interface for commanding heterogeneous UGV and UAS fleets from a single device. The deal "
+            "positions AeroVironment to compete for US Army and SOCOM multi-domain robotics programmes "
+            "and adds a complementary product line to its Switchblade loitering munition family."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "avinc.com",
+        "target_logo_domain": "tomahawkrobotics.com",
+        "source_url": "https://www.avinc.com/company/news",
+        "announced_date": datetime(2024, 2, 27, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Anduril Industries", "target": "Rebellion Defense",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Anduril acquires Rebellion Defense — DoD software and AI platform startup",
+        "rationale": (
+            "Anduril Industries acquires Rebellion Defense, a Washington DC-based defense technology "
+            "startup known for its IronBank container registry and Phantom AI software platform used "
+            "across the US Department of Defense. The deal folds Rebellion's engineering talent and "
+            "government-relations expertise into Anduril's Lattice platform, accelerating its push "
+            "into DoD enterprise software alongside its hardware autonomy systems (Ghost, Roadrunner, "
+            "Fury). Rebellion Defense co-founders Chris Lynch and Nand Mulchandani had deep DoD ties."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "anduril.com",
+        "target_logo_domain": "rebelliondefense.com",
+        "source_url": "https://www.anduril.com/newsroom",
+        "announced_date": datetime(2024, 1, 18, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "Rheinmetall", "target": "Loc Performance Products",
+        "deal_value": 80, "status": "completed", "deal_type": "acquisition",
+        "description": "US military vehicle driveline specialist acquisition",
+        "rationale": (
+            "Rheinmetall acquires Loc Performance Products, a US manufacturer of military vehicle "
+            "driveline components including transfer cases, differentials and final drive assemblies "
+            "for the Abrams MBT, Bradley IFV and JLTV programmes. The acquisition strengthens "
+            "Rheinmetall's US defence industrial footprint and provides verticalised supply-chain "
+            "capability for its expanding American Rheinmetall Vehicles (ARV) joint programme "
+            "competing for the US Army OMFV contract."
+        ),
+        "acquirer_country": "DE", "target_country": "US",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "rheinmetall.com",
+        "source_url": "https://www.rheinmetall.com/en/investor-relations",
+        "announced_date": datetime(2024, 3, 14, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2022–2023 ─────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Saab", "target": "MD Helicopters",
+        "deal_value": 232, "status": "completed", "deal_type": "acquisition",
+        "description": "Swedish prime acquires Arizona-based light military helicopter OEM",
+        "rationale": (
+            "Saab AB acquires MD Helicopters, an Arizona-based manufacturer of light civil and "
+            "military helicopters including the MD 500 and MD 969 Combat Explorer series, for "
+            "$232 million. The acquisition gives Saab a rotor-wing platform to complement its "
+            "fixed-wing portfolio (Gripen, GlobalEye) and a foothold in US domestic helicopter "
+            "maintenance and upgrade markets for law enforcement and special operations forces. "
+            "The deal also includes MD Helicopter's MRO and training services business."
+        ),
+        "acquirer_country": "SE", "target_country": "US",
+        "acquirer_logo_domain": "saabgroup.com",
+        "target_logo_domain": "mdhelicopters.com",
+        "source_url": "https://www.saabgroup.com/media/news-press/news/",
+        "announced_date": datetime(2022, 12, 7, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Leonardo DRS", "target": "Calspan Corporation",
+        "deal_value": 1060, "status": "completed", "deal_type": "acquisition",
+        "description": "Aerospace and defense test-engineering group acquired for $1.06B",
+        "rationale": (
+            "Leonardo DRS acquires Calspan Corporation, a Buffalo, NY-based aerospace test "
+            "and engineering company operating unique variable-stability research aircraft, "
+            "hypersonic wind tunnels and automotive safety labs, for $1.06 billion. The deal "
+            "expands Leonardo DRS's ground-test, simulation and flight-test services capabilities, "
+            "supporting US Air Force, Navy and Army experimental and developmental programmes. "
+            "Calspan's variable-stability aircraft fleet is unique in North America for pilot training "
+            "and aircraft certification."
+        ),
+        "acquirer_country": "IT", "target_country": "US",
+        "acquirer_logo_domain": "leonardodrs.com",
+        "target_logo_domain": "calspan.com",
+        "source_url": "https://www.leonardodrs.com/news/",
+        "announced_date": datetime(2022, 12, 9, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── European Joint Programmes ─────────────────────────────────────────────
+    {
+        "acquirer": "Airbus + Dassault Aviation + Indra", "target": "SCAF/FCAS Industrial JV",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Tri-national industrial JV — SCAF next-generation combat air system (FR/DE/ES)",
+        "rationale": (
+            "Airbus Defence & Space (Germany/Spain) and Dassault Aviation (France) alongside "
+            "Indra (Spain) establish formal industrial joint venture structures for the Système de "
+            "Combat Aérien du Futur (SCAF/FCAS). The programme develops Europe's next-generation "
+            "combat air system for entry into service around 2040, combining a Next-Generation "
+            "Fighter (NGF), remote carriers (loyal wingmen), a new engine (MGDE) and a combat cloud "
+            "network. Phase 1B is co-funded at €3.5 billion by France, Germany and Spain and covers "
+            "technology maturation through 2027 before a Phase 2 production decision."
+        ),
+        "acquirer_country": "FR", "target_country": "DE",
+        "acquirer_logo_domain": "dassault-aviation.com",
+        "target_logo_domain": "airbus.com",
+        "source_url": "https://www.dassault-aviation.com/en/group/press/",
+        "announced_date": datetime(2022, 1, 15, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "KNDS + Rheinmetall", "target": "MGCS Programme JV",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Franco-German Main Ground Combat System (MGCS) industrial programme JV",
+        "rationale": (
+            "KNDS (France/Germany) and Rheinmetall establish a joint programme organisation for "
+            "the Main Ground Combat System (MGCS), the successor to both the Leopard 2 and Leclerc "
+            "MBT platforms, targeting entry into service around 2035-2040. Work-share covers turret "
+            "and weapon system (KNDS), active protection and automotive (Rheinmetall). The programme "
+            "represents the largest single land-systems investment in European defence industrial "
+            "history and is central to the Franco-German ambition for sovereign armoured warfare "
+            "capability under the LPM 2024-2030 and Bundeswehr Zeitenwende plans."
+        ),
+        "acquirer_country": "FR", "target_country": "DE",
+        "acquirer_logo_domain": "knds.com",
+        "target_logo_domain": "rheinmetall.com",
+        "source_url": "https://www.knds.com/en",
+        "announced_date": datetime(2020, 9, 10, tzinfo=timezone.utc),
+        "stake_percentage": 50.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    # ── 2019 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Leidos", "target": "Dynetics",
+        "deal_value": 1650, "status": "completed", "deal_type": "acquisition",
+        "description": "Huntsville defense R&D and hypersonic systems acquisition for $1.65B",
+        "rationale": (
+            "Leidos acquires Dynetics, a Huntsville, Alabama-based applied research and national "
+            "security technology company, for $1.65 billion. Dynetics develops hypersonic weapon "
+            "systems (HAWC programme), electronic warfare payloads, space systems and ground-based "
+            "missile defence technologies. The deal significantly expands Leidos's presence in "
+            "hypersonics and advanced weaponry, complementing its intelligence and IT services "
+            "business. Dynetics was formerly a finalist for the US Army's LREW programme."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "leidos.com",
+        "target_logo_domain": "leidos.com",
+        "source_url": "https://www.leidos.com/company/news",
+        "announced_date": datetime(2019, 9, 24, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2021 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Kongsberg Defence & Aerospace", "target": "Patria Oyj",
+        "deal_value": 100, "status": "completed", "deal_type": "acquisition",
+        "description": "Norwegian prime increases stake to 50% in Finnish defence champion Patria",
+        "rationale": (
+            "Kongsberg Defence & Aerospace, a subsidiary of Kongsberg Gruppen, acquires an "
+            "additional stake in Patria Oyj, the Finnish state-owned defence company, bringing "
+            "its total shareholding to 50%. Patria manufactures the AMV 8x8 armoured wheeled "
+            "vehicle (used by 14 armies), provides aircraft MRO services for F-18 and BAE Hawk, "
+            "and produces 81/120mm mortar systems. The deal deepens the Nordic defence industrial "
+            "partnership and positions the combined Kongsberg-Patria entity for future European "
+            "armoured vehicle competitions, including the German HMT programme."
+        ),
+        "acquirer_country": "NO", "target_country": "FI",
+        "acquirer_logo_domain": "kongsberg.com",
+        "target_logo_domain": "patriagroup.com",
+        "source_url": "https://www.kongsberg.com/news-and-media/",
+        "announced_date": datetime(2021, 1, 15, tzinfo=timezone.utc),
+        "stake_percentage": 50.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
 ]
 
 # Extended Expenditures
