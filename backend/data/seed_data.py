@@ -1202,6 +1202,330 @@ MA_EXTRA_DEALS = [
         "round_type": None,
         "is_disclosed": True,
     },
+    # ── Failed / cancelled blockbusters ───────────────────────────────────────
+    {
+        "acquirer": "Lockheed Martin", "target": "Aerojet Rocketdyne",
+        "deal_value": 4400, "status": "cancelled", "deal_type": "acquisition",
+        "description": "FTC blocked $4.4B bid for the US's last independent rocket motor maker",
+        "rationale": (
+            "Lockheed Martin announced an all-cash acquisition of Aerojet Rocketdyne for $4.4 billion "
+            "in December 2020. The FTC sued to block the deal in January 2022, arguing Lockheed would "
+            "gain the ability to cut off rival defence primes from critical solid-rocket-motor supply. "
+            "Lockheed terminated the agreement in February 2022, leaving Aerojet Rocketdyne as an "
+            "independent supplier. The failed deal accelerated DoD concern about consolidation risk "
+            "in the US propulsion industrial base."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "lockheedmartin.com",
+        "target_logo_domain": "aerojet.com",
+        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2022/02",
+        "announced_date": datetime(2020, 12, 20, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2024 — Defense Tech ────────────────────────────────────────────────────
+    {
+        "acquirer": "Founders Fund + General Atlantic", "target": "Anduril Industries",
+        "deal_value": 1500, "status": "completed", "deal_type": "strategic_investment",
+        "description": "Anduril Industries Series F — largest single defense tech raise in history",
+        "rationale": (
+            "Anduril Industries closes a $1.5 billion Series F round at a $14 billion post-money "
+            "valuation — the largest single financing in defense technology history. Investors include "
+            "Founders Fund (lead), General Atlantic, Valor Equity Partners, 8VC and Andreessen "
+            "Horowitz. The capital funds mass production scale-up for the Roadrunner-M interceptor, "
+            "Fury UCAV, and Lattice AI platform, and expands Anduril's manufacturing campus in Ohio. "
+            "The round underscores the shift of tier-1 capital toward US defence autonomy platforms."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "anduril.com",
+        "target_logo_domain": "anduril.com",
+        "source_url": "https://www.anduril.com/newsroom",
+        "announced_date": datetime(2024, 8, 7, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "growth",
+        "is_disclosed": True,
+    },
+    # ── 2023 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "HEICO Corporation", "target": "Wencor Group",
+        "deal_value": 1900, "status": "completed", "deal_type": "acquisition",
+        "description": "HEICO acquires Wencor — aviation aftermarket parts distributor for $1.9B",
+        "rationale": (
+            "HEICO Corporation acquires Wencor Group, a leading US aviation aftermarket parts "
+            "distributor and repair station operator, for approximately $1.9 billion. Wencor serves "
+            "commercial, business and military operators with FAA/PMA-approved parts and MRO services. "
+            "The deal significantly expands HEICO's distribution network and repair capabilities, "
+            "including its military aviation aftermarket services for C-130, F-16 and C-17 fleets. "
+            "Combined annual revenues exceed $3.5 billion."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "heico.com",
+        "target_logo_domain": "heico.com",
+        "source_url": "https://www.heico.com/news",
+        "announced_date": datetime(2023, 7, 24, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2022 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "L3Harris Technologies", "target": "Condor Systems",
+        "deal_value": 1050, "status": "completed", "deal_type": "acquisition",
+        "description": "Airborne ELINT and electronic warfare systems maker acquired for $1.05B",
+        "rationale": (
+            "L3Harris Technologies acquires Condor Systems, a San Jose-based developer of airborne "
+            "electronic intelligence (ELINT) and electronic attack systems, from Vector Capital for "
+            "$1.05 billion. Condor's products collect and exploit adversary radar emissions and support "
+            "electronic order-of-battle mapping for US Air Force and Navy ISR platforms including "
+            "RC-135 Rivet Joint and EP-3E. The acquisition strengthens L3Harris's Electronic Systems "
+            "segment and its position in integrated EW/ISR mission systems."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "l3harris.com",
+        "source_url": "https://www.l3harris.com/newsroom",
+        "announced_date": datetime(2022, 2, 22, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Carlyle Group", "target": "ManTech International",
+        "deal_value": 4200, "status": "completed", "deal_type": "acquisition",
+        "description": "Private equity take-private of US government cybersecurity & IT services group",
+        "rationale": (
+            "Carlyle Group acquires ManTech International, a US government cybersecurity, digital "
+            "transformation and mission IT company, for $4.2 billion in an all-cash take-private "
+            "transaction. ManTech provides classified intelligence, DoD and federal civilian agencies "
+            "with cyber operations, data analytics and software development. The deal reflects "
+            "sustained PE appetite for stable, highly cleared government IT services businesses "
+            "with recurring DoD contract revenue."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "carlyle.com",
+        "target_logo_domain": "mantech.com",
+        "source_url": "https://www.mantech.com/newsroom",
+        "announced_date": datetime(2022, 5, 16, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "QinetiQ", "target": "Avantus Federal",
+        "deal_value": 590, "status": "completed", "deal_type": "acquisition",
+        "description": "QinetiQ acquires US national security services firm to double its US presence",
+        "rationale": (
+            "QinetiQ Group acquires Avantus, a US national security and intelligence services company "
+            "headquartered in Virginia, for approximately $590 million. Avantus provides cyber, "
+            "digital transformation and mission support services to the US intelligence community "
+            "and DoD. The deal roughly doubles QinetiQ's US headcount and revenue, accelerating "
+            "its strategy to establish a balanced US-UK defence technology and services business "
+            "alongside its core UK MoD test and evaluation franchise."
+        ),
+        "acquirer_country": "GB", "target_country": "US",
+        "acquirer_logo_domain": "qinetiq.com",
+        "target_logo_domain": "qinetiq.com",
+        "source_url": "https://www.qinetiq.com/news-and-events/news",
+        "announced_date": datetime(2022, 4, 19, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Tikehau Capital", "target": "iXBlue + ECA Group → Exail",
+        "deal_value": 0, "status": "completed", "deal_type": "merger",
+        "description": "Merger of iXBlue & ECA Group to create Exail — French naval & autonomy champion",
+        "rationale": (
+            "French PE firm Tikehau Capital orchestrates the merger of iXBlue (fiber-optic inertial "
+            "navigation, subsea positioning and photonics) with ECA Group (marine autonomous systems, "
+            "military simulators, inspection robots) to form Exail in October 2022. The combined "
+            "entity generates revenues of approximately €350 million and serves NATO navies, the "
+            "DGA and international customers with underwater drones (Seascan, AUVs), mine-clearance "
+            "systems, submarine navigation and ruggedised training simulators for fighter pilots."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "exail.com",
+        "target_logo_domain": "exail.com",
+        "source_url": "https://www.exail.com/news",
+        "announced_date": datetime(2022, 10, 1, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "Thales", "target": "Ercom",
+        "deal_value": 200, "status": "completed", "deal_type": "acquisition",
+        "description": "Thales acquires Ercom — encrypted mobile comms specialist for French government",
+        "rationale": (
+            "Thales acquires Ercom, a Paris-based company specialising in encrypted mobile "
+            "communications and sovereign messaging platforms used by French government ministries, "
+            "the military, and regulated enterprises. Ercom's Cryptobox and Citadel Team products "
+            "are accredited by ANSSI (France's national cybersecurity agency) for classified use. "
+            "The deal reinforces Thales's position as the primary supplier of sovereign digital "
+            "communications to the French state and underpins its ambition for European secure "
+            "communications leadership."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "thalesgroup.com",
+        "source_url": "https://www.thalesgroup.com/en/worldwide/digital-identity-and-security/press-release",
+        "announced_date": datetime(2022, 3, 15, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2021 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Huntington Ingalls Industries", "target": "Alion Science and Technology",
+        "deal_value": 1650, "status": "completed", "deal_type": "acquisition",
+        "description": "HII acquires Alion — defense R&D and naval systems engineering for $1.65B",
+        "rationale": (
+            "Huntington Ingalls Industries (HII) acquires Alion Science and Technology, a "
+            "Fairfax, Virginia-based defense R&D and technical services company, for $1.65 billion. "
+            "Alion specialises in naval architecture, systems engineering, live-fire test ranges, "
+            "and C4ISR integration services for the US Navy, DARPA and joint force commands. "
+            "The deal nearly doubles HII's technical services revenue and creates a complementary "
+            "engineering pipeline for HII's shipbuilding programmes at Newport News and Ingalls."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "hii.com",
+        "target_logo_domain": "hii.com",
+        "source_url": "https://investors.hii.com/news-releases",
+        "announced_date": datetime(2021, 6, 29, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Leidos", "target": "Gibbs & Cox",
+        "deal_value": 380, "status": "completed", "deal_type": "acquisition",
+        "description": "World's largest independent naval architecture firm acquired for $380M",
+        "rationale": (
+            "Leidos acquires Gibbs & Cox, the world's largest independent naval architecture and "
+            "marine engineering firm, for $380 million. Founded in 1929, Gibbs & Cox designed the "
+            "USS Spruance, Ticonderoga-class cruisers and the DDG-51 Arleigh Burke destroyer. "
+            "The acquisition brings deep naval design competency into Leidos's defense and maritime "
+            "division, enabling integrated offerings from concept design through systems integration "
+            "and in-service support for US and allied navies."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "leidos.com",
+        "target_logo_domain": "leidos.com",
+        "source_url": "https://www.leidos.com/company/news",
+        "announced_date": datetime(2021, 11, 3, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Peraton", "target": "Perspecta",
+        "deal_value": 7100, "status": "completed", "deal_type": "acquisition",
+        "description": "Veritas Capital-backed Peraton acquires Perspecta for $7.1B — creates US intel IT giant",
+        "rationale": (
+            "Peraton (backed by Veritas Capital) acquires Perspecta, a leading US government IT "
+            "services company with classified intelligence community contracts, for $7.1 billion. "
+            "Perspecta had been spun out of DXC Technology's US public sector business in 2018. "
+            "The combined Peraton-Perspecta entity becomes one of the top five US government IT "
+            "service providers, covering CIA, NGA, NSA and DoD digital transformation programmes "
+            "with a cleared workforce of over 26,000 personnel."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "peraton.com",
+        "target_logo_domain": "peraton.com",
+        "source_url": "https://www.peraton.com/newsroom",
+        "announced_date": datetime(2021, 1, 27, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Shield AI", "target": "Martin UAV",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Shield AI acquires Martin UAV — maker of the V-BAT vertical-takeoff tactical UAS",
+        "rationale": (
+            "Shield AI acquires Martin UAV, the developer of the V-BAT (formerly known as the "
+            "WB-37), a vertical-takeoff-and-landing (VTOL) Group 3 UAS designed for austere "
+            "shipboard and expeditionary operations. The V-BAT was selected by the US Navy for "
+            "its Small Tactical Unmanned Aircraft System (STUAS) programme and by SOCOM. "
+            "The deal gives Shield AI a production-ready hardware platform to complement its "
+            "Hivemind autonomous pilot AI, enabling fully autonomous ship-based UAS operations "
+            "without GPS."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "shield.ai",
+        "target_logo_domain": "shield.ai",
+        "source_url": "https://shield.ai/newsroom",
+        "announced_date": datetime(2021, 9, 13, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "RTX", "target": "Blue Canyon Technologies",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "RTX acquires Blue Canyon — premier small satellite bus and spacecraft maker",
+        "rationale": (
+            "Raytheon Technologies (RTX) acquires Blue Canyon Technologies, a leading manufacturer "
+            "of small satellite buses and spacecraft for DoD, NASA and commercial customers. "
+            "Blue Canyon's platforms have flown on DARPA Blackjack, Air Force Research Laboratory "
+            "and various NASA science missions. The deal integrates Blue Canyon's rapid-prototyping "
+            "capability into RTX's space sensor and communications portfolio and supports the "
+            "US Space Force's proliferated LEO architecture programmes."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "rtx.com",
+        "target_logo_domain": "rtx.com",
+        "source_url": "https://www.rtx.com/news",
+        "announced_date": datetime(2021, 1, 11, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "Babcock International", "target": "Frazer-Nash Consultancy",
+        "deal_value": 360, "status": "completed", "deal_type": "acquisition",
+        "description": "Babcock acquires Frazer-Nash — UK defense engineering consultancy from Ricardo",
+        "rationale": (
+            "Babcock International acquires Frazer-Nash Consultancy, a UK engineering and technology "
+            "consultancy serving defence, nuclear and space markets, from Ricardo plc for £293 million "
+            "(~$360 million). Frazer-Nash provides systems engineering, digital modelling and safety "
+            "case expertise for the Royal Navy's nuclear submarine programme, UK armoured vehicle "
+            "procurement and satellite projects. The deal significantly expands Babcock's technical "
+            "services capability beyond its traditional ship support and nuclear roles."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "babcock.com",
+        "target_logo_domain": "babcock.com",
+        "source_url": "https://www.babcock.com/en/news",
+        "announced_date": datetime(2021, 6, 24, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2018 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Elbit Systems", "target": "IMI Systems",
+        "deal_value": 520, "status": "completed", "deal_type": "acquisition",
+        "description": "Elbit acquires Israel Military Industries — privatisation of Israeli defense titan",
+        "rationale": (
+            "Elbit Systems acquires Israel Military Industries (IMI Systems) from the Israeli "
+            "government for approximately $520 million in a landmark privatisation. IMI is one of "
+            "Israel's oldest and most important defence manufacturers, producing Kalanit guided "
+            "mortar rounds, Lynx artillery rocket systems, Namer heavy APC upgrades and a large "
+            "portfolio of ammunition and combat engineering solutions. The acquisition makes Elbit "
+            "the dominant Israeli land-systems prime and removes a state-owned competitor, "
+            "significantly expanding export revenue potential."
+        ),
+        "acquirer_country": "IL", "target_country": "IL",
+        "acquirer_logo_domain": "elbitsystems.com",
+        "target_logo_domain": "elbitsystems.com",
+        "source_url": "https://www.elbitsystems.com/media",
+        "announced_date": datetime(2018, 3, 11, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
 ]
 
 # Extended Expenditures
