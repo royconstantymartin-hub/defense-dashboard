@@ -59,6 +59,11 @@ const MANUFACTURERS = [
   { value: "Hyundai Rotem", label: "Hyundai Rotem" },
   { value: "AeroVironment", label: "AeroVironment" },
   { value: "Sikorsky", label: "Sikorsky" },
+  { value: "Tupolev", label: "Tupolev" },
+  { value: "RSK MiG", label: "RSK MiG" },
+  { value: "Grumman", label: "Grumman" },
+  { value: "Hindustan Aeronautics", label: "Hindustan Aeronautics" },
+  { value: "Korea Aerospace Industries", label: "Korea Aerospace Industries" },
 ];
 
 // Wikipedia article title overrides for products whose names differ from their article titles
@@ -201,16 +206,42 @@ const WIKI_TITLES = {
   "Stinger FIM-92": "FIM-92 Stinger",
   "Spike NLOS": "Spike (missile)",
   "Spike ER2": "Spike (missile)",
+  // Iconic / newly added
+  "B-52H Stratofortress": "Boeing B-52 Stratofortress",
+  "SR-71 Blackbird": "Lockheed SR-71 Blackbird",
+  "F-117 Nighthawk": "Lockheed F-117 Nighthawk",
+  "F-14 Tomcat": "Grumman F-14 Tomcat",
+  "E-3 Sentry AWACS": "Boeing E-3 Sentry",
+  "C-130J Super Hercules": "Lockheed C-130 Hercules",
+  "Tu-160 Blackjack": "Tupolev Tu-160",
+  "MiG-29 Fulcrum": "Mikoyan MiG-29",
+  "Mirage 2000-5": "Dassault Mirage 2000",
+  "MH-60R Seahawk": "Sikorsky SH-60 Seahawk",
+  "AW101 Merlin HM2": "AgustaWestland AW101",
+  "MQ-28A Ghost Bat": "Boeing MQ-28 Ghost Bat",
+  "F/A-18C Hornet": "McDonnell Douglas F/A-18 Hornet",
+  "Dassault nEUROn UCAV": "Dassault nEUROn",
 };
 
 // Company logo domains
 const COMPANY_LOGOS = {
+  // USA
   "Lockheed Martin": "lockheedmartin.com",
   "Raytheon Technologies": "rtx.com",
   "Boeing Defense": "boeing.com",
   "Northrop Grumman": "northropgrumman.com",
   "General Dynamics": "gd.com",
   "L3Harris Technologies": "l3harris.com",
+  "Huntington Ingalls": "hii.com",
+  "General Atomics": "ga.com",
+  "AeroVironment": "aerovironment.com",
+  "Sikorsky": "lockheedmartin.com",
+  "Oshkosh Defense": "oshkoshdefense.com",
+  "Palantir Technologies": "palantir.com",
+  "Kratos Defense": "kratosdefense.com",
+  "Leidos Holdings": "leidos.com",
+  "Textron": "textron.com",
+  // Europe
   "BAE Systems": "baesystems.com",
   "Thales": "thalesgroup.com",
   "Leonardo": "leonardo.com",
@@ -222,14 +253,32 @@ const COMPANY_LOGOS = {
   "Naval Group": "naval-group.com",
   "Hensoldt": "hensoldt.net",
   "MBDA": "mbda-systems.com",
+  "Nexter Systems": "knds.com",
+  "Krauss-Maffei Wegmann": "kmweg.com",
+  "Fincantieri": "fincantieri.com",
+  "Diehl Defence": "diehl.com",
+  "Patria": "patriagroup.com",
+  "Rolls-Royce Holdings": "rolls-royce.com",
+  "Babcock International": "babcockinternational.com",
+  "QinetiQ": "qinetiq.com",
+  // Middle East / Israel
   "Kongsberg Defence": "kongsberg.com",
-  "Hanwha Defense": "hanwha.com",
   "Elbit Systems": "elbitsystems.com",
   "Rafael Advanced Defense": "rafael.co.il",
   "Israel Aerospace Industries": "iai.co.il",
-  "General Dynamics": "gd.com",
-  "Huntington Ingalls": "hii.com",
-  "Sikorsky": "lockheedmartin.com",
+  // Asia-Pacific
+  "Hanwha Defense": "hanwha.com",
+  "Hanwha Aerospace": "hanwha.com",
+  "Korea Aerospace Industries": "koreaaero.com",
+  "Hyundai Rotem": "hyundai-rotem.co.kr",
+  "Hindustan Aeronautics": "hal-india.co.in",
+  "Mitsubishi Heavy Industries": "mhi.com",
+  "Baykar": "baykartech.com",
+  // Others
+  "Kongsberg/Raytheon": "kongsberg.com",
+  "BrahMos Aerospace": "brahmos.com",
+  "GDELS": "gdels.com",
+  "ThyssenKrupp Marine": "thyssenkrupp.com",
 };
 
 export default function Products() {
@@ -638,16 +687,23 @@ export default function Products() {
                       className="flex items-center gap-1.5 mt-1.5 group text-left bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg px-2 py-1 transition-all"
                       title={`View ${product.manufacturer} profile`}
                     >
-                      {logoUrl ? (
-                        <img
-                          src={logoUrl}
-                          alt={product.manufacturer}
-                          className="w-4 h-4 rounded object-contain shrink-0"
-                          onError={(e) => { e.target.style.display = 'none'; }}
+                      <span className="w-5 h-5 rounded-full bg-white ring-1 ring-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                        {logoUrl ? (
+                          <img
+                            src={logoUrl}
+                            alt=""
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextElementSibling.style.display = 'block';
+                            }}
+                          />
+                        ) : null}
+                        <Building2
+                          className="w-3 h-3 text-slate-400 group-hover:text-purple-500 transition-colors"
+                          style={{ display: logoUrl ? 'none' : 'block' }}
                         />
-                      ) : (
-                        <Building2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-500 shrink-0 transition-colors" />
-                      )}
+                      </span>
                       <p className="text-xs text-slate-600 group-hover:text-purple-700 font-medium transition-colors truncate max-w-[120px]">
                         {product.manufacturer}
                       </p>
