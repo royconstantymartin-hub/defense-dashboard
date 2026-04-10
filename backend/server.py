@@ -417,13 +417,15 @@ async def delete_announcement(announcement_id: str, current_user: dict = Depends
 @api_router.get("/ma-activities", response_model=List[MAActivity])
 async def get_ma_activities(
     status: Optional[str] = None,
-    limit: int = 100,
+    limit: int = 50,
+    offset: int = 0,
     days: Optional[int] = 30,
 ):
     """
     Return M&A deals sorted by announced_date DESC.
     - days=30  (default) → last 30 days only
     - days=0             → no date filter (all recent deals)
+    - offset             → skip N records (for pagination)
     """
     query: dict = {}
     if status:
@@ -431,20 +433,33 @@ async def get_ma_activities(
     if days and days > 0:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
         query["announced_date"] = {"$gte": cutoff}
-    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).limit(limit).to_list(limit)
+    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).skip(offset).limit(limit).to_list(limit)
     for a in activities:
         if isinstance(a['announced_date'], str):
             a['announced_date'] = datetime.fromisoformat(a['announced_date'])
     return activities
+
+@api_router.get("/ma-activities/meta")
+async def get_ma_meta():
+    """Return total deal count and last scrape timestamp."""
+    total = await db.ma_activities.count_documents({})
+    latest = await db.ma_activities.find_one(
+        {"scraped_at": {"$exists": True}},
+        {"_id": 0, "scraped_at": 1},
+        sort=[("scraped_at", -1)],
+    )
+    last_scraped_at = latest.get("scraped_at") if latest else None
+    return {"total": total, "last_scraped_at": last_scraped_at}
 
 @api_router.get("/ma-activities/historical", response_model=List[MAActivity])
 async def get_ma_historical(
     acquirer: Optional[str] = None,
     year: Optional[int] = None,
     deal_type: Optional[str] = None,
-    limit: int = 200
+    limit: int = 100,
+    offset: int = 0,
 ):
-    """Return all M&A activities for the historical 5-year table view."""
+    """Return M&A activities for the historical table view, with pagination."""
     query: dict = {}
     if acquirer:
         query["acquirer"] = {"$regex": acquirer, "$options": "i"}
@@ -454,7 +469,7 @@ async def get_ma_historical(
         from_dt = datetime(year, 1, 1, tzinfo=timezone.utc).isoformat()
         to_dt = datetime(year, 12, 31, 23, 59, 59, tzinfo=timezone.utc).isoformat()
         query["announced_date"] = {"$gte": from_dt, "$lte": to_dt}
-    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).limit(limit).to_list(limit)
+    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).skip(offset).limit(limit).to_list(limit)
     for a in activities:
         if isinstance(a['announced_date'], str):
             a['announced_date'] = datetime.fromisoformat(a['announced_date'])
@@ -1628,11 +1643,11 @@ async def startup_event():
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
 
-    scheduler.add_job(run_news_scraper_job, "cron", hour=7,  minute=0, id="morning_news_scraper")
-    scheduler.add_job(run_news_scraper_job, "cron", hour=19, minute=0, id="evening_news_scraper")
-    scheduler.add_job(run_ma_scraper_job,   "cron", hour=8,  minute=0, id="daily_ma_scraper")
+    scheduler.add_job(run_news_scraper_job, "cron",     hour=7,  minute=0, id="morning_news_scraper")
+    scheduler.add_job(run_news_scraper_job, "cron",     hour=19, minute=0, id="evening_news_scraper")
+    scheduler.add_job(run_ma_scraper_job,   "interval", hours=6,           id="ma_scraper")
     scheduler.start()
-    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, M&A at 08:00 UTC")
+    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, M&A every 6 h")
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())
