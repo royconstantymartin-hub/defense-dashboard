@@ -78,13 +78,13 @@ export default function Admin() {
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4" data-testid="admin-login-required">
-        <Lock className="w-16 h-16 text-zinc-700" />
-        <h2 className="font-heading text-xl text-white">Authentication Required</h2>
-        <p className="text-zinc-500 text-center max-w-md">
+        <Lock className="w-16 h-16 text-slate-400" />
+        <h2 className="font-heading text-xl text-slate-900">Authentication Required</h2>
+        <p className="text-slate-500 text-center max-w-md">
           Please login to access the admin panel and manage defense industry data.
         </p>
         <Link to="/login">
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button className="bg-purple-700 hover:bg-purple-800">
             Login to Continue
           </Button>
         </Link>
@@ -96,40 +96,40 @@ export default function Admin() {
     <div data-testid="admin-page" className="space-y-6 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="font-heading text-3xl font-bold text-white tracking-tight">
+        <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
           Admin Panel
         </h1>
-        <p className="text-zinc-500 text-sm mt-1">Manage Defense Industry Data</p>
+        <p className="text-slate-500 text-sm mt-1">Manage Defense Industry Data</p>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="announcements" className="space-y-6">
-        <TabsList className="bg-zinc-900 border border-zinc-800 p-1 flex-wrap h-auto gap-1">
-          <TabsTrigger value="database" className="data-[state=active]:bg-zinc-800">
+        <TabsList className="bg-slate-100 border border-slate-200 p-1 flex-wrap h-auto gap-1">
+          <TabsTrigger value="database" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
             <Database className="w-4 h-4 mr-2" />
             {tDbTab}
           </TabsTrigger>
-          <TabsTrigger value="announcements" className="data-[state=active]:bg-zinc-800">
+          <TabsTrigger value="announcements" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
             <Newspaper className="w-4 h-4 mr-2" />
             Announcements
           </TabsTrigger>
-          <TabsTrigger value="ma" className="data-[state=active]:bg-zinc-800">
+          <TabsTrigger value="ma" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
             <Handshake className="w-4 h-4 mr-2" />
             M&A
           </TabsTrigger>
-          <TabsTrigger value="players" className="data-[state=active]:bg-zinc-800">
+          <TabsTrigger value="players" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
             <Building2 className="w-4 h-4 mr-2" />
             Players
           </TabsTrigger>
-          <TabsTrigger value="expenditures" className="data-[state=active]:bg-zinc-800">
+          <TabsTrigger value="expenditures" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
             <Globe className="w-4 h-4 mr-2" />
             Expenditures
           </TabsTrigger>
-          <TabsTrigger value="regulations" className="data-[state=active]:bg-zinc-800">
+          <TabsTrigger value="regulations" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
             <FileText className="w-4 h-4 mr-2" />
             Regulations
           </TabsTrigger>
-          <TabsTrigger value="products" className="data-[state=active]:bg-zinc-800">
+          <TabsTrigger value="products" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
             <Package className="w-4 h-4 mr-2" />
             Products
           </TabsTrigger>
@@ -138,17 +138,17 @@ export default function Admin() {
         {/* Database Tab */}
         <TabsContent value="database">
           <div className="space-y-6 max-w-2xl">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
+            <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-600/20 rounded-lg">
-                  <Database className="w-5 h-5 text-purple-400" />
+                <div className="p-2 bg-purple-50 rounded-lg">
+                  <Database className="w-5 h-5 text-purple-700" />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold">{tDbTitle}</h3>
-                  <p className="text-zinc-400 text-sm">{tDbDesc}</p>
+                  <h3 className="text-slate-900 font-semibold">{tDbTitle}</h3>
+                  <p className="text-slate-500 text-sm">{tDbDesc}</p>
                 </div>
               </div>
-              <div className="bg-zinc-800/60 border border-zinc-700 rounded-lg p-4 text-xs text-zinc-400 space-y-1">
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs text-slate-500 space-y-1">
                 <p>{tNote1}</p>
                 <p>{tNote2}</p>
                 <p>{tNote3}</p>
@@ -156,7 +156,7 @@ export default function Admin() {
               <button
                 onClick={handleSeed}
                 disabled={seeding}
-                className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 bg-purple-700 hover:bg-purple-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
               >
                 {seeding
                   ? <><RefreshCw className="w-4 h-4 animate-spin" /> {tSeeding}</>
@@ -166,8 +166,8 @@ export default function Admin() {
               {seedResult && (
                 <div className={`flex items-start gap-2 text-sm rounded-lg p-3 border ${
                   seedResult.ok
-                    ? "bg-emerald-900/30 border-emerald-700 text-emerald-300"
-                    : "bg-red-900/30 border-red-700 text-red-300"
+                    ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                    : "bg-rose-50 border-rose-200 text-rose-600"
                 }`}>
                   <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
                   {seedResult.ok ? (
@@ -266,50 +266,50 @@ function AnnouncementsAdmin({ authHeaders }) {
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white flex items-center gap-2">
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900 flex items-center gap-2">
             <Plus className="w-5 h-5" /> Add Announcement
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label className="text-zinc-400">Title</Label>
+              <Label className="text-slate-600">Title</Label>
               <Input
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="bg-zinc-900 border-zinc-800 text-white"
+                className="bg-white border-slate-200 text-slate-900"
                 required
               />
             </div>
             <div>
-              <Label className="text-zinc-400">Content</Label>
+              <Label className="text-slate-600">Content</Label>
               <Textarea
                 value={form.content}
                 onChange={(e) => setForm({ ...form, content: e.target.value })}
-                className="bg-zinc-900 border-zinc-800 text-white"
+                className="bg-white border-slate-200 text-slate-900"
                 rows={3}
                 required
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-zinc-400">Source</Label>
+                <Label className="text-slate-600">Source</Label>
                 <Input
                   value={form.source}
                   onChange={(e) => setForm({ ...form, source: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Category</Label>
+                <Label className="text-slate-600">Category</Label>
                 <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-                  <SelectTrigger className="bg-zinc-900 border-zinc-800 text-white">
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-900">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                  <SelectContent className="bg-white border-slate-200">
                     <SelectItem value="contract">Contract</SelectItem>
                     <SelectItem value="partnership">Partnership</SelectItem>
                     <SelectItem value="product_launch">Product Launch</SelectItem>
@@ -319,31 +319,31 @@ function AnnouncementsAdmin({ authHeaders }) {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-400">Company (optional)</Label>
+              <Label className="text-slate-600">Company (optional)</Label>
               <Input
                 value={form.company}
                 onChange={(e) => setForm({ ...form, company: e.target.value })}
-                className="bg-zinc-900 border-zinc-800 text-white"
+                className="bg-white border-slate-200 text-slate-900"
               />
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
               Add Announcement
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white">Recent Announcements</CardTitle>
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900">Recent Announcements</CardTitle>
         </CardHeader>
         <CardContent className="pt-4 max-h-[500px] overflow-y-auto">
           <div className="space-y-2">
             {items.slice(0, 10).map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-3 bg-zinc-900 rounded-sm">
+              <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-lg">
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm truncate">{item.title}</p>
-                  <p className="text-xs text-zinc-500">{item.category}</p>
+                  <p className="text-slate-900 text-sm font-medium truncate">{item.title}</p>
+                  <p className="text-xs text-slate-500">{item.category}</p>
                 </div>
                 <Button
                   variant="ghost"
@@ -401,9 +401,9 @@ function MAAdmin({ authHeaders }) {
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white flex items-center gap-2">
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900 flex items-center gap-2">
             <Plus className="w-5 h-5" /> Add M&A Activity
           </CardTitle>
         </CardHeader>
@@ -411,42 +411,42 @@ function MAAdmin({ authHeaders }) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-zinc-400">Acquirer</Label>
+                <Label className="text-slate-600">Acquirer</Label>
                 <Input
                   value={form.acquirer}
                   onChange={(e) => setForm({ ...form, acquirer: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Target</Label>
+                <Label className="text-slate-600">Target</Label>
                 <Input
                   value={form.target}
                   onChange={(e) => setForm({ ...form, target: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label className="text-zinc-400">Deal Value (M$)</Label>
+                <Label className="text-slate-600">Deal Value (M$)</Label>
                 <Input
                   type="number"
                   value={form.deal_value}
                   onChange={(e) => setForm({ ...form, deal_value: parseFloat(e.target.value) })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Status</Label>
+                <Label className="text-slate-600">Status</Label>
                 <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                  <SelectTrigger className="bg-zinc-900 border-zinc-800 text-white">
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-900">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                  <SelectContent className="bg-white border-slate-200">
                     <SelectItem value="announced">Announced</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
@@ -455,12 +455,12 @@ function MAAdmin({ authHeaders }) {
                 </Select>
               </div>
               <div>
-                <Label className="text-zinc-400">Type</Label>
+                <Label className="text-slate-600">Type</Label>
                 <Select value={form.deal_type} onValueChange={(v) => setForm({ ...form, deal_type: v })}>
-                  <SelectTrigger className="bg-zinc-900 border-zinc-800 text-white">
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-900">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                  <SelectContent className="bg-white border-slate-200">
                     <SelectItem value="acquisition">Acquisition</SelectItem>
                     <SelectItem value="merger">Merger</SelectItem>
                     <SelectItem value="joint_venture">Joint Venture</SelectItem>
@@ -469,33 +469,33 @@ function MAAdmin({ authHeaders }) {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-400">Description</Label>
+              <Label className="text-slate-600">Description</Label>
               <Textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="bg-zinc-900 border-zinc-800 text-white"
+                className="bg-white border-slate-200 text-slate-900"
                 rows={2}
                 required
               />
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
               Add M&A Activity
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white">Recent M&A</CardTitle>
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900">Recent M&A</CardTitle>
         </CardHeader>
         <CardContent className="pt-4 max-h-[500px] overflow-y-auto">
           <div className="space-y-2">
             {items.slice(0, 10).map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-3 bg-zinc-900 rounded-sm">
+              <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-lg">
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm">{item.acquirer} → {item.target}</p>
-                  <p className="text-xs text-zinc-500">${item.deal_value}M • {item.status}</p>
+                  <p className="text-slate-900 text-sm font-medium">{item.acquirer} → {item.target}</p>
+                  <p className="text-xs text-slate-500">${item.deal_value}M • {item.status}</p>
                 </div>
                 <Button
                   variant="ghost"
@@ -564,9 +564,9 @@ function PlayersAdmin({ authHeaders }) {
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white flex items-center gap-2">
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900 flex items-center gap-2">
             <Plus className="w-5 h-5" /> Add Defense Player
           </CardTitle>
         </CardHeader>
@@ -574,127 +574,127 @@ function PlayersAdmin({ authHeaders }) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-zinc-400">Company Name</Label>
+                <Label className="text-slate-600">Company Name</Label>
                 <Input
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Ticker</Label>
+                <Label className="text-slate-600">Ticker</Label>
                 <Input
                   value={form.ticker}
                   onChange={(e) => setForm({ ...form, ticker: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label className="text-zinc-400">Country</Label>
+                <Label className="text-slate-600">Country</Label>
                 <Input
                   value={form.country}
                   onChange={(e) => setForm({ ...form, country: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Market Cap (B$)</Label>
+                <Label className="text-slate-600">Market Cap (B$)</Label>
                 <Input
                   type="number"
                   step="0.1"
                   value={form.market_cap}
                   onChange={(e) => setForm({ ...form, market_cap: parseFloat(e.target.value) })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Stock Price ($)</Label>
+                <Label className="text-slate-600">Stock Price ($)</Label>
                 <Input
                   type="number"
                   step="0.01"
                   value={form.stock_price}
                   onChange={(e) => setForm({ ...form, stock_price: parseFloat(e.target.value) })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label className="text-zinc-400">Change %</Label>
+                <Label className="text-slate-600">Change %</Label>
                 <Input
                   type="number"
                   step="0.01"
                   value={form.change_percent}
                   onChange={(e) => setForm({ ...form, change_percent: parseFloat(e.target.value) })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Revenue (B$)</Label>
+                <Label className="text-slate-600">Revenue (B$)</Label>
                 <Input
                   type="number"
                   step="0.1"
                   value={form.revenue}
                   onChange={(e) => setForm({ ...form, revenue: parseFloat(e.target.value) })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Employees</Label>
+                <Label className="text-slate-600">Employees</Label>
                 <Input
                   type="number"
                   value={form.employees}
                   onChange={(e) => setForm({ ...form, employees: parseInt(e.target.value) })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
             </div>
             <div>
-              <Label className="text-zinc-400">Specializations</Label>
+              <Label className="text-slate-600">Specializations</Label>
               <div className="flex gap-2">
                 <Input
                   value={specInput}
                   onChange={(e) => setSpecInput(e.target.value)}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   placeholder="Add specialization"
                 />
                 <Button type="button" onClick={addSpec} variant="secondary">Add</Button>
               </div>
               <div className="flex flex-wrap gap-1 mt-2">
                 {form.specializations.map((s, i) => (
-                  <span key={i} className="text-xs bg-zinc-800 text-zinc-300 px-2 py-1 rounded-full">
+                  <span key={i} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full border border-slate-200">
                     {s}
                   </span>
                 ))}
               </div>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
               Add Player
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white">Defense Players</CardTitle>
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900">Defense Players</CardTitle>
         </CardHeader>
         <CardContent className="pt-4 max-h-[500px] overflow-y-auto">
           <div className="space-y-2">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-3 bg-zinc-900 rounded-sm">
+              <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-lg">
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm">{item.name}</p>
-                  <p className="text-xs text-zinc-500">{item.ticker} • ${item.market_cap}B</p>
+                  <p className="text-slate-900 text-sm font-medium">{item.name}</p>
+                  <p className="text-xs text-slate-500">{item.ticker} • ${item.market_cap}B</p>
                 </div>
                 <Button
                   variant="ghost"
@@ -752,9 +752,9 @@ function ExpendituresAdmin({ authHeaders }) {
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white flex items-center gap-2">
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900 flex items-center gap-2">
             <Plus className="w-5 h-5" /> Add Expenditure
           </CardTitle>
         </CardHeader>
@@ -762,20 +762,20 @@ function ExpendituresAdmin({ authHeaders }) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-zinc-400">Country</Label>
+                <Label className="text-slate-600">Country</Label>
                 <Input
                   value={form.country}
                   onChange={(e) => setForm({ ...form, country: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Country Code</Label>
+                <Label className="text-slate-600">Country Code</Label>
                 <Input
                   value={form.country_code}
                   onChange={(e) => setForm({ ...form, country_code: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   maxLength={2}
                   required
                 />
@@ -783,45 +783,45 @@ function ExpendituresAdmin({ authHeaders }) {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label className="text-zinc-400">Year</Label>
+                <Label className="text-slate-600">Year</Label>
                 <Input
                   type="number"
                   value={form.year}
                   onChange={(e) => setForm({ ...form, year: parseInt(e.target.value) })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Expenditure (B$)</Label>
+                <Label className="text-slate-600">Expenditure (B$)</Label>
                 <Input
                   type="number"
                   step="0.1"
                   value={form.expenditure}
                   onChange={(e) => setForm({ ...form, expenditure: parseFloat(e.target.value) })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">% of GDP</Label>
+                <Label className="text-slate-600">% of GDP</Label>
                 <Input
                   type="number"
                   step="0.1"
                   value={form.gdp_percent}
                   onChange={(e) => setForm({ ...form, gdp_percent: parseFloat(e.target.value) })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
             </div>
             <div>
-              <Label className="text-zinc-400">Region</Label>
+              <Label className="text-slate-600">Region</Label>
               <Select value={form.region} onValueChange={(v) => setForm({ ...form, region: v })}>
-                <SelectTrigger className="bg-zinc-900 border-zinc-800 text-white">
+                <SelectTrigger className="bg-white border-slate-200 text-slate-900">
                   <SelectValue placeholder="Select region" />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-900 border-zinc-800">
+                <SelectContent className="bg-white border-slate-200">
                   <SelectItem value="North America">North America</SelectItem>
                   <SelectItem value="Europe">Europe</SelectItem>
                   <SelectItem value="Asia-Pacific">Asia-Pacific</SelectItem>
@@ -831,24 +831,24 @@ function ExpendituresAdmin({ authHeaders }) {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
               Add Expenditure
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white">Expenditure Data</CardTitle>
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900">Expenditure Data</CardTitle>
         </CardHeader>
         <CardContent className="pt-4 max-h-[500px] overflow-y-auto">
           <div className="space-y-2">
             {items.slice(0, 15).map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-3 bg-zinc-900 rounded-sm">
+              <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-lg">
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm">{item.country}</p>
-                  <p className="text-xs text-zinc-500">${item.expenditure}B • {item.gdp_percent}% GDP</p>
+                  <p className="text-slate-900 text-sm font-medium">{item.country}</p>
+                  <p className="text-xs text-slate-500">${item.expenditure}B • {item.gdp_percent}% GDP</p>
                 </div>
                 <Button
                   variant="ghost"
@@ -914,40 +914,40 @@ function RegulationsAdmin({ authHeaders }) {
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white flex items-center gap-2">
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900 flex items-center gap-2">
             <Plus className="w-5 h-5" /> Add Regulation
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label className="text-zinc-400">Title</Label>
+              <Label className="text-slate-600">Title</Label>
               <Input
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="bg-zinc-900 border-zinc-800 text-white"
+                className="bg-white border-slate-200 text-slate-900"
                 required
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-zinc-400">Country</Label>
+                <Label className="text-slate-600">Country</Label>
                 <Input
                   value={form.country}
                   onChange={(e) => setForm({ ...form, country: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Category</Label>
+                <Label className="text-slate-600">Category</Label>
                 <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-                  <SelectTrigger className="bg-zinc-900 border-zinc-800 text-white">
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-900">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                  <SelectContent className="bg-white border-slate-200">
                     <SelectItem value="offset">Offset</SelectItem>
                     <SelectItem value="export_control">Export Control</SelectItem>
                     <SelectItem value="procurement">Procurement</SelectItem>
@@ -957,60 +957,60 @@ function RegulationsAdmin({ authHeaders }) {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-400">Description</Label>
+              <Label className="text-slate-600">Description</Label>
               <Textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="bg-zinc-900 border-zinc-800 text-white"
+                className="bg-white border-slate-200 text-slate-900"
                 rows={2}
                 required
               />
             </div>
             <div>
-              <Label className="text-zinc-400">Effective Date</Label>
+              <Label className="text-slate-600">Effective Date</Label>
               <Input
                 type="date"
                 value={form.effective_date}
                 onChange={(e) => setForm({ ...form, effective_date: e.target.value })}
-                className="bg-zinc-900 border-zinc-800 text-white"
+                className="bg-white border-slate-200 text-slate-900"
                 required
               />
             </div>
             <div>
-              <Label className="text-zinc-400">Requirements</Label>
+              <Label className="text-slate-600">Requirements</Label>
               <div className="flex gap-2">
                 <Input
                   value={reqInput}
                   onChange={(e) => setReqInput(e.target.value)}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   placeholder="Add requirement"
                 />
                 <Button type="button" onClick={addReq} variant="secondary">Add</Button>
               </div>
               <div className="space-y-1 mt-2">
                 {form.requirements.map((r, i) => (
-                  <p key={i} className="text-xs text-zinc-400">• {r}</p>
+                  <p key={i} className="text-xs text-slate-500">• {r}</p>
                 ))}
               </div>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
               Add Regulation
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white">Regulations</CardTitle>
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900">Regulations</CardTitle>
         </CardHeader>
         <CardContent className="pt-4 max-h-[500px] overflow-y-auto">
           <div className="space-y-2">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-3 bg-zinc-900 rounded-sm">
+              <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-lg">
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm truncate">{item.title}</p>
-                  <p className="text-xs text-zinc-500">{item.country} • {item.category}</p>
+                  <p className="text-slate-900 text-sm font-medium truncate">{item.title}</p>
+                  <p className="text-xs text-slate-500">{item.country} • {item.category}</p>
                 </div>
                 <Button
                   variant="ghost"
@@ -1088,9 +1088,9 @@ function ProductsAdmin({ authHeaders }) {
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white flex items-center gap-2">
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900 flex items-center gap-2">
             <Plus className="w-5 h-5" /> Add Product
           </CardTitle>
         </CardHeader>
@@ -1098,32 +1098,32 @@ function ProductsAdmin({ authHeaders }) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-zinc-400">Name</Label>
+                <Label className="text-slate-600">Name</Label>
                 <Input
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Manufacturer</Label>
+                <Label className="text-slate-600">Manufacturer</Label>
                 <Input
                   value={form.manufacturer}
                   onChange={(e) => setForm({ ...form, manufacturer: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   required
                 />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label className="text-zinc-400">Category</Label>
+                <Label className="text-slate-600">Category</Label>
                 <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-                  <SelectTrigger className="bg-zinc-900 border-zinc-800 text-white">
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-900">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                  <SelectContent className="bg-white border-slate-200">
                     <SelectItem value="aircraft">Aircraft</SelectItem>
                     <SelectItem value="naval">Naval</SelectItem>
                     <SelectItem value="land">Land</SelectItem>
@@ -1134,22 +1134,22 @@ function ProductsAdmin({ authHeaders }) {
                 </Select>
               </div>
               <div>
-                <Label className="text-zinc-400">Product Type</Label>
+                <Label className="text-slate-600">Product Type</Label>
                 <Input
                   value={form.product_type}
                   onChange={(e) => setForm({ ...form, product_type: e.target.value })}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   placeholder="e.g. fighter"
                   required
                 />
               </div>
               <div>
-                <Label className="text-zinc-400">Status</Label>
+                <Label className="text-slate-600">Status</Label>
                 <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                  <SelectTrigger className="bg-zinc-900 border-zinc-800 text-white">
+                  <SelectTrigger className="bg-white border-slate-200 text-slate-900">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                  <SelectContent className="bg-white border-slate-200">
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="development">Development</SelectItem>
                     <SelectItem value="retired">Retired</SelectItem>
@@ -1158,72 +1158,72 @@ function ProductsAdmin({ authHeaders }) {
               </div>
             </div>
             <div>
-              <Label className="text-zinc-400">Image URL (optional)</Label>
+              <Label className="text-slate-600">Image URL (optional)</Label>
               <Input
                 value={form.image_url}
                 onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                className="bg-zinc-900 border-zinc-800 text-white"
+                className="bg-white border-slate-200 text-slate-900"
                 placeholder="https://..."
               />
             </div>
             <div>
-              <Label className="text-zinc-400">Specifications</Label>
+              <Label className="text-slate-600">Specifications</Label>
               <div className="flex gap-2">
                 <Input
                   value={specKey}
                   onChange={(e) => setSpecKey(e.target.value)}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   placeholder="Key"
                 />
                 <Input
                   value={specValue}
                   onChange={(e) => setSpecValue(e.target.value)}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   placeholder="Value"
                 />
                 <Button type="button" onClick={addSpec} variant="secondary">Add</Button>
               </div>
               <div className="mt-2 space-y-1">
                 {Object.entries(form.specifications).map(([k, v]) => (
-                  <p key={k} className="text-xs text-zinc-400">{k}: {v}</p>
+                  <p key={k} className="text-xs text-slate-500">{k}: {v}</p>
                 ))}
               </div>
             </div>
             <div>
-              <Label className="text-zinc-400">Materials</Label>
+              <Label className="text-slate-600">Materials</Label>
               <div className="flex gap-2">
                 <Input
                   value={materialInput}
                   onChange={(e) => setMaterialInput(e.target.value)}
-                  className="bg-zinc-900 border-zinc-800 text-white"
+                  className="bg-white border-slate-200 text-slate-900"
                   placeholder="Add material"
                 />
                 <Button type="button" onClick={addMaterial} variant="secondary">Add</Button>
               </div>
               <div className="flex flex-wrap gap-1 mt-2">
                 {form.materials.map((m, i) => (
-                  <span key={i} className="text-xs bg-zinc-800 text-zinc-300 px-2 py-1 rounded-full">{m}</span>
+                  <span key={i} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full border border-slate-200">{m}</span>
                 ))}
               </div>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
               Add Product
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      <Card className="bg-zinc-950 border-zinc-800">
-        <CardHeader className="border-b border-zinc-800">
-          <CardTitle className="text-white">Products</CardTitle>
+      <Card className="bg-white border-slate-200">
+        <CardHeader className="border-b border-slate-200">
+          <CardTitle className="text-slate-900">Products</CardTitle>
         </CardHeader>
         <CardContent className="pt-4 max-h-[500px] overflow-y-auto">
           <div className="space-y-2">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-3 bg-zinc-900 rounded-sm">
+              <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-lg">
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm">{item.name}</p>
-                  <p className="text-xs text-zinc-500">{item.manufacturer} • {item.category}</p>
+                  <p className="text-slate-900 text-sm font-medium">{item.name}</p>
+                  <p className="text-xs text-slate-500">{item.manufacturer} • {item.category}</p>
                 </div>
                 <Button
                   variant="ghost"
