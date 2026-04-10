@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
-import { API } from "@/App";
+import { API, useAuth } from "@/App";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import {
   Search, ArrowRight, ArrowLeftRight, Plus, CircleDot,
   Clock, Database, Filter, TrendingUp, ChevronDown, ChevronUp,
   ExternalLink, Download, Calendar, User, CheckCircle2, AlertCircle, AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -18,6 +19,9 @@ import {
 } from "recharts";
 
 // ── Constants ──────────────────────────────────────────────────────────────
+
+const PAGE_SIZE      = 50;   // items per page — recent view
+const HIST_PAGE_SIZE = 100;  // items per page — historical view
 
 const STATUS_OPTIONS = [
   { value: "all",          label: "All Statuses" },
@@ -516,51 +520,104 @@ function exportCSV(data) {
 // ── Main page ──────────────────────────────────────────────────────────────
 
 export default function MAActivity() {
-  const [activities,     setActivities]     = useState([]);
-  const [historical,     setHistorical]     = useState([]);
-  const [loading,        setLoading]        = useState(true);
-  const [histLoading,    setHistLoading]    = useState(false);
-  const [error,          setError]          = useState(null);
-  const [tab,            setTab]            = useState("recent");
-  const [searchTerm,     setSearchTerm]     = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedType,   setSelectedType]   = useState("all");
-  const [selectedYear,   setSelectedYear]   = useState("all");
-  const [profileName,    setProfileName]    = useState(null);
-  const [period,         setPeriod]         = useState("30");
-  const [sortField,      setSortField]      = useState("announced_date");
-  const [sortDir,        setSortDir]        = useState("desc");
+  const { token }                              = useAuth();
+  const [activities,     setActivities]        = useState([]);
+  const [historical,     setHistorical]        = useState([]);
+  const [loading,        setLoading]           = useState(true);
+  const [histLoading,    setHistLoading]       = useState(false);
+  const [loadingMore,    setLoadingMore]       = useState(false);
+  const [histLoadingMore, setHistLoadingMore]  = useState(false);
+  const [error,          setError]             = useState(null);
+  const [tab,            setTab]               = useState("recent");
+  const [searchTerm,     setSearchTerm]        = useState("");
+  const [selectedStatus, setSelectedStatus]    = useState("all");
+  const [selectedType,   setSelectedType]      = useState("all");
+  const [selectedYear,   setSelectedYear]      = useState("all");
+  const [profileName,    setProfileName]       = useState(null);
+  const [period,         setPeriod]            = useState("30");
+  const [sortField,      setSortField]         = useState("announced_date");
+  const [sortDir,        setSortDir]           = useState("desc");
+  const [hasMore,        setHasMore]           = useState(false);
+  const [histHasMore,    setHistHasMore]       = useState(false);
+  const [scraping,       setScraping]          = useState(false);
+  const [metaTotal,      setMetaTotal]         = useState(null);
+  const [metaLastScraped, setMetaLastScraped]  = useState(null);
 
-  const fetchRecent = async (days) => {
-    setLoading(true);
+  const fetchRecent = async (days, append = false) => {
+    if (append) setLoadingMore(true);
+    else setLoading(true);
     setError(null);
     try {
-      const params = days === "0" ? { days: 0 } : { days: Number(days) };
+      const currentOffset = append ? activities.length : 0;
+      const params = { limit: PAGE_SIZE, offset: currentOffset };
+      if (days === "0") params.days = 0;
+      else params.days = Number(days);
       const res = await axios.get(`${API}/ma-activities`, { params });
-      setActivities(res.data);
+      if (append) setActivities((prev) => [...prev, ...res.data]);
+      else setActivities(res.data);
+      setHasMore(res.data.length === PAGE_SIZE);
     } catch {
       setError("Failed to load M&A deals. Check your connection and try again.");
     } finally {
-      setLoading(false);
+      if (append) setLoadingMore(false);
+      else setLoading(false);
+    }
+  };
+
+  const fetchHist = async (append = false) => {
+    if (append) setHistLoadingMore(true);
+    else setHistLoading(true);
+    try {
+      const currentOffset = append ? historical.length : 0;
+      const res = await axios.get(`${API}/ma-activities/historical`, {
+        params: { limit: HIST_PAGE_SIZE, offset: currentOffset },
+      });
+      if (append) setHistorical((prev) => [...prev, ...res.data]);
+      else setHistorical(res.data);
+      setHistHasMore(res.data.length === HIST_PAGE_SIZE);
+    } catch {
+      // silent — table shows empty state
+    } finally {
+      if (append) setHistLoadingMore(false);
+      else setHistLoading(false);
+    }
+  };
+
+  const fetchMeta = async () => {
+    try {
+      const res = await axios.get(`${API}/ma-activities/meta`);
+      setMetaTotal(res.data.total);
+      setMetaLastScraped(res.data.last_scraped_at);
+    } catch {
+      // silent
+    }
+  };
+
+  const handleRefresh = async () => {
+    if (!token || scraping) return;
+    setScraping(true);
+    try {
+      await axios.post(`${API}/ma-activities/scrape`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 60000,
+      });
+      await fetchRecent(period, false);
+      await fetchMeta();
+    } catch {
+      // silent — new data might still have been saved
+      await fetchRecent(period, false);
+      await fetchMeta();
+    } finally {
+      setScraping(false);
     }
   };
 
   useEffect(() => { fetchRecent(period); }, [period]);
+  useEffect(() => { fetchMeta(); }, []);
 
   useEffect(() => {
     if (tab !== "historical" || historical.length) return;
-    const fetchHist = async () => {
-      setHistLoading(true);
-      try {
-        const res = await axios.get(`${API}/ma-activities/historical`);
-        setHistorical(res.data);
-      } catch {
-        // silent — table shows empty state
-      } finally {
-        setHistLoading(false);
-      }
-    };
-    fetchHist();
+    fetchHist(false);
   }, [tab, historical.length]);
 
   const applyFilters = (list) => list.filter((a) => {
@@ -650,8 +707,29 @@ export default function MAActivity() {
             <span>{lastDealDate ? `Latest: ${lastDealDate}` : "No deals in range"}</span>
             <span className="text-slate-300">|</span>
             <Database className="w-3.5 h-3.5" />
-            <span>17 RSS sources</span>
+            <span>
+              {metaLastScraped
+                ? `Scraped: ${format(new Date(metaLastScraped), "MMM d, HH:mm")}`
+                : "17 RSS sources"}
+            </span>
+            {metaTotal != null && (
+              <>
+                <span className="text-slate-300">|</span>
+                <span className="font-mono font-semibold text-slate-700">{metaTotal} total</span>
+              </>
+            )}
           </div>
+          {token && (
+            <button
+              onClick={handleRefresh}
+              disabled={scraping}
+              title="Trigger M&A scraper now"
+              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${scraping ? "animate-spin" : ""}`} />
+              {scraping ? "Scraping…" : "Refresh"}
+            </button>
+          )}
         </div>
       </div>
 
@@ -866,11 +944,25 @@ export default function MAActivity() {
               <MACard key={activity.id} activity={activity} onOpenProfile={setProfileName} />
             ))
           )}
+          {hasMore && (
+            <div className="flex justify-center pt-2">
+              <button
+                onClick={() => fetchRecent(period, true)}
+                disabled={loadingMore}
+                className="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 transition-colors disabled:opacity-50"
+              >
+                {loadingMore
+                  ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading…</>
+                  : `Load more deals (showing ${activities.length}${metaTotal ? ` of ${metaTotal}` : ""})`}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
       {/* ── Historical: table view ── */}
       {tab === "historical" && (
+        <div className="space-y-3">
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
           {histLoading ? (
             <div className="flex items-center justify-center h-40">
@@ -918,6 +1010,20 @@ export default function MAActivity() {
               </table>
             </div>
           )}
+        </div>
+        {histHasMore && (
+          <div className="flex justify-center">
+            <button
+              onClick={() => fetchHist(true)}
+              disabled={histLoadingMore}
+              className="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 transition-colors disabled:opacity-50"
+            >
+              {histLoadingMore
+                ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading…</>
+                : `Load more (showing ${historical.length}${metaTotal ? ` of ${metaTotal}` : ""})`}
+            </button>
+          </div>
+        )}
         </div>
       )}
 
