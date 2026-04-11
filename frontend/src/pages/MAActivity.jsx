@@ -270,10 +270,37 @@ function RoundBadge({ roundType }) {
   return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${map[roundType]}`}>{label}</span>;
 }
 
+// Corporate suffixes to strip when doing fuzzy name matching
+const CORP_SUFFIX_RE = /\s+(se|ag|gmbh|kg|nv|bv|sa|sas|plc|ltd|llc|inc|corp|co\.|group|international|industries|technologies|systems|solutions|defense|defence|aerospace|aviation|naval|digital|ventures|federal|division|holding|holdings)\b.*/gi;
+
+function normalizeName(name) {
+  return name.toLowerCase().replace(CORP_SUFFIX_RE, "").trim();
+}
+
 function getLogoDomain(activity, side) {
   const domainField = side === "acquirer" ? "acquirer_logo_domain" : "target_logo_domain";
   const nameField   = side === "acquirer" ? "acquirer" : "target";
-  return activity[domainField] || LOGO_FALLBACK[activity[nameField]] || null;
+  const name = activity[nameField] ?? "";
+
+  // 1. Explicit domain from DB
+  if (activity[domainField]) return activity[domainField];
+
+  // 2. Exact name match in LOGO_FALLBACK
+  if (LOGO_FALLBACK[name]) return LOGO_FALLBACK[name];
+
+  // 3. Fuzzy match: strip corporate suffixes, then compare
+  const normName = normalizeName(name);
+  for (const [key, domain] of Object.entries(LOGO_FALLBACK)) {
+    if (normalizeName(key) === normName) return domain;
+  }
+
+  // 4. Partial match: LOGO_FALLBACK key is a prefix of the company name (e.g. "Airbus" in "Airbus Defence")
+  for (const [key, domain] of Object.entries(LOGO_FALLBACK)) {
+    const normKey = normalizeName(key);
+    if (normKey.length >= 4 && normName.startsWith(normKey)) return domain;
+  }
+
+  return null;
 }
 
 // ── Wikipedia logo cache (module-level → persists across renders) ──────────
@@ -681,7 +708,7 @@ export default function MAActivity() {
   const [loadingMore,    setLoadingMore]       = useState(false);
   const [histLoadingMore, setHistLoadingMore]  = useState(false);
   const [error,          setError]             = useState(null);
-  const [tab,            setTab]               = useState("recent");
+  const [tab,            setTab]               = useState("historical");
   const [searchTerm,     setSearchTerm]        = useState("");
   const [selectedStatus, setSelectedStatus]    = useState("all");
   const [selectedType,   setSelectedType]      = useState("all");
