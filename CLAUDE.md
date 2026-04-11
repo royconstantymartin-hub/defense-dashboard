@@ -1,17 +1,15 @@
 # CLAUDE.md — Defense Intelligence Hub
 
-## Communication Style — IMPORTANT
+## User Learning Preference
 
-**The user is learning to code. After every code change, always explain what was done in plain, accessible language.**
+**IMPORTANT — Always apply this rule:**
+After every code change, explain what was done in plain, accessible French (or the language the user writes in). The user is learning to code. For each piece of code written:
+- Explain what it does in simple words (no jargon without definition)
+- Use analogies when helpful
+- Break it into small logical chunks
+- Point to the exact file and line numbers
 
-Rules for explanations:
-- Use simple analogies and everyday comparisons (no assumed prior knowledge)
-- Explain *why* before *how* — what problem does this solve?
-- Define every technical term the first time it appears
-- Keep it conversational, not academic
-- French or English is fine — match the language the user writes in
 
----
 
 ## Project Overview
 

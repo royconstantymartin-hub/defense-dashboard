@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
 const CATEGORIES = [
@@ -221,6 +221,26 @@ const WIKI_TITLES = {
   "MQ-28A Ghost Bat": "Boeing MQ-28 Ghost Bat",
   "F/A-18C Hornet": "McDonnell Douglas F/A-18 Hornet",
   "Dassault nEUROn UCAV": "Dassault nEUROn",
+};
+
+// YouTube presentation video IDs for selected products
+// Format: product name (must match seed data) → YouTube video ID
+const YOUTUBE_VIDEOS = {
+  "F-35 Lightning II":        "bpVU_RNB4nI", // Lockheed Martin – F-35 overview
+  "F-22 Raptor":              "Lz7JHy4WOPE", // USAF – F-22 Raptor
+  "Rafale F4":                "Y3aHb7Xo_dY", // Dassault Aviation – Rafale
+  "Eurofighter Typhoon":      "hQl3FD-dJqo", // Eurofighter GmbH – Typhoon
+  "Gripen E":                 "9GJlkP0WXAM", // Saab AB – Gripen E
+  "Bayraktar TB2":            "ETQ3MFJsNDA", // Baykar – Bayraktar TB2
+  "MQ-9 Reaper":              "kd0P1BmFYMY", // General Atomics – MQ-9 Reaper
+  "AH-64E Apache Guardian":   "9nBkKNgLvW8", // Boeing – AH-64E Apache
+  "HIMARS":                   "bBiOBQqnLbU", // US Army – HIMARS
+  "M1A2 Abrams SEPv3":        "k2tUTbzGfBo", // General Dynamics – M1A2
+  "Iron Dome":                "Q1V5Pf2hX2w", // Rafael – Iron Dome
+  "Patriot PAC-3":            "wbWHMgZzlqY", // Raytheon – Patriot PAC-3
+  "F/A-18E/F Super Hornet":   "aJWbRH8IJHU", // Boeing – Super Hornet
+  "B-21 Raider":              "EYHkiOJQSFg", // Northrop Grumman – B-21 Raider
+  "Arleigh Burke Flight III": "MK3DSzSXtGs", // US Navy – DDG Flight III
 };
 
 // Company logo domains
@@ -951,6 +971,39 @@ export default function Products() {
                   {selectedProduct.product_type.replace(/_/g, ' ')}
                 </span>
               </div>
+
+              {/* YouTube Presentation Video */}
+              {YOUTUBE_VIDEOS[selectedProduct.name] && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Presentation Video</p>
+                  <a
+                    href={`https://www.youtube.com/watch?v=${YOUTUBE_VIDEOS[selectedProduct.name]}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block relative rounded-xl overflow-hidden border border-slate-200 hover:border-red-300 transition-all shadow-sm hover:shadow-md"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <img
+                      src={`https://img.youtube.com/vi/${YOUTUBE_VIDEOS[selectedProduct.name]}/hqdefault.jpg`}
+                      alt={`${selectedProduct.name} presentation`}
+                      className="w-full object-cover"
+                      style={{ aspectRatio: '16/9' }}
+                      onError={(ev) => { ev.target.closest('a').style.display = 'none'; }}
+                    />
+                    {/* Play overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/35 transition-colors">
+                      <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <Play className="w-6 h-6 text-white ml-1" fill="white" />
+                      </div>
+                    </div>
+                    {/* YouTube badge */}
+                    <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-black/70 rounded px-2 py-1">
+                      <Youtube className="w-3.5 h-3.5 text-red-500" />
+                      <span className="text-white text-xs font-medium">Watch on YouTube</span>
+                    </div>
+                  </a>
+                </div>
+              )}
 
               {/* Specs */}
               <div>
