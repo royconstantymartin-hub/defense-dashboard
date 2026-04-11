@@ -800,13 +800,11 @@ async def get_dashboard_stats():
 
 # ============= SEED DATA ENDPOINT =============
 
-@api_router.post("/seed-data")
-async def seed_data(current_user: dict = Depends(get_current_user)):
-    if current_user.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Admin role required")
+async def _run_seed() -> dict:
+    """Idempotent seed — safe to call on every startup."""
     from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
-    
-    # Seed Defense Players (250+ companies)
+
+    # Seed Defense Players
     for p in DEFENSE_COMPANIES:
         existing = await db.defense_players.find_one({"ticker": p['ticker']})
         if not existing:
@@ -814,7 +812,7 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             doc = player.model_dump()
             doc['updated_at'] = doc['updated_at'].isoformat()
             await db.defense_players.insert_one(doc)
-    
+
     # Seed Announcements
     for a in ANNOUNCEMENTS_DATA:
         existing = await db.announcements.find_one({"title": a['title']})
@@ -823,7 +821,7 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             doc = announcement.model_dump()
             doc['date'] = doc['date'].isoformat()
             await db.announcements.insert_one(doc)
-    
+
     # Seed M&A Activities — upsert so enriched fields are applied to existing docs
     for m in MA_DATA + MA_EXTRA_DEALS:
         activity = MAActivity(**m)
@@ -834,21 +832,21 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             {"$set": doc},
             upsert=True,
         )
-    
+
     # Seed Expenditures
     for e in EXPENDITURES_DATA:
         existing = await db.expenditures.find_one({"country_code": e['country_code'], "year": e['year']})
         if not existing:
             expenditure = Expenditure(**e)
             await db.expenditures.insert_one(expenditure.model_dump())
-    
+
     # Seed Regulations
     for r in REGULATIONS_DATA:
         existing = await db.regulations.find_one({"title": r['title']})
         if not existing:
             regulation = Regulation(**r)
             await db.regulations.insert_one(regulation.model_dump())
-    
+
     # Seed Products (insert new, update image_url for existing)
     for p in PRODUCTS_DATA:
         existing = await db.products.find_one({"name": p['name']})
@@ -860,7 +858,7 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
                 {"name": p['name']},
                 {"$set": {"image_url": p['image_url']}}
             )
-    
+
     # Seed Contracts
     for c in CONTRACTS_DATA:
         existing = await db.contracts.find_one({"title": c['title']})
@@ -869,12 +867,17 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             doc = contract.model_dump()
             await db.contracts.insert_one(doc)
 
-    # Get counts
     players_count = await db.defense_players.count_documents({})
     announcements_count = await db.announcements.count_documents({})
     contracts_count = await db.contracts.count_documents({})
-
     return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count, "contracts": contracts_count}
+
+
+@api_router.post("/seed-data")
+async def seed_data(current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    return await _run_seed()
 
 # ============= NEWS SCRAPER JOB =============
 
@@ -1628,6 +1631,15 @@ async def _apply_product_images():
     except Exception as exc:
         logger.error("Product image migration error: %s", exc)
 
+async def _auto_seed():
+    """Silently seed reference data on startup. Errors are logged, never raised."""
+    try:
+        result = await _run_seed()
+        logger.info("Auto-seed complete: %s", result)
+    except Exception as exc:
+        logger.warning("Auto-seed failed (non-fatal): %s", exc)
+
+
 @app.on_event("startup")
 async def startup_event():
     """Create news_articles indexes, start scheduler, and auto-scrape if empty."""
@@ -1660,6 +1672,8 @@ async def startup_event():
     # Always start with a fresh stock cache so stale values never survive restarts
     invalidate_stock_cache()
     logger.info("Stock price cache cleared on startup")
+    # Auto-seed reference data on every startup (idempotent — skips existing rows)
+    asyncio.create_task(_auto_seed())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
