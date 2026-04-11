@@ -117,7 +117,9 @@ KNOWN_COMPANIES: Dict[str, Tuple[str, str]] = {
     "exail":                     ("FR", "exail.com"),
     "eca group":                 ("FR", "ecagroup.com"),
     "eurodrone":                 ("FR", "airbus.com"),
-    "knds":                      ("DE", "knds.de"),
+    "knds france":               ("FR", "knds.com"),   # FR subsidiary (ex-Nexter)
+    "knds germany":              ("DE", "knds.com"),   # DE subsidiary (ex-KMW)
+    "knds":                      ("DE", "knds.com"),   # default holding → DE
     "diehl":                     ("DE", "diehl.com"),
     "hensoldt":                  ("DE", "hensoldt.net"),
     "rheinmetall":               ("DE", "rheinmetall.com"),
