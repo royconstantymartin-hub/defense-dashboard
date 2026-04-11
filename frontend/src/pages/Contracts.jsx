@@ -20,6 +20,7 @@ import {
   Download,
   ExternalLink,
   Filter,
+  History,
 } from "lucide-react";
 
 // ── Translations ──────────────────────────────────────────────────────────────
@@ -63,6 +64,9 @@ const T = {
   cLog:        { en: "Logistics", fr: "Logistique" },
   cSpace:      { en: "Space",     fr: "Spatial" },
   cMissiles:   { en: "Missiles",  fr: "Missiles" },
+  // Recent strip
+  recent:      { en: "Recent Activity",  fr: "Activité récente" },
+  recentSub:   { en: "Latest contracts & tenders indexed", fr: "Derniers contrats & appels d'offres référencés" },
   // Card fields
   estVal:      { en: "Est. Value",    fr: "Valeur estimée" },
   published:   { en: "Published",     fr: "Publication" },
@@ -85,6 +89,53 @@ const CATEGORY_COLORS = {
   space:     "bg-indigo-50 text-indigo-700 border-indigo-200",
   missiles:  "bg-rose-50 text-rose-700 border-rose-200",
 };
+
+const STATUS_DOT = {
+  open:      "bg-blue-500",
+  awarded:   "bg-emerald-500",
+  closed:    "bg-slate-400",
+  cancelled: "bg-rose-400",
+};
+
+function RecentStrip({ contracts }) {
+  const tRecent  = useT(T.recent);
+  const tRecentS = useT(T.recentSub);
+  const tUndis   = useT(T.undisclosed);
+
+  const recent = [...contracts]
+    .sort((a, b) => (b.publication_date || "").localeCompare(a.publication_date || ""))
+    .slice(0, 6);
+
+  if (recent.length === 0) return null;
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <History size={15} className="text-purple-700" />
+        <div>
+          <p className="text-sm font-semibold text-slate-900">{tRecent}</p>
+          <p className="text-xs text-slate-400">{tRecentS}</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
+        {recent.map((c) => (
+          <div key={c.id} className="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-purple-200 transition-colors">
+            <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[c.status] || "bg-slate-400"}`} />
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-slate-800 leading-snug line-clamp-2">{c.title}</p>
+              <p className="text-[11px] text-slate-400 mt-0.5 font-mono">
+                {c.publication_date?.slice(0, 10)}
+                {c.amount_min || c.amount_max
+                  ? ` · $${c.amount_min ?? "?"}M–$${c.amount_max ?? "?"}M`
+                  : ` · ${tUndis}`}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function ContractCard({ contract }) {
   const tStatus    = { open: useT(T.sOpen), awarded: useT(T.sAwarded), closed: useT(T.sClosed), cancelled: useT(T.sCancelled) };
@@ -372,6 +423,9 @@ export default function Contracts() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent activity strip */}
+      {contracts.length > 0 && <RecentStrip contracts={contracts} />}
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
