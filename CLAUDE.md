@@ -1,5 +1,16 @@
 # CLAUDE.md — Defense Intelligence Hub
 
+## User Learning Preference
+
+**IMPORTANT — Always apply this rule:**
+After every code change, explain what was done in plain, accessible French (or the language the user writes in). The user is learning to code. For each piece of code written:
+- Explain what it does in simple words (no jargon without definition)
+- Use analogies when helpful
+- Break it into small logical chunks
+- Point to the exact file and line numbers
+
+
+
 ## Project Overview
 
 A full-stack defense industry intelligence dashboard ("Defense Intelligence Hub") for tracking market data, M&A activity, contracts, regulations, products, and announcements across the global defense sector.
