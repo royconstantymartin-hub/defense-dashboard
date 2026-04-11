@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getLogoDomain } from "@/lib/companyLogos";
+import { getLogoUrl } from "@/lib/companyLogos";
 import {
   Sheet, SheetContent,
 } from "@/components/ui/sheet";
@@ -9,8 +10,46 @@ import { format, formatDistanceToNow } from "date-fns";
 import {
   Globe, Linkedin, MapPin, Calendar, ArrowRight, ExternalLink,
   Users, TrendingUp, DollarSign, Building2, Newspaper, X,
-  StickyNote, Send, Trash2, LogIn,
+  StickyNote, Send, Trash2, LogIn, Package, ChevronRight,
 } from "lucide-react";
+
+// ── Country → ISO 3166-1 alpha-2 flag code ────────────────────────────────
+const COUNTRY_CODES = {
+  "USA": "us", "United States": "us",
+  "UK": "gb", "United Kingdom": "gb",
+  "France": "fr",
+  "Germany": "de",
+  "Italy": "it",
+  "Spain": "es",
+  "Israel": "il",
+  "Russia": "ru",
+  "China": "cn",
+  "Japan": "jp",
+  "South Korea": "kr",
+  "India": "in",
+  "Turkey": "tr",
+  "Sweden": "se",
+  "Norway": "no",
+  "Netherlands": "nl",
+  "Australia": "au",
+  "Canada": "ca",
+  "Poland": "pl",
+  "Ukraine": "ua",
+  "Brazil": "br",
+  "South Africa": "za",
+  "Singapore": "sg",
+  "Switzerland": "ch",
+  "Austria": "at",
+  "Finland": "fi",
+  "Greece": "gr",
+  "Portugal": "pt",
+  "Belgium": "be",
+  "Denmark": "dk",
+  "Czech Republic": "cz",
+  "Romania": "ro",
+  "UAE": "ae",
+  "Saudi Arabia": "sa",
+};
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
@@ -35,11 +74,11 @@ function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-function CompanyLogo({ name, domain, size = "lg" }) {
+function CompanyLogo({ name, size = "lg" }) {
   const [failed, setFailed] = useState(false);
   const sizeClass = size === "lg" ? "w-16 h-16" : "w-10 h-10";
   const textClass = size === "lg" ? "text-xl" : "text-sm";
-  const logoUrl = domain ? `https://unavatar.io/${domain}?fallback=false` : null;
+  const logoUrl = getLogoUrl(name);
 
   if (logoUrl && !failed) {
     return (
@@ -95,10 +134,12 @@ function relativeTime(isoStr) {
 
 export default function CompanyProfileSheet({ name, onClose }) {
   const { token, user } = useAuth();
+  const navigate = useNavigate();
   const [data, setData]         = useState(null);
   const [loading, setLoading]   = useState(false);
   const [articles, setArticles] = useState([]);
-  const [logoDomain, setLogoDomain] = useState(null);
+  const [stockPrice, setStockPrice] = useState(null);
+  const [productCount, setProductCount] = useState(null);
 
   // Analyst notes
   const [notes, setNotes]           = useState([]);
@@ -150,21 +191,41 @@ export default function CompanyProfileSheet({ name, onClose }) {
   };
 
   useEffect(() => {
-    if (!name) { setData(null); setArticles([]); return; }
+    if (!name) { setData(null); setArticles([]); setStockPrice(null); setProductCount(null); return; }
     setLoading(true);
     setData(null);
     setArticles([]);
+    setStockPrice(null);
+    setProductCount(null);
 
     Promise.all([
       axios.get(`${API}/companies/${encodeURIComponent(name)}`),
       axios.get(`${API}/news/company?name=${encodeURIComponent(name)}&limit=5`).catch(() => ({ data: [] })),
+      axios.get(`${API}/products`).catch(() => ({ data: [] })),
     ])
-      .then(([profileRes, newsRes]) => {
-        setData(profileRes.data);
+      .then(([profileRes, newsRes, productsRes]) => {
+        const profile = profileRes.data;
+        setData(profile);
         setArticles(newsRes.data || []);
-        const p = profileRes.data?.profile;
-        if (p) {
-          setLogoDomain(p.acquirer_logo_domain || p.target_logo_domain || null);
+
+        // Count products for this manufacturer
+        const allProducts = productsRes.data || [];
+        const count = allProducts.filter(
+          (p) => p.manufacturer?.toLowerCase() === name.toLowerCase()
+        ).length;
+        setProductCount(count);
+
+        // Fetch live stock price if company is public
+        const ticker = profile?.profile?.ticker;
+        if (ticker && ticker !== "PRIVATE" && !ticker.startsWith("PRIV")) {
+          axios.get(`${API}/stock-prices?tickers=${encodeURIComponent(ticker)}`)
+            .then((r) => {
+              const entry = (r.data || []).find(
+                (s) => s.ticker?.toUpperCase() === ticker.toUpperCase()
+              );
+              if (entry) setStockPrice(entry);
+            })
+            .catch(() => {});
         }
       })
       .catch((e) => console.error("CompanyProfileSheet fetch error:", e))
@@ -173,16 +234,6 @@ export default function CompanyProfileSheet({ name, onClose }) {
 
   const p  = data?.profile;
   const ma = data?.ma_activities ?? [];
-
-  const resolvedDomain = logoDomain
-    ?? (() => {
-      for (const a of ma) {
-        if (a.acquirer?.toLowerCase().includes(name?.toLowerCase() || "")) return a.acquirer_logo_domain;
-        if (a.target?.toLowerCase().includes(name?.toLowerCase() || ""))   return a.target_logo_domain;
-      }
-      return null;
-    })()
-    ?? getLogoDomain(name);
 
   return (
     <Sheet open={!!name} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -199,9 +250,19 @@ export default function CompanyProfileSheet({ name, onClose }) {
           </button>
 
           <div className="flex items-start gap-4">
-            <CompanyLogo name={name || ""} domain={resolvedDomain} size="lg" />
+            <CompanyLogo name={name || ""} size="lg" />
             <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-bold text-white leading-tight">{name}</h2>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-xl font-bold text-white leading-tight">{name}</h2>
+                {p?.country && COUNTRY_CODES[p.country] && (
+                  <img
+                    src={`https://flagcdn.com/w40/${COUNTRY_CODES[p.country]}.png`}
+                    alt={p.country}
+                    title={p.country}
+                    className="h-4 w-auto rounded-sm opacity-90 shrink-0"
+                  />
+                )}
+              </div>
               <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                 {p?.ticker && (
                   <span className="font-mono text-xs bg-white/15 text-white px-2 py-0.5 rounded-md border border-white/20">
@@ -224,6 +285,22 @@ export default function CompanyProfileSheet({ name, onClose }) {
                   </span>
                 )}
               </div>
+              {/* Stock price row */}
+              {stockPrice && (
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className="font-mono text-sm font-bold text-white">
+                    ${stockPrice.price?.toFixed(2)}
+                  </span>
+                  <span className={`text-xs font-mono font-semibold px-1.5 py-0.5 rounded ${
+                    stockPrice.change_percent >= 0
+                      ? "text-emerald-300 bg-emerald-500/20"
+                      : "text-rose-300 bg-rose-500/20"
+                  }`}>
+                    {stockPrice.change_percent >= 0 ? "+" : ""}
+                    {stockPrice.change_percent?.toFixed(2)}%
+                  </span>
+                </div>
+              )}
               {p?.founded_year && (
                 <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
@@ -336,6 +413,36 @@ export default function CompanyProfileSheet({ name, onClose }) {
                     </span>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* ── Associated Products ── */}
+            {productCount !== null && productCount > 0 && (
+              <div className="px-6 py-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Package className="w-3.5 h-3.5 text-slate-400" />
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Products</p>
+                </div>
+                <button
+                  onClick={() => {
+                    onClose();
+                    navigate(`/products?manufacturer=${encodeURIComponent(name)}`);
+                  }}
+                  className="flex items-center justify-between w-full bg-purple-50 hover:bg-purple-100 border border-purple-100 hover:border-purple-200 rounded-xl px-4 py-3 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center justify-center transition-colors">
+                      <Package className="w-4 h-4 text-purple-600" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-semibold text-purple-800">
+                        {productCount} product{productCount !== 1 ? "s" : ""} in catalog
+                      </p>
+                      <p className="text-xs text-purple-500">View in Products page</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-purple-400 group-hover:text-purple-600 transition-colors" />
+                </button>
               </div>
             )}
 

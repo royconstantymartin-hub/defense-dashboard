@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
 const CATEGORIES = [
@@ -59,6 +59,11 @@ const MANUFACTURERS = [
   { value: "Hyundai Rotem", label: "Hyundai Rotem" },
   { value: "AeroVironment", label: "AeroVironment" },
   { value: "Sikorsky", label: "Sikorsky" },
+  { value: "Tupolev", label: "Tupolev" },
+  { value: "RSK MiG", label: "RSK MiG" },
+  { value: "Grumman", label: "Grumman" },
+  { value: "Hindustan Aeronautics", label: "Hindustan Aeronautics" },
+  { value: "Korea Aerospace Industries", label: "Korea Aerospace Industries" },
 ];
 
 // Wikipedia article title overrides for products whose names differ from their article titles
@@ -201,16 +206,62 @@ const WIKI_TITLES = {
   "Stinger FIM-92": "FIM-92 Stinger",
   "Spike NLOS": "Spike (missile)",
   "Spike ER2": "Spike (missile)",
+  // Iconic / newly added
+  "B-52H Stratofortress": "Boeing B-52 Stratofortress",
+  "SR-71 Blackbird": "Lockheed SR-71 Blackbird",
+  "F-117 Nighthawk": "Lockheed F-117 Nighthawk",
+  "F-14 Tomcat": "Grumman F-14 Tomcat",
+  "E-3 Sentry AWACS": "Boeing E-3 Sentry",
+  "C-130J Super Hercules": "Lockheed C-130 Hercules",
+  "Tu-160 Blackjack": "Tupolev Tu-160",
+  "MiG-29 Fulcrum": "Mikoyan MiG-29",
+  "Mirage 2000-5": "Dassault Mirage 2000",
+  "MH-60R Seahawk": "Sikorsky SH-60 Seahawk",
+  "AW101 Merlin HM2": "AgustaWestland AW101",
+  "MQ-28A Ghost Bat": "Boeing MQ-28 Ghost Bat",
+  "F/A-18C Hornet": "McDonnell Douglas F/A-18 Hornet",
+  "Dassault nEUROn UCAV": "Dassault nEUROn",
+};
+
+// YouTube presentation video IDs for selected products
+// Format: product name (must match seed data) → YouTube video ID
+const YOUTUBE_VIDEOS = {
+  "F-35 Lightning II":        "bpVU_RNB4nI", // Lockheed Martin – F-35 overview
+  "F-22 Raptor":              "Lz7JHy4WOPE", // USAF – F-22 Raptor
+  "Rafale F4":                "Y3aHb7Xo_dY", // Dassault Aviation – Rafale
+  "Eurofighter Typhoon":      "hQl3FD-dJqo", // Eurofighter GmbH – Typhoon
+  "Gripen E":                 "9GJlkP0WXAM", // Saab AB – Gripen E
+  "Bayraktar TB2":            "ETQ3MFJsNDA", // Baykar – Bayraktar TB2
+  "MQ-9 Reaper":              "kd0P1BmFYMY", // General Atomics – MQ-9 Reaper
+  "AH-64E Apache Guardian":   "9nBkKNgLvW8", // Boeing – AH-64E Apache
+  "HIMARS":                   "bBiOBQqnLbU", // US Army – HIMARS
+  "M1A2 Abrams SEPv3":        "k2tUTbzGfBo", // General Dynamics – M1A2
+  "Iron Dome":                "Q1V5Pf2hX2w", // Rafael – Iron Dome
+  "Patriot PAC-3":            "wbWHMgZzlqY", // Raytheon – Patriot PAC-3
+  "F/A-18E/F Super Hornet":   "aJWbRH8IJHU", // Boeing – Super Hornet
+  "B-21 Raider":              "EYHkiOJQSFg", // Northrop Grumman – B-21 Raider
+  "Arleigh Burke Flight III": "MK3DSzSXtGs", // US Navy – DDG Flight III
 };
 
 // Company logo domains
 const COMPANY_LOGOS = {
+  // USA
   "Lockheed Martin": "lockheedmartin.com",
   "Raytheon Technologies": "rtx.com",
   "Boeing Defense": "boeing.com",
   "Northrop Grumman": "northropgrumman.com",
   "General Dynamics": "gd.com",
   "L3Harris Technologies": "l3harris.com",
+  "Huntington Ingalls": "hii.com",
+  "General Atomics": "ga.com",
+  "AeroVironment": "aerovironment.com",
+  "Sikorsky": "lockheedmartin.com",
+  "Oshkosh Defense": "oshkoshdefense.com",
+  "Palantir Technologies": "palantir.com",
+  "Kratos Defense": "kratosdefense.com",
+  "Leidos Holdings": "leidos.com",
+  "Textron": "textron.com",
+  // Europe
   "BAE Systems": "baesystems.com",
   "Thales": "thalesgroup.com",
   "Leonardo": "leonardo.com",
@@ -222,24 +273,46 @@ const COMPANY_LOGOS = {
   "Naval Group": "naval-group.com",
   "Hensoldt": "hensoldt.net",
   "MBDA": "mbda-systems.com",
+  "Nexter Systems": "knds.com",
+  "Krauss-Maffei Wegmann": "kmweg.com",
+  "Fincantieri": "fincantieri.com",
+  "Diehl Defence": "diehl.com",
+  "Patria": "patriagroup.com",
+  "Rolls-Royce Holdings": "rolls-royce.com",
+  "Babcock International": "babcockinternational.com",
+  "QinetiQ": "qinetiq.com",
+  // Middle East / Israel
   "Kongsberg Defence": "kongsberg.com",
-  "Hanwha Defense": "hanwha.com",
   "Elbit Systems": "elbitsystems.com",
   "Rafael Advanced Defense": "rafael.co.il",
   "Israel Aerospace Industries": "iai.co.il",
-  "General Dynamics": "gd.com",
-  "Huntington Ingalls": "hii.com",
-  "Sikorsky": "lockheedmartin.com",
+  // Asia-Pacific
+  "Hanwha Defense": "hanwha.com",
+  "Hanwha Aerospace": "hanwha.com",
+  "Korea Aerospace Industries": "koreaaero.com",
+  "Hyundai Rotem": "hyundai-rotem.co.kr",
+  "Hindustan Aeronautics": "hal-india.co.in",
+  "Mitsubishi Heavy Industries": "mhi.com",
+  "Baykar": "baykartech.com",
+  // Others
+  "Kongsberg/Raytheon": "kongsberg.com",
+  "BrahMos Aerospace": "brahmos.com",
+  "GDELS": "gdels.com",
+  "ThyssenKrupp Marine": "thyssenkrupp.com",
 };
 
 export default function Products() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedManufacturer, setSelectedManufacturer] = useState("all");
+  const [selectedManufacturer, setSelectedManufacturer] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("manufacturer") || "all";
+  });
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [profileName, setProfileName] = useState(null);
   const [compareMode, setCompareMode] = useState(false);
@@ -634,16 +707,23 @@ export default function Products() {
                       className="flex items-center gap-1.5 mt-1.5 group text-left bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg px-2 py-1 transition-all"
                       title={`View ${product.manufacturer} profile`}
                     >
-                      {logoUrl ? (
-                        <img
-                          src={logoUrl}
-                          alt={product.manufacturer}
-                          className="w-4 h-4 rounded object-contain shrink-0"
-                          onError={(e) => { e.target.style.display = 'none'; }}
+                      <span className="w-5 h-5 rounded-full bg-white ring-1 ring-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                        {logoUrl ? (
+                          <img
+                            src={logoUrl}
+                            alt=""
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextElementSibling.style.display = 'block';
+                            }}
+                          />
+                        ) : null}
+                        <Building2
+                          className="w-3 h-3 text-slate-400 group-hover:text-purple-500 transition-colors"
+                          style={{ display: logoUrl ? 'none' : 'block' }}
                         />
-                      ) : (
-                        <Building2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-500 shrink-0 transition-colors" />
-                      )}
+                      </span>
                       <p className="text-xs text-slate-600 group-hover:text-purple-700 font-medium transition-colors truncate max-w-[120px]">
                         {product.manufacturer}
                       </p>
@@ -891,6 +971,39 @@ export default function Products() {
                   {selectedProduct.product_type.replace(/_/g, ' ')}
                 </span>
               </div>
+
+              {/* YouTube Presentation Video */}
+              {YOUTUBE_VIDEOS[selectedProduct.name] && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Presentation Video</p>
+                  <a
+                    href={`https://www.youtube.com/watch?v=${YOUTUBE_VIDEOS[selectedProduct.name]}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block relative rounded-xl overflow-hidden border border-slate-200 hover:border-red-300 transition-all shadow-sm hover:shadow-md"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <img
+                      src={`https://img.youtube.com/vi/${YOUTUBE_VIDEOS[selectedProduct.name]}/hqdefault.jpg`}
+                      alt={`${selectedProduct.name} presentation`}
+                      className="w-full object-cover"
+                      style={{ aspectRatio: '16/9' }}
+                      onError={(ev) => { ev.target.closest('a').style.display = 'none'; }}
+                    />
+                    {/* Play overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/35 transition-colors">
+                      <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <Play className="w-6 h-6 text-white ml-1" fill="white" />
+                      </div>
+                    </div>
+                    {/* YouTube badge */}
+                    <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-black/70 rounded px-2 py-1">
+                      <Youtube className="w-3.5 h-3.5 text-red-500" />
+                      <span className="text-white text-xs font-medium">Watch on YouTube</span>
+                    </div>
+                  </a>
+                </div>
+              )}
 
               {/* Specs */}
               <div>

@@ -982,6 +982,550 @@ MA_EXTRA_DEALS = [
         "round_type": None,
         "is_disclosed": True,
     },
+    # ── 2026 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "KNDS France", "target": "Texelis Defense",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "KNDS France acquires Texelis Defense — French military vehicle driveline specialist",
+        "rationale": (
+            "KNDS France (the French subsidiary of KNDS, parent company of Nexter Systems) acquires "
+            "Texelis Defense, a French manufacturer of hub-reduction drives, axles and driveline "
+            "systems for wheeled and tracked military vehicles. Texelis equipment equips the Leclerc "
+            "MBT, VAB, VBCI and Caesar self-propelled howitzer. The acquisition verticalises KNDS "
+            "France's supply chain for its key land platforms and strengthens French industrial "
+            "sovereignty in the land vehicle sector — a strategic priority under the LPM 2024-2030."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "knds.com",
+        "target_logo_domain": "texelis.com",
+        "source_url": "https://www.knds.com/en",
+        "announced_date": datetime(2025, 11, 5, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    # ── 2024 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "AeroVironment", "target": "Tomahawk Robotics",
+        "deal_value": 120, "status": "completed", "deal_type": "acquisition",
+        "description": "Multi-domain UGV control system maker acquired for $120M",
+        "rationale": (
+            "AeroVironment acquires Tomahawk Robotics for $120 million, expanding its portfolio "
+            "from small UAS into unmanned ground vehicle (UGV) command-and-control systems. "
+            "Tomahawk's flagship product — the Kinesis controller — provides a unified human-machine "
+            "interface for commanding heterogeneous UGV and UAS fleets from a single device. The deal "
+            "positions AeroVironment to compete for US Army and SOCOM multi-domain robotics programmes "
+            "and adds a complementary product line to its Switchblade loitering munition family."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "avinc.com",
+        "target_logo_domain": "tomahawkrobotics.com",
+        "source_url": "https://www.avinc.com/company/news",
+        "announced_date": datetime(2024, 2, 27, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Anduril Industries", "target": "Rebellion Defense",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Anduril acquires Rebellion Defense — DoD software and AI platform startup",
+        "rationale": (
+            "Anduril Industries acquires Rebellion Defense, a Washington DC-based defense technology "
+            "startup known for its IronBank container registry and Phantom AI software platform used "
+            "across the US Department of Defense. The deal folds Rebellion's engineering talent and "
+            "government-relations expertise into Anduril's Lattice platform, accelerating its push "
+            "into DoD enterprise software alongside its hardware autonomy systems (Ghost, Roadrunner, "
+            "Fury). Rebellion Defense co-founders Chris Lynch and Nand Mulchandani had deep DoD ties."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "anduril.com",
+        "target_logo_domain": "rebelliondefense.com",
+        "source_url": "https://www.anduril.com/newsroom",
+        "announced_date": datetime(2024, 1, 18, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "Rheinmetall", "target": "Loc Performance Products",
+        "deal_value": 80, "status": "completed", "deal_type": "acquisition",
+        "description": "US military vehicle driveline specialist acquisition",
+        "rationale": (
+            "Rheinmetall acquires Loc Performance Products, a US manufacturer of military vehicle "
+            "driveline components including transfer cases, differentials and final drive assemblies "
+            "for the Abrams MBT, Bradley IFV and JLTV programmes. The acquisition strengthens "
+            "Rheinmetall's US defence industrial footprint and provides verticalised supply-chain "
+            "capability for its expanding American Rheinmetall Vehicles (ARV) joint programme "
+            "competing for the US Army OMFV contract."
+        ),
+        "acquirer_country": "DE", "target_country": "US",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "rheinmetall.com",
+        "source_url": "https://www.rheinmetall.com/en/investor-relations",
+        "announced_date": datetime(2024, 3, 14, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2022–2023 ─────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Saab", "target": "MD Helicopters",
+        "deal_value": 232, "status": "completed", "deal_type": "acquisition",
+        "description": "Swedish prime acquires Arizona-based light military helicopter OEM",
+        "rationale": (
+            "Saab AB acquires MD Helicopters, an Arizona-based manufacturer of light civil and "
+            "military helicopters including the MD 500 and MD 969 Combat Explorer series, for "
+            "$232 million. The acquisition gives Saab a rotor-wing platform to complement its "
+            "fixed-wing portfolio (Gripen, GlobalEye) and a foothold in US domestic helicopter "
+            "maintenance and upgrade markets for law enforcement and special operations forces. "
+            "The deal also includes MD Helicopter's MRO and training services business."
+        ),
+        "acquirer_country": "SE", "target_country": "US",
+        "acquirer_logo_domain": "saabgroup.com",
+        "target_logo_domain": "mdhelicopters.com",
+        "source_url": "https://www.saabgroup.com/media/news-press/news/",
+        "announced_date": datetime(2022, 12, 7, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Leonardo DRS", "target": "Calspan Corporation",
+        "deal_value": 1060, "status": "completed", "deal_type": "acquisition",
+        "description": "Aerospace and defense test-engineering group acquired for $1.06B",
+        "rationale": (
+            "Leonardo DRS acquires Calspan Corporation, a Buffalo, NY-based aerospace test "
+            "and engineering company operating unique variable-stability research aircraft, "
+            "hypersonic wind tunnels and automotive safety labs, for $1.06 billion. The deal "
+            "expands Leonardo DRS's ground-test, simulation and flight-test services capabilities, "
+            "supporting US Air Force, Navy and Army experimental and developmental programmes. "
+            "Calspan's variable-stability aircraft fleet is unique in North America for pilot training "
+            "and aircraft certification."
+        ),
+        "acquirer_country": "IT", "target_country": "US",
+        "acquirer_logo_domain": "leonardodrs.com",
+        "target_logo_domain": "calspan.com",
+        "source_url": "https://www.leonardodrs.com/news/",
+        "announced_date": datetime(2022, 12, 9, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── European Joint Programmes ─────────────────────────────────────────────
+    {
+        "acquirer": "Airbus + Dassault Aviation + Indra", "target": "SCAF/FCAS Industrial JV",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Tri-national industrial JV — SCAF next-generation combat air system (FR/DE/ES)",
+        "rationale": (
+            "Airbus Defence & Space (Germany/Spain) and Dassault Aviation (France) alongside "
+            "Indra (Spain) establish formal industrial joint venture structures for the Système de "
+            "Combat Aérien du Futur (SCAF/FCAS). The programme develops Europe's next-generation "
+            "combat air system for entry into service around 2040, combining a Next-Generation "
+            "Fighter (NGF), remote carriers (loyal wingmen), a new engine (MGDE) and a combat cloud "
+            "network. Phase 1B is co-funded at €3.5 billion by France, Germany and Spain and covers "
+            "technology maturation through 2027 before a Phase 2 production decision."
+        ),
+        "acquirer_country": "FR", "target_country": "DE",
+        "acquirer_logo_domain": "dassault-aviation.com",
+        "target_logo_domain": "airbus.com",
+        "source_url": "https://www.dassault-aviation.com/en/group/press/",
+        "announced_date": datetime(2022, 1, 15, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "KNDS + Rheinmetall", "target": "MGCS Programme JV",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Franco-German Main Ground Combat System (MGCS) industrial programme JV",
+        "rationale": (
+            "KNDS (France/Germany) and Rheinmetall establish a joint programme organisation for "
+            "the Main Ground Combat System (MGCS), the successor to both the Leopard 2 and Leclerc "
+            "MBT platforms, targeting entry into service around 2035-2040. Work-share covers turret "
+            "and weapon system (KNDS), active protection and automotive (Rheinmetall). The programme "
+            "represents the largest single land-systems investment in European defence industrial "
+            "history and is central to the Franco-German ambition for sovereign armoured warfare "
+            "capability under the LPM 2024-2030 and Bundeswehr Zeitenwende plans."
+        ),
+        "acquirer_country": "FR", "target_country": "DE",
+        "acquirer_logo_domain": "knds.com",
+        "target_logo_domain": "rheinmetall.com",
+        "source_url": "https://www.knds.com/en",
+        "announced_date": datetime(2020, 9, 10, tzinfo=timezone.utc),
+        "stake_percentage": 50.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    # ── 2019 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Leidos", "target": "Dynetics",
+        "deal_value": 1650, "status": "completed", "deal_type": "acquisition",
+        "description": "Huntsville defense R&D and hypersonic systems acquisition for $1.65B",
+        "rationale": (
+            "Leidos acquires Dynetics, a Huntsville, Alabama-based applied research and national "
+            "security technology company, for $1.65 billion. Dynetics develops hypersonic weapon "
+            "systems (HAWC programme), electronic warfare payloads, space systems and ground-based "
+            "missile defence technologies. The deal significantly expands Leidos's presence in "
+            "hypersonics and advanced weaponry, complementing its intelligence and IT services "
+            "business. Dynetics was formerly a finalist for the US Army's LREW programme."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "leidos.com",
+        "target_logo_domain": "leidos.com",
+        "source_url": "https://www.leidos.com/company/news",
+        "announced_date": datetime(2019, 9, 24, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2021 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Kongsberg Defence & Aerospace", "target": "Patria Oyj",
+        "deal_value": 100, "status": "completed", "deal_type": "acquisition",
+        "description": "Norwegian prime increases stake to 50% in Finnish defence champion Patria",
+        "rationale": (
+            "Kongsberg Defence & Aerospace, a subsidiary of Kongsberg Gruppen, acquires an "
+            "additional stake in Patria Oyj, the Finnish state-owned defence company, bringing "
+            "its total shareholding to 50%. Patria manufactures the AMV 8x8 armoured wheeled "
+            "vehicle (used by 14 armies), provides aircraft MRO services for F-18 and BAE Hawk, "
+            "and produces 81/120mm mortar systems. The deal deepens the Nordic defence industrial "
+            "partnership and positions the combined Kongsberg-Patria entity for future European "
+            "armoured vehicle competitions, including the German HMT programme."
+        ),
+        "acquirer_country": "NO", "target_country": "FI",
+        "acquirer_logo_domain": "kongsberg.com",
+        "target_logo_domain": "patriagroup.com",
+        "source_url": "https://www.kongsberg.com/news-and-media/",
+        "announced_date": datetime(2021, 1, 15, tzinfo=timezone.utc),
+        "stake_percentage": 50.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── Failed / cancelled blockbusters ───────────────────────────────────────
+    {
+        "acquirer": "Lockheed Martin", "target": "Aerojet Rocketdyne",
+        "deal_value": 4400, "status": "cancelled", "deal_type": "acquisition",
+        "description": "FTC blocked $4.4B bid for the US's last independent rocket motor maker",
+        "rationale": (
+            "Lockheed Martin announced an all-cash acquisition of Aerojet Rocketdyne for $4.4 billion "
+            "in December 2020. The FTC sued to block the deal in January 2022, arguing Lockheed would "
+            "gain the ability to cut off rival defence primes from critical solid-rocket-motor supply. "
+            "Lockheed terminated the agreement in February 2022, leaving Aerojet Rocketdyne as an "
+            "independent supplier. The failed deal accelerated DoD concern about consolidation risk "
+            "in the US propulsion industrial base."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "lockheedmartin.com",
+        "target_logo_domain": "aerojet.com",
+        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2022/02",
+        "announced_date": datetime(2020, 12, 20, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2024 — Defense Tech ────────────────────────────────────────────────────
+    {
+        "acquirer": "Founders Fund + General Atlantic", "target": "Anduril Industries",
+        "deal_value": 1500, "status": "completed", "deal_type": "strategic_investment",
+        "description": "Anduril Industries Series F — largest single defense tech raise in history",
+        "rationale": (
+            "Anduril Industries closes a $1.5 billion Series F round at a $14 billion post-money "
+            "valuation — the largest single financing in defense technology history. Investors include "
+            "Founders Fund (lead), General Atlantic, Valor Equity Partners, 8VC and Andreessen "
+            "Horowitz. The capital funds mass production scale-up for the Roadrunner-M interceptor, "
+            "Fury UCAV, and Lattice AI platform, and expands Anduril's manufacturing campus in Ohio. "
+            "The round underscores the shift of tier-1 capital toward US defence autonomy platforms."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "anduril.com",
+        "target_logo_domain": "anduril.com",
+        "source_url": "https://www.anduril.com/newsroom",
+        "announced_date": datetime(2024, 8, 7, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "growth",
+        "is_disclosed": True,
+    },
+    # ── 2023 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "HEICO Corporation", "target": "Wencor Group",
+        "deal_value": 1900, "status": "completed", "deal_type": "acquisition",
+        "description": "HEICO acquires Wencor — aviation aftermarket parts distributor for $1.9B",
+        "rationale": (
+            "HEICO Corporation acquires Wencor Group, a leading US aviation aftermarket parts "
+            "distributor and repair station operator, for approximately $1.9 billion. Wencor serves "
+            "commercial, business and military operators with FAA/PMA-approved parts and MRO services. "
+            "The deal significantly expands HEICO's distribution network and repair capabilities, "
+            "including its military aviation aftermarket services for C-130, F-16 and C-17 fleets. "
+            "Combined annual revenues exceed $3.5 billion."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "heico.com",
+        "target_logo_domain": "heico.com",
+        "source_url": "https://www.heico.com/news",
+        "announced_date": datetime(2023, 7, 24, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2022 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "L3Harris Technologies", "target": "Condor Systems",
+        "deal_value": 1050, "status": "completed", "deal_type": "acquisition",
+        "description": "Airborne ELINT and electronic warfare systems maker acquired for $1.05B",
+        "rationale": (
+            "L3Harris Technologies acquires Condor Systems, a San Jose-based developer of airborne "
+            "electronic intelligence (ELINT) and electronic attack systems, from Vector Capital for "
+            "$1.05 billion. Condor's products collect and exploit adversary radar emissions and support "
+            "electronic order-of-battle mapping for US Air Force and Navy ISR platforms including "
+            "RC-135 Rivet Joint and EP-3E. The acquisition strengthens L3Harris's Electronic Systems "
+            "segment and its position in integrated EW/ISR mission systems."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "l3harris.com",
+        "source_url": "https://www.l3harris.com/newsroom",
+        "announced_date": datetime(2022, 2, 22, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Carlyle Group", "target": "ManTech International",
+        "deal_value": 4200, "status": "completed", "deal_type": "acquisition",
+        "description": "Private equity take-private of US government cybersecurity & IT services group",
+        "rationale": (
+            "Carlyle Group acquires ManTech International, a US government cybersecurity, digital "
+            "transformation and mission IT company, for $4.2 billion in an all-cash take-private "
+            "transaction. ManTech provides classified intelligence, DoD and federal civilian agencies "
+            "with cyber operations, data analytics and software development. The deal reflects "
+            "sustained PE appetite for stable, highly cleared government IT services businesses "
+            "with recurring DoD contract revenue."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "carlyle.com",
+        "target_logo_domain": "mantech.com",
+        "source_url": "https://www.mantech.com/newsroom",
+        "announced_date": datetime(2022, 5, 16, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "QinetiQ", "target": "Avantus Federal",
+        "deal_value": 590, "status": "completed", "deal_type": "acquisition",
+        "description": "QinetiQ acquires US national security services firm to double its US presence",
+        "rationale": (
+            "QinetiQ Group acquires Avantus, a US national security and intelligence services company "
+            "headquartered in Virginia, for approximately $590 million. Avantus provides cyber, "
+            "digital transformation and mission support services to the US intelligence community "
+            "and DoD. The deal roughly doubles QinetiQ's US headcount and revenue, accelerating "
+            "its strategy to establish a balanced US-UK defence technology and services business "
+            "alongside its core UK MoD test and evaluation franchise."
+        ),
+        "acquirer_country": "GB", "target_country": "US",
+        "acquirer_logo_domain": "qinetiq.com",
+        "target_logo_domain": "qinetiq.com",
+        "source_url": "https://www.qinetiq.com/news-and-events/news",
+        "announced_date": datetime(2022, 4, 19, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Tikehau Capital", "target": "iXBlue + ECA Group → Exail",
+        "deal_value": 0, "status": "completed", "deal_type": "merger",
+        "description": "Merger of iXBlue & ECA Group to create Exail — French naval & autonomy champion",
+        "rationale": (
+            "French PE firm Tikehau Capital orchestrates the merger of iXBlue (fiber-optic inertial "
+            "navigation, subsea positioning and photonics) with ECA Group (marine autonomous systems, "
+            "military simulators, inspection robots) to form Exail in October 2022. The combined "
+            "entity generates revenues of approximately €350 million and serves NATO navies, the "
+            "DGA and international customers with underwater drones (Seascan, AUVs), mine-clearance "
+            "systems, submarine navigation and ruggedised training simulators for fighter pilots."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "exail.com",
+        "target_logo_domain": "exail.com",
+        "source_url": "https://www.exail.com/news",
+        "announced_date": datetime(2022, 10, 1, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "Thales", "target": "Ercom",
+        "deal_value": 200, "status": "completed", "deal_type": "acquisition",
+        "description": "Thales acquires Ercom — encrypted mobile comms specialist for French government",
+        "rationale": (
+            "Thales acquires Ercom, a Paris-based company specialising in encrypted mobile "
+            "communications and sovereign messaging platforms used by French government ministries, "
+            "the military, and regulated enterprises. Ercom's Cryptobox and Citadel Team products "
+            "are accredited by ANSSI (France's national cybersecurity agency) for classified use. "
+            "The deal reinforces Thales's position as the primary supplier of sovereign digital "
+            "communications to the French state and underpins its ambition for European secure "
+            "communications leadership."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "thalesgroup.com",
+        "source_url": "https://www.thalesgroup.com/en/worldwide/digital-identity-and-security/press-release",
+        "announced_date": datetime(2022, 3, 15, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2021 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Huntington Ingalls Industries", "target": "Alion Science and Technology",
+        "deal_value": 1650, "status": "completed", "deal_type": "acquisition",
+        "description": "HII acquires Alion — defense R&D and naval systems engineering for $1.65B",
+        "rationale": (
+            "Huntington Ingalls Industries (HII) acquires Alion Science and Technology, a "
+            "Fairfax, Virginia-based defense R&D and technical services company, for $1.65 billion. "
+            "Alion specialises in naval architecture, systems engineering, live-fire test ranges, "
+            "and C4ISR integration services for the US Navy, DARPA and joint force commands. "
+            "The deal nearly doubles HII's technical services revenue and creates a complementary "
+            "engineering pipeline for HII's shipbuilding programmes at Newport News and Ingalls."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "hii.com",
+        "target_logo_domain": "hii.com",
+        "source_url": "https://investors.hii.com/news-releases",
+        "announced_date": datetime(2021, 6, 29, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Leidos", "target": "Gibbs & Cox",
+        "deal_value": 380, "status": "completed", "deal_type": "acquisition",
+        "description": "World's largest independent naval architecture firm acquired for $380M",
+        "rationale": (
+            "Leidos acquires Gibbs & Cox, the world's largest independent naval architecture and "
+            "marine engineering firm, for $380 million. Founded in 1929, Gibbs & Cox designed the "
+            "USS Spruance, Ticonderoga-class cruisers and the DDG-51 Arleigh Burke destroyer. "
+            "The acquisition brings deep naval design competency into Leidos's defense and maritime "
+            "division, enabling integrated offerings from concept design through systems integration "
+            "and in-service support for US and allied navies."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "leidos.com",
+        "target_logo_domain": "leidos.com",
+        "source_url": "https://www.leidos.com/company/news",
+        "announced_date": datetime(2021, 11, 3, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Peraton", "target": "Perspecta",
+        "deal_value": 7100, "status": "completed", "deal_type": "acquisition",
+        "description": "Veritas Capital-backed Peraton acquires Perspecta for $7.1B — creates US intel IT giant",
+        "rationale": (
+            "Peraton (backed by Veritas Capital) acquires Perspecta, a leading US government IT "
+            "services company with classified intelligence community contracts, for $7.1 billion. "
+            "Perspecta had been spun out of DXC Technology's US public sector business in 2018. "
+            "The combined Peraton-Perspecta entity becomes one of the top five US government IT "
+            "service providers, covering CIA, NGA, NSA and DoD digital transformation programmes "
+            "with a cleared workforce of over 26,000 personnel."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "peraton.com",
+        "target_logo_domain": "peraton.com",
+        "source_url": "https://www.peraton.com/newsroom",
+        "announced_date": datetime(2021, 1, 27, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Shield AI", "target": "Martin UAV",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Shield AI acquires Martin UAV — maker of the V-BAT vertical-takeoff tactical UAS",
+        "rationale": (
+            "Shield AI acquires Martin UAV, the developer of the V-BAT (formerly known as the "
+            "WB-37), a vertical-takeoff-and-landing (VTOL) Group 3 UAS designed for austere "
+            "shipboard and expeditionary operations. The V-BAT was selected by the US Navy for "
+            "its Small Tactical Unmanned Aircraft System (STUAS) programme and by SOCOM. "
+            "The deal gives Shield AI a production-ready hardware platform to complement its "
+            "Hivemind autonomous pilot AI, enabling fully autonomous ship-based UAS operations "
+            "without GPS."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "shield.ai",
+        "target_logo_domain": "shield.ai",
+        "source_url": "https://shield.ai/newsroom",
+        "announced_date": datetime(2021, 9, 13, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "RTX", "target": "Blue Canyon Technologies",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "RTX acquires Blue Canyon — premier small satellite bus and spacecraft maker",
+        "rationale": (
+            "Raytheon Technologies (RTX) acquires Blue Canyon Technologies, a leading manufacturer "
+            "of small satellite buses and spacecraft for DoD, NASA and commercial customers. "
+            "Blue Canyon's platforms have flown on DARPA Blackjack, Air Force Research Laboratory "
+            "and various NASA science missions. The deal integrates Blue Canyon's rapid-prototyping "
+            "capability into RTX's space sensor and communications portfolio and supports the "
+            "US Space Force's proliferated LEO architecture programmes."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "rtx.com",
+        "target_logo_domain": "rtx.com",
+        "source_url": "https://www.rtx.com/news",
+        "announced_date": datetime(2021, 1, 11, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    {
+        "acquirer": "Babcock International", "target": "Frazer-Nash Consultancy",
+        "deal_value": 360, "status": "completed", "deal_type": "acquisition",
+        "description": "Babcock acquires Frazer-Nash — UK defense engineering consultancy from Ricardo",
+        "rationale": (
+            "Babcock International acquires Frazer-Nash Consultancy, a UK engineering and technology "
+            "consultancy serving defence, nuclear and space markets, from Ricardo plc for £293 million "
+            "(~$360 million). Frazer-Nash provides systems engineering, digital modelling and safety "
+            "case expertise for the Royal Navy's nuclear submarine programme, UK armoured vehicle "
+            "procurement and satellite projects. The deal significantly expands Babcock's technical "
+            "services capability beyond its traditional ship support and nuclear roles."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "babcock.com",
+        "target_logo_domain": "babcock.com",
+        "source_url": "https://www.babcock.com/en/news",
+        "announced_date": datetime(2021, 6, 24, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2018 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Elbit Systems", "target": "IMI Systems",
+        "deal_value": 520, "status": "completed", "deal_type": "acquisition",
+        "description": "Elbit acquires Israel Military Industries — privatisation of Israeli defense titan",
+        "rationale": (
+            "Elbit Systems acquires Israel Military Industries (IMI Systems) from the Israeli "
+            "government for approximately $520 million in a landmark privatisation. IMI is one of "
+            "Israel's oldest and most important defence manufacturers, producing Kalanit guided "
+            "mortar rounds, Lynx artillery rocket systems, Namer heavy APC upgrades and a large "
+            "portfolio of ammunition and combat engineering solutions. The acquisition makes Elbit "
+            "the dominant Israeli land-systems prime and removes a state-owned competitor, "
+            "significantly expanding export revenue potential."
+        ),
+        "acquirer_country": "IL", "target_country": "IL",
+        "acquirer_logo_domain": "elbitsystems.com",
+        "target_logo_domain": "elbitsystems.com",
+        "source_url": "https://www.elbitsystems.com/media",
+        "announced_date": datetime(2018, 3, 11, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
 ]
 
 # Extended Expenditures
@@ -1276,6 +1820,22 @@ PRODUCTS_DATA = [
     {"name": "Brimstone 3", "manufacturer": "MBDA", "category": "missile", "product_type": "air_to_ground", "specifications": {"range": "60 km", "speed": "Mach 1.3+", "guidance": "Dual-Mode Seeker", "warhead": "Tandem HEAT"}, "materials": ["Composite Materials", "Millimetric Radar Seeker"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Brimstone_missile_RAF.jpg"},
     {"name": "Harpoon Block II+ER", "manufacturer": "Boeing Defense", "category": "missile", "product_type": "anti_ship", "specifications": {"range": "300 km", "speed": "Mach 0.85", "guidance": "GPS/INS/Active Radar", "warhead": "221 kg"}, "materials": ["Aluminum", "Turbofan Engine", "Composite Materials"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/cc/AGM-84_Harpoon_missile.jpg"},
     {"name": "Javelin FGM-148F", "manufacturer": "Raytheon/Lockheed", "category": "missile", "product_type": "atgm", "specifications": {"range": "4.75 km", "speed": "190 m/s", "guidance": "Infrared Imaging", "warhead": "Tandem HEAT"}, "materials": ["Composite Launcher", "Imaging IR Seeker"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/FGM-148_Javelin_ATGM.jpg"},
+
+    # === Iconic & Mythic Platforms ===
+    {"name": "B-52H Stratofortress", "manufacturer": "Boeing Defense", "category": "aircraft", "product_type": "bomber", "specifications": {"max_speed": "1,047 km/h", "range": "14,080 km", "ceiling": "50,000 ft", "payload": "32,000 kg"}, "materials": ["Aluminum Alloy", "Titanium", "Composite Materials"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d1/B-52_Stratofortress.jpg"},
+    {"name": "SR-71 Blackbird", "manufacturer": "Lockheed Martin", "category": "aircraft", "product_type": "reconnaissance", "specifications": {"max_speed": "Mach 3.3", "range": "5,400 km", "ceiling": "85,000 ft", "crew": "2"}, "materials": ["Titanium Alloy", "Iron-based Composites", "Radar-Absorbing Materials"], "status": "retired", "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Lockheed_SR-71_Blackbird.jpg"},
+    {"name": "F-117 Nighthawk", "manufacturer": "Lockheed Martin", "category": "aircraft", "product_type": "attack", "specifications": {"max_speed": "1,040 km/h", "range": "2,100 km", "ceiling": "45,000 ft", "payload": "2,268 kg"}, "materials": ["RAM Faceted Panels", "Composite Materials", "Stealth Coating"], "status": "retired", "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/db/F117_Nighthawk_Front.jpg"},
+    {"name": "F-14 Tomcat", "manufacturer": "Grumman", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 2.34", "range": "3,000 km", "ceiling": "50,000 ft", "payload": "6,577 kg"}, "materials": ["Titanium", "Aluminum", "Steel"], "status": "retired", "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/F14_Tomcat_contrail.jpg"},
+    {"name": "E-3 Sentry AWACS", "manufacturer": "Boeing Defense", "category": "aircraft", "product_type": "awacs", "specifications": {"max_speed": "853 km/h", "range": "9,250 km", "ceiling": "29,000 ft", "endurance": "11 hours"}, "materials": ["Boeing 707 Airframe", "Rotodome Radar", "Advanced Electronics"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/E-3_Sentry.jpg"},
+    {"name": "C-130J Super Hercules", "manufacturer": "Lockheed Martin", "category": "aircraft", "product_type": "transport", "specifications": {"max_speed": "671 km/h", "range": "6,852 km", "ceiling": "28,000 ft", "payload": "19,958 kg"}, "materials": ["Aluminum Alloy", "Composite Materials"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/e8/C-130J_Super_Hercules.jpg"},
+    {"name": "Tu-160 Blackjack", "manufacturer": "Tupolev", "category": "aircraft", "product_type": "bomber", "specifications": {"max_speed": "Mach 2.05", "range": "12,300 km", "ceiling": "52,000 ft", "payload": "45,000 kg"}, "materials": ["Titanium Alloy", "Composite Materials", "Variable-Sweep Wings"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/62/Tu-160.jpg"},
+    {"name": "MiG-29 Fulcrum", "manufacturer": "RSK MiG", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 2.25", "range": "2,100 km", "ceiling": "59,000 ft", "payload": "4,500 kg"}, "materials": ["Aluminum-Lithium Alloy", "Composite Materials"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/MiG-29_at_Kubinka.jpg"},
+    {"name": "Mirage 2000-5", "manufacturer": "Dassault Aviation", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 2.2", "range": "3,335 km", "ceiling": "59,000 ft", "payload": "6,300 kg"}, "materials": ["Carbon Fiber", "Kevlar", "Aluminum Alloy"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Mirage_2000-5_droit.jpg"},
+    {"name": "MH-60R Seahawk", "manufacturer": "Sikorsky", "category": "aircraft", "product_type": "helicopter", "specifications": {"max_speed": "270 km/h", "range": "834 km", "ceiling": "10,500 ft", "armament": "Torpedoes/Hellfire"}, "materials": ["Composite Rotors", "Aluminum Frame", "Advanced Avionics"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/ef/MH-60R_Seahawk_HSM-70.jpg"},
+    {"name": "AW101 Merlin HM2", "manufacturer": "Leonardo", "category": "aircraft", "product_type": "helicopter", "specifications": {"max_speed": "309 km/h", "range": "1,050 km", "ceiling": "15,000 ft", "capacity": "24 troops"}, "materials": ["Composite Fuselage", "Titanium Components", "Advanced Avionics"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/AgustaWestland_AW101_Merlin.jpg"},
+    {"name": "MQ-28A Ghost Bat", "manufacturer": "Boeing Defense", "category": "aircraft", "product_type": "uav", "specifications": {"max_speed": "Mach 0.9+", "range": "3,700+ km", "ceiling": "45,000+ ft", "role": "Loyal Wingman"}, "materials": ["Composite Materials", "Stealth Design", "Advanced Avionics"], "status": "development", "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/09/Boeing_MQ-28A_Ghost_Bat.jpg"},
+    {"name": "F/A-18C Hornet", "manufacturer": "Boeing Defense", "category": "aircraft", "product_type": "fighter", "specifications": {"max_speed": "Mach 1.8", "range": "2,537 km", "ceiling": "50,000 ft", "payload": "7,711 kg"}, "materials": ["Aluminum", "Carbon Fiber", "Titanium"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/F-18_Hornet_modified.jpg"},
+    {"name": "Dassault nEUROn UCAV", "manufacturer": "Dassault Aviation", "category": "aircraft", "product_type": "uav", "specifications": {"max_speed": "Mach 0.8", "range": "Classified", "ceiling": "45,000 ft", "payload": "Classified"}, "materials": ["Stealth Composites", "Low-RCS Airframe"], "status": "development", "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/68/Dassault_nEUROn_UCAV.jpg"},
 
 ]
 

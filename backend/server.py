@@ -417,13 +417,15 @@ async def delete_announcement(announcement_id: str, current_user: dict = Depends
 @api_router.get("/ma-activities", response_model=List[MAActivity])
 async def get_ma_activities(
     status: Optional[str] = None,
-    limit: int = 100,
+    limit: int = 50,
+    offset: int = 0,
     days: Optional[int] = 30,
 ):
     """
     Return M&A deals sorted by announced_date DESC.
     - days=30  (default) → last 30 days only
     - days=0             → no date filter (all recent deals)
+    - offset             → skip N records (for pagination)
     """
     query: dict = {}
     if status:
@@ -431,20 +433,33 @@ async def get_ma_activities(
     if days and days > 0:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
         query["announced_date"] = {"$gte": cutoff}
-    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).limit(limit).to_list(limit)
+    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).skip(offset).limit(limit).to_list(limit)
     for a in activities:
         if isinstance(a['announced_date'], str):
             a['announced_date'] = datetime.fromisoformat(a['announced_date'])
     return activities
+
+@api_router.get("/ma-activities/meta")
+async def get_ma_meta():
+    """Return total deal count and last scrape timestamp."""
+    total = await db.ma_activities.count_documents({})
+    latest = await db.ma_activities.find_one(
+        {"scraped_at": {"$exists": True}},
+        {"_id": 0, "scraped_at": 1},
+        sort=[("scraped_at", -1)],
+    )
+    last_scraped_at = latest.get("scraped_at") if latest else None
+    return {"total": total, "last_scraped_at": last_scraped_at}
 
 @api_router.get("/ma-activities/historical", response_model=List[MAActivity])
 async def get_ma_historical(
     acquirer: Optional[str] = None,
     year: Optional[int] = None,
     deal_type: Optional[str] = None,
-    limit: int = 200
+    limit: int = 100,
+    offset: int = 0,
 ):
-    """Return all M&A activities for the historical 5-year table view."""
+    """Return M&A activities for the historical table view, with pagination."""
     query: dict = {}
     if acquirer:
         query["acquirer"] = {"$regex": acquirer, "$options": "i"}
@@ -454,7 +469,7 @@ async def get_ma_historical(
         from_dt = datetime(year, 1, 1, tzinfo=timezone.utc).isoformat()
         to_dt = datetime(year, 12, 31, 23, 59, 59, tzinfo=timezone.utc).isoformat()
         query["announced_date"] = {"$gte": from_dt, "$lte": to_dt}
-    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).limit(limit).to_list(limit)
+    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).skip(offset).limit(limit).to_list(limit)
     for a in activities:
         if isinstance(a['announced_date'], str):
             a['announced_date'] = datetime.fromisoformat(a['announced_date'])
@@ -549,24 +564,60 @@ async def get_stock_history_route(ticker: str, period: str = "1d"):
 
 @api_router.get("/stock-prices")
 async def get_stock_prices(tickers: str = ""):
-    """Return current price data for a comma-separated list of tickers (from DB seed)."""
+    """Return current price data for a comma-separated list of tickers.
+    Public tickers are fetched live from Yahoo Finance (via stock_service, 5-min cache).
+    Private companies (stock_price <= 0 or ticker contains PRIV) fall back to DB seed data.
+    """
     ticker_list = [t.strip() for t in tickers.split(",") if t.strip()]
     if not ticker_list:
         return {}
+
+    # Load DB records to identify private companies
     players = await db.defense_players.find(
         {"ticker": {"$in": ticker_list}}, {"_id": 0, "ticker": 1, "stock_price": 1, "change_percent": 1}
     ).to_list(len(ticker_list))
+    db_map = {p["ticker"]: p for p in players}
+
+    public_tickers = [
+        t for t in ticker_list
+        if "PRIV" not in t.upper() and float((db_map.get(t) or {}).get("stock_price", 0) or 0) > 0
+    ]
+    private_tickers = [t for t in ticker_list if t not in public_tickers]
+
+    # Fetch live prices for public tickers
+    live_data = await get_bulk_prices(public_tickers) if public_tickers else {}
+
     result = {}
-    for p in players:
-        t = p["ticker"]
-        price = p.get("stock_price", 0)
-        change = p.get("change_percent", 0)
-        if price > 0:
-            result[t] = {
-                "price": price,
-                "change_percent": change,
-                "prev_close": round(price / (1 + change / 100), 2) if change else price,
-            }
+    # Live prices take priority
+    for t, data in live_data.items():
+        result[t] = {
+            "price": data["price"],
+            "change_percent": data["change_percent"],
+            "prev_close": data.get("prev_close", data["price"]),
+        }
+    # Fallback to DB for any public ticker that yfinance couldn't resolve + all private
+    for t in public_tickers:
+        if t not in result and t in db_map:
+            p = db_map[t]
+            price = p.get("stock_price", 0)
+            change = p.get("change_percent", 0)
+            if price > 0:
+                result[t] = {
+                    "price": price,
+                    "change_percent": change,
+                    "prev_close": round(price / (1 + change / 100), 2) if change else price,
+                }
+    for t in private_tickers:
+        if t in db_map:
+            p = db_map[t]
+            price = p.get("stock_price", 0)
+            change = p.get("change_percent", 0)
+            if price > 0:
+                result[t] = {
+                    "price": price,
+                    "change_percent": change,
+                    "prev_close": round(price / (1 + change / 100), 2) if change else price,
+                }
     return result
 
 @api_router.get("/companies/{name}")
@@ -749,13 +800,11 @@ async def get_dashboard_stats():
 
 # ============= SEED DATA ENDPOINT =============
 
-@api_router.post("/seed-data")
-async def seed_data(current_user: dict = Depends(get_current_user)):
-    if current_user.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Admin role required")
+async def _run_seed() -> dict:
+    """Idempotent seed — safe to call on every startup."""
     from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
-    
-    # Seed Defense Players (250+ companies)
+
+    # Seed Defense Players
     for p in DEFENSE_COMPANIES:
         existing = await db.defense_players.find_one({"ticker": p['ticker']})
         if not existing:
@@ -763,7 +812,7 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             doc = player.model_dump()
             doc['updated_at'] = doc['updated_at'].isoformat()
             await db.defense_players.insert_one(doc)
-    
+
     # Seed Announcements
     for a in ANNOUNCEMENTS_DATA:
         existing = await db.announcements.find_one({"title": a['title']})
@@ -772,7 +821,7 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             doc = announcement.model_dump()
             doc['date'] = doc['date'].isoformat()
             await db.announcements.insert_one(doc)
-    
+
     # Seed M&A Activities — upsert so enriched fields are applied to existing docs
     for m in MA_DATA + MA_EXTRA_DEALS:
         activity = MAActivity(**m)
@@ -783,21 +832,21 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             {"$set": doc},
             upsert=True,
         )
-    
+
     # Seed Expenditures
     for e in EXPENDITURES_DATA:
         existing = await db.expenditures.find_one({"country_code": e['country_code'], "year": e['year']})
         if not existing:
             expenditure = Expenditure(**e)
             await db.expenditures.insert_one(expenditure.model_dump())
-    
+
     # Seed Regulations
     for r in REGULATIONS_DATA:
         existing = await db.regulations.find_one({"title": r['title']})
         if not existing:
             regulation = Regulation(**r)
             await db.regulations.insert_one(regulation.model_dump())
-    
+
     # Seed Products (insert new, update image_url for existing)
     for p in PRODUCTS_DATA:
         existing = await db.products.find_one({"name": p['name']})
@@ -809,7 +858,7 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
                 {"name": p['name']},
                 {"$set": {"image_url": p['image_url']}}
             )
-    
+
     # Seed Contracts
     for c in CONTRACTS_DATA:
         existing = await db.contracts.find_one({"title": c['title']})
@@ -818,12 +867,17 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             doc = contract.model_dump()
             await db.contracts.insert_one(doc)
 
-    # Get counts
     players_count = await db.defense_players.count_documents({})
     announcements_count = await db.announcements.count_documents({})
     contracts_count = await db.contracts.count_documents({})
-
     return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count, "contracts": contracts_count}
+
+
+@api_router.post("/seed-data")
+async def seed_data(current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    return await _run_seed()
 
 # ============= NEWS SCRAPER JOB =============
 
@@ -1577,6 +1631,15 @@ async def _apply_product_images():
     except Exception as exc:
         logger.error("Product image migration error: %s", exc)
 
+async def _auto_seed():
+    """Silently seed reference data on startup. Errors are logged, never raised."""
+    try:
+        result = await _run_seed()
+        logger.info("Auto-seed complete: %s", result)
+    except Exception as exc:
+        logger.warning("Auto-seed failed (non-fatal): %s", exc)
+
+
 @app.on_event("startup")
 async def startup_event():
     """Create news_articles indexes, start scheduler, and auto-scrape if empty."""
@@ -1592,11 +1655,11 @@ async def startup_event():
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
 
-    scheduler.add_job(run_news_scraper_job, "cron", hour=7,  minute=0, id="morning_news_scraper")
-    scheduler.add_job(run_news_scraper_job, "cron", hour=19, minute=0, id="evening_news_scraper")
-    scheduler.add_job(run_ma_scraper_job,   "cron", hour=8,  minute=0, id="daily_ma_scraper")
+    scheduler.add_job(run_news_scraper_job, "cron",     hour=7,  minute=0, id="morning_news_scraper")
+    scheduler.add_job(run_news_scraper_job, "cron",     hour=19, minute=0, id="evening_news_scraper")
+    scheduler.add_job(run_ma_scraper_job,   "interval", hours=6,           id="ma_scraper")
     scheduler.start()
-    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, M&A at 08:00 UTC")
+    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, M&A every 6 h")
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())
@@ -1609,6 +1672,8 @@ async def startup_event():
     # Always start with a fresh stock cache so stale values never survive restarts
     invalidate_stock_cache()
     logger.info("Stock price cache cleared on startup")
+    # Auto-seed reference data on every startup (idempotent — skips existing rows)
+    asyncio.create_task(_auto_seed())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

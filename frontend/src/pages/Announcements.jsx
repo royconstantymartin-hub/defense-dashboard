@@ -16,7 +16,6 @@ import {
   Rss,
   RefreshCw,
   TrendingUp,
-  LogIn,
   Bookmark,
   BookmarkCheck,
   Sparkles,
@@ -634,11 +633,12 @@ export default function Announcements() {
             </button>
           ) : (
             <button
-              onClick={() => navigate("/login")}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
+              onClick={() => fetchNews(selectedLang, selectedRegion)}
+              disabled={loading}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-50"
             >
-              <LogIn className="w-4 h-4" />
-              Log in to refresh
+              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              Refresh Feed
             </button>
           )}
         </div>
