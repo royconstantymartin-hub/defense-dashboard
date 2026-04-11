@@ -276,15 +276,48 @@ function getLogoDomain(activity, side) {
   return activity[domainField] || LOGO_FALLBACK[activity[nameField]] || null;
 }
 
-// ── Logo component — Clearbit → coloured initials, with flagcdn flag ───────
+// ── Wikipedia logo cache (module-level → persists across renders) ──────────
+const wikiLogoCache = new Map();
+
+async function fetchWikipediaLogo(name) {
+  if (wikiLogoCache.has(name)) return wikiLogoCache.get(name);
+  try {
+    const params = new URLSearchParams({
+      action: "query", titles: name, prop: "pageimages",
+      format: "json", pithumbsize: "100", origin: "*",
+    });
+    const res  = await fetch(`https://en.wikipedia.org/w/api.php?${params}`);
+    const data = await res.json();
+    const page = Object.values(data?.query?.pages ?? {})[0];
+    const url  = page?.thumbnail?.source ?? null;
+    wikiLogoCache.set(name, url);
+    return url;
+  } catch {
+    wikiLogoCache.set(name, null);
+    return null;
+  }
+}
+
+// ── Logo component — Clearbit → Wikipedia → coloured initials ─────────────
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  const [failed, setFailed] = useState(false);
+  const [clearbitFailed, setClearbitFailed] = useState(false);
+  const [wikiUrl,        setWikiUrl]        = useState(null);
+  const [wikiChecked,    setWikiChecked]    = useState(false);
+
   const name    = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const country = activity[side === "acquirer" ? "acquirer_country" : "target_country"];
   const domain  = getLogoDomain(activity, side);
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-11 h-11";
   const textSize  = size === "sm" ? "text-[9px]" : "text-xs";
+
+  // When Clearbit fails (or no domain), try Wikipedia once
+  useEffect(() => {
+    if (!clearbitFailed && domain) return; // Clearbit still loading/ok
+    if (wikiChecked) return;               // already tried
+    setWikiChecked(true);
+    fetchWikipediaLogo(name).then(setWikiUrl);
+  }, [clearbitFailed, domain, name, wikiChecked]);
 
   const flag = country ? (
     <div className="absolute -bottom-1 -right-1">
@@ -292,7 +325,20 @@ function CompanyLogo({ activity, side, size = "md" }) {
     </div>
   ) : null;
 
-  if (domain && !failed) {
+  // Helper to wrap an image in the white rounded box with the flag overlay
+  function logoBox(imgSrc, alt) {
+    return (
+      <div className="relative shrink-0">
+        <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
+          <img src={imgSrc} alt={alt} className="w-full h-full object-contain p-1" />
+        </div>
+        {flag}
+      </div>
+    );
+  }
+
+  // Level 1 — Clearbit (domain known, not yet failed)
+  if (domain && !clearbitFailed) {
     return (
       <div className="relative shrink-0">
         <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
@@ -300,7 +346,7 @@ function CompanyLogo({ activity, side, size = "md" }) {
             src={`https://logo.clearbit.com/${domain}`}
             alt={name}
             className="w-full h-full object-contain p-1"
-            onError={() => setFailed(true)}
+            onError={() => setClearbitFailed(true)}
           />
         </div>
         {flag}
@@ -308,6 +354,10 @@ function CompanyLogo({ activity, side, size = "md" }) {
     );
   }
 
+  // Level 2 — Wikipedia thumbnail (async, shows once fetched)
+  if (wikiUrl) return logoBox(wikiUrl, name);
+
+  // Level 3 — Coloured initials avatar
   return (
     <div className={`${sizeClass} ${avatarColor(name)} rounded-xl flex items-center justify-center relative shrink-0 shadow-sm`}>
       <span className={`${textSize} font-bold text-white tracking-tight select-none`}>{initials(name)}</span>
