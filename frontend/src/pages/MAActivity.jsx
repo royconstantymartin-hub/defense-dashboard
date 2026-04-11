@@ -111,6 +111,54 @@ const LOGO_FALLBACK = {
   "RADA Electronic Industries":  "rada.com",
   "Nightwing Group":             "nightwinggroup.com",
   "Rebellion Defense":           "rebelliondefense.com",
+  "KNDS France":                 "knds.com",
+  "KNDS Germany":                "knds.com",
+  "Texelis Defense":             "texelis.com",
+  "Tomahawk Robotics":           "tomahawkrobotics.com",
+  "Saab":                        "saabgroup.com",
+  "Saab AB":                     "saabgroup.com",
+  "MD Helicopters":              "mdhelicopters.com",
+  "Leonardo DRS":                "leonardodrs.com",
+  "Calspan Corporation":         "calspan.com",
+  "Kongsberg":                   "kongsberg.com",
+  "Kongsberg Defence & Aerospace": "kongsberg.com",
+  "Patria Oyj":                  "patriagroup.com",
+  "Leidos":                      "leidos.com",
+  "Dynetics":                    "leidos.com",
+  "Loc Performance Products":    "rheinmetall.com",
+  "Dassault":                    "dassault-aviation.com",
+  "Dassault Aviation":           "dassault-aviation.com",
+  "Indra":                       "indracompany.com",
+  "Expal Systems":               "maxamcorp.com",
+  "Hensoldt":                    "hensoldt.net",
+  "QinetiQ":                     "qinetiq.com",
+  "Babcock":                     "babcock.com",
+  "Babcock International":       "babcock.com",
+  "Frazer-Nash Consultancy":     "babcock.com",
+  "Rheinmetall":                 "rheinmetall.com",
+  "Leonardo":                    "leonardo.com",
+  "Elbit Systems":               "elbitsystems.com",
+  "IMI Systems":                 "elbitsystems.com",
+  "HEICO":                       "heico.com",
+  "HEICO Corporation":           "heico.com",
+  "Wencor Group":                "heico.com",
+  "Huntington Ingalls Industries": "hii.com",
+  "HII":                         "hii.com",
+  "Alion Science and Technology": "hii.com",
+  "Peraton":                     "peraton.com",
+  "Perspecta":                   "peraton.com",
+  "ManTech International":       "mantech.com",
+  "Carlyle Group":               "carlyle.com",
+  "Exail":                       "exail.com",
+  "iXBlue":                      "exail.com",
+  "ECA Group":                   "ecagroup.com",
+  "Avantus Federal":             "qinetiq.com",
+  "Condor Systems":              "l3harris.com",
+  "Blue Canyon Technologies":    "rtx.com",
+  "Martin UAV":                  "shield.ai",
+  "Gibbs & Cox":                 "leidos.com",
+  "Dynetics":                    "leidos.com",
+  "Ercom":                       "thalesgroup.com",
 };
 
 // Initials avatar colour palette (deterministic by name)
@@ -127,14 +175,18 @@ function initials(name) {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-// ISO-2 → emoji flag
-function flagEmoji(iso2) {
-  if (!iso2 || iso2.length !== 2) return "";
-  return iso2
-    .toUpperCase()
-    .split("")
-    .map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65))
-    .join("");
+// ── Country flag (flagcdn.com image, more reliable than emoji) ────────────
+function FlagImg({ iso2, className = "" }) {
+  if (!iso2 || iso2.length !== 2) return null;
+  return (
+    <img
+      src={`https://flagcdn.com/w20/${iso2.toLowerCase()}.png`}
+      srcSet={`https://flagcdn.com/w40/${iso2.toLowerCase()}.png 2x`}
+      alt={iso2}
+      className={`object-cover rounded-[2px] shadow-sm border border-white/60 ${className}`}
+      style={{ width: 16, height: 11 }}
+    />
+  );
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -164,6 +216,25 @@ function formatValue(dealValue, isDisclosed = true) {
   return dealValue >= 1000 ? `$${(dealValue / 1000).toFixed(1)}B` : `$${dealValue}M`;
 }
 
+function getStatusAccentBg(status) {
+  switch (status) {
+    case "completed": case "active":       return "bg-emerald-500";
+    case "pending":   case "under_review": return "bg-amber-400";
+    case "announced":                      return "bg-blue-500";
+    case "cancelled":                      return "bg-rose-500";
+    case "dissolved": case "exited":       return "bg-slate-400";
+    default:                               return "bg-purple-500";
+  }
+}
+
+function getDealSizeBadge(value) {
+  if (!value || value === 0) return null;
+  if (value >= 5000)  return { label: "Mega deal",  cls: "bg-rose-50 text-rose-700 border-rose-200" };
+  if (value >= 1000)  return { label: "Large deal",  cls: "bg-orange-50 text-orange-700 border-orange-200" };
+  if (value >= 100)   return { label: "Mid-size",    cls: "bg-yellow-50 text-yellow-700 border-yellow-200" };
+  return null;
+}
+
 function getDealLabels(dealType) {
   switch (dealType) {
     case "merger":               return { left: "PARTY A",    right: "PARTY B",       sep: "merger" };
@@ -189,6 +260,8 @@ function RoundBadge({ roundType }) {
     series_b: "bg-indigo-50 text-indigo-700 border-indigo-200",
     series_c: "bg-purple-50 text-purple-700 border-purple-200",
     series_d: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200",
+    series_e: "bg-pink-50 text-pink-700 border-pink-200",
+    series_f: "bg-rose-50 text-rose-700 border-rose-200",
     growth:   "bg-teal-50 text-teal-700 border-teal-200",
     buyout:   "bg-amber-50 text-amber-700 border-amber-200",
   };
@@ -197,43 +270,124 @@ function RoundBadge({ roundType }) {
   return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${map[roundType]}`}>{label}</span>;
 }
 
+// Corporate suffixes to strip when doing fuzzy name matching
+const CORP_SUFFIX_RE = /\s+(se|ag|gmbh|kg|nv|bv|sa|sas|plc|ltd|llc|inc|corp|co\.|group|international|industries|technologies|systems|solutions|defense|defence|aerospace|aviation|naval|digital|ventures|federal|division|holding|holdings)\b.*/gi;
+
+function normalizeName(name) {
+  return name.toLowerCase().replace(CORP_SUFFIX_RE, "").trim();
+}
+
 function getLogoDomain(activity, side) {
   const domainField = side === "acquirer" ? "acquirer_logo_domain" : "target_logo_domain";
   const nameField   = side === "acquirer" ? "acquirer" : "target";
-  return activity[domainField] || LOGO_FALLBACK[activity[nameField]] || null;
+  const name = activity[nameField] ?? "";
+
+  // 1. Explicit domain from DB
+  if (activity[domainField]) return activity[domainField];
+
+  // 2. Exact name match in LOGO_FALLBACK
+  if (LOGO_FALLBACK[name]) return LOGO_FALLBACK[name];
+
+  // 3. Fuzzy match: strip corporate suffixes, then compare
+  const normName = normalizeName(name);
+  for (const [key, domain] of Object.entries(LOGO_FALLBACK)) {
+    if (normalizeName(key) === normName) return domain;
+  }
+
+  // 4. Partial match: LOGO_FALLBACK key is a prefix of the company name (e.g. "Airbus" in "Airbus Defence")
+  for (const [key, domain] of Object.entries(LOGO_FALLBACK)) {
+    const normKey = normalizeName(key);
+    if (normKey.length >= 4 && normName.startsWith(normKey)) return domain;
+  }
+
+  return null;
 }
 
-// ── Logo component — 2-tier fallback: Clearbit → coloured initials ─────────
+// ── Wikipedia logo cache (module-level → persists across renders) ──────────
+const wikiLogoCache = new Map();
+
+async function fetchWikipediaLogo(name) {
+  if (wikiLogoCache.has(name)) return wikiLogoCache.get(name);
+  try {
+    const params = new URLSearchParams({
+      action: "query", titles: name, prop: "pageimages",
+      format: "json", pithumbsize: "100", origin: "*",
+    });
+    const res  = await fetch(`https://en.wikipedia.org/w/api.php?${params}`);
+    const data = await res.json();
+    const page = Object.values(data?.query?.pages ?? {})[0];
+    const url  = page?.thumbnail?.source ?? null;
+    wikiLogoCache.set(name, url);
+    return url;
+  } catch {
+    wikiLogoCache.set(name, null);
+    return null;
+  }
+}
+
+// ── Logo component — Clearbit → Wikipedia → coloured initials ─────────────
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  const [failed, setFailed] = useState(false);
+  const [clearbitFailed, setClearbitFailed] = useState(false);
+  const [wikiUrl,        setWikiUrl]        = useState(null);
+  const [wikiChecked,    setWikiChecked]    = useState(false);
+
   const name    = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const country = activity[side === "acquirer" ? "acquirer_country" : "target_country"];
   const domain  = getLogoDomain(activity, side);
-  const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
-  const textSize  = size === "sm" ? "text-[10px]" : "text-sm";
+  const sizeClass = size === "sm" ? "w-8 h-8" : "w-11 h-11";
+  const textSize  = size === "sm" ? "text-[9px]" : "text-xs";
+
+  // When Clearbit fails (or no domain), try Wikipedia once
+  useEffect(() => {
+    if (!clearbitFailed && domain) return; // Clearbit still loading/ok
+    if (wikiChecked) return;               // already tried
+    setWikiChecked(true);
+    fetchWikipediaLogo(name).then(setWikiUrl);
+  }, [clearbitFailed, domain, name, wikiChecked]);
 
   const flag = country ? (
-    <span className="absolute -bottom-1 -right-1 text-xs leading-none">{flagEmoji(country)}</span>
+    <div className="absolute -bottom-1 -right-1">
+      <FlagImg iso2={country} />
+    </div>
   ) : null;
 
-  if (domain && !failed) {
+  // Helper to wrap an image in the white rounded box with the flag overlay
+  function logoBox(imgSrc, alt) {
     return (
       <div className="relative shrink-0">
-        <img
-          src={`https://logo.clearbit.com/${domain}`}
-          alt={name}
-          className={`${sizeClass} rounded-xl object-contain bg-white border border-slate-100 shadow-sm p-0.5`}
-          onError={() => setFailed(true)}
-        />
+        <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
+          <img src={imgSrc} alt={alt} className="w-full h-full object-contain p-1" />
+        </div>
         {flag}
       </div>
     );
   }
 
+  // Level 1 — Clearbit (domain known, not yet failed)
+  if (domain && !clearbitFailed) {
+    return (
+      <div className="relative shrink-0">
+        <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
+          <img
+            src={`https://logo.clearbit.com/${domain}`}
+            alt={name}
+            className="w-full h-full object-contain p-1"
+            onError={() => setClearbitFailed(true)}
+          />
+        </div>
+        {flag}
+      </div>
+    );
+  }
+
+  // Level 2 — Wikipedia thumbnail (async, shows once fetched)
+  if (wikiUrl) return logoBox(wikiUrl, name);
+
+  // Level 3 — Coloured initials avatar
   return (
-    <div className={`${sizeClass} ${avatarColor(name)} rounded-xl flex items-center justify-center relative shrink-0`}>
-      <span className={`${textSize} font-bold text-white tracking-tight`}>{initials(name)}</span>
+    <div className={`${sizeClass} ${avatarColor(name)} rounded-xl flex items-center justify-center relative shrink-0 shadow-sm`}>
+      <span className={`${textSize} font-bold text-white tracking-tight select-none`}>{initials(name)}</span>
       {flag}
     </div>
   );
@@ -253,110 +407,136 @@ function ProfileLink({ name, onOpen }) {
   );
 }
 
-// ── Card expand section ────────────────────────────────────────────────────
+// ── Card ───────────────────────────────────────────────────────────────────
 
 function MACard({ activity, onOpenProfile }) {
   const [open, setOpen] = useState(false);
-  const labels = getDealLabels(activity.deal_type);
+  const labels   = getDealLabels(activity.deal_type);
+  const accent   = getStatusAccentBg(activity.status);
+  const sizeBadge = getDealSizeBadge(activity.is_disclosed !== false ? activity.deal_value : 0);
+  const daysAgo  = Math.floor((Date.now() - new Date(activity.announced_date).getTime()) / 86_400_000);
 
   return (
-    <Card
-      className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300"
+    <div
+      className="relative bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 overflow-hidden"
       data-testid={`ma-item-${activity.id}`}
     >
-      <CardContent className="p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+      {/* Status colour stripe */}
+      <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${accent}`} />
+
+      <div className="p-5 pl-6">
+        {/* ── Top: companies + meta ── */}
+        <div className="flex flex-col lg:flex-row lg:items-start gap-5">
+
           {/* Companies */}
-          <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            {/* Acquirer */}
+            <div className="flex items-center gap-2.5 shrink-0">
               <CompanyLogo activity={activity} side="acquirer" />
               <div>
                 <div className="flex items-center gap-1.5">
-                  <p className="text-slate-900 font-medium leading-tight">{activity.acquirer}</p>
+                  <span className="text-slate-900 font-semibold text-sm leading-snug">{activity.acquirer}</span>
                   <ProfileLink name={activity.acquirer} onOpen={onOpenProfile} />
                 </div>
-                <p className="text-xs text-slate-500 font-mono">{labels.left}</p>
+                <span className="text-[9px] text-slate-400 font-mono tracking-widest uppercase">{labels.left}</span>
               </div>
             </div>
 
             <DealSep type={labels.sep} />
 
-            <div className="flex items-center gap-3 min-w-0">
+            {/* Target */}
+            <div className="flex items-center gap-2.5 min-w-0">
               <CompanyLogo activity={activity} side="target" />
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-slate-900 font-medium leading-tight truncate">{activity.target}</p>
+                  <span className="text-slate-900 font-semibold text-sm leading-snug truncate">{activity.target}</span>
                   <ProfileLink name={activity.target} onOpen={onOpenProfile} />
                 </div>
-                <p className="text-xs text-slate-500 font-mono">{labels.right}</p>
+                <span className="text-[9px] text-slate-400 font-mono tracking-widest uppercase">{labels.right}</span>
               </div>
             </div>
           </div>
 
-          {/* Deal meta */}
-          <div className="flex flex-wrap items-center gap-5">
-            <div className="text-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">DEAL VALUE</p>
-              <p className="text-xl font-mono font-bold text-purple-700 mt-1">
+          {/* Meta strip */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 lg:justify-end">
+
+            {/* Value */}
+            <div className="min-w-[70px]">
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Value</p>
+              <p className="text-lg font-mono font-bold text-purple-700 leading-none">
                 {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
               </p>
               {activity.stake_percentage != null && (
-                <p className="text-[10px] text-slate-400 font-mono mt-0.5">{activity.stake_percentage}% stake</p>
+                <p className="text-[9px] text-slate-400 font-mono mt-0.5">{activity.stake_percentage}% stake</p>
               )}
             </div>
 
-            <div className="text-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TYPE</p>
-              <p className="text-sm text-slate-700 mt-1 capitalize bg-slate-100 px-2 py-0.5 rounded">
+            {/* Type */}
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Type</p>
+              <span className="text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded capitalize font-medium">
                 {activity.deal_type.replaceAll("_", " ")}
-              </p>
+              </span>
             </div>
 
-            <div className="text-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">DATE</p>
-              <p className="text-sm text-slate-700 mt-1">
-                {format(new Date(activity.announced_date), "MMM yyyy")}
+            {/* Date */}
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Date</p>
+              <p className="text-xs text-slate-700 font-medium whitespace-nowrap">
+                {format(new Date(activity.announced_date), "d MMM yyyy")}
               </p>
+              {daysAgo >= 0 && daysAgo <= 14 && (
+                <p className="text-[9px] text-purple-600 font-semibold mt-0.5">
+                  {daysAgo === 0 ? "Today" : `${daysAgo}d ago`}
+                </p>
+              )}
             </div>
 
-            <div className="flex flex-col items-start gap-1.5">
-              <span className={`text-xs font-medium px-3 py-1.5 rounded-full border ${getStatusStyle(activity.status)}`}>
+            {/* Status + badges column */}
+            <div className="flex flex-col items-start gap-1">
+              <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border ${getStatusStyle(activity.status)}`}>
                 {formatStatus(activity.status)}
               </span>
-              <RoundBadge roundType={activity.round_type} />
+              {activity.round_type && <RoundBadge roundType={activity.round_type} />}
+              {sizeBadge && (
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${sizeBadge.cls}`}>
+                  {sizeBadge.label}
+                </span>
+              )}
             </div>
 
-            {activity.source_url ? (
-              <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                <CheckCircle2 className="w-3 h-3" /> Sourced
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
-                <AlertCircle className="w-3 h-3" /> Unsourced
-              </span>
-            )}
-
-            {(activity.rationale || activity.source_url) && (
-              <button
-                onClick={() => setOpen((v) => !v)}
-                className="ml-auto flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-medium transition-colors"
-                aria-label="Toggle details"
-              >
-                {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                {open ? "Less" : "Details"}
-              </button>
-            )}
+            {/* Source + details */}
+            <div className="flex flex-col items-start gap-1">
+              {activity.source_url ? (
+                <span className="flex items-center gap-1 text-[9px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                  <CheckCircle2 className="w-2.5 h-2.5" /> Sourced
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                  <AlertCircle className="w-2.5 h-2.5" /> Unsourced
+                </span>
+              )}
+              {(activity.rationale || activity.source_url) && (
+                <button
+                  onClick={() => setOpen((v) => !v)}
+                  className="flex items-center gap-0.5 text-[11px] text-purple-600 hover:text-purple-800 font-semibold transition-colors mt-0.5"
+                >
+                  {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  {open ? "Less" : "Details"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Description */}
-        <p className="text-slate-500 text-sm mt-4 border-t border-slate-100 pt-4">
+        <p className="text-slate-500 text-[13px] mt-4 pt-3 border-t border-slate-100 leading-relaxed">
           {activity.description}
         </p>
 
-        {/* Accordion: rationale + source */}
+        {/* Accordion */}
         {open && (activity.rationale || activity.source_url) && (
-          <div className="mt-3 pt-3 border-t border-purple-100 space-y-2 animate-fade-in">
+          <div className="mt-3 pt-3 border-t border-purple-100 space-y-2">
             {activity.rationale && (
               <p className="text-slate-600 text-sm leading-relaxed">{activity.rationale}</p>
             )}
@@ -365,7 +545,7 @@ function MACard({ activity, onOpenProfile }) {
                 href={activity.source_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 font-medium"
+                className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 font-semibold"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 Source article
@@ -373,8 +553,8 @@ function MACard({ activity, onOpenProfile }) {
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
@@ -528,7 +708,7 @@ export default function MAActivity() {
   const [loadingMore,    setLoadingMore]       = useState(false);
   const [histLoadingMore, setHistLoadingMore]  = useState(false);
   const [error,          setError]             = useState(null);
-  const [tab,            setTab]               = useState("recent");
+  const [tab,            setTab]               = useState("historical");
   const [searchTerm,     setSearchTerm]        = useState("");
   const [selectedStatus, setSelectedStatus]    = useState("all");
   const [selectedType,   setSelectedType]      = useState("all");

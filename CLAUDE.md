@@ -1,5 +1,18 @@
 # CLAUDE.md — Defense Intelligence Hub
 
+## Communication Style — IMPORTANT
+
+**The user is learning to code. After every code change, always explain what was done in plain, accessible language.**
+
+Rules for explanations:
+- Use simple analogies and everyday comparisons (no assumed prior knowledge)
+- Explain *why* before *how* — what problem does this solve?
+- Define every technical term the first time it appears
+- Keep it conversational, not academic
+- French or English is fine — match the language the user writes in
+
+---
+
 ## Project Overview
 
 A full-stack defense industry intelligence dashboard ("Defense Intelligence Hub") for tracking market data, M&A activity, contracts, regulations, products, and announcements across the global defense sector.
