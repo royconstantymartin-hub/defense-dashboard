@@ -692,19 +692,20 @@ MA_DATA = [
         "announced_date": datetime(2018, 10, 10, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "Airbus", "target": "Bombardier C Series programme",
+        "acquirer": "Airbus", "target": "Bombardier",
         "deal_value": 500, "status": "completed", "deal_type": "acquisition",
-        "description": "Commercial aviation programme partnership",
+        "description": "Airbus acquires majority stake in Bombardier C Series programme (later renamed Airbus A220)",
         "rationale": (
-            "Airbus takes a majority stake in the Bombardier C Series aircraft "
+            "Airbus takes a majority stake in Bombardier's C Series aircraft "
             "programme (later renamed the Airbus A220) after Bombardier faced severe "
-            "financial pressure and US trade tariffs. Airbus's involvement provided "
-            "marketing and supply-chain support to make the programme viable."
+            "financial pressure and US trade tariffs imposed by a Boeing petition. "
+            "Airbus's involvement provided marketing, manufacturing and supply-chain "
+            "support that saved the programme. The C Series was rebranded A220 in July 2018."
         ),
         "acquirer_country": "FR", "target_country": "CA",
         "acquirer_logo_domain": "airbus.com",
-        "target_logo_domain": "airbus.com",
-                "source_url": "https://www.airbus.com/en/newsroom/press-releases",
+        "target_logo_domain": "bombardier.com",
+        "source_url": "https://www.reuters.com/article/us-bombardier-airbus/airbus-takes-majority-stake-in-bombardiers-c-series-programme-idUSKBN1CT1HU",
         "announced_date": datetime(2018, 1, 16, tzinfo=timezone.utc),
     },
     # ── Historical context ────────────────────────────────────────────────────

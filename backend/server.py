@@ -823,10 +823,64 @@ async def _run_seed() -> dict:
             await db.announcements.insert_one(doc)
 
     # Seed M&A Activities — upsert so enriched fields are applied to existing docs
+    import re as _re
+
+    def _norm(s: str) -> str:
+        return _re.sub(r"\s+", " ", s.lower().strip())
+
+    # Build a set of (acq_first_word, tgt_first_word) tuples to identify scraper duplicates
+    seed_acq_tgt_first: set = set()
+    for m in MA_DATA + MA_EXTRA_DEALS:
+        acq_words = _norm(m['acquirer']).split()
+        tgt_words = _norm(m['target']).split()
+        if acq_words and tgt_words:
+            seed_acq_tgt_first.add((acq_words[0], tgt_words[0]))
+
+    # Also build full set of seed target words (>3 chars) for broader matching
+    seed_tgt_words: set = set()
+    for m in MA_DATA + MA_EXTRA_DEALS:
+        for w in _norm(m['target']).split():
+            if len(w) > 3:
+                seed_tgt_words.add(w)
+
+    # Generic words that indicate a hallucinated/misextracted scraper target
+    _HALLUCINATION_TARGETS = frozenset({
+        "formation", "multiple", "various", "new", "combined",
+        "subsidiary", "unit", "division", "program", "programme",
+        "targets", "companies", "businesses", "assets", "operations",
+        "division", "group", "consortium", "venture",
+    })
+
+    # Delete scraper-created entries that duplicate seeded deals
+    # Criteria: has scraped_at AND (acquirer first-word matches a seed acquirer AND
+    #           (target first-word is in hallucination list OR target word overlaps seed target words))
+    all_scraped = await db.ma_activities.find(
+        {"scraped_at": {"$exists": True}},
+        {"_id": 0, "id": 1, "acquirer": 1, "target": 1}
+    ).to_list(2000)
+
+    for entry in all_scraped:
+        acq_words = _norm(entry.get("acquirer", "")).split()
+        tgt_words = _norm(entry.get("target", "")).split()
+        if not acq_words or not tgt_words:
+            continue
+        # Check if (first acquirer word, first target word) exactly matches a seed pair
+        exact_match = (acq_words[0], tgt_words[0]) in seed_acq_tgt_first
+        # Check if acquirer matches any seed acquirer AND target looks like a hallucination
+        acq_matches_any_seed = any(acq_words[0] == p[0] for p in seed_acq_tgt_first)
+        tgt_is_generic = tgt_words[0] in _HALLUCINATION_TARGETS
+        tgt_overlaps_seed = any(w in seed_tgt_words for w in tgt_words if len(w) > 3)
+
+        if exact_match or (acq_matches_any_seed and (tgt_is_generic or tgt_overlaps_seed)):
+            await db.ma_activities.delete_one({"id": entry["id"]})
+
     for m in MA_DATA + MA_EXTRA_DEALS:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc['announced_date'] = doc['announced_date'].isoformat()
+        # Set normalized names so scraper deduplication recognises these entries
+        doc['acquirer_norm'] = _norm(m['acquirer'])
+        doc['target_norm'] = _norm(m['target'])
         await db.ma_activities.update_one(
             {"acquirer": m['acquirer'], "target": m['target']},
             {"$set": doc},
@@ -1345,7 +1399,23 @@ async def run_ma_scraper_job() -> dict:
                 doc["target_norm"] = key["target_norm"]
                 doc["scraped_at"] = scraped_at.isoformat()
 
+                # Check exact norm match
                 existing = await db.ma_activities.find_one(key, {"_id": 0})
+                if not existing:
+                    # Also check if an entry exists whose acquirer/target first-word
+                    # matches — catches "Airbus → Bombardier C Series" vs "Airbus → Bombardier"
+                    acq_first = key["acquirer_norm"].split()[0] if key["acquirer_norm"].split() else ""
+                    tgt_first = key["target_norm"].split()[0] if key["target_norm"].split() else ""
+                    if acq_first and tgt_first:
+                        first_word_match = await db.ma_activities.find_one(
+                            {
+                                "acquirer_norm": {"$regex": f"^{acq_first}"},
+                                "target_norm":   {"$regex": f"^{tgt_first}"},
+                            },
+                            {"_id": 0, "id": 1},
+                        )
+                        if first_word_match:
+                            existing = first_word_match
                 if not existing:
                     await db.ma_activities.insert_one(doc)
                     saved += 1
