@@ -983,13 +983,19 @@ export default function Products() {
                     className="group block relative rounded-xl overflow-hidden border border-slate-200 hover:border-red-300 transition-all shadow-sm hover:shadow-md"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <img
-                      src={`https://img.youtube.com/vi/${YOUTUBE_VIDEOS[selectedProduct.name]}/hqdefault.jpg`}
-                      alt={`${selectedProduct.name} presentation`}
-                      className="w-full object-cover"
-                      style={{ aspectRatio: '16/9' }}
-                      onError={(ev) => { ev.target.closest('a').style.display = 'none'; }}
-                    />
+                    {/* Fixed-ratio container: fallback slate bg always visible, img covers it when loaded */}
+                    <div className="relative w-full bg-slate-800" style={{ aspectRatio: '16/9' }}>
+                      <img
+                        src={`https://img.youtube.com/vi/${YOUTUBE_VIDEOS[selectedProduct.name]}/hqdefault.jpg`}
+                        alt={`${selectedProduct.name} presentation`}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        onError={(ev) => { ev.target.style.display = 'none'; }}
+                      />
+                      {/* Fallback icon shown when thumbnail fails to load */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <Youtube className="w-12 h-12 text-slate-600" />
+                      </div>
+                    </div>
                     {/* Play overlay */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/35 transition-colors">
                       <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
