@@ -913,13 +913,16 @@ async def _run_seed() -> dict:
                 {"$set": {"image_url": p['image_url']}}
             )
 
-    # Seed Contracts
+    # Seed Contracts — upsert by stable key so re-seeding updates existing records
+    # (e.g. title translations, source_url fixes) without creating duplicates.
     for c in CONTRACTS_DATA:
-        existing = await db.contracts.find_one({"title": c['title']})
-        if not existing:
-            contract = Contract(**c)
-            doc = contract.model_dump()
-            await db.contracts.insert_one(doc)
+        contract = Contract(**c)
+        doc = contract.model_dump()
+        if c.get("program"):
+            match = {"program": c["program"], "authority_country": c["authority_country"]}
+        else:
+            match = {"contracting_authority": c["contracting_authority"], "category": c["category"]}
+        await db.contracts.replace_one(match, doc, upsert=True)
 
     players_count = await db.defense_players.count_documents({})
     announcements_count = await db.announcements.count_documents({})
