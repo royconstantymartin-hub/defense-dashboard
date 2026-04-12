@@ -263,6 +263,10 @@ export default function Products() {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showComparison, setShowComparison]= useState(false);
 
+  // YouTube video availability: track which product names have a broken/deleted video
+  const [brokenVideos, setBrokenVideos] = useState(new Set());
+  const checkedVideoIds = useRef(new Set()); // avoid duplicate oembed requests
+
   // Wikipedia image fallback: fetched client-side when DB image_url is missing or broken
   const [wikiImages, setWikiImages] = useState({});   // productId → url
   const [failedPrimary, setFailedPrimary] = useState(new Set()); // productIds where image_url 404'd
@@ -292,6 +296,34 @@ export default function Products() {
       if (!p.image_url) fetchWikiImage(p.id, p.name);
     });
   }, [filteredProducts, fetchWikiImage]);
+
+  // Check YouTube video availability via oembed when a product is selected.
+  // YouTube oembed returns 404 for deleted/unavailable videos (unlike thumbnail URLs
+  // which silently return a placeholder image). We mark broken videos to hide the section.
+  useEffect(() => {
+    if (!selectedProduct) return;
+    const videoId = YOUTUBE_VIDEOS[selectedProduct.name];
+    if (!videoId || checkedVideoIds.current.has(videoId)) return;
+    checkedVideoIds.current.add(videoId);
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
+    fetch(
+      `https://www.youtube.com/oembed?url=https%3A//www.youtube.com/watch%3Fv%3D${videoId}&format=json`,
+      { signal: controller.signal }
+    )
+      .then(r => {
+        if (!r.ok) {
+          setBrokenVideos(prev => new Set([...prev, selectedProduct.name]));
+        }
+      })
+      .catch(() => {
+        // Network error or abort — treat video as unavailable
+        setBrokenVideos(prev => new Set([...prev, selectedProduct.name]));
+      })
+      .finally(() => clearTimeout(timeout));
+  }, [selectedProduct]);
 
   const goToCompanyProfile = (e, manufacturer) => {
     e.stopPropagation();
@@ -914,7 +946,7 @@ export default function Products() {
               </div>
 
               {/* YouTube Presentation Video */}
-              {YOUTUBE_VIDEOS[selectedProduct.name] && (
+              {YOUTUBE_VIDEOS[selectedProduct.name] && !brokenVideos.has(selectedProduct.name) && (
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Presentation Video</p>
                   <a
