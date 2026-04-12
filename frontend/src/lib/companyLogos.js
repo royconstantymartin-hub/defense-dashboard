@@ -199,9 +199,13 @@ export const COMPANY_WIKI_LOGOS = {
   "Thales":                        WP + "Thales_Logo.svg",
   "Thales Nederland":              WP + "Thales_Logo.svg",
   "Safran":                        WP + "Logo_Safran.svg",
+  "Dassault Aviation":             WP + "Dassault_Aviation_Logo.jpg",
+  "MBDA":                          WP + "MBDA-Logo.svg",
   "Naval Group":                   WP + "Naval_Group_logo.svg",
   // Germany
   "Rheinmetall":                   WP + "Rheinmetall_Logo_2021.svg",
+  "Krauss-Maffei Wegmann":         WP + "KMW-logo.svg",
+  "Diehl Defence":                 WP + "Diehl_Defence_Logo.svg",
   "Hensoldt":                      WP + "Hensoldt_Logo_2020.svg",
   // Italy
   "Leonardo":                      WP + "Logo_Leonardo.svg",
@@ -211,12 +215,21 @@ export const COMPANY_WIKI_LOGOS = {
   "Kongsberg Defence":             WP + "Kongsberg_logo.svg",
   // Spain
   "Indra Sistemas":                WP + "Indra_Sistemas_logo.svg",
+  // Benelux
+  "FN Herstal":                    WP + "FN-Herstal-logo.svg",
+  // Switzerland
+  "Pilatus Aircraft":              WP + "Pilatus_Aircraft_logo.svg",
   // Israel
   "Elbit Systems":                 WP + "Elbit_Systems_logo.svg",
+  "Israel Aerospace Industries":   WP + "IAI_Corporation_Logo.svg",
+  "Rafael Advanced Defense":       WP + "RAFAEL_logo.png",
   // Japan
   "Mitsubishi Heavy Industries":   WP + "Mhi_logo_en.svg",
+  "Kawasaki Heavy Industries":     WP + "Kawasaki_Heavy_Industries_Logo.svg",
   // South Korea
   "Korea Aerospace Industries":    WP + "Korea_Aerospace_Industries_logo.svg",
+  "Hanwha Aerospace":              WP + "Hanwha_Aerospace_logo.svg",
+  "Hanwha Defense":                WP + "Hanwha_logo.svg",
   // Russia
   "Rostec":                        WP + "Rostec_logo.svg",
   // Singapore
@@ -224,8 +237,14 @@ export const COMPANY_WIKI_LOGOS = {
   // Turkey
   "Turkish Aerospace Industries":  WP + "Turkish_Aerospace_Industries_logo.svg",
   "Aselsan":                       WP + "ASELSAN_logo.svg",
+  // Australia
+  "Austal":                        WP + "Austal_logo.svg",
+  // Canada
+  "CAE Inc":                       WP + "CAE_inc._logo_2022.svg",
   // Latin America
   "Embraer Defense":               WP + "Embraer_logo.svg",
+  // USA — additional
+  "Anduril Industries":            WP + "Anduril_Industries_Logo.svg",
 };
 
 export function getLogoDomain(name) {
