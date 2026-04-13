@@ -64,12 +64,16 @@ def _fetch_price_sync(ticker: str) -> Optional[dict]:
         price = round(float(hist["Close"].iloc[-1]), 2)
         prev_close = round(float(hist["Close"].iloc[-2]), 2) if len(hist) >= 2 else price
         change_pct = round(((price - prev_close) / prev_close) * 100, 2) if prev_close > 0 else 0.0
+        open_price = round(float(hist["Open"].iloc[-1]), 2)
+        change_since_open = round(((price - open_price) / open_price) * 100, 2) if open_price > 0 else 0.0
 
         return {
             "ticker": ticker,
             "price": price,
             "change_percent": change_pct,
             "prev_close": prev_close,
+            "open_price": open_price,
+            "change_since_open": change_since_open,
         }
     except Exception as exc:
         logger.warning("Price fetch failed for %s: %s", ticker, exc)

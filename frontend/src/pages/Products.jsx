@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
+import { getLogoUrl } from "@/lib/companyLogos";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -234,63 +235,6 @@ const YOUTUBE_VIDEOS = {
   "E-2D Advanced Hawkeye": "u9LmpUS6-pE", // northropgrumman.com – FLOW: E-2D Enhancement
 };
 
-// Company logo domains
-const COMPANY_LOGOS = {
-  // USA
-  "Lockheed Martin": "lockheedmartin.com",
-  "Raytheon Technologies": "rtx.com",
-  "Boeing Defense": "boeing.com",
-  "Northrop Grumman": "northropgrumman.com",
-  "General Dynamics": "gd.com",
-  "L3Harris Technologies": "l3harris.com",
-  "Huntington Ingalls": "hii.com",
-  "General Atomics": "ga.com",
-  "AeroVironment": "aerovironment.com",
-  "Sikorsky": "lockheedmartin.com",
-  "Oshkosh Defense": "oshkoshdefense.com",
-  "Palantir Technologies": "palantir.com",
-  "Kratos Defense": "kratosdefense.com",
-  "Leidos Holdings": "leidos.com",
-  "Textron": "textron.com",
-  // Europe
-  "BAE Systems": "baesystems.com",
-  "Thales": "thalesgroup.com",
-  "Leonardo": "leonardo.com",
-  "Airbus Defence & Space": "airbus.com",
-  "Dassault Aviation": "dassault-aviation.com",
-  "Safran": "safran-group.com",
-  "Rheinmetall": "rheinmetall.com",
-  "Saab AB": "saab.com",
-  "Naval Group": "naval-group.com",
-  "Hensoldt": "hensoldt.net",
-  "MBDA": "mbda-systems.com",
-  "Nexter Systems": "knds.com",
-  "Krauss-Maffei Wegmann": "kmweg.com",
-  "Fincantieri": "fincantieri.com",
-  "Diehl Defence": "diehl.com",
-  "Patria": "patriagroup.com",
-  "Rolls-Royce Holdings": "rolls-royce.com",
-  "Babcock International": "babcockinternational.com",
-  "QinetiQ": "qinetiq.com",
-  // Middle East / Israel
-  "Kongsberg Defence": "kongsberg.com",
-  "Elbit Systems": "elbitsystems.com",
-  "Rafael Advanced Defense": "rafael.co.il",
-  "Israel Aerospace Industries": "iai.co.il",
-  // Asia-Pacific
-  "Hanwha Defense": "hanwha.com",
-  "Hanwha Aerospace": "hanwha.com",
-  "Korea Aerospace Industries": "koreaaero.com",
-  "Hyundai Rotem": "hyundai-rotem.co.kr",
-  "Hindustan Aeronautics": "hal-india.co.in",
-  "Mitsubishi Heavy Industries": "mhi.com",
-  "Baykar": "baykartech.com",
-  // Others
-  "Kongsberg/Raytheon": "kongsberg.com",
-  "BrahMos Aerospace": "brahmos.com",
-  "GDELS": "gdels.com",
-  "ThyssenKrupp Marine": "thyssenkrupp.com",
-};
 
 export default function Products() {
   const navigate = useNavigate();
@@ -310,6 +254,9 @@ export default function Products() {
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showComparison, setShowComparison]= useState(false);
+
+  // YouTube video availability: track which product names have a broken/deleted video
+  const [brokenVideos, setBrokenVideos] = useState(new Set());
 
   // Wikipedia image fallback: fetched client-side when DB image_url is missing or broken
   const [wikiImages, setWikiImages] = useState({});   // productId → url
@@ -340,6 +287,7 @@ export default function Products() {
       if (!p.image_url) fetchWikiImage(p.id, p.name);
     });
   }, [filteredProducts, fetchWikiImage]);
+
 
   const goToCompanyProfile = (e, manufacturer) => {
     e.stopPropagation();
@@ -392,11 +340,6 @@ export default function Products() {
   const getCategoryIcon = (category) => {
     const cat = CATEGORIES.find(c => c.value === category);
     return cat?.icon || Package;
-  };
-
-  const getLogo = (manufacturer) => {
-    const domain = COMPANY_LOGOS[manufacturer];
-    return domain ? `https://logo.clearbit.com/${domain}` : null;
   };
 
   const toggleProductForCompare = (product) => {
@@ -643,7 +586,7 @@ export default function Products() {
         {filteredProducts.map((product) => {
           const Icon = getCategoryIcon(product.category);
           const isSelectedForCompare = selectedForCompare.find(p => p.id === product.id);
-          const logoUrl = getLogo(product.manufacturer);
+          const logoUrl = getLogoUrl(product.manufacturer);
           return (
             <Card 
               key={product.id}
@@ -942,16 +885,18 @@ export default function Products() {
                   className="flex items-center gap-2 mt-2 group text-left bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg px-2.5 py-1.5 transition-all"
                   title={`View ${selectedProduct.manufacturer} profile`}
                 >
-                  {getLogo(selectedProduct.manufacturer) ? (
+                  {getLogoUrl(selectedProduct.manufacturer) ? (
                     <img
-                      src={getLogo(selectedProduct.manufacturer)}
+                      src={getLogoUrl(selectedProduct.manufacturer)}
                       alt={selectedProduct.manufacturer}
                       className="w-5 h-5 rounded object-contain shrink-0"
-                      onError={(ev) => { ev.target.style.display = 'none'; }}
+                      onError={(ev) => { ev.target.style.display = 'none'; ev.target.nextElementSibling.style.display = 'block'; }}
                     />
-                  ) : (
-                    <Building2 className="w-4 h-4 text-slate-400 group-hover:text-purple-500 shrink-0 transition-colors" />
-                  )}
+                  ) : null}
+                  <Building2
+                    className="w-4 h-4 text-slate-400 group-hover:text-purple-500 shrink-0 transition-colors"
+                    style={{ display: getLogoUrl(selectedProduct.manufacturer) ? 'none' : 'block' }}
+                  />
                   <span className="text-sm text-slate-600 group-hover:text-purple-700 font-medium transition-colors">
                     {selectedProduct.manufacturer}
                   </span>
@@ -970,7 +915,7 @@ export default function Products() {
               </div>
 
               {/* YouTube Presentation Video */}
-              {YOUTUBE_VIDEOS[selectedProduct.name] && (
+              {YOUTUBE_VIDEOS[selectedProduct.name] && !brokenVideos.has(selectedProduct.name) && (
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Presentation Video</p>
                   {playingVideo ? (

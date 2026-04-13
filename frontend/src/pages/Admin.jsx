@@ -365,6 +365,8 @@ function AnnouncementsAdmin({ authHeaders }) {
 // M&A Admin Component
 function MAAdmin({ authHeaders }) {
   const [items, setItems] = useState([]);
+  const [piloting, setPiloting] = useState(false);
+  const [pilotResult, setPilotResult] = useState(null);
   const [form, setForm] = useState({
     acquirer: "",
     target: "",
@@ -380,6 +382,24 @@ function MAAdmin({ authHeaders }) {
   };
 
   useEffect(() => { fetchItems(); }, []);
+
+  const handlePilotSeed = async () => {
+    if (!window.confirm("Ceci va SUPPRIMER tous les deals M&A existants et les remplacer par les 15 deals pilotes. Confirmer ?")) return;
+    setPiloting(true);
+    setPilotResult(null);
+    try {
+      const res = await axios.post(`${API}/ma-activities/seed-pilot`, {}, { headers: authHeaders });
+      setPilotResult({ ok: true, data: res.data });
+      toast.success(`Pilot chargé — ${res.data.deals} deals`);
+      fetchItems();
+    } catch (err) {
+      const msg = err.response?.data?.detail || err.message;
+      setPilotResult({ ok: false, msg });
+      toast.error(msg);
+    } finally {
+      setPiloting(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -400,7 +420,37 @@ function MAAdmin({ authHeaders }) {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
+    <div className="space-y-6">
+      {/* Pilot Seed Banner */}
+      <Card className="bg-white border-amber-200">
+        <CardContent className="pt-4 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex-1">
+              <p className="text-slate-900 font-semibold text-sm">M&A Pilot — 15 deals curatés</p>
+              <p className="text-slate-500 text-xs mt-0.5">
+                Réinitialise la collection avec 15 deals vérifiés (logos, sources, rationale). Supprime tous les deals existants.
+              </p>
+              {pilotResult && (
+                <p className={`text-xs mt-1 font-medium ${pilotResult.ok ? "text-emerald-600" : "text-rose-600"}`}>
+                  {pilotResult.ok ? `✓ ${pilotResult.data.deals} deals chargés` : pilotResult.msg}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={handlePilotSeed}
+              disabled={piloting}
+              className="shrink-0 flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              {piloting
+                ? <><RefreshCw className="w-4 h-4 animate-spin" /> Chargement…</>
+                : <><Database className="w-4 h-4" /> Charger Pilot 15</>
+              }
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid lg:grid-cols-2 gap-6">
       <Card className="bg-white border-slate-200">
         <CardHeader className="border-b border-slate-200">
           <CardTitle className="text-slate-900 flex items-center gap-2">
@@ -510,6 +560,7 @@ function MAAdmin({ authHeaders }) {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

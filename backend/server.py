@@ -154,6 +154,8 @@ class DefensePlayer(BaseModel):
     funding_stage: Optional[str] = None
     is_public: Optional[bool] = None
     description: Optional[str] = None
+    programs: Optional[List[str]] = None
+    export_countries: Optional[List[str]] = None
 
 # Defense Expenditure Model
 class ExpenditureCreate(BaseModel):
@@ -496,6 +498,30 @@ async def trigger_ma_scrape(current_user: dict = Depends(get_current_user)):
     result = await run_ma_scraper_job()
     return result
 
+@api_router.post("/ma-activities/seed-pilot")
+async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
+    """Drop all M&A entries and seed exactly the 15 hand-curated pilot deals."""
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    from data.seed_data import MA_PILOT_15
+    import re as _re
+
+    def _norm(s: str) -> str:
+        return _re.sub(r"\s+", " ", s.lower().strip())
+
+    await db.ma_activities.delete_many({})
+
+    for m in MA_PILOT_15:
+        activity = MAActivity(**m)
+        doc = activity.model_dump()
+        doc["announced_date"] = doc["announced_date"].isoformat()
+        doc["acquirer_norm"] = _norm(m["acquirer"])
+        doc["target_norm"] = _norm(m["target"])
+        await db.ma_activities.insert_one(doc)
+
+    count = await db.ma_activities.count_documents({})
+    return {"status": "Pilot seeded", "deals": count, "message": f"{count} deals chargés — scraper ignoré"}
+
 # ============= DEFENSE PLAYERS ROUTES =============
 
 @api_router.get("/defense-players", response_model=List[DefensePlayer])
@@ -594,6 +620,8 @@ async def get_stock_prices(tickers: str = ""):
             "price": data["price"],
             "change_percent": data["change_percent"],
             "prev_close": data.get("prev_close", data["price"]),
+            "open_price": data.get("open_price"),
+            "change_since_open": data.get("change_since_open"),
         }
     # Fallback to DB for any public ticker that yfinance couldn't resolve + all private
     for t in public_tickers:
@@ -800,13 +828,11 @@ async def get_dashboard_stats():
 
 # ============= SEED DATA ENDPOINT =============
 
-@api_router.post("/seed-data")
-async def seed_data(current_user: dict = Depends(get_current_user)):
-    if current_user.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Admin role required")
-    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
-    
-    # Seed Defense Players (250+ companies)
+async def _run_seed() -> dict:
+    """Idempotent seed — safe to call on every startup."""
+    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, MA_PILOT_15, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
+
+    # Seed Defense Players
     for p in DEFENSE_COMPANIES:
         existing = await db.defense_players.find_one({"ticker": p['ticker']})
         if not existing:
@@ -814,7 +840,7 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             doc = player.model_dump()
             doc['updated_at'] = doc['updated_at'].isoformat()
             await db.defense_players.insert_one(doc)
-    
+
     # Seed Announcements
     for a in ANNOUNCEMENTS_DATA:
         existing = await db.announcements.find_one({"title": a['title']})
@@ -823,32 +849,94 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
             doc = announcement.model_dump()
             doc['date'] = doc['date'].isoformat()
             await db.announcements.insert_one(doc)
-    
+
     # Seed M&A Activities — upsert so enriched fields are applied to existing docs
+    import re as _re
+
+    def _norm(s: str) -> str:
+        return _re.sub(r"\s+", " ", s.lower().strip())
+
+    # Build a set of (acq_first_word, tgt_first_word) tuples to identify scraper duplicates
+    seed_acq_tgt_first: set = set()
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
+        acq_words = _norm(m['acquirer']).split()
+        tgt_words = _norm(m['target']).split()
+        if acq_words and tgt_words:
+            seed_acq_tgt_first.add((acq_words[0], tgt_words[0]))
+
+    # Also build full set of seed target words (>3 chars) for broader matching
+    seed_tgt_words: set = set()
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
+        for w in _norm(m['target']).split():
+            if len(w) > 3:
+                seed_tgt_words.add(w)
+
+    # Also build full set of seed acquirer first words for looser matching
+    seed_acq_first_words: set = {p[0] for p in seed_acq_tgt_first}
+
+    # Generic words that indicate a hallucinated/misextracted scraper target
+    _HALLUCINATION_TARGETS = frozenset({
+        "formation", "multiple", "various", "new", "combined",
+        "subsidiary", "unit", "division", "program", "programme",
+        "targets", "companies", "businesses", "assets", "operations",
+        "group", "consortium", "venture", "unit", "holdings",
+        "international", "technologies", "systems", "solutions",
+    })
+
+    # Delete ALL scraper-created entries that duplicate or corrupt seeded deals.
+    # A scraper entry is removed when it has scraped_at AND any of:
+    #   1. Exact (acq_first, tgt_first) pair matches a seed entry
+    #   2. Acquirer matches a seed acquirer AND target contains a hallucination word
+    #   3. Acquirer matches a seed acquirer AND any target word overlaps known seed targets
+    #   4. No source_url at all (unsourced scraper noise)
+    all_scraped = await db.ma_activities.find(
+        {"scraped_at": {"$exists": True}},
+        {"_id": 0, "id": 1, "acquirer": 1, "target": 1, "source_url": 1}
+    ).to_list(2000)
+
+    for entry in all_scraped:
+        acq_words = _norm(entry.get("acquirer", "")).split()
+        tgt_words = _norm(entry.get("target", "")).split()
+        if not acq_words or not tgt_words:
+            await db.ma_activities.delete_one({"id": entry["id"]})
+            continue
+
+        exact_match = (acq_words[0], tgt_words[0]) in seed_acq_tgt_first
+        acq_matches_any_seed = acq_words[0] in seed_acq_first_words
+        tgt_is_generic = any(w in _HALLUCINATION_TARGETS for w in tgt_words)
+        tgt_overlaps_seed = any(w in seed_tgt_words for w in tgt_words if len(w) > 3)
+        no_source = not entry.get("source_url")
+
+        if exact_match or (acq_matches_any_seed and (tgt_is_generic or tgt_overlaps_seed or no_source)):
+            await db.ma_activities.delete_one({"id": entry["id"]})
+
     for m in MA_DATA + MA_EXTRA_DEALS:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc['announced_date'] = doc['announced_date'].isoformat()
+        # Set normalized names so scraper deduplication recognises these entries
+        doc['acquirer_norm'] = _norm(m['acquirer'])
+        doc['target_norm'] = _norm(m['target'])
         await db.ma_activities.update_one(
             {"acquirer": m['acquirer'], "target": m['target']},
             {"$set": doc},
             upsert=True,
         )
-    
+
     # Seed Expenditures
     for e in EXPENDITURES_DATA:
         existing = await db.expenditures.find_one({"country_code": e['country_code'], "year": e['year']})
         if not existing:
             expenditure = Expenditure(**e)
             await db.expenditures.insert_one(expenditure.model_dump())
-    
+
     # Seed Regulations
     for r in REGULATIONS_DATA:
         existing = await db.regulations.find_one({"title": r['title']})
         if not existing:
             regulation = Regulation(**r)
             await db.regulations.insert_one(regulation.model_dump())
-    
+
     # Seed Products (insert new, update image_url for existing)
     for p in PRODUCTS_DATA:
         existing = await db.products.find_one({"name": p['name']})
@@ -860,21 +948,29 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
                 {"name": p['name']},
                 {"$set": {"image_url": p['image_url']}}
             )
-    
-    # Seed Contracts
-    for c in CONTRACTS_DATA:
-        existing = await db.contracts.find_one({"title": c['title']})
-        if not existing:
-            contract = Contract(**c)
-            doc = contract.model_dump()
-            await db.contracts.insert_one(doc)
 
-    # Get counts
+    # Seed Contracts — upsert by stable key so re-seeding updates existing records
+    # (e.g. title translations, source_url fixes) without creating duplicates.
+    for c in CONTRACTS_DATA:
+        contract = Contract(**c)
+        doc = contract.model_dump()
+        if c.get("program"):
+            match = {"program": c["program"], "authority_country": c["authority_country"]}
+        else:
+            match = {"contracting_authority": c["contracting_authority"], "category": c["category"]}
+        await db.contracts.replace_one(match, doc, upsert=True)
+
     players_count = await db.defense_players.count_documents({})
     announcements_count = await db.announcements.count_documents({})
     contracts_count = await db.contracts.count_documents({})
-
     return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count, "contracts": contracts_count}
+
+
+@api_router.post("/seed-data")
+async def seed_data(current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    return await _run_seed()
 
 # ============= NEWS SCRAPER JOB =============
 
@@ -890,10 +986,11 @@ async def run_news_scraper_job() -> dict:
         "Army Technology", "Naval Technology", "Airforce Technology",
         "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
         "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
+        "Le Point", "USNI News", "Task & Purpose",
     }
     _FR_SOURCES = {
         "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
-        "Usine Nouvelle", "Challenges", "La Tribune",
+        "Usine Nouvelle", "Challenges", "La Tribune", "Le Point",
     }
     _SOURCE_REGION = {
         "Breaking Defense": "us",     "Defense News": "us",   "Defense Industry Daily": "us",
@@ -924,7 +1021,7 @@ async def run_news_scraper_job() -> dict:
             or a.get("relevanceScore", 0) >= MIN_MAINSTREAM_SCORE
         ]
 
-        # Sort by relevance (desc) then date (desc), keep top 150
+        # Sort by relevance (desc) then date (desc), keep top 300
         unique_articles.sort(
             key=lambda x: (
                 x.get("relevanceScore", 0),
@@ -932,7 +1029,7 @@ async def run_news_scraper_job() -> dict:
             ),
             reverse=True,
         )
-        unique_articles = unique_articles[:150]
+        unique_articles = unique_articles[:300]
 
         scraped_at = datetime.now(timezone.utc)
         saved = 0
@@ -984,7 +1081,7 @@ async def run_news_scraper_job() -> dict:
 # Source-level metadata used both for query fallback and response normalisation
 _FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
                    "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
-                   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business"]
+                   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business", "Le Point"]
 _FR_SOURCES_SET = set(_FR_SOURCES)
 _SOURCE_REGION_MAP: dict = {
     "Breaking Defense": "us",     "Defense News": "us",          "Defense Industry Daily": "us",
@@ -994,12 +1091,14 @@ _SOURCE_REGION_MAP: dict = {
     "Le Monde": "europe",         "Le Figaro": "europe",         "Les Echos": "europe",
     "Usine Nouvelle": "europe",   "Challenges": "europe",        "La Tribune": "europe",
     "La Tribune Défense": "europe", "L'Agefi": "europe",         "Capital": "europe",
-    "BFM Business": "europe",     "NATO": "europe",
+    "BFM Business": "europe",     "NATO": "europe",              "Le Point": "europe",
     "The Defense Post": "global", "BBC News": "global",
     "The Guardian": "global",     "Janes": "global",
     "The War Zone": "global",     "Aviation Week": "global",
     "Army Technology": "global",  "Naval Technology": "global",  "Airforce Technology": "global",
     "Shephard Media": "global",   "Flight Global": "global",     "SpaceNews": "global",
+    "USNI News": "us",            "Task & Purpose": "us",
+    "The Guardian Defence": "global",
 }
 # Invert: region → list of sources whose default region is that value
 _REGION_SOURCES: dict = {}
@@ -1015,7 +1114,8 @@ _SPECIALTY_SOURCES_LIST = [
     "The War Zone", "Defense One", "Aviation Week",
     "Army Technology", "Naval Technology", "Airforce Technology",
     "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
-    "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
+    "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense", "Le Point",
+    "USNI News", "Task & Purpose", "The Guardian Defence",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 
@@ -1093,7 +1193,7 @@ async def get_news(
     `offset`: skip first N results (for pagination).
     Falls back to the most recent batch when no fresh articles match.
     """
-    limit = min(max(limit, 1), 150)
+    limit = min(max(limit, 1), 300)
     hours = max(0, min(hours, 8760))  # cap at 1 year
     offset = max(0, offset)
 
@@ -1342,7 +1442,23 @@ async def run_ma_scraper_job() -> dict:
                 doc["target_norm"] = key["target_norm"]
                 doc["scraped_at"] = scraped_at.isoformat()
 
+                # Check exact norm match
                 existing = await db.ma_activities.find_one(key, {"_id": 0})
+                if not existing:
+                    # Also check if an entry exists whose acquirer/target first-word
+                    # matches — catches "Airbus → Bombardier C Series" vs "Airbus → Bombardier"
+                    acq_first = key["acquirer_norm"].split()[0] if key["acquirer_norm"].split() else ""
+                    tgt_first = key["target_norm"].split()[0] if key["target_norm"].split() else ""
+                    if acq_first and tgt_first:
+                        first_word_match = await db.ma_activities.find_one(
+                            {
+                                "acquirer_norm": {"$regex": f"^{acq_first}"},
+                                "target_norm":   {"$regex": f"^{tgt_first}"},
+                            },
+                            {"_id": 0, "id": 1},
+                        )
+                        if first_word_match:
+                            existing = first_word_match
                 if not existing:
                     await db.ma_activities.insert_one(doc)
                     saved += 1
@@ -1628,6 +1744,15 @@ async def _apply_product_images():
     except Exception as exc:
         logger.error("Product image migration error: %s", exc)
 
+async def _auto_seed():
+    """Silently seed reference data on startup. Errors are logged, never raised."""
+    try:
+        result = await _run_seed()
+        logger.info("Auto-seed complete: %s", result)
+    except Exception as exc:
+        logger.warning("Auto-seed failed (non-fatal): %s", exc)
+
+
 @app.on_event("startup")
 async def startup_event():
     """Create news_articles indexes, start scheduler, and auto-scrape if empty."""
@@ -1660,6 +1785,8 @@ async def startup_event():
     # Always start with a fresh stock cache so stale values never survive restarts
     invalidate_stock_cache()
     logger.info("Stock price cache cleared on startup")
+    # Auto-seed reference data on every startup (idempotent — skips existing rows)
+    asyncio.create_task(_auto_seed())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

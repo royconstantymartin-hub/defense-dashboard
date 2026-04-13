@@ -80,6 +80,27 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
 }
 
 
+# ── Source-level defense relevance weights ───────────────────────────────────
+# Specialty defense outlets keep their full score (1.0).
+# Mainstream/generalist outlets get a penalty so they don't flood the feed with
+# tangentially-related articles. Scores are multiplied by this factor at scrape time.
+
+_SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
+    # Generalist dailies — low defense signal-to-noise
+    "Le Monde":         0.40,
+    "Le Figaro":        0.55,
+    "BFM Business":     0.50,
+    "Capital":          0.45,
+    "BBC News":         0.60,
+    "The Guardian":     0.60,
+    "Reuters Business": 0.65,
+    # Business press — good for M&A/budget but not pure defense
+    "L'Agefi":          0.75,
+    "Les Echos":        0.80,
+    "La Tribune":       0.80,
+}
+
+
 def assign_category(title: str) -> str:
     t = title.lower()
     for cat, keywords in CATEGORY_KEYWORDS.items():
@@ -275,35 +296,53 @@ def _parse_entry_date(entry) -> datetime:
 
 def _extract_image_from_entry(entry) -> Optional[str]:
     """Return the best image URL found in a feedparser entry."""
-    # media:content
+    # media:content — accept any entry with a URL.
+    # Many outlets (Guardian, Reuters, War Zone) emit <media:content url="..."/>
+    # WITHOUT a medium= or type= attribute, so the old strict check dropped them.
     for m in getattr(entry, "media_content", []):
-        if m.get("medium") == "image" or m.get("type", "").startswith("image"):
-            if m.get("url"):
-                return m["url"]
+        url = m.get("url", "")
+        if not url or not url.startswith("http"):
+            continue
+        medium = m.get("medium", "")
+        mime   = m.get("type", "")
+        # Accept: explicit image medium, image/* MIME, OR no typing at all
+        if medium == "image" or mime.startswith("image") or (not medium and not mime):
+            return url
 
     # media:thumbnail
     thumbs = getattr(entry, "media_thumbnail", [])
     if thumbs and thumbs[0].get("url"):
         return thumbs[0]["url"]
 
-    # enclosures
+    # enclosures — accept image MIME or image URL extension
+    _IMG_EXTS = (".jpg", ".jpeg", ".png", ".webp", ".avif")
     for enc in getattr(entry, "enclosures", []):
-        if enc.get("type", "").startswith("image"):
-            url = enc.get("url") or enc.get("href")
-            if url:
-                return url
+        url  = enc.get("url") or enc.get("href", "")
+        mime = enc.get("type", "")
+        if url and (mime.startswith("image") or any(url.lower().endswith(e) for e in _IMG_EXTS)):
+            return url
 
-    # Parse from entry HTML content / summary
+    # Parse from full article HTML (WordPress content:encoded, Guardian, etc.)
     for attr in ("content", "summary"):
         val = getattr(entry, attr, None)
         if not val:
             continue
         html = val[0].get("value", "") if isinstance(val, list) else val
         soup = BeautifulSoup(html, "html.parser")
-        img = soup.find("img")
-        if img:
-            src = img.get("src") or img.get("data-src", "")
-            if src and src.startswith("http"):
+        # <figure> first — WordPress themes put the best image there
+        fig = soup.find("figure")
+        if fig:
+            img = fig.find("img")
+            if img:
+                src = (img.get("src") or img.get("data-src")
+                       or img.get("data-lazy-src") or img.get("data-original", ""))
+                if src and src.startswith("http"):
+                    return src
+        # Fall back to any <img> — skip tiny tracking pixels and GIFs
+        for img in soup.find_all("img"):
+            src = (img.get("src") or img.get("data-src")
+                   or img.get("data-lazy-src") or img.get("data-original", ""))
+            if src and src.startswith("http") and not src.endswith(".gif"):
                 return src
 
     return None
@@ -326,7 +365,7 @@ def _fetch_og_image(article_url: str) -> Optional[str]:
     Used as a fallback when the RSS entry carries no image metadata.
     Short timeout (4 s) so it never blocks the scraper for long."""
     try:
-        resp = requests.get(article_url, headers=HEADERS, timeout=4, stream=True)
+        resp = requests.get(article_url, headers=HEADERS, timeout=6, stream=True)
         resp.raise_for_status()
         # Read only the first 32 KB — enough to find <meta> tags in <head>
         chunk = resp.raw.read(32768).decode("utf-8", errors="ignore")
@@ -354,7 +393,7 @@ def _enrich_images(articles: List[Dict]) -> None:
     targets = [(i, a["url"]) for i, a in enumerate(articles) if not a.get("image") and a.get("url")]
     if not targets:
         return
-    with ThreadPoolExecutor(max_workers=8) as pool:
+    with ThreadPoolExecutor(max_workers=16) as pool:
         futures = {pool.submit(_fetch_og_image, url): idx for idx, url in targets}
         for future in as_completed(futures):
             idx = futures[future]
@@ -387,6 +426,8 @@ def _fetch_rss(source: Dict) -> List[Dict]:
             src_region = source.get("region", "global")
             # For global sources try to narrow down region from content
             region = (detect_region_from_text(title, summary) or src_region) if src_region == "global" else src_region
+            raw_score = compute_relevance_score(title, summary)
+            weight    = _SOURCE_DEFENSE_WEIGHT.get(source["name"], 1.0)
             articles.append({
                 "title":          title,
                 "url":            url,
@@ -395,7 +436,7 @@ def _fetch_rss(source: Dict) -> List[Dict]:
                 "source":         source["name"],
                 "publishedAt":    _parse_entry_date(entry),
                 "category":       assign_category(title),
-                "relevanceScore": compute_relevance_score(title, summary),
+                "relevanceScore": int(raw_score * weight),
                 "language":       src_lang,
                 "region":         region,
             })
@@ -602,35 +643,40 @@ def _scrape_defensepost() -> List[Dict]:
 # ── RSS source registry ──────────────────────────────────────────────────────
 
 RSS_SOURCES: List[Dict] = [
-    # ── Defense specialty — English ─────────────────────────────────────────
-    # The Defense Post: try RSS feed first (may work); HTML scraper is additional fallback
-    {"name": "The Defense Post",          "url": "https://thedefensepost.com/feed/",                                          "language": "en", "region": "global", "max_items": 50},
-    {"name": "Breaking Defense",          "url": "https://breakingdefense.com/feed/",                                         "language": "en", "region": "us"},
-    {"name": "Defense News",              "url": "https://www.defensenews.com/arc/outboundfeeds/rss/",                        "language": "en", "region": "us"},
-    {"name": "Defense Industry Daily",    "url": "https://www.defenseindustrydaily.com/feed/",                                "language": "en", "region": "us"},
-    {"name": "The War Zone",              "url": "https://www.thedrive.com/the-war-zone/feed",                                "language": "en", "region": "global"},
-    {"name": "Defense One",               "url": "https://www.defenseone.com/rss/all/",                                       "language": "en", "region": "us"},
-    {"name": "Aviation Week",             "url": "https://aviationweek.com/rss/defense-space",                                "language": "en", "region": "global"},
-    {"name": "Army Technology",           "url": "https://www.army-technology.com/feed/",                                     "language": "en", "region": "global"},
-    {"name": "Naval Technology",          "url": "https://www.naval-technology.com/feed/",                                    "language": "en", "region": "global"},
-    {"name": "Airforce Technology",       "url": "https://www.airforce-technology.com/feed/",                                 "language": "en", "region": "global"},
-    {"name": "C4ISRNET",                  "url": "https://www.c4isrnet.com/arc/outboundfeeds/rss/",                           "language": "en", "region": "us"},
-    {"name": "National Defense Magazine", "url": "https://www.nationaldefensemagazine.org/rss/articles",                      "language": "en", "region": "us"},
-    {"name": "SpaceNews",                 "url": "https://spacenews.com/feed/",                                               "language": "en", "region": "global"},
-    {"name": "Air Force Magazine",        "url": "https://www.airforcemag.com/feed/",                                         "language": "en", "region": "us"},
-    {"name": "Shephard Media",            "url": "https://www.shephardmedia.com/rss/news/",                                   "language": "en", "region": "global"},
-    {"name": "Flight Global",             "url": "https://www.flightglobal.com/rss/",                                         "language": "en", "region": "global"},
+    # ── Defense specialty — English (tier 1 — no score minimum, max items boosted) ──
+    {"name": "The Defense Post",          "url": "https://thedefensepost.com/feed/",                                          "language": "en", "region": "global",  "max_items": 60},
+    {"name": "Breaking Defense",          "url": "https://breakingdefense.com/feed/",                                         "language": "en", "region": "us",      "max_items": 50},
+    {"name": "Defense News",              "url": "https://www.defensenews.com/arc/outboundfeeds/rss/",                        "language": "en", "region": "us",      "max_items": 50},
+    {"name": "The War Zone",              "url": "https://www.thedrive.com/the-war-zone/feed",                                "language": "en", "region": "global",  "max_items": 50},
+    {"name": "Defense One",               "url": "https://www.defenseone.com/rss/all/",                                       "language": "en", "region": "us",      "max_items": 40},
+    {"name": "Defense Industry Daily",    "url": "https://www.defenseindustrydaily.com/feed/",                                "language": "en", "region": "us",      "max_items": 40},
+    {"name": "USNI News",                 "url": "https://news.usni.org/feed",                                                "language": "en", "region": "us",      "max_items": 40},
+    {"name": "Task & Purpose",            "url": "https://taskandpurpose.com/feed/",                                          "language": "en", "region": "us",      "max_items": 30},
+    {"name": "Aviation Week",             "url": "https://aviationweek.com/rss/defense-space",                                "language": "en", "region": "global",  "max_items": 40},
+    {"name": "Army Technology",           "url": "https://www.army-technology.com/feed/",                                     "language": "en", "region": "global",  "max_items": 35},
+    {"name": "Naval Technology",          "url": "https://www.naval-technology.com/feed/",                                    "language": "en", "region": "global",  "max_items": 35},
+    {"name": "Airforce Technology",       "url": "https://www.airforce-technology.com/feed/",                                 "language": "en", "region": "global",  "max_items": 35},
+    {"name": "C4ISRNET",                  "url": "https://www.c4isrnet.com/arc/outboundfeeds/rss/",                           "language": "en", "region": "us",      "max_items": 35},
+    {"name": "National Defense Magazine", "url": "https://www.nationaldefensemagazine.org/rss/articles",                      "language": "en", "region": "us",      "max_items": 30},
+    {"name": "SpaceNews",                 "url": "https://spacenews.com/feed/",                                               "language": "en", "region": "global",  "max_items": 30},
+    {"name": "Air Force Magazine",        "url": "https://www.airforcemag.com/feed/",                                         "language": "en", "region": "us",      "max_items": 30},
+    {"name": "Shephard Media",            "url": "https://www.shephardmedia.com/rss/news/",                                   "language": "en", "region": "global",  "max_items": 30},
+    {"name": "Flight Global",             "url": "https://www.flightglobal.com/rss/",                                         "language": "en", "region": "global",  "max_items": 30},
     # ── Defense specialty — French ──────────────────────────────────────────
-    {"name": "Opex360",                   "url": "https://www.opex360.com/feed/",                                             "language": "fr", "region": "europe"},
-    {"name": "Meta-Défense",              "url": "https://meta-defense.fr/feed/",                                             "language": "fr", "region": "europe"},
-    {"name": "Air & Cosmos",              "url": "https://www.air-cosmos.com/rss",                                            "language": "fr", "region": "europe"},
+    {"name": "Opex360",                   "url": "https://www.opex360.com/feed/",                                             "language": "fr", "region": "europe",  "max_items": 40},
+    {"name": "Meta-Défense",              "url": "https://meta-defense.fr/feed/",                                             "language": "fr", "region": "europe",  "max_items": 40},
+    {"name": "Air & Cosmos",              "url": "https://www.air-cosmos.com/rss",                                            "language": "fr", "region": "europe",  "max_items": 30},
     # ── Mainstream — English ────────────────────────────────────────────────
     {"name": "BBC News",                  "url": "http://feeds.bbci.co.uk/news/world/rss.xml",                                "language": "en", "region": "global"},
     {"name": "The Guardian",              "url": "https://www.theguardian.com/world/rss",                                     "language": "en", "region": "global"},
+    {"name": "The Guardian Defence",      "url": "https://www.theguardian.com/uk/defence-and-security/rss",                   "language": "en", "region": "global",  "max_items": 20},
     {"name": "Reuters Business",          "url": "https://feeds.reuters.com/reuters/businessNews",                            "language": "en", "region": "global"},
     # ── Mainstream — French ─────────────────────────────────────────────────
-    {"name": "Le Monde",                  "url": "https://www.lemonde.fr/rss/une.xml",                                        "language": "fr", "region": "europe"},
+    # Le Monde: généraliste, poids défense faible — limité à 8 articles
+    {"name": "Le Monde",                  "url": "https://www.lemonde.fr/rss/une.xml",                                        "language": "fr", "region": "europe", "max_items": 8},
     {"name": "Le Figaro",                 "url": "https://www.lefigaro.fr/rss/figaro_monde.xml",                              "language": "fr", "region": "europe"},
+    # Le Point — bonne couverture défense/sécurité en France
+    {"name": "Le Point",                  "url": "https://www.lepoint.fr/defense-et-securite/rss.xml",                        "language": "fr", "region": "europe", "max_items": 20},
     {"name": "Les Echos",                 "url": "https://www.lesechos.fr/arc/outboundfeeds/rss/",                            "language": "fr", "region": "europe"},
     # ── French business & industry press (M&A / finance / defense industry) ─
     # Usine Nouvelle: defense/aerospace section — targeted feed

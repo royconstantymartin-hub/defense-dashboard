@@ -159,6 +159,19 @@ const LOGO_FALLBACK = {
   "Gibbs & Cox":                 "leidos.com",
   "Dynetics":                    "leidos.com",
   "Ercom":                       "thalesgroup.com",
+  // ── Aerospace / Aviation ──────────────────────────────────────────────────
+  "Bombardier":                  "bombardier.com",
+  "Bombardier C Series":         "bombardier.com",
+  "Bombardier C Series programme": "bombardier.com",
+  "Spirit AeroSystems":          "spiritaero.com",
+  "Blue Canyon Technologies":    "rtx.com",
+  // ── Nordic / APAC ─────────────────────────────────────────────────────────
+  "Patria":                      "patriagroup.com",
+  "Patria Oyj":                  "patriagroup.com",
+  "Tomahawk Robotics":           "tomahawkrobotics.com",
+  "Adranos":                     "anduril.com",
+  "Area-I":                      "anduril.com",
+  "Rebellion Defense":           "rebelliondefense.com",
 };
 
 // Initials avatar colour palette (deterministic by name)
@@ -714,7 +727,7 @@ export default function MAActivity() {
   const [selectedType,   setSelectedType]      = useState("all");
   const [selectedYear,   setSelectedYear]      = useState("all");
   const [profileName,    setProfileName]       = useState(null);
-  const [period,         setPeriod]            = useState("30");
+  const [period,         setPeriod]            = useState("0");
   const [sortField,      setSortField]         = useState("announced_date");
   const [sortDir,        setSortDir]           = useState("desc");
   const [hasMore,        setHasMore]           = useState(false);
@@ -1031,7 +1044,7 @@ export default function MAActivity() {
             tab === "recent" ? "bg-white text-purple-700 shadow-sm" : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          Last {periodLabel}
+          {period === "0" ? "All Deals" : `Last ${periodLabel}`}
         </button>
         <button
           onClick={() => setTab("historical")}

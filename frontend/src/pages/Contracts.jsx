@@ -20,7 +20,19 @@ import {
   Download,
   ExternalLink,
   Filter,
+  History,
+  ChevronRight,
+  Building2,
+  Globe2,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import CompanyProfileSheet from "@/components/CompanyProfileSheet";
+import { getLogoUrl } from "@/lib/companyLogos";
 
 // ── Translations ──────────────────────────────────────────────────────────────
 const T = {
@@ -63,6 +75,9 @@ const T = {
   cLog:        { en: "Logistics", fr: "Logistique" },
   cSpace:      { en: "Space",     fr: "Spatial" },
   cMissiles:   { en: "Missiles",  fr: "Missiles" },
+  // Recent strip
+  recent:      { en: "Recent Activity",  fr: "Activité récente" },
+  recentSub:   { en: "Latest contracts & tenders indexed", fr: "Derniers contrats & appels d'offres référencés" },
   // Card fields
   estVal:      { en: "Est. Value",    fr: "Valeur estimée" },
   published:   { en: "Published",     fr: "Publication" },
@@ -86,7 +101,118 @@ const CATEGORY_COLORS = {
   missiles:  "bg-rose-50 text-rose-700 border-rose-200",
 };
 
-function ContractCard({ contract }) {
+const STATUS_DOT = {
+  open:      "bg-blue-500",
+  awarded:   "bg-emerald-500",
+  closed:    "bg-slate-400",
+  cancelled: "bg-rose-400",
+};
+
+// ISO codes for flag display in contract authority header
+const AUTH_COUNTRY_CODES = {
+  "USA": "us", "United States": "us",
+  "UK": "gb", "United Kingdom": "gb",
+  "France": "fr", "Germany": "de", "Italy": "it", "Spain": "es",
+  "Australia": "au", "Poland": "pl", "Japan": "jp", "Canada": "ca",
+  "Netherlands": "nl", "Sweden": "se", "Norway": "no", "Denmark": "dk",
+  "Belgium": "be", "Finland": "fi", "Greece": "gr", "Portugal": "pt",
+  "Czech Republic": "cz", "Romania": "ro", "Turkey": "tr",
+  "Israel": "il", "India": "in", "South Korea": "kr", "EU": "eu",
+};
+
+function AuthorityFlag({ country, authority = "" }) {
+  // OCCAR = organisation internationale → globe
+  if (authority.includes("OCCAR")) {
+    return (
+      <Globe2 size={13} className="text-slate-500 shrink-0" title="Organisation internationale" />
+    );
+  }
+  if (country === "NATO") {
+    return (
+      <span className="inline-flex items-center text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded px-1 py-0.5 leading-none shrink-0">
+        NATO
+      </span>
+    );
+  }
+  const code = AUTH_COUNTRY_CODES[country];
+  if (!code) return null;
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${code}.png`}
+      alt={country}
+      title={country}
+      className="w-4 h-3 object-cover rounded-sm shadow-sm shrink-0"
+      onError={(e) => { e.target.style.display = "none"; }}
+    />
+  );
+}
+
+function AwardedToButton({ name, onOpenProfile }) {
+  const [logoFailed, setLogoFailed] = useState(false);
+  const logoUrl = getLogoUrl(name);
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); onOpenProfile(name); }}
+      className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-colors group"
+      title={`Voir le profil de ${name}`}
+    >
+      {logoUrl && !logoFailed ? (
+        <img
+          src={logoUrl}
+          alt={name}
+          className="h-4 w-auto max-w-[48px] object-contain"
+          onError={() => setLogoFailed(true)}
+        />
+      ) : (
+        <Building2 size={11} className="text-emerald-600 shrink-0" />
+      )}
+      <span className="text-xs text-emerald-700 font-medium group-hover:text-emerald-900 leading-none">{name}</span>
+      <ChevronRight size={10} className="text-emerald-400 group-hover:text-emerald-600 shrink-0" />
+    </button>
+  );
+}
+
+function RecentStrip({ contracts }) {
+  const tRecent  = useT(T.recent);
+  const tRecentS = useT(T.recentSub);
+  const tUndis   = useT(T.undisclosed);
+
+  const recent = [...contracts]
+    .sort((a, b) => (b.publication_date || "").localeCompare(a.publication_date || ""))
+    .slice(0, 6);
+
+  if (recent.length === 0) return null;
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <History size={15} className="text-purple-700" />
+        <div>
+          <p className="text-sm font-semibold text-slate-900">{tRecent}</p>
+          <p className="text-xs text-slate-400">{tRecentS}</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
+        {recent.map((c) => (
+          <div key={c.id} className="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-purple-200 transition-colors">
+            <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[c.status] || "bg-slate-400"}`} />
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-slate-800 leading-snug line-clamp-2">{c.title}</p>
+              <p className="text-[11px] text-slate-400 mt-0.5 font-mono">
+                {c.publication_date?.slice(0, 10)}
+                {c.amount_min || c.amount_max
+                  ? ` · $${c.amount_min ?? "?"}M–$${c.amount_max ?? "?"}M`
+                  : ` · ${tUndis}`}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ContractCard({ contract, onOpenProfile, onSelect }) {
   const tStatus    = { open: useT(T.sOpen), awarded: useT(T.sAwarded), closed: useT(T.sClosed), cancelled: useT(T.sCancelled) };
   const tAuthority = { national: useT(T.aNational), nato: useT(T.aNato), eu: useT(T.aEu), bilateral: useT(T.aBilateral) };
   const tCategory  = { aerospace: useT(T.cAero), naval: useT(T.cNaval), land: useT(T.cLand), cyber: useT(T.cCyber), services: useT(T.cSvc), logistics: useT(T.cLog), space: useT(T.cSpace), missiles: useT(T.cMissiles) };
@@ -121,15 +247,19 @@ function ContractCard({ contract }) {
   }
 
   return (
-    <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg hover:border-purple-200 transition-all duration-300">
+    <Card
+      onClick={() => onSelect(contract)}
+      className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer"
+    >
       <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <CardTitle className="text-sm font-semibold text-slate-900 leading-snug">
               {contract.title}
             </CardTitle>
-            <p className="text-xs text-slate-500 mt-1">
-              {contract.contracting_authority} · {contract.authority_country}
+            <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
+              <AuthorityFlag country={contract.authority_country} authority={contract.contracting_authority} />
+              {contract.contracting_authority}
             </p>
           </div>
           <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${statusColor}`}>
@@ -171,15 +301,20 @@ function ContractCard({ contract }) {
             </div>
           )}
           {contract.awarded_to && (
-            <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tAwardedTo}</p>
-              <p className="text-xs text-emerald-600 font-medium">{contract.awarded_to}</p>
+            <div className="col-span-2">
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">{tAwardedTo}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {contract.awarded_to.split(" / ").map((company) => (
+                  <AwardedToButton key={company} name={company.trim()} onOpenProfile={onOpenProfile} />
+                ))}
+              </div>
             </div>
           )}
         </div>
         <div className="flex items-center justify-between pt-2 border-t border-slate-100">
           {contract.source_url ? (
             <a href={contract.source_url} target="_blank" rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="flex items-center gap-1 text-xs text-purple-700 hover:text-purple-900 transition-colors">
               <ExternalLink size={11} />
               {tOfficSrc}
@@ -199,6 +334,109 @@ function ContractCard({ contract }) {
   );
 }
 
+function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
+  if (!contract) return null;
+
+  const STATUS_ICON  = { open: Clock, awarded: CheckCircle2, closed: XCircle, cancelled: AlertCircle };
+  const STATUS_COLOR = {
+    open:      "bg-blue-50 text-blue-700 border border-blue-200",
+    awarded:   "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    closed:    "bg-slate-100 text-slate-500 border border-slate-200",
+    cancelled: "bg-rose-50 text-rose-600 border border-rose-200",
+  };
+  const StatusIcon = STATUS_ICON[contract.status] || XCircle;
+
+  function fmtAmount(min, max) {
+    if (!min && !max) return "Non divulgué";
+    if (min && max) return `$${min}M – $${max}M`;
+    if (min) return `≥ $${min}M`;
+    return `≤ $${max}M`;
+  }
+
+  return (
+    <Dialog open={!!contract} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-2xl bg-white border-slate-200">
+        <DialogHeader className="pr-6">
+          <div className="flex items-start gap-3 flex-wrap">
+            <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${STATUS_COLOR[contract.status] || STATUS_COLOR.closed}`}>
+              <StatusIcon size={11} />
+              {contract.status}
+            </span>
+            {contract.program && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-mono">
+                {contract.program}
+              </span>
+            )}
+          </div>
+          <DialogTitle className="font-heading text-base font-bold text-slate-900 leading-snug mt-2">
+            {contract.title}
+          </DialogTitle>
+          <p className="text-xs text-slate-500 flex items-center gap-1.5 flex-wrap mt-1">
+            <AuthorityFlag country={contract.authority_country} authority={contract.contracting_authority} />
+            {contract.contracting_authority} · {contract.authority_country}
+          </p>
+        </DialogHeader>
+
+        <div className="space-y-4 mt-1">
+          {contract.description && (
+            <p className="text-sm text-slate-600 leading-relaxed">
+              {contract.description}
+            </p>
+          )}
+
+          <div className="grid grid-cols-2 gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100">
+            <div>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Valeur estimée</p>
+              <p className="text-sm font-mono font-semibold text-slate-900">{fmtAmount(contract.amount_min, contract.amount_max)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Publication</p>
+              <p className="text-sm text-slate-700">{contract.publication_date?.slice(0, 10) || "—"}</p>
+            </div>
+            {contract.deadline && (
+              <div>
+                <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Échéance</p>
+                <p className="text-sm text-slate-700">{contract.deadline?.slice(0, 10)}</p>
+              </div>
+            )}
+            <div>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Catégorie</p>
+              <p className="text-sm text-slate-700 capitalize">{contract.category}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Fiabilité</p>
+              <p className={`text-sm font-medium ${contract.reliability === "confirmed" ? "text-emerald-600" : "text-amber-600"}`}>
+                {contract.reliability === "confirmed" ? "✓ Confirmé" : "~ Estimé"}
+              </p>
+            </div>
+          </div>
+
+          {contract.awarded_to && (
+            <div>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-2">Attributaire</p>
+              <div className="flex flex-wrap gap-2">
+                {contract.awarded_to.split(" / ").map((company) => (
+                  <AwardedToButton key={company} name={company.trim()} onOpenProfile={(name) => { onClose(); onOpenProfile(name); }} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {contract.source_url && (
+            <div className="pt-1 border-t border-slate-100">
+              <a href={contract.source_url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 transition-colors">
+                <ExternalLink size={12} />
+                Source officielle
+              </a>
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function Contracts() {
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -206,6 +444,8 @@ export default function Contracts() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedAuthority, setSelectedAuthority] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [profileName, setProfileName] = useState(null);
+  const [selectedContract, setSelectedContract] = useState(null);
 
   const tTitle      = useT(T.title);
   const tSubtitle   = useT(T.subtitle);
@@ -373,6 +613,9 @@ export default function Contracts() {
         </Card>
       </div>
 
+      {/* Recent activity strip */}
+      {contracts.length > 0 && <RecentStrip contracts={contracts} />}
+
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-48">
@@ -425,9 +668,23 @@ export default function Contracts() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((c) => <ContractCard key={c.id} contract={c} />)}
+          {filtered.map((c) => (
+            <ContractCard
+              key={c.id}
+              contract={c}
+              onOpenProfile={setProfileName}
+              onSelect={setSelectedContract}
+            />
+          ))}
         </div>
       )}
+
+      <ContractDetailDialog
+        contract={selectedContract}
+        onClose={() => setSelectedContract(null)}
+        onOpenProfile={setProfileName}
+      />
+      <CompanyProfileSheet name={profileName} onClose={() => setProfileName(null)} />
     </div>
   );
 }

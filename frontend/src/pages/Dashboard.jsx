@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import axios from "axios";
 import { API, useAuth, useT } from "@/App";
 import { getClearbitUrl } from "@/lib/companyLogos";
@@ -17,6 +17,8 @@ import {
   Zap,
   Info,
   Settings,
+  RefreshCw,
+  ExternalLink,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Link } from "react-router-dom";
@@ -77,6 +79,27 @@ const COUNTRY_FLAGS = {
 };
 
 
+// Relative time formatter (e.g. "2h ago", "yesterday", "Apr 8")
+function relativeTime(dateStr) {
+  if (!dateStr) return null;
+  const date = new Date(dateStr);
+  if (isNaN(date)) return null;
+  const diffMs = Date.now() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffH = Math.floor(diffMin / 60);
+  const diffD = Math.floor(diffH / 24);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffH < 24) return `${diffH}h ago`;
+  if (diffD === 1) return "yesterday";
+  if (diffD < 7) return `${diffD}d ago`;
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+// Extract hostname from URL for favicons
+function hostFromUrl(url) {
+  try { return new URL(url).hostname; } catch { return null; }
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
   const tBannerTitle   = useT({ en: "Database not initialized",   fr: "Base de données non initialisée" });
@@ -97,6 +120,31 @@ export default function Dashboard() {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const searchRef = useRef(null);
 
+  // Live stock prices state
+  const [livePrices, setLivePrices] = useState({});
+  const [pricesRefreshedAt, setPricesRefreshedAt] = useState(null);
+  const [pricesRefreshing, setPricesRefreshing] = useState(false);
+  const liveIntervalRef = useRef(null);
+
+  const fetchLivePrices = useCallback(async (currentPlayers) => {
+    const tickers = (currentPlayers || players)
+      .slice(0, 5)
+      .map((p) => p.ticker)
+      .filter(Boolean)
+      .join(",");
+    if (!tickers) return;
+    setPricesRefreshing(true);
+    try {
+      const res = await axios.get(`${API}/stock-prices?tickers=${tickers}`);
+      setLivePrices(res.data);
+      setPricesRefreshedAt(new Date());
+    } catch {
+      // silently fail — keep old prices
+    } finally {
+      setPricesRefreshing(false);
+    }
+  }, [players]);
+
   const fetchData = async () => {
     setLoading(true);
     setError(false);
@@ -114,6 +162,8 @@ export default function Dashboard() {
       setExpenditures(expendituresRes.data);
       setRecentMA(maRes.data);
       setFetchedAt(new Date());
+      // Fetch live prices right after players load
+      fetchLivePrices(playersRes.data);
     } catch {
       setError(true);
     } finally {
@@ -121,7 +171,14 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-refresh live prices every 60 seconds
+  useEffect(() => {
+    if (players.length === 0) return;
+    liveIntervalRef.current = setInterval(() => fetchLivePrices(), 60000);
+    return () => clearInterval(liveIntervalRef.current);
+  }, [players, fetchLivePrices]);
 
   // Close search dropdown when clicking outside
   useEffect(() => {
@@ -329,9 +386,27 @@ export default function Dashboard() {
         <Card className="lg:col-span-2 bg-white border-slate-200 shadow-sm">
           <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
             <div className="flex items-center justify-between">
-              <CardTitle className="font-heading text-lg text-slate-900">Market Leaders</CardTitle>
-              <Link 
-                to="/market-data" 
+              <div className="flex items-center gap-3">
+                <CardTitle className="font-heading text-lg text-slate-900">Market Leaders</CardTitle>
+                {/* LIVE badge + refresh time */}
+                <div className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
+                    <span className={`w-1.5 h-1.5 rounded-full bg-emerald-500 ${pricesRefreshing ? "animate-pulse" : "animate-ping"}`} style={{ animationDuration: "2s" }} />
+                    LIVE
+                  </span>
+                  {pricesRefreshedAt && (
+                    <span className="text-[10px] text-slate-400">
+                      {pricesRefreshing ? (
+                        <RefreshCw className="w-2.5 h-2.5 animate-spin inline" />
+                      ) : (
+                        `upd. ${pricesRefreshedAt.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`
+                      )}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <Link
+                to="/market-data"
                 className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
                 data-testid="view-all-market"
               >
@@ -346,15 +421,19 @@ export default function Dashboard() {
                   <tr className="border-b border-slate-100 bg-slate-50/30">
                     <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Company</th>
                     <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Ticker</th>
-                    <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Market Cap</th>
-                    <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Change</th>
+                    <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Price</th>
+                    <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Since Open</th>
                   </tr>
                 </thead>
                 <tbody>
                   {topPlayers.map((player, idx) => {
                     const flagUrl = getFlag(player.country);
+                    const live = livePrices[player.ticker];
+                    const price = live?.price ?? player.stock_price;
+                    const change = live?.change_since_open ?? live?.change_percent ?? player.change_percent;
+                    const isLive = !!live;
                     return (
-                      <tr key={player.id} className="border-b border-slate-100 hover:bg-purple-50/30 transition-colors">
+                      <tr key={player.id} className="border-b border-slate-100 hover:bg-purple-50/30 transition-colors cursor-pointer" onClick={() => setSelectedCompany(player.name)}>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
@@ -378,18 +457,25 @@ export default function Dashboard() {
                           </span>
                         </td>
                         <td className="p-4 text-right">
-                          <span className="font-mono text-sm text-slate-900 font-semibold">${player.market_cap}B</span>
+                          <div className="flex items-center justify-end gap-1">
+                            <span className="font-mono text-sm text-slate-900 font-semibold">
+                              ${price != null ? Number(price).toFixed(2) : "—"}
+                            </span>
+                            {isLive && (
+                              <span className="w-1 h-1 rounded-full bg-emerald-500 shrink-0" title="Live price" />
+                            )}
+                          </div>
                         </td>
                         <td className="p-4 text-right">
                           <span className={`font-mono text-sm flex items-center justify-end gap-1 ${
-                            player.change_percent >= 0 ? 'text-emerald-600' : 'text-rose-600'
+                            change >= 0 ? 'text-emerald-600' : 'text-rose-600'
                           }`}>
-                            {player.change_percent >= 0 ? (
+                            {change >= 0 ? (
                               <TrendingUp className="w-3 h-3" />
                             ) : (
                               <TrendingDown className="w-3 h-3" />
                             )}
-                            {player.change_percent >= 0 ? '+' : ''}{player.change_percent}%
+                            {change >= 0 ? '+' : ''}{Number(change).toFixed(2)}%
                           </span>
                         </td>
                       </tr>
@@ -525,54 +611,162 @@ export default function Dashboard() {
               </Link>
             </div>
           </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-slate-100" data-testid="recent-announcements">
-              {recentNews.map((item, idx) => (
-                <a
-                  key={item.url || idx}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-4 hover:bg-purple-50/30 transition-colors"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Newspaper className="w-4 h-4 text-purple-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-slate-900 text-sm font-medium line-clamp-2">{item.title}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${
-                          item.category === 'CONTRACT'    ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                          item.category === 'TECHNOLOGY'  ? 'bg-purple-50  text-purple-700  border-purple-200' :
-                          item.category === 'CONFLICT'    ? 'bg-red-50     text-red-700     border-red-200'    :
-                          item.category === 'POLICY'      ? 'bg-amber-50   text-amber-700   border-amber-200'  :
-                          item.category === 'GEOPOLITICS' ? 'bg-sky-50     text-sky-700     border-sky-200'    :
-                          item.category === 'M&A'         ? 'bg-blue-50    text-blue-700    border-blue-200'   :
-                          'bg-slate-50 text-slate-600 border-slate-200'
-                        }`}>
-                          {item.category || 'INDUSTRY'}
-                        </span>
-                        <span className="text-xs text-slate-500">{item.source}</span>
-                        {item.source_count > 1 && (
-                          <span className="text-xs text-orange-500 font-medium">🔥 {item.source_count} sources</span>
+          <CardContent className="p-0" data-testid="recent-announcements">
+            {recentNews.length === 0 ? (
+              <div className="p-8 text-center text-slate-500 text-sm">No recent news</div>
+            ) : (
+              <>
+                {/* Hero article — first item */}
+                {(() => {
+                  const item = recentNews[0];
+                  const host = hostFromUrl(item.url);
+                  const ago = relativeTime(item.publishedAt);
+                  return (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block group relative overflow-hidden"
+                    >
+                      {/* Image or gradient fallback */}
+                      <div className="relative h-44 bg-slate-100 overflow-hidden">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => { e.target.style.display = "none"; }}
+                          />
+                        ) : (
+                          <div className={`w-full h-full flex items-center justify-center ${
+                            item.category === 'CONTRACT'    ? 'bg-emerald-900' :
+                            item.category === 'TECHNOLOGY'  ? 'bg-purple-900'  :
+                            item.category === 'CONFLICT'    ? 'bg-rose-900'    :
+                            item.category === 'POLICY'      ? 'bg-amber-900'   :
+                            item.category === 'GEOPOLITICS' ? 'bg-sky-900'     :
+                            item.category === 'M&A'         ? 'bg-blue-900'    :
+                            'bg-slate-800'
+                          }`}>
+                            <Newspaper className="w-10 h-10 text-white/20" />
+                          </div>
                         )}
+                        {/* Dark gradient overlay for text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                        {/* Category badge top-left */}
+                        <div className="absolute top-3 left-3">
+                          <IntelCategoryBadge category={item.category} />
+                        </div>
+                        {item.source_count > 1 && (
+                          <div className="absolute top-3 right-3">
+                            <span className="text-xs bg-orange-500 text-white font-semibold px-2 py-0.5 rounded-full">
+                              🔥 {item.source_count} sources
+                            </span>
+                          </div>
+                        )}
+                        {/* Title overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <p className="text-white font-semibold text-sm leading-snug line-clamp-3 group-hover:text-purple-200 transition-colors">
+                            {item.title}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2">
+                            {host && (
+                              <img
+                                src={`https://www.google.com/s2/favicons?domain=${host}&sz=16`}
+                                alt=""
+                                className="w-3.5 h-3.5 rounded-sm opacity-80"
+                                onError={(e) => { e.target.style.display = "none"; }}
+                              />
+                            )}
+                            <span className="text-white/70 text-xs">{item.source}</span>
+                            {ago && <span className="text-white/50 text-xs">· {ago}</span>}
+                            <ExternalLink className="w-3 h-3 text-white/40 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </a>
-              ))}
-              {recentNews.length === 0 && (
-                <div className="p-8 text-center text-slate-500">
-                  No recent news
+                    </a>
+                  );
+                })()}
+
+                {/* Compact rows — remaining articles */}
+                <div className="divide-y divide-slate-100">
+                  {recentNews.slice(1).map((item, idx) => {
+                    const host = hostFromUrl(item.url);
+                    const ago = relativeTime(item.publishedAt);
+                    return (
+                      <a
+                        key={item.url || idx}
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-start gap-3 p-3 hover:bg-purple-50/40 transition-colors group"
+                      >
+                        {/* Thumbnail or colored placeholder */}
+                        <div className="w-16 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-100 relative">
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt=""
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              onError={(e) => { e.target.parentNode.classList.add("flex", "items-center", "justify-center"); e.target.style.display = "none"; }}
+                            />
+                          ) : (
+                            <div className={`w-full h-full flex items-center justify-center ${
+                              item.category === 'CONTRACT'    ? 'bg-emerald-50' :
+                              item.category === 'TECHNOLOGY'  ? 'bg-purple-50'  :
+                              item.category === 'CONFLICT'    ? 'bg-rose-50'    :
+                              item.category === 'POLICY'      ? 'bg-amber-50'   :
+                              item.category === 'GEOPOLITICS' ? 'bg-sky-50'     :
+                              item.category === 'M&A'         ? 'bg-blue-50'    :
+                              'bg-slate-50'
+                            }`}>
+                              <Newspaper className={`w-5 h-5 ${
+                                item.category === 'CONTRACT'    ? 'text-emerald-400' :
+                                item.category === 'TECHNOLOGY'  ? 'text-purple-400'  :
+                                item.category === 'CONFLICT'    ? 'text-rose-400'    :
+                                item.category === 'POLICY'      ? 'text-amber-400'   :
+                                item.category === 'GEOPOLITICS' ? 'text-sky-400'     :
+                                item.category === 'M&A'         ? 'text-blue-400'    :
+                                'text-slate-300'
+                              }`} />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Text content */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-slate-800 text-xs font-medium leading-snug line-clamp-2 group-hover:text-purple-700 transition-colors">
+                            {item.title}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                            <IntelCategoryBadge category={item.category} small />
+                            <div className="flex items-center gap-1">
+                              {host && (
+                                <img
+                                  src={`https://www.google.com/s2/favicons?domain=${host}&sz=16`}
+                                  alt=""
+                                  className="w-3 h-3 rounded-sm"
+                                  onError={(e) => { e.target.style.display = "none"; }}
+                                />
+                              )}
+                              <span className="text-[10px] text-slate-500">{item.source}</span>
+                            </div>
+                            {ago && <span className="text-[10px] text-slate-400">{ago}</span>}
+                            {item.source_count > 1 && (
+                              <span className="text-[10px] text-orange-500 font-medium">🔥 {item.source_count}</span>
+                            )}
+                          </div>
+                        </div>
+                      </a>
+                    );
+                  })}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Company profile sheet — opened from search */}
+      {/* Company profile sheet — opened from search or market leaders row */}
       {selectedCompany && (
         <CompanyProfileSheet
           name={selectedCompany}
@@ -580,6 +774,23 @@ export default function Dashboard() {
         />
       )}
     </div>
+  );
+}
+
+function IntelCategoryBadge({ category, small = false }) {
+  const styles = {
+    CONTRACT:    "bg-emerald-50 text-emerald-700 border-emerald-200",
+    TECHNOLOGY:  "bg-purple-50  text-purple-700  border-purple-200",
+    CONFLICT:    "bg-red-50     text-red-700     border-red-200",
+    POLICY:      "bg-amber-50   text-amber-700   border-amber-200",
+    GEOPOLITICS: "bg-sky-50     text-sky-700     border-sky-200",
+    "M&A":       "bg-blue-50    text-blue-700    border-blue-200",
+  };
+  const cls = styles[category] || "bg-slate-50 text-slate-600 border-slate-200";
+  return (
+    <span className={`border font-medium rounded-full ${small ? "text-[9px] px-1.5 py-px" : "text-xs px-2 py-0.5"} ${cls}`}>
+      {category || "INDUSTRY"}
+    </span>
   );
 }
 

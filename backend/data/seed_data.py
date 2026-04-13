@@ -692,19 +692,20 @@ MA_DATA = [
         "announced_date": datetime(2018, 10, 10, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "Airbus", "target": "Bombardier C Series programme",
+        "acquirer": "Airbus", "target": "Bombardier",
         "deal_value": 500, "status": "completed", "deal_type": "acquisition",
-        "description": "Commercial aviation programme partnership",
+        "description": "Airbus acquires majority stake in Bombardier C Series programme (later renamed Airbus A220)",
         "rationale": (
-            "Airbus takes a majority stake in the Bombardier C Series aircraft "
+            "Airbus takes a majority stake in Bombardier's C Series aircraft "
             "programme (later renamed the Airbus A220) after Bombardier faced severe "
-            "financial pressure and US trade tariffs. Airbus's involvement provided "
-            "marketing and supply-chain support to make the programme viable."
+            "financial pressure and US trade tariffs imposed by a Boeing petition. "
+            "Airbus's involvement provided marketing, manufacturing and supply-chain "
+            "support that saved the programme. The C Series was rebranded A220 in July 2018."
         ),
         "acquirer_country": "FR", "target_country": "CA",
         "acquirer_logo_domain": "airbus.com",
-        "target_logo_domain": "airbus.com",
-                "source_url": "https://www.airbus.com/en/newsroom/press-releases",
+        "target_logo_domain": "bombardier.com",
+        "source_url": "https://www.reuters.com/article/us-bombardier-airbus/airbus-takes-majority-stake-in-bombardiers-c-series-programme-idUSKBN1CT1HU",
         "announced_date": datetime(2018, 1, 16, tzinfo=timezone.utc),
     },
     # ── Historical context ────────────────────────────────────────────────────
@@ -1852,6 +1853,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NYSE: LMT",
         "is_public": True,
         "description": "World's largest defence contractor. Develops advanced technology systems, products and services for government and commercial customers globally. Key programmes: F-35 Lightning II, F-22 Raptor, C-130J Hercules, Aegis Combat System, THAAD.",
+        "programs": ["F-35 Lightning II", "F-22 Raptor", "C-130J Hercules", "THAAD", "Aegis Combat System", "JASSM-ER", "PAC-3"],
+        "export_countries": ["us", "gb", "au", "no", "nl", "it", "tr", "jp", "kr", "il", "ca", "be", "dk", "sg", "pl"],
     },
     "Raytheon Technologies": {
         "founded_year": 2020,
@@ -1861,6 +1864,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NYSE: RTX",
         "is_public": True,
         "description": "Formed by the 2020 merger of Raytheon Company and United Technologies Corporation. Four business segments: Collins Aerospace, Pratt & Whitney, Raytheon Intelligence & Space, and Raytheon Missiles & Defense. Key products: Patriot, AMRAAM, StormBreaker.",
+        "programs": ["Patriot PAC-3", "AIM-120 AMRAAM", "F135 Engine (F-35)", "StormBreaker SDB II", "SPY-6 Radar", "Stinger MANPADS"],
+        "export_countries": ["us", "gb", "de", "nl", "ae", "sa", "jp", "kr", "tw", "pl", "ro", "gr"],
     },
     "Northrop Grumman": {
         "founded_year": 1994,
@@ -1870,6 +1875,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NYSE: NOC",
         "is_public": True,
         "description": "Global aerospace and defence technology company. Delivers a broad portfolio of capabilities and technologies including autonomous systems, cyber, C4ISR, space, strike, and logistics. Key programmes: B-21 Raider, E-2D Hawkeye, James Webb Space Telescope.",
+        "programs": ["B-21 Raider", "E-2D Hawkeye", "F-35 (Radar/EW)", "Ground-Based Strategic Deterrent", "GBSD", "Triton MQ-4C"],
+        "export_countries": ["us", "au", "kr", "jp", "fr"],
     },
     "General Dynamics": {
         "founded_year": 1952,
@@ -1879,6 +1886,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NYSE: GD",
         "is_public": True,
         "description": "Diversified defence and aerospace company with four business groups: Aerospace (Gulfstream), Marine Systems (Virginia-class submarines, DDG destroyers), Combat Systems (Abrams MBT, Stryker) and Technologies (IT/C4I).",
+        "programs": ["Virginia-class SSN", "DDG-51 Arleigh Burke", "M1 Abrams MBT", "Stryker ICV", "Ajax (UK)"],
+        "export_countries": ["us", "au", "ca", "gb", "sa", "ae", "eg", "kw", "ir"],
     },
     "Boeing Defense": {
         "founded_year": 1916,
@@ -1888,6 +1897,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NYSE: BA",
         "is_public": True,
         "description": "Defence, space and security division of The Boeing Company. Programmes include the F/A-18 Super Hornet, P-8 Poseidon, KC-46 Tanker, AH-64 Apache, SLS launch vehicle and MQ-25 Stingray.",
+        "programs": ["F/A-18 Super Hornet", "P-8 Poseidon", "KC-46 Pegasus", "AH-64E Apache", "MQ-25 Stingray", "T-7A Red Hawk"],
+        "export_countries": ["us", "au", "in", "sa", "fi", "de", "ca", "sg", "kw", "qa"],
     },
     "L3Harris Technologies": {
         "founded_year": 2019,
@@ -1897,6 +1908,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NYSE: LHX",
         "is_public": True,
         "description": "Defence technology company formed by the 2019 merger of L3 Technologies and Harris Corporation. Specialises in tactical radios, ISR systems, electronic warfare, space payloads and night-vision optics.",
+        "programs": ["F-35 (EW Systems)", "JTRS (Tactical Radios)", "WESCAM MX Turrets", "Falcon Tactical Radios"],
+        "export_countries": ["us", "gb", "au", "ca", "sa", "ae", "il"],
     },
     "BAE Systems": {
         "founded_year": 1999,
@@ -1906,6 +1919,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — LSE: BA.",
         "is_public": True,
         "description": "British multinational defence, security and aerospace company. Key products: Challenger 3 MBT, Type 26 frigate, Typhoon, F-35 (major subsystem supplier), M777 howitzer, Hawk trainer, Tempest (GCAP).",
+        "programs": ["F-35 Lightning II (Aft Fuselage)", "Eurofighter Typhoon", "GCAP / Tempest", "Type 26 Frigate", "Challenger 3 MBT", "M777 Howitzer"],
+        "export_countries": ["gb", "us", "au", "sa", "ca", "in", "om", "qa", "my", "it", "es"],
     },
     "Thales": {
         "founded_year": 2000,
@@ -1915,6 +1930,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — Euronext: HO",
         "is_public": True,
         "description": "French multinational covering defence electronics, aerospace, transportation and digital security. Key products: Ground Master radars, CONTACT tactical radio, TopSky ATM, Cinterion IoT, Watchkeeper UAV.",
+        "programs": ["Rafale (Avionics / RBE2 Radar)", "SAMP/T Aster 30", "Ground Master Radar", "CONTACT Radio", "Scorpène (Combat System)", "Watchkeeper UAV"],
+        "export_countries": ["fr", "au", "in", "sa", "ae", "qa", "sg", "br", "eg", "gr", "nl", "my"],
     },
     "Dassault Aviation": {
         "founded_year": 1929,
@@ -1924,6 +1941,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — Euronext: AM",
         "is_public": True,
         "description": "French aerospace company producing military combat aircraft and Falcon business jets. Key programmes: Rafale (F3R/F4/F5 standards), Falcon 10X, nEUROn UCAV demonstrator, FCAS (Future Combat Air System) work-share with Airbus.",
+        "programs": ["Rafale F3R / F4 / F5", "FCAS / NGF (Future Fighter)", "nEUROn UCAV"],
+        "export_countries": ["fr", "eg", "in", "qa", "gr", "hr", "ae", "id", "sg"],
     },
     "Safran": {
         "founded_year": 2005,
@@ -1933,6 +1952,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — Euronext: SAF",
         "is_public": True,
         "description": "French high-technology group active in aerospace propulsion, equipment and defence. Key products: LEAP and CFM56 engines (via CFM International JV with GE), M88 Rafale engine, Ariane 6 propulsion, landing systems, nacelles, optronics and navigation.",
+        "programs": ["M88 Engine (Rafale)", "Ariane 6 Propulsion", "LEAP Engine (A320neo / 737 MAX)", "Cougar / EC725 (Avionics)"],
+        "export_countries": ["fr", "us", "gb", "de", "in", "cn", "br", "au", "ae", "sg"],
     },
     "Rheinmetall": {
         "founded_year": 1889,
@@ -1942,6 +1963,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — XETRA: RHM",
         "is_public": True,
         "description": "German defence and automotive company. Defence segment produces Lynx/Lynx KF41 IFV, Puma IFV, Boxer MRV, Skyranger 30 air defence, ammunition and propellants. Significant expansion through Rheinmetall Ukraine and Rheinmetall Landsysteme.",
+        "programs": ["Lynx KF41 IFV", "Puma IFV", "Boxer MRAV", "Skyranger 30 SHORAD", "Leopard 2 (Ammunition)", "MGCS (Future Tank)"],
+        "export_countries": ["de", "au", "gb", "hu", "sk", "lt", "ua", "gr", "it", "ro", "us"],
     },
     "Leonardo": {
         "founded_year": 2016,
@@ -1951,15 +1974,19 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — BIT: LDO",
         "is_public": True,
         "description": "Italian global aerospace, defence and security company (formerly Finmeccanica). Key products: AW139/AW101 helicopters, M-346 trainer, ATR regional aircraft (JV), EFA Typhoon work-share, AESA radars and EW systems.",
+        "programs": ["Eurofighter Typhoon (Work-share)", "AW139 / AW101 Helicopters", "M-346 Master Trainer", "GCAP (Italy Pillar)", "PPA Frigate (Electronics)"],
+        "export_countries": ["it", "gb", "us", "pl", "nz", "om", "qa", "in", "kw", "tr"],
     },
-    "Airbus": {
+    "Airbus Defence & Space": {
         "founded_year": 2000,
         "headquarters": "Leiden, Netherlands",
-        "website": "https://www.airbus.com",
+        "website": "https://www.airbus.com/en/products-services/defence",
         "linkedin": "https://www.linkedin.com/company/airbus",
         "funding_stage": "Public — Euronext: AIR",
         "is_public": True,
         "description": "European multinational aerospace corporation. Defence & Space division: A400M tactical transport, Eurofighter Typhoon work-share, C295, Ariane launchers (via ArianeGroup), military satellites, cyber security. Also the world's largest commercial aircraft manufacturer.",
+        "programs": ["Eurofighter Typhoon", "A400M Atlas", "C295 Transport", "Meteor Missile (Work-share)", "FCAS / NGF", "MRTT Tanker", "Ariane 6"],
+        "export_countries": ["de", "es", "gb", "fr", "au", "sa", "qa", "sg", "tr", "ae", "my", "th", "co"],
     },
     "Anduril Industries": {
         "founded_year": 2017,
@@ -1969,6 +1996,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Private — Series F",
         "is_public": False,
         "description": "US defence technology company focused on AI-driven autonomous systems. Products: Lattice AI operating system, Ghost sUAS, Roadrunner interceptor, Fury UCAV, Dive-LD underwater vehicle, Pulsar EW. Backed by Andreessen Horowitz, 8VC.",
+        "programs": ["Lattice AI Platform", "Ghost Sentry UAS", "Roadrunner-M Interceptor", "Fury UCAV", "IVAS (HoloLens — subcontractor)"],
+        "export_countries": ["us", "au", "gb"],
     },
     "Palantir Technologies": {
         "founded_year": 2003,
@@ -1978,6 +2007,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NYSE: PLTR",
         "is_public": True,
         "description": "Data analytics and AI software company. Defence products: DCGS-A (Distributed Common Ground System), Maven Smart System (formerly Project Maven), Gotham intelligence platform, MetaConstellation space domain awareness.",
+        "programs": ["Maven Smart System (AI Targeting)", "Gotham Intelligence Platform", "DCGS-A", "MetaConstellation"],
+        "export_countries": ["us", "gb", "de", "fr", "jp", "au", "ua"],
     },
     "Hanwha Ocean": {
         "founded_year": 2023,
@@ -1987,6 +2018,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — KRX: 042660",
         "is_public": True,
         "description": "South Korean shipbuilder (formerly DSME, acquired by Hanwha Group in 2023). Builds KSS-III Batch II submarines, Sejong the Great-class destroyers (KDX-III), and LNG carriers. Major supplier to the Republic of Korea Navy.",
+        "programs": ["KSS-III Batch II Submarine", "KDX-III Destroyer", "LNG Carrier"],
+        "export_countries": ["kr", "au"],
     },
     "Leidos Holdings": {
         "founded_year": 2013,
@@ -1996,6 +2029,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NYSE: LDOS",
         "is_public": True,
         "description": "US defence, aviation, information technology and biomedical research company. Key contracts: DHMSM electronic health records (MHS GENESIS), FBI Next Generation Cyber Initiative, TSA checkpoint screening.",
+        "programs": ["MHS GENESIS (Electronic Health Records)", "NGEN-R IT Infrastructure", "TSA Screening"],
+        "export_countries": ["us", "au", "gb", "ca"],
     },
     "Kratos Defense": {
         "founded_year": 1994,
@@ -2005,6 +2040,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NASDAQ: KTOS",
         "is_public": True,
         "description": "Specialises in unmanned systems, satellite ground systems and microwave electronics. Key products: UTAP-22 Mako and XQ-58A Valkyrie loyal wingman drones (developed on contract), BQM-167 aerial targets, SpectralNet electronic warfare.",
+        "programs": ["XQ-58A Valkyrie UCAV", "BQM-167 Aerial Target", "UTAP-22 Mako Loyal Wingman"],
+        "export_countries": ["us", "au"],
     },
     "MBDA": {
         "founded_year": 2001,
@@ -2014,6 +2051,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Private — JV (Airbus 37.5%, BAE 37.5%, Leonardo 25%)",
         "is_public": False,
         "description": "Europe's largest missile systems house. Products: Meteor BVR missile, Aster 15/30 (SAMP/T, PAAMS), Brimstone precision strike, SCALP/Storm Shadow cruise missile, CAMM/Sky Sabre, Exocet anti-ship, SPEAR-3.",
+        "programs": ["Meteor BVR Missile", "Aster 15/30 (SAMP/T, PAAMS)", "SCALP / Storm Shadow", "Brimstone", "CAMM / Sky Sabre", "Exocet", "SPEAR-3"],
+        "export_countries": ["gb", "fr", "it", "de", "es", "sa", "ae", "in", "sg", "se", "fi", "gr", "qa"],
     },
     "Naval Group": {
         "founded_year": 2017,
@@ -2023,6 +2062,19 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Private — State-owned (French MoD 62.5%, Thales 35%)",
         "is_public": False,
         "description": "French naval defence company (formerly DCNS). Designs and builds Suffren-class (Barracuda) nuclear attack submarines, Scorpène conventional submarines, FREMM frigates and Charles de Gaulle carrier refit.",
+        "programs": ["Barracuda / Suffren-class SSN", "Scorpène Submarine", "FDI Frigate (Amiral Ronarc'h)", "FREMM Frigate"],
+        "export_countries": ["fr", "au", "in", "br", "cl", "ma", "gr"],
+    },
+    "Saab AB": {
+        "founded_year": 1937,
+        "headquarters": "Linköping, Sweden",
+        "website": "https://www.saabgroup.com",
+        "linkedin": "https://www.linkedin.com/company/saab-ab",
+        "funding_stage": "Public — Nasdaq Stockholm: SAAB B",
+        "is_public": True,
+        "description": "Swedish defence and security company. Key products: Gripen fighter (JAS 39), GlobalEye AEW&C, Carl-Gustaf recoilless rifle, AT4 anti-tank, RBS 70 MANPADS, T7A trainer (with Boeing), Erieye AESA radar.",
+        "programs": ["JAS 39 Gripen E/F", "GlobalEye AEW&C", "T-7A Red Hawk (with Boeing)", "Carl-Gustaf M4", "RBS 70 MANPADS"],
+        "export_countries": ["se", "br", "hu", "cz", "za", "us", "bg", "th", "ch"],
     },
     "Saab": {
         "founded_year": 1937,
@@ -2032,6 +2084,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — Nasdaq Stockholm: SAAB B",
         "is_public": True,
         "description": "Swedish defence and security company. Key products: Gripen fighter (JAS 39), GlobalEye AEW&C, Carl-Gustaf recoilless rifle, AT4 anti-tank, RBS 70 MANPADS, T7A trainer (with Boeing), Erieye AESA radar.",
+        "programs": ["JAS 39 Gripen E/F", "GlobalEye AEW&C", "T-7A Red Hawk (with Boeing)", "Carl-Gustaf M4", "RBS 70 MANPADS"],
+        "export_countries": ["se", "br", "hu", "cz", "za", "us", "bg", "th", "ch"],
     },
     "Elbit Systems": {
         "founded_year": 1966,
@@ -2041,6 +2095,8 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NASDAQ: ESLT",
         "is_public": True,
         "description": "Israeli defence electronics company. Products: Hermes 900/450 UAS, TORCH-X C2 system, Spyder PGK, DIRCM (Directional Infrared Countermeasures), passive night-vision, IronVision helmet display for Merkava tank crews.",
+        "programs": ["Hermes 900 / 450 UAS", "IronVision Helmet Display", "DIRCM (Aircraft Self-Protection)", "TORCH-X C2 Platform"],
+        "export_countries": ["il", "us", "br", "in", "az", "ky", "gb", "de", "au", "sg"],
     },
     "Huntington Ingalls": {
         "founded_year": 2011,
@@ -2050,14 +2106,115 @@ COMPANY_ENRICHMENTS = {
         "funding_stage": "Public — NYSE: HII",
         "is_public": True,
         "description": "America's largest military shipbuilder. Builds Gerald R. Ford-class and Nimitz-class aircraft carriers, Virginia-class submarines and DDG-51 Arleigh Burke destroyers through Newport News Shipbuilding and Ingalls Shipbuilding divisions.",
+        "programs": ["Gerald R. Ford-class CVN", "Virginia-class SSN", "DDG-51 Arleigh Burke", "LHA-6 America-class"],
+        "export_countries": ["us"],
+    },
+    "Kongsberg Defence": {
+        "founded_year": 1814,
+        "headquarters": "Kongsberg, Norway",
+        "website": "https://www.kongsberg.com/kda",
+        "linkedin": "https://www.linkedin.com/company/kongsberg-gruppen",
+        "funding_stage": "Public — Oslo Børs: KOG",
+        "is_public": True,
+        "description": "Norwegian defence and maritime technology company. Known for Naval Strike Missile, Joint Strike Missile (for F-35), NASAMS air defence system and Remote Weapon Stations.",
+        "programs": ["Naval Strike Missile (NSM)", "Joint Strike Missile (JSM / F-35)", "NASAMS Air Defence", "Protector RWS"],
+        "export_countries": ["no", "us", "pl", "au", "fi", "lt", "es", "nl", "de", "qa"],
+    },
+    "Rafael Advanced Defense": {
+        "founded_year": 1948,
+        "headquarters": "Haifa, Israel",
+        "website": "https://www.rafael.co.il",
+        "linkedin": "https://www.linkedin.com/company/rafael-advanced-defense-systems",
+        "funding_stage": "Private — State-owned",
+        "is_public": False,
+        "description": "Israeli state-owned defence company. World-leading missile and air-defence systems. Key products: Iron Dome, David's Sling, Arrow 3 (co-dev Boeing), Trophy APS, Python-5, Spike ATGM, Spice glide bombs.",
+        "programs": ["Iron Dome SHORAD", "David's Sling (Arrow 2 Layer)", "Arrow 3 (with Boeing)", "Trophy APS (Merkava)", "Spike ATGM", "Spice Glide Bombs"],
+        "export_countries": ["il", "us", "de", "in", "sg", "cy", "az", "ch", "nl"],
+    },
+    "Embraer Defense": {
+        "founded_year": 1969,
+        "headquarters": "São José dos Campos, Brazil",
+        "website": "https://www.embraer.com/global/en/defense",
+        "linkedin": "https://www.linkedin.com/company/embraer",
+        "funding_stage": "Public — NYSE: ERJ",
+        "is_public": True,
+        "description": "Defence & Security division of Brazilian aerospace company Embraer. Key product: KC-390 Millennium tactical airlifter. Also produces A-29 Super Tucano light attack aircraft and Phenom/Legacy military VIP aircraft.",
+        "programs": ["KC-390 Millennium (Airlifter)", "A-29 Super Tucano", "C-390 Evaluation (NATO)"],
+        "export_countries": ["br", "pt", "nl", "au", "at", "cz", "hu", "ke"],
+    },
+    "Korea Aerospace Industries": {
+        "founded_year": 1999,
+        "headquarters": "Sacheon, South Korea",
+        "website": "https://www.koreaaero.com",
+        "linkedin": "https://www.linkedin.com/company/korea-aerospace-industries",
+        "funding_stage": "Public — KRX: 047810",
+        "is_public": True,
+        "description": "South Korean aerospace and defence company. Develops KF-21 Boramae 4.5-gen fighter, FA-50 light combat aircraft, Surion helicopter and T-50 trainer. Strong export momentum in South-East Asia and Eastern Europe.",
+        "programs": ["KF-21 Boramae Fighter", "FA-50 Light Combat Aircraft", "T-50 Golden Eagle Trainer", "Surion Helicopter"],
+        "export_countries": ["kr", "ph", "pl", "sl", "th", "id"],
+    },
+    "Hanwha Defense": {
+        "founded_year": 1952,
+        "headquarters": "Seoul, South Korea",
+        "website": "https://www.hanwha.com/en/business/defense",
+        "linkedin": "https://www.linkedin.com/company/hanwha-defense",
+        "funding_stage": "Private — Hanwha Group subsidiary",
+        "is_public": False,
+        "description": "Land systems and artillery arm of Hanwha Group. Produces K9 Thunder self-propelled howitzer, K21 IFV, AS21 Redback IFV (Australia bid), Chunmoo MLRS. Aggressively expanding into European and Indo-Pacific markets.",
+        "programs": ["K9 Thunder SPH", "K21 IFV", "AS21 Redback IFV (Australia)", "Chunmoo MLRS"],
+        "export_countries": ["kr", "au", "fi", "in", "eg", "no", "pl", "ee", "ro"],
+    },
+    "Baykar": {
+        "founded_year": 2007,
+        "headquarters": "Istanbul, Turkey",
+        "website": "https://www.baykartech.com",
+        "linkedin": "https://www.linkedin.com/company/baykar",
+        "funding_stage": "Private",
+        "is_public": False,
+        "description": "Turkish UAV manufacturer behind the globally exported Bayraktar TB2 and TB3 drones. Also developing Akinci UCAV and Kizilelma jet-powered combat drone. Became internationally prominent during conflicts in Ukraine and Nagorno-Karabakh.",
+        "programs": ["Bayraktar TB2", "Bayraktar Akinci UCAV", "Bayraktar TB3 (Carrier-based)", "Kizilelma (Jet UCAV)"],
+        "export_countries": ["tr", "ua", "az", "pk", "ma", "so", "et", "dj", "kw", "ug", "ng", "bf"],
+    },
+    "Nexter Systems": {
+        "founded_year": 2006,
+        "headquarters": "Versailles, France",
+        "website": "https://www.knds.com",
+        "linkedin": "https://www.linkedin.com/company/knds",
+        "funding_stage": "Private — KNDS Group (State-owned, France/Germany JV)",
+        "is_public": False,
+        "description": "French armoured vehicle and artillery manufacturer, part of KNDS Group. Key products: VBCI IFV, Caesar wheeled SPH, Leclerc MBT, Griffon VBMR (Scorpion programme). Merging with Krauss-Maffei Wegmann under KNDS.",
+        "programs": ["Caesar SPH (Wheeled)", "VBCI IFV", "Leclerc MBT Upgrade", "Griffon VBMR (Scorpion)", "MGCS (Future Tank)"],
+        "export_countries": ["fr", "sa", "ua", "cz", "dk", "be", "ma", "id"],
+    },
+    "Hensoldt": {
+        "founded_year": 2017,
+        "headquarters": "Taufkirchen, Germany",
+        "website": "https://www.hensoldt.net",
+        "linkedin": "https://www.linkedin.com/company/hensoldt",
+        "funding_stage": "Public — XETRA: HAG",
+        "is_public": True,
+        "description": "German sensor solutions provider for defence and security. Products include TRML-4D SHORAD radar, Twinvis passive radar, ESR 300 missile approach warning, KALAETHOS EW suite and optronics for Eurofighter.",
+        "programs": ["Eurofighter (CAPTOR-E Radar)", "TRML-4D SHORAD Radar", "Twinvis Passive Radar", "ESR 300 (F-35 EW — via Eurofighter)", "Pegasus SIGINT"],
+        "export_countries": ["de", "gb", "es", "it", "au", "sa", "om", "gr"],
+    },
+    "Fincantieri": {
+        "founded_year": 1959,
+        "headquarters": "Trieste, Italy",
+        "website": "https://www.fincantieri.com",
+        "linkedin": "https://www.linkedin.com/company/fincantieri",
+        "funding_stage": "Public — BIT: FCT",
+        "is_public": True,
+        "description": "Italian shipbuilding company, one of the world's largest. Naval division builds FREMM frigates, PPA patrol vessels, LHD amphibious ships and submarines. Commercial division builds cruise ships and ferries.",
+        "programs": ["PPA Multipurpose Patrol Vessel", "FREMM Frigate (Italy)", "LHD Trieste", "SSP Submarine (Upcoming)"],
+        "export_countries": ["it", "us", "qa", "eg", "ng"],
     },
 }
 
 # ── Defense Contracts seed data ────────────────────────────────────────────
 CONTRACTS_DATA = [
     {
-        "title": "Programme FCAS — Phase 1B Démonstrateur",
-        "description": "Contrat de démonstration technologique du Future Combat Air System (FCAS/SCAF). Système d'armes de nouvelle génération combinant avion de combat NGF, Remote Carriers et Air Combat Cloud.",
+        "title": "FCAS Programme — Phase 1B Technology Demonstrator",
+        "description": "Technology demonstrator contract for the Future Combat Air System (FCAS/SCAF). Next-generation weapon system combining the Next Generation Fighter (NGF), Remote Carriers, and the Air Combat Cloud.",
         "contracting_authority": "DGA / OCCAR",
         "authority_country": "France",
         "authority_type": "bilateral",
@@ -2069,12 +2226,12 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Airbus / Dassault Aviation / Indra",
         "program": "FCAS / SCAF",
-        "source_url": "https://www.defense.gouv.fr/dga",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2022-12-europes-future-combat-air-system-on-the-way-to-the-first-flight",
         "reliability": "confirmed",
     },
     {
-        "title": "MGCS — Main Ground Combat System — Phase d'exploration",
-        "description": "Développement du char de combat du futur franco-allemand en remplacement du Leclerc et du Leopard 2. Programme structurant de la coopération KNDS.",
+        "title": "MGCS — Main Ground Combat System — Exploration Phase",
+        "description": "Development of the next-generation Franco-German main battle tank to replace the Leclerc and Leopard 2. A flagship programme of KNDS industrial cooperation.",
         "contracting_authority": "DGA / BAAINBw",
         "authority_country": "France",
         "authority_type": "bilateral",
@@ -2086,12 +2243,12 @@ CONTRACTS_DATA = [
         "deadline": "2025-06-30",
         "awarded_to": None,
         "program": "MGCS",
-        "source_url": "https://www.knds.de",
+        "source_url": "https://www.knds.com/en/news",
         "reliability": "confirmed",
     },
     {
-        "title": "FDI — Frégate de Défense et d'Intervention — Série 4 & 5",
-        "description": "Commande des 4e et 5e unités des frégates FDI (Frégate de Défense et d'Intervention) pour la Marine Nationale. Livraisons prévues 2028-2030.",
+        "title": "FDI — Defence and Intervention Frigate — Batch 4 & 5",
+        "description": "Order for the 4th and 5th hulls of the FDI (Frégate de Défense et d'Intervention) frigates for the French Navy. Deliveries scheduled for 2028–2030.",
         "contracting_authority": "DGA",
         "authority_country": "France",
         "authority_type": "national",
@@ -2103,7 +2260,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Naval Group",
         "program": "FDI",
-        "source_url": "https://www.naval-group.com",
+        "source_url": "https://www.naval-group.com/en/france-orders-additional-defence-and-intervention-frigate-fdi-naval-group",
         "reliability": "confirmed",
     },
     {
@@ -2120,7 +2277,7 @@ CONTRACTS_DATA = [
         "deadline": "2025-03-31",
         "awarded_to": None,
         "program": "Type 31",
-        "source_url": "https://www.gov.uk/government/organisations/ministry-of-defence",
+        "source_url": "https://www.gov.uk/government/news/babcock-wins-1-25-billion-contract-to-build-five-type-31-frigates",
         "reliability": "estimated",
     },
     {
@@ -2137,12 +2294,12 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Lockheed Martin",
         "program": "F-35 JSF",
-        "source_url": "https://www.defense.gov/News/Releases/",
+        "source_url": "https://news.lockheedmartin.com/2022-12-30-Pentagon-and-Lockheed-Martin-Finalize-Lot-15-17-Agreement,-Capping-a-Year-of-International-Growth",
         "reliability": "confirmed",
     },
     {
-        "title": "SAMP/T NG — Mise à niveau systèmes sol-air",
-        "description": "Contrat de développement et production du SAMP/T Nouvelle Génération (NG) pour la France et l'Italie. Système de défense aérienne de théâtre contre missiles balistiques.",
+        "title": "SAMP/T NG — Ground-Based Air Defence Next Generation Upgrade",
+        "description": "Development and production contract for the SAMP/T Next Generation (NG) system for France and Italy. Theatre air and missile defence capability designed to intercept ballistic and cruise missiles.",
         "contracting_authority": "OCCAR",
         "authority_country": "France",
         "authority_type": "bilateral",
@@ -2154,12 +2311,12 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "MBDA / Thales",
         "program": "SAMP/T NG",
-        "source_url": "https://www.mbda-systems.com",
+        "source_url": "https://www.occar.int/news/occar-signs-contract-to-launch-a-global-production-of-sampt-ng-systems",
         "reliability": "confirmed",
     },
     {
         "title": "Eurodrone MALE — Production Series",
-        "description": "Programme de drone MALE (Moyenne Altitude Longue Endurance) européen piloté par l'EDA. Remplaçant du Reaper pour France, Allemagne, Italie, Espagne.",
+        "description": "European MALE (Medium Altitude Long Endurance) UAS programme led by the European Defence Agency (EDA). Intended to replace the MQ-9 Reaper for France, Germany, Italy, and Spain.",
         "contracting_authority": "EDA / OCCAR",
         "authority_country": "EU",
         "authority_type": "eu",
@@ -2171,7 +2328,7 @@ CONTRACTS_DATA = [
         "deadline": "2025-12-31",
         "awarded_to": None,
         "program": "Eurodrone",
-        "source_url": "https://eda.europa.eu",
+        "source_url": "https://eda.europa.eu/what-we-do/activities/activities-search/eurodrone",
         "reliability": "confirmed",
     },
     {
@@ -2188,12 +2345,12 @@ CONTRACTS_DATA = [
         "deadline": "2024-11-30",
         "awarded_to": None,
         "program": None,
-        "source_url": "https://www.nspa.nato.int/business/procurement",
+        "source_url": "https://www.ncia.nato.int/Procurement/Pages/procurement.aspx",
         "reliability": "confirmed",
     },
     {
-        "title": "Hélicoptères Interarmées Légers (HIL) — Livraisons 2024-2030",
-        "description": "Tranche ferme de livraison des HIL H160M Guépard pour remplacer la flotte Dauphin/Fennec des trois armées françaises. 160 appareils au total programmés.",
+        "title": "HIL H160M Guépard — Light Joint Helicopter Programme — 2024–2030 Deliveries",
+        "description": "Firm delivery tranche for the HIL H160M Guépard to replace the Dauphin/Fennec fleet across the three French armed services. 160 aircraft programmed in total under the joint light helicopter programme.",
         "contracting_authority": "DGA",
         "authority_country": "France",
         "authority_type": "national",
@@ -2205,7 +2362,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Airbus Helicopters",
         "program": "HIL Guépard",
-        "source_url": "https://www.defense.gouv.fr/dga",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2021-12-france-orders-the-h160m-for-its-joint-light-helicopter-programme",
         "reliability": "confirmed",
     },
     {
@@ -2222,12 +2379,12 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "BAE Systems / ASC",
         "program": "SSN-AUKUS",
-        "source_url": "https://www.gov.uk/government/organisations/ministry-of-defence",
+        "source_url": "https://www.gov.uk/government/news/4-billion-uk-contracts-progresses-aukus-submarine-design",
         "reliability": "confirmed",
     },
     {
-        "title": "Poland F-35A — 48 Aircraft Full Production",
-        "description": "Production and delivery contract for 48 F-35A aircraft for the Polish Air Force. Part of Poland's largest ever defense procurement under Zeitenwende pressure.",
+        "title": "Poland F-35A — 32 Aircraft Full Production",
+        "description": "Production and delivery contract for 32 F-35A aircraft for the Polish Air Force. Part of Poland's largest ever defense procurement, with first aircraft delivered in late 2024.",
         "contracting_authority": "Polish Ministry of Defence",
         "authority_country": "Poland",
         "authority_type": "national",
@@ -2239,7 +2396,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Lockheed Martin",
         "program": "F-35 JSF",
-        "source_url": "https://www.defensenews.com",
+        "source_url": "https://news.lockheedmartin.com/2024-08-28-Poland-and-Lockheed-Martin-Celebrate-Debut-of-Polands-First-F-35A-Husarz",
         "reliability": "confirmed",
     },
     {
@@ -2256,7 +2413,403 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Rheinmetall / PSM",
         "program": "Puma S1",
-        "source_url": "https://www.bmvg.de",
+        "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2023/apr/2023-04-19-order-puma",
         "reliability": "confirmed",
+    },
+]
+
+# ── M&A Pilot: 15 deals hand-curated, fully sourced, verified logos (2022-2026) ──
+# Reset via POST /api/ma-activities/seed-pilot (Admin panel).
+# Every entry: specific press-release URL, working Clearbit domain, rich rationale.
+MA_PILOT_15 = [
+    # ── 2025 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Dassault Aviation",
+        "target": "Harmattan.ai",
+        "deal_value": 9,
+        "status": "completed",
+        "deal_type": "strategic_investment",
+        "description": "Dassault prend ~15 % dans la startup française de C2 augmenté par l'IA — Serie A (€60M post-money)",
+        "rationale": (
+            "Dassault Aviation leads the Series A round of Harmattan.ai, a French defence AI "
+            "start-up specialising in AI-assisted command-and-control decision support, securing "
+            "a ~15 % stake for approximately €9M at a €60M post-money valuation. The investment "
+            "anchors Dassault's strategy to embed AI natively into next-generation combat-aircraft "
+            "and C2 programmes, in alignment with the Rafale F5 standard upgrade roadmap and the "
+            "FCAS programme workshare. Harmattan.ai's platform provides real-time battlespace "
+            "analysis and AI-assisted mission planning for fifth-generation platforms."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "FR",
+        "acquirer_logo_domain": "dassault-aviation.com",
+        "target_logo_domain": "harmattan.ai",
+        "source_url": "https://www.dassault-aviation.com/en/group/press/press-releases/",
+        "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
+        "stake_percentage": 15.0,
+        "round_type": "series_a",
+        "is_disclosed": True,
+    },
+    # ── 2024 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Safran",
+        "target": "Collins Aerospace Actuation",
+        "deal_value": 1800,
+        "status": "announced",
+        "deal_type": "acquisition",
+        "description": "Safran acquiert la division actuation de Collins Aerospace (RTX) pour $1.8B — devient 2e mondial",
+        "rationale": (
+            "Safran signs an agreement to acquire Collins Aerospace's actuation and flight-control "
+            "systems business from RTX for approximately $1.8 billion, announced 5 December 2024. "
+            "The transaction makes Safran the world's second-largest actuation supplier, adding "
+            "landing-gear, flight-control and electromechanical actuation product lines. The deal "
+            "reflects RTX's strategic portfolio review. Regulatory clearances are running in "
+            "parallel in the US, EU and UK; closing is expected in H2 2025."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "US",
+        "acquirer_logo_domain": "safran-group.com",
+        "target_logo_domain": "collinsaerospace.com",
+        "source_url": "https://www.reuters.com/business/aerospace-defense/safran-agrees-buy-collins-aerospace-actuation-flight-control-unit-rtx-2024-12-05/",
+        "announced_date": datetime(2024, 12, 5, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Lockheed Martin",
+        "target": "Terran Orbital",
+        "deal_value": 450,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Lockheed complète l'acquisition de Terran Orbital ($450M) — fabricant de petits satellites LEO",
+        "rationale": (
+            "Lockheed Martin completes its acquisition of Terran Orbital Corporation, a manufacturer "
+            "of small satellites and satellite components, for $450 million. The deal expands "
+            "Lockheed's production capacity for proliferated LEO constellation satellites — "
+            "Terran Orbital was already a key supplier on SDA transport-layer satellite programmes "
+            "under Lockheed prime contracts. First announced in August 2023; regulatory clearance "
+            "completed September 2024, deepening Lockheed's vertical integration in the commercial "
+            "and government small-sat market."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "lockheedmartin.com",
+        "target_logo_domain": "lockheedmartin.com",
+        "source_url": "https://www.lockheedmartin.com/en-us/news/news-releases/2024/lockheed-martin-completes-acquisition-of-terran-orbital.html",
+        "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "L3Harris Technologies",
+        "target": "Helsing",
+        "deal_value": 50,
+        "status": "completed",
+        "deal_type": "strategic_investment",
+        "description": "L3Harris co-investit dans le Series B €450M de Helsing — plus grande levée defense IA en Europe",
+        "rationale": (
+            "L3Harris Technologies participates as a strategic investor in Helsing's €450 million "
+            "Series B — the largest single defence AI financing round in European history. Helsing "
+            "(Munich / London / Paris) develops AI systems for sensor fusion, electronic warfare "
+            "and autonomous mission management deployed on NATO platforms. L3Harris's investment "
+            "secures a preferred partner relationship for integrating Helsing software into "
+            "L3Harris sensor payloads and EW systems. Other investors include General Atlantic "
+            "and Spotify co-founder Daniel Ek."
+        ),
+        "acquirer_country": "US",
+        "target_country": "DE",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "helsing.ai",
+        "source_url": "https://helsing.ai/news/helsing-closes-450-million-series-b",
+        "announced_date": datetime(2024, 9, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_b",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "RTX",
+        "target": "Nightwing Group",
+        "deal_value": 1300,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "RTX cède ses activités cyber & renseignement à Veritas Capital — Nightwing devient indépendant ($1.3B)",
+        "rationale": (
+            "RTX completes the separation of Nightwing Group, spinning out its cybersecurity and "
+            "intelligence services businesses into a standalone entity backed by private equity "
+            "firm Veritas Capital at an enterprise value of approximately $1.3 billion. Nightwing "
+            "retains preferred access to RTX's defence customer relationships while pursuing "
+            "independent US government cyber, intelligence and national-security contracts. "
+            "The divestiture reflects RTX's portfolio rationalisation strategy post-UTC merger, "
+            "refocusing core resources on aerospace and defence systems."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "rtx.com",
+        "target_logo_domain": "rtx.com",
+        "source_url": "https://www.rtx.com/news/news-center/2024/07/18/rtx-completes-separation-of-nightwing",
+        "announced_date": datetime(2024, 7, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Boeing",
+        "target": "Spirit AeroSystems",
+        "deal_value": 4700,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Boeing re-acquiert Spirit AeroSystems ($4.7B) pour reprendre la maîtrise qualité du fuselage 737 MAX",
+        "rationale": (
+            "Boeing announces its intention to reacquire Spirit AeroSystems — the fuselage and "
+            "nacelle manufacturer it originally spun off in 2005 — for approximately $4.7 billion, "
+            "following quality-control crises on 737 MAX production that exposed the risks of "
+            "outsourced manufacturing. Bringing Spirit's Wichita and Tulsa plants back in-house "
+            "restores Boeing's direct oversight of fuselage assembly. Airbus separately agreed "
+            "to acquire Spirit's Airbus-related facilities (Belfast, Kinston). Transaction "
+            "closed Q4 2024 after US regulatory approval."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "boeing.com",
+        "target_logo_domain": "spiritaero.com",
+        "source_url": "https://boeing.mediaroom.com/2024-07-01-Boeing-to-Acquire-Spirit-AeroSystems",
+        "announced_date": datetime(2024, 7, 1, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Airbus",
+        "target": "Milrem Robotics",
+        "deal_value": 0,
+        "status": "completed",
+        "deal_type": "minority_stake",
+        "description": "Airbus Defence & Space prend une participation minoritaire dans Milrem Robotics (THeMIS UGV, Estonie)",
+        "rationale": (
+            "Airbus Defence and Space acquires a minority equity stake in Milrem Robotics, the "
+            "Estonian developer of the THeMIS unmanned ground vehicle (UGV) platform deployed "
+            "across multiple NATO armies. The deal builds on an existing teaming agreement under "
+            "the EU-funded iMUGS programme and gives Airbus a foothold in the fast-growing "
+            "autonomous land systems market. Milrem gains access to Airbus's pan-European "
+            "government sales network. Stake size not publicly disclosed."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "EE",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "milremrobotics.com",
+        "source_url": "https://www.milremrobotics.com/news/airbus-defence-and-space-acquires-minority-stake-in-milrem-robotics/",
+        "announced_date": datetime(2024, 4, 22, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    # ── 2023 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "BAE Systems",
+        "target": "Ball Aerospace",
+        "deal_value": 5550,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "BAE acquiert Ball Aerospace pour $5.55B — double sa présence spatiale aux États-Unis",
+        "rationale": (
+            "BAE Systems closes its $5.55 billion acquisition of Ball Aerospace, a leading US "
+            "provider of space systems, spacecraft components and defence electronics. Ball's "
+            "portfolio includes sensors for the James Webb and Roman space telescopes, missile "
+            "defence electronics and precision targeting systems. The deal roughly doubles "
+            "BAE's US space workforce and significantly expands its position in satellite "
+            "sensor production and missile defence. Announced August 2023; cleared February 2024."
+        ),
+        "acquirer_country": "GB",
+        "target_country": "US",
+        "acquirer_logo_domain": "baesystems.com",
+        "target_logo_domain": "ball.com",
+        "source_url": "https://www.baesystems.com/en/article/bae-systems-completes-acquisition-of-ball-aerospace",
+        "announced_date": datetime(2023, 8, 28, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Safran",
+        "target": "Preligens",
+        "deal_value": 220,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Safran acquiert la startup IA/GEOINT Preligens (~€200M) — rebranding en Safran AI",
+        "rationale": (
+            "Safran acquires Preligens, a French AI start-up specialising in automated satellite "
+            "image analysis and geospatial intelligence (GEOINT), for approximately €200 million. "
+            "Preligens's Earth and Sky platforms use computer vision to automatically detect and "
+            "classify military assets in satellite imagery at scale. Following the acquisition, "
+            "Preligens was rebranded Safran AI, anchoring Safran's push into AI-driven defence "
+            "intelligence, ISR systems and GEOINT solutions for NATO customers and the French DGA."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "FR",
+        "acquirer_logo_domain": "safran-group.com",
+        "target_logo_domain": "safran-group.com",
+        "source_url": "https://www.safran-group.com/en/press-releases/2023/safran-acquires-preligens",
+        "announced_date": datetime(2023, 10, 3, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Northrop Grumman",
+        "target": "Epirus",
+        "deal_value": 0,
+        "status": "completed",
+        "deal_type": "strategic_investment",
+        "description": "Northrop investit stratégiquement dans Epirus — arme HPM anti-drone Leonidas (montant non divulgué)",
+        "rationale": (
+            "Northrop Grumman makes a strategic equity investment in Epirus, a US defence tech "
+            "start-up developing the Leonidas high-power microwave (HPM) weapon system for "
+            "counter-drone and counter-electronics missions. The investment gives Northrop a "
+            "preferred technology partner for directed-energy payloads, complementing its "
+            "Integrated Air and Missile Defense (IAMD) portfolio. Epirus gains access to "
+            "Northrop's systems integration expertise and government customer relationships. "
+            "Deal size was not publicly disclosed."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "northropgrumman.com",
+        "target_logo_domain": "epirusinc.com",
+        "source_url": "https://www.northropgrumman.com/media/press-releases/northrop-grumman-makes-strategic-investment-in-epirus",
+        "announced_date": datetime(2023, 11, 7, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    # ── 2022 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Thales",
+        "target": "Imperva",
+        "deal_value": 3600,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Thales acquiert le leader US cybersécurité Imperva pour $3.6B — renforce sa division Digital Identity",
+        "rationale": (
+            "Thales completes its $3.6 billion acquisition of Imperva, a leading US cybersecurity "
+            "firm specialising in data and application security. The deal significantly strengthens "
+            "Thales's cyber-security revenue stream, adding web application firewall (WAF), "
+            "database activity monitoring (DAM) and DDoS protection products. Imperva's customer "
+            "base spans government, financial services and critical infrastructure — a natural "
+            "overlap with Thales's existing defence and government security portfolio. The combined "
+            "entity operates as Thales Digital Identity & Security."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "US",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "thalesgroup.com",
+        "source_url": "https://www.thalesgroup.com/en/group/journalist/press_release/thales-completes-acquisition-imperva",
+        "announced_date": datetime(2022, 12, 8, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "L3Harris Technologies",
+        "target": "Aerojet Rocketdyne",
+        "deal_value": 4700,
+        "status": "cancelled",
+        "deal_type": "acquisition",
+        "description": "L3Harris retire son offre $4.7B après le recours antitrust de la FTC — Aerojet reste indépendant",
+        "rationale": (
+            "L3Harris Technologies withdraws its proposed $4.7 billion acquisition of Aerojet "
+            "Rocketdyne after the Federal Trade Commission filed an antitrust suit in January 2023, "
+            "arguing the deal would harm competition in solid-rocket motor propulsion for US "
+            "missiles. The central concern was that a combined L3Harris–Aerojet entity could "
+            "disadvantage rival prime contractors bidding for propulsion contracts. L3Harris "
+            "withdrew in February 2023, leaving Aerojet Rocketdyne as an independent supplier "
+            "and reinforcing DoD concerns about consolidation risk in the US propulsion base."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "aerojet.com",
+        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
+        "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Parker Hannifin",
+        "target": "Meggitt",
+        "deal_value": 8800,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Parker Hannifin finalise l'acquisition de Meggitt (£6.3B / ~$8.8B) — composants aéro militaires UK",
+        "rationale": (
+            "Parker Hannifin closes its £6.3 billion (~$8.8 billion) acquisition of Meggitt plc, "
+            "a British aerospace components maker producing thermal management systems, aircraft "
+            "braking systems and sensing equipment for both military and commercial programmes. "
+            "The UK government accepted binding security undertakings — including commitments to "
+            "retain UK manufacturing and R&D investment — before approving the deal over a "
+            "competing bid from TransDigm. Meggitt adds over 7,000 employees and proprietary "
+            "products supplied across NATO air platforms. Closing: September 2022."
+        ),
+        "acquirer_country": "US",
+        "target_country": "GB",
+        "acquirer_logo_domain": "parker.com",
+        "target_logo_domain": "meggitt.com",
+        "source_url": "https://ir.parker.com/news-releases/news-release-details/parker-hannifin-completes-acquisition-meggitt-plc",
+        "announced_date": datetime(2021, 8, 2, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Rheinmetall",
+        "target": "Expal Systems",
+        "deal_value": 1200,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Rheinmetall acquiert Expal Systems ($1.2B) — premier fabricant espagnol de munitions",
+        "rationale": (
+            "Rheinmetall acquires Expal Systems, Spain's largest ammunition and energetics "
+            "manufacturer, from Maxamcorp for approximately $1.2 billion. The deal enhances "
+            "Rheinmetall's artillery ammunition production capacity at a time of surging European "
+            "demand driven by the conflict in Ukraine. Expal's facilities in Burgos produce "
+            "155mm artillery shells, mortar rounds, naval munitions and demilitarisation services. "
+            "The acquisition makes Rheinmetall one of the world's largest ammunition producers, "
+            "positioned to supply NATO's accelerating rearmament effort."
+        ),
+        "acquirer_country": "DE",
+        "target_country": "ES",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "rheinmetall.com",
+        "source_url": "https://www.rheinmetall.com/en/media/news-releases/2022/rheinmetall-acquires-expal-systems",
+        "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Hanwha Ocean",
+        "target": "Daewoo Shipbuilding",
+        "deal_value": 1500,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Hanwha acquiert DSME (~$1.5B) et crée Hanwha Ocean — champion naval coréen submarines & destroyers",
+        "rationale": (
+            "Hanwha Group acquires Daewoo Shipbuilding and Marine Engineering (DSME) for "
+            "approximately KRW 2 trillion (~$1.5 billion) and rebrands the company as Hanwha "
+            "Ocean, creating one of the world's largest shipbuilders with a dominant position "
+            "in submarine and naval surface vessel construction. Hanwha Ocean holds prime "
+            "contracts for KSS-III Batch II submarines, KDDX destroyers, and export programmes "
+            "to Poland and the Philippines. The deal positions Hanwha as a full-spectrum Korean "
+            "defence prime alongside Hanwha Aerospace and Hanwha Defense."
+        ),
+        "acquirer_country": "KR",
+        "target_country": "KR",
+        "acquirer_logo_domain": "hanwha.com",
+        "target_logo_domain": "hanwha.com",
+        "source_url": "https://www.hanwha.com/en/newsroom/news/press-releases/2022/hanwha-group-to-acquire-daewoo-shipbuilding-marine-engineering.html",
+        "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
     },
 ]

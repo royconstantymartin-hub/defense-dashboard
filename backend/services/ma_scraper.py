@@ -160,6 +160,8 @@ KNOWN_COMPANIES: Dict[str, Tuple[str, str]] = {
     "edge group":                ("AE", "edgegroup.ae"),
     "arianegroup":               ("FR", "arianegroup.com"),
     "rbsl":                      ("GB", "rheinmetall.com"),
+    # ── Canada ───────────────────────────────────────────────────────────────
+    "bombardier":                ("CA", "bombardier.com"),
 }
 
 # ── M&A keyword patterns for article filtering ────────────────────────────────
