@@ -80,6 +80,27 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
 }
 
 
+# ── Source-level defense relevance weights ───────────────────────────────────
+# Specialty defense outlets keep their full score (1.0).
+# Mainstream/generalist outlets get a penalty so they don't flood the feed with
+# tangentially-related articles. Scores are multiplied by this factor at scrape time.
+
+_SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
+    # Generalist dailies — low defense signal-to-noise
+    "Le Monde":         0.40,
+    "Le Figaro":        0.55,
+    "BFM Business":     0.50,
+    "Capital":          0.45,
+    "BBC News":         0.60,
+    "The Guardian":     0.60,
+    "Reuters Business": 0.65,
+    # Business press — good for M&A/budget but not pure defense
+    "L'Agefi":          0.75,
+    "Les Echos":        0.80,
+    "La Tribune":       0.80,
+}
+
+
 def assign_category(title: str) -> str:
     t = title.lower()
     for cat, keywords in CATEGORY_KEYWORDS.items():
@@ -326,7 +347,7 @@ def _fetch_og_image(article_url: str) -> Optional[str]:
     Used as a fallback when the RSS entry carries no image metadata.
     Short timeout (4 s) so it never blocks the scraper for long."""
     try:
-        resp = requests.get(article_url, headers=HEADERS, timeout=4, stream=True)
+        resp = requests.get(article_url, headers=HEADERS, timeout=6, stream=True)
         resp.raise_for_status()
         # Read only the first 32 KB — enough to find <meta> tags in <head>
         chunk = resp.raw.read(32768).decode("utf-8", errors="ignore")
@@ -387,6 +408,8 @@ def _fetch_rss(source: Dict) -> List[Dict]:
             src_region = source.get("region", "global")
             # For global sources try to narrow down region from content
             region = (detect_region_from_text(title, summary) or src_region) if src_region == "global" else src_region
+            raw_score = compute_relevance_score(title, summary)
+            weight    = _SOURCE_DEFENSE_WEIGHT.get(source["name"], 1.0)
             articles.append({
                 "title":          title,
                 "url":            url,
@@ -395,7 +418,7 @@ def _fetch_rss(source: Dict) -> List[Dict]:
                 "source":         source["name"],
                 "publishedAt":    _parse_entry_date(entry),
                 "category":       assign_category(title),
-                "relevanceScore": compute_relevance_score(title, summary),
+                "relevanceScore": int(raw_score * weight),
                 "language":       src_lang,
                 "region":         region,
             })
@@ -629,8 +652,11 @@ RSS_SOURCES: List[Dict] = [
     {"name": "The Guardian",              "url": "https://www.theguardian.com/world/rss",                                     "language": "en", "region": "global"},
     {"name": "Reuters Business",          "url": "https://feeds.reuters.com/reuters/businessNews",                            "language": "en", "region": "global"},
     # ── Mainstream — French ─────────────────────────────────────────────────
-    {"name": "Le Monde",                  "url": "https://www.lemonde.fr/rss/une.xml",                                        "language": "fr", "region": "europe"},
+    # Le Monde: généraliste, poids défense faible — limité à 8 articles
+    {"name": "Le Monde",                  "url": "https://www.lemonde.fr/rss/une.xml",                                        "language": "fr", "region": "europe", "max_items": 8},
     {"name": "Le Figaro",                 "url": "https://www.lefigaro.fr/rss/figaro_monde.xml",                              "language": "fr", "region": "europe"},
+    # Le Point — bonne couverture défense/sécurité en France
+    {"name": "Le Point",                  "url": "https://www.lepoint.fr/defense-et-securite/rss.xml",                        "language": "fr", "region": "europe", "max_items": 20},
     {"name": "Les Echos",                 "url": "https://www.lesechos.fr/arc/outboundfeeds/rss/",                            "language": "fr", "region": "europe"},
     # ── French business & industry press (M&A / finance / defense industry) ─
     # Usine Nouvelle: defense/aerospace section — targeted feed

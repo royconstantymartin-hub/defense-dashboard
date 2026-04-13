@@ -88,7 +88,7 @@ function relativeTime(dateStr) {
 const FR_SOURCES = new Set([
   "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
   "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
-  "Air & Cosmos", "L'Agefi", "Capital", "BFM Business",
+  "Air & Cosmos", "L'Agefi", "Capital", "BFM Business", "Le Point",
 ]);
 
 function resolveLanguage(article) {
@@ -150,16 +150,30 @@ const TIME_BAND_LABELS = {
 
 // ── Placeholder ───────────────────────────────────────────────────────────────
 
-function NewsPlaceholder({ source }) {
+const PLACEHOLDER_BG = {
+  CONTRACT:    "bg-emerald-900",
+  TECHNOLOGY:  "bg-purple-900",
+  CONFLICT:    "bg-red-900",
+  POLICY:      "bg-amber-900",
+  GEOPOLITICS: "bg-sky-900",
+  "M&A":       "bg-blue-900",
+  INDUSTRY:    "bg-slate-800",
+};
+
+function NewsPlaceholder({ source, category }) {
+  const bg = PLACEHOLDER_BG[category] || "bg-slate-800";
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.4">
+    <div className={`w-full h-full flex flex-col items-center justify-center ${bg}`}>
+      <svg width="44" height="44" viewBox="0 0 48 48" fill="none" opacity="0.35">
         <rect x="6" y="8" width="36" height="32" rx="3" stroke="white" strokeWidth="2" />
         <line x1="12" y1="18" x2="36" y2="18" stroke="white" strokeWidth="2" strokeLinecap="round" />
         <line x1="12" y1="24" x2="36" y2="24" stroke="white" strokeWidth="2" strokeLinecap="round" />
         <line x1="12" y1="30" x2="26" y2="30" stroke="white" strokeWidth="2" strokeLinecap="round" />
       </svg>
-      <span className="text-slate-500 text-[11px] mt-3 font-semibold tracking-wide uppercase">{source}</span>
+      <span className="text-slate-300 text-[11px] mt-3 font-semibold tracking-wide uppercase">{source}</span>
+      {category && category !== "INDUSTRY" && (
+        <span className="text-slate-500 text-[9px] mt-1 tracking-widest uppercase">{category}</span>
+      )}
     </div>
   );
 }
@@ -217,7 +231,7 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
             className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
           />
         ) : (
-          <NewsPlaceholder source={article.source} />
+          <NewsPlaceholder source={article.source} category={article.category} />
         )}
 
         {/* Bottom scrim for badge legibility */}
@@ -397,7 +411,7 @@ export default function Announcements() {
   const [scraping,      setScraping]      = useState(false);
   const [searchTerm,    setSearchTerm]    = useState("");
   const [selectedCat,   setSelectedCat]   = useState("all");
-  const [selectedLang,  setSelectedLang]  = useState("all");
+  const [selectedLang,  setSelectedLang]  = useState("en");
   const [selectedRegion,setSelectedRegion]= useState("all");
   const [lastUpdated,   setLastUpdated]   = useState(null);
   // Whether to show the "Earlier" (>7 days) bucket
@@ -746,18 +760,23 @@ export default function Announcements() {
       ) : (
         <div className="space-y-10">
 
-          {/* ── BREAKING INTEL — multi-source + high-importance stories ── */}
-          {breakingArticles.length > 0 && (
-            <div>
-              <SectionHeader
-                emoji="🔥"
-                label="Breaking Intel"
-                sublabel="— major contracts, deals &amp; strategic developments"
-                color="orange"
-              />
+          {/* ── BREAKING INTEL — last 24h, high-importance stories ── */}
+          <div>
+            <SectionHeader
+              emoji="🔥"
+              label="Breaking Intel"
+              sublabel="— major contracts, deals &amp; strategic developments"
+              color="orange"
+            />
+            {breakingArticles.length > 0 ? (
               <ArticleGrid articles={breakingArticles} {...cardProps} isHot />
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center gap-3 px-5 py-4 bg-white border border-orange-100 rounded-xl text-slate-500 text-sm">
+                <span className="text-xl">📡</span>
+                <span>Aucune news haute priorité dans les dernières 24h — prochaine actualisation à 07:00 ou 19:00 UTC.</span>
+              </div>
+            )}
+          </div>
 
           {/* ── TODAY ── */}
           {todayArticles.length > 0 && (
