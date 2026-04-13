@@ -988,7 +988,7 @@ async def run_news_scraper_job() -> dict:
             or a.get("relevanceScore", 0) >= MIN_MAINSTREAM_SCORE
         ]
 
-        # Sort by relevance (desc) then date (desc), keep top 150
+        # Sort by relevance (desc) then date (desc), keep top 300
         unique_articles.sort(
             key=lambda x: (
                 x.get("relevanceScore", 0),
@@ -996,7 +996,7 @@ async def run_news_scraper_job() -> dict:
             ),
             reverse=True,
         )
-        unique_articles = unique_articles[:150]
+        unique_articles = unique_articles[:300]
 
         scraped_at = datetime.now(timezone.utc)
         saved = 0
@@ -1157,7 +1157,7 @@ async def get_news(
     `offset`: skip first N results (for pagination).
     Falls back to the most recent batch when no fresh articles match.
     """
-    limit = min(max(limit, 1), 150)
+    limit = min(max(limit, 1), 300)
     hours = max(0, min(hours, 8760))  # cap at 1 year
     offset = max(0, offset)
 

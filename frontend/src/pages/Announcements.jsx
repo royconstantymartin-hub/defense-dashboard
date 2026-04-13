@@ -115,6 +115,10 @@ function isBreakingIntel(article) {
   const score    = article.relevanceScore ?? 0;
   const sources  = article.source_count  ?? 1;
   const cat      = article.category      ?? "";
+  const ageH     = differenceInHours(new Date(), new Date(article.publishedAt));
+
+  // Breaking Intel = dernières 24h uniquement
+  if (ageH > 24) return false;
 
   if (sources >= 2 && score >= 50) return true;
   if (score >= 80 && ["CONTRACT", "M&A", "POLICY", "TECHNOLOGY"].includes(cat)) return true;
@@ -413,12 +417,12 @@ export default function Announcements() {
     setHasMore(false);
     setShowEarlier(false);
     try {
-      const params = { limit: 120, hours: 168 };
+      const params = { limit: 200, hours: 168 };
       if (lang   !== "all") params.language = lang;
       if (region !== "all") params.region   = region;
       const resp = await axios.get(`${API}/news`, { params });
       setArticles(resp.data);
-      setHasMore(resp.data.length >= 120);
+      setHasMore(resp.data.length >= 200);
       setLastUpdated(new Date());
     } catch (err) {
       console.error("Error fetching news:", err);
