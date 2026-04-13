@@ -23,6 +23,7 @@ import {
   History,
   ChevronRight,
   Building2,
+  Globe2,
 } from "lucide-react";
 import {
   Dialog,
@@ -119,8 +120,13 @@ const AUTH_COUNTRY_CODES = {
   "Israel": "il", "India": "in", "South Korea": "kr", "EU": "eu",
 };
 
-function AuthorityFlag({ country }) {
-  const code = AUTH_COUNTRY_CODES[country];
+function AuthorityFlag({ country, authority = "" }) {
+  // OCCAR = organisation internationale → globe
+  if (authority.includes("OCCAR")) {
+    return (
+      <Globe2 size={13} className="text-slate-500 shrink-0" title="Organisation internationale" />
+    );
+  }
   if (country === "NATO") {
     return (
       <span className="inline-flex items-center text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded px-1 py-0.5 leading-none shrink-0">
@@ -128,6 +134,7 @@ function AuthorityFlag({ country }) {
       </span>
     );
   }
+  const code = AUTH_COUNTRY_CODES[country];
   if (!code) return null;
   return (
     <img
@@ -251,7 +258,7 @@ function ContractCard({ contract, onOpenProfile, onSelect }) {
               {contract.title}
             </CardTitle>
             <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
-              <AuthorityFlag country={contract.authority_country} />
+              <AuthorityFlag country={contract.authority_country} authority={contract.contracting_authority} />
               {contract.contracting_authority}
             </p>
           </div>
@@ -365,7 +372,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
             {contract.title}
           </DialogTitle>
           <p className="text-xs text-slate-500 flex items-center gap-1.5 flex-wrap mt-1">
-            <AuthorityFlag country={contract.authority_country} />
+            <AuthorityFlag country={contract.authority_country} authority={contract.contracting_authority} />
             {contract.contracting_authority} · {contract.authority_country}
           </p>
         </DialogHeader>
