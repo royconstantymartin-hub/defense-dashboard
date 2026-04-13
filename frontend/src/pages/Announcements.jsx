@@ -105,20 +105,21 @@ function langFlag(lang) {
  * Determine if an article qualifies as "Breaking Intel".
  *
  * Criteria — an article is Breaking Intel if it meets ANY of:
- *   1. Covered by 2+ sources AND relevance ≥ 50
- *      (multi-source = industry consensus on importance)
- *   2. Relevance ≥ 80 AND category is major (CONTRACT / M&A / POLICY / TECHNOLOGY)
- *      (very high-signal single-source story on a strategic topic)
- *   3. Relevance ≥ 90 regardless of category
- *      (exceptional news that would be top of any briefing)
+ *   1. adminApproved = true  (manually validated by an admin — no age/score restriction)
+ *   2. Covered by 2+ sources AND relevance ≥ 50, within last 24h
+ *   3. Relevance ≥ 80 AND category is major (CONTRACT / M&A / POLICY / TECHNOLOGY), within 24h
+ *   4. Relevance ≥ 90 regardless of category, within 24h
  */
 function isBreakingIntel(article) {
+  // Admin-validated articles always appear in Breaking Intel
+  if (article.adminApproved) return true;
+
   const score    = article.relevanceScore ?? 0;
   const sources  = article.source_count  ?? 1;
   const cat      = article.category      ?? "";
   const ageH     = differenceInHours(new Date(), new Date(article.publishedAt));
 
-  // Breaking Intel = dernières 24h uniquement
+  // Algorithmic criteria apply to last 24h only
   if (ageH > 24) return false;
 
   if (sources >= 2 && score >= 50) return true;
@@ -239,11 +240,15 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
 
         {/* Score badge — top left */}
-        {score >= 70 && (
+        {article.adminApproved ? (
+          <span className="absolute top-3 left-3 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow flex items-center gap-1">
+            ★ VALIDATED
+          </span>
+        ) : score >= 70 ? (
           <span className="absolute top-3 left-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow">
             HIGH
           </span>
-        )}
+        ) : null}
 
         {/* NEW badge — top right */}
         {isNew && (

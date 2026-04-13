@@ -1152,6 +1152,9 @@ def _build_news_query(
     """
     conditions: list = [{"scrapedAt": {"$gte": cutoff}}]
 
+    # Always exclude admin-rejected articles from the public feed
+    conditions.append({"adminRejected": {"$ne": True}})
+
     # Always enforce: specialty sources OR sufficient relevance score
     conditions.append({"$or": [
         {"source": {"$in": _SPECIALTY_SOURCES_LIST}},
@@ -1414,6 +1417,70 @@ async def trigger_scrape(current_user: dict = Depends(get_current_user)):
     """Manually trigger the news scraper (requires authentication)."""
     stats = await run_news_scraper_job()
     return {"status": "ok", **stats}
+
+
+# ── News moderation models ──────────────────────────────────────────────────
+
+class NewsModerationAction(BaseModel):
+    url: str
+    action: str  # "approve" | "reject" | "reset" | "recategorize"
+    category: Optional[str] = None
+
+
+@api_router.get("/admin/news")
+async def admin_get_news(
+    moderation: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0,
+    current_user: dict = Depends(get_current_user),
+):
+    """Return articles with moderation metadata (admin only).
+    moderation filter: 'approved' | 'rejected' | 'pending' | None (all)
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    limit  = min(max(limit, 1), 200)
+    offset = max(0, offset)
+    query: dict = {}
+    if moderation == "approved":
+        query["adminApproved"] = True
+    elif moderation == "rejected":
+        query["adminRejected"] = True
+    elif moderation == "pending":
+        query["adminApproved"] = {"$ne": True}
+        query["adminRejected"] = {"$ne": True}
+    articles = await db.news_articles.find(
+        query, {"_id": 0}
+    ).sort([("scrapedAt", -1)]).skip(offset).limit(limit).to_list(limit)
+    return [_normalise_article(a) for a in articles]
+
+
+@api_router.patch("/admin/news/moderate")
+async def moderate_news_article(
+    data: NewsModerationAction,
+    current_user: dict = Depends(get_current_user),
+):
+    """Approve, reject, reset, or recategorize a news article (admin only)."""
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    exists = await db.news_articles.find_one({"url": data.url}, {"_id": 1})
+    if not exists:
+        raise HTTPException(status_code=404, detail="Article not found")
+    if data.action == "approve":
+        update = {"$set": {"adminApproved": True}, "$unset": {"adminRejected": ""}}
+    elif data.action == "reject":
+        update = {"$set": {"adminRejected": True}, "$unset": {"adminApproved": ""}}
+    elif data.action == "reset":
+        update = {"$unset": {"adminApproved": "", "adminRejected": ""}}
+    elif data.action == "recategorize":
+        if not data.category:
+            raise HTTPException(status_code=400, detail="category is required for recategorize")
+        update = {"$set": {"category": data.category}}
+    else:
+        raise HTTPException(status_code=400, detail=f"Unknown action: {data.action}")
+    await db.news_articles.update_one({"url": data.url}, update)
+    return {"ok": True}
+
 
 # ============= M&A SCRAPER JOB =============
 
