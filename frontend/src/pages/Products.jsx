@@ -265,7 +265,6 @@ export default function Products() {
 
   // YouTube video availability: track which product names have a broken/deleted video
   const [brokenVideos, setBrokenVideos] = useState(new Set());
-  const checkedVideoIds = useRef(new Set()); // avoid duplicate oembed requests
 
   // Wikipedia image fallback: fetched client-side when DB image_url is missing or broken
   const [wikiImages, setWikiImages] = useState({});   // productId → url
@@ -297,33 +296,6 @@ export default function Products() {
     });
   }, [filteredProducts, fetchWikiImage]);
 
-  // Check YouTube video availability via oembed when a product is selected.
-  // YouTube oembed returns 404 for deleted/unavailable videos (unlike thumbnail URLs
-  // which silently return a placeholder image). We mark broken videos to hide the section.
-  useEffect(() => {
-    if (!selectedProduct) return;
-    const videoId = YOUTUBE_VIDEOS[selectedProduct.name];
-    if (!videoId || checkedVideoIds.current.has(videoId)) return;
-    checkedVideoIds.current.add(videoId);
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-
-    fetch(
-      `https://www.youtube.com/oembed?url=https%3A//www.youtube.com/watch%3Fv%3D${videoId}&format=json`,
-      { signal: controller.signal }
-    )
-      .then(r => {
-        if (!r.ok) {
-          setBrokenVideos(prev => new Set([...prev, selectedProduct.name]));
-        }
-      })
-      .catch(() => {
-        // Network error or abort — treat video as unavailable
-        setBrokenVideos(prev => new Set([...prev, selectedProduct.name]));
-      })
-      .finally(() => clearTimeout(timeout));
-  }, [selectedProduct]);
 
   const goToCompanyProfile = (e, manufacturer) => {
     e.stopPropagation();
@@ -962,7 +934,10 @@ export default function Products() {
                         src={`https://img.youtube.com/vi/${YOUTUBE_VIDEOS[selectedProduct.name]}/hqdefault.jpg`}
                         alt={`${selectedProduct.name} presentation`}
                         className="absolute inset-0 w-full h-full object-cover"
-                        onError={(ev) => { ev.target.style.display = 'none'; }}
+                        onError={(ev) => {
+                          ev.target.style.display = 'none';
+                          setBrokenVideos(prev => new Set([...prev, selectedProduct.name]));
+                        }}
                       />
                       {/* Fallback icon shown when thumbnail fails to load */}
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
