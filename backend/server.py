@@ -954,10 +954,11 @@ async def run_news_scraper_job() -> dict:
         "Army Technology", "Naval Technology", "Airforce Technology",
         "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
         "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
+        "Le Point",
     }
     _FR_SOURCES = {
         "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
-        "Usine Nouvelle", "Challenges", "La Tribune",
+        "Usine Nouvelle", "Challenges", "La Tribune", "Le Point",
     }
     _SOURCE_REGION = {
         "Breaking Defense": "us",     "Defense News": "us",   "Defense Industry Daily": "us",
@@ -1048,7 +1049,7 @@ async def run_news_scraper_job() -> dict:
 # Source-level metadata used both for query fallback and response normalisation
 _FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
                    "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
-                   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business"]
+                   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business", "Le Point"]
 _FR_SOURCES_SET = set(_FR_SOURCES)
 _SOURCE_REGION_MAP: dict = {
     "Breaking Defense": "us",     "Defense News": "us",          "Defense Industry Daily": "us",
@@ -1058,7 +1059,7 @@ _SOURCE_REGION_MAP: dict = {
     "Le Monde": "europe",         "Le Figaro": "europe",         "Les Echos": "europe",
     "Usine Nouvelle": "europe",   "Challenges": "europe",        "La Tribune": "europe",
     "La Tribune Défense": "europe", "L'Agefi": "europe",         "Capital": "europe",
-    "BFM Business": "europe",     "NATO": "europe",
+    "BFM Business": "europe",     "NATO": "europe",              "Le Point": "europe",
     "The Defense Post": "global", "BBC News": "global",
     "The Guardian": "global",     "Janes": "global",
     "The War Zone": "global",     "Aviation Week": "global",
@@ -1079,7 +1080,7 @@ _SPECIALTY_SOURCES_LIST = [
     "The War Zone", "Defense One", "Aviation Week",
     "Army Technology", "Naval Technology", "Airforce Technology",
     "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
-    "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
+    "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense", "Le Point",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 
