@@ -1765,6 +1765,79 @@ async def _apply_product_images():
     except Exception as exc:
         logger.error("Product image migration error: %s", exc)
 
+async def _purge_scraper_junk():
+    """
+    Run on every startup — remove hallucinated / duplicate scraper M&A entries.
+    Uses direct MongoDB queries so no Python-side iteration needed for the
+    most obvious cases. Then does a cross-reference pass against seed data.
+    """
+    try:
+        import re as _re
+
+        # ── Pass 1: delete scraper entries with no source URL ─────────────────
+        r1 = await db.ma_activities.delete_many({
+            "scraped_at": {"$exists": True},
+            "$or": [{"source_url": None}, {"source_url": ""}],
+        })
+
+        # ── Pass 2: delete entries whose target is a known hallucination ──────
+        _HALLUC_RE = (
+            r"^(formation|multiple\s+targets?|multiple\s+(uae\s+)?defense\s+companies?|"
+            r"various|combined|new\s+\w+|subsidiary|unnamed|undisclosed(\s+target)?|"
+            r"strategic\s+assets?|portfolio\s+(companies?|co\.?)|defense\s+assets?|"
+            r"aerospace\s+assets?|target\s+company|several\s+companies?|"
+            r"multiple|various\s+companies?)$"
+        )
+        r2 = await db.ma_activities.delete_many({
+            "scraped_at": {"$exists": True},
+            "target": {"$regex": _HALLUC_RE, "$options": "i"},
+        })
+
+        # ── Pass 3: cross-reference against seeded (acquirer, target) pairs ───
+        from data.seed_data import MA_DATA, MA_EXTRA_DEALS, MA_PILOT_15
+
+        def _norm(s: str) -> str:
+            return _re.sub(r"\s+", " ", s.lower().strip())
+
+        # Build lookup: first word of acquirer → set of first words of targets
+        seed_pairs: set = set()
+        seed_tgt_words: set = set()
+        seed_acq_first: set = set()
+        for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
+            aw = _norm(m["acquirer"]).split()
+            tw = _norm(m["target"]).split()
+            if aw and tw:
+                seed_pairs.add((aw[0], tw[0]))
+                seed_acq_first.add(aw[0])
+            for w in tw:
+                if len(w) > 3:
+                    seed_tgt_words.add(w)
+
+        scraped = await db.ma_activities.find(
+            {"scraped_at": {"$exists": True}},
+            {"_id": 0, "id": 1, "acquirer": 1, "target": 1},
+        ).to_list(5000)
+
+        r3 = 0
+        for e in scraped:
+            aw = _norm(e.get("acquirer", "")).split()
+            tw = _norm(e.get("target", "")).split()
+            if not aw or not tw:
+                await db.ma_activities.delete_one({"id": e["id"]}); r3 += 1; continue
+            exact = (aw[0], tw[0]) in seed_pairs
+            acq_known = aw[0] in seed_acq_first
+            tgt_dup = any(w in seed_tgt_words for w in tw if len(w) > 3)
+            if exact or (acq_known and tgt_dup):
+                await db.ma_activities.delete_one({"id": e["id"]}); r3 += 1
+
+        logger.info(
+            "M&A scraper junk purge: %d no-source, %d hallucinated target, %d duplicates removed",
+            r1.deleted_count, r2.deleted_count, r3,
+        )
+    except Exception as exc:
+        logger.warning("M&A scraper junk purge failed (non-fatal): %s", exc)
+
+
 async def _auto_seed():
     """Silently seed reference data on startup. Errors are logged, never raised."""
     try:
@@ -1808,6 +1881,8 @@ async def startup_event():
     logger.info("Stock price cache cleared on startup")
     # Auto-seed reference data on every startup (idempotent — skips existing rows)
     asyncio.create_task(_auto_seed())
+    # Purge scraper junk immediately — no button click needed
+    asyncio.create_task(_purge_scraper_junk())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
