@@ -727,7 +727,7 @@ export default function MAActivity() {
   const [selectedType,   setSelectedType]      = useState("all");
   const [selectedYear,   setSelectedYear]      = useState("all");
   const [profileName,    setProfileName]       = useState(null);
-  const [period,         setPeriod]            = useState("30");
+  const [period,         setPeriod]            = useState("0");
   const [sortField,      setSortField]         = useState("announced_date");
   const [sortDir,        setSortDir]           = useState("desc");
   const [hasMore,        setHasMore]           = useState(false);
@@ -1044,7 +1044,7 @@ export default function MAActivity() {
             tab === "recent" ? "bg-white text-purple-700 shadow-sm" : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          Last {periodLabel}
+          {period === "0" ? "All Deals" : `Last ${periodLabel}`}
         </button>
         <button
           onClick={() => setTab("historical")}
