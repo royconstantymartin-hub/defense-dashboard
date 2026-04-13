@@ -520,50 +520,62 @@ function MACard({ activity, onOpenProfile }) {
 
             {/* Source + details */}
             <div className="flex flex-col items-start gap-1">
-              {activity.source_url ? (
-                <span className="flex items-center gap-1 text-[9px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                  <CheckCircle2 className="w-2.5 h-2.5" /> Sourced
-                </span>
-              ) : (
-                <span className="flex items-center gap-1 text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
-                  <AlertCircle className="w-2.5 h-2.5" /> Unsourced
-                </span>
+              {activity.source_url && (
+                <a
+                  href={activity.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-[9px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full hover:bg-emerald-100 transition-colors"
+                >
+                  <ExternalLink className="w-2.5 h-2.5" /> Source
+                </a>
               )}
-              {(activity.rationale || activity.source_url) && (
+              {(activity.rationale || activity.description) && (
                 <button
                   onClick={() => setOpen((v) => !v)}
                   className="flex items-center gap-0.5 text-[11px] text-purple-600 hover:text-purple-800 font-semibold transition-colors mt-0.5"
                 >
                   {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                  {open ? "Less" : "Details"}
+                  {open ? "Moins" : "Détails"}
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* Description */}
-        <p className="text-slate-500 text-[13px] mt-4 pt-3 border-t border-slate-100 leading-relaxed">
-          {activity.description}
-        </p>
+        {/* Description — always visible */}
+        {activity.description && (
+          <p className="text-slate-500 text-[13px] mt-4 pt-3 border-t border-slate-100 leading-relaxed">
+            {activity.description}
+          </p>
+        )}
 
-        {/* Accordion */}
-        {open && (activity.rationale || activity.source_url) && (
-          <div className="mt-3 pt-3 border-t border-purple-100 space-y-2">
+        {/* Accordion — rationale + source link */}
+        {open && (
+          <div className="mt-3 pt-3 border-t border-purple-100 space-y-3">
             {activity.rationale && (
               <p className="text-slate-600 text-sm leading-relaxed">{activity.rationale}</p>
             )}
-            {activity.source_url && (
-              <a
-                href={activity.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 font-semibold"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                Source article
-              </a>
-            )}
+            <div className="flex flex-wrap gap-3 items-center">
+              {activity.acquirer_country && (
+                <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+                  <FlagImg iso2={activity.acquirer_country} /> {activity.acquirer_country}
+                  {" → "}
+                  {activity.target_country && <><FlagImg iso2={activity.target_country} /> {activity.target_country}</>}
+                </span>
+              )}
+              {activity.source_url && (
+                <a
+                  href={activity.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 font-semibold"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  Lire la source
+                </a>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -628,14 +640,16 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
             <span className={`text-xs font-medium px-2.5 py-1 rounded-full border w-fit ${getStatusStyle(activity.status)}`}>
               {formatStatus(activity.status)}
             </span>
-            {activity.source_url ? (
-              <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600">
-                <CheckCircle2 className="w-2.5 h-2.5" /> Sourced
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-[10px] font-medium text-amber-500">
-                <AlertCircle className="w-2.5 h-2.5" /> Unsourced
-              </span>
+            {activity.source_url && (
+              <a
+                href={activity.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 text-[10px] font-medium text-emerald-600 hover:text-emerald-800"
+              >
+                <ExternalLink className="w-2.5 h-2.5" /> Source
+              </a>
             )}
           </div>
         </td>
