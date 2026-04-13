@@ -773,7 +773,7 @@ export default function Announcements() {
             ) : (
               <div className="flex items-center gap-3 px-5 py-4 bg-white border border-orange-100 rounded-xl text-slate-500 text-sm">
                 <span className="text-xl">📡</span>
-                <span>Aucune news haute priorité dans les dernières 24h — prochaine actualisation à 07:00 ou 19:00 UTC.</span>
+                <span>No high-priority news in the last 24h — next refresh at 07:00 or 19:00 UTC.</span>
               </div>
             )}
           </div>

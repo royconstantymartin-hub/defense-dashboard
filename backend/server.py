@@ -954,7 +954,7 @@ async def run_news_scraper_job() -> dict:
         "Army Technology", "Naval Technology", "Airforce Technology",
         "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
         "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
-        "Le Point",
+        "Le Point", "USNI News", "Task & Purpose",
     }
     _FR_SOURCES = {
         "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
@@ -1065,6 +1065,8 @@ _SOURCE_REGION_MAP: dict = {
     "The War Zone": "global",     "Aviation Week": "global",
     "Army Technology": "global",  "Naval Technology": "global",  "Airforce Technology": "global",
     "Shephard Media": "global",   "Flight Global": "global",     "SpaceNews": "global",
+    "USNI News": "us",            "Task & Purpose": "us",
+    "The Guardian Defence": "global",
 }
 # Invert: region → list of sources whose default region is that value
 _REGION_SOURCES: dict = {}
@@ -1081,6 +1083,7 @@ _SPECIALTY_SOURCES_LIST = [
     "Army Technology", "Naval Technology", "Airforce Technology",
     "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
     "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense", "Le Point",
+    "USNI News", "Task & Purpose", "The Guardian Defence",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 
