@@ -98,6 +98,10 @@ _SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
     "L'Agefi":          0.75,
     "Les Echos":        0.80,
     "La Tribune":       0.80,
+    # Broad geopolitics / analysis — good signal but not pure defense
+    "Foreign Policy":   0.70,
+    "Bellingcat":       0.80,
+    "Stars and Stripes": 0.90,
 }
 
 
@@ -662,10 +666,24 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Air Force Magazine",        "url": "https://www.airforcemag.com/feed/",                                         "language": "en", "region": "us",      "max_items": 30},
     {"name": "Shephard Media",            "url": "https://www.shephardmedia.com/rss/news/",                                   "language": "en", "region": "global",  "max_items": 30},
     {"name": "Flight Global",             "url": "https://www.flightglobal.com/rss/",                                         "language": "en", "region": "global",  "max_items": 30},
+    {"name": "The Aviationist",           "url": "https://theaviationist.com/feed/",                                          "language": "en", "region": "global",  "max_items": 40},
+    {"name": "Naval News",                "url": "https://www.navalnews.com/feed/",                                           "language": "en", "region": "global",  "max_items": 35},
+    {"name": "War on the Rocks",          "url": "https://warontherocks.com/feed/",                                           "language": "en", "region": "global",  "max_items": 30},
+    {"name": "Real Clear Defense",        "url": "https://www.realcleardefense.com/rss/all.rss",                              "language": "en", "region": "global",  "max_items": 30},
+    {"name": "Army Times",                "url": "https://www.armytimes.com/arc/outboundfeeds/rss/",                          "language": "en", "region": "us",      "max_items": 30},
+    {"name": "Navy Times",                "url": "https://www.navytimes.com/arc/outboundfeeds/rss/",                          "language": "en", "region": "us",      "max_items": 30},
+    {"name": "Air Force Times",           "url": "https://www.airforcetimes.com/arc/outboundfeeds/rss/",                     "language": "en", "region": "us",      "max_items": 30},
+    {"name": "Marine Corps Times",        "url": "https://www.marinecorpstimes.com/arc/outboundfeeds/rss/",                  "language": "en", "region": "us",      "max_items": 20},
+    {"name": "Stars and Stripes",         "url": "https://www.stripes.com/arc/outboundfeeds/rss/",                           "language": "en", "region": "us",      "max_items": 30},
+    {"name": "Foreign Policy",            "url": "https://foreignpolicy.com/feed/",                                          "language": "en", "region": "global",  "max_items": 20},
+    {"name": "Bellingcat",                "url": "https://www.bellingcat.com/feed/",                                          "language": "en", "region": "global",  "max_items": 20},
+    {"name": "UK Ministry of Defence",    "url": "https://www.gov.uk/government/organisations/ministry-of-defence.atom",     "language": "en", "region": "europe",  "max_items": 20},
     # ── Defense specialty — French ──────────────────────────────────────────
     {"name": "Opex360",                   "url": "https://www.opex360.com/feed/",                                             "language": "fr", "region": "europe",  "max_items": 40},
     {"name": "Meta-Défense",              "url": "https://meta-defense.fr/feed/",                                             "language": "fr", "region": "europe",  "max_items": 40},
     {"name": "Air & Cosmos",              "url": "https://www.air-cosmos.com/rss",                                            "language": "fr", "region": "europe",  "max_items": 30},
+    {"name": "TTU",                       "url": "https://www.ttu.fr/feed/",                                                  "language": "fr", "region": "europe",  "max_items": 30},
+    {"name": "Mer et Marine",             "url": "https://www.meretmarine.com/fr/rss.xml",                                   "language": "fr", "region": "europe",  "max_items": 25},
     # ── Mainstream — English ────────────────────────────────────────────────
     {"name": "BBC News",                  "url": "http://feeds.bbci.co.uk/news/world/rss.xml",                                "language": "en", "region": "global"},
     {"name": "The Guardian",              "url": "https://www.theguardian.com/world/rss",                                     "language": "en", "region": "global"},

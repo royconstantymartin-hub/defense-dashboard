@@ -987,10 +987,16 @@ async def run_news_scraper_job() -> dict:
         "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
         "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
         "Le Point", "USNI News", "Task & Purpose",
+        # New specialty sources
+        "The Aviationist", "Naval News", "War on the Rocks", "Real Clear Defense",
+        "Army Times", "Navy Times", "Air Force Times", "Marine Corps Times",
+        "Stars and Stripes", "TTU", "Mer et Marine", "UK Ministry of Defence",
+        "Flight Global",
     }
     _FR_SOURCES = {
         "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
         "Usine Nouvelle", "Challenges", "La Tribune", "Le Point",
+        "TTU", "Mer et Marine",
     }
     _SOURCE_REGION = {
         "Breaking Defense": "us",     "Defense News": "us",   "Defense Industry Daily": "us",
@@ -1021,7 +1027,7 @@ async def run_news_scraper_job() -> dict:
             or a.get("relevanceScore", 0) >= MIN_MAINSTREAM_SCORE
         ]
 
-        # Sort by relevance (desc) then date (desc), keep top 300
+        # Sort by relevance (desc) then date (desc), keep top 500
         unique_articles.sort(
             key=lambda x: (
                 x.get("relevanceScore", 0),
@@ -1029,7 +1035,7 @@ async def run_news_scraper_job() -> dict:
             ),
             reverse=True,
         )
-        unique_articles = unique_articles[:300]
+        unique_articles = unique_articles[:500]
 
         scraped_at = datetime.now(timezone.utc)
         saved = 0
@@ -1081,24 +1087,29 @@ async def run_news_scraper_job() -> dict:
 # Source-level metadata used both for query fallback and response normalisation
 _FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
                    "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
-                   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business", "Le Point"]
+                   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business", "Le Point",
+                   "TTU", "Mer et Marine"]
 _FR_SOURCES_SET = set(_FR_SOURCES)
 _SOURCE_REGION_MAP: dict = {
     "Breaking Defense": "us",     "Defense News": "us",          "Defense Industry Daily": "us",
     "Defense One": "us",          "C4ISRNET": "us",              "National Defense Magazine": "us",
-    "Air Force Magazine": "us",
+    "Air Force Magazine": "us",   "Army Times": "us",            "Navy Times": "us",
+    "Air Force Times": "us",      "Marine Corps Times": "us",    "Stars and Stripes": "us",
+    "USNI News": "us",            "Task & Purpose": "us",
     "Opex360": "europe",          "Meta-Défense": "europe",      "Air & Cosmos": "europe",
     "Le Monde": "europe",         "Le Figaro": "europe",         "Les Echos": "europe",
     "Usine Nouvelle": "europe",   "Challenges": "europe",        "La Tribune": "europe",
     "La Tribune Défense": "europe", "L'Agefi": "europe",         "Capital": "europe",
     "BFM Business": "europe",     "NATO": "europe",              "Le Point": "europe",
+    "TTU": "europe",              "Mer et Marine": "europe",     "UK Ministry of Defence": "europe",
     "The Defense Post": "global", "BBC News": "global",
     "The Guardian": "global",     "Janes": "global",
     "The War Zone": "global",     "Aviation Week": "global",
     "Army Technology": "global",  "Naval Technology": "global",  "Airforce Technology": "global",
     "Shephard Media": "global",   "Flight Global": "global",     "SpaceNews": "global",
-    "USNI News": "us",            "Task & Purpose": "us",
     "The Guardian Defence": "global",
+    "The Aviationist": "global",  "Naval News": "global",        "War on the Rocks": "global",
+    "Real Clear Defense": "global", "Foreign Policy": "global",  "Bellingcat": "global",
 }
 # Invert: region → list of sources whose default region is that value
 _REGION_SOURCES: dict = {}
@@ -1116,6 +1127,11 @@ _SPECIALTY_SOURCES_LIST = [
     "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
     "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense", "Le Point",
     "USNI News", "Task & Purpose", "The Guardian Defence",
+    # New specialty sources
+    "The Aviationist", "Naval News", "War on the Rocks", "Real Clear Defense",
+    "Army Times", "Navy Times", "Air Force Times", "Marine Corps Times",
+    "Stars and Stripes", "TTU", "Mer et Marine", "UK Ministry of Defence",
+    "Flight Global",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 

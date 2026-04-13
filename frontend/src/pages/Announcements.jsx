@@ -89,6 +89,7 @@ const FR_SOURCES = new Set([
   "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
   "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business", "Le Point",
+  "TTU", "Mer et Marine",
 ]);
 
 function resolveLanguage(article) {
@@ -431,7 +432,7 @@ export default function Announcements() {
     setHasMore(false);
     setShowEarlier(false);
     try {
-      const params = { limit: 200, hours: 168 };
+      const params = { limit: 300, hours: 168 };
       if (lang   !== "all") params.language = lang;
       if (region !== "all") params.region   = region;
       const resp = await axios.get(`${API}/news`, { params });
