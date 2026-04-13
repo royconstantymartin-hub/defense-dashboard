@@ -422,7 +422,7 @@ export default function Dashboard() {
                     <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Company</th>
                     <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Ticker</th>
                     <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Price</th>
-                    <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Change</th>
+                    <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Since Open</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -430,7 +430,7 @@ export default function Dashboard() {
                     const flagUrl = getFlag(player.country);
                     const live = livePrices[player.ticker];
                     const price = live?.price ?? player.stock_price;
-                    const change = live?.change_percent ?? player.change_percent;
+                    const change = live?.change_since_open ?? live?.change_percent ?? player.change_percent;
                     const isLive = !!live;
                     return (
                       <tr key={player.id} className="border-b border-slate-100 hover:bg-purple-50/30 transition-colors">
