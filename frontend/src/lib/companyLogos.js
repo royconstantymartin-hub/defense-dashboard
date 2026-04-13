@@ -196,6 +196,9 @@ export const COMPANY_WIKI_LOGOS = {
   // France
   "Airbus Defence & Space":        WP + "Airbus_Logo_2017.svg",
   "Airbus Defence Spain":          WP + "Airbus_Logo_2017.svg",
+  "Airbus":                        WP + "Airbus_Logo_2017.svg",
+  "Airbus Helicopters":            WP + "Airbus_Logo_2017.svg",
+  "Indra":                         WP + "Indra_Sistemas_logo.svg",
   "Thales":                        WP + "Thales_Logo.svg",
   "Thales Nederland":              WP + "Thales_Logo.svg",
   "Safran":                        WP + "Logo_Safran.svg",

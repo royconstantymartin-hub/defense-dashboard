@@ -2226,7 +2226,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Airbus / Dassault Aviation / Indra",
         "program": "FCAS / SCAF",
-        "source_url": "https://www.defense.gouv.fr/actualites",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2022-12-europes-future-combat-air-system-on-the-way-to-the-first-flight",
         "reliability": "confirmed",
     },
     {
@@ -2243,7 +2243,7 @@ CONTRACTS_DATA = [
         "deadline": "2025-06-30",
         "awarded_to": None,
         "program": "MGCS",
-        "source_url": "https://www.knds.com",
+        "source_url": "https://www.knds.com/en/news",
         "reliability": "confirmed",
     },
     {
@@ -2260,7 +2260,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Naval Group",
         "program": "FDI",
-        "source_url": "https://www.naval-group.com/en/news",
+        "source_url": "https://www.naval-group.com/en/france-orders-additional-defence-and-intervention-frigate-fdi-naval-group",
         "reliability": "confirmed",
     },
     {
@@ -2277,7 +2277,7 @@ CONTRACTS_DATA = [
         "deadline": "2025-03-31",
         "awarded_to": None,
         "program": "Type 31",
-        "source_url": "https://www.gov.uk/government/organisations/ministry-of-defence",
+        "source_url": "https://www.gov.uk/government/news/babcock-wins-1-25-billion-contract-to-build-five-type-31-frigates",
         "reliability": "estimated",
     },
     {
@@ -2294,7 +2294,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Lockheed Martin",
         "program": "F-35 JSF",
-        "source_url": "https://www.defense.gov/News/Releases/",
+        "source_url": "https://news.lockheedmartin.com/2022-12-30-Pentagon-and-Lockheed-Martin-Finalize-Lot-15-17-Agreement,-Capping-a-Year-of-International-Growth",
         "reliability": "confirmed",
     },
     {
@@ -2311,7 +2311,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "MBDA / Thales",
         "program": "SAMP/T NG",
-        "source_url": "https://www.mbda-systems.com/product/aster-30-sampt/",
+        "source_url": "https://www.occar.int/news/occar-signs-contract-to-launch-a-global-production-of-sampt-ng-systems",
         "reliability": "confirmed",
     },
     {
@@ -2345,7 +2345,7 @@ CONTRACTS_DATA = [
         "deadline": "2024-11-30",
         "awarded_to": None,
         "program": None,
-        "source_url": "https://www.nspa.nato.int/business/procurement",
+        "source_url": "https://www.ncia.nato.int/Procurement/Pages/procurement.aspx",
         "reliability": "confirmed",
     },
     {
@@ -2362,7 +2362,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Airbus Helicopters",
         "program": "HIL Guépard",
-        "source_url": "https://www.airbus.com/en/products-services/defence/rotorcraft/h160m-guepard",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2021-12-france-orders-the-h160m-for-its-joint-light-helicopter-programme",
         "reliability": "confirmed",
     },
     {
@@ -2379,12 +2379,12 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "BAE Systems / ASC",
         "program": "SSN-AUKUS",
-        "source_url": "https://www.gov.uk/government/organisations/ministry-of-defence",
+        "source_url": "https://www.gov.uk/government/news/4-billion-uk-contracts-progresses-aukus-submarine-design",
         "reliability": "confirmed",
     },
     {
-        "title": "Poland F-35A — 48 Aircraft Full Production",
-        "description": "Production and delivery contract for 48 F-35A aircraft for the Polish Air Force. Part of Poland's largest ever defense procurement under Zeitenwende pressure.",
+        "title": "Poland F-35A — 32 Aircraft Full Production",
+        "description": "Production and delivery contract for 32 F-35A aircraft for the Polish Air Force. Part of Poland's largest ever defense procurement, with first aircraft delivered in late 2024.",
         "contracting_authority": "Polish Ministry of Defence",
         "authority_country": "Poland",
         "authority_type": "national",
@@ -2396,7 +2396,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Lockheed Martin",
         "program": "F-35 JSF",
-        "source_url": "https://www.defensenews.com",
+        "source_url": "https://news.lockheedmartin.com/2024-08-28-Poland-and-Lockheed-Martin-Celebrate-Debut-of-Polands-First-F-35A-Husarz",
         "reliability": "confirmed",
     },
     {
@@ -2413,7 +2413,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Rheinmetall / PSM",
         "program": "Puma S1",
-        "source_url": "https://www.bmvg.de",
+        "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2023/apr/2023-04-19-order-puma",
         "reliability": "confirmed",
     },
 ]
