@@ -154,6 +154,8 @@ class DefensePlayer(BaseModel):
     funding_stage: Optional[str] = None
     is_public: Optional[bool] = None
     description: Optional[str] = None
+    programs: Optional[List[str]] = None
+    export_countries: Optional[List[str]] = None
 
 # Defense Expenditure Model
 class ExpenditureCreate(BaseModel):
