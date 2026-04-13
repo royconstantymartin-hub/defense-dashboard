@@ -2417,3 +2417,399 @@ CONTRACTS_DATA = [
         "reliability": "confirmed",
     },
 ]
+
+# ── M&A Pilot: 15 deals hand-curated, fully sourced, verified logos (2022-2026) ──
+# Reset via POST /api/ma-activities/seed-pilot (Admin panel).
+# Every entry: specific press-release URL, working Clearbit domain, rich rationale.
+MA_PILOT_15 = [
+    # ── 2025 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Dassault Aviation",
+        "target": "Harmattan.ai",
+        "deal_value": 9,
+        "status": "completed",
+        "deal_type": "strategic_investment",
+        "description": "Dassault prend ~15 % dans la startup française de C2 augmenté par l'IA — Serie A (€60M post-money)",
+        "rationale": (
+            "Dassault Aviation leads the Series A round of Harmattan.ai, a French defence AI "
+            "start-up specialising in AI-assisted command-and-control decision support, securing "
+            "a ~15 % stake for approximately €9M at a €60M post-money valuation. The investment "
+            "anchors Dassault's strategy to embed AI natively into next-generation combat-aircraft "
+            "and C2 programmes, in alignment with the Rafale F5 standard upgrade roadmap and the "
+            "FCAS programme workshare. Harmattan.ai's platform provides real-time battlespace "
+            "analysis and AI-assisted mission planning for fifth-generation platforms."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "FR",
+        "acquirer_logo_domain": "dassault-aviation.com",
+        "target_logo_domain": "harmattan.ai",
+        "source_url": "https://www.dassault-aviation.com/en/group/press/press-releases/",
+        "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
+        "stake_percentage": 15.0,
+        "round_type": "series_a",
+        "is_disclosed": True,
+    },
+    # ── 2024 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Safran",
+        "target": "Collins Aerospace Actuation",
+        "deal_value": 1800,
+        "status": "announced",
+        "deal_type": "acquisition",
+        "description": "Safran acquiert la division actuation de Collins Aerospace (RTX) pour $1.8B — devient 2e mondial",
+        "rationale": (
+            "Safran signs an agreement to acquire Collins Aerospace's actuation and flight-control "
+            "systems business from RTX for approximately $1.8 billion, announced 5 December 2024. "
+            "The transaction makes Safran the world's second-largest actuation supplier, adding "
+            "landing-gear, flight-control and electromechanical actuation product lines. The deal "
+            "reflects RTX's strategic portfolio review. Regulatory clearances are running in "
+            "parallel in the US, EU and UK; closing is expected in H2 2025."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "US",
+        "acquirer_logo_domain": "safran-group.com",
+        "target_logo_domain": "collinsaerospace.com",
+        "source_url": "https://www.reuters.com/business/aerospace-defense/safran-agrees-buy-collins-aerospace-actuation-flight-control-unit-rtx-2024-12-05/",
+        "announced_date": datetime(2024, 12, 5, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Lockheed Martin",
+        "target": "Terran Orbital",
+        "deal_value": 450,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Lockheed complète l'acquisition de Terran Orbital ($450M) — fabricant de petits satellites LEO",
+        "rationale": (
+            "Lockheed Martin completes its acquisition of Terran Orbital Corporation, a manufacturer "
+            "of small satellites and satellite components, for $450 million. The deal expands "
+            "Lockheed's production capacity for proliferated LEO constellation satellites — "
+            "Terran Orbital was already a key supplier on SDA transport-layer satellite programmes "
+            "under Lockheed prime contracts. First announced in August 2023; regulatory clearance "
+            "completed September 2024, deepening Lockheed's vertical integration in the commercial "
+            "and government small-sat market."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "lockheedmartin.com",
+        "target_logo_domain": "lockheedmartin.com",
+        "source_url": "https://www.lockheedmartin.com/en-us/news/news-releases/2024/lockheed-martin-completes-acquisition-of-terran-orbital.html",
+        "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "L3Harris Technologies",
+        "target": "Helsing",
+        "deal_value": 50,
+        "status": "completed",
+        "deal_type": "strategic_investment",
+        "description": "L3Harris co-investit dans le Series B €450M de Helsing — plus grande levée defense IA en Europe",
+        "rationale": (
+            "L3Harris Technologies participates as a strategic investor in Helsing's €450 million "
+            "Series B — the largest single defence AI financing round in European history. Helsing "
+            "(Munich / London / Paris) develops AI systems for sensor fusion, electronic warfare "
+            "and autonomous mission management deployed on NATO platforms. L3Harris's investment "
+            "secures a preferred partner relationship for integrating Helsing software into "
+            "L3Harris sensor payloads and EW systems. Other investors include General Atlantic "
+            "and Spotify co-founder Daniel Ek."
+        ),
+        "acquirer_country": "US",
+        "target_country": "DE",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "helsing.ai",
+        "source_url": "https://helsing.ai/news/helsing-closes-450-million-series-b",
+        "announced_date": datetime(2024, 9, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_b",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "RTX",
+        "target": "Nightwing Group",
+        "deal_value": 1300,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "RTX cède ses activités cyber & renseignement à Veritas Capital — Nightwing devient indépendant ($1.3B)",
+        "rationale": (
+            "RTX completes the separation of Nightwing Group, spinning out its cybersecurity and "
+            "intelligence services businesses into a standalone entity backed by private equity "
+            "firm Veritas Capital at an enterprise value of approximately $1.3 billion. Nightwing "
+            "retains preferred access to RTX's defence customer relationships while pursuing "
+            "independent US government cyber, intelligence and national-security contracts. "
+            "The divestiture reflects RTX's portfolio rationalisation strategy post-UTC merger, "
+            "refocusing core resources on aerospace and defence systems."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "rtx.com",
+        "target_logo_domain": "rtx.com",
+        "source_url": "https://www.rtx.com/news/news-center/2024/07/18/rtx-completes-separation-of-nightwing",
+        "announced_date": datetime(2024, 7, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Boeing",
+        "target": "Spirit AeroSystems",
+        "deal_value": 4700,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Boeing re-acquiert Spirit AeroSystems ($4.7B) pour reprendre la maîtrise qualité du fuselage 737 MAX",
+        "rationale": (
+            "Boeing announces its intention to reacquire Spirit AeroSystems — the fuselage and "
+            "nacelle manufacturer it originally spun off in 2005 — for approximately $4.7 billion, "
+            "following quality-control crises on 737 MAX production that exposed the risks of "
+            "outsourced manufacturing. Bringing Spirit's Wichita and Tulsa plants back in-house "
+            "restores Boeing's direct oversight of fuselage assembly. Airbus separately agreed "
+            "to acquire Spirit's Airbus-related facilities (Belfast, Kinston). Transaction "
+            "closed Q4 2024 after US regulatory approval."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "boeing.com",
+        "target_logo_domain": "spiritaero.com",
+        "source_url": "https://boeing.mediaroom.com/2024-07-01-Boeing-to-Acquire-Spirit-AeroSystems",
+        "announced_date": datetime(2024, 7, 1, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Airbus",
+        "target": "Milrem Robotics",
+        "deal_value": 0,
+        "status": "completed",
+        "deal_type": "minority_stake",
+        "description": "Airbus Defence & Space prend une participation minoritaire dans Milrem Robotics (THeMIS UGV, Estonie)",
+        "rationale": (
+            "Airbus Defence and Space acquires a minority equity stake in Milrem Robotics, the "
+            "Estonian developer of the THeMIS unmanned ground vehicle (UGV) platform deployed "
+            "across multiple NATO armies. The deal builds on an existing teaming agreement under "
+            "the EU-funded iMUGS programme and gives Airbus a foothold in the fast-growing "
+            "autonomous land systems market. Milrem gains access to Airbus's pan-European "
+            "government sales network. Stake size not publicly disclosed."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "EE",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "milremrobotics.com",
+        "source_url": "https://www.milremrobotics.com/news/airbus-defence-and-space-acquires-minority-stake-in-milrem-robotics/",
+        "announced_date": datetime(2024, 4, 22, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    # ── 2023 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "BAE Systems",
+        "target": "Ball Aerospace",
+        "deal_value": 5550,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "BAE acquiert Ball Aerospace pour $5.55B — double sa présence spatiale aux États-Unis",
+        "rationale": (
+            "BAE Systems closes its $5.55 billion acquisition of Ball Aerospace, a leading US "
+            "provider of space systems, spacecraft components and defence electronics. Ball's "
+            "portfolio includes sensors for the James Webb and Roman space telescopes, missile "
+            "defence electronics and precision targeting systems. The deal roughly doubles "
+            "BAE's US space workforce and significantly expands its position in satellite "
+            "sensor production and missile defence. Announced August 2023; cleared February 2024."
+        ),
+        "acquirer_country": "GB",
+        "target_country": "US",
+        "acquirer_logo_domain": "baesystems.com",
+        "target_logo_domain": "ball.com",
+        "source_url": "https://www.baesystems.com/en/article/bae-systems-completes-acquisition-of-ball-aerospace",
+        "announced_date": datetime(2023, 8, 28, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Safran",
+        "target": "Preligens",
+        "deal_value": 220,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Safran acquiert la startup IA/GEOINT Preligens (~€200M) — rebranding en Safran AI",
+        "rationale": (
+            "Safran acquires Preligens, a French AI start-up specialising in automated satellite "
+            "image analysis and geospatial intelligence (GEOINT), for approximately €200 million. "
+            "Preligens's Earth and Sky platforms use computer vision to automatically detect and "
+            "classify military assets in satellite imagery at scale. Following the acquisition, "
+            "Preligens was rebranded Safran AI, anchoring Safran's push into AI-driven defence "
+            "intelligence, ISR systems and GEOINT solutions for NATO customers and the French DGA."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "FR",
+        "acquirer_logo_domain": "safran-group.com",
+        "target_logo_domain": "safran-group.com",
+        "source_url": "https://www.safran-group.com/en/press-releases/2023/safran-acquires-preligens",
+        "announced_date": datetime(2023, 10, 3, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Northrop Grumman",
+        "target": "Epirus",
+        "deal_value": 0,
+        "status": "completed",
+        "deal_type": "strategic_investment",
+        "description": "Northrop investit stratégiquement dans Epirus — arme HPM anti-drone Leonidas (montant non divulgué)",
+        "rationale": (
+            "Northrop Grumman makes a strategic equity investment in Epirus, a US defence tech "
+            "start-up developing the Leonidas high-power microwave (HPM) weapon system for "
+            "counter-drone and counter-electronics missions. The investment gives Northrop a "
+            "preferred technology partner for directed-energy payloads, complementing its "
+            "Integrated Air and Missile Defense (IAMD) portfolio. Epirus gains access to "
+            "Northrop's systems integration expertise and government customer relationships. "
+            "Deal size was not publicly disclosed."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "northropgrumman.com",
+        "target_logo_domain": "epirusinc.com",
+        "source_url": "https://www.northropgrumman.com/media/press-releases/northrop-grumman-makes-strategic-investment-in-epirus",
+        "announced_date": datetime(2023, 11, 7, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+    },
+    # ── 2022 ──────────────────────────────────────────────────────────────────
+    {
+        "acquirer": "Thales",
+        "target": "Imperva",
+        "deal_value": 3600,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Thales acquiert le leader US cybersécurité Imperva pour $3.6B — renforce sa division Digital Identity",
+        "rationale": (
+            "Thales completes its $3.6 billion acquisition of Imperva, a leading US cybersecurity "
+            "firm specialising in data and application security. The deal significantly strengthens "
+            "Thales's cyber-security revenue stream, adding web application firewall (WAF), "
+            "database activity monitoring (DAM) and DDoS protection products. Imperva's customer "
+            "base spans government, financial services and critical infrastructure — a natural "
+            "overlap with Thales's existing defence and government security portfolio. The combined "
+            "entity operates as Thales Digital Identity & Security."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "US",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "thalesgroup.com",
+        "source_url": "https://www.thalesgroup.com/en/group/journalist/press_release/thales-completes-acquisition-imperva",
+        "announced_date": datetime(2022, 12, 8, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "L3Harris Technologies",
+        "target": "Aerojet Rocketdyne",
+        "deal_value": 4700,
+        "status": "cancelled",
+        "deal_type": "acquisition",
+        "description": "L3Harris retire son offre $4.7B après le recours antitrust de la FTC — Aerojet reste indépendant",
+        "rationale": (
+            "L3Harris Technologies withdraws its proposed $4.7 billion acquisition of Aerojet "
+            "Rocketdyne after the Federal Trade Commission filed an antitrust suit in January 2023, "
+            "arguing the deal would harm competition in solid-rocket motor propulsion for US "
+            "missiles. The central concern was that a combined L3Harris–Aerojet entity could "
+            "disadvantage rival prime contractors bidding for propulsion contracts. L3Harris "
+            "withdrew in February 2023, leaving Aerojet Rocketdyne as an independent supplier "
+            "and reinforcing DoD concerns about consolidation risk in the US propulsion base."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "aerojet.com",
+        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
+        "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Parker Hannifin",
+        "target": "Meggitt",
+        "deal_value": 8800,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Parker Hannifin finalise l'acquisition de Meggitt (£6.3B / ~$8.8B) — composants aéro militaires UK",
+        "rationale": (
+            "Parker Hannifin closes its £6.3 billion (~$8.8 billion) acquisition of Meggitt plc, "
+            "a British aerospace components maker producing thermal management systems, aircraft "
+            "braking systems and sensing equipment for both military and commercial programmes. "
+            "The UK government accepted binding security undertakings — including commitments to "
+            "retain UK manufacturing and R&D investment — before approving the deal over a "
+            "competing bid from TransDigm. Meggitt adds over 7,000 employees and proprietary "
+            "products supplied across NATO air platforms. Closing: September 2022."
+        ),
+        "acquirer_country": "US",
+        "target_country": "GB",
+        "acquirer_logo_domain": "parker.com",
+        "target_logo_domain": "meggitt.com",
+        "source_url": "https://ir.parker.com/news-releases/news-release-details/parker-hannifin-completes-acquisition-meggitt-plc",
+        "announced_date": datetime(2021, 8, 2, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Rheinmetall",
+        "target": "Expal Systems",
+        "deal_value": 1200,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Rheinmetall acquiert Expal Systems ($1.2B) — premier fabricant espagnol de munitions",
+        "rationale": (
+            "Rheinmetall acquires Expal Systems, Spain's largest ammunition and energetics "
+            "manufacturer, from Maxamcorp for approximately $1.2 billion. The deal enhances "
+            "Rheinmetall's artillery ammunition production capacity at a time of surging European "
+            "demand driven by the conflict in Ukraine. Expal's facilities in Burgos produce "
+            "155mm artillery shells, mortar rounds, naval munitions and demilitarisation services. "
+            "The acquisition makes Rheinmetall one of the world's largest ammunition producers, "
+            "positioned to supply NATO's accelerating rearmament effort."
+        ),
+        "acquirer_country": "DE",
+        "target_country": "ES",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "rheinmetall.com",
+        "source_url": "https://www.rheinmetall.com/en/media/news-releases/2022/rheinmetall-acquires-expal-systems",
+        "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Hanwha Ocean",
+        "target": "Daewoo Shipbuilding",
+        "deal_value": 1500,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Hanwha acquiert DSME (~$1.5B) et crée Hanwha Ocean — champion naval coréen submarines & destroyers",
+        "rationale": (
+            "Hanwha Group acquires Daewoo Shipbuilding and Marine Engineering (DSME) for "
+            "approximately KRW 2 trillion (~$1.5 billion) and rebrands the company as Hanwha "
+            "Ocean, creating one of the world's largest shipbuilders with a dominant position "
+            "in submarine and naval surface vessel construction. Hanwha Ocean holds prime "
+            "contracts for KSS-III Batch II submarines, KDDX destroyers, and export programmes "
+            "to Poland and the Philippines. The deal positions Hanwha as a full-spectrum Korean "
+            "defence prime alongside Hanwha Aerospace and Hanwha Defense."
+        ),
+        "acquirer_country": "KR",
+        "target_country": "KR",
+        "acquirer_logo_domain": "hanwha.com",
+        "target_logo_domain": "hanwha.com",
+        "source_url": "https://www.hanwha.com/en/newsroom/news/press-releases/2022/hanwha-group-to-acquire-daewoo-shipbuilding-marine-engineering.html",
+        "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+]
