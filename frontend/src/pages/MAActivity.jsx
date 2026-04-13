@@ -10,7 +10,7 @@ import {
 import {
   Search, ArrowRight, ArrowLeftRight, Plus, CircleDot,
   Clock, Database, Filter, TrendingUp, ChevronDown, ChevronUp,
-  ExternalLink, Download, Calendar, User, CheckCircle2, AlertCircle, AlertTriangle,
+  ExternalLink, Download, Calendar, User, AlertTriangle,
   RefreshCw,
 } from "lucide-react";
 import { format } from "date-fns";
@@ -316,34 +316,14 @@ function getLogoDomain(activity, side) {
   return null;
 }
 
-// ── Wikipedia logo cache (module-level → persists across renders) ──────────
-const wikiLogoCache = new Map();
-
-async function fetchWikipediaLogo(name) {
-  if (wikiLogoCache.has(name)) return wikiLogoCache.get(name);
-  try {
-    const params = new URLSearchParams({
-      action: "query", titles: name, prop: "pageimages",
-      format: "json", pithumbsize: "100", origin: "*",
-    });
-    const res  = await fetch(`https://en.wikipedia.org/w/api.php?${params}`);
-    const data = await res.json();
-    const page = Object.values(data?.query?.pages ?? {})[0];
-    const url  = page?.thumbnail?.source ?? null;
-    wikiLogoCache.set(name, url);
-    return url;
-  } catch {
-    wikiLogoCache.set(name, null);
-    return null;
-  }
-}
-
-// ── Logo component — Clearbit → Wikipedia → coloured initials ─────────────
+// ── Logo component — Clearbit → Google Favicon → coloured initials ───────────
+// Stratégie :
+//   1. Clearbit logo.clearbit.com/{domain}  — logo HD, échec silencieux via onError
+//   2. Google Favicon V2 (sz=128)           — instantané, fiable pour 100% des domaines
+//   3. Initiales colorées déterministes     — dernier recours, pas d'appel réseau
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  const [clearbitFailed, setClearbitFailed] = useState(false);
-  const [wikiUrl,        setWikiUrl]        = useState(null);
-  const [wikiChecked,    setWikiChecked]    = useState(false);
+  const [level, setLevel] = useState(1); // 1=clearbit 2=google 3=initials
 
   const name    = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const country = activity[side === "acquirer" ? "acquirer_country" : "target_country"];
@@ -351,13 +331,8 @@ function CompanyLogo({ activity, side, size = "md" }) {
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-11 h-11";
   const textSize  = size === "sm" ? "text-[9px]" : "text-xs";
 
-  // When Clearbit fails (or no domain), try Wikipedia once
-  useEffect(() => {
-    if (!clearbitFailed && domain) return; // Clearbit still loading/ok
-    if (wikiChecked) return;               // already tried
-    setWikiChecked(true);
-    fetchWikipediaLogo(name).then(setWikiUrl);
-  }, [clearbitFailed, domain, name, wikiChecked]);
+  // Reset when the domain changes (different deal row)
+  useEffect(() => { setLevel(1); }, [domain, name]);
 
   const flag = country ? (
     <div className="absolute -bottom-1 -right-1">
@@ -365,28 +340,15 @@ function CompanyLogo({ activity, side, size = "md" }) {
     </div>
   ) : null;
 
-  // Helper to wrap an image in the white rounded box with the flag overlay
-  function logoBox(imgSrc, alt) {
-    return (
-      <div className="relative shrink-0">
-        <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
-          <img src={imgSrc} alt={alt} className="w-full h-full object-contain p-1" />
-        </div>
-        {flag}
-      </div>
-    );
-  }
-
-  // Level 1 — Clearbit (domain known, not yet failed)
-  if (domain && !clearbitFailed) {
+  function logoBox(src) {
     return (
       <div className="relative shrink-0">
         <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
           <img
-            src={`https://logo.clearbit.com/${domain}`}
+            src={src}
             alt={name}
             className="w-full h-full object-contain p-1"
-            onError={() => setClearbitFailed(true)}
+            onError={() => setLevel((l) => Math.min(l + 1, 3))}
           />
         </div>
         {flag}
@@ -394,8 +356,13 @@ function CompanyLogo({ activity, side, size = "md" }) {
     );
   }
 
-  // Level 2 — Wikipedia thumbnail (async, shows once fetched)
-  if (wikiUrl) return logoBox(wikiUrl, name);
+  // Level 1 — Clearbit HD logo
+  if (level === 1 && domain) return logoBox(`https://logo.clearbit.com/${domain}`);
+
+  // Level 2 — Google Favicon V2 (sz=128, instantané, pas d'API key)
+  if (level <= 2 && domain) {
+    return logoBox(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
+  }
 
   // Level 3 — Coloured initials avatar
   return (
