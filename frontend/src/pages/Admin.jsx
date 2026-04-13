@@ -384,7 +384,7 @@ function MAAdmin({ authHeaders }) {
   useEffect(() => { fetchItems(); }, []);
 
   const handlePilotSeed = async () => {
-    if (!window.confirm("Ceci va SUPPRIMER tous les deals M&A existants et les remplacer par les 15 deals pilotes. Confirmer ?")) return;
+    if (!window.confirm("Ceci va SUPPRIMER tous les deals M&A existants et les remplacer par les 9 deals pilotes vérifiés. Confirmer ?")) return;
     setPiloting(true);
     setPilotResult(null);
     try {
@@ -426,9 +426,9 @@ function MAAdmin({ authHeaders }) {
         <CardContent className="pt-4 pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1">
-              <p className="text-slate-900 font-semibold text-sm">M&A Pilot — 15 deals curatés</p>
+              <p className="text-slate-900 font-semibold text-sm">M&A Pilot — 9 deals curatés</p>
               <p className="text-slate-500 text-xs mt-0.5">
-                Réinitialise la collection avec 15 deals vérifiés (logos, sources, rationale). Supprime tous les deals existants.
+                Réinitialise la collection avec 9 deals vérifiés (logos, sources réelles, rationale détaillé). Supprime tous les deals existants.
               </p>
               {pilotResult && (
                 <p className={`text-xs mt-1 font-medium ${pilotResult.ok ? "text-emerald-600" : "text-rose-600"}`}>
@@ -443,7 +443,7 @@ function MAAdmin({ authHeaders }) {
             >
               {piloting
                 ? <><RefreshCw className="w-4 h-4 animate-spin" /> Chargement…</>
-                : <><Database className="w-4 h-4" /> Charger Pilot 15</>
+                : <><Database className="w-4 h-4" /> Charger Pilot 9</>
               }
             </button>
           </div>

@@ -500,10 +500,10 @@ async def trigger_ma_scrape(current_user: dict = Depends(get_current_user)):
 
 @api_router.post("/ma-activities/seed-pilot")
 async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
-    """Drop all M&A entries and seed exactly the 15 hand-curated pilot deals."""
+    """Drop all M&A entries and seed exactly the 9 hand-curated pilot deals."""
     if current_user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin role required")
-    from data.seed_data import MA_PILOT_15
+    from data.seed_data import MA_PILOT_10
     import re as _re
 
     def _norm(s: str) -> str:
@@ -511,7 +511,7 @@ async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
 
     await db.ma_activities.delete_many({})
 
-    for m in MA_PILOT_15:
+    for m in MA_PILOT_10:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc["announced_date"] = doc["announced_date"].isoformat()
@@ -830,7 +830,7 @@ async def get_dashboard_stats():
 
 async def _run_seed() -> dict:
     """Idempotent seed — safe to call on every startup."""
-    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, MA_PILOT_15, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
+    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, MA_PILOT_10, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
 
     # Seed Defense Players
     for p in DEFENSE_COMPANIES:
@@ -858,7 +858,7 @@ async def _run_seed() -> dict:
 
     # Build a set of (acq_first_word, tgt_first_word) tuples to identify scraper duplicates
     seed_acq_tgt_first: set = set()
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_10:
         acq_words = _norm(m['acquirer']).split()
         tgt_words = _norm(m['target']).split()
         if acq_words and tgt_words:
@@ -866,7 +866,7 @@ async def _run_seed() -> dict:
 
     # Also build full set of seed target words (>3 chars) for broader matching
     seed_tgt_words: set = set()
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_10:
         for w in _norm(m['target']).split():
             if len(w) > 3:
                 seed_tgt_words.add(w)
@@ -914,8 +914,8 @@ async def _run_seed() -> dict:
     # unsourced scraper noise has no place in the curated dataset.
     await db.ma_activities.delete_many({"scraped_at": {"$exists": True}, "source_url": {"$in": [None, ""]}})
 
-    # Seed MA_DATA + MA_EXTRA_DEALS, then MA_PILOT_15 last so its enriched fields win on conflict
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
+    # Seed MA_DATA + MA_EXTRA_DEALS, then MA_PILOT_10 last so its enriched fields win on conflict
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_10:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc['announced_date'] = doc['announced_date'].isoformat()
@@ -1794,7 +1794,7 @@ async def _purge_scraper_junk():
         })
 
         # ── Pass 3: cross-reference against seeded (acquirer, target) pairs ───
-        from data.seed_data import MA_DATA, MA_EXTRA_DEALS, MA_PILOT_15
+        from data.seed_data import MA_DATA, MA_EXTRA_DEALS, MA_PILOT_10
 
         def _norm(s: str) -> str:
             return _re.sub(r"\s+", " ", s.lower().strip())
@@ -1803,7 +1803,7 @@ async def _purge_scraper_junk():
         seed_pairs: set = set()
         seed_tgt_words: set = set()
         seed_acq_first: set = set()
-        for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
+        for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_10:
             aw = _norm(m["acquirer"]).split()
             tw = _norm(m["target"]).split()
             if aw and tw:

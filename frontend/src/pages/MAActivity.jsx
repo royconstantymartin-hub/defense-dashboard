@@ -10,7 +10,7 @@ import {
 import {
   Search, ArrowRight, ArrowLeftRight, Plus, CircleDot,
   Clock, Database, Filter, TrendingUp, ChevronDown, ChevronUp,
-  ExternalLink, Download, Calendar, User, AlertTriangle,
+  ExternalLink, Download, Calendar, AlertTriangle,
   RefreshCw,
 } from "lucide-react";
 import { format } from "date-fns";
@@ -373,20 +373,6 @@ function CompanyLogo({ activity, side, size = "md" }) {
   );
 }
 
-// ── Inline "View Profile" button ───────────────────────────────────────────
-
-function ProfileLink({ name, onOpen }) {
-  return (
-    <button
-      onClick={(e) => { e.stopPropagation(); onOpen(name); }}
-      title={`View ${name} profile`}
-      className="text-slate-400 hover:text-purple-600 transition-colors"
-    >
-      <User className="w-3.5 h-3.5" />
-    </button>
-  );
-}
-
 // ── Card ───────────────────────────────────────────────────────────────────
 
 function MACard({ activity, onOpenProfile }) {
@@ -415,8 +401,12 @@ function MACard({ activity, onOpenProfile }) {
               <CompanyLogo activity={activity} side="acquirer" />
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-slate-900 font-semibold text-sm leading-snug">{activity.acquirer}</span>
-                  <ProfileLink name={activity.acquirer} onOpen={onOpenProfile} />
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onOpenProfile(activity.acquirer); }}
+                    className="text-slate-900 font-semibold text-sm leading-snug hover:text-purple-700 transition-colors text-left"
+                  >
+                    {activity.acquirer}
+                  </button>
                 </div>
                 <span className="text-[9px] text-slate-400 font-mono tracking-widest uppercase">{labels.left}</span>
               </div>
@@ -429,8 +419,12 @@ function MACard({ activity, onOpenProfile }) {
               <CompanyLogo activity={activity} side="target" />
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-slate-900 font-semibold text-sm leading-snug truncate">{activity.target}</span>
-                  <ProfileLink name={activity.target} onOpen={onOpenProfile} />
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onOpenProfile(activity.target); }}
+                    className="text-slate-900 font-semibold text-sm leading-snug hover:text-purple-700 transition-colors text-left truncate"
+                  >
+                    {activity.target}
+                  </button>
                 </div>
                 <span className="text-[9px] text-slate-400 font-mono tracking-widest uppercase">{labels.right}</span>
               </div>
@@ -570,20 +564,28 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
           <div className="flex items-center gap-2">
             <CompanyLogo activity={activity} side="acquirer" size="sm" />
             <div>
-              <span className="text-sm text-slate-800 font-medium">{activity.acquirer}</span>
+              <button
+                onClick={(e) => { e.stopPropagation(); onOpenProfile(activity.acquirer); }}
+                className="text-sm text-slate-800 font-medium hover:text-purple-700 transition-colors text-left"
+              >
+                {activity.acquirer}
+              </button>
               <p className="text-[10px] text-slate-400 font-mono">{labels.left}</p>
             </div>
-            <ProfileLink name={activity.acquirer} onOpen={onOpenProfile} />
           </div>
         </td>
         <td className="px-4 py-3">
           <div className="flex items-center gap-2">
             <CompanyLogo activity={activity} side="target" size="sm" />
             <div>
-              <span className="text-sm text-slate-800">{activity.target}</span>
+              <button
+                onClick={(e) => { e.stopPropagation(); onOpenProfile(activity.target); }}
+                className="text-sm text-slate-800 hover:text-purple-700 transition-colors text-left"
+              >
+                {activity.target}
+              </button>
               <p className="text-[10px] text-slate-400 font-mono">{labels.right}</p>
             </div>
-            <ProfileLink name={activity.target} onOpen={onOpenProfile} />
           </div>
         </td>
         <td className="px-4 py-3 text-sm font-mono font-semibold text-purple-700">
