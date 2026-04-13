@@ -498,6 +498,30 @@ async def trigger_ma_scrape(current_user: dict = Depends(get_current_user)):
     result = await run_ma_scraper_job()
     return result
 
+@api_router.post("/ma-activities/seed-pilot")
+async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
+    """Drop all M&A entries and seed exactly the 15 hand-curated pilot deals."""
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    from data.seed_data import MA_PILOT_15
+    import re as _re
+
+    def _norm(s: str) -> str:
+        return _re.sub(r"\s+", " ", s.lower().strip())
+
+    await db.ma_activities.delete_many({})
+
+    for m in MA_PILOT_15:
+        activity = MAActivity(**m)
+        doc = activity.model_dump()
+        doc["announced_date"] = doc["announced_date"].isoformat()
+        doc["acquirer_norm"] = _norm(m["acquirer"])
+        doc["target_norm"] = _norm(m["target"])
+        await db.ma_activities.insert_one(doc)
+
+    count = await db.ma_activities.count_documents({})
+    return {"status": "Pilot seeded", "deals": count, "message": f"{count} deals chargés — scraper ignoré"}
+
 # ============= DEFENSE PLAYERS ROUTES =============
 
 @api_router.get("/defense-players", response_model=List[DefensePlayer])
