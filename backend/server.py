@@ -908,7 +908,12 @@ async def _run_seed() -> dict:
         if exact_match or (acq_matches_any_seed and (tgt_is_generic or tgt_overlaps_seed or no_source)):
             await db.ma_activities.delete_one({"id": entry["id"]})
 
-    for m in MA_DATA + MA_EXTRA_DEALS:
+    # Also purge ALL scraper entries with no source URL regardless of acquirer match —
+    # unsourced scraper noise has no place in the curated dataset.
+    await db.ma_activities.delete_many({"scraped_at": {"$exists": True}, "source_url": {"$in": [None, ""]}})
+
+    # Seed MA_DATA + MA_EXTRA_DEALS, then MA_PILOT_15 last so its enriched fields win on conflict
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc['announced_date'] = doc['announced_date'].isoformat()
