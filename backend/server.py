@@ -596,6 +596,8 @@ async def get_stock_prices(tickers: str = ""):
             "price": data["price"],
             "change_percent": data["change_percent"],
             "prev_close": data.get("prev_close", data["price"]),
+            "open_price": data.get("open_price"),
+            "change_since_open": data.get("change_since_open"),
         }
     # Fallback to DB for any public ticker that yfinance couldn't resolve + all private
     for t in public_tickers:
