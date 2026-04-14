@@ -42,6 +42,83 @@ import {
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
+// ── Admin Setup (role promotion) ────────────────────────────────────────────
+// Shown to logged-in users who don't yet have role="admin".
+// They enter the ADMIN_SETUP_KEY (or JWT_SECRET) from their Railway config.
+
+function AdminSetup({ token }) {
+  const { updateAuth } = useAuth();
+  const [setupKey, setSetupKey] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handlePromote = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.post(
+        `${API}/auth/promote-admin`,
+        { setup_key: setupKey },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      updateAuth(res.data.access_token, res.data.user);
+      toast.success("Admin access activated!");
+    } catch (err) {
+      setError(err.response?.data?.detail || "Invalid setup key");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 animate-fade-in">
+      <div className="w-full max-w-md">
+        <div className="flex flex-col items-center text-center mb-6">
+          <div className="w-14 h-14 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-center mb-4">
+            <Lock className="w-7 h-7 text-amber-600" />
+          </div>
+          <h2 className="font-heading text-2xl font-bold text-slate-900">Admin access required</h2>
+          <p className="text-slate-500 text-sm mt-2 max-w-sm">
+            Your account doesn't have admin privileges yet. Enter the setup key from your
+            Railway environment variables (<code className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">ADMIN_SETUP_KEY</code> or <code className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">JWT_SECRET</code>) to activate them.
+          </p>
+        </div>
+
+        <form onSubmit={handlePromote} className="bg-white border border-slate-200 rounded-xl shadow-sm p-6 space-y-4">
+          <div>
+            <Label className="text-slate-600 text-sm">Setup key</Label>
+            <Input
+              type="password"
+              value={setupKey}
+              onChange={(e) => setSetupKey(e.target.value)}
+              placeholder="Paste your setup key…"
+              className="mt-1 border-slate-200 text-slate-900"
+              required
+            />
+          </div>
+          {error && (
+            <p className="text-xs text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
+          <Button
+            type="submit"
+            disabled={loading || !setupKey}
+            className="w-full bg-purple-700 hover:bg-purple-800 disabled:opacity-50"
+          >
+            {loading ? "Activating…" : "Activate Admin Access"}
+          </Button>
+        </form>
+
+        <p className="text-center text-xs text-slate-400 mt-4">
+          Find your key in Railway → Variables → <code className="font-mono">JWT_SECRET</code>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function Admin() {
   const { user, token } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -96,6 +173,10 @@ export default function Admin() {
         </Link>
       </div>
     );
+  }
+
+  if (user.role !== "admin") {
+    return <AdminSetup token={token} />;
   }
 
   return (
