@@ -1527,6 +1527,167 @@ MA_EXTRA_DEALS = [
         "round_type": None,
         "is_disclosed": True,
     },
+    # ── Defense Tech Startup Funding Rounds ───────────────────────────────────
+    {
+        "acquirer": "Andreessen Horowitz / Founders Fund", "target": "Anduril Industries",
+        "deal_value": 1480, "status": "completed", "deal_type": "funding_round",
+        "description": "Series F — autonomous defense systems platform (Roadrunner-M, Fury UAV, Lattice AI)",
+        "rationale": (
+            "Anduril Industries closes a $1.48 billion Series F round co-led by Andreessen Horowitz "
+            "and Founders Fund, pushing valuation to $14 billion. Proceeds accelerate production of "
+            "the Roadrunner-M interceptor drone, Fury combat UAV, and Lattice AI command-and-control "
+            "platform. The round reflects surging US DoD demand for next-generation autonomous defense "
+            "systems and positions Anduril as a direct challenger to traditional prime contractors."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "a16z.com",
+        "target_logo_domain": "anduril.com",
+        "source_url": "https://techcrunch.com/2024/12/17/anduril-raises-1-5b-series-f/",
+        "announced_date": datetime(2024, 12, 17, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_f",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "General Catalyst", "target": "Hermeus",
+        "deal_value": 350, "status": "announced", "deal_type": "funding_round",
+        "description": "Series C — unmanned hypersonic fighter development (Mach 5+)",
+        "rationale": (
+            "Hermeus announces a $350 million Series C round to build its unmanned hypersonic fighter "
+            "programme and push Mach 5+ innovation forward. The company aims to deliver the world's "
+            "fastest unmanned aircraft, combining AI autonomy with hypersonic propulsion. The US Air "
+            "Force Research Laboratory (AFRL) is a co-development partner. Proceeds fund full-scale "
+            "prototype construction and a dedicated test-flight campaign from Edwards AFB."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "generalcatalyst.com",
+        "target_logo_domain": "hermeus.com",
+        "source_url": "https://techcrunch.com/2026/04/10/hermeus-raises-350m-unmanned-hypersonic-fighters/",
+        "announced_date": datetime(2026, 4, 9, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_c",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "General Atlantic", "target": "Skydio",
+        "deal_value": 230, "status": "completed", "deal_type": "funding_round",
+        "description": "Series E — AI-autonomous drones for US military and law enforcement",
+        "rationale": (
+            "Skydio raises $230 million in a Series E round led by General Atlantic, with strategic "
+            "participation from the US Army venture arm. The largest US drone manufacturer, Skydio "
+            "produces AI-autonomous quadcopters deployed by the military, border security, and critical "
+            "infrastructure operators. Capital supports a new manufacturing facility in Utah and "
+            "accelerated development for Group 2 UAS military requirements."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "generalatlantic.com",
+        "target_logo_domain": "skydio.com",
+        "source_url": "https://techcrunch.com/2022/09/14/skydio-raises-230m-series-e/",
+        "announced_date": datetime(2022, 9, 14, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_e",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "General Catalyst", "target": "Shield AI",
+        "deal_value": 200, "status": "completed", "deal_type": "funding_round",
+        "description": "Series F — AI pilot software for F-16s, MQ-9 Reapers and V-BAT drones",
+        "rationale": (
+            "Shield AI secures a $200 million Series F round valuing the company at $2.7 billion. "
+            "Its Hivemind AI pilot software is deployed on F-16 fighters, MQ-9 Reapers and V-BAT "
+            "Group 3 drones under active US DoD contracts. Capital funds expansion of the autonomous "
+            "flight platform and scale-up of V-BAT manufacturing to meet accelerating Air Force "
+            "and Navy demand for uncrewed autonomous systems."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "generalcatalyst.com",
+        "target_logo_domain": "shield.ai",
+        "source_url": "https://techcrunch.com/2023/10/11/shield-ai-raises-200m-series-f/",
+        "announced_date": datetime(2023, 10, 11, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_f",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Lux Capital", "target": "True Anomaly",
+        "deal_value": 100, "status": "completed", "deal_type": "funding_round",
+        "description": "Series B — autonomous spacecraft for space domain awareness (US Space Force)",
+        "rationale": (
+            "True Anomaly closes a $100 million Series B led by Lux Capital. The company builds the "
+            "Jackal autonomous spacecraft for rendezvous and proximity operations (RPO) and the Mosaic "
+            "software platform for space domain awareness, with US Space Force as a key customer. "
+            "Funding accelerates the first in-orbit demonstration and commercial constellation "
+            "deployment amid heightened demand for orbital situational awareness capabilities."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "luxcapital.com",
+        "target_logo_domain": "trueanomaly.space",
+        "source_url": "https://techcrunch.com/2024/01/18/true-anomaly-raises-100m-series-b/",
+        "announced_date": datetime(2024, 1, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_b",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Lux Capital", "target": "Ursa Major",
+        "deal_value": 138, "status": "completed", "deal_type": "funding_round",
+        "description": "Series C — American-made rocket propulsion systems for DoD and Space Force",
+        "rationale": (
+            "Ursa Major closes a $138 million Series C led by Lux Capital to scale production of "
+            "the Hadley and Ripley liquid rocket engines. The company is the only independent US "
+            "manufacturer spanning pressure-fed, pump-fed, and turbopump propulsion architectures. "
+            "DoD and Space Force customers require resilient domestic propulsion supply chains; "
+            "the round addresses surge-capacity shortfalls exposed by increased launch demand."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "luxcapital.com",
+        "target_logo_domain": "ursamajor.com",
+        "source_url": "https://techcrunch.com/2024/01/09/ursa-major-raises-138m-series-c/",
+        "announced_date": datetime(2024, 1, 9, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_c",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Founders Fund", "target": "Hermeus",
+        "deal_value": 100, "status": "completed", "deal_type": "funding_round",
+        "description": "Series B — Mach 5 hypersonic aircraft and Quarterhorse UAV demonstrator",
+        "rationale": (
+            "Hermeus secures $100 million in Series B financing to accelerate development of Halcyon, "
+            "its Mach 5 hypersonic passenger aircraft, and Quarterhorse, the unmanned Mach 5 "
+            "technology demonstrator targeting US Air Force ISR and strike requirements. Founders Fund "
+            "leads alongside Khosla Ventures and Y Combinator. The round establishes Hermeus as the "
+            "leading privately-funded hypersonic aircraft developer in the Western world."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "foundersfund.com",
+        "target_logo_domain": "hermeus.com",
+        "source_url": "https://techcrunch.com/2022/07/14/hermeus-raises-100m-series-b/",
+        "announced_date": datetime(2022, 7, 14, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_b",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Tiger Global Management", "target": "Rebellion Defense",
+        "deal_value": 150, "status": "completed", "deal_type": "funding_round",
+        "description": "Series C — AI-native software for intelligence analysis and cyber operations",
+        "rationale": (
+            "Rebellion Defense raises $150 million in Series C financing to scale its AI-native "
+            "software stack for intelligence analysis, cyber operations, and command decision support. "
+            "The company holds classified programmes with multiple US defence agencies. Tiger Global "
+            "leads alongside In-Q-Tel and Shield Capital Partners, reflecting strong conviction in "
+            "AI-first defense software as a paradigm shift in government IT modernisation."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "tigerglobal.com",
+        "target_logo_domain": "rebelliondefense.com",
+        "source_url": "https://techcrunch.com/2022/11/15/rebellion-defense-raises-150m-series-c/",
+        "announced_date": datetime(2022, 11, 15, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_c",
+        "is_disclosed": True,
+    },
 ]
 
 # Extended Expenditures
