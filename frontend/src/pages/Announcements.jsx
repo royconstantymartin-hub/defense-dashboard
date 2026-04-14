@@ -240,15 +240,11 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
 
         {/* Score badge — top left */}
-        {article.adminApproved ? (
-          <span className="absolute top-3 left-3 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow flex items-center gap-1">
-            ★ VALIDATED
-          </span>
-        ) : score >= 70 ? (
+        {score >= 70 && (
           <span className="absolute top-3 left-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow">
             HIGH
           </span>
-        ) : null}
+        )}
 
         {/* NEW badge — top right */}
         {isNew && (
