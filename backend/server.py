@@ -165,6 +165,7 @@ class ExpenditureCreate(BaseModel):
     expenditure: float  # in billions USD
     gdp_percent: float
     region: str
+    source: Optional[str] = None
 
 class Expenditure(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -175,6 +176,7 @@ class Expenditure(BaseModel):
     expenditure: float
     gdp_percent: float
     region: str
+    source: Optional[str] = None
 
 # Regulation Model
 class RegulationCreate(BaseModel):
