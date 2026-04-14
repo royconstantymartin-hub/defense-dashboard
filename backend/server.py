@@ -871,6 +871,10 @@ async def _run_seed() -> dict:
             doc['date'] = doc['date'].isoformat()
             await db.announcements.insert_one(doc)
 
+    # Purge known-incorrect M&A entries before seeding correct data
+    for stale in _STALE_MA_DEALS:
+        await db.ma_activities.delete_many(stale)
+
     # Seed M&A Activities — upsert so enriched fields are applied to existing docs
     import re as _re
 
@@ -1741,6 +1745,12 @@ async def _apply_company_enrichments():
     except Exception as exc:
         logger.error("Company enrichments error: %s", exc)
 
+# Known-incorrect M&A entries that must be purged from the DB.
+# These crept in via old seeds or scraper hallucinations and have the wrong acquirer.
+_STALE_MA_DEALS = [
+    {"acquirer": "Thales", "target": "Preligens"},   # acquired by Safran, not Thales
+]
+
 async def _migrate_ma_enrichments():
     """
     On startup, unconditionally upsert all seed-data enrichments into MA documents.
@@ -1750,6 +1760,13 @@ async def _migrate_ma_enrichments():
     try:
         logger.info("MA migration: applying enrichments from seed data")
         from data.seed_data import MA_DATA, MA_EXTRA_DEALS
+
+        # Purge known-incorrect entries before upserting correct ones
+        for stale in _STALE_MA_DEALS:
+            result = await db.ma_activities.delete_many(stale)
+            if result.deleted_count:
+                logger.info("MA migration: removed %d stale entry/entries %s", result.deleted_count, stale)
+
         all_deals = MA_DATA + MA_EXTRA_DEALS
         for m in all_deals:
             activity = MAActivity(**m)
