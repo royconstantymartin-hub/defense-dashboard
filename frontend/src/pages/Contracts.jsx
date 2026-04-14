@@ -88,6 +88,9 @@ const T = {
   noSrc:       { en: "No source",     fr: "Source non renseignée" },
   confirmed:   { en: "✓ Confirmed",   fr: "✓ Confirmé" },
   estimated:   { en: "~ Estimated",   fr: "~ Estimé" },
+  category:    { en: "Category",      fr: "Catégorie" },
+  reliability: { en: "Reliability",   fr: "Fiabilité" },
+  viewProfile: { en: "View profile for", fr: "Voir le profil de" },
 };
 
 const CATEGORY_COLORS = {
@@ -150,11 +153,12 @@ function AuthorityFlag({ country, authority = "" }) {
 function AwardedToButton({ name, onOpenProfile }) {
   const [logoFailed, setLogoFailed] = useState(false);
   const logoUrl = getLogoUrl(name);
+  const tViewProfile = useT(T.viewProfile);
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onOpenProfile(name); }}
       className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-colors group"
-      title={`Voir le profil de ${name}`}
+      title={`${tViewProfile} ${name}`}
     >
       {logoUrl && !logoFailed ? (
         <img
@@ -335,6 +339,18 @@ function ContractCard({ contract, onOpenProfile, onSelect }) {
 }
 
 function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
+  const tEstVal    = useT(T.estVal);
+  const tPub       = useT(T.published);
+  const tDeadline  = useT(T.deadline);
+  const tCategory  = useT(T.category);
+  const tReliab    = useT(T.reliability);
+  const tAwardedTo = useT(T.awardedTo);
+  const tOfficSrc  = useT(T.officialSrc);
+  const tConfirmed = useT(T.confirmed);
+  const tEstimated = useT(T.estimated);
+  const tUndis     = useT(T.undisclosed);
+  const tStatus    = { open: useT(T.sOpen), awarded: useT(T.sAwarded), closed: useT(T.sClosed), cancelled: useT(T.sCancelled) };
+
   if (!contract) return null;
 
   const STATUS_ICON  = { open: Clock, awarded: CheckCircle2, closed: XCircle, cancelled: AlertCircle };
@@ -347,7 +363,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
   const StatusIcon = STATUS_ICON[contract.status] || XCircle;
 
   function fmtAmount(min, max) {
-    if (!min && !max) return "Non divulgué";
+    if (!min && !max) return tUndis;
     if (min && max) return `$${min}M – $${max}M`;
     if (min) return `≥ $${min}M`;
     return `≤ $${max}M`;
@@ -360,7 +376,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
           <div className="flex items-start gap-3 flex-wrap">
             <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${STATUS_COLOR[contract.status] || STATUS_COLOR.closed}`}>
               <StatusIcon size={11} />
-              {contract.status}
+              {tStatus[contract.status] || contract.status}
             </span>
             {contract.program && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-mono">
@@ -386,34 +402,34 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
 
           <div className="grid grid-cols-2 gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100">
             <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Valeur estimée</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tEstVal}</p>
               <p className="text-sm font-mono font-semibold text-slate-900">{fmtAmount(contract.amount_min, contract.amount_max)}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Publication</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tPub}</p>
               <p className="text-sm text-slate-700">{contract.publication_date?.slice(0, 10) || "—"}</p>
             </div>
             {contract.deadline && (
               <div>
-                <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Échéance</p>
+                <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tDeadline}</p>
                 <p className="text-sm text-slate-700">{contract.deadline?.slice(0, 10)}</p>
               </div>
             )}
             <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Catégorie</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tCategory}</p>
               <p className="text-sm text-slate-700 capitalize">{contract.category}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Fiabilité</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">{tReliab}</p>
               <p className={`text-sm font-medium ${contract.reliability === "confirmed" ? "text-emerald-600" : "text-amber-600"}`}>
-                {contract.reliability === "confirmed" ? "✓ Confirmé" : "~ Estimé"}
+                {contract.reliability === "confirmed" ? tConfirmed : tEstimated}
               </p>
             </div>
           </div>
 
           {contract.awarded_to && (
             <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wide mb-2">Attributaire</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wide mb-2">{tAwardedTo}</p>
               <div className="flex flex-wrap gap-2">
                 {contract.awarded_to.split(" / ").map((company) => (
                   <AwardedToButton key={company} name={company.trim()} onOpenProfile={(name) => { onClose(); onOpenProfile(name); }} />
@@ -427,7 +443,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
               <a href={contract.source_url} target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 transition-colors">
                 <ExternalLink size={12} />
-                Source officielle
+                {tOfficSrc}
               </a>
             </div>
           )}

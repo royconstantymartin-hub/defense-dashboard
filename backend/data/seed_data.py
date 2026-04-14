@@ -2506,7 +2506,7 @@ CONTRACTS_DATA = [
         "deadline": "2024-11-30",
         "awarded_to": None,
         "program": None,
-        "source_url": "https://www.ncia.nato.int/Procurement/Pages/procurement.aspx",
+        "source_url": "https://www.ncia.nato.int/procurement/",
         "reliability": "confirmed",
     },
     {
