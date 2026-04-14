@@ -223,7 +223,7 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
     }`}>
 
       {/* ── Cover image ── */}
-      <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative block flex-shrink-0 overflow-hidden" style={{ height: "200px" }}>
+      <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative block flex-shrink-0 overflow-hidden" style={{ height: "220px" }}>
         {!imgError && article.image ? (
           <img
             src={article.image}
@@ -286,13 +286,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
             {article.title}
           </h3>
         </a>
-
-        {/* Summary excerpt */}
-        {article.summary && !showSummary && (
-          <p className="text-slate-500 text-[12px] leading-relaxed line-clamp-2">
-            {article.summary}
-          </p>
-        )}
 
         {/* AI Summary panel */}
         {showSummary && (
