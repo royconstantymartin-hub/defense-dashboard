@@ -977,6 +977,38 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=403, detail="Admin role required")
     return await _run_seed()
 
+
+@api_router.post("/news/reindex-companies")
+async def reindex_company_tags(current_user: dict = Depends(get_current_user)):
+    """
+    Admin utility: scan every article in news_articles that has no `companies`
+    field (or an empty list) and back-fill it using the canonical alias map.
+    Safe to run multiple times (idempotent).
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+
+    from services.news_scraper import detect_companies
+
+    cursor = db.news_articles.find(
+        {"$or": [{"companies": {"$exists": False}}, {"companies": []}]},
+        {"_id": 1, "title": 1, "summary": 1},
+    )
+    updated = 0
+    async for doc in cursor:
+        title   = doc.get("title", "")
+        summary = doc.get("summary", "")
+        tags    = detect_companies(title, summary)
+        if tags:
+            await db.news_articles.update_one(
+                {"_id": doc["_id"]},
+                {"$set": {"companies": tags}},
+            )
+            updated += 1
+
+    return {"status": "ok", "articles_updated": updated}
+
+
 # ============= NEWS SCRAPER JOB =============
 
 async def run_news_scraper_job() -> dict:
@@ -1064,6 +1096,7 @@ async def run_news_scraper_job() -> dict:
                     "region":         region,
                     "source_count":   article.get("source_count", 1),
                     "covered_by":     article.get("covered_by", [src]),
+                    "companies":      article.get("companies", []),
                 }
                 await db.news_articles.update_one(
                     {"url": doc["url"]},
@@ -1244,10 +1277,22 @@ async def get_news(
 @api_router.get("/news/company")
 async def get_company_news(name: str, limit: int = 5):
     """
-    Return articles mentioning a company name (case-insensitive regex on title + summary).
-    Sorted by most recent first. Max 10 articles.
+    Return articles mentioning a company name.
+    Priority 1: articles tagged with the canonical company name in the `companies` array.
+    Priority 2: case-insensitive regex fallback on title + summary.
+    Sorted by most recent first. Max 20 articles.
     """
-    limit = min(max(limit, 1), 10)
+    limit = min(max(limit, 1), 20)
+
+    # First try the fast pre-tagged field
+    tagged = await db.news_articles.find(
+        {"companies": name}, {"_id": 0}
+    ).sort("publishedAt", -1).limit(limit).to_list(limit)
+
+    if tagged:
+        return [_normalise_article(a) for a in tagged]
+
+    # Fallback: broad regex search on title and summary
     regex = {"$regex": name, "$options": "i"}
     query = {"$or": [{"title": regex}, {"summary": regex}]}
     articles = await db.news_articles.find(
