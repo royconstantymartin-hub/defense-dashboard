@@ -38,6 +38,7 @@ import {
   RotateCcw,
   Tag,
   Star,
+  Image as ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -124,6 +125,8 @@ export default function Admin() {
   const [loading, setLoading] = useState(false);
   const [seeding, setSeeding] = useState(false);
   const [seedResult, setSeedResult] = useState(null);
+  const [refreshingImages, setRefreshingImages] = useState(false);
+  const [imageRefreshResult, setImageRefreshResult] = useState(null);
 
   const tDbTab      = useT({ en: "Database",                                    fr: "Base de données" });
   const tDbTitle    = useT({ en: "Database Initialization",                     fr: "Initialisation de la base de données" });
@@ -155,6 +158,22 @@ export default function Admin() {
       toast.error(msg);
     } finally {
       setSeeding(false);
+    }
+  };
+
+  const handleRefreshImages = async () => {
+    setRefreshingImages(true);
+    setImageRefreshResult(null);
+    try {
+      const res = await axios.post(`${API}/admin/refresh-article-images`, {}, { headers: authHeaders });
+      setImageRefreshResult({ ok: true, updated: res.data.updated, processed: res.data.processed });
+      toast.success(`${res.data.updated} images enriched`);
+    } catch (err) {
+      const msg = err.response?.data?.detail || err.message;
+      setImageRefreshResult({ ok: false, msg });
+      toast.error(msg);
+    } finally {
+      setRefreshingImages(false);
     }
   };
 
@@ -267,6 +286,48 @@ export default function Admin() {
                     </span>
                   ) : (
                     <span>{seedResult.msg}</span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Article Image Enrichment */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-lg">
+                  <ImageIcon className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-slate-900 font-semibold">Article Image Enrichment</h3>
+                  <p className="text-slate-500 text-sm">Fetch missing illustrations for news articles from their source pages (OG images).</p>
+                </div>
+              </div>
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs text-slate-500 space-y-1">
+                <p>• Scans up to 500 articles without images</p>
+                <p>• Fetches the Open Graph image from each article page</p>
+                <p>• Results are cached in the database permanently</p>
+              </div>
+              <button
+                onClick={handleRefreshImages}
+                disabled={refreshingImages}
+                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                {refreshingImages
+                  ? <><RefreshCw className="w-4 h-4 animate-spin" /> Enriching images…</>
+                  : <><ImageIcon className="w-4 h-4" /> Refresh Article Images</>
+                }
+              </button>
+              {imageRefreshResult && (
+                <div className={`flex items-start gap-2 text-sm rounded-lg p-3 border ${
+                  imageRefreshResult.ok
+                    ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                    : "bg-rose-50 border-rose-200 text-rose-600"
+                }`}>
+                  <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+                  {imageRefreshResult.ok ? (
+                    <span>{imageRefreshResult.updated} images added out of {imageRefreshResult.processed} articles processed</span>
+                  ) : (
+                    <span>{imageRefreshResult.msg}</span>
                   )}
                 </div>
               )}
