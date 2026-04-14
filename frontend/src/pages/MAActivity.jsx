@@ -704,17 +704,188 @@ function exportCSV(data) {
   URL.revokeObjectURL(url);
 }
 
-// ── Deal-type tabs ─────────────────────────────────────────────────────────
+// ── Deal-type tabs (strategic_investment + minority_stake merged) ──────────
 
 const DEAL_TYPE_TABS = [
-  { value: "all",                  label: "All" },
-  { value: "acquisition",          label: "Acquisitions" },
-  { value: "merger",               label: "Mergers" },
-  { value: "joint_venture",        label: "Joint Ventures" },
-  { value: "strategic_investment", label: "Strategic Investments" },
-  { value: "minority_stake",       label: "Minority Stakes" },
-  { value: "funding_round",        label: "Funding Rounds" },
+  { value: "all",          label: "All",           types: null },
+  { value: "acquisition",  label: "Acquisitions",  types: ["acquisition"] },
+  { value: "merger",       label: "Mergers",        types: ["merger"] },
+  { value: "joint_venture",label: "Joint Ventures", types: ["joint_venture"] },
+  { value: "investments",  label: "Investments",    types: ["strategic_investment", "minority_stake"] },
+  { value: "funding_round",label: "Funding Rounds", types: ["funding_round"] },
 ];
+
+// ── Known defense players: name variant → canonical DB name ───────────────
+// Canonical names must match exactly what's stored in defense_players.name
+
+const PROFILE_NAME_MAP = {
+  // Lockheed Martin
+  "Lockheed Martin": "Lockheed Martin",
+  // Raytheon / RTX
+  "Raytheon Technologies": "Raytheon Technologies",
+  "Raytheon": "Raytheon Technologies",
+  "RTX": "Raytheon Technologies",
+  "RTX Ventures": "Raytheon Technologies",
+  // Northrop Grumman
+  "Northrop Grumman": "Northrop Grumman",
+  // General Dynamics
+  "General Dynamics": "General Dynamics",
+  // Boeing
+  "Boeing": "Boeing Defense",
+  "Boeing Defense": "Boeing Defense",
+  // L3Harris
+  "L3Harris Technologies": "L3Harris Technologies",
+  "L3Harris": "L3Harris Technologies",
+  // HII
+  "Huntington Ingalls Industries": "Huntington Ingalls",
+  "Huntington Ingalls": "Huntington Ingalls",
+  "HII": "Huntington Ingalls",
+  // Leidos
+  "Leidos Holdings": "Leidos Holdings",
+  "Leidos": "Leidos Holdings",
+  // BAE Systems
+  "BAE Systems": "BAE Systems",
+  // Thales
+  "Thales": "Thales",
+  "Thales Group": "Thales",
+  // Leonardo
+  "Leonardo": "Leonardo",
+  "Leonardo DRS": "Leonardo",
+  "Leonardo Finmeccanica": "Leonardo",
+  // Airbus
+  "Airbus": "Airbus Defence & Space",
+  "Airbus Defence & Space": "Airbus Defence & Space",
+  "Airbus Defense": "Airbus Defence & Space",
+  // Rheinmetall
+  "Rheinmetall": "Rheinmetall",
+  "Rheinmetall AG": "Rheinmetall",
+  // Safran
+  "Safran": "Safran",
+  // KNDS
+  "KNDS": "KNDS",
+  "KNDS France": "KNDS",
+  "KNDS Germany": "KNDS",
+  // Hanwha
+  "Hanwha": "Hanwha Aerospace",
+  "Hanwha Aerospace": "Hanwha Aerospace",
+  "Hanwha Defense": "Hanwha Aerospace",
+  "Hanwha Ocean": "Hanwha Aerospace",
+  // Saab
+  "Saab": "Saab AB",
+  "Saab AB": "Saab AB",
+  // Dassault
+  "Dassault": "Dassault Aviation",
+  "Dassault Aviation": "Dassault Aviation",
+  // Naval Group
+  "Naval Group": "Naval Group",
+  // MBDA
+  "MBDA": "MBDA",
+  // Elbit
+  "Elbit Systems": "Elbit Systems",
+  // Rafael
+  "Rafael": "Rafael Advanced Defense",
+  "Rafael Advanced Defense Systems": "Rafael Advanced Defense",
+  "Rafael Advanced Defense": "Rafael Advanced Defense",
+  // Hensoldt
+  "Hensoldt": "Hensoldt",
+  // QinetiQ
+  "QinetiQ": "QinetiQ",
+  // Babcock
+  "Babcock": "Babcock International",
+  "Babcock International": "Babcock International",
+  // HEICO
+  "HEICO": "HEICO Corporation",
+  "HEICO Corporation": "HEICO Corporation",
+  // TransDigm
+  "TransDigm": "TransDigm",
+  // Mercury Systems
+  "Mercury Systems": "Mercury Systems",
+  // AeroVironment
+  "AeroVironment": "AeroVironment",
+  // Shield AI
+  "Shield AI": "Shield AI",
+  // SAIC
+  "SAIC": "SAIC",
+  // Kratos
+  "Kratos": "Kratos Defense",
+  "Kratos Defense": "Kratos Defense",
+  "Kratos Defense & Security Solutions": "Kratos Defense",
+  // Palantir
+  "Palantir": "Palantir Technologies",
+  "Palantir Technologies": "Palantir Technologies",
+  // Anduril
+  "Anduril": "Anduril Industries",
+  "Anduril Industries": "Anduril Industries",
+  // Booz Allen
+  "Booz Allen Hamilton": "Booz Allen Hamilton",
+  // CACI
+  "CACI": "CACI International",
+  "CACI International": "CACI International",
+  // Teledyne
+  "Teledyne Technologies": "Teledyne Technologies",
+  "Teledyne": "Teledyne Technologies",
+  // Curtiss-Wright
+  "Curtiss-Wright": "Curtiss-Wright",
+  // Textron
+  "Textron": "Textron",
+  // Rolls-Royce
+  "Rolls-Royce": "Rolls-Royce Holdings",
+  "Rolls-Royce Holdings": "Rolls-Royce Holdings",
+  // Parker Hannifin
+  "Parker Hannifin": "Parker Hannifin",
+  // Collins Aerospace
+  "Collins Aerospace": "Raytheon Technologies",
+};
+
+/**
+ * Returns the canonical DB name if the company is a known defense player,
+ * or null if it's a fund / VC / unknown entity.
+ */
+function resolvePlayerName(name) {
+  if (!name) return null;
+  if (PROFILE_NAME_MAP[name] !== undefined) return PROFILE_NAME_MAP[name];
+  // Partial match — first word of a known player contained in the name
+  const lower = name.toLowerCase();
+  for (const [key, val] of Object.entries(PROFILE_NAME_MAP)) {
+    if (key.length >= 5 && lower.includes(key.toLowerCase())) return val;
+  }
+  return null;
+}
+
+// ── Company cell — opens profile sheet for known players, website for others ─
+
+function CompanyCell({ activity, side, onOpenProfile }) {
+  const name    = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
+  const canonical = resolvePlayerName(name);
+  const domain  = getLogoDomain(activity, side);
+
+  return (
+    <div className="flex items-center gap-2">
+      <CompanyLogo activity={activity} side={side} size="sm" />
+      {canonical ? (
+        <button
+          onClick={e => { e.stopPropagation(); onOpenProfile(canonical); }}
+          className="text-sm font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
+        >
+          {name}
+        </button>
+      ) : domain ? (
+        <a
+          href={`https://${domain}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={e => e.stopPropagation()}
+          className="text-sm text-slate-600 hover:text-blue-600 transition-colors text-left leading-tight inline-flex items-center gap-1"
+        >
+          {name}
+          <ExternalLink className="w-2.5 h-2.5 opacity-40 shrink-0" />
+        </a>
+      ) : (
+        <span className="text-sm text-slate-600 leading-tight">{name}</span>
+      )}
+    </div>
+  );
+}
 
 // ── Table row ──────────────────────────────────────────────────────────────
 
@@ -732,15 +903,7 @@ function TableRow({ activity, index, onOpenProfile }) {
 
         {/* Acquirer */}
         <td className="px-3 py-2.5">
-          <div className="flex items-center gap-2">
-            <CompanyLogo activity={activity} side="acquirer" size="sm" />
-            <button
-              onClick={e => { e.stopPropagation(); onOpenProfile(activity.acquirer); }}
-              className="text-sm font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
-            >
-              {activity.acquirer}
-            </button>
-          </div>
+          <CompanyCell activity={activity} side="acquirer" onOpenProfile={onOpenProfile} />
         </td>
 
         {/* Arrow */}
@@ -748,15 +911,7 @@ function TableRow({ activity, index, onOpenProfile }) {
 
         {/* Target */}
         <td className="px-3 py-2.5">
-          <div className="flex items-center gap-2">
-            <CompanyLogo activity={activity} side="target" size="sm" />
-            <button
-              onClick={e => { e.stopPropagation(); onOpenProfile(activity.target); }}
-              className="text-sm text-slate-700 hover:text-purple-700 transition-colors text-left leading-tight"
-            >
-              {activity.target}
-            </button>
-          </div>
+          <CompanyCell activity={activity} side="target" onOpenProfile={onOpenProfile} />
         </td>
 
         {/* Type */}
@@ -904,11 +1059,18 @@ export default function MAActivity() {
     });
   }, [activities, historical]);
 
-  // Tab counts
+  // Tab counts — "investments" tab sums strategic_investment + minority_stake
   const tabCounts = useMemo(() => {
-    const counts = { all: allDeals.length };
-    for (const a of allDeals) counts[a.deal_type] = (counts[a.deal_type] || 0) + 1;
-    return counts;
+    const raw = { all: allDeals.length };
+    for (const a of allDeals) raw[a.deal_type] = (raw[a.deal_type] || 0) + 1;
+    return {
+      all:          raw.all,
+      acquisition:  raw.acquisition  || 0,
+      merger:       raw.merger       || 0,
+      joint_venture:raw.joint_venture|| 0,
+      investments:  (raw.strategic_investment || 0) + (raw.minority_stake || 0),
+      funding_round:raw.funding_round|| 0,
+    };
   }, [allDeals]);
 
   const handleSort = (field) => {
@@ -919,7 +1081,10 @@ export default function MAActivity() {
   // Apply filters + sort
   const filteredDeals = useMemo(() => {
     let list = allDeals;
-    if (dealTypeTab !== "all") list = list.filter(a => a.deal_type === dealTypeTab);
+    if (dealTypeTab !== "all") {
+      const tabDef = DEAL_TYPE_TABS.find(t => t.value === dealTypeTab);
+      if (tabDef?.types) list = list.filter(a => tabDef.types.includes(a.deal_type));
+    }
     if (selectedStatus !== "all") list = list.filter(a => a.status === selectedStatus);
     if (selectedYear !== "all") list = list.filter(a => String(new Date(a.announced_date).getFullYear()) === selectedYear);
     if (searchTerm) {
