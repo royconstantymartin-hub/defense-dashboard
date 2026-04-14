@@ -42,6 +42,7 @@ const DEAL_TYPE_OPTIONS = [
   { value: "joint_venture",        label: "Joint Venture" },
   { value: "strategic_investment", label: "Strategic Investment" },
   { value: "minority_stake",       label: "Minority Stake" },
+  { value: "funding_round",        label: "Funding Round" },
 ];
 
 const YEAR_OPTIONS = [
@@ -106,6 +107,19 @@ const LOGO_FALLBACK = {
   "Capella Space":               "capellaspace.com",
   "Epirus":                      "epirusinc.com",
   "Harmattan.ai":                "harmattan.ai",
+  "Hermeus":                     "hermeus.com",
+  "Skydio":                      "skydio.com",
+  "True Anomaly":                "trueanomaly.space",
+  "Ursa Major":                  "ursamajor.com",
+  "Mach Industries":             "machindustries.co",
+  // ── Investors / VCs ──────────────────────────────────────────────────────────
+  "Andreessen Horowitz":         "a16z.com",
+  "Founders Fund":               "foundersfund.com",
+  "General Catalyst":            "generalcatalyst.com",
+  "Lux Capital":                 "luxcapital.com",
+  "General Atlantic":            "generalatlantic.com",
+  "Tiger Global Management":     "tigerglobal.com",
+  "Andreessen Horowitz / Founders Fund": "a16z.com",
   "ArianeGroup":                 "arianegroup.com",
   "MBDA":                        "mbda-systems.com",
   "RADA Electronic Industries":  "rada.com",
@@ -254,6 +268,7 @@ function getDealLabels(dealType) {
     case "joint_venture":        return { left: "CO-FOUNDER", right: "JV ENTITY",     sep: "jv" };
     case "minority_stake":       return { left: "INVESTOR",   right: "PORTFOLIO CO.", sep: "invest" };
     case "strategic_investment": return { left: "INVESTOR",   right: "PORTFOLIO CO.", sep: "invest" };
+    case "funding_round":        return { left: "LEAD INVESTOR", right: "STARTUP",    sep: "invest" };
     default:                     return { left: "ACQUIRER",   right: "TARGET",        sep: "arrow" };
   }
 }

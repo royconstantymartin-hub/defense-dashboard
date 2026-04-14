@@ -87,7 +87,7 @@ class MAActivityCreate(BaseModel):
     target: str
     deal_value: float  # in millions USD
     status: str  # announced, pending, under_review, completed, active, cancelled, dissolved, exited
-    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake
+    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake, funding_round
     description: str
     acquirer_country: Optional[str] = None   # ISO 3166-1 alpha-2
     target_country: Optional[str] = None
