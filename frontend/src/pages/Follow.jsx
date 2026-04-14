@@ -346,6 +346,20 @@ const LANG_COLORS = {
   DE: "bg-yellow-50 text-yellow-700 border-yellow-200",
 };
 
+function SourceLogo({ url }) {
+  const domain = url.replace(/^https?:\/\//, "").split("/")[0];
+  const [errored, setErrored] = useState(false);
+  if (errored) return <Globe2 className="w-5 h-5 text-slate-300" />;
+  return (
+    <img
+      src={`https://logo.clearbit.com/${domain}`}
+      alt=""
+      className="w-5 h-5 object-contain"
+      onError={() => setErrored(true)}
+    />
+  );
+}
+
 export default function Follow() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
@@ -431,11 +445,16 @@ export default function Follow() {
               <CardContent className="p-4 flex flex-col gap-3 h-full">
                 {/* Top row */}
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-slate-900 group-hover:text-purple-700 transition-colors leading-tight">
-                      {source.name}
-                    </p>
-                    <p className="text-xs text-slate-400 mt-0.5 font-mono truncate">{source.url.replace("https://", "")}</p>
+                  <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-md bg-slate-50 border border-slate-100 flex items-center justify-center">
+                      <SourceLogo url={source.url} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-slate-900 group-hover:text-purple-700 transition-colors leading-tight">
+                        {source.name}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-0.5 font-mono truncate">{source.url.replace("https://", "")}</p>
+                    </div>
                   </div>
                   <ExternalLink className="w-4 h-4 text-slate-300 group-hover:text-purple-500 flex-shrink-0 mt-0.5 transition-colors" />
                 </div>
