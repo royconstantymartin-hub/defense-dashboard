@@ -105,6 +105,111 @@ _SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
 }
 
 
+# ── Company alias map ────────────────────────────────────────────────────────
+# Maps each canonical company name (as stored in the DB) to a list of search
+# terms (lowercase) that identify mentions of that company in article text.
+# Terms are checked against the full lowercase title + summary string.
+
+COMPANY_ALIASES: Dict[str, List[str]] = {
+    # USA — Major Primes
+    "Lockheed Martin":         ["lockheed martin", "lockheed", "lmt"],
+    "Raytheon Technologies":   ["raytheon technologies", "raytheon", " rtx ", "rtx corp", "rtx's"],
+    "Northrop Grumman":        ["northrop grumman", "northrop", "noc "],
+    "General Dynamics":        ["general dynamics", " gdls "],
+    "Boeing Defense":          ["boeing defense", "boeing"],
+    "L3Harris Technologies":   ["l3harris", "l3 harris", "harris corporation"],
+    "Huntington Ingalls":      ["huntington ingalls", " hii "],
+    "Leidos Holdings":         ["leidos"],
+    "SAIC":                    [" saic "],
+    "Booz Allen Hamilton":     ["booz allen"],
+    "General Atomics":         ["general atomics"],
+    "Textron":                 ["textron", "bell helicopter", "bell textron"],
+    "Kratos Defense":          ["kratos defense", "kratos"],
+    "AeroVironment":           ["aerovironment"],
+    "Anduril Industries":      ["anduril"],
+    "Palantir Technologies":   ["palantir", "pltr"],
+    "Rocket Lab":              ["rocket lab", "rklb"],
+    "Axon Enterprise":         ["axon enterprise", " axon "],
+    "Mercury Systems":         ["mercury systems"],
+    "Parsons Corporation":     ["parsons corporation"],
+    "BWX Technologies":        [" bwxt ", "bwx technologies"],
+    "TransDigm":               ["transdigm"],
+    # UK
+    "BAE Systems":             ["bae systems", "bae "],
+    "Rolls-Royce Holdings":    ["rolls-royce", "rolls royce"],
+    "Babcock International":   ["babcock international", "babcock"],
+    "QinetiQ":                 ["qinetiq"],
+    # France
+    "Thales":                  ["thales"],
+    "Dassault Aviation":       ["dassault", "rafale"],
+    "Safran":                  ["safran"],
+    "Naval Group":             ["naval group"],
+    "MBDA":                    [" mbda "],
+    "Nexter Systems":          ["nexter"],
+    "Arquus":                  ["arquus"],
+    # Germany
+    "Rheinmetall":             ["rheinmetall"],
+    "Hensoldt":                ["hensoldt"],
+    "KNDS":                    [" knds "],
+    "Krauss-Maffei Wegmann":   ["krauss-maffei", "kmw ", " leopard tank"],
+    "MTU Aero Engines":        [" mtu aero"],
+    "ThyssenKrupp Marine":     ["thyssenkrupp marine", "thyssenkrupp"],
+    # EU/Multinational
+    "Airbus Defence & Space":  ["airbus defence", "airbus defense", "airbus"],
+    "Leonardo":                ["leonardo"],
+    "MBDA":                    [" mbda "],
+    "Saab AB":                 [" saab "],
+    "Kongsberg Defence":       ["kongsberg"],
+    # Italy
+    "Fincantieri":             ["fincantieri"],
+    # Spain
+    "Indra Sistemas":          ["indra "],
+    "Navantia":                ["navantia"],
+    # Israel
+    "Elbit Systems":           ["elbit"],
+    "Israel Aerospace Industries": ["iai ", "israel aerospace"],
+    "Rafael Advanced Defense": ["rafael "],
+    # Turkey
+    "Baykar":                  ["baykar", "bayraktar"],
+    "Aselsan":                 ["aselsan"],
+    # South Korea
+    "Hanwha Aerospace":        ["hanwha"],
+    "Korea Aerospace Industries": [" kai ", "korea aerospace"],
+    # Japan
+    "Mitsubishi Heavy Industries": ["mitsubishi heavy"],
+    # Australia
+    "Austal":                  ["austal"],
+    # India
+    "Hindustan Aeronautics":   [" hal ", "hindustan aeronautics"],
+    # Brazil
+    "Embraer Defense":         ["embraer"],
+    # Canada
+    "CAE Inc":                 [" cae "],
+    # Ukraine
+    "Ukroboronprom":           ["ukroboronprom"],
+    # Singapore
+    "ST Engineering":          ["st engineering"],
+}
+
+
+def detect_companies(title: str, summary: str) -> List[str]:
+    """
+    Return a list of canonical company names mentioned in the article.
+    Checks title and summary (case-insensitive). Uses word-boundary padding
+    (spaces / punctuation) via the padded text trick to avoid false positives
+    on short terms like "rtx" or "hal".
+    """
+    # Pad with spaces so prefix/suffix terms like " rtx " always match
+    text = (" " + title + " " + summary + " ").lower()
+    found: List[str] = []
+    for canonical, aliases in COMPANY_ALIASES.items():
+        for alias in aliases:
+            if alias in text:
+                found.append(canonical)
+                break  # one match per company is enough
+    return found
+
+
 def assign_category(title: str) -> str:
     t = title.lower()
     for cat, keywords in CATEGORY_KEYWORDS.items():
@@ -443,6 +548,7 @@ def _fetch_rss(source: Dict) -> List[Dict]:
                 "relevanceScore": int(raw_score * weight),
                 "language":       src_lang,
                 "region":         region,
+                "companies":      detect_companies(title, summary),
             })
 
         logger.info("[%s] Fetched %d articles via RSS", source["name"], len(articles))
@@ -499,6 +605,7 @@ def _scrape_nato() -> List[Dict]:
                 "relevanceScore": compute_relevance_score(title, ""),
                 "language":       "en",
                 "region":         "europe",
+                "companies":      detect_companies(title, ""),
             })
 
         logger.info("[NATO] Scraped %d articles", len(articles))
@@ -555,6 +662,7 @@ def _scrape_janes() -> List[Dict]:
                 "relevanceScore": compute_relevance_score(title, ""),
                 "language":       "en",
                 "region":         region,
+                "companies":      detect_companies(title, ""),
             })
 
         logger.info("[Janes] Scraped %d articles", len(articles))
@@ -635,6 +743,7 @@ def _scrape_defensepost() -> List[Dict]:
                     "relevanceScore": compute_relevance_score(title, summary),
                     "language":       "en",
                     "region":         region,
+                    "companies":      detect_companies(title, summary),
                 })
 
         except Exception as exc:
