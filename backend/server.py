@@ -386,6 +386,27 @@ async def get_me(current_user: dict = Depends(get_current_user)):
     user = await db.users.find_one({"id": current_user['sub']}, {"_id": 0, "password_hash": 0})
     return user
 
+class AdminSetupBody(BaseModel):
+    setup_key: str
+
+@api_router.post("/auth/promote-admin", response_model=TokenResponse)
+async def promote_admin(body: AdminSetupBody, current_user: dict = Depends(get_current_user)):
+    """Promotes the current logged-in user to admin role.
+    Requires the ADMIN_SETUP_KEY env var (falls back to JWT_SECRET).
+    One-time setup for dashboard owners.
+    """
+    expected_key = os.environ.get("ADMIN_SETUP_KEY", JWT_SECRET)
+    if body.setup_key != expected_key:
+        raise HTTPException(status_code=403, detail="Invalid setup key")
+    user_id = current_user.get("sub")
+    await db.users.update_one({"id": user_id}, {"$set": {"role": "admin"}})
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
+    token = create_token(user["id"], user["email"], "admin")
+    return TokenResponse(
+        access_token=token,
+        user={"id": user["id"], "email": user["email"], "name": user["name"], "role": "admin"}
+    )
+
 # ============= ANNOUNCEMENTS ROUTES =============
 
 @api_router.get("/announcements", response_model=List[Announcement])
