@@ -19,7 +19,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { 
+import {
   Plus,
   Trash2,
   Newspaper,
@@ -32,6 +32,12 @@ import {
   Database,
   RefreshCw,
   CheckCircle2,
+  Rss,
+  ThumbsUp,
+  ThumbsDown,
+  RotateCcw,
+  Tag,
+  Star,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -133,6 +139,10 @@ export default function Admin() {
             <Package className="w-4 h-4 mr-2" />
             Products
           </TabsTrigger>
+          <TabsTrigger value="news-feed" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
+            <Rss className="w-4 h-4 mr-2" />
+            News Feed
+          </TabsTrigger>
         </TabsList>
 
         {/* Database Tab */}
@@ -212,7 +222,291 @@ export default function Admin() {
         <TabsContent value="products">
           <ProductsAdmin authHeaders={authHeaders} />
         </TabsContent>
+
+        {/* News Feed Moderation Tab */}
+        <TabsContent value="news-feed">
+          <NewsFeedAdmin authHeaders={authHeaders} />
+        </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+// ─── News Feed Moderation Component ──────────────────────────────────────────
+
+const NEWS_CATEGORIES_MOD = [
+  "CONTRACT", "TECHNOLOGY", "CONFLICT", "POLICY", "GEOPOLITICS", "M&A", "INDUSTRY",
+];
+
+function getCatStyle(cat) {
+  switch (cat) {
+    case "CONTRACT":    return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    case "POLICY":      return "bg-amber-50   text-amber-700   border-amber-200";
+    case "M&A":         return "bg-blue-50    text-blue-700    border-blue-200";
+    case "TECHNOLOGY":  return "bg-purple-50  text-purple-700  border-purple-200";
+    case "CONFLICT":    return "bg-red-50     text-red-700     border-red-200";
+    case "GEOPOLITICS": return "bg-sky-50     text-sky-700     border-sky-200";
+    default:            return "bg-slate-100  text-slate-600   border-slate-200";
+  }
+}
+
+function NewsFeedAdmin({ authHeaders }) {
+  const [articles, setArticles]           = useState([]);
+  const [loading, setLoading]             = useState(true);
+  const [filter, setFilter]               = useState("all"); // all | pending | approved | rejected
+  const [search, setSearch]               = useState("");
+  const [actionLoading, setActionLoading] = useState(null); // url of article being updated
+
+  const fetchArticles = async (mod) => {
+    setLoading(true);
+    try {
+      const params = { limit: 100 };
+      if (mod && mod !== "all") params.moderation = mod;
+      const res = await axios.get(`${API}/admin/news`, { params, headers: authHeaders });
+      setArticles(res.data);
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "Failed to load articles");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchArticles(filter); }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const moderate = async (url, action, category) => {
+    setActionLoading(url + action);
+    try {
+      await axios.patch(
+        `${API}/admin/news/moderate`,
+        { url, action, category },
+        { headers: authHeaders },
+      );
+      setArticles((prev) =>
+        prev.map((a) => {
+          if (a.url !== url) return a;
+          const updated = { ...a };
+          if (action === "approve")      { updated.adminApproved = true;  delete updated.adminRejected; }
+          if (action === "reject")       { updated.adminRejected = true;  delete updated.adminApproved; }
+          if (action === "reset")        { delete updated.adminApproved;  delete updated.adminRejected; }
+          if (action === "recategorize") { updated.category = category; }
+          return updated;
+        })
+      );
+      toast.success(
+        action === "approve"      ? "Article validé pour Breaking Intel"  :
+        action === "reject"       ? "Article retiré du flux"               :
+        action === "reset"        ? "Modération annulée"                   :
+                                    `Catégorie → ${category}`
+      );
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "Action failed");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const displayed = articles.filter((a) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      a.title?.toLowerCase().includes(q) ||
+      a.source?.toLowerCase().includes(q)
+    );
+  });
+
+  const pendingCount  = articles.filter((a) => !a.adminApproved && !a.adminRejected).length;
+  const approvedCount = articles.filter((a) =>  a.adminApproved).length;
+  const rejectedCount = articles.filter((a) =>  a.adminRejected).length;
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-purple-50 rounded-lg">
+            <Rss className="w-5 h-5 text-purple-700" />
+          </div>
+          <div>
+            <h3 className="text-slate-900 font-semibold">News Feed Moderation</h3>
+            <p className="text-slate-500 text-sm">
+              Recatégoriser les articles, valider pour Breaking Intel, ou retirer les hors-sujet.
+            </p>
+          </div>
+        </div>
+
+        {/* Stats row */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {[
+            { label: "All",      value: "all",      count: articles.length,  color: "bg-slate-100 text-slate-700" },
+            { label: "Pending",  value: "pending",  count: pendingCount,     color: "bg-amber-50  text-amber-700" },
+            { label: "Approved", value: "approved", count: approvedCount,    color: "bg-emerald-50 text-emerald-700" },
+            { label: "Rejected", value: "rejected", count: rejectedCount,    color: "bg-red-50    text-red-700" },
+          ].map(({ label, value, count, color }) => (
+            <button
+              key={value}
+              onClick={() => setFilter(value)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${color} ${
+                filter === value ? "border-current ring-1 ring-current" : "border-transparent opacity-70 hover:opacity-100"
+              }`}
+            >
+              {label} · {count}
+            </button>
+          ))}
+        </div>
+
+        {/* Search */}
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by title or source…"
+            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-900 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-300"
+          />
+        </div>
+      </div>
+
+      {/* Article list */}
+      <div className="space-y-2">
+        {loading ? (
+          <div className="text-center py-12 text-slate-400 text-sm">Loading…</div>
+        ) : displayed.length === 0 ? (
+          <div className="text-center py-12 text-slate-400 text-sm">No articles found.</div>
+        ) : displayed.map((article) => (
+          <ArticleModerationRow
+            key={article.url}
+            article={article}
+            actionLoading={actionLoading}
+            onModerate={moderate}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ArticleModerationRow({ article, actionLoading, onModerate }) {
+  const [catOpen, setCatOpen] = useState(false);
+  const isApproved = !!article.adminApproved;
+  const isRejected = !!article.adminRejected;
+  const busy = (action) => actionLoading === article.url + action;
+
+  return (
+    <div className={`bg-white border rounded-xl p-4 flex flex-col sm:flex-row gap-3 transition-all ${
+      isApproved ? "border-emerald-300 bg-emerald-50/30" :
+      isRejected ? "border-red-200   bg-red-50/20 opacity-60" :
+                   "border-slate-200"
+    }`}>
+      {/* Thumbnail */}
+      {article.image && (
+        <div className="flex-shrink-0 w-full sm:w-20 h-14 sm:h-14 rounded-lg overflow-hidden bg-slate-100">
+          <img src={article.image} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = "none"; }} />
+        </div>
+      )}
+
+      {/* Text */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-widest ${getCatStyle(article.category)}`}>
+            {article.category || "INDUSTRY"}
+          </span>
+          <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">{article.source}</span>
+          {isApproved && (
+            <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
+              <Star className="w-3 h-3" /> Validated
+            </span>
+          )}
+          {isRejected && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 border border-red-200">
+              Rejected
+            </span>
+          )}
+        </div>
+        <a href={article.url} target="_blank" rel="noopener noreferrer"
+           className="text-slate-900 font-semibold text-sm leading-snug line-clamp-2 hover:text-purple-700 transition-colors">
+          {article.title}
+        </a>
+        {article.summary && (
+          <p className="text-slate-400 text-xs mt-1 line-clamp-1">{article.summary}</p>
+        )}
+        <p className="text-slate-400 text-[11px] mt-1">
+          Score {article.relevanceScore ?? 0} · {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : ""}
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-row sm:flex-col gap-1.5 flex-shrink-0 self-start sm:self-center">
+        {/* Approve */}
+        <button
+          onClick={() => onModerate(article.url, "approve")}
+          disabled={isApproved || !!actionLoading}
+          title="Valider pour Breaking Intel"
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+            isApproved
+              ? "bg-emerald-100 text-emerald-700 border-emerald-200 cursor-default"
+              : "bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50 disabled:opacity-40"
+          }`}
+        >
+          {busy("approve") ? <RefreshCw className="w-3 h-3 animate-spin" /> : <ThumbsUp className="w-3 h-3" />}
+          <span className="hidden sm:inline">Approve</span>
+        </button>
+
+        {/* Reject */}
+        <button
+          onClick={() => onModerate(article.url, "reject")}
+          disabled={isRejected || !!actionLoading}
+          title="Retirer du flux"
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+            isRejected
+              ? "bg-red-100 text-red-600 border-red-200 cursor-default"
+              : "bg-white text-red-500 border-red-200 hover:bg-red-50 disabled:opacity-40"
+          }`}
+        >
+          {busy("reject") ? <RefreshCw className="w-3 h-3 animate-spin" /> : <ThumbsDown className="w-3 h-3" />}
+          <span className="hidden sm:inline">Reject</span>
+        </button>
+
+        {/* Reset */}
+        {(isApproved || isRejected) && (
+          <button
+            onClick={() => onModerate(article.url, "reset")}
+            disabled={!!actionLoading}
+            title="Annuler la modération"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-500 border border-slate-200 hover:bg-slate-50 transition-all disabled:opacity-40"
+          >
+            {busy("reset") ? <RefreshCw className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
+            <span className="hidden sm:inline">Reset</span>
+          </button>
+        )}
+
+        {/* Recategorize */}
+        <div className="relative">
+          <button
+            onClick={() => setCatOpen((o) => !o)}
+            disabled={!!actionLoading}
+            title="Changer la catégorie"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-purple-700 border border-purple-200 hover:bg-purple-50 transition-all disabled:opacity-40"
+          >
+            <Tag className="w-3 h-3" />
+            <span className="hidden sm:inline">Category</span>
+          </button>
+          {catOpen && (
+            <div className="absolute right-0 top-full mt-1 z-20 bg-white border border-slate-200 rounded-xl shadow-lg py-1 min-w-[130px]">
+              {NEWS_CATEGORIES_MOD.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => { onModerate(article.url, "recategorize", cat); setCatOpen(false); }}
+                  className={`w-full text-left px-3 py-1.5 text-xs font-semibold hover:bg-purple-50 transition-colors ${
+                    article.category === cat ? "text-purple-700 bg-purple-50" : "text-slate-700"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
