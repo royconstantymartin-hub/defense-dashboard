@@ -207,6 +207,21 @@ function SourceFavicon({ url, source }) {
 
 function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, isHot }) {
   const [imgError, setImgError] = useState(false);
+  const [localImage, setLocalImage] = useState(null);
+
+  // If the article has no image stored, try fetching the OG image on-demand.
+  // The backend caches the result in the DB so subsequent loads are instant.
+  useEffect(() => {
+    if (!article.image && !localImage && article.url) {
+      axios
+        .get(`${API}/news/og-image`, { params: { url: article.url } })
+        .then((r) => { if (r.data.image) setLocalImage(r.data.image); })
+        .catch(() => {});
+    }
+  }, [article.url, article.image, localImage]);
+
+  const displayImage = article.image || localImage;
+
   const score     = article.relevanceScore ?? 0;
   const isNew     = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
   const srcCount  = article.source_count ?? 1;
@@ -226,7 +241,7 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
       <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative block flex-shrink-0 overflow-hidden" style={{ height: "220px" }}>
         {!imgError && article.image ? (
           <img
-            src={article.image}
+            src={displayImage}
             alt={article.title}
             loading="lazy"
             onError={() => setImgError(true)}

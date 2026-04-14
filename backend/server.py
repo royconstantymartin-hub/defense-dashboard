@@ -871,6 +871,10 @@ async def _run_seed() -> dict:
             doc['date'] = doc['date'].isoformat()
             await db.announcements.insert_one(doc)
 
+    # Purge known-incorrect M&A entries before seeding correct data
+    for stale in _STALE_MA_DEALS:
+        await db.ma_activities.delete_many(stale)
+
     # Seed M&A Activities — upsert so enriched fields are applied to existing docs
     import re as _re
 
@@ -1485,6 +1489,64 @@ async def trigger_scrape(current_user: dict = Depends(get_current_user)):
     return {"status": "ok", **stats}
 
 
+@api_router.get("/news/og-image")
+async def get_article_og_image(url: str):
+    """
+    Return the OG/Twitter Card image URL for a given article URL.
+    Checks the DB cache first; fetches from the source page if missing.
+    The result is written back to the DB so subsequent calls are instant.
+    """
+    import asyncio
+    from services.news_scraper import _fetch_og_image
+
+    article = await db.news_articles.find_one({"url": url}, {"_id": 0, "image": 1})
+    if article and article.get("image"):
+        return {"image": article["image"]}
+
+    img = await asyncio.to_thread(_fetch_og_image, url)
+    if img:
+        await db.news_articles.update_one({"url": url}, {"$set": {"image": img}})
+        return {"image": img}
+
+    return {"image": None}
+
+
+@api_router.post("/admin/refresh-article-images")
+async def refresh_article_images(current_user: dict = Depends(get_current_user)):
+    """
+    Re-enrich images for all news articles that currently lack one.
+    Uses the same OG-image fetcher as the news scraper. Admin only.
+    Returns how many articles were updated out of those processed.
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+
+    import asyncio
+    from services.news_scraper import _enrich_images
+
+    raw = await db.news_articles.find(
+        {"$or": [{"image": None}, {"image": {"$exists": False}}]},
+        {"_id": 0, "url": 1}
+    ).limit(500).to_list(500)
+
+    if not raw:
+        return {"updated": 0, "processed": 0}
+
+    articles = [{"url": a["url"], "image": None} for a in raw]
+    await asyncio.to_thread(_enrich_images, articles)
+
+    updated = 0
+    for a in articles:
+        if a.get("image"):
+            await db.news_articles.update_one(
+                {"url": a["url"]},
+                {"$set": {"image": a["image"]}}
+            )
+            updated += 1
+
+    return {"updated": updated, "processed": len(articles)}
+
+
 # ── News moderation models ──────────────────────────────────────────────────
 
 class NewsModerationAction(BaseModel):
@@ -1683,6 +1745,12 @@ async def _apply_company_enrichments():
     except Exception as exc:
         logger.error("Company enrichments error: %s", exc)
 
+# Known-incorrect M&A entries that must be purged from the DB.
+# These crept in via old seeds or scraper hallucinations and have the wrong acquirer.
+_STALE_MA_DEALS = [
+    {"acquirer": "Thales", "target": "Preligens"},   # acquired by Safran, not Thales
+]
+
 async def _migrate_ma_enrichments():
     """
     On startup, unconditionally upsert all seed-data enrichments into MA documents.
@@ -1692,6 +1760,13 @@ async def _migrate_ma_enrichments():
     try:
         logger.info("MA migration: applying enrichments from seed data")
         from data.seed_data import MA_DATA, MA_EXTRA_DEALS
+
+        # Purge known-incorrect entries before upserting correct ones
+        for stale in _STALE_MA_DEALS:
+            result = await db.ma_activities.delete_many(stale)
+            if result.deleted_count:
+                logger.info("MA migration: removed %d stale entry/entries %s", result.deleted_count, stale)
+
         all_deals = MA_DATA + MA_EXTRA_DEALS
         for m in all_deals:
             activity = MAActivity(**m)
