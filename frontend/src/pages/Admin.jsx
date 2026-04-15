@@ -24,6 +24,9 @@ import {
   Trash2,
   Newspaper,
   Handshake,
+  Sparkles,
+  Link2,
+  ImageIcon,
   Building2,
   Globe,
   FileText,
@@ -940,30 +943,112 @@ function AnnouncementsAdmin({ authHeaders }) {
 }
 
 // M&A Admin Component
+const EMPTY_FORM = {
+  acquirer: "", target: "",
+  deal_value: "", is_disclosed: true,
+  status: "announced", deal_type: "acquisition",
+  round_type: "", stake_percentage: "",
+  acquirer_country: "", target_country: "",
+  announced_date: new Date().toISOString().slice(0, 10),
+  description: "", rationale: "", source_url: "",
+};
+
 function MAAdmin({ authHeaders }) {
-  const [items, setItems] = useState([]);
-  const [piloting, setPiloting] = useState(false);
+  const [items,       setItems]       = useState([]);
+  const [piloting,    setPiloting]    = useState(false);
   const [pilotResult, setPilotResult] = useState(null);
-  const [form, setForm] = useState({
-    acquirer: "",
-    target: "",
-    deal_value: 0,
-    status: "announced",
-    deal_type: "acquisition",
-    description: ""
-  });
+  const [form,        setForm]        = useState(EMPTY_FORM);
+
+  // ── AI extraction state ──────────────────────────────────────────────────
+  const [extractMode,    setExtractMode]    = useState("url");   // "url" | "image"
+  const [extractUrl,     setExtractUrl]     = useState("");
+  const [extracting,     setExtracting]     = useState(false);
+  const [extractPreview, setExtractPreview] = useState(null);
+  const [extractError,   setExtractError]   = useState(null);
+  const [pastedImage,    setPastedImage]    = useState(null);    // { base64, mediaType, preview }
 
   const fetchItems = async () => {
     const res = await axios.get(`${API}/ma-activities`);
     setItems(res.data);
   };
-
   useEffect(() => { fetchItems(); }, []);
 
+  // ── Paste handler for screenshots ─────────────────────────────────────────
+  const handlePaste = (e) => {
+    const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith("image/"));
+    if (!item) return;
+    e.preventDefault();
+    const file = item.getAsFile();
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      const [header, base64] = dataUrl.split(",");
+      const mediaType = header.match(/:(.*?);/)[1];
+      setPastedImage({ base64, mediaType, preview: dataUrl });
+      setExtractError(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      const [header, base64] = dataUrl.split(",");
+      const mediaType = header.match(/:(.*?);/)[1];
+      setPastedImage({ base64, mediaType, preview: dataUrl });
+      setExtractError(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ── AI extract ─────────────────────────────────────────────────────────────
+  const handleExtract = async () => {
+    setExtracting(true);
+    setExtractError(null);
+    setExtractPreview(null);
+    try {
+      const body = extractMode === "url"
+        ? { url: extractUrl }
+        : { image_base64: pastedImage.base64, image_media_type: pastedImage.mediaType };
+      const res = await axios.post(`${API}/ma-activities/extract`, body, { headers: authHeaders });
+      setExtractPreview(res.data);
+    } catch (err) {
+      setExtractError(err.response?.data?.detail || err.message);
+    } finally {
+      setExtracting(false);
+    }
+  };
+
+  const applyExtracted = () => {
+    if (!extractPreview) return;
+    const d = extractPreview;
+    setForm({
+      acquirer:        d.acquirer        ?? "",
+      target:          d.target          ?? "",
+      deal_value:      d.deal_value      ?? "",
+      is_disclosed:    d.is_disclosed    ?? true,
+      status:          d.status          ?? "announced",
+      deal_type:       d.deal_type       ?? "acquisition",
+      round_type:      d.round_type      ?? "",
+      stake_percentage:d.stake_percentage ?? "",
+      acquirer_country:d.acquirer_country ?? "",
+      target_country:  d.target_country  ?? "",
+      announced_date:  d.announced_date  ?? new Date().toISOString().slice(0, 10),
+      description:     d.description     ?? "",
+      rationale:       d.rationale       ?? "",
+      source_url:      d.source_url      ?? "",
+    });
+    setExtractPreview(null);
+    toast.success("Formulaire pré-rempli — vérifiez et soumettez");
+  };
+
+  // ── Pilot seed ─────────────────────────────────────────────────────────────
   const handlePilotSeed = async () => {
-    if (!window.confirm("Ceci va SUPPRIMER tous les deals M&A existants et les remplacer par les 9 deals pilotes vérifiés. Confirmer ?")) return;
-    setPiloting(true);
-    setPilotResult(null);
+    if (!window.confirm("Supprimer tous les deals M&A et charger les 9 deals pilotes vérifiés ?")) return;
+    setPiloting(true); setPilotResult(null);
     try {
       const res = await axios.post(`${API}/ma-activities/seed-pilot`, {}, { headers: authHeaders });
       setPilotResult({ ok: true, data: res.data });
@@ -978,165 +1063,324 @@ function MAAdmin({ authHeaders }) {
     }
   };
 
+  // ── Submit ─────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API}/ma-activities`, form, { headers: authHeaders });
-      toast.success("M&A activity created!");
-      setForm({ acquirer: "", target: "", deal_value: 0, status: "announced", deal_type: "acquisition", description: "" });
+      const payload = {
+        ...form,
+        deal_value:       parseFloat(form.deal_value) || 0,
+        stake_percentage: form.stake_percentage !== "" ? parseFloat(form.stake_percentage) : null,
+        round_type:       form.round_type  || null,
+        acquirer_country: form.acquirer_country || null,
+        target_country:   form.target_country   || null,
+        source_url:       form.source_url  || null,
+        rationale:        form.rationale   || null,
+        announced_date:   form.announced_date || null,
+      };
+      await axios.post(`${API}/ma-activities`, payload, { headers: authHeaders });
+      toast.success("Deal créé !");
+      setForm(EMPTY_FORM);
       fetchItems();
     } catch (err) {
-      toast.error("Failed to create");
+      toast.error(err.response?.data?.detail || "Erreur création");
     }
   };
 
   const handleDelete = async (id) => {
     await axios.delete(`${API}/ma-activities/${id}`, { headers: authHeaders });
-    toast.success("Deleted!");
+    toast.success("Supprimé");
     fetchItems();
   };
 
+  const f = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+
   return (
     <div className="space-y-6">
-      {/* Pilot Seed Banner */}
+
+      {/* ── Pilot Seed ── */}
       <Card className="bg-white border-amber-200">
         <CardContent className="pt-4 pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1">
               <p className="text-slate-900 font-semibold text-sm">M&A Pilot — 9 deals curatés</p>
-              <p className="text-slate-500 text-xs mt-0.5">
-                Réinitialise la collection avec 9 deals vérifiés (logos, sources réelles, rationale détaillé). Supprime tous les deals existants.
-              </p>
+              <p className="text-slate-500 text-xs mt-0.5">Réinitialise la collection avec 9 deals vérifiés.</p>
               {pilotResult && (
                 <p className={`text-xs mt-1 font-medium ${pilotResult.ok ? "text-emerald-600" : "text-rose-600"}`}>
                   {pilotResult.ok ? `✓ ${pilotResult.data.deals} deals chargés` : pilotResult.msg}
                 </p>
               )}
             </div>
-            <button
-              onClick={handlePilotSeed}
-              disabled={piloting}
-              className="shrink-0 flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
-            >
-              {piloting
-                ? <><RefreshCw className="w-4 h-4 animate-spin" /> Chargement…</>
-                : <><Database className="w-4 h-4" /> Charger Pilot 9</>
-              }
+            <button onClick={handlePilotSeed} disabled={piloting}
+              className="shrink-0 flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors">
+              {piloting ? <><RefreshCw className="w-4 h-4 animate-spin" /> Chargement…</> : <><Database className="w-4 h-4" /> Charger Pilot 9</>}
             </button>
           </div>
         </CardContent>
       </Card>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-      <Card className="bg-white border-slate-200">
-        <CardHeader className="border-b border-slate-200">
-          <CardTitle className="text-slate-900 flex items-center gap-2">
-            <Plus className="w-5 h-5" /> Add M&A Activity
+      {/* ── AI Extraction ── */}
+      <Card className="bg-white border-purple-200">
+        <CardHeader className="border-b border-slate-100 pb-3">
+          <CardTitle className="text-slate-900 flex items-center gap-2 text-base">
+            <Sparkles className="w-4 h-4 text-purple-600" /> Extraction IA — URL ou capture d'écran
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-slate-600">Acquirer</Label>
-                <Input
-                  value={form.acquirer}
-                  onChange={(e) => setForm({ ...form, acquirer: e.target.value })}
-                  className="bg-white border-slate-200 text-slate-900"
-                  required
-                />
-              </div>
-              <div>
-                <Label className="text-slate-600">Target</Label>
-                <Input
-                  value={form.target}
-                  onChange={(e) => setForm({ ...form, target: e.target.value })}
-                  className="bg-white border-slate-200 text-slate-900"
-                  required
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label className="text-slate-600">Deal Value (M$)</Label>
-                <Input
-                  type="number"
-                  value={form.deal_value}
-                  onChange={(e) => setForm({ ...form, deal_value: parseFloat(e.target.value) })}
-                  className="bg-white border-slate-200 text-slate-900"
-                  required
-                />
-              </div>
-              <div>
-                <Label className="text-slate-600">Status</Label>
-                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                  <SelectTrigger className="bg-white border-slate-200 text-slate-900">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-slate-200">
-                    <SelectItem value="announced">Announced</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-slate-600">Type</Label>
-                <Select value={form.deal_type} onValueChange={(v) => setForm({ ...form, deal_type: v })}>
-                  <SelectTrigger className="bg-white border-slate-200 text-slate-900">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-slate-200">
-                    <SelectItem value="acquisition">Acquisition</SelectItem>
-                    <SelectItem value="merger">Merger</SelectItem>
-                    <SelectItem value="joint_venture">Joint Venture</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div>
-              <Label className="text-slate-600">Description</Label>
-              <Textarea
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="bg-white border-slate-200 text-slate-900"
-                rows={2}
-                required
+        <CardContent className="pt-4 space-y-4">
+          {/* Mode toggle */}
+          <div className="flex gap-2">
+            {[{ k: "url", icon: Link2, label: "URL article" }, { k: "image", icon: ImageIcon, label: "Capture d'écran" }].map(({ k, icon: Icon, label }) => (
+              <button key={k} onClick={() => { setExtractMode(k); setExtractError(null); setExtractPreview(null); }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${extractMode === k ? "bg-purple-50 border-purple-300 text-purple-700" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                <Icon className="w-3.5 h-3.5" />{label}
+              </button>
+            ))}
+          </div>
+
+          {extractMode === "url" ? (
+            <div className="flex gap-2">
+              <Input
+                placeholder="https://www.reuters.com/..."
+                value={extractUrl}
+                onChange={e => setExtractUrl(e.target.value)}
+                className="bg-white border-slate-200 text-slate-900 flex-1"
               />
+              <Button onClick={handleExtract} disabled={extracting || !extractUrl.trim()}
+                className="bg-purple-700 hover:bg-purple-800 shrink-0">
+                {extracting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                {extracting ? "Extraction…" : "Extraire"}
+              </Button>
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
-              Add M&A Activity
-            </Button>
-          </form>
+          ) : (
+            <div className="space-y-2">
+              <div
+                onPaste={handlePaste}
+                className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center cursor-default hover:border-purple-300 transition-colors"
+              >
+                {pastedImage ? (
+                  <div className="space-y-2">
+                    <img src={pastedImage.preview} alt="preview" className="max-h-40 mx-auto rounded-lg object-contain" />
+                    <p className="text-xs text-emerald-600 font-medium">Image prête</p>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    <ImageIcon className="w-8 h-8 text-slate-300 mx-auto" />
+                    <p className="text-sm text-slate-500">Collez une capture d'écran ici <span className="font-mono text-xs">(Ctrl+V)</span></p>
+                    <p className="text-xs text-slate-400">ou</p>
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <label className="flex-1">
+                  <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                  <div className="flex items-center justify-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 cursor-pointer transition-colors">
+                    <ImageIcon className="w-4 h-4" /> Choisir un fichier
+                  </div>
+                </label>
+                <Button onClick={handleExtract} disabled={extracting || !pastedImage}
+                  className="bg-purple-700 hover:bg-purple-800 shrink-0">
+                  {extracting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  {extracting ? "Extraction…" : "Extraire"}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {extractError && (
+            <p className="text-rose-600 text-sm bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">{extractError}</p>
+          )}
+
+          {extractPreview && (
+            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-purple-600">Résultat extrait — vérifiez avant d'appliquer</p>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {[
+                  ["Acquéreur", extractPreview.acquirer],
+                  ["Cible", extractPreview.target],
+                  ["Valeur", extractPreview.deal_value != null ? `$${extractPreview.deal_value}M` : "—"],
+                  ["Statut", extractPreview.status],
+                  ["Type", extractPreview.deal_type],
+                  ["Round", extractPreview.round_type || "—"],
+                  ["Stake", extractPreview.stake_percentage ? `${extractPreview.stake_percentage}%` : "—"],
+                  ["Date", extractPreview.announced_date],
+                  ["Pays acq.", extractPreview.acquirer_country || "—"],
+                  ["Pays cible", extractPreview.target_country || "—"],
+                ].map(([label, val]) => (
+                  <div key={label} className="flex gap-1">
+                    <span className="text-slate-400 shrink-0 w-20">{label}:</span>
+                    <span className="text-slate-800 font-medium truncate">{val}</span>
+                  </div>
+                ))}
+              </div>
+              {extractPreview.description && (
+                <p className="text-xs text-slate-600 italic border-t border-purple-100 pt-2">{extractPreview.description}</p>
+              )}
+              <Button onClick={applyExtracted} className="w-full bg-purple-700 hover:bg-purple-800 text-sm">
+                Charger dans le formulaire
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      <Card className="bg-white border-slate-200">
-        <CardHeader className="border-b border-slate-200">
-          <CardTitle className="text-slate-900">Recent M&A</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4 max-h-[500px] overflow-y-auto">
-          <div className="space-y-2">
-            {items.slice(0, 10).map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-lg">
-                <div className="flex-1 min-w-0">
-                  <p className="text-slate-900 text-sm font-medium">{item.acquirer} → {item.target}</p>
-                  <p className="text-xs text-slate-500">${item.deal_value}M • {item.status}</p>
+      <div className="grid lg:grid-cols-2 gap-6">
+
+        {/* ── Add Deal Form ── */}
+        <Card className="bg-white border-slate-200">
+          <CardHeader className="border-b border-slate-200">
+            <CardTitle className="text-slate-900 flex items-center gap-2 text-base">
+              <Plus className="w-4 h-4" /> Ajouter un deal M&A
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-5">
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-slate-600 text-xs">Acquéreur / Investisseur</Label>
+                  <Input value={form.acquirer} onChange={e => f("acquirer", e.target.value)}
+                    className="bg-white border-slate-200 text-slate-900 h-8 text-sm" required />
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDelete(item.id)}
-                  className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <div>
+                  <Label className="text-slate-600 text-xs">Cible / Startup</Label>
+                  <Input value={form.target} onChange={e => f("target", e.target.value)}
+                    className="bg-white border-slate-200 text-slate-900 h-8 text-sm" required />
+                </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <Label className="text-slate-600 text-xs">Valeur (M$)</Label>
+                  <Input type="number" step="any" value={form.deal_value} onChange={e => f("deal_value", e.target.value)}
+                    className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
+                </div>
+                <div>
+                  <Label className="text-slate-600 text-xs">Stake %</Label>
+                  <Input type="number" step="any" placeholder="—" value={form.stake_percentage} onChange={e => f("stake_percentage", e.target.value)}
+                    className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
+                </div>
+                <div>
+                  <Label className="text-slate-600 text-xs">Date annonce</Label>
+                  <Input type="date" value={form.announced_date} onChange={e => f("announced_date", e.target.value)}
+                    className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-slate-600 text-xs">Statut</Label>
+                  <Select value={form.status} onValueChange={v => f("status", v)}>
+                    <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-8 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-slate-200">
+                      {["announced","pending","under_review","completed","active","cancelled"].map(s => (
+                        <SelectItem key={s} value={s} className="text-sm">{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-slate-600 text-xs">Type de deal</Label>
+                  <Select value={form.deal_type} onValueChange={v => f("deal_type", v)}>
+                    <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-8 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-slate-200">
+                      {["acquisition","merger","joint_venture","strategic_investment","minority_stake","funding_round"].map(t => (
+                        <SelectItem key={t} value={t} className="text-sm capitalize">{t.replaceAll("_"," ")}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-slate-600 text-xs">Round (si applicable)</Label>
+                  <Select value={form.round_type || "none"} onValueChange={v => f("round_type", v === "none" ? "" : v)}>
+                    <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-8 text-sm">
+                      <SelectValue placeholder="—" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-slate-200">
+                      <SelectItem value="none">—</SelectItem>
+                      {["seed","series_a","series_b","series_c","series_d","growth","buyout"].map(r => (
+                        <SelectItem key={r} value={r} className="text-sm capitalize">{r.replaceAll("_"," ")}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-end gap-2">
+                  <label className="flex items-center gap-2 cursor-pointer mb-1">
+                    <input type="checkbox" checked={form.is_disclosed}
+                      onChange={e => f("is_disclosed", e.target.checked)}
+                      className="accent-purple-600" />
+                    <span className="text-xs text-slate-600">Valeur divulguée</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-slate-600 text-xs">Pays acquéreur (ISO-2)</Label>
+                  <Input placeholder="FR, US, DE…" value={form.acquirer_country} onChange={e => f("acquirer_country", e.target.value.toUpperCase().slice(0,2))}
+                    className="bg-white border-slate-200 text-slate-900 h-8 text-sm font-mono" maxLength={2} />
+                </div>
+                <div>
+                  <Label className="text-slate-600 text-xs">Pays cible (ISO-2)</Label>
+                  <Input placeholder="FR, US, DE…" value={form.target_country} onChange={e => f("target_country", e.target.value.toUpperCase().slice(0,2))}
+                    className="bg-white border-slate-200 text-slate-900 h-8 text-sm font-mono" maxLength={2} />
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-slate-600 text-xs">Source URL</Label>
+                <Input placeholder="https://…" value={form.source_url} onChange={e => f("source_url", e.target.value)}
+                  className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
+              </div>
+
+              <div>
+                <Label className="text-slate-600 text-xs">Description (une phrase)</Label>
+                <Textarea value={form.description} onChange={e => f("description", e.target.value)}
+                  className="bg-white border-slate-200 text-slate-900 text-sm" rows={2} required />
+              </div>
+
+              <div>
+                <Label className="text-slate-600 text-xs">Rationale stratégique (optionnel)</Label>
+                <Textarea value={form.rationale} onChange={e => f("rationale", e.target.value)}
+                  className="bg-white border-slate-200 text-slate-900 text-sm" rows={2} />
+              </div>
+
+              <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+                <Plus className="w-4 h-4 mr-1" /> Créer le deal
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* ── Recent deals list ── */}
+        <Card className="bg-white border-slate-200">
+          <CardHeader className="border-b border-slate-200">
+            <CardTitle className="text-slate-900 text-base">Deals récents</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4 max-h-[700px] overflow-y-auto">
+            <div className="space-y-2">
+              {items.slice(0, 20).map((item) => (
+                <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-lg gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-slate-900 text-sm font-medium truncate">{item.acquirer} → {item.target}</p>
+                    <p className="text-xs text-slate-500">
+                      {item.deal_value ? `$${item.deal_value}M` : "Undisclosed"} · {item.deal_type?.replaceAll("_"," ")} · {item.status}
+                    </p>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => handleDelete(item.id)}
+                    className="text-rose-400 hover:text-rose-600 hover:bg-rose-50 shrink-0">
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -734,8 +734,8 @@ MA_DATA = [
 MA_EXTRA_DEALS = [
     {
         "acquirer": "Dassault Aviation", "target": "Harmattan.ai",
-        "deal_value": 9, "status": "completed", "deal_type": "strategic_investment",
-        "description": "Strategic ~15% minority stake in French AI-powered C2 startup (Series A, €60M valuation)",
+        "deal_value": 9, "status": "completed", "deal_type": "funding_round",
+        "description": "Dassault Aviation leads Harmattan.ai Series A (€60M valuation, ~15% stake, €9M ticket)",
         "rationale": (
             "Dassault Aviation leads a strategic investment round in Harmattan.ai, a "
             "French defence AI start-up specialising in AI-assisted command-and-control "
