@@ -89,16 +89,17 @@ class MAActivityCreate(BaseModel):
     status: str  # announced, pending, under_review, completed, active, cancelled, dissolved, exited
     deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake, funding_round
     description: str
-    acquirer_country: Optional[str] = None   # ISO 3166-1 alpha-2
+    announced_date: Optional[datetime] = None   # if None, defaults to now in MAActivity
+    acquirer_country: Optional[str] = None      # ISO 3166-1 alpha-2
     target_country: Optional[str] = None
     acquirer_logo_domain: Optional[str] = None
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
-    rationale: Optional[str] = None          # 2-3 sentence strategic context
+    rationale: Optional[str] = None             # 2-3 sentence strategic context
     # Enriched deal metadata
-    stake_percentage: Optional[float] = None  # % of capital acquired/invested (minority deals)
-    round_type: Optional[str] = None          # seed / series_a / series_b / series_c / growth / buyout
-    is_disclosed: bool = True                 # False when deal value is undisclosed
+    stake_percentage: Optional[float] = None    # % of capital acquired/invested (minority deals)
+    round_type: Optional[str] = None            # seed / series_a / series_b / series_c / growth / buyout
+    is_disclosed: bool = True                   # False when deal value is undisclosed
 
 class MAActivity(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -500,7 +501,11 @@ async def get_ma_historical(
 
 @api_router.post("/ma-activities", response_model=MAActivity)
 async def create_ma_activity(data: MAActivityCreate, current_user: dict = Depends(get_current_user)):
-    activity = MAActivity(**data.model_dump())
+    dump = data.model_dump()
+    # If caller supplied an announced_date, keep it; otherwise MAActivity defaults to now
+    if dump.get("announced_date") is None:
+        dump.pop("announced_date", None)
+    activity = MAActivity(**dump)
     doc = activity.model_dump()
     doc['announced_date'] = doc['announced_date'].isoformat()
     await db.ma_activities.insert_one(doc)
@@ -518,6 +523,98 @@ async def trigger_ma_scrape(current_user: dict = Depends(get_current_user)):
     """Manually trigger the M&A scraper job."""
     result = await run_ma_scraper_job()
     return result
+
+@api_router.post("/ma-activities/extract")
+async def extract_deal_from_source(request: Request, current_user: dict = Depends(get_current_user)):
+    """
+    Extract M&A deal fields from an article URL or base64 screenshot using Claude.
+    Body: { "url": "https://..." }  OR  { "image_base64": "...", "image_media_type": "image/jpeg" }
+    Returns a pre-filled deal object ready to POST to /ma-activities.
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+
+    body = await request.json()
+    url        = (body.get("url") or "").strip()
+    image_b64  = (body.get("image_base64") or "").strip()
+    media_type = body.get("image_media_type") or "image/jpeg"
+
+    if not url and not image_b64:
+        raise HTTPException(status_code=400, detail="Provide 'url' or 'image_base64'")
+
+    SCHEMA_PROMPT = """\
+Extract the M&A / investment deal from the source and return ONLY a JSON object — no markdown, no prose — with exactly these keys:
+
+{
+  "acquirer": "string",
+  "target": "string",
+  "deal_value": <number in USD millions, 0 if undisclosed>,
+  "is_disclosed": <true|false>,
+  "status": "<announced|completed|pending|under_review|cancelled>",
+  "deal_type": "<acquisition|merger|joint_venture|strategic_investment|minority_stake|funding_round>",
+  "round_type": "<seed|series_a|series_b|series_c|series_d|growth|buyout|null>",
+  "stake_percentage": <number or null>,
+  "acquirer_country": "<ISO-2 code or null>",
+  "target_country": "<ISO-2 code or null>",
+  "announced_date": "<YYYY-MM-DD, today if unknown>",
+  "description": "<one-sentence summary>",
+  "rationale": "<2–3 sentence strategic context>",
+  "source_url": "<url or null>"
+}"""
+
+    import anthropic, json, re as _re
+    client = anthropic.Anthropic()
+
+    if url:
+        import requests as _req
+        article_text = f"(URL: {url})"
+        try:
+            r = _req.get(url, timeout=10, allow_redirects=True,
+                         headers={"User-Agent": "Mozilla/5.0"})
+            stripped = _re.sub(r"<[^>]+>", " ", r.text)
+            article_text = _re.sub(r"\s+", " ", stripped).strip()[:7000]
+        except Exception as e:
+            logger.warning("extract_deal: fetch failed for %s — %s", url, e)
+
+        user_content = f"{SCHEMA_PROMPT}\n\nArticle (from {url}):\n{article_text}"
+        messages = [{"role": "user", "content": user_content}]
+    else:
+        messages = [{
+            "role": "user",
+            "content": [
+                {"type": "image", "source": {
+                    "type": "base64", "media_type": media_type, "data": image_b64}},
+                {"type": "text", "text": SCHEMA_PROMPT},
+            ],
+        }]
+
+    try:
+        msg = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=700,
+            messages=messages,
+        )
+    except Exception as e:
+        logger.error("extract_deal: Claude error — %s", e)
+        raise HTTPException(status_code=502, detail=f"Claude API error: {e}")
+
+    raw = msg.content[0].text.strip()
+    # Strip markdown fences if present
+    if raw.startswith("```"):
+        raw = raw.split("```")[1]
+        if raw.lower().startswith("json"):
+            raw = raw[4:]
+        raw = raw.strip()
+
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=422, detail=f"Non-JSON from Claude: {raw[:300]}")
+
+    if url and not data.get("source_url"):
+        data["source_url"] = url
+
+    return data
 
 @api_router.post("/ma-activities/seed-pilot")
 async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
@@ -1690,7 +1787,9 @@ async def _apply_company_enrichments():
 # Known-incorrect M&A entries that must be purged from the DB.
 # These crept in via old seeds or scraper hallucinations and have the wrong acquirer.
 _STALE_MA_DEALS = [
-    {"acquirer": "Thales", "target": "Preligens"},   # acquired by Safran, not Thales
+    {"acquirer": "Thales", "target": "Preligens"},         # acquired by Safran, not Thales
+    {"acquirer": "Dassault Aviation", "target": "Harmattan.ai",
+     "deal_type": {"$ne": "funding_round"}},               # fix old strategic_investment entry
 ]
 
 async def _migrate_ma_enrichments():
