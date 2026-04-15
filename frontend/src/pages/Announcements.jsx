@@ -104,24 +104,28 @@ function langFlag(lang) {
 /**
  * Determine if an article qualifies as "Breaking Intel".
  *
- * Criteria — an article is Breaking Intel if it meets ANY of:
- *   1. adminApproved = true  (manually validated by an admin — no age/score restriction)
- *   2. Covered by 2+ sources AND relevance ≥ 50, within last 24h
- *   3. Relevance ≥ 80 AND category is major (CONTRACT / M&A / POLICY / TECHNOLOGY), within 24h
- *   4. Relevance ≥ 90 regardless of category, within 24h
+ * Priority 1 — Admin explicitly pinned the article (breakingIntel: true).
+ * Priority 2 — Algorithmic fallback when no manual pins exist:
+ *   a. adminApproved = true
+ *   b. 2+ sources AND relevance ≥ 50, within last 24h
+ *   c. Relevance ≥ 80 AND major category, within 24h
+ *   d. Relevance ≥ 90 regardless of category, within 24h
+ *
+ * The caller (page component) selects pinned articles first and uses
+ * algorithmic ones only when there are fewer than 3 pinned articles.
  */
 function isBreakingIntel(article) {
-  // Admin-validated articles always appear in Breaking Intel
+  if (article.breakingIntel) return true;
+  return false;
+}
+
+function isAlgoBreakingIntel(article) {
   if (article.adminApproved) return true;
-
-  const score    = article.relevanceScore ?? 0;
-  const sources  = article.source_count  ?? 1;
-  const cat      = article.category      ?? "";
-  const ageH     = differenceInHours(new Date(), new Date(article.publishedAt));
-
-  // Algorithmic criteria apply to last 24h only
+  const score  = article.relevanceScore ?? 0;
+  const sources = article.source_count  ?? 1;
+  const cat    = article.category      ?? "";
+  const ageH   = differenceInHours(new Date(), new Date(article.publishedAt));
   if (ageH > 24) return false;
-
   if (sources >= 2 && score >= 50) return true;
   if (score >= 80 && ["CONTRACT", "M&A", "POLICY", "TECHNOLOGY"].includes(cat)) return true;
   if (score >= 90) return true;
@@ -568,8 +572,17 @@ export default function Announcements() {
 
   // ── Section splits ────────────────────────────────────────────────────────
 
-  const breakingArticles  = filtered.filter(isBreakingIntel);
-  const regularArticles   = filtered.filter((a) => !isBreakingIntel(a));
+  // Admin-pinned articles fill the Breaking Intel slots first (max 3).
+  // If fewer than 3 are pinned, algorithmic picks fill remaining slots.
+  const pinnedArticles = filtered.filter(isBreakingIntel).slice(0, 3);
+  const algoArticles   = pinnedArticles.length < 3
+    ? filtered
+        .filter((a) => !isBreakingIntel(a) && isAlgoBreakingIntel(a))
+        .slice(0, 3 - pinnedArticles.length)
+    : [];
+  const breakingArticles = [...pinnedArticles, ...algoArticles];
+  const breakingUrls     = new Set(breakingArticles.map((a) => a.url));
+  const regularArticles  = filtered.filter((a) => !breakingUrls.has(a.url));
 
   // Time-band grouping for regular articles
   const todayArticles     = regularArticles.filter((a) => timeBand(a.publishedAt) === "today");
@@ -770,20 +783,22 @@ export default function Announcements() {
       ) : (
         <div className="space-y-10">
 
-          {/* ── BREAKING INTEL — last 24h, high-importance stories ── */}
+          {/* ── BREAKING INTEL — admin-pinned + algo fill, max 3 ── */}
           <div>
-            <SectionHeader
-              emoji="🔥"
-              label="Breaking Intel"
-              sublabel="— major contracts, deals &amp; strategic developments"
-              color="orange"
-            />
+            <div className="flex items-center justify-between mb-3">
+              <SectionHeader
+                emoji="🔥"
+                label="Breaking Intel"
+                sublabel={`— ${pinnedArticles.length}/3 slots curated · refreshes at 07:05 &amp; 19:05 UTC`}
+                color="orange"
+              />
+            </div>
             {breakingArticles.length > 0 ? (
               <ArticleGrid articles={breakingArticles} {...cardProps} isHot />
             ) : (
               <div className="flex items-center gap-3 px-5 py-4 bg-white border border-orange-100 rounded-xl text-slate-500 text-sm">
                 <span className="text-xl">📡</span>
-                <span>No high-priority news in the last 24h — next refresh at 07:00 or 19:00 UTC.</span>
+                <span>No high-priority news for now — next slot refresh at 07:05 or 19:05 UTC.</span>
               </div>
             )}
           </div>

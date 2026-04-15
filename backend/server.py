@@ -1553,8 +1553,10 @@ async def refresh_article_images(current_user: dict = Depends(get_current_user))
 
 class NewsModerationAction(BaseModel):
     url: str
-    action: str  # "approve" | "reject" | "reset" | "recategorize"
+    action: str  # "approve" | "reject" | "reset" | "recategorize" | "pin" | "unpin"
     category: Optional[str] = None
+
+BREAKING_INTEL_MAX_SLOTS = 3
 
 
 @api_router.get("/admin/news")
@@ -1585,12 +1587,25 @@ async def admin_get_news(
     return [_normalise_article(a) for a in articles]
 
 
+@api_router.get("/admin/breaking-intel")
+async def get_breaking_intel_slots(
+    current_user: dict = Depends(get_current_user),
+):
+    """Return the current Breaking Intel pinned articles (admin only)."""
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    articles = await db.news_articles.find(
+        {"breakingIntel": True}, {"_id": 0}
+    ).sort([("breakingIntelSetAt", 1)]).to_list(BREAKING_INTEL_MAX_SLOTS)
+    return [_normalise_article(a) for a in articles]
+
+
 @api_router.patch("/admin/news/moderate")
 async def moderate_news_article(
     data: NewsModerationAction,
     current_user: dict = Depends(get_current_user),
 ):
-    """Approve, reject, reset, or recategorize a news article (admin only)."""
+    """Approve, reject, reset, recategorize, pin, or unpin a news article (admin only)."""
     if current_user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin role required")
     exists = await db.news_articles.find_one({"url": data.url}, {"_id": 1})
@@ -1606,10 +1621,35 @@ async def moderate_news_article(
         if not data.category:
             raise HTTPException(status_code=400, detail="category is required for recategorize")
         update = {"$set": {"category": data.category}}
+    elif data.action == "pin":
+        # Enforce max 3 slots
+        current_count = await db.news_articles.count_documents({"breakingIntel": True})
+        if current_count >= BREAKING_INTEL_MAX_SLOTS:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Breaking Intel is full ({BREAKING_INTEL_MAX_SLOTS}/{BREAKING_INTEL_MAX_SLOTS} slots). Unpin an article first.",
+            )
+        update = {
+            "$set": {
+                "breakingIntel": True,
+                "breakingIntelSetAt": datetime.now(timezone.utc).isoformat(),
+            }
+        }
+    elif data.action == "unpin":
+        update = {"$unset": {"breakingIntel": "", "breakingIntelSetAt": ""}}
     else:
         raise HTTPException(status_code=400, detail=f"Unknown action: {data.action}")
     await db.news_articles.update_one({"url": data.url}, update)
     return {"ok": True}
+
+
+async def clear_breaking_intel_job():
+    """Clear Breaking Intel pins — called at 07:00 and 19:00 UTC (every half-day)."""
+    result = await db.news_articles.update_many(
+        {"breakingIntel": True},
+        {"$unset": {"breakingIntel": "", "breakingIntelSetAt": ""}},
+    )
+    logger.info("Breaking Intel slots cleared: %d articles unpinned", result.modified_count)
 
 
 # ============= M&A SCRAPER JOB =============
@@ -2072,11 +2112,13 @@ async def startup_event():
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
 
-    scheduler.add_job(run_news_scraper_job, "cron",     hour=7,  minute=0, id="morning_news_scraper")
-    scheduler.add_job(run_news_scraper_job, "cron",     hour=19, minute=0, id="evening_news_scraper")
-    scheduler.add_job(run_ma_scraper_job,   "interval", hours=6,           id="ma_scraper")
+    scheduler.add_job(run_news_scraper_job,       "cron", hour=7,  minute=0, id="morning_news_scraper")
+    scheduler.add_job(run_news_scraper_job,       "cron", hour=19, minute=0, id="evening_news_scraper")
+    scheduler.add_job(clear_breaking_intel_job,   "cron", hour=7,  minute=5, id="morning_breaking_intel_clear")
+    scheduler.add_job(clear_breaking_intel_job,   "cron", hour=19, minute=5, id="evening_breaking_intel_clear")
+    scheduler.add_job(run_ma_scraper_job,         "interval", hours=6,       id="ma_scraper")
     scheduler.start()
-    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, M&A every 6 h")
+    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, Breaking Intel clear at 07:05 + 19:05 UTC, M&A every 6 h")
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())
