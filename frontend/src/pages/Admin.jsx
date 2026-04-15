@@ -38,6 +38,9 @@ import {
   RotateCcw,
   Tag,
   Star,
+  Flame,
+  Pin,
+  PinOff,
   Image as ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -392,12 +395,76 @@ function getCatStyle(cat) {
   }
 }
 
+function BreakingIntelPanel({ slots, onUnpin, actionLoading }) {
+  const filled = slots.length;
+  return (
+    <div className="bg-white border-2 border-orange-200 rounded-xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-orange-50 rounded-lg">
+            <Flame className="w-5 h-5 text-orange-500" />
+          </div>
+          <div>
+            <h3 className="text-slate-900 font-semibold">Breaking Intel — Slots actifs</h3>
+            <p className="text-slate-500 text-sm">
+              Ces 3 articles sont mis en avant. Slots vidés automatiquement à 07:05 et 19:05 UTC.
+            </p>
+          </div>
+        </div>
+        <span className={`text-sm font-bold px-3 py-1 rounded-full border ${
+          filled >= 3 ? "bg-orange-100 text-orange-700 border-orange-300" :
+          filled > 0  ? "bg-amber-50 text-amber-700 border-amber-200" :
+                        "bg-slate-100 text-slate-500 border-slate-200"
+        }`}>
+          {filled}/3
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {[0, 1, 2].map((i) => {
+          const a = slots[i];
+          return (
+            <div key={i} className={`rounded-xl border p-3 min-h-[80px] flex flex-col justify-between ${
+              a ? "border-orange-300 bg-orange-50/40" : "border-dashed border-slate-200 bg-slate-50/50"
+            }`}>
+              {a ? (
+                <>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-orange-500 mb-1 block">
+                      Slot {i + 1}
+                    </span>
+                    <p className="text-slate-900 text-xs font-semibold line-clamp-2 leading-snug">{a.title}</p>
+                    <p className="text-slate-400 text-[11px] mt-1">{a.source}</p>
+                  </div>
+                  <button
+                    onClick={() => onUnpin(a.url)}
+                    disabled={!!actionLoading}
+                    className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-rose-500 hover:text-rose-700 transition-colors disabled:opacity-40"
+                  >
+                    <PinOff className="w-3 h-3" /> Retirer
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-slate-400 text-xs text-center gap-1 py-2">
+                  <Pin className="w-4 h-4 opacity-30" />
+                  <span>Slot {i + 1} — vide</span>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function NewsFeedAdmin({ authHeaders }) {
   const [articles, setArticles]           = useState([]);
   const [loading, setLoading]             = useState(true);
   const [filter, setFilter]               = useState("all"); // all | pending | approved | rejected
   const [search, setSearch]               = useState("");
-  const [actionLoading, setActionLoading] = useState(null); // url of article being updated
+  const [actionLoading, setActionLoading] = useState(null); // url + action being updated
+  const [breakingSlots, setBreakingSlots] = useState([]);   // up to 3 pinned articles
 
   const fetchArticles = async (mod) => {
     setLoading(true);
@@ -413,7 +480,19 @@ function NewsFeedAdmin({ authHeaders }) {
     }
   };
 
-  useEffect(() => { fetchArticles(filter); }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
+  const fetchBreakingSlots = async () => {
+    try {
+      const res = await axios.get(`${API}/admin/breaking-intel`, { headers: authHeaders });
+      setBreakingSlots(res.data);
+    } catch {
+      /* non-fatal */
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles(filter);
+    fetchBreakingSlots();
+  }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const moderate = async (url, action, category) => {
     setActionLoading(url + action);
@@ -423,23 +502,40 @@ function NewsFeedAdmin({ authHeaders }) {
         { url, action, category },
         { headers: authHeaders },
       );
-      setArticles((prev) =>
-        prev.map((a) => {
-          if (a.url !== url) return a;
-          const updated = { ...a };
-          if (action === "approve")      { updated.adminApproved = true;  delete updated.adminRejected; }
-          if (action === "reject")       { updated.adminRejected = true;  delete updated.adminApproved; }
-          if (action === "reset")        { delete updated.adminApproved;  delete updated.adminRejected; }
-          if (action === "recategorize") { updated.category = category; }
-          return updated;
-        })
-      );
-      toast.success(
-        action === "approve"      ? "Article validé pour Breaking Intel"  :
-        action === "reject"       ? "Article retiré du flux"               :
-        action === "reset"        ? "Modération annulée"                   :
-                                    `Catégorie → ${category}`
-      );
+
+      if (action === "pin") {
+        // Fetch fresh slots from server
+        const res = await axios.get(`${API}/admin/breaking-intel`, { headers: authHeaders });
+        setBreakingSlots(res.data);
+        setArticles((prev) =>
+          prev.map((a) => a.url !== url ? a : { ...a, breakingIntel: true })
+        );
+        toast.success("Article épinglé en Breaking Intel 🔥");
+      } else if (action === "unpin") {
+        setBreakingSlots((prev) => prev.filter((a) => a.url !== url));
+        setArticles((prev) =>
+          prev.map((a) => a.url !== url ? a : { ...a, breakingIntel: false })
+        );
+        toast.success("Article retiré des slots Breaking Intel");
+      } else {
+        setArticles((prev) =>
+          prev.map((a) => {
+            if (a.url !== url) return a;
+            const updated = { ...a };
+            if (action === "approve")      { updated.adminApproved = true;  delete updated.adminRejected; }
+            if (action === "reject")       { updated.adminRejected = true;  delete updated.adminApproved; }
+            if (action === "reset")        { delete updated.adminApproved;  delete updated.adminRejected; }
+            if (action === "recategorize") { updated.category = category; }
+            return updated;
+          })
+        );
+        toast.success(
+          action === "approve"      ? "Article validé"           :
+          action === "reject"       ? "Article retiré du flux"   :
+          action === "reset"        ? "Modération annulée"       :
+                                      `Catégorie → ${category}`
+        );
+      }
     } catch (err) {
       toast.error(err.response?.data?.detail || "Action failed");
     } finally {
@@ -462,6 +558,14 @@ function NewsFeedAdmin({ authHeaders }) {
 
   return (
     <div className="space-y-4">
+
+      {/* ── Breaking Intel slots panel ── */}
+      <BreakingIntelPanel
+        slots={breakingSlots}
+        onUnpin={(url) => moderate(url, "unpin")}
+        actionLoading={actionLoading}
+      />
+
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
         <div className="flex items-center gap-3 mb-4">
@@ -471,7 +575,7 @@ function NewsFeedAdmin({ authHeaders }) {
           <div>
             <h3 className="text-slate-900 font-semibold">News Feed Moderation</h3>
             <p className="text-slate-500 text-sm">
-              Recatégoriser les articles, valider pour Breaking Intel, ou retirer les hors-sujet.
+              Épingler des articles en Breaking Intel, recatégoriser ou retirer les hors-sujet.
             </p>
           </div>
         </div>
@@ -520,6 +624,7 @@ function NewsFeedAdmin({ authHeaders }) {
             article={article}
             actionLoading={actionLoading}
             onModerate={moderate}
+            slotsCount={breakingSlots.length}
           />
         ))}
       </div>
@@ -527,14 +632,17 @@ function NewsFeedAdmin({ authHeaders }) {
   );
 }
 
-function ArticleModerationRow({ article, actionLoading, onModerate }) {
+function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }) {
   const [catOpen, setCatOpen] = useState(false);
-  const isApproved = !!article.adminApproved;
-  const isRejected = !!article.adminRejected;
+  const isApproved   = !!article.adminApproved;
+  const isRejected   = !!article.adminRejected;
+  const isPinned     = !!article.breakingIntel;
+  const slotsFull    = slotsCount >= 3;
   const busy = (action) => actionLoading === article.url + action;
 
   return (
     <div className={`bg-white border rounded-xl p-4 flex flex-col sm:flex-row gap-3 transition-all ${
+      isPinned   ? "border-orange-300 bg-orange-50/20" :
       isApproved ? "border-emerald-300 bg-emerald-50/30" :
       isRejected ? "border-red-200   bg-red-50/20 opacity-60" :
                    "border-slate-200"
@@ -553,7 +661,12 @@ function ArticleModerationRow({ article, actionLoading, onModerate }) {
             {article.category || "INDUSTRY"}
           </span>
           <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide">{article.source}</span>
-          {isApproved && (
+          {isPinned && (
+            <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-600 border border-orange-300">
+              <Flame className="w-3 h-3" /> Breaking Intel
+            </span>
+          )}
+          {isApproved && !isPinned && (
             <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
               <Star className="w-3 h-3" /> Validated
             </span>
@@ -578,11 +691,39 @@ function ArticleModerationRow({ article, actionLoading, onModerate }) {
 
       {/* Actions */}
       <div className="flex flex-row sm:flex-col gap-1.5 flex-shrink-0 self-start sm:self-center">
+
+        {/* Pin / Unpin Breaking Intel */}
+        {isPinned ? (
+          <button
+            onClick={() => onModerate(article.url, "unpin")}
+            disabled={!!actionLoading}
+            title="Retirer des slots Breaking Intel"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-300 hover:bg-orange-100 transition-all disabled:opacity-40"
+          >
+            {busy("unpin") ? <RefreshCw className="w-3 h-3 animate-spin" /> : <PinOff className="w-3 h-3" />}
+            <span className="hidden sm:inline">Unpin</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => onModerate(article.url, "pin")}
+            disabled={slotsFull || !!actionLoading}
+            title={slotsFull ? "3/3 slots déjà utilisés — retirez un article d'abord" : "Épingler en Breaking Intel"}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+              slotsFull
+                ? "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed"
+                : "bg-white text-orange-500 border-orange-200 hover:bg-orange-50 disabled:opacity-40"
+            }`}
+          >
+            {busy("pin") ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Flame className="w-3 h-3" />}
+            <span className="hidden sm:inline">Pin</span>
+          </button>
+        )}
+
         {/* Approve */}
         <button
           onClick={() => onModerate(article.url, "approve")}
           disabled={isApproved || !!actionLoading}
-          title="Valider pour Breaking Intel"
+          title="Valider l'article"
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
             isApproved
               ? "bg-emerald-100 text-emerald-700 border-emerald-200 cursor-default"
