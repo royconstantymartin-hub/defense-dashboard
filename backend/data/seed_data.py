@@ -734,25 +734,23 @@ MA_DATA = [
 MA_EXTRA_DEALS = [
     {
         "acquirer": "Dassault Aviation", "target": "Harmattan.ai",
-        "deal_value": 9, "status": "completed", "deal_type": "funding_round",
-        "description": "Dassault Aviation leads Harmattan.ai Series A (€60M valuation, ~15% stake, €9M ticket)",
+        "deal_value": 200, "status": "completed", "deal_type": "funding_round",
+        "description": "Dassault Aviation participe à la Series B de $200M d'Harmattan.ai — IA de C2 pour la défense française",
         "rationale": (
-            "Dassault Aviation leads a strategic investment round in Harmattan.ai, a "
-            "French defence AI start-up specialising in AI-assisted command-and-control "
-            "decision support. Harmattan.ai's Series A closed at a post-money valuation of "
-            "approximately €60M; Dassault's ticket of roughly €9M secures a ~15% stake. "
-            "The investment is part of Dassault's broader strategy to embed AI natively into "
-            "its future combat-aircraft and C2 programmes. Harmattan.ai's software integrates "
-            "with Dassault's FCAS work-share and the Rafale F5 standard upgrade roadmap, "
-            "providing AI-assisted mission planning and real-time battlespace analysis."
+            "Harmattan.ai, French defence AI start-up specialising in AI-assisted command-and-control "
+            "decision support, closes a $200 million Series B funding round with Dassault Aviation as "
+            "a key strategic participant. The round accelerates development of Harmattan's AI-driven "
+            "mission planning and real-time battlespace analysis software. Dassault's participation "
+            "aligns with its strategy to embed AI natively into the Rafale F5 standard and FCAS "
+            "programmes, providing AI-assisted C2 at operational tempo for French and allied forces."
         ),
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "dassault-aviation.com",
         "target_logo_domain": "harmattan.ai",
-        "source_url": "https://www.dassault-aviation.com/en/group/press/",
+        "source_url": "https://www.dassault-aviation.com/fr/groupe/presse/press-kits/dassault-aviation-participe-a-la-levee-de-fonds-serie-b-de-200-millions-de-dollars-dharmattan-ai/",
         "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
-        "stake_percentage": 15.0,
-        "round_type": "series_a",
+        "stake_percentage": None,
+        "round_type": "series_b",
         "is_disclosed": True,
     },
     # ── Defense Tech Startup Investments ──────────────────────────────────────
