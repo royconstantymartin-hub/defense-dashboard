@@ -17,14 +17,6 @@ import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { getLogoUrl } from "@/lib/companyLogos";
 
-// Proxy Wikimedia URLs through wsrv.nl to bypass CDN restrictions and
-// follow file-rename redirects that would otherwise 404 in direct loads.
-function proxyWikiUrl(url) {
-  if (!url || !url.includes('upload.wikimedia.org')) return url;
-  const bare = url.replace(/^https?:\/\//, '');
-  return `https://wsrv.nl/?url=${encodeURIComponent(bare)}&w=600`;
-}
-
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
   { value: "aircraft", label: "Aircraft", icon: Plane },
@@ -267,7 +259,9 @@ export default function Products() {
   const [brokenVideos, setBrokenVideos] = useState(new Set());
 
   // Wikipedia image cache: fetched client-side for every product on load
-  const [wikiImages, setWikiImages] = useState({});   // productId → url
+  const [wikiImages, setWikiImages] = useState({});     // productId → url
+  const [primaryErr, setPrimaryErr] = useState({});     // productId → true when DB url failed
+  const [wikiErr, setWikiErr] = useState({});           // productId → true when wiki url failed
   const fetchedIds = useRef(new Set());
 
   const fetchWikiImage = useCallback(async (productId, productName) => {
@@ -285,7 +279,9 @@ export default function Products() {
           setWikiImages(prev => ({ ...prev, [productId]: src }));
         }
       }
-    } catch {}
+    } catch (e) {
+      console.warn('[Products] Wikipedia fetch failed for', productName, e?.message);
+    }
   }, []);
 
   // Pre-fetch Wikipedia images for every product so the fallback is ready
@@ -296,6 +292,26 @@ export default function Products() {
     });
   }, [filteredProducts, fetchWikiImage]);
 
+
+  // Choose which image URL to show for a product.
+  // Prefers the fresh Wikipedia thumbnail; falls back to the DB url;
+  // returns null when both have failed (triggering the icon placeholder).
+  const resolveImgSrc = (productId, dbUrl) => {
+    const wikiSrc = wikiImages[productId];
+    if (wikiSrc && !wikiErr[productId]) return wikiSrc;
+    if (dbUrl   && !primaryErr[productId]) return dbUrl;
+    return null;
+  };
+
+  const handleImgError = (ev, productId, imgSrc) => {
+    const wikiSrc = wikiImages[productId];
+    ev.target.style.display = 'none';
+    if (imgSrc === wikiSrc) {
+      setWikiErr(prev => ({ ...prev, [productId]: true }));
+    } else {
+      setPrimaryErr(prev => ({ ...prev, [productId]: true }));
+    }
+  };
 
   const goToCompanyProfile = (e, manufacturer) => {
     e.stopPropagation();
@@ -607,15 +623,14 @@ export default function Products() {
               {/* Image or Placeholder */}
               <div className="h-40 bg-gradient-to-br from-slate-100 to-slate-50 relative">
                 {(() => {
-                  // Proxy through wsrv.nl so renamed/blocked Wikimedia files still load
-                  const imgSrc = proxyWikiUrl(wikiImages[product.id] || product.image_url);
+                  const imgSrc = resolveImgSrc(product.id, product.image_url);
                   return imgSrc ? (
                     <img
                       key={imgSrc}
                       src={imgSrc}
                       alt={product.name}
                       className="w-full h-full object-cover"
-                      onError={(ev) => { ev.target.style.display = 'none'; }}
+                      onError={(ev) => handleImgError(ev, product.id, imgSrc)}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -732,13 +747,13 @@ export default function Products() {
                             return (
                               <div className="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden bg-slate-100 relative flex items-center justify-center">
                                 <CmpIcon className="w-10 h-10 text-slate-300 absolute" />
-                                {proxyWikiUrl(wikiImages[product.id] || product.image_url) && (
+                                {resolveImgSrc(product.id, product.image_url) && (
                                   <img
-                                    key={proxyWikiUrl(wikiImages[product.id] || product.image_url)}
-                                    src={proxyWikiUrl(wikiImages[product.id] || product.image_url)}
+                                    key={resolveImgSrc(product.id, product.image_url)}
+                                    src={resolveImgSrc(product.id, product.image_url)}
                                     alt={product.name}
                                     className="w-full h-full object-cover relative z-10"
-                                    onError={(ev) => { ev.target.style.display = 'none'; }}
+                                    onError={(ev) => handleImgError(ev, product.id, resolveImgSrc(product.id, product.image_url))}
                                   />
                                 )}
                               </div>
@@ -844,7 +859,7 @@ export default function Products() {
             {/* Header Image – fixed height, never collapses */}
             <div className="h-52 bg-gradient-to-br from-slate-100 to-slate-50 flex-shrink-0 relative">
               {(() => {
-                const modalImgSrc = proxyWikiUrl(wikiImages[selectedProduct.id] || selectedProduct.image_url);
+                const modalImgSrc = resolveImgSrc(selectedProduct.id, selectedProduct.image_url);
                 if (modalImgSrc) {
                   return (
                     <img
@@ -852,7 +867,7 @@ export default function Products() {
                       src={modalImgSrc}
                       alt={selectedProduct.name}
                       className="w-full h-full object-cover"
-                      onError={(ev) => { ev.target.style.display = 'none'; }}
+                      onError={(ev) => handleImgError(ev, selectedProduct.id, modalImgSrc)}
                     />
                   );
                 }
