@@ -87,18 +87,19 @@ class MAActivityCreate(BaseModel):
     target: str
     deal_value: float  # in millions USD
     status: str  # announced, pending, under_review, completed, active, cancelled, dissolved, exited
-    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake
+    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake, funding_round
     description: str
-    acquirer_country: Optional[str] = None   # ISO 3166-1 alpha-2
+    announced_date: Optional[datetime] = None   # if None, defaults to now in MAActivity
+    acquirer_country: Optional[str] = None      # ISO 3166-1 alpha-2
     target_country: Optional[str] = None
     acquirer_logo_domain: Optional[str] = None
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
-    rationale: Optional[str] = None          # 2-3 sentence strategic context
+    rationale: Optional[str] = None             # 2-3 sentence strategic context
     # Enriched deal metadata
-    stake_percentage: Optional[float] = None  # % of capital acquired/invested (minority deals)
-    round_type: Optional[str] = None          # seed / series_a / series_b / series_c / growth / buyout
-    is_disclosed: bool = True                 # False when deal value is undisclosed
+    stake_percentage: Optional[float] = None    # % of capital acquired/invested (minority deals)
+    round_type: Optional[str] = None            # seed / series_a / series_b / series_c / growth / buyout
+    is_disclosed: bool = True                   # False when deal value is undisclosed
 
 class MAActivity(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -165,6 +166,7 @@ class ExpenditureCreate(BaseModel):
     expenditure: float  # in billions USD
     gdp_percent: float
     region: str
+    source: Optional[str] = None
 
 class Expenditure(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -175,6 +177,7 @@ class Expenditure(BaseModel):
     expenditure: float
     gdp_percent: float
     region: str
+    source: Optional[str] = None
 
 # Regulation Model
 class RegulationCreate(BaseModel):
@@ -386,6 +389,27 @@ async def get_me(current_user: dict = Depends(get_current_user)):
     user = await db.users.find_one({"id": current_user['sub']}, {"_id": 0, "password_hash": 0})
     return user
 
+class AdminSetupBody(BaseModel):
+    setup_key: str
+
+@api_router.post("/auth/promote-admin", response_model=TokenResponse)
+async def promote_admin(body: AdminSetupBody, current_user: dict = Depends(get_current_user)):
+    """Promotes the current logged-in user to admin role.
+    Requires the ADMIN_SETUP_KEY env var (falls back to JWT_SECRET).
+    One-time setup for dashboard owners.
+    """
+    expected_key = os.environ.get("ADMIN_SETUP_KEY", JWT_SECRET)
+    if body.setup_key != expected_key:
+        raise HTTPException(status_code=403, detail="Invalid setup key")
+    user_id = current_user.get("sub")
+    await db.users.update_one({"id": user_id}, {"$set": {"role": "admin"}})
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
+    token = create_token(user["id"], user["email"], "admin")
+    return TokenResponse(
+        access_token=token,
+        user={"id": user["id"], "email": user["email"], "name": user["name"], "role": "admin"}
+    )
+
 # ============= ANNOUNCEMENTS ROUTES =============
 
 @api_router.get("/announcements", response_model=List[Announcement])
@@ -479,7 +503,11 @@ async def get_ma_historical(
 
 @api_router.post("/ma-activities", response_model=MAActivity)
 async def create_ma_activity(data: MAActivityCreate, current_user: dict = Depends(get_current_user)):
-    activity = MAActivity(**data.model_dump())
+    dump = data.model_dump()
+    # If caller supplied an announced_date, keep it; otherwise MAActivity defaults to now
+    if dump.get("announced_date") is None:
+        dump.pop("announced_date", None)
+    activity = MAActivity(**dump)
     doc = activity.model_dump()
     doc['announced_date'] = doc['announced_date'].isoformat()
     await db.ma_activities.insert_one(doc)
@@ -498,12 +526,104 @@ async def trigger_ma_scrape(current_user: dict = Depends(get_current_user)):
     result = await run_ma_scraper_job()
     return result
 
-@api_router.post("/ma-activities/seed-pilot")
-async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
-    """Drop all M&A entries and seed exactly the 15 hand-curated pilot deals."""
+@api_router.post("/ma-activities/extract")
+async def extract_deal_from_source(request: Request, current_user: dict = Depends(get_current_user)):
+    """
+    Extract M&A deal fields from an article URL or base64 screenshot using Claude.
+    Body: { "url": "https://..." }  OR  { "image_base64": "...", "image_media_type": "image/jpeg" }
+    Returns a pre-filled deal object ready to POST to /ma-activities.
+    """
     if current_user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin role required")
-    from data.seed_data import MA_PILOT_15
+
+    body = await request.json()
+    url        = (body.get("url") or "").strip()
+    image_b64  = (body.get("image_base64") or "").strip()
+    media_type = body.get("image_media_type") or "image/jpeg"
+
+    if not url and not image_b64:
+        raise HTTPException(status_code=400, detail="Provide 'url' or 'image_base64'")
+
+    SCHEMA_PROMPT = """\
+Extract the M&A / investment deal from the source and return ONLY a JSON object — no markdown, no prose — with exactly these keys:
+
+{
+  "acquirer": "string",
+  "target": "string",
+  "deal_value": <number in USD millions, 0 if undisclosed>,
+  "is_disclosed": <true|false>,
+  "status": "<announced|completed|pending|under_review|cancelled>",
+  "deal_type": "<acquisition|merger|joint_venture|strategic_investment|minority_stake|funding_round>",
+  "round_type": "<seed|series_a|series_b|series_c|series_d|growth|buyout|null>",
+  "stake_percentage": <number or null>,
+  "acquirer_country": "<ISO-2 code or null>",
+  "target_country": "<ISO-2 code or null>",
+  "announced_date": "<YYYY-MM-DD, today if unknown>",
+  "description": "<one-sentence summary>",
+  "rationale": "<2–3 sentence strategic context>",
+  "source_url": "<url or null>"
+}"""
+
+    import anthropic, json, re as _re
+    client = anthropic.Anthropic()
+
+    if url:
+        import requests as _req
+        article_text = f"(URL: {url})"
+        try:
+            r = _req.get(url, timeout=10, allow_redirects=True,
+                         headers={"User-Agent": "Mozilla/5.0"})
+            stripped = _re.sub(r"<[^>]+>", " ", r.text)
+            article_text = _re.sub(r"\s+", " ", stripped).strip()[:7000]
+        except Exception as e:
+            logger.warning("extract_deal: fetch failed for %s — %s", url, e)
+
+        user_content = f"{SCHEMA_PROMPT}\n\nArticle (from {url}):\n{article_text}"
+        messages = [{"role": "user", "content": user_content}]
+    else:
+        messages = [{
+            "role": "user",
+            "content": [
+                {"type": "image", "source": {
+                    "type": "base64", "media_type": media_type, "data": image_b64}},
+                {"type": "text", "text": SCHEMA_PROMPT},
+            ],
+        }]
+
+    try:
+        msg = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=700,
+            messages=messages,
+        )
+    except Exception as e:
+        logger.error("extract_deal: Claude error — %s", e)
+        raise HTTPException(status_code=502, detail=f"Claude API error: {e}")
+
+    raw = msg.content[0].text.strip()
+    # Strip markdown fences if present
+    if raw.startswith("```"):
+        raw = raw.split("```")[1]
+        if raw.lower().startswith("json"):
+            raw = raw[4:]
+        raw = raw.strip()
+
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=422, detail=f"Non-JSON from Claude: {raw[:300]}")
+
+    if url and not data.get("source_url"):
+        data["source_url"] = url
+
+    return data
+
+@api_router.post("/ma-activities/seed-pilot")
+async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
+    """Drop all M&A entries and seed exactly the 9 hand-curated pilot deals."""
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    from data.seed_data import MA_PILOT_10
     import re as _re
 
     def _norm(s: str) -> str:
@@ -511,7 +631,7 @@ async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
 
     await db.ma_activities.delete_many({})
 
-    for m in MA_PILOT_15:
+    for m in MA_PILOT_10:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc["announced_date"] = doc["announced_date"].isoformat()
@@ -620,6 +740,8 @@ async def get_stock_prices(tickers: str = ""):
             "price": data["price"],
             "change_percent": data["change_percent"],
             "prev_close": data.get("prev_close", data["price"]),
+            "open_price": data.get("open_price"),
+            "change_since_open": data.get("change_since_open"),
         }
     # Fallback to DB for any public ticker that yfinance couldn't resolve + all private
     for t in public_tickers:
@@ -828,7 +950,7 @@ async def get_dashboard_stats():
 
 async def _run_seed() -> dict:
     """Idempotent seed — safe to call on every startup."""
-    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, MA_PILOT_15, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
+    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, MA_PILOT_10, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
 
     # Seed Defense Players
     for p in DEFENSE_COMPANIES:
@@ -848,6 +970,10 @@ async def _run_seed() -> dict:
             doc['date'] = doc['date'].isoformat()
             await db.announcements.insert_one(doc)
 
+    # Purge known-incorrect M&A entries before seeding correct data
+    for stale in _STALE_MA_DEALS:
+        await db.ma_activities.delete_many(stale)
+
     # Seed M&A Activities — upsert so enriched fields are applied to existing docs
     import re as _re
 
@@ -856,7 +982,7 @@ async def _run_seed() -> dict:
 
     # Build a set of (acq_first_word, tgt_first_word) tuples to identify scraper duplicates
     seed_acq_tgt_first: set = set()
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_10:
         acq_words = _norm(m['acquirer']).split()
         tgt_words = _norm(m['target']).split()
         if acq_words and tgt_words:
@@ -864,7 +990,7 @@ async def _run_seed() -> dict:
 
     # Also build full set of seed target words (>3 chars) for broader matching
     seed_tgt_words: set = set()
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_10:
         for w in _norm(m['target']).split():
             if len(w) > 3:
                 seed_tgt_words.add(w)
@@ -975,6 +1101,38 @@ async def seed_data(current_user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=403, detail="Admin role required")
     return await _run_seed()
 
+
+@api_router.post("/news/reindex-companies")
+async def reindex_company_tags(current_user: dict = Depends(get_current_user)):
+    """
+    Admin utility: scan every article in news_articles that has no `companies`
+    field (or an empty list) and back-fill it using the canonical alias map.
+    Safe to run multiple times (idempotent).
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+
+    from services.news_scraper import detect_companies
+
+    cursor = db.news_articles.find(
+        {"$or": [{"companies": {"$exists": False}}, {"companies": []}]},
+        {"_id": 1, "title": 1, "summary": 1},
+    )
+    updated = 0
+    async for doc in cursor:
+        title   = doc.get("title", "")
+        summary = doc.get("summary", "")
+        tags    = detect_companies(title, summary)
+        if tags:
+            await db.news_articles.update_one(
+                {"_id": doc["_id"]},
+                {"$set": {"companies": tags}},
+            )
+            updated += 1
+
+    return {"status": "ok", "articles_updated": updated}
+
+
 # ============= NEWS SCRAPER JOB =============
 
 async def run_news_scraper_job() -> dict:
@@ -989,10 +1147,17 @@ async def run_news_scraper_job() -> dict:
         "Army Technology", "Naval Technology", "Airforce Technology",
         "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
         "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
+        "Le Point", "USNI News", "Task & Purpose",
+        # New specialty sources
+        "The Aviationist", "Naval News", "War on the Rocks", "Real Clear Defense",
+        "Army Times", "Navy Times", "Air Force Times", "Marine Corps Times",
+        "Stars and Stripes", "TTU", "Mer et Marine", "UK Ministry of Defence",
+        "Flight Global",
     }
     _FR_SOURCES = {
         "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
-        "Usine Nouvelle", "Challenges", "La Tribune",
+        "Usine Nouvelle", "Challenges", "La Tribune", "Le Point",
+        "TTU", "Mer et Marine",
     }
     _SOURCE_REGION = {
         "Breaking Defense": "us",     "Defense News": "us",   "Defense Industry Daily": "us",
@@ -1023,7 +1188,7 @@ async def run_news_scraper_job() -> dict:
             or a.get("relevanceScore", 0) >= MIN_MAINSTREAM_SCORE
         ]
 
-        # Sort by relevance (desc) then date (desc), keep top 150
+        # Sort by relevance (desc) then date (desc), keep top 500
         unique_articles.sort(
             key=lambda x: (
                 x.get("relevanceScore", 0),
@@ -1031,7 +1196,7 @@ async def run_news_scraper_job() -> dict:
             ),
             reverse=True,
         )
-        unique_articles = unique_articles[:150]
+        unique_articles = unique_articles[:500]
 
         scraped_at = datetime.now(timezone.utc)
         saved = 0
@@ -1055,6 +1220,7 @@ async def run_news_scraper_job() -> dict:
                     "region":         region,
                     "source_count":   article.get("source_count", 1),
                     "covered_by":     article.get("covered_by", [src]),
+                    "companies":      article.get("companies", []),
                 }
                 await db.news_articles.update_one(
                     {"url": doc["url"]},
@@ -1083,22 +1249,29 @@ async def run_news_scraper_job() -> dict:
 # Source-level metadata used both for query fallback and response normalisation
 _FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
                    "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
-                   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business"]
+                   "Air & Cosmos", "L'Agefi", "Capital", "BFM Business", "Le Point",
+                   "TTU", "Mer et Marine"]
 _FR_SOURCES_SET = set(_FR_SOURCES)
 _SOURCE_REGION_MAP: dict = {
     "Breaking Defense": "us",     "Defense News": "us",          "Defense Industry Daily": "us",
     "Defense One": "us",          "C4ISRNET": "us",              "National Defense Magazine": "us",
-    "Air Force Magazine": "us",
+    "Air Force Magazine": "us",   "Army Times": "us",            "Navy Times": "us",
+    "Air Force Times": "us",      "Marine Corps Times": "us",    "Stars and Stripes": "us",
+    "USNI News": "us",            "Task & Purpose": "us",
     "Opex360": "europe",          "Meta-Défense": "europe",      "Air & Cosmos": "europe",
     "Le Monde": "europe",         "Le Figaro": "europe",         "Les Echos": "europe",
     "Usine Nouvelle": "europe",   "Challenges": "europe",        "La Tribune": "europe",
     "La Tribune Défense": "europe", "L'Agefi": "europe",         "Capital": "europe",
-    "BFM Business": "europe",     "NATO": "europe",
+    "BFM Business": "europe",     "NATO": "europe",              "Le Point": "europe",
+    "TTU": "europe",              "Mer et Marine": "europe",     "UK Ministry of Defence": "europe",
     "The Defense Post": "global", "BBC News": "global",
     "The Guardian": "global",     "Janes": "global",
     "The War Zone": "global",     "Aviation Week": "global",
     "Army Technology": "global",  "Naval Technology": "global",  "Airforce Technology": "global",
     "Shephard Media": "global",   "Flight Global": "global",     "SpaceNews": "global",
+    "The Guardian Defence": "global",
+    "The Aviationist": "global",  "Naval News": "global",        "War on the Rocks": "global",
+    "Real Clear Defense": "global", "Foreign Policy": "global",  "Bellingcat": "global",
 }
 # Invert: region → list of sources whose default region is that value
 _REGION_SOURCES: dict = {}
@@ -1114,7 +1287,13 @@ _SPECIALTY_SOURCES_LIST = [
     "The War Zone", "Defense One", "Aviation Week",
     "Army Technology", "Naval Technology", "Airforce Technology",
     "C4ISRNET", "National Defense Magazine", "Air Force Magazine",
-    "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense",
+    "Shephard Media", "Air & Cosmos", "Usine Nouvelle", "La Tribune Défense", "Le Point",
+    "USNI News", "Task & Purpose", "The Guardian Defence",
+    # New specialty sources
+    "The Aviationist", "Naval News", "War on the Rocks", "Real Clear Defense",
+    "Army Times", "Navy Times", "Air Force Times", "Marine Corps Times",
+    "Stars and Stripes", "TTU", "Mer et Marine", "UK Ministry of Defence",
+    "Flight Global",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 
@@ -1129,6 +1308,9 @@ def _build_news_query(
     and old articles (without those fields, identified by source name).
     """
     conditions: list = [{"scrapedAt": {"$gte": cutoff}}]
+
+    # Always exclude admin-rejected articles from the public feed
+    conditions.append({"adminRejected": {"$ne": True}})
 
     # Always enforce: specialty sources OR sufficient relevance score
     conditions.append({"$or": [
@@ -1192,7 +1374,7 @@ async def get_news(
     `offset`: skip first N results (for pagination).
     Falls back to the most recent batch when no fresh articles match.
     """
-    limit = min(max(limit, 1), 150)
+    limit = min(max(limit, 1), 300)
     hours = max(0, min(hours, 8760))  # cap at 1 year
     offset = max(0, offset)
 
@@ -1219,10 +1401,22 @@ async def get_news(
 @api_router.get("/news/company")
 async def get_company_news(name: str, limit: int = 5):
     """
-    Return articles mentioning a company name (case-insensitive regex on title + summary).
-    Sorted by most recent first. Max 10 articles.
+    Return articles mentioning a company name.
+    Priority 1: articles tagged with the canonical company name in the `companies` array.
+    Priority 2: case-insensitive regex fallback on title + summary.
+    Sorted by most recent first. Max 20 articles.
     """
-    limit = min(max(limit, 1), 10)
+    limit = min(max(limit, 1), 20)
+
+    # First try the fast pre-tagged field
+    tagged = await db.news_articles.find(
+        {"companies": name}, {"_id": 0}
+    ).sort("publishedAt", -1).limit(limit).to_list(limit)
+
+    if tagged:
+        return [_normalise_article(a) for a in tagged]
+
+    # Fallback: broad regex search on title and summary
     regex = {"$regex": name, "$options": "i"}
     query = {"$or": [{"title": regex}, {"summary": regex}]}
     articles = await db.news_articles.find(
@@ -1393,6 +1587,168 @@ async def trigger_scrape(current_user: dict = Depends(get_current_user)):
     stats = await run_news_scraper_job()
     return {"status": "ok", **stats}
 
+
+@api_router.get("/news/og-image")
+async def get_article_og_image(url: str):
+    """
+    Return the OG/Twitter Card image URL for a given article URL.
+    Checks the DB cache first; fetches from the source page if missing.
+    The result is written back to the DB so subsequent calls are instant.
+    """
+    import asyncio
+    from services.news_scraper import _fetch_og_image
+
+    article = await db.news_articles.find_one({"url": url}, {"_id": 0, "image": 1})
+    if article and article.get("image"):
+        return {"image": article["image"]}
+
+    img = await asyncio.to_thread(_fetch_og_image, url)
+    if img:
+        await db.news_articles.update_one({"url": url}, {"$set": {"image": img}})
+        return {"image": img}
+
+    return {"image": None}
+
+
+@api_router.post("/admin/refresh-article-images")
+async def refresh_article_images(current_user: dict = Depends(get_current_user)):
+    """
+    Re-enrich images for all news articles that currently lack one.
+    Uses the same OG-image fetcher as the news scraper. Admin only.
+    Returns how many articles were updated out of those processed.
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+
+    import asyncio
+    from services.news_scraper import _enrich_images
+
+    raw = await db.news_articles.find(
+        {"$or": [{"image": None}, {"image": {"$exists": False}}]},
+        {"_id": 0, "url": 1}
+    ).limit(500).to_list(500)
+
+    if not raw:
+        return {"updated": 0, "processed": 0}
+
+    articles = [{"url": a["url"], "image": None} for a in raw]
+    await asyncio.to_thread(_enrich_images, articles)
+
+    updated = 0
+    for a in articles:
+        if a.get("image"):
+            await db.news_articles.update_one(
+                {"url": a["url"]},
+                {"$set": {"image": a["image"]}}
+            )
+            updated += 1
+
+    return {"updated": updated, "processed": len(articles)}
+
+
+# ── News moderation models ──────────────────────────────────────────────────
+
+class NewsModerationAction(BaseModel):
+    url: str
+    action: str  # "approve" | "reject" | "reset" | "recategorize" | "pin" | "unpin"
+    category: Optional[str] = None
+
+BREAKING_INTEL_MAX_SLOTS = 3
+
+
+@api_router.get("/admin/news")
+async def admin_get_news(
+    moderation: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0,
+    current_user: dict = Depends(get_current_user),
+):
+    """Return articles with moderation metadata (admin only).
+    moderation filter: 'approved' | 'rejected' | 'pending' | None (all)
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    limit  = min(max(limit, 1), 200)
+    offset = max(0, offset)
+    query: dict = {}
+    if moderation == "approved":
+        query["adminApproved"] = True
+    elif moderation == "rejected":
+        query["adminRejected"] = True
+    elif moderation == "pending":
+        query["adminApproved"] = {"$ne": True}
+        query["adminRejected"] = {"$ne": True}
+    articles = await db.news_articles.find(
+        query, {"_id": 0}
+    ).sort([("scrapedAt", -1)]).skip(offset).limit(limit).to_list(limit)
+    return [_normalise_article(a) for a in articles]
+
+
+@api_router.get("/admin/breaking-intel")
+async def get_breaking_intel_slots(
+    current_user: dict = Depends(get_current_user),
+):
+    """Return the current Breaking Intel pinned articles (admin only)."""
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    articles = await db.news_articles.find(
+        {"breakingIntel": True}, {"_id": 0}
+    ).sort([("breakingIntelSetAt", 1)]).to_list(BREAKING_INTEL_MAX_SLOTS)
+    return [_normalise_article(a) for a in articles]
+
+
+@api_router.patch("/admin/news/moderate")
+async def moderate_news_article(
+    data: NewsModerationAction,
+    current_user: dict = Depends(get_current_user),
+):
+    """Approve, reject, reset, recategorize, pin, or unpin a news article (admin only)."""
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    exists = await db.news_articles.find_one({"url": data.url}, {"_id": 1})
+    if not exists:
+        raise HTTPException(status_code=404, detail="Article not found")
+    if data.action == "approve":
+        update = {"$set": {"adminApproved": True}, "$unset": {"adminRejected": ""}}
+    elif data.action == "reject":
+        update = {"$set": {"adminRejected": True}, "$unset": {"adminApproved": ""}}
+    elif data.action == "reset":
+        update = {"$unset": {"adminApproved": "", "adminRejected": ""}}
+    elif data.action == "recategorize":
+        if not data.category:
+            raise HTTPException(status_code=400, detail="category is required for recategorize")
+        update = {"$set": {"category": data.category}}
+    elif data.action == "pin":
+        # Enforce max 3 slots
+        current_count = await db.news_articles.count_documents({"breakingIntel": True})
+        if current_count >= BREAKING_INTEL_MAX_SLOTS:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Breaking Intel is full ({BREAKING_INTEL_MAX_SLOTS}/{BREAKING_INTEL_MAX_SLOTS} slots). Unpin an article first.",
+            )
+        update = {
+            "$set": {
+                "breakingIntel": True,
+                "breakingIntelSetAt": datetime.now(timezone.utc).isoformat(),
+            }
+        }
+    elif data.action == "unpin":
+        update = {"$unset": {"breakingIntel": "", "breakingIntelSetAt": ""}}
+    else:
+        raise HTTPException(status_code=400, detail=f"Unknown action: {data.action}")
+    await db.news_articles.update_one({"url": data.url}, update)
+    return {"ok": True}
+
+
+async def clear_breaking_intel_job():
+    """Clear Breaking Intel pins — called at 07:00 and 19:00 UTC (every half-day)."""
+    result = await db.news_articles.update_many(
+        {"breakingIntel": True},
+        {"$unset": {"breakingIntel": "", "breakingIntelSetAt": ""}},
+    )
+    logger.info("Breaking Intel slots cleared: %d articles unpinned", result.modified_count)
+
+
 # ============= M&A SCRAPER JOB =============
 
 async def run_ma_scraper_job() -> dict:
@@ -1528,6 +1884,14 @@ async def _apply_company_enrichments():
     except Exception as exc:
         logger.error("Company enrichments error: %s", exc)
 
+# Known-incorrect M&A entries that must be purged from the DB.
+# These crept in via old seeds or scraper hallucinations and have the wrong acquirer.
+_STALE_MA_DEALS = [
+    {"acquirer": "Thales", "target": "Preligens"},         # acquired by Safran, not Thales
+    {"acquirer": "Dassault Aviation", "target": "Harmattan.ai",
+     "deal_type": {"$ne": "funding_round"}},               # fix old strategic_investment entry
+]
+
 async def _migrate_ma_enrichments():
     """
     On startup, unconditionally upsert all seed-data enrichments into MA documents.
@@ -1537,6 +1901,13 @@ async def _migrate_ma_enrichments():
     try:
         logger.info("MA migration: applying enrichments from seed data")
         from data.seed_data import MA_DATA, MA_EXTRA_DEALS
+
+        # Purge known-incorrect entries before upserting correct ones
+        for stale in _STALE_MA_DEALS:
+            result = await db.ma_activities.delete_many(stale)
+            if result.deleted_count:
+                logger.info("MA migration: removed %d stale entry/entries %s", result.deleted_count, stale)
+
         all_deals = MA_DATA + MA_EXTRA_DEALS
         for m in all_deals:
             activity = MAActivity(**m)
@@ -1840,11 +2211,13 @@ async def startup_event():
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
 
-    scheduler.add_job(run_news_scraper_job, "cron",     hour=7,  minute=0, id="morning_news_scraper")
-    scheduler.add_job(run_news_scraper_job, "cron",     hour=19, minute=0, id="evening_news_scraper")
-    scheduler.add_job(run_ma_scraper_job,   "interval", hours=6,           id="ma_scraper")
+    scheduler.add_job(run_news_scraper_job,       "cron", hour=7,  minute=0, id="morning_news_scraper")
+    scheduler.add_job(run_news_scraper_job,       "cron", hour=19, minute=0, id="evening_news_scraper")
+    scheduler.add_job(clear_breaking_intel_job,   "cron", hour=7,  minute=5, id="morning_breaking_intel_clear")
+    scheduler.add_job(clear_breaking_intel_job,   "cron", hour=19, minute=5, id="evening_breaking_intel_clear")
+    scheduler.add_job(run_ma_scraper_job,         "interval", hours=6,       id="ma_scraper")
     scheduler.start()
-    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, M&A every 6 h")
+    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, Breaking Intel clear at 07:05 + 19:05 UTC, M&A every 6 h")
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())

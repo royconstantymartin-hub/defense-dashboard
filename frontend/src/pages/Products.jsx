@@ -224,24 +224,15 @@ const WIKI_TITLES = {
   "Dassault nEUROn UCAV": "Dassault nEUROn",
 };
 
-// YouTube presentation video IDs for selected products
-// Format: product name (must match seed data) → YouTube video ID
+// YouTube presentation video IDs — verified directly from official manufacturer websites
+// Format: product name (must match seed data exactly) → YouTube video ID
 const YOUTUBE_VIDEOS = {
-  "F-35 Lightning II":        "bpVU_RNB4nI", // Lockheed Martin – F-35 overview
-  "F-22 Raptor":              "Lz7JHy4WOPE", // USAF – F-22 Raptor
-  "Rafale F4":                "Y3aHb7Xo_dY", // Dassault Aviation – Rafale
-  "Eurofighter Typhoon":      "hQl3FD-dJqo", // Eurofighter GmbH – Typhoon
-  "Gripen E":                 "9GJlkP0WXAM", // Saab AB – Gripen E
-  "Bayraktar TB2":            "ETQ3MFJsNDA", // Baykar – Bayraktar TB2
-  "MQ-9 Reaper":              "kd0P1BmFYMY", // General Atomics – MQ-9 Reaper
-  "AH-64E Apache Guardian":   "9nBkKNgLvW8", // Boeing – AH-64E Apache
-  "HIMARS":                   "bBiOBQqnLbU", // US Army – HIMARS
-  "M1A2 Abrams SEPv3":        "k2tUTbzGfBo", // General Dynamics – M1A2
-  "Iron Dome":                "Q1V5Pf2hX2w", // Rafael – Iron Dome
-  "Patriot PAC-3":            "wbWHMgZzlqY", // Raytheon – Patriot PAC-3
-  "F/A-18E/F Super Hornet":   "aJWbRH8IJHU", // Boeing – Super Hornet
-  "B-21 Raider":              "EYHkiOJQSFg", // Northrop Grumman – B-21 Raider
-  "Arleigh Burke Flight III": "MK3DSzSXtGs", // US Navy – DDG Flight III
+  "F-35 Lightning II":     "9GLxUGQwYbk", // lockheedmartin.com – F-35 Capabilities: Stealth
+  "F-22 Raptor":           "fnmMebmEHaw", // lockheedmartin.com – Designed to Dominate
+  "B-21 Raider":           "chJlJgrvfBY", // northropgrumman.com – B-21 Raider Unveiling (Dec 2022)
+  "B-2 Spirit":            "ORyn0Zm3oeM", // northropgrumman.com – The B-2 at 30
+  "RQ-4 Global Hawk":      "mprYM6eTwoc", // northropgrumman.com – Global Hawk first mission
+  "E-2D Advanced Hawkeye": "u9LmpUS6-pE", // northropgrumman.com – FLOW: E-2D Enhancement
 };
 
 
@@ -258,6 +249,7 @@ export default function Products() {
     return params.get("manufacturer") || "all";
   });
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [playingVideo, setPlayingVideo] = useState(false);
   const [profileName, setProfileName] = useState(null);
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
@@ -265,7 +257,6 @@ export default function Products() {
 
   // YouTube video availability: track which product names have a broken/deleted video
   const [brokenVideos, setBrokenVideos] = useState(new Set());
-  const checkedVideoIds = useRef(new Set()); // avoid duplicate oembed requests
 
   // Wikipedia image fallback: fetched client-side when DB image_url is missing or broken
   const [wikiImages, setWikiImages] = useState({});   // productId → url
@@ -297,33 +288,6 @@ export default function Products() {
     });
   }, [filteredProducts, fetchWikiImage]);
 
-  // Check YouTube video availability via oembed when a product is selected.
-  // YouTube oembed returns 404 for deleted/unavailable videos (unlike thumbnail URLs
-  // which silently return a placeholder image). We mark broken videos to hide the section.
-  useEffect(() => {
-    if (!selectedProduct) return;
-    const videoId = YOUTUBE_VIDEOS[selectedProduct.name];
-    if (!videoId || checkedVideoIds.current.has(videoId)) return;
-    checkedVideoIds.current.add(videoId);
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-
-    fetch(
-      `https://www.youtube.com/oembed?url=https%3A//www.youtube.com/watch%3Fv%3D${videoId}&format=json`,
-      { signal: controller.signal }
-    )
-      .then(r => {
-        if (!r.ok) {
-          setBrokenVideos(prev => new Set([...prev, selectedProduct.name]));
-        }
-      })
-      .catch(() => {
-        // Network error or abort — treat video as unavailable
-        setBrokenVideos(prev => new Set([...prev, selectedProduct.name]));
-      })
-      .finally(() => clearTimeout(timeout));
-  }, [selectedProduct]);
 
   const goToCompanyProfile = (e, manufacturer) => {
     e.stopPropagation();
@@ -344,6 +308,11 @@ export default function Products() {
     };
     fetchProducts();
   }, []);
+
+  // Reset inline video player when a different product is opened
+  useEffect(() => {
+    setPlayingVideo(false);
+  }, [selectedProduct]);
 
   useEffect(() => {
     let filtered = products;
@@ -949,38 +918,48 @@ export default function Products() {
               {YOUTUBE_VIDEOS[selectedProduct.name] && !brokenVideos.has(selectedProduct.name) && (
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Presentation Video</p>
-                  <a
-                    href={`https://www.youtube.com/watch?v=${YOUTUBE_VIDEOS[selectedProduct.name]}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group block relative rounded-xl overflow-hidden border border-slate-200 hover:border-red-300 transition-all shadow-sm hover:shadow-md"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {/* Fixed-ratio container: fallback slate bg always visible, img covers it when loaded */}
-                    <div className="relative w-full bg-slate-800" style={{ aspectRatio: '16/9' }}>
-                      <img
-                        src={`https://img.youtube.com/vi/${YOUTUBE_VIDEOS[selectedProduct.name]}/hqdefault.jpg`}
-                        alt={`${selectedProduct.name} presentation`}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        onError={(ev) => { ev.target.style.display = 'none'; }}
+                  {playingVideo ? (
+                    /* Inline iframe player — video plays directly in the modal */
+                    <div className="relative rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-black" style={{ aspectRatio: '16/9' }}>
+                      <iframe
+                        src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_VIDEOS[selectedProduct.name]}?autoplay=1&rel=0`}
+                        title={`${selectedProduct.name} presentation`}
+                        className="absolute inset-0 w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
                       />
-                      {/* Fallback icon shown when thumbnail fails to load */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <Youtube className="w-12 h-12 text-slate-600" />
+                    </div>
+                  ) : (
+                    /* Clickable thumbnail — click to play inline */
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setPlayingVideo(true); }}
+                      className="group block w-full relative rounded-xl overflow-hidden border border-slate-200 hover:border-red-300 transition-all shadow-sm hover:shadow-md cursor-pointer"
+                    >
+                      <div className="relative w-full bg-slate-800" style={{ aspectRatio: '16/9' }}>
+                        <img
+                          src={`https://img.youtube.com/vi/${YOUTUBE_VIDEOS[selectedProduct.name]}/hqdefault.jpg`}
+                          alt={`${selectedProduct.name} presentation`}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          onError={(ev) => { ev.target.style.display = 'none'; }}
+                        />
+                        {/* Fallback icon if thumbnail unavailable */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <Youtube className="w-12 h-12 text-slate-600" />
+                        </div>
                       </div>
-                    </div>
-                    {/* Play overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/35 transition-colors">
-                      <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                        <Play className="w-6 h-6 text-white ml-1" fill="white" />
+                      {/* Play overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/35 transition-colors">
+                        <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                          <Play className="w-6 h-6 text-white ml-1" fill="white" />
+                        </div>
                       </div>
-                    </div>
-                    {/* YouTube badge */}
-                    <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-black/70 rounded px-2 py-1">
-                      <Youtube className="w-3.5 h-3.5 text-red-500" />
-                      <span className="text-white text-xs font-medium">Watch on YouTube</span>
-                    </div>
-                  </a>
+                      {/* Badge */}
+                      <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-black/70 rounded px-2 py-1">
+                        <Youtube className="w-3.5 h-3.5 text-red-500" />
+                        <span className="text-white text-xs font-medium">Lire ici</span>
+                      </div>
+                    </button>
+                  )}
                 </div>
               )}
 

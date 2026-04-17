@@ -734,25 +734,23 @@ MA_DATA = [
 MA_EXTRA_DEALS = [
     {
         "acquirer": "Dassault Aviation", "target": "Harmattan.ai",
-        "deal_value": 9, "status": "completed", "deal_type": "strategic_investment",
-        "description": "Strategic ~15% minority stake in French AI-powered C2 startup (Series A, €60M valuation)",
+        "deal_value": 200, "status": "completed", "deal_type": "funding_round",
+        "description": "Dassault Aviation participe à la Series B de $200M d'Harmattan.ai — IA de C2 pour la défense française",
         "rationale": (
-            "Dassault Aviation leads a strategic investment round in Harmattan.ai, a "
-            "French defence AI start-up specialising in AI-assisted command-and-control "
-            "decision support. Harmattan.ai's Series A closed at a post-money valuation of "
-            "approximately €60M; Dassault's ticket of roughly €9M secures a ~15% stake. "
-            "The investment is part of Dassault's broader strategy to embed AI natively into "
-            "its future combat-aircraft and C2 programmes. Harmattan.ai's software integrates "
-            "with Dassault's FCAS work-share and the Rafale F5 standard upgrade roadmap, "
-            "providing AI-assisted mission planning and real-time battlespace analysis."
+            "Harmattan.ai, French defence AI start-up specialising in AI-assisted command-and-control "
+            "decision support, closes a $200 million Series B funding round with Dassault Aviation as "
+            "a key strategic participant. The round accelerates development of Harmattan's AI-driven "
+            "mission planning and real-time battlespace analysis software. Dassault's participation "
+            "aligns with its strategy to embed AI natively into the Rafale F5 standard and FCAS "
+            "programmes, providing AI-assisted C2 at operational tempo for French and allied forces."
         ),
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "dassault-aviation.com",
         "target_logo_domain": "harmattan.ai",
-        "source_url": "https://www.dassault-aviation.com/en/group/press/",
+        "source_url": "https://www.dassault-aviation.com/fr/groupe/presse/press-kits/dassault-aviation-participe-a-la-levee-de-fonds-serie-b-de-200-millions-de-dollars-dharmattan-ai/",
         "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
-        "stake_percentage": 15.0,
-        "round_type": "series_a",
+        "stake_percentage": None,
+        "round_type": "series_b",
         "is_disclosed": True,
     },
     # ── Defense Tech Startup Investments ──────────────────────────────────────
@@ -1527,40 +1525,232 @@ MA_EXTRA_DEALS = [
         "round_type": None,
         "is_disclosed": True,
     },
+    # ── Defense Tech Startup Funding Rounds ───────────────────────────────────
+    {
+        "acquirer": "Andreessen Horowitz / Founders Fund", "target": "Anduril Industries",
+        "deal_value": 1480, "status": "completed", "deal_type": "funding_round",
+        "description": "Series F — autonomous defense systems platform (Roadrunner-M, Fury UAV, Lattice AI)",
+        "rationale": (
+            "Anduril Industries closes a $1.48 billion Series F round co-led by Andreessen Horowitz "
+            "and Founders Fund, pushing valuation to $14 billion. Proceeds accelerate production of "
+            "the Roadrunner-M interceptor drone, Fury combat UAV, and Lattice AI command-and-control "
+            "platform. The round reflects surging US DoD demand for next-generation autonomous defense "
+            "systems and positions Anduril as a direct challenger to traditional prime contractors."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "a16z.com",
+        "target_logo_domain": "anduril.com",
+        "source_url": "https://techcrunch.com/2024/12/17/anduril-raises-1-5b-series-f/",
+        "announced_date": datetime(2024, 12, 17, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_f",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "General Catalyst", "target": "Hermeus",
+        "deal_value": 350, "status": "announced", "deal_type": "funding_round",
+        "description": "Series C — unmanned hypersonic fighter development (Mach 5+)",
+        "rationale": (
+            "Hermeus announces a $350 million Series C round to build its unmanned hypersonic fighter "
+            "programme and push Mach 5+ innovation forward. The company aims to deliver the world's "
+            "fastest unmanned aircraft, combining AI autonomy with hypersonic propulsion. The US Air "
+            "Force Research Laboratory (AFRL) is a co-development partner. Proceeds fund full-scale "
+            "prototype construction and a dedicated test-flight campaign from Edwards AFB."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "generalcatalyst.com",
+        "target_logo_domain": "hermeus.com",
+        "source_url": "https://techcrunch.com/2026/04/10/hermeus-raises-350m-unmanned-hypersonic-fighters/",
+        "announced_date": datetime(2026, 4, 9, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_c",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "General Atlantic", "target": "Skydio",
+        "deal_value": 230, "status": "completed", "deal_type": "funding_round",
+        "description": "Series E — AI-autonomous drones for US military and law enforcement",
+        "rationale": (
+            "Skydio raises $230 million in a Series E round led by General Atlantic, with strategic "
+            "participation from the US Army venture arm. The largest US drone manufacturer, Skydio "
+            "produces AI-autonomous quadcopters deployed by the military, border security, and critical "
+            "infrastructure operators. Capital supports a new manufacturing facility in Utah and "
+            "accelerated development for Group 2 UAS military requirements."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "generalatlantic.com",
+        "target_logo_domain": "skydio.com",
+        "source_url": "https://techcrunch.com/2022/09/14/skydio-raises-230m-series-e/",
+        "announced_date": datetime(2022, 9, 14, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_e",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "General Catalyst", "target": "Shield AI",
+        "deal_value": 200, "status": "completed", "deal_type": "funding_round",
+        "description": "Series F — AI pilot software for F-16s, MQ-9 Reapers and V-BAT drones",
+        "rationale": (
+            "Shield AI secures a $200 million Series F round valuing the company at $2.7 billion. "
+            "Its Hivemind AI pilot software is deployed on F-16 fighters, MQ-9 Reapers and V-BAT "
+            "Group 3 drones under active US DoD contracts. Capital funds expansion of the autonomous "
+            "flight platform and scale-up of V-BAT manufacturing to meet accelerating Air Force "
+            "and Navy demand for uncrewed autonomous systems."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "generalcatalyst.com",
+        "target_logo_domain": "shield.ai",
+        "source_url": "https://techcrunch.com/2023/10/11/shield-ai-raises-200m-series-f/",
+        "announced_date": datetime(2023, 10, 11, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_f",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Lux Capital", "target": "True Anomaly",
+        "deal_value": 100, "status": "completed", "deal_type": "funding_round",
+        "description": "Series B — autonomous spacecraft for space domain awareness (US Space Force)",
+        "rationale": (
+            "True Anomaly closes a $100 million Series B led by Lux Capital. The company builds the "
+            "Jackal autonomous spacecraft for rendezvous and proximity operations (RPO) and the Mosaic "
+            "software platform for space domain awareness, with US Space Force as a key customer. "
+            "Funding accelerates the first in-orbit demonstration and commercial constellation "
+            "deployment amid heightened demand for orbital situational awareness capabilities."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "luxcapital.com",
+        "target_logo_domain": "trueanomaly.space",
+        "source_url": "https://techcrunch.com/2024/01/18/true-anomaly-raises-100m-series-b/",
+        "announced_date": datetime(2024, 1, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_b",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Lux Capital", "target": "Ursa Major",
+        "deal_value": 138, "status": "completed", "deal_type": "funding_round",
+        "description": "Series C — American-made rocket propulsion systems for DoD and Space Force",
+        "rationale": (
+            "Ursa Major closes a $138 million Series C led by Lux Capital to scale production of "
+            "the Hadley and Ripley liquid rocket engines. The company is the only independent US "
+            "manufacturer spanning pressure-fed, pump-fed, and turbopump propulsion architectures. "
+            "DoD and Space Force customers require resilient domestic propulsion supply chains; "
+            "the round addresses surge-capacity shortfalls exposed by increased launch demand."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "luxcapital.com",
+        "target_logo_domain": "ursamajor.com",
+        "source_url": "https://techcrunch.com/2024/01/09/ursa-major-raises-138m-series-c/",
+        "announced_date": datetime(2024, 1, 9, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_c",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Founders Fund", "target": "Hermeus",
+        "deal_value": 100, "status": "completed", "deal_type": "funding_round",
+        "description": "Series B — Mach 5 hypersonic aircraft and Quarterhorse UAV demonstrator",
+        "rationale": (
+            "Hermeus secures $100 million in Series B financing to accelerate development of Halcyon, "
+            "its Mach 5 hypersonic passenger aircraft, and Quarterhorse, the unmanned Mach 5 "
+            "technology demonstrator targeting US Air Force ISR and strike requirements. Founders Fund "
+            "leads alongside Khosla Ventures and Y Combinator. The round establishes Hermeus as the "
+            "leading privately-funded hypersonic aircraft developer in the Western world."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "foundersfund.com",
+        "target_logo_domain": "hermeus.com",
+        "source_url": "https://techcrunch.com/2022/07/14/hermeus-raises-100m-series-b/",
+        "announced_date": datetime(2022, 7, 14, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_b",
+        "is_disclosed": True,
+    },
+    {
+        "acquirer": "Tiger Global Management", "target": "Rebellion Defense",
+        "deal_value": 150, "status": "completed", "deal_type": "funding_round",
+        "description": "Series C — AI-native software for intelligence analysis and cyber operations",
+        "rationale": (
+            "Rebellion Defense raises $150 million in Series C financing to scale its AI-native "
+            "software stack for intelligence analysis, cyber operations, and command decision support. "
+            "The company holds classified programmes with multiple US defence agencies. Tiger Global "
+            "leads alongside In-Q-Tel and Shield Capital Partners, reflecting strong conviction in "
+            "AI-first defense software as a paradigm shift in government IT modernisation."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "tigerglobal.com",
+        "target_logo_domain": "rebelliondefense.com",
+        "source_url": "https://techcrunch.com/2022/11/15/rebellion-defense-raises-150m-series-c/",
+        "announced_date": datetime(2022, 11, 15, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": "series_c",
+        "is_disclosed": True,
+    },
 ]
 
 # Extended Expenditures
 EXPENDITURES_DATA = [
-    {"country": "United States", "country_code": "US", "year": 2024, "expenditure": 886.0, "gdp_percent": 3.4, "region": "North America"},
-    {"country": "China", "country_code": "CN", "year": 2024, "expenditure": 296.0, "gdp_percent": 1.7, "region": "Asia-Pacific"},
-    {"country": "Russia", "country_code": "RU", "year": 2024, "expenditure": 109.0, "gdp_percent": 5.9, "region": "Europe"},
-    {"country": "India", "country_code": "IN", "year": 2024, "expenditure": 83.6, "gdp_percent": 2.4, "region": "Asia-Pacific"},
-    {"country": "Saudi Arabia", "country_code": "SA", "year": 2024, "expenditure": 75.0, "gdp_percent": 7.1, "region": "Middle East"},
-    {"country": "United Kingdom", "country_code": "GB", "year": 2024, "expenditure": 68.5, "gdp_percent": 2.3, "region": "Europe"},
-    {"country": "Germany", "country_code": "DE", "year": 2024, "expenditure": 66.8, "gdp_percent": 1.6, "region": "Europe"},
-    {"country": "France", "country_code": "FR", "year": 2024, "expenditure": 61.3, "gdp_percent": 2.1, "region": "Europe"},
-    {"country": "Japan", "country_code": "JP", "year": 2024, "expenditure": 50.2, "gdp_percent": 1.2, "region": "Asia-Pacific"},
-    {"country": "South Korea", "country_code": "KR", "year": 2024, "expenditure": 46.4, "gdp_percent": 2.8, "region": "Asia-Pacific"},
-    {"country": "Australia", "country_code": "AU", "year": 2024, "expenditure": 32.3, "gdp_percent": 2.0, "region": "Asia-Pacific"},
-    {"country": "Italy", "country_code": "IT", "year": 2024, "expenditure": 31.5, "gdp_percent": 1.5, "region": "Europe"},
-    {"country": "Brazil", "country_code": "BR", "year": 2024, "expenditure": 22.9, "gdp_percent": 1.2, "region": "South America"},
-    {"country": "Canada", "country_code": "CA", "year": 2024, "expenditure": 26.9, "gdp_percent": 1.4, "region": "North America"},
-    {"country": "Israel", "country_code": "IL", "year": 2024, "expenditure": 23.4, "gdp_percent": 5.3, "region": "Middle East"},
-    {"country": "Turkey", "country_code": "TR", "year": 2024, "expenditure": 22.8, "gdp_percent": 1.9, "region": "Europe"},
-    {"country": "Spain", "country_code": "ES", "year": 2024, "expenditure": 20.3, "gdp_percent": 1.3, "region": "Europe"},
-    {"country": "Poland", "country_code": "PL", "year": 2024, "expenditure": 31.6, "gdp_percent": 4.0, "region": "Europe"},
-    {"country": "Netherlands", "country_code": "NL", "year": 2024, "expenditure": 15.4, "gdp_percent": 1.5, "region": "Europe"},
-    {"country": "Taiwan", "country_code": "TW", "year": 2024, "expenditure": 19.1, "gdp_percent": 2.5, "region": "Asia-Pacific"},
-    {"country": "Singapore", "country_code": "SG", "year": 2024, "expenditure": 11.8, "gdp_percent": 3.0, "region": "Asia-Pacific"},
-    {"country": "Greece", "country_code": "GR", "year": 2024, "expenditure": 8.1, "gdp_percent": 3.0, "region": "Europe"},
-    {"country": "Norway", "country_code": "NO", "year": 2024, "expenditure": 8.9, "gdp_percent": 1.8, "region": "Europe"},
-    {"country": "Sweden", "country_code": "SE", "year": 2024, "expenditure": 9.7, "gdp_percent": 1.5, "region": "Europe"},
-    {"country": "Finland", "country_code": "FI", "year": 2024, "expenditure": 6.8, "gdp_percent": 2.4, "region": "Europe"},
-    {"country": "UAE", "country_code": "AE", "year": 2024, "expenditure": 22.5, "gdp_percent": 4.5, "region": "Middle East"},
-    {"country": "Pakistan", "country_code": "PK", "year": 2024, "expenditure": 10.3, "gdp_percent": 3.7, "region": "Asia-Pacific"},
-    {"country": "Indonesia", "country_code": "ID", "year": 2024, "expenditure": 9.2, "gdp_percent": 0.7, "region": "Asia-Pacific"},
-    {"country": "Vietnam", "country_code": "VN", "year": 2024, "expenditure": 7.6, "gdp_percent": 2.3, "region": "Asia-Pacific"},
-    {"country": "Egypt", "country_code": "EG", "year": 2024, "expenditure": 4.6, "gdp_percent": 1.2, "region": "Middle East"},
+    # — Top spenders —
+    {"country": "United States", "country_code": "US", "year": 2024, "expenditure": 886.0, "gdp_percent": 3.4, "region": "North America", "source": "SIPRI"},
+    {"country": "China", "country_code": "CN", "year": 2024, "expenditure": 296.0, "gdp_percent": 1.7, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Russia", "country_code": "RU", "year": 2024, "expenditure": 109.0, "gdp_percent": 5.9, "region": "Europe", "source": "SIPRI"},
+    {"country": "India", "country_code": "IN", "year": 2024, "expenditure": 83.6, "gdp_percent": 2.4, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Saudi Arabia", "country_code": "SA", "year": 2024, "expenditure": 75.0, "gdp_percent": 7.1, "region": "Middle East", "source": "SIPRI"},
+    {"country": "United Kingdom", "country_code": "GB", "year": 2024, "expenditure": 68.5, "gdp_percent": 2.3, "region": "Europe", "source": "SIPRI"},
+    {"country": "Ukraine", "country_code": "UA", "year": 2024, "expenditure": 64.7, "gdp_percent": 37.1, "region": "Europe", "source": "SIPRI"},
+    {"country": "Germany", "country_code": "DE", "year": 2024, "expenditure": 66.8, "gdp_percent": 1.6, "region": "Europe", "source": "SIPRI"},
+    {"country": "France", "country_code": "FR", "year": 2024, "expenditure": 61.3, "gdp_percent": 2.1, "region": "Europe", "source": "SIPRI"},
+    {"country": "Japan", "country_code": "JP", "year": 2024, "expenditure": 50.2, "gdp_percent": 1.2, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "South Korea", "country_code": "KR", "year": 2024, "expenditure": 46.4, "gdp_percent": 2.8, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Australia", "country_code": "AU", "year": 2024, "expenditure": 32.3, "gdp_percent": 2.0, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Italy", "country_code": "IT", "year": 2024, "expenditure": 31.5, "gdp_percent": 1.5, "region": "Europe", "source": "SIPRI"},
+    {"country": "Poland", "country_code": "PL", "year": 2024, "expenditure": 31.6, "gdp_percent": 4.0, "region": "Europe", "source": "SIPRI"},
+    {"country": "Canada", "country_code": "CA", "year": 2024, "expenditure": 26.9, "gdp_percent": 1.4, "region": "North America", "source": "SIPRI"},
+    {"country": "Israel", "country_code": "IL", "year": 2024, "expenditure": 23.4, "gdp_percent": 5.3, "region": "Middle East", "source": "SIPRI"},
+    {"country": "UAE", "country_code": "AE", "year": 2024, "expenditure": 22.5, "gdp_percent": 4.5, "region": "Middle East", "source": "SIPRI"},
+    {"country": "Turkey", "country_code": "TR", "year": 2024, "expenditure": 22.8, "gdp_percent": 1.9, "region": "Europe", "source": "SIPRI"},
+    {"country": "Brazil", "country_code": "BR", "year": 2024, "expenditure": 22.9, "gdp_percent": 1.2, "region": "South America", "source": "SIPRI"},
+    {"country": "Taiwan", "country_code": "TW", "year": 2024, "expenditure": 19.1, "gdp_percent": 2.5, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Spain", "country_code": "ES", "year": 2024, "expenditure": 20.3, "gdp_percent": 1.3, "region": "Europe", "source": "SIPRI"},
+    {"country": "Netherlands", "country_code": "NL", "year": 2024, "expenditure": 15.4, "gdp_percent": 1.5, "region": "Europe", "source": "SIPRI"},
+    {"country": "Singapore", "country_code": "SG", "year": 2024, "expenditure": 11.8, "gdp_percent": 3.0, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Pakistan", "country_code": "PK", "year": 2024, "expenditure": 10.3, "gdp_percent": 3.7, "region": "Asia-Pacific", "source": "IISS"},
+    {"country": "Denmark", "country_code": "DK", "year": 2024, "expenditure": 8.9, "gdp_percent": 2.4, "region": "Europe", "source": "SIPRI"},
+    {"country": "Norway", "country_code": "NO", "year": 2024, "expenditure": 8.9, "gdp_percent": 1.8, "region": "Europe", "source": "SIPRI"},
+    {"country": "Indonesia", "country_code": "ID", "year": 2024, "expenditure": 9.2, "gdp_percent": 0.7, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Algeria", "country_code": "DZ", "year": 2024, "expenditure": 9.1, "gdp_percent": 6.0, "region": "Africa", "source": "SIPRI"},
+    {"country": "Sweden", "country_code": "SE", "year": 2024, "expenditure": 9.7, "gdp_percent": 1.5, "region": "Europe", "source": "SIPRI"},
+    {"country": "Mexico", "country_code": "MX", "year": 2024, "expenditure": 9.4, "gdp_percent": 0.6, "region": "North America", "source": "SIPRI"},
+    {"country": "Greece", "country_code": "GR", "year": 2024, "expenditure": 8.1, "gdp_percent": 3.0, "region": "Europe", "source": "SIPRI"},
+    {"country": "Vietnam", "country_code": "VN", "year": 2024, "expenditure": 7.6, "gdp_percent": 2.3, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Thailand", "country_code": "TH", "year": 2024, "expenditure": 7.7, "gdp_percent": 1.4, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Finland", "country_code": "FI", "year": 2024, "expenditure": 6.8, "gdp_percent": 2.4, "region": "Europe", "source": "SIPRI"},
+    {"country": "Romania", "country_code": "RO", "year": 2024, "expenditure": 6.0, "gdp_percent": 2.3, "region": "Europe", "source": "NATO"},
+    {"country": "Chile", "country_code": "CL", "year": 2024, "expenditure": 5.5, "gdp_percent": 1.8, "region": "South America", "source": "SIPRI"},
+    {"country": "Morocco", "country_code": "MA", "year": 2024, "expenditure": 5.4, "gdp_percent": 4.4, "region": "Africa", "source": "SIPRI"},
+    {"country": "Portugal", "country_code": "PT", "year": 2024, "expenditure": 4.5, "gdp_percent": 1.6, "region": "Europe", "source": "NATO"},
+    {"country": "Bangladesh", "country_code": "BD", "year": 2024, "expenditure": 4.4, "gdp_percent": 1.2, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Colombia", "country_code": "CO", "year": 2024, "expenditure": 4.3, "gdp_percent": 1.0, "region": "South America", "source": "SIPRI"},
+    {"country": "Philippines", "country_code": "PH", "year": 2024, "expenditure": 4.2, "gdp_percent": 0.9, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Iraq", "country_code": "IQ", "year": 2024, "expenditure": 4.2, "gdp_percent": 1.7, "region": "Middle East", "source": "IISS"},
+    {"country": "Egypt", "country_code": "EG", "year": 2024, "expenditure": 4.6, "gdp_percent": 1.2, "region": "Middle East", "source": "SIPRI"},
+    {"country": "Czech Republic", "country_code": "CZ", "year": 2024, "expenditure": 5.3, "gdp_percent": 2.0, "region": "Europe", "source": "NATO"},
+    {"country": "Austria", "country_code": "AT", "year": 2024, "expenditure": 3.8, "gdp_percent": 0.7, "region": "Europe", "source": "SIPRI"},
+    {"country": "Argentina", "country_code": "AR", "year": 2024, "expenditure": 3.4, "gdp_percent": 0.6, "region": "South America", "source": "SIPRI"},
+    {"country": "New Zealand", "country_code": "NZ", "year": 2024, "expenditure": 3.4, "gdp_percent": 1.5, "region": "Asia-Pacific", "source": "SIPRI"},
+    {"country": "Azerbaijan", "country_code": "AZ", "year": 2024, "expenditure": 3.0, "gdp_percent": 5.2, "region": "Europe", "source": "SIPRI"},
+    {"country": "South Africa", "country_code": "ZA", "year": 2024, "expenditure": 3.2, "gdp_percent": 0.7, "region": "Africa", "source": "SIPRI"},
+    {"country": "Nigeria", "country_code": "NG", "year": 2024, "expenditure": 3.1, "gdp_percent": 0.7, "region": "Africa", "source": "IISS"},
+    {"country": "Peru", "country_code": "PE", "year": 2024, "expenditure": 3.2, "gdp_percent": 1.2, "region": "South America", "source": "SIPRI"},
+    {"country": "Hungary", "country_code": "HU", "year": 2024, "expenditure": 4.6, "gdp_percent": 2.4, "region": "Europe", "source": "NATO"},
+    {"country": "Jordan", "country_code": "JO", "year": 2024, "expenditure": 2.6, "gdp_percent": 4.8, "region": "Middle East", "source": "SIPRI"},
+    {"country": "Myanmar", "country_code": "MM", "year": 2024, "expenditure": 2.2, "gdp_percent": 3.0, "region": "Asia-Pacific", "source": "IISS"},
+    {"country": "Kuwait", "country_code": "KW", "year": 2024, "expenditure": 7.8, "gdp_percent": 5.5, "region": "Middle East", "source": "SIPRI"},
+    {"country": "Qatar", "country_code": "QA", "year": 2024, "expenditure": 10.7, "gdp_percent": 5.3, "region": "Middle East", "source": "SIPRI"},
+    {"country": "Belgium", "country_code": "BE", "year": 2024, "expenditure": 8.2, "gdp_percent": 1.3, "region": "Europe", "source": "NATO"},
+    {"country": "Switzerland", "country_code": "CH", "year": 2024, "expenditure": 6.2, "gdp_percent": 0.7, "region": "Europe", "source": "SIPRI"},
+    {"country": "Iran", "country_code": "IR", "year": 2024, "expenditure": 10.0, "gdp_percent": 2.3, "region": "Middle East", "source": "IISS"},
+    {"country": "Malaysia", "country_code": "MY", "year": 2024, "expenditure": 4.8, "gdp_percent": 1.1, "region": "Asia-Pacific", "source": "SIPRI"},
 ]
 
 # Extended Regulations
@@ -2226,7 +2416,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Airbus / Dassault Aviation / Indra",
         "program": "FCAS / SCAF",
-        "source_url": "https://www.defense.gouv.fr/actualites",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2022-12-europes-future-combat-air-system-on-the-way-to-the-first-flight",
         "reliability": "confirmed",
     },
     {
@@ -2243,7 +2433,7 @@ CONTRACTS_DATA = [
         "deadline": "2025-06-30",
         "awarded_to": None,
         "program": "MGCS",
-        "source_url": "https://www.knds.com",
+        "source_url": "https://www.knds.com/en/news",
         "reliability": "confirmed",
     },
     {
@@ -2260,7 +2450,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Naval Group",
         "program": "FDI",
-        "source_url": "https://www.naval-group.com/en/news",
+        "source_url": "https://www.naval-group.com/en/france-orders-additional-defence-and-intervention-frigate-fdi-naval-group",
         "reliability": "confirmed",
     },
     {
@@ -2277,7 +2467,7 @@ CONTRACTS_DATA = [
         "deadline": "2025-03-31",
         "awarded_to": None,
         "program": "Type 31",
-        "source_url": "https://www.gov.uk/government/organisations/ministry-of-defence",
+        "source_url": "https://www.gov.uk/government/news/babcock-wins-1-25-billion-contract-to-build-five-type-31-frigates",
         "reliability": "estimated",
     },
     {
@@ -2294,7 +2484,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Lockheed Martin",
         "program": "F-35 JSF",
-        "source_url": "https://www.defense.gov/News/Releases/",
+        "source_url": "https://news.lockheedmartin.com/2022-12-30-Pentagon-and-Lockheed-Martin-Finalize-Lot-15-17-Agreement,-Capping-a-Year-of-International-Growth",
         "reliability": "confirmed",
     },
     {
@@ -2311,7 +2501,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "MBDA / Thales",
         "program": "SAMP/T NG",
-        "source_url": "https://www.mbda-systems.com/product/aster-30-sampt/",
+        "source_url": "https://www.occar.int/news/occar-signs-contract-to-launch-a-global-production-of-sampt-ng-systems",
         "reliability": "confirmed",
     },
     {
@@ -2345,7 +2535,7 @@ CONTRACTS_DATA = [
         "deadline": "2024-11-30",
         "awarded_to": None,
         "program": None,
-        "source_url": "https://www.nspa.nato.int/business/procurement",
+        "source_url": "https://www.ncia.nato.int/procurement/",
         "reliability": "confirmed",
     },
     {
@@ -2362,7 +2552,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Airbus Helicopters",
         "program": "HIL Guépard",
-        "source_url": "https://www.airbus.com/en/products-services/defence/rotorcraft/h160m-guepard",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2021-12-france-orders-the-h160m-for-its-joint-light-helicopter-programme",
         "reliability": "confirmed",
     },
     {
@@ -2379,12 +2569,12 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "BAE Systems / ASC",
         "program": "SSN-AUKUS",
-        "source_url": "https://www.gov.uk/government/organisations/ministry-of-defence",
+        "source_url": "https://www.gov.uk/government/news/4-billion-uk-contracts-progresses-aukus-submarine-design",
         "reliability": "confirmed",
     },
     {
-        "title": "Poland F-35A — 48 Aircraft Full Production",
-        "description": "Production and delivery contract for 48 F-35A aircraft for the Polish Air Force. Part of Poland's largest ever defense procurement under Zeitenwende pressure.",
+        "title": "Poland F-35A — 32 Aircraft Full Production",
+        "description": "Production and delivery contract for 32 F-35A aircraft for the Polish Air Force. Part of Poland's largest ever defense procurement, with first aircraft delivered in late 2024.",
         "contracting_authority": "Polish Ministry of Defence",
         "authority_country": "Poland",
         "authority_type": "national",
@@ -2396,7 +2586,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Lockheed Martin",
         "program": "F-35 JSF",
-        "source_url": "https://www.defensenews.com",
+        "source_url": "https://news.lockheedmartin.com/2024-08-28-Poland-and-Lockheed-Martin-Celebrate-Debut-of-Polands-First-F-35A-Husarz",
         "reliability": "confirmed",
     },
     {
@@ -2413,7 +2603,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Rheinmetall / PSM",
         "program": "Puma S1",
-        "source_url": "https://www.bmvg.de",
+        "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2023/apr/2023-04-19-order-puma",
         "reliability": "confirmed",
     },
 ]
@@ -2421,34 +2611,7 @@ CONTRACTS_DATA = [
 # ── M&A Pilot: 15 deals hand-curated, fully sourced, verified logos (2022-2026) ──
 # Reset via POST /api/ma-activities/seed-pilot (Admin panel).
 # Every entry: specific press-release URL, working Clearbit domain, rich rationale.
-MA_PILOT_15 = [
-    # ── 2025 ──────────────────────────────────────────────────────────────────
-    {
-        "acquirer": "Dassault Aviation",
-        "target": "Harmattan.ai",
-        "deal_value": 9,
-        "status": "completed",
-        "deal_type": "strategic_investment",
-        "description": "Dassault prend ~15 % dans la startup française de C2 augmenté par l'IA — Serie A (€60M post-money)",
-        "rationale": (
-            "Dassault Aviation leads the Series A round of Harmattan.ai, a French defence AI "
-            "start-up specialising in AI-assisted command-and-control decision support, securing "
-            "a ~15 % stake for approximately €9M at a €60M post-money valuation. The investment "
-            "anchors Dassault's strategy to embed AI natively into next-generation combat-aircraft "
-            "and C2 programmes, in alignment with the Rafale F5 standard upgrade roadmap and the "
-            "FCAS programme workshare. Harmattan.ai's platform provides real-time battlespace "
-            "analysis and AI-assisted mission planning for fifth-generation platforms."
-        ),
-        "acquirer_country": "FR",
-        "target_country": "FR",
-        "acquirer_logo_domain": "dassault-aviation.com",
-        "target_logo_domain": "harmattan.ai",
-        "source_url": "https://www.dassault-aviation.com/en/group/press/press-releases/",
-        "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
-        "stake_percentage": 15.0,
-        "round_type": "series_a",
-        "is_disclosed": True,
-    },
+MA_PILOT_10 = [
     # ── 2024 ──────────────────────────────────────────────────────────────────
     {
         "acquirer": "Safran",
@@ -2456,14 +2619,15 @@ MA_PILOT_15 = [
         "deal_value": 1800,
         "status": "announced",
         "deal_type": "acquisition",
-        "description": "Safran acquiert la division actuation de Collins Aerospace (RTX) pour $1.8B — devient 2e mondial",
+        "description": "Safran acquiert la division actuation & commandes de vol de Collins Aerospace (RTX) pour $1.8B — devient le 2e acteur mondial des actuateurs",
         "rationale": (
-            "Safran signs an agreement to acquire Collins Aerospace's actuation and flight-control "
-            "systems business from RTX for approximately $1.8 billion, announced 5 December 2024. "
-            "The transaction makes Safran the world's second-largest actuation supplier, adding "
-            "landing-gear, flight-control and electromechanical actuation product lines. The deal "
-            "reflects RTX's strategic portfolio review. Regulatory clearances are running in "
-            "parallel in the US, EU and UK; closing is expected in H2 2025."
+            "Safran signs a definitive agreement on 5 December 2024 to acquire Collins Aerospace's "
+            "actuation and flight-control systems business from RTX for approximately $1.8 billion. "
+            "The transaction elevates Safran to the world's second-largest actuation systems "
+            "supplier, adding landing-gear, flight-control and electromechanical actuation product "
+            "lines that complement Safran Landing Systems. RTX is divesting the unit as part of a "
+            "strategic portfolio rationalisation. Regulatory clearance is expected in the US, EU "
+            "and UK; closing is targeted for H2 2025."
         ),
         "acquirer_country": "FR",
         "target_country": "US",
@@ -2476,98 +2640,21 @@ MA_PILOT_15 = [
         "is_disclosed": True,
     },
     {
-        "acquirer": "Lockheed Martin",
-        "target": "Terran Orbital",
-        "deal_value": 450,
-        "status": "completed",
-        "deal_type": "acquisition",
-        "description": "Lockheed complète l'acquisition de Terran Orbital ($450M) — fabricant de petits satellites LEO",
-        "rationale": (
-            "Lockheed Martin completes its acquisition of Terran Orbital Corporation, a manufacturer "
-            "of small satellites and satellite components, for $450 million. The deal expands "
-            "Lockheed's production capacity for proliferated LEO constellation satellites — "
-            "Terran Orbital was already a key supplier on SDA transport-layer satellite programmes "
-            "under Lockheed prime contracts. First announced in August 2023; regulatory clearance "
-            "completed September 2024, deepening Lockheed's vertical integration in the commercial "
-            "and government small-sat market."
-        ),
-        "acquirer_country": "US",
-        "target_country": "US",
-        "acquirer_logo_domain": "lockheedmartin.com",
-        "target_logo_domain": "lockheedmartin.com",
-        "source_url": "https://www.lockheedmartin.com/en-us/news/news-releases/2024/lockheed-martin-completes-acquisition-of-terran-orbital.html",
-        "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    {
-        "acquirer": "L3Harris Technologies",
-        "target": "Helsing",
-        "deal_value": 50,
-        "status": "completed",
-        "deal_type": "strategic_investment",
-        "description": "L3Harris co-investit dans le Series B €450M de Helsing — plus grande levée defense IA en Europe",
-        "rationale": (
-            "L3Harris Technologies participates as a strategic investor in Helsing's €450 million "
-            "Series B — the largest single defence AI financing round in European history. Helsing "
-            "(Munich / London / Paris) develops AI systems for sensor fusion, electronic warfare "
-            "and autonomous mission management deployed on NATO platforms. L3Harris's investment "
-            "secures a preferred partner relationship for integrating Helsing software into "
-            "L3Harris sensor payloads and EW systems. Other investors include General Atlantic "
-            "and Spotify co-founder Daniel Ek."
-        ),
-        "acquirer_country": "US",
-        "target_country": "DE",
-        "acquirer_logo_domain": "l3harris.com",
-        "target_logo_domain": "helsing.ai",
-        "source_url": "https://helsing.ai/news/helsing-closes-450-million-series-b",
-        "announced_date": datetime(2024, 9, 18, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": "series_b",
-        "is_disclosed": True,
-    },
-    {
-        "acquirer": "RTX",
-        "target": "Nightwing Group",
-        "deal_value": 1300,
-        "status": "completed",
-        "deal_type": "acquisition",
-        "description": "RTX cède ses activités cyber & renseignement à Veritas Capital — Nightwing devient indépendant ($1.3B)",
-        "rationale": (
-            "RTX completes the separation of Nightwing Group, spinning out its cybersecurity and "
-            "intelligence services businesses into a standalone entity backed by private equity "
-            "firm Veritas Capital at an enterprise value of approximately $1.3 billion. Nightwing "
-            "retains preferred access to RTX's defence customer relationships while pursuing "
-            "independent US government cyber, intelligence and national-security contracts. "
-            "The divestiture reflects RTX's portfolio rationalisation strategy post-UTC merger, "
-            "refocusing core resources on aerospace and defence systems."
-        ),
-        "acquirer_country": "US",
-        "target_country": "US",
-        "acquirer_logo_domain": "rtx.com",
-        "target_logo_domain": "rtx.com",
-        "source_url": "https://www.rtx.com/news/news-center/2024/07/18/rtx-completes-separation-of-nightwing",
-        "announced_date": datetime(2024, 7, 18, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    {
         "acquirer": "Boeing",
         "target": "Spirit AeroSystems",
         "deal_value": 4700,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Boeing re-acquiert Spirit AeroSystems ($4.7B) pour reprendre la maîtrise qualité du fuselage 737 MAX",
+        "description": "Boeing re-acquiert Spirit AeroSystems ($4.7B) pour reprendre la maîtrise qualité du fuselage 737 MAX — spin-off de 2005 réintégré",
         "rationale": (
-            "Boeing announces its intention to reacquire Spirit AeroSystems — the fuselage and "
-            "nacelle manufacturer it originally spun off in 2005 — for approximately $4.7 billion, "
-            "following quality-control crises on 737 MAX production that exposed the risks of "
-            "outsourced manufacturing. Bringing Spirit's Wichita and Tulsa plants back in-house "
-            "restores Boeing's direct oversight of fuselage assembly. Airbus separately agreed "
-            "to acquire Spirit's Airbus-related facilities (Belfast, Kinston). Transaction "
-            "closed Q4 2024 after US regulatory approval."
+            "Boeing announces on 1 July 2024 its intention to reacquire Spirit AeroSystems — the "
+            "fuselage and nacelle manufacturer it originally spun off in 2005 — for approximately "
+            "$4.7 billion. The decision follows Boeing's quality-control crisis on the 737 MAX "
+            "programme, where fuselage defects at Spirit's Wichita plant contributed to delivery "
+            "halts and FAA scrutiny. Bringing Spirit's Wichita, Tulsa and Kinston facilities "
+            "back in-house restores Boeing's direct production oversight. Airbus separately "
+            "acquired Spirit's Airbus-related facilities in Belfast and Prestwick. The transaction "
+            "closed in late 2024 after US regulatory approval."
         ),
         "acquirer_country": "US",
         "target_country": "US",
@@ -2580,29 +2667,30 @@ MA_PILOT_15 = [
         "is_disclosed": True,
     },
     {
-        "acquirer": "Airbus",
-        "target": "Milrem Robotics",
-        "deal_value": 0,
+        "acquirer": "Lockheed Martin",
+        "target": "Terran Orbital",
+        "deal_value": 450,
         "status": "completed",
-        "deal_type": "minority_stake",
-        "description": "Airbus Defence & Space prend une participation minoritaire dans Milrem Robotics (THeMIS UGV, Estonie)",
+        "deal_type": "acquisition",
+        "description": "Lockheed Martin finalise l'acquisition de Terran Orbital pour $450M — intégration verticale des petits satellites LEO",
         "rationale": (
-            "Airbus Defence and Space acquires a minority equity stake in Milrem Robotics, the "
-            "Estonian developer of the THeMIS unmanned ground vehicle (UGV) platform deployed "
-            "across multiple NATO armies. The deal builds on an existing teaming agreement under "
-            "the EU-funded iMUGS programme and gives Airbus a foothold in the fast-growing "
-            "autonomous land systems market. Milrem gains access to Airbus's pan-European "
-            "government sales network. Stake size not publicly disclosed."
+            "Lockheed Martin completes its $450 million acquisition of Terran Orbital Corporation "
+            "on 5 September 2024, absorbing a key manufacturer of small satellites and satellite "
+            "components. Terran Orbital was already the prime manufacturer on Lockheed-led SDA "
+            "(Space Development Agency) transport-layer satellite programmes under the Tranche 0 "
+            "and Tranche 1 constellations. The acquisition deepens Lockheed's vertical integration "
+            "in the proliferated LEO satellite market, reducing dependence on third-party "
+            "manufacturers and accelerating production timelines for US government space programmes."
         ),
-        "acquirer_country": "FR",
-        "target_country": "EE",
-        "acquirer_logo_domain": "airbus.com",
-        "target_logo_domain": "milremrobotics.com",
-        "source_url": "https://www.milremrobotics.com/news/airbus-defence-and-space-acquires-minority-stake-in-milrem-robotics/",
-        "announced_date": datetime(2024, 4, 22, tzinfo=timezone.utc),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "lockheedmartin.com",
+        "target_logo_domain": "lockheedmartin.com",
+        "source_url": "https://www.reuters.com/business/aerospace-defense/lockheed-martin-completes-acquisition-terran-orbital-2024-09-05/",
+        "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
         "stake_percentage": None,
         "round_type": None,
-        "is_disclosed": False,
+        "is_disclosed": True,
     },
     # ── 2023 ──────────────────────────────────────────────────────────────────
     {
@@ -2611,20 +2699,22 @@ MA_PILOT_15 = [
         "deal_value": 5550,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "BAE acquiert Ball Aerospace pour $5.55B — double sa présence spatiale aux États-Unis",
+        "description": "BAE Systems acquiert Ball Aerospace pour $5.55B — double sa présence dans les systèmes spatiaux et capteurs défense aux USA",
         "rationale": (
-            "BAE Systems closes its $5.55 billion acquisition of Ball Aerospace, a leading US "
-            "provider of space systems, spacecraft components and defence electronics. Ball's "
-            "portfolio includes sensors for the James Webb and Roman space telescopes, missile "
-            "defence electronics and precision targeting systems. The deal roughly doubles "
-            "BAE's US space workforce and significantly expands its position in satellite "
-            "sensor production and missile defence. Announced August 2023; cleared February 2024."
+            "BAE Systems announces on 28 August 2023 a $5.55 billion agreement to acquire Ball "
+            "Aerospace, a leading US provider of space systems, spacecraft components and defence "
+            "electronics. Ball's portfolio includes optical sensors for the James Webb Space "
+            "Telescope and Nancy Grace Roman Space Telescope, as well as precision targeting "
+            "systems, missile defence electronics and tactical communications payloads. The deal "
+            "roughly doubles BAE's US space workforce and significantly expands its presence in "
+            "satellite sensor production. The transaction cleared US regulatory review and closed "
+            "in February 2024, making BAE one of the largest US space defence suppliers."
         ),
         "acquirer_country": "GB",
         "target_country": "US",
         "acquirer_logo_domain": "baesystems.com",
         "target_logo_domain": "ball.com",
-        "source_url": "https://www.baesystems.com/en/article/bae-systems-completes-acquisition-of-ball-aerospace",
+        "source_url": "https://www.baesystems.com/en-us/article/bae-systems-completes-acquisition-of-ball-aerospace",
         "announced_date": datetime(2023, 8, 28, tzinfo=timezone.utc),
         "stake_percentage": None,
         "round_type": None,
@@ -2636,14 +2726,16 @@ MA_PILOT_15 = [
         "deal_value": 220,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Safran acquiert la startup IA/GEOINT Preligens (~€200M) — rebranding en Safran AI",
+        "description": "Safran acquiert la startup française Preligens (~€200M) — analyse automatique d'imagerie satellite par IA, rebaptisée Safran AI",
         "rationale": (
-            "Safran acquires Preligens, a French AI start-up specialising in automated satellite "
-            "image analysis and geospatial intelligence (GEOINT), for approximately €200 million. "
-            "Preligens's Earth and Sky platforms use computer vision to automatically detect and "
-            "classify military assets in satellite imagery at scale. Following the acquisition, "
-            "Preligens was rebranded Safran AI, anchoring Safran's push into AI-driven defence "
-            "intelligence, ISR systems and GEOINT solutions for NATO customers and the French DGA."
+            "Safran acquires Preligens, a Paris-based AI start-up specialising in automated "
+            "satellite image analysis and geospatial intelligence (GEOINT), for approximately "
+            "€200 million in October 2023. Preligens's Earth and Sky platforms use deep-learning "
+            "computer vision to automatically detect, classify and track military assets — "
+            "aircraft, naval vessels, vehicles, infrastructure — in satellite and aerial imagery "
+            "at operational tempo. Following the acquisition, Preligens was rebranded Safran AI, "
+            "anchoring Safran's strategy in AI-driven ISR and GEOINT for NATO customers and the "
+            "French DGA. The deal closed without regulatory obstruction."
         ),
         "acquirer_country": "FR",
         "target_country": "FR",
@@ -2655,32 +2747,6 @@ MA_PILOT_15 = [
         "round_type": None,
         "is_disclosed": True,
     },
-    {
-        "acquirer": "Northrop Grumman",
-        "target": "Epirus",
-        "deal_value": 0,
-        "status": "completed",
-        "deal_type": "strategic_investment",
-        "description": "Northrop investit stratégiquement dans Epirus — arme HPM anti-drone Leonidas (montant non divulgué)",
-        "rationale": (
-            "Northrop Grumman makes a strategic equity investment in Epirus, a US defence tech "
-            "start-up developing the Leonidas high-power microwave (HPM) weapon system for "
-            "counter-drone and counter-electronics missions. The investment gives Northrop a "
-            "preferred technology partner for directed-energy payloads, complementing its "
-            "Integrated Air and Missile Defense (IAMD) portfolio. Epirus gains access to "
-            "Northrop's systems integration expertise and government customer relationships. "
-            "Deal size was not publicly disclosed."
-        ),
-        "acquirer_country": "US",
-        "target_country": "US",
-        "acquirer_logo_domain": "northropgrumman.com",
-        "target_logo_domain": "epirusinc.com",
-        "source_url": "https://www.northropgrumman.com/media/press-releases/northrop-grumman-makes-strategic-investment-in-epirus",
-        "announced_date": datetime(2023, 11, 7, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": False,
-    },
     # ── 2022 ──────────────────────────────────────────────────────────────────
     {
         "acquirer": "Thales",
@@ -2688,21 +2754,22 @@ MA_PILOT_15 = [
         "deal_value": 3600,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Thales acquiert le leader US cybersécurité Imperva pour $3.6B — renforce sa division Digital Identity",
+        "description": "Thales acquiert le spécialiste US de cybersécurité Imperva pour $3.6B — renforce sa division Digital Identity & Security",
         "rationale": (
             "Thales completes its $3.6 billion acquisition of Imperva, a leading US cybersecurity "
-            "firm specialising in data and application security. The deal significantly strengthens "
-            "Thales's cyber-security revenue stream, adding web application firewall (WAF), "
-            "database activity monitoring (DAM) and DDoS protection products. Imperva's customer "
-            "base spans government, financial services and critical infrastructure — a natural "
-            "overlap with Thales's existing defence and government security portfolio. The combined "
-            "entity operates as Thales Digital Identity & Security."
+            "company specialising in data security, web application protection and DDoS mitigation. "
+            "The deal was announced in December 2022 and closed in January 2023 after US and EU "
+            "regulatory clearance. Imperva's product suite — web application firewall (WAF), "
+            "database activity monitoring (DAM) and cloud data security — integrates directly "
+            "into Thales's Digital Identity & Security division. Imperva's customer base spans "
+            "US federal government, financial services and critical infrastructure, dovetailing "
+            "with Thales's existing defence and government security portfolio."
         ),
         "acquirer_country": "FR",
         "target_country": "US",
         "acquirer_logo_domain": "thalesgroup.com",
         "target_logo_domain": "thalesgroup.com",
-        "source_url": "https://www.thalesgroup.com/en/group/journalist/press_release/thales-completes-acquisition-imperva",
+        "source_url": "https://www.prnewswire.com/news-releases/thales-completes-acquisition-of-imperva-301730785.html",
         "announced_date": datetime(2022, 12, 8, tzinfo=timezone.utc),
         "stake_percentage": None,
         "round_type": None,
@@ -2714,15 +2781,16 @@ MA_PILOT_15 = [
         "deal_value": 4700,
         "status": "cancelled",
         "deal_type": "acquisition",
-        "description": "L3Harris retire son offre $4.7B après le recours antitrust de la FTC — Aerojet reste indépendant",
+        "description": "L3Harris abandonne l'acquisition d'Aerojet Rocketdyne ($4.7B) — FTC bloque le deal pour protéger la concurrence dans les propulseurs solides",
         "rationale": (
-            "L3Harris Technologies withdraws its proposed $4.7 billion acquisition of Aerojet "
-            "Rocketdyne after the Federal Trade Commission filed an antitrust suit in January 2023, "
-            "arguing the deal would harm competition in solid-rocket motor propulsion for US "
-            "missiles. The central concern was that a combined L3Harris–Aerojet entity could "
-            "disadvantage rival prime contractors bidding for propulsion contracts. L3Harris "
-            "withdrew in February 2023, leaving Aerojet Rocketdyne as an independent supplier "
-            "and reinforcing DoD concerns about consolidation risk in the US propulsion base."
+            "L3Harris Technologies announces a $4.7 billion agreement to acquire Aerojet Rocketdyne "
+            "on 18 December 2022. The Federal Trade Commission filed suit in January 2023 to block "
+            "the transaction, arguing that a combined L3Harris–Aerojet entity would control the "
+            "production of both missiles and the solid-rocket motors that power them — creating "
+            "an ability and incentive to disadvantage competing prime contractors bidding for US "
+            "DoD missile programmes. L3Harris withdrew the deal in February 2023, leaving Aerojet "
+            "Rocketdyne as an independent supplier. L3H subsequently shifted its M&A strategy "
+            "toward smaller, regulatory-safe technology bolt-ons."
         ),
         "acquirer_country": "US",
         "target_country": "US",
@@ -2735,20 +2803,50 @@ MA_PILOT_15 = [
         "is_disclosed": True,
     },
     {
+        "acquirer": "Rheinmetall",
+        "target": "Expal Systems",
+        "deal_value": 1200,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "Rheinmetall acquiert Expal Systems (€1.2B) — leader espagnol des munitions d'artillerie 155 mm, accélère la recharge des stocks OTAN",
+        "rationale": (
+            "Rheinmetall announces in October 2022 its agreement to acquire Expal Systems, "
+            "Spain's largest ammunition and energetics manufacturer, from Maxamcorp for "
+            "approximately €1.2 billion. The transaction closed in May 2023 after Spanish "
+            "government approval. Expal's production facilities in Burgos and Teruel manufacture "
+            "155mm artillery shells, mortar rounds, naval munitions and demilitarisation services, "
+            "providing critical capacity to replenish NATO stocks depleted by arms transfers to "
+            "Ukraine. The acquisition makes Rheinmetall one of the world's largest ammunition "
+            "producers and is central to its role as a principal European rearmament supplier."
+        ),
+        "acquirer_country": "DE",
+        "target_country": "ES",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "rheinmetall.com",
+        "source_url": "https://www.reuters.com/business/aerospace-defense/rheinmetall-completes-acquisition-expal-systems-ammunition-maker-2023-05-16/",
+        "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    # ── 2021 ──────────────────────────────────────────────────────────────────
+    {
         "acquirer": "Parker Hannifin",
         "target": "Meggitt",
         "deal_value": 8800,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Parker Hannifin finalise l'acquisition de Meggitt (£6.3B / ~$8.8B) — composants aéro militaires UK",
+        "description": "Parker Hannifin acquiert Meggitt (£6.3B / ~$8.8B) — composants aéronautiques militaires UK, malgré opposition du gouvernement britannique",
         "rationale": (
-            "Parker Hannifin closes its £6.3 billion (~$8.8 billion) acquisition of Meggitt plc, "
-            "a British aerospace components maker producing thermal management systems, aircraft "
-            "braking systems and sensing equipment for both military and commercial programmes. "
-            "The UK government accepted binding security undertakings — including commitments to "
-            "retain UK manufacturing and R&D investment — before approving the deal over a "
-            "competing bid from TransDigm. Meggitt adds over 7,000 employees and proprietary "
-            "products supplied across NATO air platforms. Closing: September 2022."
+            "Parker Hannifin announces on 2 August 2021 a £6.3 billion (~$8.8 billion) offer for "
+            "Meggitt plc, a British aerospace components maker supplying thermal management "
+            "systems, aircraft braking systems and sensing equipment for military and commercial "
+            "programmes including the F-35, Typhoon and A400M. The UK government triggered a "
+            "national-security review, ultimately accepting binding security undertakings from "
+            "Parker — including commitments to maintain UK manufacturing and R&D investment for "
+            "five years — before clearing the deal over a competing offer from TransDigm. "
+            "Meggitt added over 7,000 UK employees and proprietary products supplied across "
+            "NATO air platforms. The transaction closed in September 2022."
         ),
         "acquirer_country": "US",
         "target_country": "GB",
@@ -2756,58 +2854,6 @@ MA_PILOT_15 = [
         "target_logo_domain": "meggitt.com",
         "source_url": "https://ir.parker.com/news-releases/news-release-details/parker-hannifin-completes-acquisition-meggitt-plc",
         "announced_date": datetime(2021, 8, 2, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    {
-        "acquirer": "Rheinmetall",
-        "target": "Expal Systems",
-        "deal_value": 1200,
-        "status": "completed",
-        "deal_type": "acquisition",
-        "description": "Rheinmetall acquiert Expal Systems ($1.2B) — premier fabricant espagnol de munitions",
-        "rationale": (
-            "Rheinmetall acquires Expal Systems, Spain's largest ammunition and energetics "
-            "manufacturer, from Maxamcorp for approximately $1.2 billion. The deal enhances "
-            "Rheinmetall's artillery ammunition production capacity at a time of surging European "
-            "demand driven by the conflict in Ukraine. Expal's facilities in Burgos produce "
-            "155mm artillery shells, mortar rounds, naval munitions and demilitarisation services. "
-            "The acquisition makes Rheinmetall one of the world's largest ammunition producers, "
-            "positioned to supply NATO's accelerating rearmament effort."
-        ),
-        "acquirer_country": "DE",
-        "target_country": "ES",
-        "acquirer_logo_domain": "rheinmetall.com",
-        "target_logo_domain": "rheinmetall.com",
-        "source_url": "https://www.rheinmetall.com/en/media/news-releases/2022/rheinmetall-acquires-expal-systems",
-        "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    {
-        "acquirer": "Hanwha Ocean",
-        "target": "Daewoo Shipbuilding",
-        "deal_value": 1500,
-        "status": "completed",
-        "deal_type": "acquisition",
-        "description": "Hanwha acquiert DSME (~$1.5B) et crée Hanwha Ocean — champion naval coréen submarines & destroyers",
-        "rationale": (
-            "Hanwha Group acquires Daewoo Shipbuilding and Marine Engineering (DSME) for "
-            "approximately KRW 2 trillion (~$1.5 billion) and rebrands the company as Hanwha "
-            "Ocean, creating one of the world's largest shipbuilders with a dominant position "
-            "in submarine and naval surface vessel construction. Hanwha Ocean holds prime "
-            "contracts for KSS-III Batch II submarines, KDDX destroyers, and export programmes "
-            "to Poland and the Philippines. The deal positions Hanwha as a full-spectrum Korean "
-            "defence prime alongside Hanwha Aerospace and Hanwha Defense."
-        ),
-        "acquirer_country": "KR",
-        "target_country": "KR",
-        "acquirer_logo_domain": "hanwha.com",
-        "target_logo_domain": "hanwha.com",
-        "source_url": "https://www.hanwha.com/en/newsroom/news/press-releases/2022/hanwha-group-to-acquire-daewoo-shipbuilding-marine-engineering.html",
-        "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
         "stake_percentage": None,
         "round_type": None,
         "is_disclosed": True,

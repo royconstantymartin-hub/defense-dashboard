@@ -91,8 +91,14 @@ const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateAuth = (access_token, updatedUser) => {
+    localStorage.setItem("token", access_token);
+    setToken(access_token);
+    setUser(updatedUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading, updateAuth }}>
       {children}
     </AuthContext.Provider>
   );

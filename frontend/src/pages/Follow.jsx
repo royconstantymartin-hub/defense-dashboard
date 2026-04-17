@@ -27,313 +27,313 @@ const CATEGORIES = [
 ];
 
 const SOURCES = [
-  // ── Presse spécialisée ──────────────────────────────────────────────────
+  // ── Specialty Press ──────────────────────────────────────────────────────
   {
     id: "janes",
     name: "Jane's",
-    description: "Référence mondiale pour l'intelligence défense & sécurité. Couverture des équipements, programmes, ordres de bataille.",
+    description: "Global reference for defense & security intelligence. Coverage of equipment, programs, and orders of battle.",
     url: "https://www.janes.com",
     category: "press",
     lang: ["EN"],
-    tags: ["équipements", "programmes", "renseignement"],
+    tags: ["equipment", "programs", "intelligence"],
     paywall: true,
   },
   {
     id: "defensenews",
     name: "Defense News",
-    description: "Actualité défense internationale, contrats, politiques d'acquisitions, budgets. Publication de référence du groupe Sightline Media.",
+    description: "International defense news covering contracts, acquisition policies, and budgets. Reference publication of the Sightline Media group.",
     url: "https://www.defensenews.com",
     category: "press",
     lang: ["EN"],
-    tags: ["contrats", "acquisitions", "budget"],
+    tags: ["contracts", "acquisitions", "budget"],
     paywall: false,
   },
   {
     id: "breakingdefense",
     name: "Breaking Defense",
-    description: "Couverture approfondie des politiques d'acquisition US, Europe et Indo-Pacifique. Fort en analyse budgétaire et Pentagon.",
+    description: "In-depth coverage of US, European and Indo-Pacific acquisition policies. Strong on budget analysis and Pentagon news.",
     url: "https://breakingdefense.com",
     category: "press",
     lang: ["EN"],
-    tags: ["politique", "budget", "acquisition"],
+    tags: ["policy", "budget", "acquisition"],
     paywall: false,
   },
   {
     id: "aviationweek",
     name: "Aviation Week & Space Technology",
-    description: "Référence aéronautique, aérospatiale et défense. Programmes d'avions de combat, UAV, espace militaire.",
+    description: "Reference publication for aeronautics, aerospace and defense. Combat aircraft programs, UAVs, military space.",
     url: "https://aviationweek.com",
     category: "press",
     lang: ["EN"],
-    tags: ["aviation", "espace", "programmes"],
+    tags: ["aviation", "space", "programs"],
     paywall: true,
   },
   {
     id: "thewarzone",
     name: "The War Zone (The Drive)",
-    description: "Analyses détaillées sur les systèmes d'armes, conflits en cours, doctrine militaire. Très fort sur les dossiers techniques US.",
+    description: "Detailed analyses of weapons systems, ongoing conflicts, and military doctrine. Very strong on US technical topics.",
     url: "https://www.thedrive.com/the-war-zone",
     category: "press",
     lang: ["EN"],
-    tags: ["systèmes", "conflits", "doctrine"],
+    tags: ["systems", "conflicts", "doctrine"],
     paywall: false,
   },
   {
     id: "opex360",
     name: "Opex 360",
-    description: "Premier site francophone d'actualité défense & sécurité. Opérations extérieures, DGA, programmes français.",
+    description: "Leading French-language defense & security news site. External operations, DGA, and French programs.",
     url: "https://www.opex360.com",
     category: "press",
     lang: ["FR"],
-    tags: ["France", "opérations", "DGA"],
+    tags: ["France", "operations", "DGA"],
     paywall: false,
   },
   {
     id: "metadefense",
     name: "Meta-Défense",
-    description: "Analyses stratégiques et industrielles de la défense européenne, avec focus sur les programmes franco-européens.",
+    description: "Strategic and industrial analyses of European defense, with a focus on Franco-European programs.",
     url: "https://www.meta-defense.fr",
     category: "press",
     lang: ["FR"],
-    tags: ["Europe", "programmes", "industrie"],
+    tags: ["Europe", "programs", "industry"],
     paywall: false,
   },
   {
     id: "ttj",
-    name: "Tout sur les Marchés Publics Défense (BOAMP)",
-    description: "Bulletin officiel des annonces des marchés publics. Source primaire pour les appels d'offres de la DGA et ministères.",
+    name: "French Official Defense Public Procurement Bulletin (BOAMP)",
+    description: "Official bulletin for public procurement notices. Primary source for DGA and ministry calls for tenders.",
     url: "https://www.boamp.fr",
     category: "press",
     lang: ["FR"],
-    tags: ["marchés publics", "appels d'offres", "DGA"],
+    tags: ["public procurement", "tenders", "DGA"],
     paywall: false,
   },
   {
     id: "europeandefencematters",
     name: "European Defence Matters",
-    description: "Magazine de l'Agence Européenne de Défense. Programmes coopératifs, PESCO, FED.",
+    description: "Magazine of the European Defence Agency. Cooperative programs, PESCO, European Defence Fund.",
     url: "https://eda.europa.eu/webzine",
     category: "press",
     lang: ["EN"],
-    tags: ["Europe", "PESCO", "coopération"],
+    tags: ["Europe", "PESCO", "cooperation"],
     paywall: false,
   },
 
   // ── Institutions ────────────────────────────────────────────────────────
   {
     id: "dga",
-    name: "DGA – Direction Générale de l'Armement",
-    description: "Communiqués officiels, programmes d'armement, marchés notifiés, rapport annuel de performance. Source primaire française.",
+    name: "DGA – Directorate General of Armaments",
+    description: "Official press releases, armament programs, awarded contracts, annual performance report. French primary source.",
     url: "https://www.defense.gouv.fr/dga",
     category: "institution",
     lang: ["FR"],
-    tags: ["France", "programmes", "marchés"],
+    tags: ["France", "programs", "contracts"],
     paywall: false,
   },
   {
     id: "nato_newsroom",
     name: "NATO Newsroom",
-    description: "Communiqués de presse, discours, documents officiels de l'OTAN. Décisions du Conseil, budget, capacités.",
+    description: "Press releases, speeches, and official NATO documents. Council decisions, budget, and capabilities.",
     url: "https://www.nato.int/cps/en/natohq/news.htm",
     category: "institution",
     lang: ["EN", "FR"],
-    tags: ["OTAN", "politiques", "capacités"],
+    tags: ["NATO", "policy", "capabilities"],
     paywall: false,
   },
   {
     id: "dod",
     name: "U.S. Department of Defense – Press Releases",
-    description: "Contrats notifiés quotidiennement, annonces budgétaires, publications officielles du Pentagone.",
+    description: "Daily contract awards, budget announcements, and official Pentagon publications.",
     url: "https://www.defense.gov/News/Releases/",
     category: "institution",
     lang: ["EN"],
-    tags: ["USA", "contrats", "budget"],
+    tags: ["USA", "contracts", "budget"],
     paywall: false,
   },
   {
     id: "eda",
     name: "European Defence Agency (EDA)",
-    description: "Données sur les dépenses défense européennes, coopération R&D, programmes PESCO.",
+    description: "Data on European defense spending, R&D cooperation, and PESCO programs.",
     url: "https://eda.europa.eu",
     category: "institution",
     lang: ["EN"],
-    tags: ["Europe", "R&D", "coopération"],
+    tags: ["Europe", "R&D", "cooperation"],
     paywall: false,
   },
   {
     id: "uk_mod",
     name: "UK Ministry of Defence",
-    description: "Annonces de contrats, stratégie défense, white papers. Données de dépenses publiées annuellement.",
+    description: "Contract announcements, defense strategy, and white papers. Spending data published annually.",
     url: "https://www.gov.uk/government/organisations/ministry-of-defence",
     category: "institution",
     lang: ["EN"],
-    tags: ["UK", "contrats", "stratégie"],
+    tags: ["UK", "contracts", "strategy"],
     paywall: false,
   },
   {
     id: "bundeswehr",
     name: "Bundeswehr / BMVg",
-    description: "Ministère fédéral allemand de la Défense. Programmes, Zeitenwende, budget défense allemand.",
+    description: "German Federal Ministry of Defence. Programs, Zeitenwende, and German defense budget.",
     url: "https://www.bmvg.de",
     category: "institution",
     lang: ["DE"],
-    tags: ["Allemagne", "programmes", "budget"],
+    tags: ["Germany", "programs", "budget"],
     paywall: false,
   },
 
-  // ── Think tanks & recherche ─────────────────────────────────────────────
+  // ── Think Tanks & Research ───────────────────────────────────────────────
   {
     id: "sipri",
     name: "SIPRI – Stockholm International Peace Research Institute",
-    description: "Base de référence mondiale sur les dépenses militaires, transferts d'armes, arsenaux nucléaires. Données annuelles libres d'accès.",
+    description: "Global reference database on military spending, arms transfers, and nuclear arsenals. Free annual data.",
     url: "https://www.sipri.org",
     category: "thinktank",
     lang: ["EN"],
-    tags: ["dépenses", "transferts", "données"],
+    tags: ["spending", "transfers", "data"],
     paywall: false,
   },
   {
     id: "iiss",
     name: "IISS – International Institute for Strategic Studies",
-    description: "Military Balance (référence annuelle sur les capacités militaires mondiales), analyses stratégiques.",
+    description: "Military Balance (annual reference on global military capabilities) and strategic analyses.",
     url: "https://www.iiss.org",
     category: "thinktank",
     lang: ["EN"],
-    tags: ["capacités", "stratégie", "Military Balance"],
+    tags: ["capabilities", "strategy", "Military Balance"],
     paywall: true,
   },
   {
     id: "irsem",
-    name: "IRSEM – Institut de Recherche Stratégique de l'École Militaire",
-    description: "Think tank français rattaché au ministère des Armées. Études stratégiques, géopolitique, industrie de défense.",
+    name: "IRSEM – Strategic Research Institute of the Military School",
+    description: "French think tank affiliated with the Ministry of Armed Forces. Strategic studies, geopolitics, and defense industry.",
     url: "https://www.irsem.fr",
     category: "thinktank",
     lang: ["FR", "EN"],
-    tags: ["France", "stratégie", "géopolitique"],
+    tags: ["France", "strategy", "geopolitics"],
     paywall: false,
   },
   {
     id: "ifri_securite",
-    name: "IFRI – Programme Sécurité & Défense",
-    description: "Institut Français des Relations Internationales. Travaux sur l'industrie de défense européenne, BITD, autonomie stratégique.",
+    name: "IFRI – Security & Defence Program",
+    description: "French Institute of International Relations. Work on European defense industry, DTIB, and strategic autonomy.",
     url: "https://www.ifri.org/fr/espaces-thematiques/securite-defense",
     category: "thinktank",
     lang: ["FR", "EN"],
-    tags: ["Europe", "BITD", "autonomie stratégique"],
+    tags: ["Europe", "DTIB", "strategic autonomy"],
     paywall: false,
   },
   {
     id: "csis",
     name: "CSIS – Center for Strategic and International Studies",
-    description: "Think tank washingtonien. Acquisition défense, industrie, Indo-Pacifique, cybersécurité.",
+    description: "Washington-based think tank. Defense acquisition, industry, Indo-Pacific, and cybersecurity.",
     url: "https://www.csis.org/programs/defense-industrial-initiatives-group",
     category: "thinktank",
     lang: ["EN"],
-    tags: ["USA", "acquisition", "industrie"],
+    tags: ["USA", "acquisition", "industry"],
     paywall: false,
   },
   {
     id: "rand",
     name: "RAND Corporation",
-    description: "Études approfondies sur l'acquisition, la planification capacitaire, la dissuasion et les stratégies militaires.",
+    description: "In-depth studies on acquisition, capability planning, deterrence, and military strategies.",
     url: "https://www.rand.org/topics/military.html",
     category: "thinktank",
     lang: ["EN"],
-    tags: ["planification", "acquisition", "dissuasion"],
+    tags: ["planning", "acquisition", "deterrence"],
     paywall: false,
   },
   {
     id: "fondation_recherche",
-    name: "FRS – Fondation pour la Recherche Stratégique",
-    description: "Expertise française en non-prolifération, stratégie nucléaire, contrôle des armements et export.",
+    name: "FRS – Foundation for Strategic Research",
+    description: "French expertise in non-proliferation, nuclear strategy, arms control, and export.",
     url: "https://www.frstrategie.org",
     category: "thinktank",
     lang: ["FR"],
-    tags: ["nucléaire", "export", "contrôle armements"],
+    tags: ["nuclear", "export", "arms control"],
     paywall: false,
   },
 
-  // ── Données marché ──────────────────────────────────────────────────────
+  // ── Market Data ──────────────────────────────────────────────────────────
   {
     id: "sam_gov",
     name: "SAM.gov – U.S. Federal Contract Opportunities",
-    description: "Source officielle US des appels d'offres et contrats fédéraux. Indispensable pour le marché défense américain.",
+    description: "Official US source for federal contract opportunities and awards. Essential for the American defense market.",
     url: "https://sam.gov/content/opportunities",
     category: "market",
     lang: ["EN"],
-    tags: ["USA", "contrats", "appels d'offres"],
+    tags: ["USA", "contracts", "tenders"],
     paywall: false,
   },
   {
     id: "ted",
-    name: "TED – Tenders Electronic Daily (UE)",
-    description: "Supplément au Journal officiel de l'UE. Marchés publics européens dont achats de défense.",
+    name: "TED – Tenders Electronic Daily (EU)",
+    description: "Supplement to the EU Official Journal. European public procurement including defense purchases.",
     url: "https://ted.europa.eu",
     category: "market",
     lang: ["FR", "EN"],
-    tags: ["Europe", "marchés publics", "appels d'offres"],
+    tags: ["Europe", "public procurement", "tenders"],
     paywall: false,
   },
   {
     id: "nato_nspa",
     name: "NATO Support and Procurement Agency (NSPA)",
-    description: "Opportunités d'acquisition OTAN, marchés logistiques, munitions, services.",
+    description: "NATO acquisition opportunities, logistics contracts, munitions, and services.",
     url: "https://www.nspa.nato.int/business/procurement",
     category: "market",
     lang: ["EN"],
-    tags: ["OTAN", "logistique", "acquisition"],
+    tags: ["NATO", "logistics", "acquisition"],
     paywall: false,
   },
   {
     id: "aerospace_forecast",
     name: "Aerospace & Defense Industry Monitor (ASD)",
-    description: "Association ASD Eurospace. Données industrielles sur le secteur aérospatiale & défense européen.",
+    description: "ASD Eurospace association. Industrial data on the European aerospace & defense sector.",
     url: "https://www.asd-europe.org",
     category: "market",
     lang: ["EN"],
-    tags: ["Europe", "industrie", "statistiques"],
+    tags: ["Europe", "industry", "statistics"],
     paywall: false,
   },
 
-  // ── Industriels ─────────────────────────────────────────────────────────
+  // ── Industry ─────────────────────────────────────────────────────────────
   {
     id: "airbus_defence",
     name: "Airbus Defence & Space – Newsroom",
-    description: "Communiqués officiels Airbus D&S. Programmes, contrats, partenariats, résultats financiers.",
+    description: "Official Airbus D&S press releases. Programs, contracts, partnerships, and financial results.",
     url: "https://www.airbus.com/en/newsroom",
     category: "industry",
     lang: ["EN", "FR"],
-    tags: ["Airbus", "programmes", "contrats"],
+    tags: ["Airbus", "programs", "contracts"],
     paywall: false,
   },
   {
     id: "thales_newsroom",
-    name: "Thales Group – Salle de presse",
-    description: "Actualités Thales : contrats, innovations, résultats, partenariats. Électronique défense & sécurité.",
+    name: "Thales Group – Newsroom",
+    description: "Thales news: contracts, innovations, results, and partnerships. Defense & security electronics.",
     url: "https://www.thalesgroup.com/en/worldwide/press_releases",
     category: "industry",
     lang: ["EN", "FR"],
-    tags: ["Thales", "électronique", "contrats"],
+    tags: ["Thales", "electronics", "contracts"],
     paywall: false,
   },
   {
     id: "safran_newsroom",
-    name: "Safran – Actualités",
-    description: "Moteurs, équipements aéronautiques et défense. Programmes LEAP, Rafale, hélicoptères.",
+    name: "Safran – News",
+    description: "Engines, aeronautical equipment and defense. LEAP, Rafale, and helicopter programs.",
     url: "https://www.safran-group.com/fr/media/actualites",
     category: "industry",
     lang: ["FR", "EN"],
-    tags: ["Safran", "moteurs", "Rafale"],
+    tags: ["Safran", "engines", "Rafale"],
     paywall: false,
   },
   {
     id: "mbda_newsroom",
-    name: "MBDA – Communiqués de presse",
-    description: "Missilier européen. Contrats, programmes Meteor, Mistral, ASMP-A, CAMM.",
+    name: "MBDA – Press Releases",
+    description: "European missile manufacturer. Meteor, Mistral, ASMP-A, and CAMM contracts and programs.",
     url: "https://www.mbda-systems.com/press-releases/",
     category: "industry",
     lang: ["EN", "FR"],
-    tags: ["missiles", "programmes", "MBDA"],
+    tags: ["missiles", "programs", "MBDA"],
     paywall: false,
   },
 ];
@@ -345,6 +345,20 @@ const LANG_COLORS = {
   EN: "bg-slate-50 text-slate-600 border-slate-200",
   DE: "bg-yellow-50 text-yellow-700 border-yellow-200",
 };
+
+function SourceLogo({ url }) {
+  const domain = url.replace(/^https?:\/\//, "").split("/")[0];
+  const [errored, setErrored] = useState(false);
+  if (errored) return <Globe2 className="w-5 h-5 text-slate-300" />;
+  return (
+    <img
+      src={`https://logo.clearbit.com/${domain}`}
+      alt=""
+      className="w-5 h-5 object-contain"
+      onError={() => setErrored(true)}
+    />
+  );
+}
 
 export default function Follow() {
   const [search, setSearch] = useState("");
@@ -431,11 +445,16 @@ export default function Follow() {
               <CardContent className="p-4 flex flex-col gap-3 h-full">
                 {/* Top row */}
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-slate-900 group-hover:text-purple-700 transition-colors leading-tight">
-                      {source.name}
-                    </p>
-                    <p className="text-xs text-slate-400 mt-0.5 font-mono truncate">{source.url.replace("https://", "")}</p>
+                  <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-md bg-slate-50 border border-slate-100 flex items-center justify-center">
+                      <SourceLogo url={source.url} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-slate-900 group-hover:text-purple-700 transition-colors leading-tight">
+                        {source.name}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-0.5 font-mono truncate">{source.url.replace("https://", "")}</p>
+                    </div>
                   </div>
                   <ExternalLink className="w-4 h-4 text-slate-300 group-hover:text-purple-500 flex-shrink-0 mt-0.5 transition-colors" />
                 </div>

@@ -32,6 +32,7 @@ const REGIONS = [
   { value: "Asia-Pacific", label: "Asia-Pacific" },
   { value: "Middle East", label: "Middle East" },
   { value: "South America", label: "South America" },
+  { value: "Africa", label: "Africa" },
 ];
 
 const SUB_REGIONS = {
@@ -57,7 +58,13 @@ const COUNTRY_FLAGS = {
   "AU": "au", "IT": "it", "BR": "br", "CA": "ca", "IL": "il",
   "TR": "tr", "ES": "es", "PL": "pl", "NL": "nl", "TW": "tw",
   "SG": "sg", "GR": "gr", "NO": "no", "SE": "se", "FI": "fi",
-  "AE": "ae", "PK": "pk", "ID": "id", "VN": "vn", "EG": "eg"
+  "AE": "ae", "PK": "pk", "ID": "id", "VN": "vn", "EG": "eg",
+  "UA": "ua", "IR": "ir", "QA": "qa", "KW": "kw", "DZ": "dz",
+  "MA": "ma", "TH": "th", "MY": "my", "PH": "ph", "NZ": "nz",
+  "ZA": "za", "NG": "ng", "AR": "ar", "CO": "co", "CL": "cl",
+  "MX": "mx", "PT": "pt", "BE": "be", "CH": "ch", "AT": "at",
+  "DK": "dk", "CZ": "cz", "RO": "ro", "HU": "hu", "JO": "jo",
+  "IQ": "iq", "AZ": "az", "BD": "bd", "MM": "mm", "PE": "pe",
 };
 
 export default function Expenditures() {
@@ -425,6 +432,7 @@ export default function Expenditures() {
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Expenditure</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">% of GDP</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Year</th>
+                  <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Source</th>
                 </tr>
               </thead>
               <tbody>
@@ -466,6 +474,15 @@ export default function Expenditures() {
                     </td>
                     <td className="p-4 text-right">
                       <span className="font-mono text-sm text-slate-500">{exp.year}</span>
+                    </td>
+                    <td className="p-4 text-right">
+                      {exp.source ? (
+                        <span className="inline-flex items-center text-xs font-medium text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-full">
+                          {exp.source}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-slate-300">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}

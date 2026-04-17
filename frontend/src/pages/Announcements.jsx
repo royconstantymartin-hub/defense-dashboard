@@ -88,7 +88,8 @@ function relativeTime(dateStr) {
 const FR_SOURCES = new Set([
   "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
   "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
-  "Air & Cosmos", "L'Agefi", "Capital", "BFM Business",
+  "Air & Cosmos", "L'Agefi", "Capital", "BFM Business", "Le Point",
+  "TTU", "Mer et Marine",
 ]);
 
 function resolveLanguage(article) {
@@ -103,19 +104,28 @@ function langFlag(lang) {
 /**
  * Determine if an article qualifies as "Breaking Intel".
  *
- * Criteria — an article is Breaking Intel if it meets ANY of:
- *   1. Covered by 2+ sources AND relevance ≥ 50
- *      (multi-source = industry consensus on importance)
- *   2. Relevance ≥ 80 AND category is major (CONTRACT / M&A / POLICY / TECHNOLOGY)
- *      (very high-signal single-source story on a strategic topic)
- *   3. Relevance ≥ 90 regardless of category
- *      (exceptional news that would be top of any briefing)
+ * Priority 1 — Admin explicitly pinned the article (breakingIntel: true).
+ * Priority 2 — Algorithmic fallback when no manual pins exist:
+ *   a. adminApproved = true
+ *   b. 2+ sources AND relevance ≥ 50, within last 24h
+ *   c. Relevance ≥ 80 AND major category, within 24h
+ *   d. Relevance ≥ 90 regardless of category, within 24h
+ *
+ * The caller (page component) selects pinned articles first and uses
+ * algorithmic ones only when there are fewer than 3 pinned articles.
  */
 function isBreakingIntel(article) {
-  const score    = article.relevanceScore ?? 0;
-  const sources  = article.source_count  ?? 1;
-  const cat      = article.category      ?? "";
+  if (article.breakingIntel) return true;
+  return false;
+}
 
+function isAlgoBreakingIntel(article) {
+  if (article.adminApproved) return true;
+  const score  = article.relevanceScore ?? 0;
+  const sources = article.source_count  ?? 1;
+  const cat    = article.category      ?? "";
+  const ageH   = differenceInHours(new Date(), new Date(article.publishedAt));
+  if (ageH > 24) return false;
   if (sources >= 2 && score >= 50) return true;
   if (score >= 80 && ["CONTRACT", "M&A", "POLICY", "TECHNOLOGY"].includes(cat)) return true;
   if (score >= 90) return true;
@@ -146,16 +156,30 @@ const TIME_BAND_LABELS = {
 
 // ── Placeholder ───────────────────────────────────────────────────────────────
 
-function NewsPlaceholder({ source }) {
+const PLACEHOLDER_BG = {
+  CONTRACT:    "bg-emerald-900",
+  TECHNOLOGY:  "bg-purple-900",
+  CONFLICT:    "bg-red-900",
+  POLICY:      "bg-amber-900",
+  GEOPOLITICS: "bg-sky-900",
+  "M&A":       "bg-blue-900",
+  INDUSTRY:    "bg-slate-800",
+};
+
+function NewsPlaceholder({ source, category }) {
+  const bg = PLACEHOLDER_BG[category] || "bg-slate-800";
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.4">
+    <div className={`w-full h-full flex flex-col items-center justify-center ${bg}`}>
+      <svg width="44" height="44" viewBox="0 0 48 48" fill="none" opacity="0.35">
         <rect x="6" y="8" width="36" height="32" rx="3" stroke="white" strokeWidth="2" />
         <line x1="12" y1="18" x2="36" y2="18" stroke="white" strokeWidth="2" strokeLinecap="round" />
         <line x1="12" y1="24" x2="36" y2="24" stroke="white" strokeWidth="2" strokeLinecap="round" />
         <line x1="12" y1="30" x2="26" y2="30" stroke="white" strokeWidth="2" strokeLinecap="round" />
       </svg>
-      <span className="text-slate-500 text-[11px] mt-3 font-semibold tracking-wide uppercase">{source}</span>
+      <span className="text-slate-300 text-[11px] mt-3 font-semibold tracking-wide uppercase">{source}</span>
+      {category && category !== "INDUSTRY" && (
+        <span className="text-slate-500 text-[9px] mt-1 tracking-widest uppercase">{category}</span>
+      )}
     </div>
   );
 }
@@ -187,6 +211,21 @@ function SourceFavicon({ url, source }) {
 
 function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, isHot }) {
   const [imgError, setImgError] = useState(false);
+  const [localImage, setLocalImage] = useState(null);
+
+  // If the article has no image stored, try fetching the OG image on-demand.
+  // The backend caches the result in the DB so subsequent loads are instant.
+  useEffect(() => {
+    if (!article.image && !localImage && article.url) {
+      axios
+        .get(`${API}/news/og-image`, { params: { url: article.url } })
+        .then((r) => { if (r.data.image) setLocalImage(r.data.image); })
+        .catch(() => {});
+    }
+  }, [article.url, article.image, localImage]);
+
+  const displayImage = article.image || localImage;
+
   const score     = article.relevanceScore ?? 0;
   const isNew     = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
   const srcCount  = article.source_count ?? 1;
@@ -203,17 +242,17 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
     }`}>
 
       {/* ── Cover image ── */}
-      <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative block flex-shrink-0 overflow-hidden" style={{ height: "200px" }}>
+      <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative block flex-shrink-0 overflow-hidden" style={{ height: "220px" }}>
         {!imgError && article.image ? (
           <img
-            src={article.image}
+            src={displayImage}
             alt={article.title}
             loading="lazy"
             onError={() => setImgError(true)}
             className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
           />
         ) : (
-          <NewsPlaceholder source={article.source} />
+          <NewsPlaceholder source={article.source} category={article.category} />
         )}
 
         {/* Bottom scrim for badge legibility */}
@@ -266,13 +305,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
             {article.title}
           </h3>
         </a>
-
-        {/* Summary excerpt */}
-        {article.summary && !showSummary && (
-          <p className="text-slate-500 text-[12px] leading-relaxed line-clamp-2">
-            {article.summary}
-          </p>
-        )}
 
         {/* AI Summary panel */}
         {showSummary && (
@@ -393,7 +425,7 @@ export default function Announcements() {
   const [scraping,      setScraping]      = useState(false);
   const [searchTerm,    setSearchTerm]    = useState("");
   const [selectedCat,   setSelectedCat]   = useState("all");
-  const [selectedLang,  setSelectedLang]  = useState("all");
+  const [selectedLang,  setSelectedLang]  = useState("en");
   const [selectedRegion,setSelectedRegion]= useState("all");
   const [lastUpdated,   setLastUpdated]   = useState(null);
   // Whether to show the "Earlier" (>7 days) bucket
@@ -413,12 +445,12 @@ export default function Announcements() {
     setHasMore(false);
     setShowEarlier(false);
     try {
-      const params = { limit: 120, hours: 168 };
+      const params = { limit: 300, hours: 168 };
       if (lang   !== "all") params.language = lang;
       if (region !== "all") params.region   = region;
       const resp = await axios.get(`${API}/news`, { params });
       setArticles(resp.data);
-      setHasMore(resp.data.length >= 120);
+      setHasMore(resp.data.length >= 200);
       setLastUpdated(new Date());
     } catch (err) {
       console.error("Error fetching news:", err);
@@ -540,8 +572,17 @@ export default function Announcements() {
 
   // ── Section splits ────────────────────────────────────────────────────────
 
-  const breakingArticles  = filtered.filter(isBreakingIntel);
-  const regularArticles   = filtered.filter((a) => !isBreakingIntel(a));
+  // Admin-pinned articles fill the Breaking Intel slots first (max 3).
+  // If fewer than 3 are pinned, algorithmic picks fill remaining slots.
+  const pinnedArticles = filtered.filter(isBreakingIntel).slice(0, 3);
+  const algoArticles   = pinnedArticles.length < 3
+    ? filtered
+        .filter((a) => !isBreakingIntel(a) && isAlgoBreakingIntel(a))
+        .slice(0, 3 - pinnedArticles.length)
+    : [];
+  const breakingArticles = [...pinnedArticles, ...algoArticles];
+  const breakingUrls     = new Set(breakingArticles.map((a) => a.url));
+  const regularArticles  = filtered.filter((a) => !breakingUrls.has(a.url));
 
   // Time-band grouping for regular articles
   const todayArticles     = regularArticles.filter((a) => timeBand(a.publishedAt) === "today");
@@ -742,18 +783,25 @@ export default function Announcements() {
       ) : (
         <div className="space-y-10">
 
-          {/* ── BREAKING INTEL — multi-source + high-importance stories ── */}
-          {breakingArticles.length > 0 && (
-            <div>
+          {/* ── BREAKING INTEL — admin-pinned + algo fill, max 3 ── */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
               <SectionHeader
                 emoji="🔥"
                 label="Breaking Intel"
-                sublabel="— major contracts, deals &amp; strategic developments"
+                sublabel={`— ${pinnedArticles.length}/3 slots curated · refreshes at 07:05 &amp; 19:05 UTC`}
                 color="orange"
               />
-              <ArticleGrid articles={breakingArticles} {...cardProps} isHot />
             </div>
-          )}
+            {breakingArticles.length > 0 ? (
+              <ArticleGrid articles={breakingArticles} {...cardProps} isHot />
+            ) : (
+              <div className="flex items-center gap-3 px-5 py-4 bg-white border border-orange-100 rounded-xl text-slate-500 text-sm">
+                <span className="text-xl">📡</span>
+                <span>No high-priority news for now — next slot refresh at 07:05 or 19:05 UTC.</span>
+              </div>
+            )}
+          </div>
 
           {/* ── TODAY ── */}
           {todayArticles.length > 0 && (
