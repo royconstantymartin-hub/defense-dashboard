@@ -1180,11 +1180,14 @@ async def run_news_scraper_job() -> dict:
         unique_articles = cluster_articles(raw_articles)
         duplicates_removed = articles_found - len(unique_articles)
 
-        # Drop clearly off-topic articles from mainstream sources
+        # Drop clearly off-topic articles — specialty sources need score >= 5,
+        # mainstream sources need score >= 20
+        MIN_SPECIALTY_SCORE  = 5
         MIN_MAINSTREAM_SCORE = 20
         unique_articles = [
             a for a in unique_articles
-            if a.get("source") in _SPECIALTY_SOURCES
+            if (a.get("source") in _SPECIALTY_SOURCES
+                and a.get("relevanceScore", 0) >= MIN_SPECIALTY_SCORE)
             or a.get("relevanceScore", 0) >= MIN_MAINSTREAM_SCORE
         ]
 
@@ -1312,9 +1315,9 @@ def _build_news_query(
     # Always exclude admin-rejected articles from the public feed
     conditions.append({"adminRejected": {"$ne": True}})
 
-    # Always enforce: specialty sources OR sufficient relevance score
+    # Always enforce: specialty sources need score >= 5, mainstream need >= _MIN_MAINSTREAM_SCORE
     conditions.append({"$or": [
-        {"source": {"$in": _SPECIALTY_SOURCES_LIST}},
+        {"source": {"$in": _SPECIALTY_SOURCES_LIST}, "relevanceScore": {"$gte": 5}},
         {"relevanceScore": {"$gte": _MIN_MAINSTREAM_SCORE}},
     ]})
 
