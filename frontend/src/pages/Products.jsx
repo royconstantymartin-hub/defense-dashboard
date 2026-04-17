@@ -17,6 +17,14 @@ import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { getLogoUrl } from "@/lib/companyLogos";
 
+// Proxy Wikimedia URLs through wsrv.nl to bypass CDN restrictions and
+// follow file-rename redirects that would otherwise 404 in direct loads.
+function proxyWikiUrl(url) {
+  if (!url || !url.includes('upload.wikimedia.org')) return url;
+  const bare = url.replace(/^https?:\/\//, '');
+  return `https://wsrv.nl/?url=${encodeURIComponent(bare)}&w=600`;
+}
+
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
   { value: "aircraft", label: "Aircraft", icon: Plane },
@@ -599,8 +607,8 @@ export default function Products() {
               {/* Image or Placeholder */}
               <div className="h-40 bg-gradient-to-br from-slate-100 to-slate-50 relative">
                 {(() => {
-                  // Prefer fresh Wikipedia thumbnail over potentially stale DB URL
-                  const imgSrc = wikiImages[product.id] || product.image_url;
+                  // Proxy through wsrv.nl so renamed/blocked Wikimedia files still load
+                  const imgSrc = proxyWikiUrl(wikiImages[product.id] || product.image_url);
                   return imgSrc ? (
                     <img
                       key={imgSrc}
@@ -724,10 +732,10 @@ export default function Products() {
                             return (
                               <div className="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden bg-slate-100 relative flex items-center justify-center">
                                 <CmpIcon className="w-10 h-10 text-slate-300 absolute" />
-                                {(wikiImages[product.id] || product.image_url) && (
+                                {proxyWikiUrl(wikiImages[product.id] || product.image_url) && (
                                   <img
-                                    key={wikiImages[product.id] || product.image_url}
-                                    src={wikiImages[product.id] || product.image_url}
+                                    key={proxyWikiUrl(wikiImages[product.id] || product.image_url)}
+                                    src={proxyWikiUrl(wikiImages[product.id] || product.image_url)}
                                     alt={product.name}
                                     className="w-full h-full object-cover relative z-10"
                                     onError={(ev) => { ev.target.style.display = 'none'; }}
@@ -836,7 +844,7 @@ export default function Products() {
             {/* Header Image – fixed height, never collapses */}
             <div className="h-52 bg-gradient-to-br from-slate-100 to-slate-50 flex-shrink-0 relative">
               {(() => {
-                const modalImgSrc = wikiImages[selectedProduct.id] || selectedProduct.image_url;
+                const modalImgSrc = proxyWikiUrl(wikiImages[selectedProduct.id] || selectedProduct.image_url);
                 if (modalImgSrc) {
                   return (
                     <img
