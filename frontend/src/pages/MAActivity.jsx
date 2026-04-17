@@ -327,23 +327,22 @@ function getLogoDomain(activity, side) {
   return null;
 }
 
-// ── Logo component — Clearbit → Google Favicon → coloured initials ───────────
+// ── Logo component — Clearbit HD → initiales colorées ────────────────────────
 // Stratégie :
 //   1. Clearbit logo.clearbit.com/{domain}  — logo HD, échec silencieux via onError
-//   2. Google Favicon V2 (sz=128)           — instantané, fiable pour 100% des domaines
-//   3. Initiales colorées déterministes     — dernier recours, pas d'appel réseau
+//   2. Initiales colorées déterministes     — toujours nets, pas d'image floue
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  const [level, setLevel] = useState(1); // 1=clearbit 2=google 3=initials
+  const [failed, setFailed] = useState(false);
 
   const name    = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const country = activity[side === "acquirer" ? "acquirer_country" : "target_country"];
   const domain  = getLogoDomain(activity, side);
-  const sizeClass = size === "sm" ? "w-8 h-8" : "w-11 h-11";
-  const textSize  = size === "sm" ? "text-[9px]" : "text-xs";
+  const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
+  const textSize  = size === "sm" ? "text-[9px]" : "text-[11px]";
 
   // Reset when the domain changes (different deal row)
-  useEffect(() => { setLevel(1); }, [domain, name]);
+  useEffect(() => { setFailed(false); }, [domain, name]);
 
   const flag = country ? (
     <div className="absolute -bottom-1 -right-1">
@@ -351,34 +350,27 @@ function CompanyLogo({ activity, side, size = "md" }) {
     </div>
   ) : null;
 
-  function logoBox(src) {
+  // Initiales colorées — toujours nettes
+  if (!domain || failed) {
     return (
-      <div className="relative shrink-0">
-        <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
-          <img
-            src={src}
-            alt={name}
-            className="w-full h-full object-contain p-1"
-            onError={() => setLevel((l) => Math.min(l + 1, 3))}
-          />
-        </div>
+      <div className={`${sizeClass} ${avatarColor(name)} rounded-xl flex items-center justify-center relative shrink-0 shadow-sm ring-1 ring-black/5`}>
+        <span className={`${textSize} font-bold text-white tracking-tight select-none`}>{initials(name)}</span>
         {flag}
       </div>
     );
   }
 
-  // Level 1 — Clearbit HD logo
-  if (level === 1 && domain) return logoBox(`https://logo.clearbit.com/${domain}`);
-
-  // Level 2 — Google Favicon V2 (sz=128, instantané, pas d'API key)
-  if (level <= 2 && domain) {
-    return logoBox(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
-  }
-
-  // Level 3 — Coloured initials avatar
+  // Clearbit HD — si 404, bascule directement sur les initiales (pas de favicon flou)
   return (
-    <div className={`${sizeClass} ${avatarColor(name)} rounded-xl flex items-center justify-center relative shrink-0 shadow-sm`}>
-      <span className={`${textSize} font-bold text-white tracking-tight select-none`}>{initials(name)}</span>
+    <div className="relative shrink-0">
+      <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm ring-1 ring-black/5 overflow-hidden flex items-center justify-center`}>
+        <img
+          src={`https://logo.clearbit.com/${domain}`}
+          alt={name}
+          className="w-full h-full object-contain p-1.5"
+          onError={() => setFailed(true)}
+        />
+      </div>
       {flag}
     </div>
   );
