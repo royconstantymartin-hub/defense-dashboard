@@ -281,10 +281,11 @@ export default function Products() {
     } catch {}
   }, []);
 
-  // Auto-fetch Wikipedia images for all products missing an image_url
+  // Pre-fetch Wikipedia images for every product so the fallback is ready
+  // immediately when a stored image_url is broken or missing
   useEffect(() => {
     filteredProducts.forEach(p => {
-      if (!p.image_url) fetchWikiImage(p.id, p.name);
+      fetchWikiImage(p.id, p.name);
     });
   }, [filteredProducts, fetchWikiImage]);
 
