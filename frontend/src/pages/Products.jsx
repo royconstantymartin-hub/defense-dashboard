@@ -258,9 +258,8 @@ export default function Products() {
   // YouTube video availability: track which product names have a broken/deleted video
   const [brokenVideos, setBrokenVideos] = useState(new Set());
 
-  // Wikipedia image fallback: fetched client-side when DB image_url is missing or broken
+  // Wikipedia image cache: fetched client-side for every product on load
   const [wikiImages, setWikiImages] = useState({});   // productId → url
-  const [failedPrimary, setFailedPrimary] = useState(new Set()); // productIds where image_url 404'd
   const fetchedIds = useRef(new Set());
 
   const fetchWikiImage = useCallback(async (productId, productName) => {
@@ -600,26 +599,15 @@ export default function Products() {
               {/* Image or Placeholder */}
               <div className="h-40 bg-gradient-to-br from-slate-100 to-slate-50 relative">
                 {(() => {
-                  const primaryFailed = failedPrimary.has(product.id);
-                  const imgSrc = primaryFailed
-                    ? wikiImages[product.id]
-                    : (product.image_url || wikiImages[product.id]);
+                  // Prefer fresh Wikipedia thumbnail over potentially stale DB URL
+                  const imgSrc = wikiImages[product.id] || product.image_url;
                   return imgSrc ? (
                     <img
+                      key={imgSrc}
                       src={imgSrc}
                       alt={product.name}
                       className="w-full h-full object-cover"
-                      onError={(ev) => {
-                        if (!primaryFailed && imgSrc === product.image_url) {
-                          // Primary URL broke — fetch Wikipedia and re-render
-                          setFailedPrimary(prev => new Set([...prev, product.id]));
-                          fetchWikiImage(product.id, product.name);
-                        } else {
-                          // Wiki image also failed — just show icon
-                          ev.target.style.display = 'none';
-                          if (ev.target.nextSibling) ev.target.nextSibling.style.display = 'flex';
-                        }
-                      }}
+                      onError={(ev) => { ev.target.style.display = 'none'; }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -736,9 +724,10 @@ export default function Products() {
                             return (
                               <div className="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden bg-slate-100 relative flex items-center justify-center">
                                 <CmpIcon className="w-10 h-10 text-slate-300 absolute" />
-                                {product.image_url && (
+                                {(wikiImages[product.id] || product.image_url) && (
                                   <img
-                                    src={product.image_url}
+                                    key={wikiImages[product.id] || product.image_url}
+                                    src={wikiImages[product.id] || product.image_url}
                                     alt={product.name}
                                     className="w-full h-full object-cover relative z-10"
                                     onError={(ev) => { ev.target.style.display = 'none'; }}
@@ -847,24 +836,15 @@ export default function Products() {
             {/* Header Image – fixed height, never collapses */}
             <div className="h-52 bg-gradient-to-br from-slate-100 to-slate-50 flex-shrink-0 relative">
               {(() => {
-                const modalPrimaryFailed = failedPrimary.has(selectedProduct.id);
-                const modalImgSrc = modalPrimaryFailed
-                  ? wikiImages[selectedProduct.id]
-                  : (selectedProduct.image_url || wikiImages[selectedProduct.id]);
+                const modalImgSrc = wikiImages[selectedProduct.id] || selectedProduct.image_url;
                 if (modalImgSrc) {
                   return (
                     <img
+                      key={modalImgSrc}
                       src={modalImgSrc}
                       alt={selectedProduct.name}
                       className="w-full h-full object-cover"
-                      onError={(ev) => {
-                        if (!modalPrimaryFailed && modalImgSrc === selectedProduct.image_url) {
-                          setFailedPrimary(prev => new Set([...prev, selectedProduct.id]));
-                          fetchWikiImage(selectedProduct.id, selectedProduct.name);
-                        } else {
-                          ev.target.style.display = 'none';
-                        }
-                      }}
+                      onError={(ev) => { ev.target.style.display = 'none'; }}
                     />
                   );
                 }
