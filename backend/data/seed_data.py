@@ -752,6 +752,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_b",
         "is_disclosed": True,
+        "valuation": 1000,
     },
     # ── Defense Tech Startup Investments ──────────────────────────────────────
     {
@@ -774,6 +775,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_b",
         "is_disclosed": True,
+        "valuation": 1200,
     },
     {
         "acquirer": "Northrop Grumman", "target": "Epirus",
@@ -795,6 +797,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": None,
         "is_disclosed": False,
+        "valuation": 800,
     },
     {
         "acquirer": "Airbus", "target": "Milrem Robotics",
@@ -816,6 +819,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": None,
         "is_disclosed": False,
+        "valuation": 300,
     },
     {
         "acquirer": "RTX Ventures", "target": "Capella Space",
@@ -837,6 +841,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_c",
         "is_disclosed": True,
+        "valuation": 400,
     },
     {
         "acquirer": "Safran", "target": "Preligens",
@@ -1244,6 +1249,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "growth",
         "is_disclosed": True,
+        "valuation": 14000,
     },
     # ── 2023 ──────────────────────────────────────────────────────────────────
     {
@@ -1545,6 +1551,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_f",
         "is_disclosed": True,
+        "valuation": 14000,
     },
     {
         "acquirer": "General Catalyst", "target": "Hermeus",
@@ -1565,6 +1572,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_c",
         "is_disclosed": True,
+        "valuation": 2000,
     },
     {
         "acquirer": "General Atlantic", "target": "Skydio",
@@ -1585,6 +1593,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_e",
         "is_disclosed": True,
+        "valuation": 2200,
     },
     {
         "acquirer": "General Catalyst", "target": "Shield AI",
@@ -1605,6 +1614,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_f",
         "is_disclosed": True,
+        "valuation": 2700,
     },
     {
         "acquirer": "Lux Capital", "target": "True Anomaly",
@@ -1625,6 +1635,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_b",
         "is_disclosed": True,
+        "valuation": 500,
     },
     {
         "acquirer": "Lux Capital", "target": "Ursa Major",
@@ -1645,6 +1656,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_c",
         "is_disclosed": True,
+        "valuation": 700,
     },
     {
         "acquirer": "Founders Fund", "target": "Hermeus",
@@ -1665,6 +1677,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_b",
         "is_disclosed": True,
+        "valuation": 600,
     },
     {
         "acquirer": "Tiger Global Management", "target": "Rebellion Defense",
@@ -1685,6 +1698,7 @@ MA_EXTRA_DEALS = [
         "stake_percentage": None,
         "round_type": "series_c",
         "is_disclosed": True,
+        "valuation": 1200,
     },
 ]
 

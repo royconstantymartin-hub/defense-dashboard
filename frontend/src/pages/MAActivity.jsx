@@ -6,8 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Search, ArrowRight, ArrowLeftRight, Plus, CircleDot,
   Clock, Database, Filter, TrendingUp, ChevronDown, ChevronUp,
+  ChevronLeft, ChevronRight,
   ExternalLink, Download, Calendar, User, AlertTriangle,
-  RefreshCw,
+  RefreshCw, Trophy,
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -31,13 +32,7 @@ const STATUS_OPTIONS = [
   { value: "exited",       label: "Exited" },
 ];
 
-const DEAL_TYPE_OPTIONS = [
-  { value: "all",          label: "All Types" },
-  { value: "acquisition",  label: "Acquisition" },
-  { value: "merger",       label: "Merger" },
-  { value: "joint_venture",label: "Joint Venture" },
-  { value: "investments",  label: "Investment & Levée de fonds" },
-];
+const INVEST_TYPES = ["strategic_investment", "minority_stake", "funding_round"];
 
 const YEAR_OPTIONS = [
   { value: "all", label: "All Years" },
@@ -385,6 +380,128 @@ function CompanyLogo({ activity, side, size = "md" }) {
         />
       </div>
       {flag}
+    </div>
+  );
+}
+
+// ── Defense Tech Leaderboard ───────────────────────────────────────────────
+
+function DefenseTechLeaderboard({ deals, onOpenProfile }) {
+  // Deduplicate by target company — keep entry with highest valuation, then latest date
+  const byCompany = new Map();
+  for (const d of deals) {
+    const prev = byCompany.get(d.target);
+    if (!prev) { byCompany.set(d.target, d); continue; }
+    const better = (d.valuation || 0) > (prev.valuation || 0) ||
+      ((d.valuation || 0) === (prev.valuation || 0) &&
+        new Date(d.announced_date) > new Date(prev.announced_date));
+    if (better) byCompany.set(d.target, d);
+  }
+
+  const rows = [...byCompany.values()].sort((a, b) => {
+    const va = a.valuation || a.deal_value || 0;
+    const vb = b.valuation || b.deal_value || 0;
+    return vb - va;
+  });
+
+  const fmtVal = (v) => v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v}M`;
+
+  if (rows.length === 0) {
+    return <div className="text-center py-16 text-slate-400 text-sm">Aucune société defense tech indexée.</div>;
+  }
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Trophy className="w-4 h-4 text-purple-600" />
+          <div>
+            <p className="text-sm font-bold text-slate-900">Classement par valorisation post-money</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">{rows.length} sociétés · basé sur les dernières levées de fonds</p>
+          </div>
+        </div>
+        <span className="text-[10px] text-slate-400 bg-slate-50 border border-slate-200 px-2 py-1 rounded font-mono uppercase tracking-wider">Post-money</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-100">
+              <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400 w-8">#</th>
+              <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400">Société</th>
+              <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400">Dernier tour</th>
+              <th className="px-3 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-slate-400">Montant levé</th>
+              <th className="px-3 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-slate-400">Valorisation</th>
+              <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400">Date</th>
+              <th className="px-3 py-2.5 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-400">Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((d, i) => (
+              <tr
+                key={d.id || d.target}
+                className={`border-b border-slate-50 hover:bg-purple-50/50 transition-colors ${i % 2 === 0 ? "bg-white" : "bg-slate-50/30"}`}
+              >
+                <td className="px-3 py-3 text-slate-400 font-mono text-[11px]">
+                  {i === 0 ? <span className="text-amber-500 font-bold">①</span>
+                   : i === 1 ? <span className="text-slate-400 font-bold">②</span>
+                   : i === 2 ? <span className="text-orange-400 font-bold">③</span>
+                   : <span className="text-slate-300">{i + 1}</span>}
+                </td>
+                <td className="px-3 py-3">
+                  <div className="flex items-center gap-2.5">
+                    <CompanyLogo activity={d} side="target" size="sm" />
+                    <div>
+                      <button
+                        onClick={() => onOpenProfile(d.target)}
+                        className="font-semibold text-slate-900 hover:text-purple-700 transition-colors text-left text-xs"
+                      >
+                        {d.target}
+                      </button>
+                      {d.target_country && (
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <FlagImg iso2={d.target_country} />
+                          <span className="text-[9px] text-slate-400 font-mono">{d.target_country}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-3 py-3">
+                  {d.round_type
+                    ? <RoundBadge roundType={d.round_type} />
+                    : <span className="text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded capitalize">{d.deal_type.replaceAll("_", " ")}</span>
+                  }
+                </td>
+                <td className="px-3 py-3 text-right font-mono font-semibold text-purple-700 whitespace-nowrap">
+                  {formatValue(d.deal_value, d.is_disclosed ?? true)}
+                </td>
+                <td className="px-3 py-3 text-right">
+                  {d.valuation
+                    ? <span className="font-mono font-bold text-slate-900 text-sm">{fmtVal(d.valuation)}</span>
+                    : <span className="text-slate-300 text-[10px]">n/d</span>
+                  }
+                </td>
+                <td className="px-3 py-3 text-slate-500 whitespace-nowrap">
+                  {format(new Date(d.announced_date), "MMM yyyy")}
+                </td>
+                <td className="px-3 py-3 text-center">
+                  {d.source_url ? (
+                    <a
+                      href={d.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-400 hover:text-purple-600 transition-colors inline-flex"
+                      title="Voir le communiqué officiel"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  ) : null}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -752,14 +869,13 @@ function exportCSV(data) {
   URL.revokeObjectURL(url);
 }
 
-// ── Deal-type tabs (strategic_investment + minority_stake + funding_round merged) ──
+// ── Deal-type tabs ─────────────────────────────────────────────────────────
 
 const DEAL_TYPE_TABS = [
-  { value: "all",          label: "All",                      types: null },
-  { value: "acquisition",  label: "Acquisitions",             types: ["acquisition"] },
-  { value: "merger",       label: "Mergers",                  types: ["merger"] },
-  { value: "joint_venture",label: "Joint Ventures",           types: ["joint_venture"] },
-  { value: "investments",  label: "Investissements & Levées", types: ["strategic_investment", "minority_stake", "funding_round"] },
+  { value: "defense_tech",  label: "Defense Tech",             types: INVEST_TYPES },
+  { value: "ma",            label: "M&A",                     types: ["acquisition", "merger"] },
+  { value: "investments",   label: "Investissements & Levées", types: INVEST_TYPES },
+  { value: "jv",            label: "Joint Ventures",           types: ["joint_venture"] },
 ];
 
 // ── Known defense players: name variant → canonical DB name ───────────────
@@ -1036,7 +1152,7 @@ export default function MAActivity() {
   const [loading,        setLoading]           = useState(true);
   const [histLoading,    setHistLoading]       = useState(false);
   const [error,          setError]             = useState(null);
-  const [dealTypeTab,    setDealTypeTab]       = useState("all");
+  const [dealTypeTab,    setDealTypeTab]       = useState("defense_tech");
   const [page,           setPage]              = useState(0);
   const [searchTerm,     setSearchTerm]        = useState("");
   const [selectedStatus, setSelectedStatus]    = useState("all");
@@ -1106,16 +1222,17 @@ export default function MAActivity() {
     });
   }, [activities, historical]);
 
-  // Tab counts — "investments" tab sums strategic_investment + minority_stake + funding_round
+  // Tab counts
   const tabCounts = useMemo(() => {
-    const raw = { all: allDeals.length };
+    const raw = {};
     for (const a of allDeals) raw[a.deal_type] = (raw[a.deal_type] || 0) + 1;
+    const investDeals = allDeals.filter(a => INVEST_TYPES.includes(a.deal_type));
+    const uniqueTargets = new Set(investDeals.map(a => a.target)).size;
     return {
-      all:          raw.all,
-      acquisition:  raw.acquisition  || 0,
-      merger:       raw.merger       || 0,
-      joint_venture:raw.joint_venture|| 0,
+      defense_tech: uniqueTargets,
+      ma:           (raw.acquisition || 0) + (raw.merger || 0),
       investments:  (raw.strategic_investment || 0) + (raw.minority_stake || 0) + (raw.funding_round || 0),
+      jv:           raw.joint_venture || 0,
     };
   }, [allDeals]);
 
@@ -1242,7 +1359,7 @@ export default function MAActivity() {
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: "TOTAL DEALS",  value: filteredDeals.length,  sub: dealTypeTab === "all" ? "All types" : DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900" },
+          { label: dealTypeTab === "defense_tech" ? "SOCIÉTÉS" : "TOTAL DEALS",  value: dealTypeTab === "defense_tech" ? tabCounts.defense_tech : filteredDeals.length,  sub: DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900" },
           { label: "TOTAL VALUE",  value: formatValue(totalValue), sub: "Disclosed only", color: "text-slate-900" },
           { label: "IN PROGRESS",  value: filteredDeals.filter(a => ["announced","pending","under_review"].includes(a.status)).length, sub: "Announced + Pending", color: "text-amber-600" },
           { label: "CLOSED",       value: filteredDeals.filter(a => ["completed","active"].includes(a.status)).length, sub: "Completed + Active", color: "text-emerald-600" },
@@ -1371,8 +1488,16 @@ export default function MAActivity() {
           </div>
         </div>
 
-        {/* Right — table */}
+        {/* Right — content */}
         <div className="flex-1 min-w-0 space-y-3">
+
+          {/* ── Defense Tech leaderboard view ── */}
+          {dealTypeTab === "defense_tech" && (
+            <DefenseTechLeaderboard deals={filteredDeals} onOpenProfile={setProfileName} />
+          )}
+
+          {/* ── Normal deal table (M&A, Investments, JV) ── */}
+          {dealTypeTab !== "defense_tech" && <>
 
           {/* Toolbar */}
           <div className="flex items-center justify-between">
@@ -1472,6 +1597,9 @@ export default function MAActivity() {
               </button>
             </div>
           )}
+
+          </> /* end normal deal table */}
+
         </div>
       </div>
 
