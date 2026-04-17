@@ -705,7 +705,7 @@ MA_DATA = [
         "acquirer_country": "FR", "target_country": "CA",
         "acquirer_logo_domain": "airbus.com",
         "target_logo_domain": "bombardier.com",
-        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2017-10-airbus-and-bombardier-strengthen-strategic-partnership-for-the-c-series",
+        "source_url": "https://www.reuters.com/article/us-airbus-bombardier-cseries/airbus-takes-majority-stake-in-bombardier-cseries-idUSKCN1C32YC",
         "announced_date": datetime(2017, 10, 16, tzinfo=timezone.utc),
     },
     # ── Historical context ────────────────────────────────────────────────────
@@ -735,7 +735,7 @@ MA_EXTRA_DEALS = [
     {
         "acquirer": "Dassault Aviation", "target": "Harmattan.ai",
         "deal_value": 200, "status": "completed", "deal_type": "funding_round",
-        "description": "Dassault Aviation participe à la Series B de $200M d'Harmattan.ai — IA de C2 pour la défense française",
+        "description": "Dassault Aviation participates in Harmattan.ai $200M Series B — AI-powered C2 for French defence",
         "rationale": (
             "Harmattan.ai, French defence AI start-up specialising in AI-assisted command-and-control "
             "decision support, closes a $200 million Series B funding round with Dassault Aviation as "
@@ -747,7 +747,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "dassault-aviation.com",
         "target_logo_domain": "harmattan.ai",
-        "source_url": "https://www.dassault-aviation.com/fr/groupe/presse/",
+        "source_url": "https://www.dassault-aviation.com/en/group/press/",
         "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
         "stake_percentage": None,
         "round_type": "series_b",
@@ -2633,7 +2633,7 @@ MA_PILOT_10 = [
         "deal_value": 1800,
         "status": "announced",
         "deal_type": "acquisition",
-        "description": "Safran acquiert la division actuation & commandes de vol de Collins Aerospace (RTX) pour $1.8B — devient le 2e acteur mondial des actuateurs",
+        "description": "Safran acquires Collins Aerospace Actuation & Flight Control unit (RTX) for $1.8B — becomes world's second-largest actuation supplier",
         "rationale": (
             "Safran signs a definitive agreement on 5 December 2024 to acquire Collins Aerospace's "
             "actuation and flight-control systems business from RTX for approximately $1.8 billion. "
@@ -2659,7 +2659,7 @@ MA_PILOT_10 = [
         "deal_value": 4700,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Boeing re-acquiert Spirit AeroSystems ($4.7B) pour reprendre la maîtrise qualité du fuselage 737 MAX — spin-off de 2005 réintégré",
+        "description": "Boeing reacquires Spirit AeroSystems ($4.7B) to regain 737 MAX fuselage quality control — 2005 spin-off brought back in-house",
         "rationale": (
             "Boeing announces on 1 July 2024 its intention to reacquire Spirit AeroSystems — the "
             "fuselage and nacelle manufacturer it originally spun off in 2005 — for approximately "
@@ -2686,7 +2686,7 @@ MA_PILOT_10 = [
         "deal_value": 450,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Lockheed Martin finalise l'acquisition de Terran Orbital pour $450M — intégration verticale des petits satellites LEO",
+        "description": "Lockheed Martin completes acquisition of Terran Orbital for $450M — vertical integration into small LEO satellite manufacturing",
         "rationale": (
             "Lockheed Martin completes its $450 million acquisition of Terran Orbital Corporation "
             "on 5 September 2024, absorbing a key manufacturer of small satellites and satellite "
@@ -2699,7 +2699,7 @@ MA_PILOT_10 = [
         "acquirer_country": "US",
         "target_country": "US",
         "acquirer_logo_domain": "lockheedmartin.com",
-        "target_logo_domain": "lockheedmartin.com",
+        "target_logo_domain": "terranorbital.com",
         "source_url": "https://www.reuters.com/business/aerospace-defense/lockheed-martin-completes-acquisition-terran-orbital-2024-09-05/",
         "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
         "stake_percentage": None,
@@ -2713,7 +2713,7 @@ MA_PILOT_10 = [
         "deal_value": 5550,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "BAE Systems acquiert Ball Aerospace pour $5.55B — double sa présence dans les systèmes spatiaux et capteurs défense aux USA",
+        "description": "BAE Systems acquires Ball Aerospace for $5.55B — doubles its US space systems and defense sensor presence",
         "rationale": (
             "BAE Systems announces on 28 August 2023 a $5.55 billion agreement to acquire Ball "
             "Aerospace, a leading US provider of space systems, spacecraft components and defence "
@@ -2740,7 +2740,7 @@ MA_PILOT_10 = [
         "deal_value": 220,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Safran acquiert la startup française Preligens (~€200M) — analyse automatique d'imagerie satellite par IA, rebaptisée Safran AI",
+        "description": "Safran acquires French AI startup Preligens (~€200M) — automated satellite image analysis, rebranded Safran AI",
         "rationale": (
             "Safran acquires Preligens, a Paris-based AI start-up specialising in automated "
             "satellite image analysis and geospatial intelligence (GEOINT), for approximately "
@@ -2768,7 +2768,7 @@ MA_PILOT_10 = [
         "deal_value": 3600,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Thales acquiert le spécialiste US de cybersécurité Imperva pour $3.6B — renforce sa division Digital Identity & Security",
+        "description": "Thales acquires US cybersecurity specialist Imperva for $3.6B — strengthens its Digital Identity & Security division",
         "rationale": (
             "Thales completes its $3.6 billion acquisition of Imperva, a leading US cybersecurity "
             "company specialising in data security, web application protection and DDoS mitigation. "
@@ -2782,7 +2782,7 @@ MA_PILOT_10 = [
         "acquirer_country": "FR",
         "target_country": "US",
         "acquirer_logo_domain": "thalesgroup.com",
-        "target_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "imperva.com",
         "source_url": "https://www.prnewswire.com/news-releases/thales-completes-acquisition-of-imperva-301730785.html",
         "announced_date": datetime(2022, 12, 8, tzinfo=timezone.utc),
         "stake_percentage": None,
@@ -2795,7 +2795,7 @@ MA_PILOT_10 = [
         "deal_value": 4700,
         "status": "cancelled",
         "deal_type": "acquisition",
-        "description": "L3Harris abandonne l'acquisition d'Aerojet Rocketdyne ($4.7B) — FTC bloque le deal pour protéger la concurrence dans les propulseurs solides",
+        "description": "L3Harris drops Aerojet Rocketdyne acquisition ($4.7B) — FTC blocks deal to protect competition in solid rocket motors",
         "rationale": (
             "L3Harris Technologies announces a $4.7 billion agreement to acquire Aerojet Rocketdyne "
             "on 18 December 2022. The Federal Trade Commission filed suit in January 2023 to block "
@@ -2822,7 +2822,7 @@ MA_PILOT_10 = [
         "deal_value": 1200,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Rheinmetall acquiert Expal Systems (€1.2B) — leader espagnol des munitions d'artillerie 155 mm, accélère la recharge des stocks OTAN",
+        "description": "Rheinmetall acquires Expal Systems (€1.2B) — Spain's leading 155mm artillery ammunition maker, accelerating NATO stockpile replenishment",
         "rationale": (
             "Rheinmetall announces in October 2022 its agreement to acquire Expal Systems, "
             "Spain's largest ammunition and energetics manufacturer, from Maxamcorp for "
@@ -2836,7 +2836,7 @@ MA_PILOT_10 = [
         "acquirer_country": "DE",
         "target_country": "ES",
         "acquirer_logo_domain": "rheinmetall.com",
-        "target_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "maxamcorp.com",
         "source_url": "https://www.reuters.com/business/aerospace-defense/rheinmetall-completes-acquisition-expal-systems-ammunition-maker-2023-05-16/",
         "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
         "stake_percentage": None,
@@ -2850,7 +2850,7 @@ MA_PILOT_10 = [
         "deal_value": 8800,
         "status": "completed",
         "deal_type": "acquisition",
-        "description": "Parker Hannifin acquiert Meggitt (£6.3B / ~$8.8B) — composants aéronautiques militaires UK, malgré opposition du gouvernement britannique",
+        "description": "Parker Hannifin acquires Meggitt (£6.3B / ~$8.8B) — UK military aerospace components, cleared despite UK government pushback",
         "rationale": (
             "Parker Hannifin announces on 2 August 2021 a £6.3 billion (~$8.8 billion) offer for "
             "Meggitt plc, a British aerospace components maker supplying thermal management "

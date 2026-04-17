@@ -133,6 +133,10 @@ const LOGO_FALLBACK = {
   "Dassault Aviation":           "dassault-aviation.com",
   "Indra":                       "indracompany.com",
   "Expal Systems":               "maxamcorp.com",
+  "Imperva":                     "imperva.com",
+  "Aerojet Rocketdyne":          "aerojetrocketdyne.com",
+  "Aerojet":                     "aerojetrocketdyne.com",
+  "Terran Orbital":              "terranorbital.com",
   "Hensoldt":                    "hensoldt.net",
   "QinetiQ":                     "qinetiq.com",
   "Babcock":                     "babcock.com",
@@ -407,7 +411,7 @@ function DefenseTechLeaderboard({ deals, onOpenProfile }) {
   const fmtVal = (v) => v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v}M`;
 
   if (rows.length === 0) {
-    return <div className="text-center py-16 text-slate-400 text-sm">Aucune société defense tech indexée.</div>;
+    return <div className="text-center py-16 text-slate-400 text-sm">No defense tech companies indexed.</div>;
   }
 
   return (
@@ -416,8 +420,8 @@ function DefenseTechLeaderboard({ deals, onOpenProfile }) {
         <div className="flex items-center gap-2">
           <Trophy className="w-4 h-4 text-purple-600" />
           <div>
-            <p className="text-sm font-bold text-slate-900">Classement par valorisation post-money</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">{rows.length} sociétés · basé sur les dernières levées de fonds</p>
+            <p className="text-sm font-bold text-slate-900">Post-Money Valuation Ranking</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">{rows.length} companies · based on latest funding rounds</p>
           </div>
         </div>
         <span className="text-[10px] text-slate-400 bg-slate-50 border border-slate-200 px-2 py-1 rounded font-mono uppercase tracking-wider">Post-money</span>
@@ -427,10 +431,10 @@ function DefenseTechLeaderboard({ deals, onOpenProfile }) {
           <thead>
             <tr className="bg-slate-50 border-b border-slate-100">
               <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400 w-8">#</th>
-              <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400">Société</th>
-              <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400">Dernier tour</th>
-              <th className="px-3 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-slate-400">Montant levé</th>
-              <th className="px-3 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-slate-400">Valorisation</th>
+              <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400">Company</th>
+              <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400">Latest Round</th>
+              <th className="px-3 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-slate-400">Amount Raised</th>
+              <th className="px-3 py-2.5 text-right text-[10px] font-semibold uppercase tracking-wider text-slate-400">Valuation</th>
               <th className="px-3 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400">Date</th>
               <th className="px-3 py-2.5 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-400">Source</th>
             </tr>
@@ -452,7 +456,7 @@ function DefenseTechLeaderboard({ deals, onOpenProfile }) {
                     <CompanyLogo activity={d} side="target" size="sm" />
                     <div>
                       <button
-                        onClick={() => onOpenProfile(d.target)}
+                        onClick={() => { const canon = resolvePlayerName(d.target); if (canon) onOpenProfile(canon); }}
                         className="font-semibold text-slate-900 hover:text-purple-700 transition-colors text-left text-xs"
                       >
                         {d.target}
@@ -491,7 +495,7 @@ function DefenseTechLeaderboard({ deals, onOpenProfile }) {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-slate-400 hover:text-purple-600 transition-colors inline-flex"
-                      title="Voir le communiqué officiel"
+                      title="View official press release"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
@@ -507,6 +511,54 @@ function DefenseTechLeaderboard({ deals, onOpenProfile }) {
 }
 
 // ── Card ───────────────────────────────────────────────────────────────────
+
+// ── Parse multi-party acquirer strings like "Airbus + BAE Systems + Leonardo" ─
+function parseParties(name) {
+  if (!name) return [{ name: "", stake: null }];
+  return name.split(/\s*\+\s*/).map(n => n.trim()).filter(Boolean).map(n => ({ name: n, stake: null }));
+}
+
+// Build a synthetic activity for a single named party (so CompanyLogo works)
+function partyActivity(name, activity, side) {
+  const domain = LOGO_FALLBACK[name] ?? getLogoDomain(activity, side);
+  return {
+    ...activity,
+    acquirer: side === "acquirer" ? name : activity.acquirer,
+    target:   side === "target"   ? name : activity.target,
+    acquirer_logo_domain: side === "acquirer" ? domain : activity.acquirer_logo_domain,
+    target_logo_domain:   side === "target"   ? domain : activity.target_logo_domain,
+  };
+}
+
+function CompanyNameBtn({ name, onOpenProfile, className = "" }) {
+  const canonical = resolvePlayerName(name);
+  if (canonical) {
+    return (
+      <button
+        onClick={(e) => { e.stopPropagation(); onOpenProfile(canonical); }}
+        className={`hover:text-purple-700 transition-colors text-left ${className}`}
+      >
+        {name}
+      </button>
+    );
+  }
+  const domain = LOGO_FALLBACK[name] || null;
+  if (domain) {
+    return (
+      <a
+        href={`https://${domain}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={e => e.stopPropagation()}
+        className={`hover:text-blue-600 transition-colors text-left inline-flex items-center gap-1 ${className}`}
+      >
+        {name}
+        <ExternalLink className="w-2.5 h-2.5 opacity-40 shrink-0" />
+      </a>
+    );
+  }
+  return <span className={className}>{name}</span>;
+}
 
 function MACard({ activity, onOpenProfile }) {
   const [open, setOpen] = useState(false);
@@ -528,22 +580,38 @@ function MACard({ activity, onOpenProfile }) {
         <div className="flex flex-col lg:flex-row lg:items-start gap-5">
 
           {/* Companies */}
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            {/* Acquirer */}
-            <div className="flex items-center gap-2.5 shrink-0">
-              <CompanyLogo activity={activity} side="acquirer" />
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onOpenProfile(activity.acquirer); }}
-                    className="text-slate-900 font-semibold text-sm leading-snug hover:text-purple-700 transition-colors text-left"
-                  >
-                    {activity.acquirer}
-                  </button>
+          <div className="flex items-center gap-3 flex-1 min-w-0 flex-wrap">
+            {/* Acquirer — single or multi-party */}
+            {(() => {
+              const parties = parseParties(activity.acquirer);
+              const isMulti = parties.length > 1;
+              return (
+                <div className="flex flex-col gap-1 shrink-0">
+                  <span className="text-[9px] text-slate-400 font-mono tracking-widest uppercase">{labels.left}</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {parties.map((p, idx) => {
+                      const synth = partyActivity(p.name, activity, "acquirer");
+                      return (
+                        <div key={idx} className="flex items-center gap-1.5">
+                          {idx > 0 && <span className="text-slate-300 text-xs font-light select-none">+</span>}
+                          <CompanyLogo activity={synth} side="acquirer" size={isMulti ? "sm" : "md"} />
+                          <div>
+                            <CompanyNameBtn
+                              name={p.name}
+                              onOpenProfile={onOpenProfile}
+                              className="text-slate-900 font-semibold text-sm leading-snug"
+                            />
+                            {activity.stake_percentage != null && isMulti && (
+                              <p className="text-[9px] text-emerald-600 font-mono font-semibold">{activity.stake_percentage}%</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <span className="text-[9px] text-slate-400 font-mono tracking-widest uppercase">{labels.left}</span>
-              </div>
-            </div>
+              );
+            })()}
 
             <DealSep type={labels.sep} />
 
@@ -551,14 +619,11 @@ function MACard({ activity, onOpenProfile }) {
             <div className="flex items-center gap-2.5 min-w-0">
               <CompanyLogo activity={activity} side="target" />
               <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onOpenProfile(activity.target); }}
-                    className="text-slate-900 font-semibold text-sm leading-snug hover:text-purple-700 transition-colors text-left truncate"
-                  >
-                    {activity.target}
-                  </button>
-                </div>
+                <CompanyNameBtn
+                  name={activity.target}
+                  onOpenProfile={onOpenProfile}
+                  className="text-slate-900 font-semibold text-sm leading-snug truncate block"
+                />
                 <span className="text-[9px] text-slate-400 font-mono tracking-widest uppercase">{labels.right}</span>
               </div>
             </div>
@@ -570,13 +635,13 @@ function MACard({ activity, onOpenProfile }) {
             {/* Value */}
             <div className="min-w-[70px]">
               <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">
-                {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type) ? "Montant levé" : "Value"}
+                {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type) ? "Amount Raised" : "Value"}
               </p>
               <p className="text-lg font-mono font-bold text-purple-700 leading-none">
                 {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
               </p>
               {activity.stake_percentage != null && (
-                <p className="text-[9px] text-emerald-600 font-mono font-semibold mt-0.5">{activity.stake_percentage}% du capital</p>
+                <p className="text-[9px] text-emerald-600 font-mono font-semibold mt-0.5">{activity.stake_percentage}% stake</p>
               )}
             </div>
 
@@ -585,7 +650,7 @@ function MACard({ activity, onOpenProfile }) {
               <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Type</p>
               <span className="text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded capitalize font-medium">
                 {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type)
-                  ? "Invest. & Levée"
+                  ? "Invest. & Funding"
                   : activity.deal_type.replaceAll("_", " ")}
               </span>
             </div>
@@ -634,7 +699,7 @@ function MACard({ activity, onOpenProfile }) {
                   className="flex items-center gap-0.5 text-[11px] text-purple-600 hover:text-purple-800 font-semibold transition-colors mt-0.5"
                 >
                   {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                  {open ? "Moins" : "Détails"}
+                  {open ? "Less" : "Details"}
                 </button>
               )}
             </div>
@@ -658,23 +723,23 @@ function MACard({ activity, onOpenProfile }) {
             {/* Investment detail box — shown for investment/funding types */}
             {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type) && (
               <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Détails de l'investissement</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Investment Details</p>
                 <div className="flex flex-wrap gap-x-6 gap-y-2">
                   {activity.deal_value > 0 && (activity.is_disclosed ?? true) && (
                     <div>
-                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Montant levé / investi</p>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Amount Raised / Invested</p>
                       <p className="text-base font-mono font-bold text-emerald-700">{formatValue(activity.deal_value, true)}</p>
                     </div>
                   )}
                   {activity.stake_percentage != null && (
                     <div>
-                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Part du capital acquise</p>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Equity Acquired</p>
                       <p className="text-base font-mono font-bold text-slate-800">{activity.stake_percentage}%</p>
                     </div>
                   )}
                   {activity.round_type && (
                     <div>
-                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1">Tour de table</p>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1">Funding Round</p>
                       <RoundBadge roundType={activity.round_type} />
                     </div>
                   )}
@@ -687,7 +752,7 @@ function MACard({ activity, onOpenProfile }) {
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-white border border-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
-                    Voir le communiqué officiel
+                    View official press release
                   </a>
                 )}
               </div>
@@ -709,7 +774,7 @@ function MACard({ activity, onOpenProfile }) {
                   className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 font-semibold"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  Lire la source
+                  Read source
                 </a>
               )}
             </div>
@@ -737,31 +802,15 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
           {format(new Date(activity.announced_date), "MMM yyyy")}
         </td>
         <td className="px-4 py-3">
-          <div className="flex items-center gap-2">
-            <CompanyLogo activity={activity} side="acquirer" size="sm" />
-            <div>
-              <button
-                onClick={(e) => { e.stopPropagation(); onOpenProfile(activity.acquirer); }}
-                className="text-sm text-slate-800 font-medium hover:text-purple-700 transition-colors text-left"
-              >
-                {activity.acquirer}
-              </button>
-              <p className="text-[10px] text-slate-400 font-mono">{labels.left}</p>
-            </div>
+          <div className="flex flex-col gap-1">
+            <p className="text-[10px] text-slate-400 font-mono">{labels.left}</p>
+            <CompanyCell activity={activity} side="acquirer" onOpenProfile={onOpenProfile} />
           </div>
         </td>
         <td className="px-4 py-3">
-          <div className="flex items-center gap-2">
-            <CompanyLogo activity={activity} side="target" size="sm" />
-            <div>
-              <button
-                onClick={(e) => { e.stopPropagation(); onOpenProfile(activity.target); }}
-                className="text-sm text-slate-800 hover:text-purple-700 transition-colors text-left"
-              >
-                {activity.target}
-              </button>
-              <p className="text-[10px] text-slate-400 font-mono">{labels.right}</p>
-            </div>
+          <div className="flex flex-col gap-1">
+            <p className="text-[10px] text-slate-400 font-mono">{labels.right}</p>
+            <CompanyCell activity={activity} side="target" onOpenProfile={onOpenProfile} />
           </div>
         </td>
         <td className="px-4 py-3 text-sm font-mono font-semibold text-purple-700">
@@ -872,10 +921,10 @@ function exportCSV(data) {
 // ── Deal-type tabs ─────────────────────────────────────────────────────────
 
 const DEAL_TYPE_TABS = [
-  { value: "defense_tech",  label: "Defense Tech",             types: INVEST_TYPES },
-  { value: "ma",            label: "M&A",                     types: ["acquisition", "merger"] },
-  { value: "investments",   label: "Investissements & Levées", types: INVEST_TYPES },
-  { value: "jv",            label: "Joint Ventures",           types: ["joint_venture"] },
+  { value: "defense_tech",  label: "Defense Tech",          types: INVEST_TYPES },
+  { value: "ma",            label: "M&A",                   types: ["acquisition", "merger"] },
+  { value: "investments",   label: "Investments & Funding", types: INVEST_TYPES },
+  { value: "jv",            label: "Joint Ventures",        types: ["joint_venture"] },
 ];
 
 // ── Known defense players: name variant → canonical DB name ───────────────
@@ -1016,36 +1065,79 @@ function resolvePlayerName(name) {
 }
 
 // ── Company cell — opens profile sheet for known players, website for others ─
+// Supports multi-party strings like "Airbus + BAE Systems + Leonardo"
 
 function CompanyCell({ activity, side, onOpenProfile }) {
-  const name    = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
-  const canonical = resolvePlayerName(name);
-  const domain  = getLogoDomain(activity, side);
+  const rawName = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
+  const parties = parseParties(rawName);
+  const isMulti = parties.length > 1;
 
+  if (!isMulti) {
+    const canonical = resolvePlayerName(rawName);
+    const domain    = getLogoDomain(activity, side);
+    return (
+      <div className="flex items-center gap-2">
+        <CompanyLogo activity={activity} side={side} size="sm" />
+        {canonical ? (
+          <button
+            onClick={e => { e.stopPropagation(); onOpenProfile(canonical); }}
+            className="text-sm font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
+          >
+            {rawName}
+          </button>
+        ) : domain ? (
+          <a
+            href={`https://${domain}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => e.stopPropagation()}
+            className="text-sm text-slate-600 hover:text-blue-600 transition-colors text-left leading-tight inline-flex items-center gap-1"
+          >
+            {rawName}
+            <ExternalLink className="w-2.5 h-2.5 opacity-40 shrink-0" />
+          </a>
+        ) : (
+          <span className="text-sm text-slate-600 leading-tight">{rawName}</span>
+        )}
+      </div>
+    );
+  }
+
+  // Multi-party: show each party inline with their logo
   return (
-    <div className="flex items-center gap-2">
-      <CompanyLogo activity={activity} side={side} size="sm" />
-      {canonical ? (
-        <button
-          onClick={e => { e.stopPropagation(); onOpenProfile(canonical); }}
-          className="text-sm font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
-        >
-          {name}
-        </button>
-      ) : domain ? (
-        <a
-          href={`https://${domain}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={e => e.stopPropagation()}
-          className="text-sm text-slate-600 hover:text-blue-600 transition-colors text-left leading-tight inline-flex items-center gap-1"
-        >
-          {name}
-          <ExternalLink className="w-2.5 h-2.5 opacity-40 shrink-0" />
-        </a>
-      ) : (
-        <span className="text-sm text-slate-600 leading-tight">{name}</span>
-      )}
+    <div className="flex items-center gap-2 flex-wrap">
+      {parties.map((p, idx) => {
+        const synth     = partyActivity(p.name, activity, side);
+        const canonical = resolvePlayerName(p.name);
+        const domain    = LOGO_FALLBACK[p.name] ?? getLogoDomain(synth, side);
+        return (
+          <div key={idx} className="flex items-center gap-1">
+            {idx > 0 && <span className="text-slate-300 text-[10px] select-none px-0.5">+</span>}
+            <CompanyLogo activity={synth} side={side} size="sm" />
+            {canonical ? (
+              <button
+                onClick={e => { e.stopPropagation(); onOpenProfile(canonical); }}
+                className="text-xs font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
+              >
+                {p.name}
+              </button>
+            ) : domain ? (
+              <a
+                href={`https://${domain}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={e => e.stopPropagation()}
+                className="text-xs text-slate-600 hover:text-blue-600 transition-colors inline-flex items-center gap-0.5"
+              >
+                {p.name}
+                <ExternalLink className="w-2 h-2 opacity-40" />
+              </a>
+            ) : (
+              <span className="text-xs text-slate-600">{p.name}</span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -1359,7 +1451,7 @@ export default function MAActivity() {
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: dealTypeTab === "defense_tech" ? "SOCIÉTÉS" : "TOTAL DEALS",  value: dealTypeTab === "defense_tech" ? tabCounts.defense_tech : filteredDeals.length,  sub: DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900" },
+          { label: dealTypeTab === "defense_tech" ? "COMPANIES" : "TOTAL DEALS",  value: dealTypeTab === "defense_tech" ? tabCounts.defense_tech : filteredDeals.length,  sub: DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900" },
           { label: "TOTAL VALUE",  value: formatValue(totalValue), sub: "Disclosed only", color: "text-slate-900" },
           { label: "IN PROGRESS",  value: filteredDeals.filter(a => ["announced","pending","under_review"].includes(a.status)).length, sub: "Announced + Pending", color: "text-amber-600" },
           { label: "CLOSED",       value: filteredDeals.filter(a => ["completed","active"].includes(a.status)).length, sub: "Completed + Active", color: "text-emerald-600" },
