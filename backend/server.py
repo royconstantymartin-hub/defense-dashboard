@@ -100,6 +100,7 @@ class MAActivityCreate(BaseModel):
     stake_percentage: Optional[float] = None    # % of capital acquired/invested (minority deals)
     round_type: Optional[str] = None            # seed / series_a / series_b / series_c / growth / buyout
     is_disclosed: bool = True                   # False when deal value is undisclosed
+    valuation: Optional[float] = None           # Post-money valuation in millions USD
 
 class MAActivity(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -121,6 +122,7 @@ class MAActivity(BaseModel):
     stake_percentage: Optional[float] = None
     round_type: Optional[str] = None
     is_disclosed: bool = True
+    valuation: Optional[float] = None           # Post-money valuation in millions USD
 
 # Defense Player Model
 class DefensePlayerCreate(BaseModel):
