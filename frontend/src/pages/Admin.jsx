@@ -26,7 +26,6 @@ import {
   Handshake,
   Sparkles,
   Link2,
-  ImageIcon,
   Building2,
   Globe,
   FileText,
