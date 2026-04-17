@@ -1038,8 +1038,8 @@ async def _run_seed() -> dict:
     # unsourced scraper noise has no place in the curated dataset.
     await db.ma_activities.delete_many({"scraped_at": {"$exists": True}, "source_url": {"$in": [None, ""]}})
 
-    # Seed MA_DATA + MA_EXTRA_DEALS, then MA_PILOT_10 last so its enriched fields win on conflict
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_10:
+    # Seed MA_DATA + MA_EXTRA_DEALS, then MA_PILOT_15 last so its enriched fields win on conflict
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc['announced_date'] = doc['announced_date'].isoformat()
@@ -2143,7 +2143,7 @@ async def _purge_scraper_junk():
         })
 
         # ── Pass 3: cross-reference against seeded (acquirer, target) pairs ───
-        from data.seed_data import MA_DATA, MA_EXTRA_DEALS, MA_PILOT_10
+        from data.seed_data import MA_DATA, MA_EXTRA_DEALS, MA_PILOT_15
 
         def _norm(s: str) -> str:
             return _re.sub(r"\s+", " ", s.lower().strip())
@@ -2152,7 +2152,7 @@ async def _purge_scraper_junk():
         seed_pairs: set = set()
         seed_tgt_words: set = set()
         seed_acq_first: set = set()
-        for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_10:
+        for m in MA_DATA + MA_EXTRA_DEALS + MA_PILOT_15:
             aw = _norm(m["acquirer"]).split()
             tw = _norm(m["target"]).split()
             if aw and tw:
