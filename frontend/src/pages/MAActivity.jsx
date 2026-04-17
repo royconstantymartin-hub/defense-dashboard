@@ -32,13 +32,11 @@ const STATUS_OPTIONS = [
 ];
 
 const DEAL_TYPE_OPTIONS = [
-  { value: "all",                  label: "All Types" },
-  { value: "acquisition",          label: "Acquisition" },
-  { value: "merger",               label: "Merger" },
-  { value: "joint_venture",        label: "Joint Venture" },
-  { value: "strategic_investment", label: "Strategic Investment" },
-  { value: "minority_stake",       label: "Minority Stake" },
-  { value: "funding_round",        label: "Funding Round" },
+  { value: "all",          label: "All Types" },
+  { value: "acquisition",  label: "Acquisition" },
+  { value: "merger",       label: "Merger" },
+  { value: "joint_venture",label: "Joint Venture" },
+  { value: "investments",  label: "Investment & Levée de fonds" },
 ];
 
 const YEAR_OPTIONS = [
@@ -454,12 +452,14 @@ function MACard({ activity, onOpenProfile }) {
 
             {/* Value */}
             <div className="min-w-[70px]">
-              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Value</p>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">
+                {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type) ? "Montant levé" : "Value"}
+              </p>
               <p className="text-lg font-mono font-bold text-purple-700 leading-none">
                 {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
               </p>
               {activity.stake_percentage != null && (
-                <p className="text-[9px] text-slate-400 font-mono mt-0.5">{activity.stake_percentage}% stake</p>
+                <p className="text-[9px] text-emerald-600 font-mono font-semibold mt-0.5">{activity.stake_percentage}% du capital</p>
               )}
             </div>
 
@@ -467,7 +467,9 @@ function MACard({ activity, onOpenProfile }) {
             <div>
               <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Type</p>
               <span className="text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded capitalize font-medium">
-                {activity.deal_type.replaceAll("_", " ")}
+                {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type)
+                  ? "Invest. & Levée"
+                  : activity.deal_type.replaceAll("_", " ")}
               </span>
             </div>
 
@@ -529,12 +531,51 @@ function MACard({ activity, onOpenProfile }) {
           </p>
         )}
 
-        {/* Accordion — rationale + source link */}
+        {/* Accordion — rationale + investment details + source link */}
         {open && (
           <div className="mt-3 pt-3 border-t border-purple-100 space-y-3">
             {activity.rationale && (
               <p className="text-slate-600 text-sm leading-relaxed">{activity.rationale}</p>
             )}
+
+            {/* Investment detail box — shown for investment/funding types */}
+            {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type) && (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 space-y-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Détails de l'investissement</p>
+                <div className="flex flex-wrap gap-x-6 gap-y-2">
+                  {activity.deal_value > 0 && (activity.is_disclosed ?? true) && (
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Montant levé / investi</p>
+                      <p className="text-base font-mono font-bold text-emerald-700">{formatValue(activity.deal_value, true)}</p>
+                    </div>
+                  )}
+                  {activity.stake_percentage != null && (
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Part du capital acquise</p>
+                      <p className="text-base font-mono font-bold text-slate-800">{activity.stake_percentage}%</p>
+                    </div>
+                  )}
+                  {activity.round_type && (
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1">Tour de table</p>
+                      <RoundBadge roundType={activity.round_type} />
+                    </div>
+                  )}
+                </div>
+                {activity.source_url && (
+                  <a
+                    href={activity.source_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-white border border-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    Voir le communiqué officiel
+                  </a>
+                )}
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-3 items-center">
               {activity.acquirer_country && (
                 <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
@@ -543,7 +584,7 @@ function MACard({ activity, onOpenProfile }) {
                   {activity.target_country && <><FlagImg iso2={activity.target_country} /> {activity.target_country}</>}
                 </span>
               )}
-              {activity.source_url && (
+              {activity.source_url && !["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type) && (
                 <a
                   href={activity.source_url}
                   target="_blank"
@@ -711,15 +752,14 @@ function exportCSV(data) {
   URL.revokeObjectURL(url);
 }
 
-// ── Deal-type tabs (strategic_investment + minority_stake merged) ──────────
+// ── Deal-type tabs (strategic_investment + minority_stake + funding_round merged) ──
 
 const DEAL_TYPE_TABS = [
-  { value: "all",          label: "All",           types: null },
-  { value: "acquisition",  label: "Acquisitions",  types: ["acquisition"] },
-  { value: "merger",       label: "Mergers",        types: ["merger"] },
-  { value: "joint_venture",label: "Joint Ventures", types: ["joint_venture"] },
-  { value: "investments",  label: "Investments",    types: ["strategic_investment", "minority_stake"] },
-  { value: "funding_round",label: "Funding Rounds", types: ["funding_round"] },
+  { value: "all",          label: "All",                      types: null },
+  { value: "acquisition",  label: "Acquisitions",             types: ["acquisition"] },
+  { value: "merger",       label: "Mergers",                  types: ["merger"] },
+  { value: "joint_venture",label: "Joint Ventures",           types: ["joint_venture"] },
+  { value: "investments",  label: "Investissements & Levées", types: ["strategic_investment", "minority_stake", "funding_round"] },
 ];
 
 // ── Known defense players: name variant → canonical DB name ───────────────
@@ -1066,7 +1106,7 @@ export default function MAActivity() {
     });
   }, [activities, historical]);
 
-  // Tab counts — "investments" tab sums strategic_investment + minority_stake
+  // Tab counts — "investments" tab sums strategic_investment + minority_stake + funding_round
   const tabCounts = useMemo(() => {
     const raw = { all: allDeals.length };
     for (const a of allDeals) raw[a.deal_type] = (raw[a.deal_type] || 0) + 1;
@@ -1075,8 +1115,7 @@ export default function MAActivity() {
       acquisition:  raw.acquisition  || 0,
       merger:       raw.merger       || 0,
       joint_venture:raw.joint_venture|| 0,
-      investments:  (raw.strategic_investment || 0) + (raw.minority_stake || 0),
-      funding_round:raw.funding_round|| 0,
+      investments:  (raw.strategic_investment || 0) + (raw.minority_stake || 0) + (raw.funding_round || 0),
     };
   }, [allDeals]);
 
