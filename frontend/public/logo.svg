@@ -1,0 +1,25 @@
+<svg viewBox="0 0 200 270" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="270" fill="white"/>
+
+  <!-- Outer shield border -->
+  <path d="M18 18 L182 18 L182 96 C182 152 145 182 100 200 C55 182 18 152 18 96 Z"
+        fill="none" stroke="#111111" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- Inner shield border -->
+  <path d="M34 34 L166 34 L166 96 C166 140 134 164 100 180 C66 164 34 140 34 96 Z"
+        fill="none" stroke="#111111" stroke-width="8" stroke-linejoin="round"/>
+
+  <!-- Center filled shield (innermost) -->
+  <path d="M52 52 L148 52 L148 96 C148 122 124 140 100 152 C76 140 52 122 52 96 Z"
+        fill="#111111"/>
+
+  <!-- DEFENSE -->
+  <text x="100" y="225" text-anchor="middle"
+        font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+        font-weight="900" font-size="22" letter-spacing="5" fill="#111111">DEFENSE</text>
+
+  <!-- DASHBOARD -->
+  <text x="100" y="248" text-anchor="middle"
+        font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+        font-weight="700" font-size="13" letter-spacing="5" fill="#111111">DASHBOARD</text>
+</svg>

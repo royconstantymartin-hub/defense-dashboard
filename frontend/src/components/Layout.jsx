@@ -1,8 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useAuth, useLang } from "@/App";
-import { 
-  Shield, 
-  Activity, 
+import {
+  Activity,
   Globe, 
   FileText, 
   Package, 
@@ -68,9 +67,7 @@ export default function Layout() {
           {/* Logo */}
           <div className="p-5 border-b border-slate-100">
             <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
-                <Shield className="w-5 h-5 text-white" />
-              </div>
+              <img src="/logo.svg" alt="Defense Dashboard" className="w-10 h-10 object-contain" />
               <div>
                 <h1 className="font-heading font-bold text-slate-900 tracking-tight">DEFENSE</h1>
                 <p className="text-[10px] font-mono text-purple-600 tracking-widest">DASHBOARD</p>
