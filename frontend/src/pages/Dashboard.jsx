@@ -19,6 +19,8 @@ import {
   Settings,
   RefreshCw,
   ExternalLink,
+  Search,
+  X,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Link } from "react-router-dom";
@@ -269,16 +271,77 @@ export default function Dashboard() {
           </h1>
           <p className="text-slate-500 text-sm mt-1">Global Defense Intelligence Overview</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
-          <Clock className="w-3.5 h-3.5" />
-          <span>
-            {fetchedAt
-              ? `Data loaded at ${fetchedAt.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`
-              : "Loading…"}
-          </span>
-          <span className="text-slate-300">|</span>
-          <Database className="w-3.5 h-3.5" />
-          <span>SIPRI · Yahoo Finance · Defense press</span>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Search bar */}
+          <div className="relative" ref={searchRef}>
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-100 transition-all w-64">
+              <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <input
+                type="text"
+                placeholder="Search companies…"
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setShowSearch(true); }}
+                onFocus={() => setShowSearch(true)}
+                className="flex-1 text-xs bg-transparent outline-none text-slate-700 placeholder-slate-400"
+              />
+              {searchQuery && (
+                <button onClick={() => { setSearchQuery(""); setShowSearch(false); }} className="text-slate-400 hover:text-slate-600">
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+
+            {/* Dropdown results */}
+            {showSearch && searchResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 overflow-hidden">
+                {searchResults.map((company) => {
+                  const flagUrl = getFlag(company.country);
+                  return (
+                    <button
+                      key={company.id}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-purple-50 transition-colors text-left"
+                      onClick={() => { setSelectedCompany(company.name); setShowSearch(false); setSearchQuery(""); }}
+                    >
+                      <CompanyLogoCell name={company.name} url={getClearbitUrl(company.name)} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900 truncate">{company.name}</p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          {flagUrl && <img src={flagUrl} alt={company.country} className="w-3.5 h-2.5 object-cover rounded-sm" />}
+                          <span className="text-xs text-slate-500">{company.country}</span>
+                        </div>
+                      </div>
+                      {company.ticker && (
+                        <span className="font-mono text-xs text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded shrink-0">
+                          {company.ticker}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* No results hint */}
+            {showSearch && searchQuery.trim() && searchResults.length === 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 px-4 py-3 text-xs text-slate-500">
+                No company found for "<span className="font-medium text-slate-700">{searchQuery}</span>"
+              </div>
+            )}
+          </div>
+
+          {/* Timestamp badge */}
+          <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+            <Clock className="w-3.5 h-3.5" />
+            <span>
+              {fetchedAt
+                ? `Data loaded at ${fetchedAt.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`
+                : "Loading…"}
+            </span>
+            <span className="text-slate-300">|</span>
+            <Database className="w-3.5 h-3.5" />
+            <span>SIPRI · Yahoo Finance · Defense press</span>
+          </div>
         </div>
       </div>
 
