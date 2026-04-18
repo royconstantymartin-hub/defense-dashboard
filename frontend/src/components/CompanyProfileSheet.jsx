@@ -157,6 +157,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
   const navigate = useNavigate();
   const [data, setData]         = useState(null);
   const [loading, setLoading]   = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const [articles, setArticles] = useState([]);
   const [stockPrice, setStockPrice] = useState(null);
   const [productCount, setProductCount] = useState(null);
@@ -211,8 +212,9 @@ export default function CompanyProfileSheet({ name, onClose }) {
   };
 
   useEffect(() => {
-    if (!name) { setData(null); setArticles([]); setStockPrice(null); setProductCount(null); return; }
+    if (!name) { setData(null); setArticles([]); setStockPrice(null); setProductCount(null); setNotFound(false); return; }
     setLoading(true);
+    setNotFound(false);
     setData(null);
     setArticles([]);
     setStockPrice(null);
@@ -248,7 +250,9 @@ export default function CompanyProfileSheet({ name, onClose }) {
             .catch(() => {});
         }
       })
-      .catch((e) => console.error("CompanyProfileSheet fetch error:", e))
+      .catch((e) => {
+        if (e?.response?.status === 404) setNotFound(true);
+      })
       .finally(() => setLoading(false));
   }, [name]);
 
@@ -366,9 +370,17 @@ export default function CompanyProfileSheet({ name, onClose }) {
           </div>
         )}
 
-        {!loading && !p && name && (
-          <div className="mt-12 text-sm text-slate-500 text-center px-6">
-            No profile data available for &quot;{name}&quot;
+        {!loading && (notFound || (!p && name)) && (
+          <div className="mt-12 px-6 text-center space-y-3">
+            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto">
+              <Building2 className="w-6 h-6 text-slate-400" />
+            </div>
+            <p className="text-sm font-semibold text-slate-700">{name}</p>
+            <p className="text-xs text-slate-400">
+              {notFound
+                ? "This company is not yet in the Defense Intelligence database."
+                : "No profile data available."}
+            </p>
           </div>
         )}
 
