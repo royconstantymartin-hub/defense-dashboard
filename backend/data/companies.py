@@ -216,7 +216,15 @@ DEFENSE_COMPANIES = [
     {"name": "AAR Corp", "ticker": "AIR", "country": "USA", "market_cap": 2.1, "stock_price": 62.34, "change_percent": 0.67, "revenue": 1.8, "employees": 6000, "specializations": ["MRO", "Parts", "Services"]},
     {"name": "Astronics Corporation", "ticker": "ATRO", "country": "USA", "market_cap": 0.6, "stock_price": 18.90, "change_percent": -0.45, "revenue": 0.5, "employees": 3000, "specializations": ["Lighting", "Power", "Connectivity"]},
     {"name": "API Technologies", "ticker": "PRIVATE", "country": "USA", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 1200, "specializations": ["RF", "Microwave", "Security"]},
-    {"name": "Kaman Aerospace", "ticker": "KAMN", "country": "USA", "market_cap": 1.2, "stock_price": 38.90, "change_percent": 0.23, "revenue": 0.7, "employees": 2800, "specializations": ["Helicopters", "Structures", "Bearings"]}
+    {"name": "Kaman Aerospace", "ticker": "KAMN", "country": "USA", "market_cap": 1.2, "stock_price": 38.90, "change_percent": 0.23, "revenue": 0.7, "employees": 2800, "specializations": ["Helicopters", "Structures", "Bearings"]},
+    # === Additional companies to reach 125 ===
+    {"name": "Teledyne Technologies", "ticker": "TDY", "country": "USA", "market_cap": 15.8, "stock_price": 387.45, "change_percent": 0.92, "revenue": 5.9, "employees": 17000, "specializations": ["Imaging", "Sensors", "Electronics", "Defense"]},
+    {"name": "SERCO Group", "ticker": "SRP.L", "country": "UK", "market_cap": 4.1, "stock_price": 1.67, "change_percent": 0.48, "revenue": 4.7, "employees": 60000, "specializations": ["Services", "IT", "Logistics", "Training"]},
+    {"name": "Milrem Robotics", "ticker": "MILR-PRIV", "country": "Estonia", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 350, "specializations": ["UGV", "Autonomous", "Land Systems"]},
+    {"name": "Terma A/S", "ticker": "TERM-PRIV", "country": "Denmark", "market_cap": 0.6, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 1400, "specializations": ["Defense Electronics", "C2 Systems", "Space"]},
+    {"name": "Dynamit Nobel Defence", "ticker": "DND-PRIV", "country": "Germany", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 900, "specializations": ["Warheads", "Propulsion", "Ammunition"]},
+    {"name": "Theon Sensors", "ticker": "THSN-PRIV", "country": "Greece", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 280, "specializations": ["Optronics", "Night Vision", "Thermal Imaging"]},
+    {"name": "PZL Mielec", "ticker": "PZL-PRIV", "country": "Poland", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2200, "specializations": ["Aircraft", "Helicopters", "MRO"]},
 ]
 
 # News sources for announcements

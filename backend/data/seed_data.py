@@ -151,6 +151,14 @@ DEFENSE_COMPANIES = [
     {"name": "Hexcel", "ticker": "HXL", "country": "USA", "market_cap": 5.8, "stock_price": 68.90, "change_percent": -0.34, "revenue": 1.8, "employees": 6300, "specializations": ["Composites", "Materials"]},
     {"name": "Redwire Corporation", "ticker": "RDW", "country": "USA", "market_cap": 0.6, "stock_price": 6.78, "change_percent": 1.23, "revenue": 0.3, "employees": 700, "specializations": ["Space", "Manufacturing"]},
     {"name": "V2X Inc", "ticker": "VVX", "country": "USA", "market_cap": 2.1, "stock_price": 52.34, "change_percent": 0.45, "revenue": 4.0, "employees": 14000, "specializations": ["Services", "Logistics", "Training"]},
+    # === Additional companies to reach 125 ===
+    {"name": "Teledyne Technologies", "ticker": "TDY", "country": "USA", "market_cap": 15.8, "stock_price": 387.45, "change_percent": 0.92, "revenue": 5.9, "employees": 17000, "specializations": ["Imaging", "Sensors", "Electronics", "Defense"]},
+    {"name": "SERCO Group", "ticker": "SRP.L", "country": "UK", "market_cap": 4.1, "stock_price": 1.67, "change_percent": 0.48, "revenue": 4.7, "employees": 60000, "specializations": ["Services", "IT", "Logistics", "Training"]},
+    {"name": "Milrem Robotics", "ticker": "MILR-PRIV", "country": "Estonia", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 350, "specializations": ["UGV", "Autonomous", "Land Systems"]},
+    {"name": "Terma A/S", "ticker": "TERM-PRIV", "country": "Denmark", "market_cap": 0.6, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 1400, "specializations": ["Defense Electronics", "C2 Systems", "Space"]},
+    {"name": "Dynamit Nobel Defence", "ticker": "DND-PRIV", "country": "Germany", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 900, "specializations": ["Warheads", "Propulsion", "Ammunition"]},
+    {"name": "Theon Sensors", "ticker": "THSN-PRIV", "country": "Greece", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 280, "specializations": ["Optronics", "Night Vision", "Thermal Imaging"]},
+    {"name": "PZL Mielec", "ticker": "PZL-PRIV", "country": "Poland", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2200, "specializations": ["Aircraft", "Helicopters", "MRO"]},
 ]
 
 # Extended Announcements from specialized sources
