@@ -342,12 +342,6 @@ function CompanyLogo({ activity, side, size = "md" }) {
   // Reset when the domain changes (different deal row)
   useEffect(() => { setLevel(1); }, [domain, name]);
 
-  const flag = country ? (
-    <div className="absolute -bottom-1 -right-1">
-      <FlagImg iso2={country} />
-    </div>
-  ) : null;
-
   function logoBox(src) {
     return (
       <div className="relative shrink-0">
@@ -359,7 +353,6 @@ function CompanyLogo({ activity, side, size = "md" }) {
             onError={() => setLevel((l) => Math.min(l + 1, 3))}
           />
         </div>
-        {flag}
       </div>
     );
   }
@@ -383,14 +376,13 @@ function CompanyLogo({ activity, side, size = "md" }) {
           onError={() => setFailed(true)}
         />
       </div>
-      {flag}
     </div>
   );
 }
 
 // ── Defense Tech Leaderboard ───────────────────────────────────────────────
 
-function DefenseTechLeaderboard({ deals, onOpenProfile }) {
+function DefenseTechLeaderboard({ deals, onOpenProfile, players = [] }) {
   // Deduplicate by target company — keep entry with highest valuation, then latest date
   const byCompany = new Map();
   for (const d of deals) {
@@ -467,6 +459,17 @@ function DefenseTechLeaderboard({ deals, onOpenProfile }) {
                           <span className="text-[9px] text-slate-400 font-mono">{d.target_country}</span>
                         </div>
                       )}
+                      {(() => {
+                        const player = players.find(p => p.name.toLowerCase() === d.target.toLowerCase());
+                        if (!player?.specializations?.length) return null;
+                        return (
+                          <div className="flex flex-wrap gap-0.5 mt-1">
+                            {player.specializations.slice(0, 3).map(s => (
+                              <span key={s} className="text-[9px] bg-purple-50 text-purple-600 border border-purple-100 px-1.5 py-0.5 rounded-full font-medium">{s}</span>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </td>
@@ -1241,6 +1244,7 @@ export default function MAActivity() {
   const { token }                              = useAuth();
   const [activities,     setActivities]        = useState([]);
   const [historical,     setHistorical]        = useState([]);
+  const [players,        setPlayers]           = useState([]);
   const [loading,        setLoading]           = useState(true);
   const [histLoading,    setHistLoading]       = useState(false);
   const [error,          setError]             = useState(null);
@@ -1302,7 +1306,10 @@ export default function MAActivity() {
     }
   };
 
-  useEffect(() => { fetchRecent(); fetchHist(); fetchMeta(); }, []);
+  useEffect(() => {
+    fetchRecent(); fetchHist(); fetchMeta();
+    axios.get(`${API}/defense-players`).then(r => setPlayers(r.data)).catch(() => {});
+  }, []);
 
   // Merge + deduplicate recent and historical
   const allDeals = useMemo(() => {
@@ -1585,7 +1592,7 @@ export default function MAActivity() {
 
           {/* ── Defense Tech leaderboard view ── */}
           {dealTypeTab === "defense_tech" && (
-            <DefenseTechLeaderboard deals={filteredDeals} onOpenProfile={setProfileName} />
+            <DefenseTechLeaderboard deals={filteredDeals} onOpenProfile={setProfileName} players={players} />
           )}
 
           {/* ── Normal deal table (M&A, Investments, JV) ── */}
