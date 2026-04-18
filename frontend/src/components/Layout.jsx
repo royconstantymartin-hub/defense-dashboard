@@ -73,7 +73,7 @@ export default function Layout() {
               </div>
               <div>
                 <h1 className="font-heading font-bold text-slate-900 tracking-tight">DEFENSE</h1>
-                <p className="text-[10px] font-mono text-purple-600 tracking-widest">INTELLIGENCE HUB</p>
+                <p className="text-[10px] font-mono text-purple-600 tracking-widest">DASHBOARD</p>
               </div>
             </Link>
           </div>
