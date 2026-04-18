@@ -124,25 +124,6 @@ function relativeTime(isoStr) {
   return `${d}d ago`;
 }
 
-const TOP10_BAR_COLORS = [
-  "#F59E0B", // amber  — #1
-  "#3B82F6", // blue   — #2
-  "#10B981", // emerald — #3
-  "#8B5CF6", // violet — #4
-  "#EF4444", // red    — #5
-  "#06B6D4", // cyan   — #6
-  "#F97316", // orange — #7
-  "#84CC16", // lime   — #8
-  "#EC4899", // pink   — #9
-  "#6366F1", // indigo — #10
-];
-
-const RANK_STYLES = [
-  { bg: "bg-amber-50",  border: "border-amber-200",  text: "text-amber-700",  label: "1st" },
-  { bg: "bg-slate-50",  border: "border-slate-200",  text: "text-slate-500",  label: "2nd" },
-  { bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-600", label: "3rd" },
-];
-
 const AVATAR_COLORS = [
   "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
   "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
@@ -727,102 +708,77 @@ export default function MarketData() {
 
       {/* Top 10 Leaderboard */}
       <Card className="bg-white border-slate-200 shadow-sm" data-testid="market-cap-chart">
-        <CardHeader className="border-b border-slate-100 pb-4">
+        <CardHeader className="border-b border-slate-100 pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="font-heading text-lg text-slate-900">Top 10 by Market Cap</CardTitle>
-            <span className="text-xs text-slate-400 font-medium">{filteredPlayers.length} companies · sorted by cap</span>
+            <span className="text-xs text-slate-400">{filteredPlayers.length} companies</span>
           </div>
         </CardHeader>
-        <CardContent className="pt-5">
+        <CardContent className="pt-2 pb-3">
           {top10Players.length === 0 ? (
             <p className="text-slate-400 text-sm py-8 text-center">No companies match your current filters.</p>
           ) : (
-            <>
-              {/* Podium — top 3 */}
-              <div className="grid grid-cols-3 gap-3 mb-5">
-                {top10Players.slice(0, 3).map((player, i) => {
-                  const rs = RANK_STYLES[i];
-                  const change = liveData[player.ticker]?.change_percent ?? player.change_percent;
-                  const isPos = change >= 0;
-                  return (
-                    <button
-                      key={player.id}
-                      className={`relative flex flex-col items-center p-4 rounded-xl border ${rs.bg} ${rs.border} cursor-pointer hover:shadow-md transition-all text-left`}
-                      onClick={() => setSelectedPlayer(player)}
-                    >
-                      <span className={`absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${rs.border} ${rs.bg} ${rs.text}`}>
-                        {rs.label}
-                      </span>
-                      <LogoWithFallback
-                        name={player.name}
-                        clearbitUrl={getLogo(player.name)}
-                        sizeClass="w-12 h-12"
-                        textClass="text-sm"
-                        rounded="rounded-xl"
-                      />
-                      <p className="text-xs font-bold text-slate-800 mt-2 text-center font-mono">{player.ticker && !isPrivate(player.ticker) ? player.ticker : player.name.slice(0, 10)}</p>
-                      <p className="text-[10px] text-slate-500 text-center truncate w-full mt-0.5">{player.name}</p>
-                      <p className="text-sm font-mono font-bold text-slate-900 mt-1.5">${player.market_cap}B</p>
-                      {!isPrivate(player.ticker) ? (
-                        <span className={`text-[11px] font-mono mt-0.5 ${isPos ? "text-emerald-600" : "text-rose-600"}`}>
-                          {isPos ? "+" : ""}{change.toFixed(2)}%
-                        </span>
-                      ) : (
-                        <span className="text-[11px] text-slate-400 mt-0.5">Private</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="divide-y divide-slate-50">
+              {top10Players.map((player, i) => {
+                const maxCap = top10Players[0].market_cap;
+                const pct = (player.market_cap / maxCap) * 100;
+                const change = liveData[player.ticker]?.change_percent ?? player.change_percent;
+                const isPos = change >= 0;
+                const priv = isPrivate(player.ticker);
+                const barColor = priv ? "#CBD5E1" : isPos ? "#059669" : "#E11D48";
+                const flagUrl = getFlag(player.country);
+                return (
+                  <button
+                    key={player.id}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 transition-colors group rounded-lg"
+                    onClick={() => setSelectedPlayer(player)}
+                  >
+                    {/* Rank */}
+                    <span className="w-4 text-xs font-mono text-slate-300 text-right shrink-0">{i + 1}</span>
 
-              {/* Ranked list — 4 to 10 */}
-              <div className="space-y-1.5">
-                {top10Players.slice(3).map((player, i) => {
-                  const rank = i + 4;
-                  const maxCap = top10Players[0].market_cap;
-                  const pct = (player.market_cap / maxCap) * 100;
-                  const change = liveData[player.ticker]?.change_percent ?? player.change_percent;
-                  const isPos = change >= 0;
-                  const barColor = TOP10_BAR_COLORS[rank - 1];
-                  const flagUrl = getFlag(player.country);
-                  return (
-                    <button
-                      key={player.id}
-                      className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-slate-50 transition-colors text-left"
-                      onClick={() => setSelectedPlayer(player)}
-                    >
-                      <span className="w-5 text-xs font-mono text-slate-400 text-center shrink-0">{rank}</span>
-                      <LogoWithFallback
-                        name={player.name}
-                        clearbitUrl={getLogo(player.name)}
-                        sizeClass="w-8 h-8"
-                        textClass="text-[10px]"
-                      />
-                      <div className="w-28 min-w-0 shrink-0">
-                        <p className="text-xs font-semibold text-slate-700 truncate font-mono">
-                          {player.ticker && !isPrivate(player.ticker) ? player.ticker : player.name.slice(0, 10)}
-                        </p>
-                        <div className="flex items-center gap-1 mt-0.5">
-                          {flagUrl && <img src={flagUrl} alt={player.country} className="w-3.5 h-2.5 rounded-sm object-cover" />}
-                          <span className="text-[10px] text-slate-400 truncate">{player.country}</span>
-                        </div>
-                      </div>
-                      <div className="flex-1 bg-slate-100 rounded-full h-1.5 min-w-0">
-                        <div className="h-1.5 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: barColor }} />
-                      </div>
-                      <span className="text-xs font-mono font-semibold text-slate-900 w-14 text-right shrink-0">${player.market_cap}B</span>
-                      {!isPrivate(player.ticker) ? (
-                        <span className={`text-xs font-mono w-14 text-right shrink-0 ${isPos ? "text-emerald-600" : "text-rose-600"}`}>
-                          {isPos ? "+" : ""}{change.toFixed(2)}%
+                    {/* Logo */}
+                    <LogoWithFallback
+                      name={player.name}
+                      clearbitUrl={getLogo(player.name)}
+                      sizeClass="w-9 h-9"
+                      textClass="text-[10px]"
+                      rounded="rounded-lg"
+                    />
+
+                    {/* Name + country */}
+                    <div className="w-36 shrink-0 min-w-0">
+                      <p className="text-sm font-semibold text-slate-800 group-hover:text-purple-700 transition-colors truncate leading-tight">
+                        {player.name}
+                      </p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        {flagUrl && <img src={flagUrl} alt={player.country} className="w-3.5 h-2.5 rounded-sm object-cover shrink-0" />}
+                        <span className="text-[10px] font-mono text-slate-400 truncate">
+                          {priv ? "Private" : player.ticker}
                         </span>
-                      ) : (
-                        <span className="text-xs text-slate-300 w-14 text-right shrink-0">Private</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </>
+                      </div>
+                    </div>
+
+                    {/* Progress bar */}
+                    <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{ width: `${pct}%`, backgroundColor: barColor }}
+                      />
+                    </div>
+
+                    {/* Market cap */}
+                    <span className="text-sm font-mono font-bold text-slate-900 w-16 text-right shrink-0">
+                      ${player.market_cap}B
+                    </span>
+
+                    {/* Change */}
+                    <span className={`text-xs font-mono w-14 text-right shrink-0 ${priv ? "text-slate-300" : isPos ? "text-emerald-600" : "text-rose-600"}`}>
+                      {priv ? "—" : `${isPos ? "+" : ""}${change.toFixed(2)}%`}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           )}
         </CardContent>
       </Card>
