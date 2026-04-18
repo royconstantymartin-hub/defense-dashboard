@@ -729,8 +729,8 @@ MA_DATA = [
             "MGCS next-generation tank programme."
         ),
         "acquirer_country": "DE", "target_country": "FR",
-        "acquirer_logo_domain": "knds.de",
-        "target_logo_domain": "knds.de",
+        "acquirer_logo_domain": "knds.com",
+        "target_logo_domain": "knds.com",
         "source_url": "https://www.knds.com/en",
         "announced_date": datetime(2015, 7, 1, tzinfo=timezone.utc),
     },
@@ -1358,7 +1358,7 @@ MA_EXTRA_DEALS = [
             "systems, submarine navigation and ruggedised training simulators for fighter pilots."
         ),
         "acquirer_country": "FR", "target_country": "FR",
-        "acquirer_logo_domain": "exail.com",
+        "acquirer_logo_domain": "tikehau-capital.com",
         "target_logo_domain": "exail.com",
         "source_url": "https://www.exail.com/news",
         "announced_date": datetime(2022, 10, 1, tzinfo=timezone.utc),

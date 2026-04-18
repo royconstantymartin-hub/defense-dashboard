@@ -1802,24 +1802,43 @@ async def run_ma_scraper_job() -> dict:
                 doc["target_norm"] = key["target_norm"]
                 doc["scraped_at"] = scraped_at.isoformat()
 
-                # Check exact norm match
-                existing = await db.ma_activities.find_one(key, {"_id": 0})
+                # 1. Exact (acquirer_norm, target_norm) match
+                existing = await db.ma_activities.find_one(key, {"_id": 0, "id": 1})
+
                 if not existing:
-                    # Also check if an entry exists whose acquirer/target first-word
-                    # matches — catches "Airbus → Bombardier C Series" vs "Airbus → Bombardier"
-                    acq_first = key["acquirer_norm"].split()[0] if key["acquirer_norm"].split() else ""
-                    tgt_first = key["target_norm"].split()[0] if key["target_norm"].split() else ""
+                    # 2. First-word prefix match — catches "Bombardier C Series" vs "Bombardier"
+                    acq_words = key["acquirer_norm"].split()
+                    tgt_words = key["target_norm"].split()
+                    acq_first = acq_words[0] if acq_words else ""
+                    tgt_first = tgt_words[0] if tgt_words else ""
                     if acq_first and tgt_first:
                         first_word_match = await db.ma_activities.find_one(
                             {
-                                "acquirer_norm": {"$regex": f"^{acq_first}"},
-                                "target_norm":   {"$regex": f"^{tgt_first}"},
+                                "acquirer_norm": {"$regex": f"^{re.escape(acq_first)}"},
+                                "target_norm":   {"$regex": f"^{re.escape(tgt_first)}"},
                             },
                             {"_id": 0, "id": 1},
                         )
                         if first_word_match:
                             existing = first_word_match
+
                 if not existing:
+                    # 3. Raw name match — catches entries seeded before norm fields existed
+                    name_match = await db.ma_activities.find_one(
+                        {"acquirer": signal["acquirer"], "target": signal["target"]},
+                        {"_id": 0, "id": 1},
+                    )
+                    if name_match:
+                        existing = name_match
+
+                if not existing:
+                    # 4. Guard against generic/low-quality targets (e.g. "Formation", "Multiple targets")
+                    target_raw = signal.get("target", "")
+                    generic_targets = {"formation", "multiple targets", "various targets", "undisclosed", "unknown"}
+                    if target_raw.lower().strip() in generic_targets:
+                        logger.warning("Skipping scraper signal with generic target '%s'", target_raw)
+                        continue
+
                     await db.ma_activities.insert_one(doc)
                     saved += 1
                 # Don't overwrite manually curated entries

@@ -64,7 +64,7 @@ const LOGO_FALLBACK = {
   "Airbus":                      "airbus.com",
   "Rheinmetall":                 "rheinmetall.com",
   "Safran":                      "safran-group.com",
-  "KNDS":                        "knds.de",
+  "KNDS":                        "knds.com",
   "Hanwha":                      "hanwha.com",
   "Hanwha Ocean":                "hanwha.com",
   "Boeing":                      "boeing.com",
@@ -116,6 +116,12 @@ const LOGO_FALLBACK = {
   "Rebellion Defense":           "rebelliondefense.com",
   "KNDS France":                 "knds.com",
   "KNDS Germany":                "knds.com",
+  "Tikehau Capital":             "tikehau-capital.com",
+  "EDGE Group":                  "edgegroup.ae",
+  "Nightwing Group":             "nightwinggroup.com",
+  "Texelis":                     "texelis.com",
+  "Texelis Defense":             "texelis.com",
+  "Preligens":                   "safran-group.com",
   "Texelis Defense":             "texelis.com",
   "Tomahawk Robotics":           "tomahawkrobotics.com",
   "Saab":                        "saabgroup.com",
@@ -356,7 +362,7 @@ function CompanyLogo({ activity, side, size = "md" }) {
             src={src}
             alt={name}
             className="w-full h-full object-contain p-1"
-            onError={() => setLevel((l) => Math.min(l + 1, 3))}
+            onError={() => setLevel(l => l + 1)}
           />
         </div>
         {flag}
@@ -367,21 +373,18 @@ function CompanyLogo({ activity, side, size = "md" }) {
   // Level 1 — Clearbit HD logo
   if (level === 1 && domain) return logoBox(`https://logo.clearbit.com/${domain}`);
 
-  // Level 2 — Google Favicon V2 (sz=128, instantané, pas d'API key)
-  if (level <= 2 && domain) {
+  // Level 2 — Google Favicon V2 (sz=128)
+  if (level === 2 && domain) {
     return logoBox(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
   }
 
-  // Level 3 — Coloured initials avatar
+  // Level 3 — Coloured initials avatar (no network call)
   return (
     <div className="relative shrink-0">
-      <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm ring-1 ring-black/5 overflow-hidden flex items-center justify-center`}>
-        <img
-          src={`https://logo.clearbit.com/${domain}`}
-          alt={name}
-          className="w-full h-full object-contain p-1.5"
-          onError={() => setFailed(true)}
-        />
+      <div className={`${sizeClass} rounded-xl overflow-hidden flex items-center justify-center ${avatarColor(name)}`}>
+        <span className={`${textSize} font-bold text-white tracking-tight select-none`}>
+          {initials(name)}
+        </span>
       </div>
       {flag}
     </div>
@@ -922,7 +925,8 @@ function exportCSV(data) {
 
 const DEAL_TYPE_TABS = [
   { value: "defense_tech",  label: "Defense Tech",          types: INVEST_TYPES },
-  { value: "ma",            label: "M&A",                   types: ["acquisition", "merger"] },
+  { value: "acquisitions",  label: "Acquisitions",          types: ["acquisition"] },
+  { value: "mergers",       label: "Mergers",               types: ["merger"] },
   { value: "investments",   label: "Investments & Funding", types: INVEST_TYPES },
   { value: "jv",            label: "Joint Ventures",        types: ["joint_venture"] },
 ];
@@ -1235,6 +1239,191 @@ function TableRow({ activity, index, onOpenProfile }) {
   );
 }
 
+// ── Investment consolidated view ────────────────────────────────────────────
+// Target company on LEFT, all investor rounds grouped and expandable.
+
+function InvestmentConsolidatedView({ deals, onOpenProfile }) {
+  const [expanded, setExpanded] = useState(new Set());
+
+  const groups = useMemo(() => {
+    const map = new Map();
+    for (const d of deals) {
+      if (!map.has(d.target)) {
+        map.set(d.target, {
+          target: d.target,
+          target_country: d.target_country,
+          target_logo_domain: d.target_logo_domain,
+          rounds: [],
+        });
+      }
+      map.get(d.target).rounds.push(d);
+    }
+    return [...map.values()].map(g => {
+      const sorted = [...g.rounds].sort((a, b) => new Date(b.announced_date) - new Date(a.announced_date));
+      const totalRaised = g.rounds
+        .filter(r => (r.is_disclosed ?? true) && r.deal_value > 0)
+        .reduce((s, r) => s + r.deal_value, 0);
+      const latestValuation = Math.max(0, ...g.rounds.map(r => r.valuation || 0));
+      return { ...g, rounds: sorted, totalRaised, latestValuation: latestValuation || null };
+    }).sort((a, b) => {
+      const va = a.latestValuation || a.totalRaised || 0;
+      const vb = b.latestValuation || b.totalRaised || 0;
+      return vb - va;
+    });
+  }, [deals]);
+
+  const toggleAll = () => {
+    if (expanded.size === groups.length) setExpanded(new Set());
+    else setExpanded(new Set(groups.map(g => g.target)));
+  };
+
+  function toggle(target) {
+    setExpanded(prev => {
+      const next = new Set(prev);
+      if (next.has(target)) next.delete(target); else next.add(target);
+      return next;
+    });
+  }
+
+  if (groups.length === 0) {
+    return <div className="text-center py-16 text-slate-400 text-sm">No investment deals match the selected filters.</div>;
+  }
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="px-5 py-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+        <p className="text-xs font-semibold text-slate-600">
+          {groups.length} portfolio {groups.length === 1 ? "company" : "companies"}
+          <span className="ml-2 text-slate-400 font-normal">{deals.length} total rounds</span>
+        </p>
+        <button
+          onClick={toggleAll}
+          className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+        >
+          {expanded.size === groups.length ? "Collapse all" : "Expand all"}
+        </button>
+      </div>
+
+      {groups.map((group) => {
+        const isOpen = expanded.has(group.target);
+        const latestRound = group.rounds[0];
+        const synth = { target: group.target, target_country: group.target_country, target_logo_domain: group.target_logo_domain };
+
+        return (
+          <div key={group.target} className="border-b border-slate-100 last:border-0">
+            <div
+              className={`flex items-center gap-4 px-5 py-3.5 cursor-pointer transition-colors ${isOpen ? "bg-purple-50/60" : "hover:bg-slate-50"}`}
+              onClick={() => toggle(group.target)}
+            >
+              {/* Target company — LEFT */}
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <CompanyLogo activity={synth} side="target" size="md" />
+                <div className="min-w-0">
+                  <button
+                    onClick={e => { e.stopPropagation(); const c = resolvePlayerName(group.target); if (c) onOpenProfile(c); }}
+                    className="font-semibold text-slate-900 hover:text-purple-700 text-sm leading-snug text-left block truncate"
+                  >
+                    {group.target}
+                  </button>
+                  {group.target_country && (
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <FlagImg iso2={group.target_country} />
+                      <span className="text-[9px] text-slate-400 font-mono">{group.target_country}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Consolidated stats — RIGHT */}
+              <div className="flex items-center gap-5 shrink-0">
+                {group.latestValuation ? (
+                  <div className="text-right">
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">Valuation</p>
+                    <p className="text-sm font-mono font-bold text-slate-900">
+                      {group.latestValuation >= 1000 ? `$${(group.latestValuation / 1000).toFixed(1)}B` : `$${group.latestValuation}M`}
+                    </p>
+                  </div>
+                ) : null}
+                {group.totalRaised > 0 && (
+                  <div className="text-right">
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">Total raised</p>
+                    <p className="text-sm font-mono font-bold text-purple-700">
+                      {group.totalRaised >= 1000 ? `$${(group.totalRaised / 1000).toFixed(1)}B` : `$${group.totalRaised}M`}
+                    </p>
+                  </div>
+                )}
+                <div className="text-right">
+                  <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">Rounds</p>
+                  <p className="text-sm font-mono font-bold text-slate-700">{group.rounds.length}</p>
+                </div>
+                {latestRound?.round_type && <RoundBadge roundType={latestRound.round_type} />}
+                <span className="text-slate-400 ml-1">
+                  {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </span>
+              </div>
+            </div>
+
+            {/* Expanded: investor rounds table */}
+            {isOpen && (
+              <div className="bg-purple-50/30 border-t border-purple-100">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-purple-100">
+                      <th className="px-5 pl-16 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-left">Investor</th>
+                      <th className="px-3 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-left">Round</th>
+                      <th className="px-3 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-right">Amount</th>
+                      <th className="px-3 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400">Date</th>
+                      <th className="px-3 py-2 w-8" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {group.rounds.map((r, rIdx) => (
+                      <tr key={r.id || rIdx} className={`border-b border-purple-50 last:border-0 ${rIdx % 2 === 0 ? "bg-white/60" : "bg-purple-50/20"}`}>
+                        <td className="px-5 pl-16 py-2.5">
+                          <div className="flex items-center gap-2">
+                            <CompanyLogo activity={r} side="acquirer" size="sm" />
+                            <CompanyNameBtn name={r.acquirer} onOpenProfile={onOpenProfile} className="text-slate-800 font-medium" />
+                          </div>
+                        </td>
+                        <td className="px-3 py-2.5">
+                          {r.round_type
+                            ? <RoundBadge roundType={r.round_type} />
+                            : <span className="text-[10px] text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded capitalize">{r.deal_type.replaceAll("_", " ")}</span>
+                          }
+                        </td>
+                        <td className="px-3 py-2.5 text-right font-mono font-semibold text-purple-700 whitespace-nowrap">
+                          {formatValue(r.deal_value, r.is_disclosed ?? true)}
+                        </td>
+                        <td className="px-3 py-2.5 text-slate-500 whitespace-nowrap">
+                          {format(new Date(r.announced_date), "MMM yyyy")}
+                        </td>
+                        <td className="px-3 py-2.5 text-center">
+                          {r.source_url && (
+                            <a
+                              href={r.source_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={e => e.stopPropagation()}
+                              className="text-slate-400 hover:text-purple-600 transition-colors inline-flex"
+                              title="Source"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────────────────
 
 export default function MAActivity() {
@@ -1321,10 +1510,11 @@ export default function MAActivity() {
     const investDeals = allDeals.filter(a => INVEST_TYPES.includes(a.deal_type));
     const uniqueTargets = new Set(investDeals.map(a => a.target)).size;
     return {
-      defense_tech: uniqueTargets,
-      ma:           (raw.acquisition || 0) + (raw.merger || 0),
-      investments:  (raw.strategic_investment || 0) + (raw.minority_stake || 0) + (raw.funding_round || 0),
-      jv:           raw.joint_venture || 0,
+      defense_tech:  uniqueTargets,
+      acquisitions:  raw.acquisition || 0,
+      mergers:       raw.merger || 0,
+      investments:   (raw.strategic_investment || 0) + (raw.minority_stake || 0) + (raw.funding_round || 0),
+      jv:            raw.joint_venture || 0,
     };
   }, [allDeals]);
 
@@ -1588,8 +1778,13 @@ export default function MAActivity() {
             <DefenseTechLeaderboard deals={filteredDeals} onOpenProfile={setProfileName} />
           )}
 
-          {/* ── Normal deal table (M&A, Investments, JV) ── */}
-          {dealTypeTab !== "defense_tech" && <>
+          {/* ── Investment consolidated view ── */}
+          {dealTypeTab === "investments" && (
+            <InvestmentConsolidatedView deals={filteredDeals} onOpenProfile={setProfileName} />
+          )}
+
+          {/* ── Normal deal table (Acquisitions, Mergers, JV) ── */}
+          {!["defense_tech", "investments"].includes(dealTypeTab) && <>
 
           {/* Toolbar */}
           <div className="flex items-center justify-between">
