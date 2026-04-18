@@ -167,6 +167,14 @@ export const COMPANY_LOGOS = {
   "Avibras": "avibras.com.br",
   // Canada
   "CAE Inc": "cae.com",
+  // New companies
+  "Teledyne Technologies": "teledyne.com",
+  "SERCO Group": "serco.com",
+  "Milrem Robotics": "milremrobotics.com",
+  "Terma A/S": "terma.com",
+  "Dynamit Nobel Defence": "dynamit-nobel-defence.de",
+  "Theon Sensors": "theonsensors.com",
+  "PZL Mielec": "pzl.mielec.pl",
 };
 
 // Direct Wikipedia Commons logo URLs — confirmed filenames, never blocked by ad-blockers.
@@ -248,6 +256,17 @@ export const COMPANY_WIKI_LOGOS = {
   "Embraer Defense":               WP + "Embraer_logo.svg",
   // USA — additional
   "Anduril Industries":            WP + "Anduril_Industries_Logo.svg",
+  "Kratos Defense":                WP + "Kratos_Defense_%26_Security_Solutions_logo.svg",
+  "Teledyne Technologies":         WP + "Teledyne_Technologies_logo.svg",
+  "SERCO Group":                   WP + "Serco_logo.svg",
+  // Turkey
+  "Roketsan":                      WP + "Roketsan_logo.svg",
+  // South Korea
+  "LIG Nex1":                      WP + "LIG_Nex1_logo.svg",
+  // Estonia
+  "Milrem Robotics":               WP + "Milrem_Robotics_logo.svg",
+  // Denmark
+  "Terma A/S":                     WP + "Terma_logo.svg",
 };
 
 export function getLogoDomain(name) {
@@ -263,7 +282,10 @@ export function getLogoUrl(name) {
   return COMPANY_WIKI_LOGOS[name] ?? null;
 }
 
-// Kept for backward compat
+// Returns Wikipedia logo if available, then clearbit fallback, then null
 export function getClearbitUrl(name) {
-  return getLogoUrl(name);
+  if (COMPANY_WIKI_LOGOS[name]) return COMPANY_WIKI_LOGOS[name];
+  const domain = COMPANY_LOGOS[name];
+  if (domain) return `https://logo.clearbit.com/${domain}`;
+  return null;
 }
