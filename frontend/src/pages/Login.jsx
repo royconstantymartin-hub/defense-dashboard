@@ -175,7 +175,7 @@ export default function Login() {
         </Card>
 
         <p className="text-center text-xs text-zinc-600 mt-6">
-          Defense Intelligence Hub • Secure Access
+          Defense Dashboard • Secure Access
         </p>
       </div>
     </div>
