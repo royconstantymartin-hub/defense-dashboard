@@ -274,8 +274,13 @@ export default function Products() {
       );
       if (r.ok) {
         const d = await r.json();
-        if (d.thumbnail?.source) {
-          const src = d.thumbnail.source.replace(/\/\d+px-/, '/600px-');
+        // Prefer originalimage (full resolution); fall back to thumbnail.
+        // Use 400px which Wikimedia reliably pre-generates (vs. 600px which can 404).
+        const raw = d.originalimage?.source || d.thumbnail?.source;
+        if (raw) {
+          const src = raw.includes('/thumb/')
+            ? raw.replace(/\/\d+px-([^/]+)$/, '/400px-$1')
+            : raw;
           setWikiImages(prev => ({ ...prev, [productId]: src }));
         }
       }
@@ -293,13 +298,24 @@ export default function Products() {
   }, [filteredProducts, fetchWikiImage]);
 
 
+  // Convert a raw Wikimedia upload URL to its thumb variant (more reliably served).
+  // e.g. .../commons/a/ab/file.jpg  →  .../commons/thumb/a/ab/file.jpg/400px-file.jpg
+  const toWikiThumb = (url) => {
+    if (!url) return null;
+    if (url.includes('/thumb/')) return url;
+    const m = url.match(/\/commons\/([a-f0-9]\/[a-f0-9]{2})\/(.+?)(\?.*)?$/i);
+    if (!m) return url;
+    return `https://upload.wikimedia.org/wikipedia/commons/thumb/${m[1]}/${m[2]}/400px-${m[2]}`;
+  };
+
   // Choose which image URL to show for a product.
-  // Prefers the fresh Wikipedia thumbnail; falls back to the DB url;
+  // Prefers the fresh Wikipedia thumbnail; falls back to the thumb-converted DB url;
   // returns null when both have failed (triggering the icon placeholder).
   const resolveImgSrc = (productId, dbUrl) => {
     const wikiSrc = wikiImages[productId];
     if (wikiSrc && !wikiErr[productId]) return wikiSrc;
-    if (dbUrl   && !primaryErr[productId]) return dbUrl;
+    const thumbUrl = toWikiThumb(dbUrl);
+    if (thumbUrl && !primaryErr[productId]) return thumbUrl;
     return null;
   };
 
