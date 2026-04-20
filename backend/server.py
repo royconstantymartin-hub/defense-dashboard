@@ -1155,11 +1155,16 @@ async def run_news_scraper_job() -> dict:
         "Army Times", "Navy Times", "Air Force Times", "Marine Corps Times",
         "Stars and Stripes", "TTU", "Mer et Marine", "UK Ministry of Defence",
         "Flight Global",
+        # French specialty sources
+        "Forces Operations", "Secret Défense", "Lignes de Défense",
+        "Ministère des Armées", "Aerobuzz", "EuroDéfense",
     }
     _FR_SOURCES = {
         "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
         "Usine Nouvelle", "Challenges", "La Tribune", "Le Point",
-        "TTU", "Mer et Marine",
+        "TTU", "Mer et Marine", "Air & Cosmos", "La Tribune Défense",
+        "Forces Operations", "Secret Défense", "Lignes de Défense",
+        "Ministère des Armées", "Aerobuzz", "EuroDéfense",
     }
     _SOURCE_REGION = {
         "Breaking Defense": "us",     "Defense News": "us",   "Defense Industry Daily": "us",
@@ -1255,7 +1260,8 @@ async def run_news_scraper_job() -> dict:
 _FR_SOURCES     = ["Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
                    "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
                    "Air & Cosmos", "L'Agefi", "Capital", "BFM Business", "Le Point",
-                   "TTU", "Mer et Marine"]
+                   "TTU", "Mer et Marine", "Forces Operations", "Secret Défense",
+                   "Lignes de Défense", "Ministère des Armées", "Aerobuzz", "EuroDéfense"]
 _FR_SOURCES_SET = set(_FR_SOURCES)
 _SOURCE_REGION_MAP: dict = {
     "Breaking Defense": "us",     "Defense News": "us",          "Defense Industry Daily": "us",
@@ -1269,6 +1275,8 @@ _SOURCE_REGION_MAP: dict = {
     "La Tribune Défense": "europe", "L'Agefi": "europe",         "Capital": "europe",
     "BFM Business": "europe",     "NATO": "europe",              "Le Point": "europe",
     "TTU": "europe",              "Mer et Marine": "europe",     "UK Ministry of Defence": "europe",
+    "Forces Operations": "europe", "Secret Défense": "europe",  "Lignes de Défense": "europe",
+    "Ministère des Armées": "europe", "Aerobuzz": "europe",     "EuroDéfense": "europe",
     "The Defense Post": "global", "BBC News": "global",
     "The Guardian": "global",     "Janes": "global",
     "The War Zone": "global",     "Aviation Week": "global",
@@ -1299,6 +1307,9 @@ _SPECIALTY_SOURCES_LIST = [
     "Army Times", "Navy Times", "Air Force Times", "Marine Corps Times",
     "Stars and Stripes", "TTU", "Mer et Marine", "UK Ministry of Defence",
     "Flight Global",
+    # French specialty sources
+    "Forces Operations", "Secret Défense", "Lignes de Défense",
+    "Ministère des Armées", "Aerobuzz", "EuroDéfense",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 
