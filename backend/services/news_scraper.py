@@ -788,11 +788,23 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Bellingcat",                "url": "https://www.bellingcat.com/feed/",                                          "language": "en", "region": "global",  "max_items": 20},
     {"name": "UK Ministry of Defence",    "url": "https://www.gov.uk/government/organisations/ministry-of-defence.atom",     "language": "en", "region": "europe",  "max_items": 20},
     # ── Defense specialty — French ──────────────────────────────────────────
-    {"name": "Opex360",                   "url": "https://www.opex360.com/feed/",                                             "language": "fr", "region": "europe",  "max_items": 40},
-    {"name": "Meta-Défense",              "url": "https://meta-defense.fr/feed/",                                             "language": "fr", "region": "europe",  "max_items": 40},
+    {"name": "Opex360",                   "url": "https://www.opex360.com/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
+    {"name": "Meta-Défense",              "url": "https://meta-defense.fr/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
     {"name": "Air & Cosmos",              "url": "https://www.air-cosmos.com/rss",                                            "language": "fr", "region": "europe",  "max_items": 30},
-    {"name": "TTU",                       "url": "https://www.ttu.fr/feed/",                                                  "language": "fr", "region": "europe",  "max_items": 30},
+    {"name": "TTU",                       "url": "https://www.ttu.fr/feed/",                                                  "language": "fr", "region": "europe",  "max_items": 25},
     {"name": "Mer et Marine",             "url": "https://www.meretmarine.com/fr/rss.xml",                                   "language": "fr", "region": "europe",  "max_items": 25},
+    # Forces Operations Blog — l'un des blogs défense français les plus actifs
+    {"name": "Forces Operations",         "url": "https://forcesoperations.com/feed/",                                        "language": "fr", "region": "europe",  "max_items": 35},
+    # Secret Défense — blog de Jean-Dominique Merchet (Libération), source de référence
+    {"name": "Secret Défense",            "url": "https://secretdefense.blogs.liberation.fr/rss.xml",                        "language": "fr", "region": "europe",  "max_items": 25},
+    # Lignes de Défense — blog Philippe Chapleau (Ouest-France), OPEX & équipements
+    {"name": "Lignes de Défense",         "url": "https://lignesdedefense.blogs.ouest-france.fr/rss.xml",                    "language": "fr", "region": "europe",  "max_items": 25},
+    # Ministère des Armées — communiqués officiels, contrats, nominations
+    {"name": "Ministère des Armées",      "url": "https://www.defense.gouv.fr/actualites/rss.xml",                           "language": "fr", "region": "europe",  "max_items": 20},
+    # Aerobuzz — actualité aéronautique et défense aérienne française
+    {"name": "Aerobuzz",                  "url": "https://www.aerobuzz.fr/feed/",                                             "language": "fr", "region": "europe",  "max_items": 25},
+    # EuroDéfense — think-tank franco-européen, politique et stratégie
+    {"name": "EuroDéfense",               "url": "https://www.eurodefen.fr/feed/",                                            "language": "fr", "region": "europe",  "max_items": 15},
     # ── Mainstream — English ────────────────────────────────────────────────
     {"name": "BBC News",                  "url": "http://feeds.bbci.co.uk/news/world/rss.xml",                                "language": "en", "region": "global"},
     {"name": "The Guardian",              "url": "https://www.theguardian.com/world/rss",                                     "language": "en", "region": "global"},
