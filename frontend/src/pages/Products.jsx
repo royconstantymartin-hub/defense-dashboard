@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
-import { getLogoUrl } from "@/lib/companyLogos";
+import { getLogoUrl, getClearbitUrl } from "@/lib/companyLogos";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -65,6 +65,65 @@ const MANUFACTURERS = [
   { value: "Grumman", label: "Grumman" },
   { value: "Hindustan Aeronautics", label: "Hindustan Aeronautics" },
   { value: "Korea Aerospace Industries", label: "Korea Aerospace Industries" },
+  // AI / Autonomous
+  { value: "Anduril Industries", label: "Anduril Industries" },
+  { value: "Shield AI", label: "Shield AI" },
+  { value: "Ghost Robotics", label: "Ghost Robotics" },
+  { value: "Epirus", label: "Epirus" },
+  { value: "Kratos Defense", label: "Kratos Defense" },
+  { value: "Quantum Systems", label: "Quantum Systems" },
+  { value: "Palantir Technologies", label: "Palantir Technologies" },
+  { value: "Harmattan AI", label: "Harmattan AI" },
+  { value: "Helsing", label: "Helsing" },
+  // Robots / UGV
+  { value: "Milrem Robotics", label: "Milrem Robotics" },
+  // Naval
+  { value: "Damen Naval", label: "Damen Naval" },
+  { value: "ThyssenKrupp Marine", label: "ThyssenKrupp Marine" },
+  { value: "Saab Kockums", label: "Saab Kockums" },
+  { value: "Austal", label: "Austal" },
+  { value: "Exail Technologies", label: "Exail Technologies" },
+  // Land
+  { value: "Oshkosh Defense", label: "Oshkosh Defense" },
+  { value: "GDELS", label: "GDELS" },
+  { value: "ARTEC", label: "ARTEC" },
+  { value: "Rheinmetall BAE Systems", label: "Rheinmetall BAE Systems" },
+  { value: "BMC Turkey", label: "BMC Turkey" },
+  { value: "Uralvagonzavod", label: "Uralvagonzavod" },
+  { value: "Norinco", label: "Norinco" },
+  // Missiles / EW
+  { value: "BrahMos Aerospace", label: "BrahMos Aerospace" },
+  { value: "Diehl Defence", label: "Diehl Defence" },
+  { value: "Israel Military Industries", label: "Israel Military Industries" },
+  { value: "Tactical Missiles Corporation", label: "Tactical Missiles Corporation" },
+  { value: "MBDA/Saab", label: "MBDA/Saab" },
+  { value: "MBDA/Thales", label: "MBDA/Thales" },
+  { value: "Rafael/Raytheon", label: "Rafael/Raytheon" },
+  { value: "Kongsberg/Raytheon", label: "Kongsberg/Raytheon" },
+  { value: "Raytheon/Lockheed Martin", label: "Raytheon/Lockheed Martin" },
+  { value: "Nexter/Arquus/Thales", label: "Nexter/Arquus/Thales" },
+  { value: "Nexter/Lockheed Martin", label: "Nexter/Lockheed Martin" },
+  // Space / ISR
+  { value: "Thales Alenia Space", label: "Thales Alenia Space" },
+  { value: "Thales/Airbus", label: "Thales/Airbus" },
+  { value: "Mitsubishi Electric", label: "Mitsubishi Electric" },
+  { value: "Mitsubishi Heavy Industries", label: "Mitsubishi Heavy Industries" },
+  { value: "Mitsubishi/Kawasaki", label: "Mitsubishi/Kawasaki" },
+  // Aircraft (historic / other)
+  { value: "Bell-Boeing", label: "Bell-Boeing" },
+  { value: "Panavia Aircraft", label: "Panavia Aircraft" },
+  { value: "Fairchild Republic", label: "Fairchild Republic" },
+  { value: "Sukhoi/UAC", label: "Sukhoi/UAC" },
+  { value: "United Aircraft Corporation", label: "United Aircraft Corporation" },
+  { value: "Almaz-Antey", label: "Almaz-Antey" },
+  { value: "AVIC", label: "AVIC" },
+  { value: "CSSC", label: "CSSC" },
+  { value: "HESA", label: "HESA" },
+  // Other
+  { value: "DRDO", label: "DRDO" },
+  { value: "Cochin Shipyard", label: "Cochin Shipyard" },
+  { value: "Konštrukta-Defence", label: "Konštrukta-Defence" },
+  { value: "Patria", label: "Patria" },
 ];
 
 // Wikipedia article title overrides for products whose names differ from their article titles
@@ -735,7 +794,7 @@ export default function Products() {
         {filteredProducts.map((product) => {
           const Icon = getCategoryIcon(product.category);
           const isSelectedForCompare = selectedForCompare.find(p => p.id === product.id);
-          const logoUrl = getLogoUrl(product.manufacturer);
+          const logoUrl = getClearbitUrl(product.manufacturer);
           return (
             <Card 
               key={product.id}
@@ -1014,9 +1073,9 @@ export default function Products() {
                   className="flex items-center gap-2 mt-2 group text-left bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg px-2.5 py-1.5 transition-all"
                   title={`View ${selectedProduct.manufacturer} profile`}
                 >
-                  {getLogoUrl(selectedProduct.manufacturer) ? (
+                  {getClearbitUrl(selectedProduct.manufacturer) ? (
                     <img
-                      src={getLogoUrl(selectedProduct.manufacturer)}
+                      src={getClearbitUrl(selectedProduct.manufacturer)}
                       alt={selectedProduct.manufacturer}
                       className="w-5 h-5 rounded object-contain shrink-0"
                       onError={(ev) => { ev.target.style.display = 'none'; ev.target.nextElementSibling.style.display = 'block'; }}
@@ -1024,7 +1083,7 @@ export default function Products() {
                   ) : null}
                   <Building2
                     className="w-4 h-4 text-slate-400 group-hover:text-purple-500 shrink-0 transition-colors"
-                    style={{ display: getLogoUrl(selectedProduct.manufacturer) ? 'none' : 'block' }}
+                    style={{ display: getClearbitUrl(selectedProduct.manufacturer) ? 'none' : 'block' }}
                   />
                   <span className="text-sm text-slate-600 group-hover:text-purple-700 font-medium transition-colors">
                     {selectedProduct.manufacturer}
