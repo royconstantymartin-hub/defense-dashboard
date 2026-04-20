@@ -384,7 +384,7 @@ const WIKI_TITLES = {
   "Vector UAV": "Quantum-Systems",
   "DG100 Autonomous USV": "Sea Hunter (ship)",
   "IDEFX Autonomous UUV": "Boeing Orca (autonomous underwater vehicle)",
-  "Harmattan Combat Drone": "TAI Akıncı",
+  "Harmattan Combat Drone": "ScanEagle",
   "Harmattan Layered Air Defense": "Sky Sabre",
   "Harmattan EW Suite": "EC-130H Compass Call",
   "Harmattan C2 Platform": "Blue Force Tracking",
