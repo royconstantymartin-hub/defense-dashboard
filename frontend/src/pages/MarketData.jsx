@@ -642,7 +642,7 @@ export default function MarketData() {
   const totalRevenue = filteredPlayers.reduce((sum, p) => sum + p.revenue, 0);
   const totalEmployees = filteredPlayers.reduce((sum, p) => sum + p.employees, 0);
 
-  const top10Players = filteredPlayers.slice(0, 10);
+  const top10Players = [...filteredPlayers].sort((a, b) => b.market_cap - a.market_cap).slice(0, 10);
 
   const getFlag = (country) => {
     const code = COUNTRY_FLAGS[country];

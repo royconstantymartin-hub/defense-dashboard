@@ -651,7 +651,7 @@ async def get_defense_players(country: Optional[str] = None):
     query = {}
     if country:
         query["country"] = country
-    players = await db.defense_players.find(query, {"_id": 0}).sort("market_cap", -1).to_list(100)
+    players = await db.defense_players.find(query, {"_id": 0}).sort("market_cap", -1).to_list(None)
     for p in players:
         if isinstance(p.get('updated_at'), str):
             p['updated_at'] = datetime.fromisoformat(p['updated_at'])
