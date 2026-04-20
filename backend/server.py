@@ -1068,17 +1068,30 @@ async def _run_seed() -> dict:
             regulation = Regulation(**r)
             await db.regulations.insert_one(regulation.model_dump())
 
-    # Seed Products (insert new, update image_url for existing)
+    # Remove products that have been consolidated or corrected
+    PRODUCTS_TO_DELETE = [
+        "Harmattan Layered Air Defense",
+        "Harmattan EW Suite",
+        "Harmattan C2 Platform",
+        "Heron Systems AI Dogfighter",  # mis-attributed to Helsing
+    ]
+    for name in PRODUCTS_TO_DELETE:
+        await db.products.delete_one({"name": name})
+
+    # Seed Products (insert new, update image_url + specifications for existing)
     for p in PRODUCTS_DATA:
         existing = await db.products.find_one({"name": p['name']})
         if not existing:
             product = Product(**p)
             await db.products.insert_one(product.model_dump())
-        elif p.get('image_url') and existing.get('image_url') != p.get('image_url'):
-            await db.products.update_one(
-                {"name": p['name']},
-                {"$set": {"image_url": p['image_url']}}
-            )
+        else:
+            updates = {}
+            if p.get('image_url') and existing.get('image_url') != p.get('image_url'):
+                updates['image_url'] = p['image_url']
+            if p.get('specifications') and existing.get('specifications') != p.get('specifications'):
+                updates['specifications'] = p['specifications']
+            if updates:
+                await db.products.update_one({"name": p['name']}, {"$set": updates})
 
     # Seed Contracts — upsert by stable key so re-seeding updates existing records
     # (e.g. title translations, source_url fixes) without creating duplicates.
