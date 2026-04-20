@@ -53,6 +53,7 @@ DEFENSE_COMPANIES = [
     {"name": "MTU Aero Engines", "ticker": "MTX.DE", "country": "Germany", "market_cap": 14.5, "stock_price": 275.90, "change_percent": 0.67, "revenue": 6.3, "employees": 12000, "specializations": ["Engines", "MRO"]},
     {"name": "Krauss-Maffei Wegmann", "ticker": "KMW-PRIV", "country": "Germany", "market_cap": 3.5, "stock_price": 0, "change_percent": 0, "revenue": 2.8, "employees": 5500, "specializations": ["Tanks", "Leopard", "Land Systems"]},
     {"name": "Renk Group", "ticker": "R3NK.DE", "country": "Germany", "market_cap": 2.8, "stock_price": 28.90, "change_percent": 2.34, "revenue": 0.9, "employees": 3400, "specializations": ["Transmissions", "Propulsion", "Components"]},
+    {"name": "Helsing", "ticker": "HELS-PRIV", "country": "Germany", "market_cap": 3.7, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 450, "specializations": ["AI", "Electronic Warfare", "Autonomous", "Software"]},
     # === Italy ===
     {"name": "Leonardo", "ticker": "LDO.MI", "country": "Italy", "market_cap": 14.8, "stock_price": 25.67, "change_percent": 1.56, "revenue": 15.3, "employees": 53000, "specializations": ["Helicopters", "Electronics", "Cyber", "Space"]},
     {"name": "Fincantieri", "ticker": "FCT.MI", "country": "Italy", "market_cap": 2.1, "stock_price": 1.23, "change_percent": 0.89, "revenue": 7.8, "employees": 21000, "specializations": ["Naval", "Shipbuilding", "Cruise Ships"]},
@@ -2468,6 +2469,28 @@ COMPANY_ENRICHMENTS = {
         "description": "Italian shipbuilding company, one of the world's largest. Naval division builds FREMM frigates, PPA patrol vessels, LHD amphibious ships and submarines. Commercial division builds cruise ships and ferries.",
         "programs": ["PPA Multipurpose Patrol Vessel", "FREMM Frigate (Italy)", "LHD Trieste", "SSP Submarine (Upcoming)"],
         "export_countries": ["it", "us", "qa", "eg", "ng"],
+    },
+    "Helsing": {
+        "founded_year": 2021,
+        "headquarters": "Munich, Germany",
+        "website": "https://www.helsing.ai",
+        "linkedin": "https://www.linkedin.com/company/helsing",
+        "funding_stage": "Private — Series B (€450M, 2023, €3.4B valuation)",
+        "is_public": False,
+        "description": "European AI-for-defence company headquartered in Munich with offices in London. Develops AI software for fighter aircraft (SG-1 Foresight sensor fusion for Eurofighter Typhoon / Rafale), autonomous drones (HX-2), and electronic warfare (EW-Inferenz AI platform). Series B co-invested by L3Harris as strategic partner.",
+        "programs": ["SG-1 Foresight (Typhoon / Rafale AI)", "HX-2 Autonomous Drone", "EW-Inferenz AI EW Platform"],
+        "export_countries": ["de", "gb", "fr"],
+    },
+    "Shield AI": {
+        "founded_year": 2015,
+        "headquarters": "San Diego, CA, USA",
+        "website": "https://www.shield.ai",
+        "linkedin": "https://www.linkedin.com/company/shield-ai",
+        "funding_stage": "Private — Series F ($2.7B valuation, 2023)",
+        "is_public": False,
+        "description": "US defence AI company building autonomous pilot software for GPS/comms-denied environments. Hivemind AI Pilot has flown F-16s and defeated human pilots in dogfighting simulations. Acquired Heron Systems and Martin UAV (V-BAT VTOL drone). Backed by Andreessen Horowitz and Point72.",
+        "programs": ["Hivemind AI Pilot", "V-BAT VTOL UAV", "VAULT25 (F-16 Autonomous Wingman)"],
+        "export_countries": ["us", "au"],
     },
 }
 

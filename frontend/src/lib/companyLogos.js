@@ -87,6 +87,7 @@ export const COMPANY_LOGOS = {
   "MTU Aero Engines": "mtu.de",
   "Renk Group": "renk.eu",
   "ThyssenKrupp Marine": "thyssenkrupp-marine-systems.com",
+  "Helsing": "helsing.ai",
   // Italy
   "Fincantieri": "fincantieri.com",
   "Elettronica": "elt.it",
