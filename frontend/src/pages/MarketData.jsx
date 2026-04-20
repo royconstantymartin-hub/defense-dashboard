@@ -706,7 +706,7 @@ export default function MarketData() {
         </Card>
       </div>
 
-      {/* Top 10 — compact card grid */}
+      {/* Top 10 — featured layout */}
       <Card className="bg-white border-slate-200 shadow-sm" data-testid="market-cap-chart">
         <CardHeader className="border-b border-slate-100 pb-3">
           <div className="flex items-center justify-between">
@@ -714,56 +714,94 @@ export default function MarketData() {
             <span className="text-xs text-slate-400">{filteredPlayers.length} companies</span>
           </div>
         </CardHeader>
-        <CardContent className="pt-4">
+        <CardContent className="pt-4 space-y-3">
           {top10Players.length === 0 ? (
             <p className="text-slate-400 text-sm py-8 text-center">No companies match your current filters.</p>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
-              {top10Players.map((player, i) => {
-                const change = liveData[player.ticker]?.change_percent ?? player.change_percent;
+            <>
+              {/* #1 — hero card */}
+              {(() => {
+                const p = top10Players[0];
+                const change = liveData[p.ticker]?.change_percent ?? p.change_percent;
                 const isPos = change >= 0;
-                const priv = isPrivate(player.ticker);
-                const flagUrl = getFlag(player.country);
+                const priv = isPrivate(p.ticker);
+                const flagUrl = getFlag(p.country);
                 return (
                   <button
-                    key={player.id}
-                    onClick={() => setSelectedPlayer(player)}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all group text-left"
+                    onClick={() => setSelectedPlayer(p)}
+                    className="w-full flex items-center gap-5 p-5 rounded-2xl bg-slate-900 hover:bg-slate-800 transition-colors group text-left"
                   >
-                    {/* Rank */}
-                    <span className={`text-xs font-mono w-4 shrink-0 font-bold ${i === 0 ? "text-amber-500" : i < 3 ? "text-slate-400" : "text-slate-200"}`}>
-                      {i + 1}
-                    </span>
-
-                    {/* Logo */}
                     <LogoWithFallback
-                      name={player.name}
-                      clearbitUrl={getLogo(player.name)}
-                      sizeClass="w-10 h-10"
-                      textClass="text-xs"
-                      rounded="rounded-xl"
+                      name={p.name}
+                      clearbitUrl={getLogo(p.name)}
+                      sizeClass="w-16 h-16"
+                      textClass="text-lg"
+                      rounded="rounded-2xl"
                     />
-
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-slate-800 group-hover:text-purple-700 transition-colors truncate leading-tight">
-                        {player.name}
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        {flagUrl && <img src={flagUrl} alt={player.country} className="w-3.5 h-2.5 rounded-sm object-cover shrink-0" />}
-                        <span className="text-[10px] font-mono text-slate-400 truncate">{priv ? "Private" : player.ticker}</span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Rank #1</span>
+                        {flagUrl && <img src={flagUrl} alt={p.country} className="w-4 h-3 rounded-sm object-cover opacity-70" />}
                       </div>
-                      <div className="flex items-center justify-between mt-1.5">
-                        <span className="text-sm font-mono font-bold text-slate-900">${player.market_cap}B</span>
-                        <span className={`text-[11px] font-mono font-medium ${priv ? "text-slate-300" : isPos ? "text-emerald-600" : "text-rose-600"}`}>
-                          {priv ? "—" : `${isPos ? "+" : ""}${change.toFixed(2)}%`}
+                      <p className="text-xl font-heading font-bold text-white truncate">{p.name}</p>
+                      <p className="text-xs font-mono text-slate-400 mt-0.5">{priv ? "Private" : p.ticker} · {p.country}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-3xl font-mono font-bold text-white">${p.market_cap}B</p>
+                      {!priv && (
+                        <span className={`text-sm font-mono font-semibold mt-1 inline-block ${isPos ? "text-emerald-400" : "text-rose-400"}`}>
+                          {isPos ? "+" : ""}{change.toFixed(2)}%
                         </span>
-                      </div>
+                      )}
                     </div>
                   </button>
                 );
-              })}
-            </div>
+              })()}
+
+              {/* #2–10 — compact 3-col grid */}
+              <div className="grid grid-cols-3 gap-2">
+                {top10Players.slice(1).map((player, i) => {
+                  const rank = i + 2;
+                  const change = liveData[player.ticker]?.change_percent ?? player.change_percent;
+                  const isPos = change >= 0;
+                  const priv = isPrivate(player.ticker);
+                  const flagUrl = getFlag(player.country);
+                  return (
+                    <button
+                      key={player.id}
+                      onClick={() => setSelectedPlayer(player)}
+                      className="flex flex-col gap-2 p-3 rounded-xl border border-slate-100 hover:border-slate-300 hover:shadow-sm transition-all group text-left"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono text-slate-300 font-bold">#{rank}</span>
+                        <LogoWithFallback
+                          name={player.name}
+                          clearbitUrl={getLogo(player.name)}
+                          sizeClass="w-7 h-7"
+                          textClass="text-[8px]"
+                          rounded="rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-800 group-hover:text-purple-700 transition-colors truncate leading-tight">
+                          {player.name}
+                        </p>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          {flagUrl && <img src={flagUrl} alt={player.country} className="w-3 h-2 rounded-sm object-cover shrink-0" />}
+                          <span className="text-[9px] font-mono text-slate-400 truncate">{priv ? "Private" : player.ticker}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-end justify-between mt-auto">
+                        <span className="text-sm font-mono font-bold text-slate-900">${player.market_cap}B</span>
+                        <span className={`text-[10px] font-mono font-medium ${priv ? "text-slate-300" : isPos ? "text-emerald-600" : "text-rose-600"}`}>
+                          {priv ? "—" : `${isPos ? "+" : ""}${change.toFixed(2)}%`}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
