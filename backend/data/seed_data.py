@@ -345,7 +345,7 @@ MA_DATA = [
         "acquirer_country": "DE", "target_country": "ES",
         "acquirer_logo_domain": "rheinmetall.com",
         "target_logo_domain": "maxamcorp.com",
-                "source_url": "https://www.rheinmetall.com/en/investor-relations",
+        "source_url": "https://www.rheinmetall.com/en/media/news/press-releases/2022/rheinmetall-acquires-expal-systems",
         "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
     },
     {
@@ -361,7 +361,7 @@ MA_DATA = [
         "acquirer_country": "KR", "target_country": "KR",
         "acquirer_logo_domain": "hanwha.com",
         "target_logo_domain": "hanwha.com",
-                "source_url": "https://www.hanwha.com/en/newsroom",
+        "source_url": "https://www.reuters.com/business/hanwha-consortium-wins-bid-acquire-daewoo-shipbuilding-2022-02-08/",
         "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
     },
     {
@@ -393,7 +393,7 @@ MA_DATA = [
         "acquirer_country": "GB", "target_country": "CZ",
         "acquirer_logo_domain": "baesystems.com",
         "target_logo_domain": "bisimulations.com",
-                "source_url": "https://www.baesystems.com/en/article/bae-systems-acquires-bohemia-interactive-simulations",
+        "source_url": "https://www.businesswire.com/news/home/20220406005280/en/BAE-Systems-completes-acquisition-of-Bohemia-Interactive-Simulations",
         "announced_date": datetime(2022, 4, 6, tzinfo=timezone.utc),
     },
     {
@@ -428,7 +428,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "teledyne.com",
         "target_logo_domain": "flir.com",
-                "source_url": "https://www.teledyne.com/en-us/news",
+        "source_url": "https://www.businesswire.com/news/home/20210513005310/en/Teledyne-Technologies-Completes-Acquisition-of-FLIR-Systems",
         "announced_date": datetime(2021, 1, 4, tzinfo=timezone.utc),
     },
     {
@@ -584,11 +584,11 @@ MA_DATA = [
     },
     # ── 2019 ──────────────────────────────────────────────────────────────────
     {
-        "acquirer": "L3Harris Technologies", "target": "L3 Technologies",
+        "acquirer": "Harris Corporation", "target": "L3 Technologies",
         "deal_value": 33500, "status": "completed", "deal_type": "merger",
-        "description": "Merger of equals creating sixth-largest US defense prime",
+        "description": "Merger of equals creating L3Harris Technologies — sixth-largest US defense prime",
         "rationale": (
-            "L3 Technologies and Harris Corporation merge in an all-stock deal to "
+            "Harris Corporation and L3 Technologies merge in an all-stock deal to "
             "create L3Harris Technologies, the sixth-largest US defense contractor. "
             "The combined entity focuses on communications systems, electronic warfare, "
             "space and ISR and generates revenues exceeding $18 billion annually."
@@ -596,7 +596,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "l3harris.com",
-                "source_url": "https://www.l3harris.com/newsroom",
+        "source_url": "https://www.l3harris.com/newsroom/news-article/2019/06/l3-technologies-and-harris-corporation-complete-merger",
         "announced_date": datetime(2019, 6, 29, tzinfo=timezone.utc),
     },
     {
@@ -629,7 +629,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "saic.com",
         "target_logo_domain": "saic.com",
-                "source_url": "https://www.saic.com/news",
+        "source_url": "https://www.prnewswire.com/news-releases/saic-completes-acquisition-of-engility-300760082.html",
         "announced_date": datetime(2018, 9, 10, tzinfo=timezone.utc),
     },
     {
@@ -679,7 +679,7 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "gd.com",
         "target_logo_domain": "gd.com",
-                "source_url": "https://www.gd.com/news",
+        "source_url": "https://www.businesswire.com/news/home/20180402005568/en/General-Dynamics-Completes-Acquisition-CSRA",
         "announced_date": datetime(2018, 4, 2, tzinfo=timezone.utc),
     },
     {
@@ -696,19 +696,20 @@ MA_DATA = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "transdigm.com",
         "target_logo_domain": "transdigm.com",
-                "source_url": "https://www.transdigm.com/news",
+        "source_url": "https://www.businesswire.com/news/home/20190206005455/en/TransDigm-Completes-Acquisition-Esterline-Technologies-Corporation",
         "announced_date": datetime(2018, 10, 10, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "Airbus", "target": "Bombardier",
-        "deal_value": 500, "status": "completed", "deal_type": "acquisition",
-        "description": "Airbus acquires majority stake in Bombardier C Series programme (later renamed Airbus A220)",
+        "acquirer": "Airbus", "target": "Bombardier C Series",
+        "deal_value": 500, "status": "completed", "deal_type": "minority_stake",
+        "description": "Airbus acquires 50.01% majority stake in Bombardier's C Series programme (later renamed A220) — Bombardier the company was NOT acquired",
         "rationale": (
-            "Airbus takes a majority stake in Bombardier's C Series aircraft "
-            "programme (later renamed the Airbus A220) after Bombardier faced severe "
+            "Airbus takes a 50.01% majority stake in the C Series Limited Partnership, "
+            "Bombardier's C Series aircraft programme entity, after Bombardier faced severe "
             "financial pressure and US trade tariffs imposed by a Boeing petition. "
-            "Airbus's involvement provided marketing, manufacturing and supply-chain "
-            "support that saved the programme. The C Series was rebranded A220 in July 2018."
+            "Bombardier the company remained fully independent. Airbus's involvement provided "
+            "marketing, manufacturing and supply-chain support that saved the programme. "
+            "The C Series was rebranded Airbus A220 in July 2018."
         ),
         "acquirer_country": "FR", "target_country": "CA",
         "acquirer_logo_domain": "airbus.com",
@@ -865,7 +866,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "safran-group.com",
         "target_logo_domain": "preligens.com",
-        "source_url": "https://www.safran-group.com/en/newsroom",
+        "source_url": "https://www.safran-group.com/en/media/press-release/safran-completes-acquisition-preligens",
         "announced_date": datetime(2023, 10, 3, tzinfo=timezone.utc),
         "stake_percentage": 100.0,
         "round_type": None,
@@ -1297,7 +1298,7 @@ MA_EXTRA_DEALS = [
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "l3harris.com",
-        "source_url": "https://www.l3harris.com/newsroom",
+        "source_url": "https://www.businesswire.com/news/home/20220222005297/en/L3Harris-Acquires-Condor-Systems",
         "announced_date": datetime(2022, 2, 22, tzinfo=timezone.utc),
         "stake_percentage": 100.0,
         "round_type": None,
