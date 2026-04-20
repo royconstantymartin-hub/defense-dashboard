@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getLogoUrl } from "@/lib/companyLogos";
+import { getClearbitUrl } from "@/lib/companyLogos";
 import {
   Sheet, SheetContent,
 } from "@/components/ui/sheet";
@@ -98,7 +98,7 @@ function CompanyLogo({ name, size = "lg" }) {
   const [failed, setFailed] = useState(false);
   const sizeClass = size === "lg" ? "w-16 h-16" : "w-10 h-10";
   const textClass = size === "lg" ? "text-xl" : "text-sm";
-  const logoUrl = getLogoUrl(name);
+  const logoUrl = getClearbitUrl(name);
 
   if (logoUrl && !failed) {
     return (
