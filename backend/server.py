@@ -1171,6 +1171,9 @@ async def run_news_scraper_job() -> dict:
         # French specialty sources
         "Forces Operations", "Secret Défense", "Lignes de Défense",
         "Ministère des Armées", "Aerobuzz", "EuroDéfense",
+        # Defense acquisition & programs
+        "Warrior Maven", "DoD News", "Federal News Network",
+        "Defense Aerospace", "CSIS Defense", "Scout Warrior",
     }
     _FR_SOURCES = {
         "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
@@ -1323,6 +1326,9 @@ _SPECIALTY_SOURCES_LIST = [
     # French specialty sources
     "Forces Operations", "Secret Défense", "Lignes de Défense",
     "Ministère des Armées", "Aerobuzz", "EuroDéfense",
+    # Defense acquisition & programs
+    "Warrior Maven", "DoD News", "Federal News Network",
+    "Defense Aerospace", "CSIS Defense", "Scout Warrior",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 

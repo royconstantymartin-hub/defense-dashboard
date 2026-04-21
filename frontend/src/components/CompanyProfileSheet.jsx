@@ -50,6 +50,7 @@ const COUNTRY_CODES = {
   "Romania": "ro",
   "UAE": "ae",
   "Saudi Arabia": "sa",
+  "Estonia": "ee",
 };
 
 // ── ISO code → display name (for export markets) ────────────────────────────

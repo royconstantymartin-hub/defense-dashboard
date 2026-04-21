@@ -231,6 +231,13 @@ export default function Dashboard() {
     [recentNews]
   );
 
+  // Sort by publishedAt descending so the hero is always the newest article,
+  // regardless of the relevance-first ordering returned by the API.
+  const sortedNews = useMemo(
+    () => [...recentNews].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)),
+    [recentNews]
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -675,13 +682,13 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="p-0" data-testid="recent-announcements">
-            {recentNews.length === 0 ? (
+            {sortedNews.length === 0 ? (
               <div className="p-8 text-center text-slate-500 text-sm">No recent news</div>
             ) : (
               <>
-                {/* Hero article — first item */}
+                {/* Hero article — most recent item */}
                 {(() => {
-                  const item = recentNews[0];
+                  const item = sortedNews[0];
                   const host = hostFromUrl(item.url);
                   const ago = relativeTime(item.publishedAt);
                   return (
@@ -752,7 +759,7 @@ export default function Dashboard() {
 
                 {/* Compact rows — remaining articles */}
                 <div className="divide-y divide-slate-100">
-                  {recentNews.slice(1).map((item, idx) => {
+                  {sortedNews.slice(1).map((item, idx) => {
                     const host = hostFromUrl(item.url);
                     const ago = relativeTime(item.publishedAt);
                     return (

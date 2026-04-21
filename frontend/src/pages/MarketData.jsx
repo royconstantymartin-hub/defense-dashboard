@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getClearbitUrl } from "@/lib/companyLogos";
+import { getClearbitUrl, getLogoUrls } from "@/lib/companyLogos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle, Star } from "lucide-react";
+import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle, Star, Pin } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
@@ -139,12 +139,13 @@ function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-// Logo: unavatar.io → letter-avatar fallback
-// sizeClass defaults to table row size; pass override for modal/card use
-function LogoWithFallback({ name, clearbitUrl, sizeClass = "w-8 h-8", textClass = "text-[10px]", rounded = "rounded-lg" }) {
-  const [failed, setFailed] = useState(false);
+// Tries each URL in sequence; falls back to letter avatar when all fail.
+// Accepts either `urls` (array, preferred) or legacy `clearbitUrl` (single string).
+function LogoWithFallback({ name, urls, clearbitUrl, sizeClass = "w-8 h-8", textClass = "text-[10px]", rounded = "rounded-lg" }) {
+  const urlList = urls ?? (clearbitUrl ? [clearbitUrl] : []);
+  const [urlIndex, setUrlIndex] = useState(0);
 
-  if (!clearbitUrl || failed) {
+  if (!urlList.length || urlIndex >= urlList.length) {
     return (
       <div className={`${sizeClass} bg-gradient-to-br ${avatarColor(name)} ${rounded} flex items-center justify-center shrink-0`}>
         <span className={`${textClass} font-bold text-white tracking-tight`}>{initials(name)}</span>
@@ -154,10 +155,10 @@ function LogoWithFallback({ name, clearbitUrl, sizeClass = "w-8 h-8", textClass 
 
   return (
     <img
-      src={clearbitUrl}
+      src={urlList[urlIndex]}
       alt={name}
       className={`${sizeClass} ${rounded} object-contain bg-white border border-slate-100 shrink-0`}
-      onError={() => setFailed(true)}
+      onError={() => setUrlIndex((i) => i + 1)}
     />
   );
 }
@@ -484,6 +485,11 @@ export default function MarketData() {
   const [lastUpdated, setLastUpdated] = useState(null);
   // watchlist: Set of company names
   const [watchlist, setWatchlist] = useState(new Set());
+  // pinnedCompanies: up to 3 company names, persisted in localStorage
+  const [pinnedCompanies, setPinnedCompanies] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("market_pinned_v1")) || []; }
+    catch { return []; }
+  });
 
   // Load watchlist (authenticated users only)
   useEffect(() => {
@@ -492,6 +498,22 @@ export default function MarketData() {
       .then((r) => setWatchlist(new Set(r.data)))
       .catch(() => {});
   }, [token]);
+
+  const togglePin = (e, companyName) => {
+    e.stopPropagation();
+    setPinnedCompanies((prev) => {
+      let next;
+      if (prev.includes(companyName)) {
+        next = prev.filter((n) => n !== companyName);
+      } else if (prev.length < 3) {
+        next = [...prev, companyName];
+      } else {
+        return prev;
+      }
+      localStorage.setItem("market_pinned_v1", JSON.stringify(next));
+      return next;
+    });
+  };
 
   const toggleWatch = async (e, companyName) => {
     e.stopPropagation();
@@ -623,8 +645,6 @@ export default function MarketData() {
   const totalRevenue = filteredPlayers.reduce((sum, p) => sum + p.revenue, 0);
   const totalEmployees = filteredPlayers.reduce((sum, p) => sum + p.employees, 0);
 
-  const top10Players = [...filteredPlayers].sort((a, b) => b.market_cap - a.market_cap).slice(0, 10);
-
   const getFlag = (country) => {
     const code = COUNTRY_FLAGS[country];
     return code ? `https://flagcdn.com/w40/${code}.png` : null;
@@ -706,48 +726,73 @@ export default function MarketData() {
         </Card>
       </div>
 
-      {/* Top 10 — featured layout */}
+      {/* Pinned Favorites */}
       <Card className="bg-white border-slate-200 shadow-sm" data-testid="market-cap-chart">
         <CardHeader className="border-b border-slate-100 pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="font-heading text-lg text-slate-900">Top 10 by Market Cap</CardTitle>
-            <span className="text-xs text-slate-400">{filteredPlayers.length} companies</span>
+            <div>
+              <CardTitle className="font-heading text-lg text-slate-900 flex items-center gap-2">
+                <Pin className="w-4 h-4 text-purple-600" />
+                Entreprises épinglées
+              </CardTitle>
+              <p className="text-xs text-slate-400 mt-0.5">Cliquez sur l'icône <Pin className="w-3 h-3 inline text-purple-500" /> dans le tableau pour épingler jusqu'à 3 entreprises</p>
+            </div>
+            <span className="text-xs font-mono text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-md">
+              {pinnedCompanies.length} / 3
+            </span>
           </div>
         </CardHeader>
-        <CardContent className="pt-4 space-y-3">
-          {top10Players.length === 0 ? (
-            <p className="text-slate-400 text-sm py-8 text-center">No companies match your current filters.</p>
+        <CardContent className="pt-4">
+          {pinnedCompanies.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-slate-200 rounded-xl gap-3">
+              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                <Pin className="w-5 h-5 text-slate-300" />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-slate-500">Aucune entreprise épinglée</p>
+                <p className="text-xs text-slate-400 mt-1">Utilisez l'icône <Pin className="w-3 h-3 inline" /> dans le tableau pour suivre 1 à 3 entreprises</p>
+              </div>
+            </div>
           ) : (
-            <>
-              {/* #1 — hero card */}
-              {(() => {
-                const p = top10Players[0];
+            <div className={`grid gap-3 ${pinnedCompanies.length === 1 ? "grid-cols-1" : pinnedCompanies.length === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-3"}`}>
+              {pinnedCompanies.map((name) => {
+                const p = players.find((pl) => pl.name === name);
+                if (!p) return null;
                 const change = liveData[p.ticker]?.change_percent ?? p.change_percent;
                 const isPos = change >= 0;
                 const priv = isPrivate(p.ticker);
                 const flagUrl = getFlag(p.country);
+                const isLarge = pinnedCompanies.length === 1;
                 return (
                   <button
+                    key={name}
                     onClick={() => setSelectedPlayer(p)}
-                    className="w-full flex items-center gap-5 p-5 rounded-2xl bg-slate-900 hover:bg-slate-800 transition-colors group text-left"
+                    className="relative flex items-center gap-4 p-5 rounded-2xl bg-slate-900 hover:bg-slate-800 transition-colors text-left"
                   >
+                    <button
+                      onClick={(e) => togglePin(e, name)}
+                      title="Désépingler"
+                      className="absolute top-3 right-3 p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
                     <LogoWithFallback
                       name={p.name}
-                      clearbitUrl={getLogo(p.name)}
-                      sizeClass="w-16 h-16"
-                      textClass="text-lg"
+                      urls={getLogoUrls(p.name)}
+                      sizeClass={isLarge ? "w-16 h-16" : "w-12 h-12"}
+                      textClass={isLarge ? "text-lg" : "text-sm"}
                       rounded="rounded-2xl"
                     />
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 pr-8">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Rank #1</span>
                         {flagUrl && <img src={flagUrl} alt={p.country} className="w-4 h-3 rounded-sm object-cover opacity-70" />}
+                        <span className="text-[10px] text-slate-400 font-mono">{p.country}</span>
                       </div>
-                      <p className="text-xl font-heading font-bold text-white truncate">{p.name}</p>
-                      <p className="text-xs font-mono text-slate-400 mt-0.5">{priv ? "Private" : p.ticker} · {p.country}</p>
+                      <p className={`font-heading font-bold text-white truncate ${isLarge ? "text-xl" : "text-base"}`}>{p.name}</p>
+                      <p className="text-xs font-mono text-slate-400 mt-0.5">{priv ? "Private" : p.ticker}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-3xl font-mono font-bold text-white">${p.market_cap}B</p>
+                      <p className={`font-mono font-bold text-white ${isLarge ? "text-3xl" : "text-xl"}`}>${p.market_cap}B</p>
                       {!priv && (
                         <span className={`text-sm font-mono font-semibold mt-1 inline-block ${isPos ? "text-emerald-400" : "text-rose-400"}`}>
                           {isPos ? "+" : ""}{change.toFixed(2)}%
@@ -756,52 +801,8 @@ export default function MarketData() {
                     </div>
                   </button>
                 );
-              })()}
-
-              {/* #2–10 — compact 3-col grid */}
-              <div className="grid grid-cols-3 gap-2">
-                {top10Players.slice(1).map((player, i) => {
-                  const rank = i + 2;
-                  const change = liveData[player.ticker]?.change_percent ?? player.change_percent;
-                  const isPos = change >= 0;
-                  const priv = isPrivate(player.ticker);
-                  const flagUrl = getFlag(player.country);
-                  return (
-                    <button
-                      key={player.id}
-                      onClick={() => setSelectedPlayer(player)}
-                      className="flex flex-col gap-2 p-3 rounded-xl border border-slate-100 hover:border-slate-300 hover:shadow-sm transition-all group text-left"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono text-slate-300 font-bold">#{rank}</span>
-                        <LogoWithFallback
-                          name={player.name}
-                          clearbitUrl={getLogo(player.name)}
-                          sizeClass="w-7 h-7"
-                          textClass="text-[8px]"
-                          rounded="rounded-lg"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-slate-800 group-hover:text-purple-700 transition-colors truncate leading-tight">
-                          {player.name}
-                        </p>
-                        <div className="flex items-center gap-1 mt-0.5">
-                          {flagUrl && <img src={flagUrl} alt={player.country} className="w-3 h-2 rounded-sm object-cover shrink-0" />}
-                          <span className="text-[9px] font-mono text-slate-400 truncate">{priv ? "Private" : player.ticker}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-end justify-between mt-auto">
-                        <span className="text-sm font-mono font-bold text-slate-900">${player.market_cap}B</span>
-                        <span className={`text-[10px] font-mono font-medium ${priv ? "text-slate-300" : isPos ? "text-emerald-600" : "text-rose-600"}`}>
-                          {priv ? "—" : `${isPos ? "+" : ""}${change.toFixed(2)}%`}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </>
+              })}
+            </div>
           )}
         </CardContent>
       </Card>
@@ -898,7 +899,7 @@ export default function MarketData() {
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4 w-8">{token ? "" : ""}</th>
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4 w-16"></th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Company</th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Ticker</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Stock Price</th>
@@ -928,17 +929,39 @@ export default function MarketData() {
                       onClick={() => setSelectedPlayer(player)}
                       data-testid={`player-row-${player.id}`}
                     >
-                      {/* Watchlist star */}
-                      <td className="p-4 w-8">
-                        {token && (
+                      {/* Pin + Watchlist */}
+                      <td className="p-4 w-16">
+                        <div className="flex items-center gap-0.5">
                           <button
-                            onClick={(e) => toggleWatch(e, player.name)}
-                            title={watchlist.has(player.name) ? "Remove from watchlist" : "Add to watchlist"}
-                            className="p-1 rounded hover:bg-amber-50 transition-colors"
+                            onClick={(e) => togglePin(e, player.name)}
+                            title={
+                              pinnedCompanies.includes(player.name)
+                                ? "Désépingler"
+                                : pinnedCompanies.length >= 3
+                                ? "Maximum 3 entreprises épinglées"
+                                : "Épingler"
+                            }
+                            disabled={!pinnedCompanies.includes(player.name) && pinnedCompanies.length >= 3}
+                            className={`p-1 rounded transition-colors ${
+                              pinnedCompanies.includes(player.name)
+                                ? "text-purple-600 hover:text-purple-800"
+                                : pinnedCompanies.length >= 3
+                                ? "text-slate-200 cursor-not-allowed"
+                                : "text-slate-300 hover:text-purple-500 hover:bg-purple-50"
+                            }`}
                           >
-                            <Star className={`w-4 h-4 transition-colors ${watchlist.has(player.name) ? "fill-amber-400 text-amber-400" : "text-slate-300 hover:text-amber-400"}`} />
+                            <Pin className={`w-3.5 h-3.5 ${pinnedCompanies.includes(player.name) ? "fill-purple-600" : ""}`} />
                           </button>
-                        )}
+                          {token && (
+                            <button
+                              onClick={(e) => toggleWatch(e, player.name)}
+                              title={watchlist.has(player.name) ? "Remove from watchlist" : "Add to watchlist"}
+                              className="p-1 rounded hover:bg-amber-50 transition-colors"
+                            >
+                              <Star className={`w-3.5 h-3.5 transition-colors ${watchlist.has(player.name) ? "fill-amber-400 text-amber-400" : "text-slate-300 hover:text-amber-400"}`} />
+                            </button>
+                          )}
+                        </div>
                       </td>
 
                       {/* Company */}
