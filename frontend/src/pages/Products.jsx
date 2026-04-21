@@ -343,8 +343,6 @@ const WIKI_TITLES = {
   "AMV35 IFV": "AMV (armored vehicle)",
   "Oerlikon Skyshield": "Skyshield",
   "Mistral SHORAD": "Mistral SHORAD",
-  "Ground Master 400": "Thales Ground Master",
-  "Ground Master 200": "Thales Ground Master",
   "Sea Fire 500": "Frégate de défense et d'intervention",
   "RBE2-AA AESA": "Dassault Rafale",
   "KRONOS Grand Naval": "EMPAR",
