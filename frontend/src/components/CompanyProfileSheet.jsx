@@ -94,22 +94,41 @@ function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-function CompanyLogo({ name, size = "lg" }) {
-  const [failed, setFailed] = useState(false);
+function CompanyLogo({ name, domain: domainOverride, size = "lg" }) {
+  const [level, setLevel] = useState(1);
   const sizeClass = size === "lg" ? "w-16 h-16" : "w-10 h-10";
   const textClass = size === "lg" ? "text-xl" : "text-sm";
   const logoUrl = getClearbitUrl(name);
+  // Domain for Google Favicon fallback: explicit override > extracted from Clearbit URL
+  const domain = domainOverride
+    || (logoUrl?.startsWith("https://logo.clearbit.com/")
+        ? logoUrl.replace("https://logo.clearbit.com/", "").split("?")[0]
+        : null);
 
-  if (logoUrl && !failed) {
+  useEffect(() => { setLevel(1); }, [name]);
+
+  const imgClass = `${sizeClass} rounded-2xl object-contain bg-white border border-white/20 shadow-lg p-1.5`;
+
+  // Level 1 — Clearbit HD or Wikipedia SVG
+  if (level === 1 && logoUrl) {
+    return (
+      <img src={logoUrl} alt={name} className={imgClass} onError={() => setLevel(2)} />
+    );
+  }
+
+  // Level 2 — Google Favicon (instant, works for any registered domain)
+  if (level <= 2 && domain) {
     return (
       <img
-        src={logoUrl}
+        src={`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`}
         alt={name}
-        className={`${sizeClass} rounded-2xl object-contain bg-white border border-white/20 shadow-lg p-1.5`}
-        onError={() => setFailed(true)}
+        className={imgClass}
+        onError={() => setLevel(3)}
       />
     );
   }
+
+  // Level 3 — Coloured initials avatar
   return (
     <div className={`${sizeClass} bg-gradient-to-br ${avatarColor(name)} rounded-2xl flex items-center justify-center shadow-lg shrink-0`}>
       <span className={`${textClass} font-bold text-white tracking-tight`}>{initials(name)}</span>
@@ -274,7 +293,11 @@ export default function CompanyProfileSheet({ name, onClose }) {
           </button>
 
           <div className="flex items-start gap-4">
-            <CompanyLogo name={name || ""} size="lg" />
+            <CompanyLogo
+              name={name || ""}
+              size="lg"
+              domain={(() => { try { return p?.website ? new URL(p.website).hostname : null; } catch { return null; } })()}
+            />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-xl font-bold text-white leading-tight">{name}</h2>
