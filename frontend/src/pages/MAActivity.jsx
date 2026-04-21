@@ -435,10 +435,12 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, players = [] }) {
                 </td>
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-2.5">
-                    <CompanyLogo activity={d} side="target" size="sm" />
+                    <button onClick={() => onOpenProfile(resolvePlayerName(d.target) || d.target)} className="shrink-0">
+                      <CompanyLogo activity={d} side="target" size="sm" />
+                    </button>
                     <div>
                       <button
-                        onClick={() => { const canon = resolvePlayerName(d.target); if (canon) onOpenProfile(canon); }}
+                        onClick={() => onOpenProfile(resolvePlayerName(d.target) || d.target)}
                         className="font-semibold text-slate-900 hover:text-purple-700 transition-colors text-left text-xs"
                       >
                         {d.target}
@@ -525,32 +527,14 @@ function partyActivity(name, activity, side) {
 
 function CompanyNameBtn({ name, onOpenProfile, className = "" }) {
   const canonical = resolvePlayerName(name);
-  if (canonical) {
-    return (
-      <button
-        onClick={(e) => { e.stopPropagation(); onOpenProfile(canonical); }}
-        className={`hover:text-purple-700 transition-colors text-left ${className}`}
-      >
-        {name}
-      </button>
-    );
-  }
-  const domain = LOGO_FALLBACK[name] || null;
-  if (domain) {
-    return (
-      <a
-        href={`https://${domain}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={e => e.stopPropagation()}
-        className={`hover:text-blue-600 transition-colors text-left inline-flex items-center gap-1 ${className}`}
-      >
-        {name}
-        <ExternalLink className="w-2.5 h-2.5 opacity-40 shrink-0" />
-      </a>
-    );
-  }
-  return <span className={className}>{name}</span>;
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); onOpenProfile(canonical || name); }}
+      className={`hover:text-purple-700 transition-colors text-left ${className}`}
+    >
+      {name}
+    </button>
+  );
 }
 
 function MACard({ activity, onOpenProfile }) {
@@ -587,7 +571,9 @@ function MACard({ activity, onOpenProfile }) {
                       return (
                         <div key={idx} className="flex items-center gap-1.5">
                           {idx > 0 && <span className="text-slate-300 text-xs font-light select-none">+</span>}
-                          <CompanyLogo activity={synth} side="acquirer" size={isMulti ? "sm" : "md"} />
+                          <button onClick={(e) => { e.stopPropagation(); onOpenProfile(resolvePlayerName(p.name) || p.name); }} className="shrink-0">
+                            <CompanyLogo activity={synth} side="acquirer" size={isMulti ? "sm" : "md"} />
+                          </button>
                           <div>
                             <CompanyNameBtn
                               name={p.name}
@@ -610,7 +596,9 @@ function MACard({ activity, onOpenProfile }) {
 
             {/* Target */}
             <div className="flex items-center gap-2.5 min-w-0">
-              <CompanyLogo activity={activity} side="target" />
+              <button onClick={(e) => { e.stopPropagation(); onOpenProfile(resolvePlayerName(activity.target) || activity.target); }} className="shrink-0">
+                <CompanyLogo activity={activity} side="target" />
+              </button>
               <div className="min-w-0">
                 <CompanyNameBtn
                   name={activity.target}
@@ -1068,31 +1056,17 @@ function CompanyCell({ activity, side, onOpenProfile }) {
 
   if (!isMulti) {
     const canonical = resolvePlayerName(rawName);
-    const domain    = getLogoDomain(activity, side);
     return (
       <div className="flex items-center gap-2">
-        <CompanyLogo activity={activity} side={side} size="sm" />
-        {canonical ? (
-          <button
-            onClick={e => { e.stopPropagation(); onOpenProfile(canonical); }}
-            className="text-sm font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
-          >
-            {rawName}
-          </button>
-        ) : domain ? (
-          <a
-            href={`https://${domain}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={e => e.stopPropagation()}
-            className="text-sm text-slate-600 hover:text-blue-600 transition-colors text-left leading-tight inline-flex items-center gap-1"
-          >
-            {rawName}
-            <ExternalLink className="w-2.5 h-2.5 opacity-40 shrink-0" />
-          </a>
-        ) : (
-          <span className="text-sm text-slate-600 leading-tight">{rawName}</span>
-        )}
+        <button onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }} className="shrink-0">
+          <CompanyLogo activity={activity} side={side} size="sm" />
+        </button>
+        <button
+          onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }}
+          className="text-sm font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
+        >
+          {rawName}
+        </button>
       </div>
     );
   }
@@ -1103,32 +1077,18 @@ function CompanyCell({ activity, side, onOpenProfile }) {
       {parties.map((p, idx) => {
         const synth     = partyActivity(p.name, activity, side);
         const canonical = resolvePlayerName(p.name);
-        const domain    = LOGO_FALLBACK[p.name] ?? getLogoDomain(synth, side);
         return (
           <div key={idx} className="flex items-center gap-1">
             {idx > 0 && <span className="text-slate-300 text-[10px] select-none px-0.5">+</span>}
-            <CompanyLogo activity={synth} side={side} size="sm" />
-            {canonical ? (
-              <button
-                onClick={e => { e.stopPropagation(); onOpenProfile(canonical); }}
-                className="text-xs font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
-              >
-                {p.name}
-              </button>
-            ) : domain ? (
-              <a
-                href={`https://${domain}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={e => e.stopPropagation()}
-                className="text-xs text-slate-600 hover:text-blue-600 transition-colors inline-flex items-center gap-0.5"
-              >
-                {p.name}
-                <ExternalLink className="w-2 h-2 opacity-40" />
-              </a>
-            ) : (
-              <span className="text-xs text-slate-600">{p.name}</span>
-            )}
+            <button onClick={e => { e.stopPropagation(); onOpenProfile(canonical || p.name); }} className="shrink-0">
+              <CompanyLogo activity={synth} side={side} size="sm" />
+            </button>
+            <button
+              onClick={e => { e.stopPropagation(); onOpenProfile(canonical || p.name); }}
+              className="text-xs font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
+            >
+              {p.name}
+            </button>
           </div>
         );
       })}
@@ -1307,10 +1267,12 @@ function InvestmentConsolidatedView({ deals, onOpenProfile }) {
             >
               {/* Target company — LEFT */}
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <CompanyLogo activity={synth} side="target" size="md" />
+                <button onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(group.target) || group.target); }} className="shrink-0">
+                  <CompanyLogo activity={synth} side="target" size="md" />
+                </button>
                 <div className="min-w-0">
                   <button
-                    onClick={e => { e.stopPropagation(); const c = resolvePlayerName(group.target); if (c) onOpenProfile(c); }}
+                    onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(group.target) || group.target); }}
                     className="font-semibold text-slate-900 hover:text-purple-700 text-sm leading-snug text-left block truncate"
                   >
                     {group.target}
@@ -1371,7 +1333,9 @@ function InvestmentConsolidatedView({ deals, onOpenProfile }) {
                       <tr key={r.id || rIdx} className={`border-b border-purple-50 last:border-0 ${rIdx % 2 === 0 ? "bg-white/60" : "bg-purple-50/20"}`}>
                         <td className="px-5 pl-16 py-2.5">
                           <div className="flex items-center gap-2">
-                            <CompanyLogo activity={r} side="acquirer" size="sm" />
+                            <button onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(r.acquirer) || r.acquirer); }} className="shrink-0">
+                              <CompanyLogo activity={r} side="acquirer" size="sm" />
+                            </button>
                             <CompanyNameBtn name={r.acquirer} onOpenProfile={onOpenProfile} className="text-slate-800 font-medium" />
                           </div>
                         </td>
