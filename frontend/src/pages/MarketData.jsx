@@ -733,9 +733,9 @@ export default function MarketData() {
             <div>
               <CardTitle className="font-heading text-lg text-slate-900 flex items-center gap-2">
                 <Pin className="w-4 h-4 text-purple-600" />
-                Entreprises épinglées
+                Pinned Companies
               </CardTitle>
-              <p className="text-xs text-slate-400 mt-0.5">Cliquez sur l'icône <Pin className="w-3 h-3 inline text-purple-500" /> dans le tableau pour épingler jusqu'à 3 entreprises</p>
+              <p className="text-xs text-slate-400 mt-0.5">Click the <Pin className="w-3 h-3 inline text-purple-500" /> icon in the table to pin up to 3 companies</p>
             </div>
             <span className="text-xs font-mono text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-md">
               {pinnedCompanies.length} / 3
@@ -749,8 +749,8 @@ export default function MarketData() {
                 <Pin className="w-5 h-5 text-slate-300" />
               </div>
               <div className="text-center">
-                <p className="text-sm font-medium text-slate-500">Aucune entreprise épinglée</p>
-                <p className="text-xs text-slate-400 mt-1">Utilisez l'icône <Pin className="w-3 h-3 inline" /> dans le tableau pour suivre 1 à 3 entreprises</p>
+                <p className="text-sm font-medium text-slate-500">No pinned companies</p>
+                <p className="text-xs text-slate-400 mt-1">Use the <Pin className="w-3 h-3 inline" /> icon in the table to track 1 to 3 companies</p>
               </div>
             </div>
           ) : (
@@ -771,7 +771,7 @@ export default function MarketData() {
                   >
                     <button
                       onClick={(e) => togglePin(e, name)}
-                      title="Désépingler"
+                      title="Unpin"
                       className="absolute top-3 right-3 p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
                     >
                       <X className="w-3.5 h-3.5" />
@@ -936,10 +936,10 @@ export default function MarketData() {
                             onClick={(e) => togglePin(e, player.name)}
                             title={
                               pinnedCompanies.includes(player.name)
-                                ? "Désépingler"
+                                ? "Unpin"
                                 : pinnedCompanies.length >= 3
-                                ? "Maximum 3 entreprises épinglées"
-                                : "Épingler"
+                                ? "Maximum 3 companies pinned"
+                                : "Pin"
                             }
                             disabled={!pinnedCompanies.includes(player.name) && pinnedCompanies.length >= 3}
                             className={`p-1 rounded transition-colors ${
