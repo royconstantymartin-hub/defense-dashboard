@@ -176,6 +176,10 @@ export const COMPANY_LOGOS = {
   "Dynamit Nobel Defence": "dynamit-nobel-defence.de",
   "Theon Sensors": "theonsensors.com",
   "PZL Mielec": "pzl.mielec.pl",
+  // France / Germany defense tech startups
+  "Harmattan AI": "harmattan.ai",
+  "Exail Technologies": "exail.com",
+  "Quantum Systems": "quantum-systems.com",
 };
 
 // Direct Wikipedia Commons logo URLs — confirmed filenames, never blocked by ad-blockers.
