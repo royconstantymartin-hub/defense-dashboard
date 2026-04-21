@@ -56,6 +56,15 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
     "CONTRACT":    ["contract", "award", "deal", "procurement", "tender", "bid",
                     "ordered", "orders", "purchase agreement", "firm order", "option",
                     "indefinite delivery", "idiq", "other transaction authority", "ota",
+                    # Acquisition program lifecycle
+                    "program of record", "program executive", "source selection",
+                    "down-select", "downselect", "selected to develop", "selected to build",
+                    "selected for", "chosen to develop", "chosen for",
+                    "full-rate production", "low-rate initial production", "lrip",
+                    "engineering manufacturing development", "milestone b", "milestone c",
+                    "request for proposal", "rfp issued", "solicitation",
+                    "program manager", "major defense acquisition", "mdap",
+                    "foreign military sale", "foreign military sales", "fms",
                     "contrat", "marché", "appel d'offres", "commande", "livraison",
                     "attribut", "remporté"],
     "GEOPOLITICS": ["sanctions", "diplomacy", "talks", "summit", "alliance", "tensions",
@@ -74,6 +83,11 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "space launch", "quantum", "radar", "stealth", "sensor",
                     "drone", "uav", "ugv", "usv", "unmanned", "loitering munition",
                     "missile defense", "c2 system", "command and control",
+                    # Missile defense programs
+                    "golden dome", "iron dome", "aegis", "thaad", "patriot missile",
+                    "interceptor missile", "layered defense", "missile shield",
+                    "ground-based midcourse", "hypersonic defense", "space-based interceptor",
+                    "high energy laser", "directed energy weapon", "counter-drone",
                     "intelligence artificielle", "cyberattaque", "spatial",
                     "guerre électronique", "énergie dirigée", "système d'arme",
                     "drone de combat", "véhicule autonome", "capteur", "détection"],
@@ -272,6 +286,19 @@ _RELEVANCE_TERMS: Dict[str, int] = {
     "lockheed": 7, "raytheon": 7, "northrop": 7, "bae systems": 7,
     "rheinmetall": 7, "thales": 7, "dassault": 7, "leonardo": 7,
     "boeing defense": 7, "general dynamics": 7,
+    "l3harris": 7, "l3 harris": 7, "anduril": 8, "palantir": 7,
+    "leidos": 7, "huntington ingalls": 7, "general atomics": 7,
+    "aerovironment": 6, "mercury systems": 6, "kratos": 6, "textron": 6,
+    # Acquisition programs and missile defense
+    "golden dome": 10, "iron dome": 9, "thaad": 8, "aegis": 8,
+    "interceptor": 7, "missile defense system": 9, "layered defense": 8,
+    "ground-based midcourse": 9, "missile shield": 8,
+    # Acquisition vocabulary
+    "program of record": 8, "source selection": 8, "down-select": 8,
+    "full-rate production": 8, "lrip": 7, "milestone b": 8, "milestone c": 8,
+    "engineering manufacturing development": 8,
+    "foreign military sale": 7, "foreign military sales": 7,
+    "ndaa": 7, "appropriations": 6, "defense authorization": 7,
     # Technology — 7 pts
     "autonomous": 7, "surveillance": 7, "intelligence": 6, "electronic warfare": 8,
     "space force": 8, "reconnaissance": 7,
@@ -787,6 +814,19 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Foreign Policy",            "url": "https://foreignpolicy.com/feed/",                                          "language": "en", "region": "global",  "max_items": 20},
     {"name": "Bellingcat",                "url": "https://www.bellingcat.com/feed/",                                          "language": "en", "region": "global",  "max_items": 20},
     {"name": "UK Ministry of Defence",    "url": "https://www.gov.uk/government/organisations/ministry-of-defence.atom",     "language": "en", "region": "europe",  "max_items": 20},
+    # ── Defense acquisition & programs — English ────────────────────────────
+    # Warrior Maven: procurement, programs, Pentagon budget analysis
+    {"name": "Warrior Maven",            "url": "https://warriormaven.com/feed/",                                            "language": "en", "region": "us",      "max_items": 40},
+    # DoD official news: contract awards, program announcements, policy
+    {"name": "DoD News",                 "url": "https://www.defense.gov/News/RSS/",                                         "language": "en", "region": "us",      "max_items": 30},
+    # Federal News Network: acquisition policy, Pentagon contracts, budget
+    {"name": "Federal News Network",     "url": "https://federalnewsnetwork.com/category/defense-main/feed/",                "language": "en", "region": "us",      "max_items": 30},
+    # Defense Aerospace: international programs, sales, contracts
+    {"name": "Defense Aerospace",        "url": "https://www.defense-aerospace.com/rss.xml",                                 "language": "en", "region": "global",  "max_items": 30},
+    # CSIS Defense360: strategic analysis, programs, acquisition policy
+    {"name": "CSIS Defense",             "url": "https://defense360.csis.org/feed/",                                         "language": "en", "region": "global",  "max_items": 20},
+    # Scout Warrior (Warrior Maven sister site): ground systems, programs
+    {"name": "Scout Warrior",            "url": "https://www.scoutwarrior.com/feed/",                                        "language": "en", "region": "us",      "max_items": 30},
     # ── Defense specialty — French ──────────────────────────────────────────
     {"name": "Opex360",                   "url": "https://www.opex360.com/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
     {"name": "Meta-Défense",              "url": "https://meta-defense.fr/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
