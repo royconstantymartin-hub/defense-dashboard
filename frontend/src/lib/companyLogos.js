@@ -113,6 +113,7 @@ export const COMPANY_LOGOS = {
   "WB Electronics": "wbelectronics.pl",
   "Czechoslovak Group": "czechoslovakgroup.cz",
   "Aero Vodochody": "aero.cz",
+  "Havelsan": "havelsan.com.tr",
   // Israel
   "Elbit Systems": "elbitsystems.com",
   "Israel Aerospace Industries": "iai.co.il",
@@ -151,11 +152,12 @@ export const COMPANY_LOGOS = {
   "Paramount Group": "paramountgroup.biz",
   "Denel": "denel.co.za",
   // China
-  "AVIC": "avic.com",
+  "AVIC": "avic.com.cn",
   "NORINCO": "norinco.com",
   "CSSC": "cssc.net.cn",
   "CASIC": "casic.com.cn",
   "CETC": "cetc.com.cn",
+  "CSGC": "csgc.com.cn",
   // Turkey
   "Turkish Aerospace Industries": "tai.com.tr",
   "Aselsan": "aselsan.com",
@@ -262,12 +264,33 @@ export const COMPANY_WIKI_LOGOS = {
   "SERCO Group":                   WP + "Serco_logo.svg",
   // Turkey
   "Roketsan":                      WP + "Roketsan_logo.svg",
+  "Baykar":                        WP + "Baykar_logo.png",
+  "Havelsan":                      WP + "Havelsan_logo.svg",
   // South Korea
   "LIG Nex1":                      WP + "LIG_Nex1_logo.svg",
+  "Hyundai Rotem":                 WP + "Hyundai_Rotem_Logo.svg",
   // Estonia
   "Milrem Robotics":               WP + "Milrem_Robotics_logo.svg",
   // Denmark
   "Terma A/S":                     WP + "Terma_logo.svg",
+  // India
+  "Hindustan Aeronautics":         WP + "Hindustan_Aeronautics_Limited_Logo.svg",
+  "Bharat Electronics":            WP + "Bharat_Electronics_Limited_logo.svg",
+  "Bharat Dynamics":               WP + "Bharat_Dynamics_Limited_logo.svg",
+  "Mazagon Dock":                  WP + "Mazagon_Dock_Shipbuilders_Limited_logo.svg",
+  // China
+  "AVIC":                          WP + "Avic_logo.svg",
+  "NORINCO":                       WP + "Norinco_logo.svg",
+  "CSSC":                          WP + "China_State_Shipbuilding_Corporation_logo.svg",
+  "CASIC":                         WP + "China_Aerospace_Science_and_Industry_Corporation_logo.svg",
+  // Russia
+  "United Aircraft Corporation":   WP + "United_Aircraft_Corporation_logo.svg",
+  "United Shipbuilding Corporation": WP + "United_Shipbuilding_Corporation_logo.svg",
+  "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
+  // South Africa
+  "Denel":                         WP + "Denel_logo.svg",
+  // UAE
+  "EDGE Group":                    WP + "EDGE_Group_logo.svg",
 };
 
 export function getLogoDomain(name) {
@@ -289,4 +312,14 @@ export function getClearbitUrl(name) {
   const domain = COMPANY_LOGOS[name];
   if (domain) return `https://logo.clearbit.com/${domain}`;
   return null;
+}
+
+// Returns ordered list of logo URLs to try: [wikipedia?, clearbit?]
+// Allows the UI to fall through each URL on error before showing a letter avatar.
+export function getLogoUrls(name) {
+  const urls = [];
+  if (COMPANY_WIKI_LOGOS[name]) urls.push(COMPANY_WIKI_LOGOS[name]);
+  const domain = COMPANY_LOGOS[name];
+  if (domain) urls.push(`https://logo.clearbit.com/${domain}`);
+  return urls;
 }
