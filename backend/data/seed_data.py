@@ -220,6 +220,47 @@ ANNOUNCEMENTS_DATA = [
 MA_DATA = [
     # ── 2026 (recent / active) ────────────────────────────────────────────────
     {
+        "acquirer": "Shark Robotics", "target": "Tencore",
+        "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
+        "description": "Strategic alliance between French and Ukrainian UGV champions",
+        "rationale": (
+            "Shark Robotics (France) and Tencore (Ukraine) announce a strategic alliance "
+            "on 21 April 2026 to combine their respective ground robotics expertise. "
+            "Shark Robotics, known for the Colossus firefighting and tactical UGV deployed "
+            "by French forces and in Ukraine, teams up with Tencore, maker of the combat-proven "
+            "TerMIT unmanned ground vehicle (NATO-standard, 800+ units fielded). The partnership "
+            "targets joint development, cross-promotion and potential co-production of next-generation "
+            "multi-mission UGVs for European and NATO markets. Financial terms were not disclosed. "
+            "Source: La Lettre de l'Expansion, 21 April 2026."
+        ),
+        "acquirer_country": "FR", "target_country": "UA",
+        "acquirer_logo_domain": "shark-robotics.com",
+        "target_logo_domain": "tencore.com",
+        "source_url": "https://www.lalettre.fr/fr/rub/fr/entreprises_defense-et-aeronautique/2026/04/21/shark-robotics-s-allie-avec-le-champion-ukrainien-du-drone-tencore,110708212-art",
+        "announced_date": datetime(2026, 4, 21, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Airbus Defence and Space", "target": "RADMOR",
+        "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
+        "description": "Tri-party industrial consortium for Poland's military GEO satellite",
+        "rationale": (
+            "Airbus Defence and Space, Thales Alenia Space and Polish RADMOR (WB GROUP) sign "
+            "an industrial cooperation agreement on 20 April 2026 in Gdańsk — in the presence of "
+            "French President Macron and Polish Defence Minister Kosiniak-Kamysz — to develop "
+            "Poland's first sovereign geostationary defence telecommunications satellite. "
+            "Airbus leads the satellite platform; Thales Alenia Space provides the military "
+            "communications payloads and mission control; RADMOR contributes cyber-secured ground "
+            "infrastructure. The programme falls under the EU Readiness 2030 plan and is designed "
+            "to provide Poland's armed forces with anti-jamming, cyber-resilient space communications. "
+            "Deal value not publicly disclosed."
+        ),
+        "acquirer_country": "DE", "target_country": "PL",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "radmor.com.pl",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2026-04-airbus-thales-alenia-space-and-radmor-to-partner-for-polands-sovereign-satellite",
+        "announced_date": datetime(2026, 4, 20, tzinfo=timezone.utc),
+    },
+    {
         "acquirer": "Safran", "target": "Collins Aerospace Actuation",
         "deal_value": 1800, "status": "announced", "deal_type": "acquisition",
         "description": "Acquisition of RTX's actuation & flight-control systems business",
