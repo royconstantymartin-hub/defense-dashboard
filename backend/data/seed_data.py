@@ -702,7 +702,7 @@ MA_DATA = [
     },
     {
         "acquirer": "Airbus", "target": "Bombardier C Series",
-        "deal_value": 500, "status": "completed", "deal_type": "minority_stake",
+        "deal_value": 500, "status": "completed", "deal_type": "acquisition",
         "description": "Airbus acquires 50.01% majority stake in Bombardier's C Series programme (later renamed A220) — Bombardier the company was NOT acquired",
         "rationale": (
             "Airbus takes a 50.01% majority stake in the C Series Limited Partnership, "
