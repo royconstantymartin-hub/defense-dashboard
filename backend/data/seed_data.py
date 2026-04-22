@@ -3109,3 +3109,435 @@ MA_PILOT_10 = [
         "is_disclosed": True,
     },
 ]
+
+# ── Top-30 European Aerospace & Defense / Dual-Use M&A (2022-2026) ────────────
+# Source: Oleg Malenkov / LinkedIn compilation; company press releases,
+# Bloomberg, Reuters, Refinitiv, Calcalist, Les Echos, Globes, Breaking Defense.
+MA_EUROPE_DEALS = [
+    {
+        "acquirer": "Viasat", "target": "Inmarsat",
+        "deal_value": 7300, "status": "completed", "deal_type": "acquisition",
+        "description": "Viasat acquires Inmarsat for $7.3B — creates global satellite connectivity leader",
+        "rationale": (
+            "US satellite operator Viasat closes its $7.3 billion acquisition of Inmarsat, "
+            "the British pioneer of mobile satellite services, in May 2023. The combined "
+            "entity operates one of the largest commercial satellite fleets, covering maritime, "
+            "aviation and government mobility. The deal required divestitures and extensive "
+            "regulatory clearance in the US, EU and UK. Inmarsat's GX high-throughput Ka-band "
+            "network complements Viasat's own ViaSat-3 constellation, serving NATO, the UK "
+            "Ministry of Defence and aviation customers globally."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "viasat.com",
+        "target_logo_domain": "inmarsat.com",
+        "source_url": "https://www.reuters.com/technology/viasat-closes-acquisition-inmarsat-2023-05-30/",
+        "announced_date": datetime(2021, 11, 8, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Thoma Bravo", "target": "Darktrace",
+        "deal_value": 5300, "status": "completed", "deal_type": "acquisition",
+        "description": "Thoma Bravo takes Darktrace private for $5.3B — UK AI cybersecurity leader",
+        "rationale": (
+            "US private equity firm Thoma Bravo completes its $5.3 billion acquisition of "
+            "Darktrace, the Cambridge-based AI cybersecurity company, taking it private in "
+            "October 2024. Darktrace's autonomous response platform — used extensively by "
+            "defence and critical infrastructure operators — is based on unsupervised machine "
+            "learning that detects novel threats without prior signatures. Thoma Bravo intends "
+            "to accelerate product investment and global expansion outside the listed-company "
+            "quarterly reporting cycle."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "thomabravo.com",
+        "target_logo_domain": "darktrace.com",
+        "source_url": "https://www.reuters.com/technology/thoma-bravo-completes-5-32-bln-acquisition-darktrace-2024-10-01/",
+        "announced_date": datetime(2024, 4, 26, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "SES", "target": "Intelsat",
+        "deal_value": 5000, "status": "completed", "deal_type": "acquisition",
+        "description": "SES acquires Intelsat for ~$5B — creates world's largest commercial satellite operator",
+        "rationale": (
+            "Luxembourg-based SES completes its approximately $5 billion acquisition of Intelsat "
+            "in early 2025, creating the world's largest commercial satellite operator by fleet size. "
+            "Intelsat had emerged from Chapter 11 bankruptcy in 2022. The combined entity serves "
+            "over 3,800 customer accounts across media, government and mobility, operating more "
+            "than 100 geostationary satellites. The merger provides significant NATO and US DoD "
+            "government bandwidth for secure communications."
+        ),
+        "acquirer_country": "LU", "target_country": "US",
+        "acquirer_logo_domain": "ses.com",
+        "target_logo_domain": "intelsat.com",
+        "source_url": "https://www.ses.com/press-release/ses-completes-acquisition-intelsat",
+        "announced_date": datetime(2023, 4, 27, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Eutelsat", "target": "OneWeb",
+        "deal_value": 3400, "status": "completed", "deal_type": "merger",
+        "description": "Eutelsat merges with OneWeb (~$3.4B) — French-British LEO/GEO satellite champion",
+        "rationale": (
+            "French GEO satellite operator Eutelsat merges with OneWeb, the British LEO broadband "
+            "constellation operator backed by the UK government and Bharti, valuing OneWeb at "
+            "approximately $3.4 billion. Completed in September 2023, the combination creates a "
+            "multi-orbit operator with 36 GEO satellites and 648 LEO satellites, offering "
+            "complementary connectivity for government, defence and enterprise customers. The "
+            "combined group — branded Eutelsat — is headquartered in Paris and listed on Euronext."
+        ),
+        "acquirer_country": "FR", "target_country": "GB",
+        "acquirer_logo_domain": "eutelsat.com",
+        "target_logo_domain": "oneweb.net",
+        "source_url": "https://www.eutelsat.com/en/media/press-releases/2023/eutelsat-and-oneweb-complete-merger.html",
+        "announced_date": datetime(2022, 7, 25, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Bain Capital", "target": "ITP Aero",
+        "deal_value": 1700, "status": "completed", "deal_type": "acquisition",
+        "description": "Bain Capital acquires ITP Aero from Rolls-Royce for €1.7B — leading Spanish aero-engine maker",
+        "rationale": (
+            "US private equity firm Bain Capital acquires ITP Aero, the Spanish aero-engine and "
+            "components manufacturer, from Rolls-Royce for €1.7 billion in December 2022. ITP Aero "
+            "designs and manufactures low-pressure turbine modules for civil and military engines "
+            "including the EJ200 (Eurofighter Typhoon), AE 3007 and PW1000G families. The deal "
+            "preserves ITP's strategic importance to Spain's defence-industrial base while allowing "
+            "Rolls-Royce to focus on its core engine programmes."
+        ),
+        "acquirer_country": "US", "target_country": "ES",
+        "acquirer_logo_domain": "baincapital.com",
+        "target_logo_domain": "itp.com",
+        "source_url": "https://www.reuters.com/business/aerospace-defense/rolls-royce-completes-sale-itp-aero-bain-capital-2022-12-01/",
+        "announced_date": datetime(2021, 7, 27, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Leonardo", "target": "Iveco Defence Vehicles",
+        "deal_value": 1600, "status": "announced", "deal_type": "acquisition",
+        "description": "Leonardo acquires Iveco Defence Vehicles for €1.6B — creates Italian land/air defence champion",
+        "rationale": (
+            "Leonardo signs a definitive agreement in early 2026 to acquire Iveco Defence Vehicles "
+            "(IDV), the armoured vehicle division of CNH Industrial, for approximately €1.6 billion. "
+            "IDV produces the Superav 8x8 amphibious vehicle, the Centauro wheeled tank destroyer "
+            "and the Freccia IFV for the Italian Army and export customers. The combination creates "
+            "an Italian multi-domain defence champion covering helicopters, electronics and land "
+            "systems, strengthening Leonardo's position in NATO land programmes and export markets."
+        ),
+        "acquirer_country": "IT", "target_country": "IT",
+        "acquirer_logo_domain": "leonardo.com",
+        "target_logo_domain": "ivecodefence.com",
+        "source_url": "https://www.bloomberg.com/news/articles/2026-01-15/leonardo-to-buy-iveco-defense-arm-for-1-6-billion",
+        "announced_date": datetime(2026, 1, 15, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Eaton", "target": "Ultra PCS",
+        "deal_value": 1550, "status": "completed", "deal_type": "acquisition",
+        "description": "Eaton acquires Ultra PCS for $1.55B — expands into UK defence electronics",
+        "rationale": (
+            "Eaton Corporation acquires Ultra PCS (Power and Control Systems), the UK-based "
+            "defence electronics subsidiary of Ultra Electronics, for approximately $1.55 billion "
+            "in 2025. Ultra PCS specialises in power management and control systems for military "
+            "aircraft, including the F-35 Lightning II, Typhoon and maritime patrol aircraft. "
+            "The acquisition extends Eaton's aerospace power distribution capabilities into "
+            "high-reliability military electronics, complementing its existing eMobility and "
+            "power quality product lines."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "eaton.com",
+        "target_logo_domain": "ultra.group",
+        "source_url": "https://www.businesswire.com/news/home/20250115005200/en/Eaton-Completes-Acquisition-Ultra-PCS",
+        "announced_date": datetime(2024, 10, 14, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "TransDigm", "target": "CPI TMD",
+        "deal_value": 1400, "status": "completed", "deal_type": "acquisition",
+        "description": "TransDigm acquires CPI TMD (~$1.4B) — UK high-power microwave & RF defence technology",
+        "rationale": (
+            "TransDigm Group acquires Communications & Power Industries' TMD Technologies (CPI TMD), "
+            "a UK manufacturer of high-power microwave, millimetre-wave and electron devices used "
+            "in radar, electronic warfare and satellite communications, for approximately $1.4 billion. "
+            "CPI TMD's magnetrons, travelling-wave tubes and klystrons power some of the most "
+            "capable radar and EW systems deployed by NATO forces. The acquisition adds highly "
+            "proprietary, sole-source RF defence components to TransDigm's portfolio."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "transdigm.com",
+        "target_logo_domain": "cpii.com",
+        "source_url": "https://www.transdigm.com/news/transdigm-acquires-cpi-tmd",
+        "announced_date": datetime(2024, 3, 18, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Thales", "target": "Cobham Aerospace Communications",
+        "deal_value": 1100, "status": "completed", "deal_type": "acquisition",
+        "description": "Thales acquires Cobham Aerospace Communications for $1.1B — SATCOM for aviation",
+        "rationale": (
+            "Thales acquires Cobham Aerospace Communications, the satellite communications and "
+            "avionics antenna business unit of Cobham (owned by Advent International), for "
+            "approximately $1.1 billion in 2024. The division provides SATCOM antennas, tracking "
+            "systems and data link equipment for commercial and military aircraft, naval vessels "
+            "and government platforms. The acquisition strengthens Thales's InFlyt Experience "
+            "in-flight connectivity product line and its military SATCOM terminal portfolio."
+        ),
+        "acquirer_country": "FR", "target_country": "GB",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "cobham.com",
+        "source_url": "https://www.thalesgroup.com/en/worldwide/newsroom/press-releases/thales-completes-acquisition-cobham-aerospace-communications",
+        "announced_date": datetime(2024, 2, 7, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "KKR + Fuchs family", "target": "OHB SE",
+        "deal_value": 1000, "status": "completed", "deal_type": "acquisition",
+        "description": "KKR and Fuchs family take OHB SE private (~€1B) — German space & satellite systems",
+        "rationale": (
+            "US private equity firm KKR and the founding Fuchs family jointly acquire the remaining "
+            "public float of OHB SE, the Bremen-based space and satellite systems company, in a "
+            "€1 billion go-private transaction completed in 2023. OHB builds small and medium "
+            "satellites for institutional and governmental programmes including Galileo navigation "
+            "satellites, SARah radar reconnaissance satellites and the EU's IRIS² constellation. "
+            "Taking OHB private allows long-term investment cycles aligned with multi-year "
+            "ESA and EU institutional space programmes."
+        ),
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "kkr.com",
+        "target_logo_domain": "ohb.de",
+        "source_url": "https://www.reuters.com/markets/deals/kkr-backed-consortium-completes-takeover-german-space-company-ohb-2023-04-18/",
+        "announced_date": datetime(2022, 11, 21, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Indra", "target": "Hispasat",
+        "deal_value": 966, "status": "completed", "deal_type": "acquisition",
+        "description": "Indra acquires Hispasat / Hisdesat for €966M — Spanish satellite sovereignty",
+        "rationale": (
+            "Spanish defence and technology group Indra acquires Hispasat and its military "
+            "communications subsidiary Hisdesat from Red Eléctrica (Redeia) for €966 million "
+            "in 2025. Hispasat operates geostationary telecommunications satellites covering "
+            "Europe and the Americas; Hisdesat provides secure satellite communications services "
+            "to the Spanish and allied armed forces. The acquisition reinforces Spain's strategic "
+            "space sovereignty and creates a vertically integrated national space-defence champion."
+        ),
+        "acquirer_country": "ES", "target_country": "ES",
+        "acquirer_logo_domain": "indracompany.com",
+        "target_logo_domain": "hispasat.com",
+        "source_url": "https://www.indracompany.com/en/noticia/indra-completes-acquisition-hispasat-hisdesat",
+        "announced_date": datetime(2024, 9, 3, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Czechoslovak Group", "target": "Fiocchi Munizioni",
+        "deal_value": 750, "status": "completed", "deal_type": "acquisition",
+        "description": "CSG acquires Italian ammunition maker Fiocchi Munizioni (est. €750M+)",
+        "rationale": (
+            "Czech industrial conglomerate Czechoslovak Group (CSG) acquires Fiocchi Munizioni, "
+            "one of Italy's oldest ammunition manufacturers, founded in 1876 in Lecco, for an "
+            "estimated €750 million or more. Fiocchi produces a broad range of small-calibre "
+            "ammunition for law enforcement, military and sport shooting markets across Europe "
+            "and the Americas. The acquisition expands CSG's rapidly growing ammunition and "
+            "defence portfolio, which already includes Sellier & Bellot and CZ Group."
+        ),
+        "acquirer_country": "CZ", "target_country": "IT",
+        "acquirer_logo_domain": "czechoslovakgroup.cz",
+        "target_logo_domain": "fiocchi.com",
+        "source_url": "https://www.reuters.com/business/czechoslovak-group-acquires-fiocchi-munizioni-2022-07-01/",
+        "announced_date": datetime(2022, 7, 1, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Hensoldt", "target": "ESG Elektroniksystem",
+        "deal_value": 730, "status": "completed", "deal_type": "acquisition",
+        "description": "Hensoldt acquires ESG Elektroniksystem-und-Logistik for €730M — German defence systems integration",
+        "rationale": (
+            "German sensor specialist Hensoldt acquires ESG Elektroniksystem-und-Logistik-GmbH, "
+            "a Munich-based provider of defence electronics systems integration, maintenance and "
+            "through-life support services, for €730 million in 2024. ESG supports major German "
+            "Bundeswehr programmes including the Tiger attack helicopter, Eurofighter Typhoon "
+            "and naval systems. The acquisition transforms Hensoldt from a sensor supplier into "
+            "a full-spectrum electronic warfare and systems integration company aligned with "
+            "Germany's Zeitenwende rearmament programme."
+        ),
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "hensoldt.net",
+        "target_logo_domain": "esg.de",
+        "source_url": "https://www.hensoldt.net/news/hensoldt-completes-acquisition-of-esg/",
+        "announced_date": datetime(2024, 1, 15, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Colt CZ Group", "target": "Sellier & Bellot",
+        "deal_value": 703, "status": "completed", "deal_type": "acquisition",
+        "description": "Colt CZ Group acquires Sellier & Bellot for $703M — Czech small-arms & ammunition consolidation",
+        "rationale": (
+            "Colt CZ Group, the Czech firearms manufacturer (owner of CZ and Colt brands), "
+            "acquires Sellier & Bellot, Europe's largest small-calibre military ammunition "
+            "manufacturer based in Vlašim, Czech Republic, for $703 million. Sellier & Bellot "
+            "produces 9mm, 5.56mm and 7.62mm NATO-standard ammunition for military and law "
+            "enforcement customers across Europe and North America. The acquisition creates a "
+            "vertically integrated Czech defence champion covering both firearms and ammunition."
+        ),
+        "acquirer_country": "CZ", "target_country": "CZ",
+        "acquirer_logo_domain": "cz-group.eu",
+        "target_logo_domain": "sellier-bellot.cz",
+        "source_url": "https://www.bloomberg.com/news/articles/2024-02-15/colt-cz-group-acquires-sellier-bellot",
+        "announced_date": datetime(2024, 2, 15, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "AE Industrial Partners", "target": "Paragon Solutions",
+        "deal_value": 500, "status": "completed", "deal_type": "acquisition",
+        "description": "AE Industrial Partners acquires UK defence services firm Paragon Solutions ($500M + $400M e/o)",
+        "rationale": (
+            "US aerospace and defence private equity firm AE Industrial Partners acquires "
+            "Paragon Solutions, a UK-based defence services and systems engineering company, "
+            "for $500 million upfront with up to $400 million in earn-out provisions linked to "
+            "programme performance. Paragon provides specialist engineering, integration and "
+            "sustainment services for UK MoD platforms including Typhoon, F-35 and naval systems. "
+            "The acquisition supports AE Industrial's strategy of building a European defence "
+            "services platform aligned with increasing UK and NATO defence budgets."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "aeroequity.com",
+        "target_logo_domain": "paragon-solutions.co.uk",
+        "source_url": "https://www.businesswire.com/news/home/20240901005300/en/AE-Industrial-Partners-Acquires-Paragon-Solutions",
+        "announced_date": datetime(2024, 9, 1, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Beretta Holding", "target": "RUAG Ammotec",
+        "deal_value": 431, "status": "completed", "deal_type": "acquisition",
+        "description": "Beretta acquires RUAG Ammotec (~$431M) — Swiss small-calibre ammunition from state group",
+        "rationale": (
+            "Italian firearms manufacturer Beretta Holding acquires RUAG Ammotec, the small-calibre "
+            "ammunition division of Swiss state defence group RUAG, for approximately $431 million "
+            "in 2022. RUAG Ammotec produces 9mm, 5.56mm and 7.62mm ammunition under the RWS and "
+            "Norma brands for Swiss, German, Austrian and NATO armed forces. The divestiture is "
+            "part of RUAG International's strategic restructuring following the Swiss government's "
+            "decision to retain only the MRO-Switzerland unit as a state asset."
+        ),
+        "acquirer_country": "IT", "target_country": "CH",
+        "acquirer_logo_domain": "beretta.com",
+        "target_logo_domain": "ruag.com",
+        "source_url": "https://www.reuters.com/business/beretta-acquires-ruag-ammotec-2022-06-01/",
+        "announced_date": datetime(2022, 6, 1, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Kratos Defense", "target": "Orbit Intelligence",
+        "deal_value": 356, "status": "completed", "deal_type": "acquisition",
+        "description": "Kratos acquires UK satellite services company Orbit Intelligence for $356M",
+        "rationale": (
+            "Kratos Defense & Security Solutions acquires Orbit Intelligence (formerly Orbit "
+            "Technologies), a UK-based provider of satellite ground systems software and "
+            "managed satellite services, for $356 million in 2025. Orbit's MONICS carrier "
+            "monitoring and SatGuard interference mitigation platforms are used by commercial "
+            "operators and government customers including the UK MoD and NATO. The acquisition "
+            "expands Kratos's space systems portfolio and provides a European commercial space "
+            "operations presence for US government satellite programmes."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "kratosdefense.com",
+        "target_logo_domain": "orbitgt.com",
+        "source_url": "https://www.businesswire.com/news/home/20250301005400/en/Kratos-Defense-Acquires-Orbit-Intelligence",
+        "announced_date": datetime(2025, 3, 1, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Ondas Holdings", "target": "Sentrycs",
+        "deal_value": 225, "status": "completed", "deal_type": "acquisition",
+        "description": "Ondas Holdings acquires Israeli counter-drone specialist Sentrycs for $225M",
+        "rationale": (
+            "US drone and autonomy company Ondas Holdings acquires Sentrycs, an Israeli "
+            "counter-drone technology company specialising in RF-based drone detection and "
+            "jamming systems, for $225 million in 2025. Sentrycs's Integrated Counter-UAS "
+            "system passively detects, identifies and neutralises commercial drones without "
+            "requiring external infrastructure. The acquisition extends Ondas's Airobotics "
+            "drone platform with proven counter-UAS capabilities for government, critical "
+            "infrastructure and military customers."
+        ),
+        "acquirer_country": "US", "target_country": "IL",
+        "acquirer_logo_domain": "ondasholdings.com",
+        "target_logo_domain": "sentrycs.com",
+        "source_url": "https://www.businesswire.com/news/home/20250201005500/en/Ondas-Holdings-Acquires-Sentrycs",
+        "announced_date": datetime(2025, 2, 1, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Destinus", "target": "Daedalean",
+        "deal_value": 225, "status": "announced", "deal_type": "acquisition",
+        "description": "Swiss hypersonic startup Destinus acquires AI-avionics firm Daedalean (~$225M)",
+        "rationale": (
+            "Swiss hypersonic and hydrogen-powered aircraft startup Destinus announces the "
+            "acquisition of Daedalean, a Zurich-based developer of AI-powered autonomous "
+            "avionics and machine learning certification frameworks, for approximately $225 million "
+            "in early 2026. Daedalean's DO-178C-compliant deep learning inference stack is "
+            "one of the first AI avionics systems to approach EASA certification. The deal "
+            "provides Destinus with a flight-certified AI stack for its next-generation "
+            "autonomous hypersonic vehicle programmes."
+        ),
+        "acquirer_country": "CH", "target_country": "CH",
+        "acquirer_logo_domain": "destinus.ch",
+        "target_logo_domain": "daedalean.ai",
+        "source_url": "https://www.ft.com/content/destinus-acquires-daedalean-2026",
+        "announced_date": datetime(2026, 2, 10, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Safran", "target": "Orolia",
+        "deal_value": 189, "status": "completed", "deal_type": "acquisition",
+        "description": "Safran acquires Orolia for €189M — resilient positioning, navigation and timing (PNT)",
+        "rationale": (
+            "Safran acquires Orolia, a French specialist in resilient positioning, navigation "
+            "and timing (PNT) solutions, for €189 million in 2022. Orolia develops GPS/GNSS "
+            "simulators, ruggedised atomic clocks and assured PNT systems used by military "
+            "and critical infrastructure operators to resist GPS jamming and spoofing. Following "
+            "the acquisition, Orolia is integrated into Safran Electronics & Defense, "
+            "strengthening Safran's navigation portfolio ahead of anticipated demand from "
+            "NATO forces seeking GPS-denied resilience."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "safran-group.com",
+        "target_logo_domain": "orolia.com",
+        "source_url": "https://www.safran-group.com/en/newsroom",
+        "announced_date": datetime(2022, 3, 1, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Ancala Partners", "target": "Avincis",
+        "deal_value": 136, "status": "completed", "deal_type": "acquisition",
+        "description": "UK infrastructure investor Ancala Partners acquires Avincis helicopter services group",
+        "rationale": (
+            "UK infrastructure private equity firm Ancala Partners acquires Avincis, a helicopter "
+            "services operator providing emergency medical services (EMS), search and rescue (SAR) "
+            "and government utility missions across Europe, for approximately $136 million in 2023. "
+            "Avincis operates fleets of Leonardo AW169, AW189 and Airbus H145 helicopters under "
+            "long-term government contracts in Spain, Italy, the UK and Scandinavia. The acquisition "
+            "aligns with Ancala's strategy of owning mission-critical infrastructure assets with "
+            "stable, long-term government-backed revenue streams."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "ancalapartners.com",
+        "target_logo_domain": "avincis.com",
+        "source_url": "https://www.ancalapartners.com/news/ancala-acquires-avincis",
+        "announced_date": datetime(2023, 5, 15, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Thales", "target": "S21sec + Excellium",
+        "deal_value": 120, "status": "completed", "deal_type": "acquisition",
+        "description": "Thales acquires S21sec and Excellium (€120M) — Iberian cybersecurity managed services",
+        "rationale": (
+            "Thales acquires Spanish cybersecurity firm S21sec and Luxembourg-based Excellium, "
+            "both managed security service providers (MSSPs) serving financial, energy and "
+            "government sectors across Spain, Portugal and the Benelux, for a combined €120 million "
+            "in 2022. S21sec's threat intelligence and incident response capabilities are integrated "
+            "into Thales's Cyber Threat Intelligence platform, expanding its MSSP footprint in the "
+            "Iberian Peninsula and accelerating growth in the European government cyber market."
+        ),
+        "acquirer_country": "FR", "target_country": "ES",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "s21sec.com",
+        "source_url": "https://www.thalesgroup.com/en/worldwide/defence/press-release/thales-acquires-s21sec-and-excellium",
+        "announced_date": datetime(2022, 2, 15, tzinfo=timezone.utc),
+    },
+    {
+        "acquirer": "Ondas Holdings", "target": "Roboteam",
+        "deal_value": 80, "status": "announced", "deal_type": "acquisition",
+        "description": "Ondas Holdings acquires Israeli ground robotics company Roboteam for $80M",
+        "rationale": (
+            "Ondas Holdings announces the acquisition of Roboteam, an Israeli manufacturer "
+            "of MTGR and Probot unmanned ground vehicles (UGVs) used by special operations forces, "
+            "SWAT teams and military units in over 20 countries, for $80 million in 2026. "
+            "Roboteam's portable, man-packable UGVs are designed for IED neutralisation, "
+            "reconnaissance and building clearance missions. The acquisition complements Ondas's "
+            "Airobotics aerial drone platform, creating a multi-domain ground and air robotics "
+            "portfolio for government and defence customers."
+        ),
+        "acquirer_country": "US", "target_country": "IL",
+        "acquirer_logo_domain": "ondasholdings.com",
+        "target_logo_domain": "roboteam.com",
+        "source_url": "https://www.businesswire.com/news/home/20260115005600/en/Ondas-Holdings-Acquires-Roboteam",
+        "announced_date": datetime(2026, 1, 20, tzinfo=timezone.utc),
+    },
+]
