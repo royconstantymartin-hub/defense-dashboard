@@ -172,6 +172,46 @@ const LOGO_FALLBACK = {
   "Bombardier C Series programme":       "bombardier.com",
   "Adranos":                             "anduril.com",
   "Area-I":                              "anduril.com",
+  // ── European deals (Top-30 list) ────────────────────────────────────────────
+  "Viasat":                              "viasat.com",
+  "Inmarsat":                            "inmarsat.com",
+  "Thoma Bravo":                         "thomabravo.com",
+  "Darktrace":                           "darktrace.com",
+  "SES":                                 "ses.com",
+  "Intelsat":                            "intelsat.com",
+  "Eutelsat":                            "eutelsat.com",
+  "OneWeb":                              "oneweb.net",
+  "Bain Capital":                        "baincapital.com",
+  "ITP Aero":                            "itp.com",
+  "Iveco Defence Vehicles":              "ivecodefence.com",
+  "Eaton":                               "eaton.com",
+  "Ultra PCS":                           "ultra.group",
+  "CPI TMD":                             "cpii.com",
+  "Cobham Aerospace Communications":     "cobham.com",
+  "KKR":                                 "kkr.com",
+  "OHB SE":                              "ohb.de",
+  "Hispasat":                            "hispasat.com",
+  "Hisdesat":                            "hispasat.com",
+  "Fiocchi Munizioni":                   "fiocchi.com",
+  "Czechoslovak Group":                  "czechoslovakgroup.cz",
+  "ESG Elektroniksystem":                "esg.de",
+  "Colt CZ Group":                       "cz-group.eu",
+  "Sellier & Bellot":                    "sellier-bellot.cz",
+  "AE Industrial Partners":              "aeroequity.com",
+  "Beretta Holding":                     "beretta.com",
+  "RUAG Ammotec":                        "ruag.com",
+  "Kratos Defense":                      "kratosdefense.com",
+  "Orbit Intelligence":                  "orbitgt.com",
+  "Ondas Holdings":                      "ondasholdings.com",
+  "Sentrycs":                            "sentrycs.com",
+  "Destinus":                            "destinus.ch",
+  "Daedalean":                           "daedalean.ai",
+  "Orolia":                              "orolia.com",
+  "Ancala Partners":                     "ancalapartners.com",
+  "Avincis":                             "avincis.com",
+  "S21sec":                              "s21sec.com",
+  "Roboteam":                            "roboteam.com",
+  "Paragon Solutions":                   "paragon-solutions.co.uk",
 };
 
 // Initials avatar colour palette (deterministic by name)
@@ -1029,6 +1069,15 @@ const PROFILE_NAME_MAP = {
   "Parker Hannifin": "Parker Hannifin",
   // Collins Aerospace
   "Collins Aerospace": "Raytheon Technologies",
+  // European companies in defense_players
+  "Indra": "Indra Sistemas",
+  "Indra Sistemas": "Indra Sistemas",
+  "Hensoldt": "Hensoldt",
+  "QinetiQ": "QinetiQ",
+  "Ultra Electronics": "Ultra Electronics",
+  "Kratos": "Kratos Defense",
+  "Kratos Defense": "Kratos Defense",
+  "Kratos Defense & Security Solutions": "Kratos Defense",
 };
 
 /**
@@ -1378,6 +1427,68 @@ function InvestmentConsolidatedView({ deals, onOpenProfile }) {
   );
 }
 
+// ── Country filter — shows top countries across all deals ──────────────────
+
+const COUNTRY_LABEL = {
+  US: "USA", GB: "UK", FR: "France", DE: "Germany", IT: "Italy",
+  ES: "Spain", IL: "Israel", CZ: "Czech Rep.", CH: "Switzerland",
+  LU: "Luxembourg", SE: "Sweden", KR: "South Korea", AU: "Australia",
+  NO: "Norway", BE: "Belgium", PL: "Poland", NL: "Netherlands",
+  UA: "Ukraine", AE: "UAE", TR: "Turkey", IN: "India",
+  BR: "Brazil", CA: "Canada", JP: "Japan", CN: "China",
+};
+
+function CountryFilter({ allDeals, selected, onSelect }) {
+  const counts = useMemo(() => {
+    const map = {};
+    for (const d of allDeals) {
+      if (d.acquirer_country) map[d.acquirer_country] = (map[d.acquirer_country] || 0) + 1;
+      if (d.target_country && d.target_country !== d.acquirer_country) {
+        map[d.target_country] = (map[d.target_country] || 0) + 1;
+      }
+    }
+    return Object.entries(map)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 12)
+      .map(([code, count]) => ({ code, count }));
+  }, [allDeals]);
+
+  if (counts.length === 0) return null;
+
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Country</p>
+      <div className="space-y-0.5">
+        <button
+          onClick={() => onSelect("all")}
+          className={`w-full text-left text-xs px-2 py-1 rounded transition-colors ${
+            selected === "all"
+              ? "bg-purple-50 text-purple-700 font-semibold"
+              : "text-slate-600 hover:bg-slate-50"
+          }`}
+        >
+          All countries
+        </button>
+        {counts.map(({ code, count }) => (
+          <button
+            key={code}
+            onClick={() => onSelect(selected === code ? "all" : code)}
+            className={`w-full text-left text-xs px-2 py-1 rounded transition-colors flex items-center gap-2 ${
+              selected === code
+                ? "bg-purple-50 text-purple-700 font-semibold"
+                : "text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            <FlagImg iso2={code} />
+            <span className="flex-1 truncate">{COUNTRY_LABEL[code] || code}</span>
+            <span className={`text-[9px] font-mono ${selected === code ? "text-purple-400" : "text-slate-400"}`}>{count}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────────────────
 
 export default function MAActivity() {
@@ -1399,6 +1510,7 @@ export default function MAActivity() {
   const [scraping,       setScraping]          = useState(false);
   const [metaTotal,      setMetaTotal]         = useState(null);
   const [metaLastScraped, setMetaLastScraped]  = useState(null);
+  const [selectedCountry, setSelectedCountry]  = useState("all");
 
   const fetchRecent = async () => {
     setLoading(true);
@@ -1490,6 +1602,11 @@ export default function MAActivity() {
     }
     if (selectedStatus !== "all") list = list.filter(a => a.status === selectedStatus);
     if (selectedYear !== "all") list = list.filter(a => String(new Date(a.announced_date).getFullYear()) === selectedYear);
+    if (selectedCountry !== "all") {
+      list = list.filter(a =>
+        a.acquirer_country === selectedCountry || a.target_country === selectedCountry
+      );
+    }
     if (searchTerm) {
       const t = searchTerm.toLowerCase();
       list = list.filter(a =>
@@ -1506,7 +1623,7 @@ export default function MAActivity() {
   }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir]);
 
   // Reset page on filter change
-  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir]);
+  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir]);
 
   const pageDeals  = filteredDeals.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(filteredDeals.length / PAGE_SIZE);
@@ -1514,7 +1631,7 @@ export default function MAActivity() {
   const rangeEnd   = Math.min((page + 1) * PAGE_SIZE, filteredDeals.length);
 
   const totalValue = filteredDeals.filter(a => a.is_disclosed ?? true).reduce((s, a) => s + (a.deal_value || 0), 0);
-  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0].filter(Boolean).length;
+  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all"].filter(Boolean).length;
 
   // Quarterly chart
   const quarterlyData = useMemo(() => {
@@ -1665,7 +1782,7 @@ export default function MAActivity() {
               </span>
               {activeFilterCount > 0 && (
                 <button
-                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); }}
+                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); }}
                   className="text-[11px] text-rose-500 hover:text-rose-700 font-medium"
                 >
                   Clear
@@ -1725,6 +1842,13 @@ export default function MAActivity() {
                 ))}
               </div>
             </div>
+
+            {/* Country */}
+            <CountryFilter
+              allDeals={allDeals}
+              selected={selectedCountry}
+              onSelect={setSelectedCountry}
+            />
           </div>
         </div>
 
