@@ -1126,21 +1126,22 @@ MA_EXTRA_DEALS = [
     },
     {
         "acquirer": "Rheinmetall", "target": "Loc Performance Products",
-        "deal_value": 80, "status": "completed", "deal_type": "acquisition",
-        "description": "US military vehicle driveline specialist acquisition",
+        "deal_value": 950, "status": "completed", "deal_type": "acquisition",
+        "description": "Rheinmetall acquires Loc Performance Products for ~$950M — US military vehicle driveline specialist",
         "rationale": (
-            "Rheinmetall acquires Loc Performance Products, a US manufacturer of military vehicle "
-            "driveline components including transfer cases, differentials and final drive assemblies "
-            "for the Abrams MBT, Bradley IFV and JLTV programmes. The acquisition strengthens "
-            "Rheinmetall's US defence industrial footprint and provides verticalised supply-chain "
-            "capability for its expanding American Rheinmetall Vehicles (ARV) joint programme "
-            "competing for the US Army OMFV contract."
+            "Rheinmetall acquires Loc Performance Products for approximately $950 million, a US "
+            "manufacturer of military vehicle driveline components including transfer cases, "
+            "differentials and final drive assemblies for the Abrams MBT, Bradley IFV and JLTV "
+            "programmes. Announced June 2024. The acquisition strengthens Rheinmetall's US defence "
+            "industrial footprint and provides verticalised supply-chain capability for its "
+            "expanding American Rheinmetall Vehicles (ARV) joint programme competing for the US "
+            "Army OMFV contract."
         ),
         "acquirer_country": "DE", "target_country": "US",
         "acquirer_logo_domain": "rheinmetall.com",
         "target_logo_domain": "rheinmetall.com",
-        "source_url": "https://www.rheinmetall.com/en/investor-relations",
-        "announced_date": datetime(2024, 3, 14, tzinfo=timezone.utc),
+        "source_url": "https://www.rheinmetall.com/en/media/news/press-releases/2024/rheinmetall-acquires-loc-performance-products",
+        "announced_date": datetime(2024, 6, 1, tzinfo=timezone.utc),
         "stake_percentage": 100.0,
         "round_type": None,
         "is_disclosed": True,
