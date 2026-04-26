@@ -3,12 +3,13 @@ import axios from "axios";
 import { API, useAuth } from "@/App";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Search, ArrowRight, ArrowLeftRight, Plus, CircleDot,
   Clock, Database, Filter, TrendingUp, ChevronDown, ChevronUp,
   ChevronLeft, ChevronRight,
   ExternalLink, Download, Calendar, User, AlertTriangle,
-  RefreshCw, Trophy,
+  RefreshCw, Trophy, Info,
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -1579,12 +1580,14 @@ export default function MAActivity() {
     for (const a of allDeals) raw[a.deal_type] = (raw[a.deal_type] || 0) + 1;
     const investDeals = allDeals.filter(a => INVEST_TYPES.includes(a.deal_type));
     const uniqueTargets = new Set(investDeals.map(a => a.target)).size;
+    const fundingRounds = (raw.strategic_investment || 0) + (raw.minority_stake || 0) + (raw.funding_round || 0) + (raw.investment || 0);
     return {
-      defense_tech:  uniqueTargets,
-      acquisitions:  raw.acquisition || 0,
-      mergers:       raw.merger || 0,
-      investments:   (raw.strategic_investment || 0) + (raw.minority_stake || 0) + (raw.funding_round || 0),
-      jv:            raw.joint_venture || 0,
+      defense_tech:         uniqueTargets,
+      defense_tech_rounds:  fundingRounds,   // separate counter: deals vs companies
+      acquisitions:         (raw.acquisition || 0) + (raw.asset_acquisition || 0),
+      mergers:              raw.merger || 0,
+      investments:          fundingRounds,
+      jv:                   raw.joint_venture || 0,
     };
   }, [allDeals]);
 
@@ -1662,7 +1665,23 @@ export default function MAActivity() {
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">M&amp;A Activity</h1>
           <p className="text-slate-500 text-sm mt-1">
             Mergers, acquisitions &amp; strategic investments
-            {metaTotal != null && <span className="ml-2 font-mono text-slate-700 font-semibold">{metaTotal} deals indexed</span>}
+            {metaTotal != null && (
+            <TooltipProvider>
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <span className="ml-2 font-mono text-slate-700 font-semibold inline-flex items-center gap-1 cursor-default">
+                    {metaTotal} deals indexed
+                    <Info className="w-3 h-3 text-slate-400" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs text-xs leading-relaxed">
+                  Global count of all unique deals in the database. A deal may appear in multiple tabs
+                  (e.g. an acquisition of a Defense Tech company counts in both "Acquisitions" and "Defense Tech").
+                  Tab badges count deals; "Companies tracked" counts unique portfolio companies.
+                </TooltipContent>
+              </UITooltip>
+            </TooltipProvider>
+          )}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -1714,14 +1733,16 @@ export default function MAActivity() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" data-testid="kpi-strip">
         {[
-          { label: dealTypeTab === "defense_tech" ? "COMPANIES" : "TOTAL DEALS",  value: dealTypeTab === "defense_tech" ? tabCounts.defense_tech : filteredDeals.length,  sub: DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900" },
-          { label: "TOTAL VALUE",  value: formatValue(totalValue), sub: "Disclosed only", color: "text-slate-900" },
-          { label: "IN PROGRESS",  value: filteredDeals.filter(a => ["announced","pending","under_review"].includes(a.status)).length, sub: "Announced + Pending", color: "text-amber-600" },
-          { label: "CLOSED",       value: filteredDeals.filter(a => ["completed","active"].includes(a.status)).length, sub: "Completed + Active", color: "text-emerald-600" },
+          dealTypeTab === "defense_tech"
+            ? { label: "COMPANIES TRACKED", value: tabCounts.defense_tech,        sub: `${tabCounts.defense_tech_rounds} funding rounds`, color: "text-slate-900", testid: "kpi-companies" }
+            : { label: "TOTAL DEALS",        value: filteredDeals.length,          sub: DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900", testid: "kpi-total-deals" },
+          { label: "TOTAL VALUE",  value: formatValue(totalValue), sub: "Disclosed only",       color: "text-slate-900",  testid: "kpi-total-value" },
+          { label: "IN PROGRESS",  value: filteredDeals.filter(a => ["announced","pending","under_review"].includes(a.status)).length, sub: "Announced + Pending", color: "text-amber-600",  testid: "kpi-in-progress" },
+          { label: "CLOSED",       value: filteredDeals.filter(a => ["completed","active"].includes(a.status)).length,                sub: "Completed + Active", color: "text-emerald-600", testid: "kpi-closed" },
         ].map(s => (
-          <Card key={s.label} className="bg-white border-slate-200 shadow-sm">
+          <Card key={s.label} className="bg-white border-slate-200 shadow-sm" data-testid={s.testid}>
             <CardContent className="p-4">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">{s.label}</p>
               <p className={`text-2xl font-mono font-bold mt-1.5 ${s.color}`}>{s.value}</p>
