@@ -220,6 +220,29 @@ ANNOUNCEMENTS_DATA = [
 MA_DATA = [
     # ── 2026 (recent / active) ────────────────────────────────────────────────
     {
+        "acquirer": "AE Industrial Partners", "target": "Rocketdyne (L3Harris Space Propulsion)",
+        "deal_value": 845, "status": "pending", "deal_type": "acquisition",
+        "description": "L3Harris divests majority of Rocketdyne to AE Industrial for $845M — PE carve-out, H2 2026 closing",
+        "rationale": (
+            "L3Harris Technologies announces a $845 million agreement in January 2026 to sell the "
+            "majority of its Aerojet Rocketdyne business (Space Propulsion and Power Systems — RL10, "
+            "RS-68A, electric propulsion) to AE Industrial Partners, a defense-focused PE firm. "
+            "L3Harris retains the RS-25 programme (sole supplier for NASA SLS) and certain "
+            "tactical-missile propulsion lines. The divestiture reflects L3Harris's perimeter "
+            "rationalisation strategy: the RS-25 retention preserves a strategically irreplaceable "
+            "government contract; the remainder is monetised at ~12× EBITDA, consistent with space "
+            "propulsion sector comps. Closing expected H2 2026 pending regulatory approvals."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "aerojet.com",
+        "target_logo_domain": "l3harris.com",
+        "source_url": "https://spaceflightnow.com/2026/01/09/l3harris-announces-845-million-majority-sale-of-space-propulsion-and-power-systems-business/",
+        "announced_date": datetime(2026, 1, 9, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
+    {
         "acquirer": "Shark Robotics", "target": "Tencore",
         "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
         "description": "Strategic alliance between French and Ukrainian UGV champions",
@@ -369,24 +392,24 @@ MA_DATA = [
     # ── 2022–2023 ─────────────────────────────────────────────────────────────
     {
         "acquirer": "L3Harris Technologies", "target": "Aerojet Rocketdyne",
-        "deal_value": 4700, "status": "cancelled", "deal_type": "acquisition",
-        "description": "L3Harris drops $4.7B Aerojet bid — FTC blocks deal over solid-rocket-motor monopoly risk",
+        "deal_value": 4700, "status": "completed", "deal_type": "acquisition",
+        "description": "L3Harris acquires Aerojet Rocketdyne for $4.7B — closed Jul 28 2023",
         "rationale": (
-            "L3Harris Technologies announces a $4.7 billion agreement to acquire Aerojet Rocketdyne "
-            "on 18 December 2022. The Federal Trade Commission filed suit in January 2023 to block "
-            "the transaction, arguing that a combined L3Harris–Aerojet entity would control the "
-            "production of both missiles and the solid-rocket motors that power them — creating "
-            "an ability and incentive to disadvantage competing prime contractors bidding for US "
-            "DoD missile programmes. L3Harris withdrew the deal in February 2023, leaving Aerojet "
-            "Rocketdyne as an independent supplier. L3Harris subsequently shifted its M&A strategy "
-            "toward smaller, regulatory-safe technology bolt-ons."
+            "L3Harris Technologies announces a $4.7 billion all-cash acquisition of Aerojet Rocketdyne "
+            "on 18 December 2022 ($58/share, including net debt). The Federal Trade Commission filed suit "
+            "in January 2023 to block the deal; L3Harris successfully contested and completed the "
+            "acquisition on 28 July 2023, forming a fourth business segment (Aerojet Rocketdyne). "
+            "The deal gives L3Harris full vertical integration in solid-rocket-motor propulsion "
+            "(RS-25, RL10, JASSM/LRASM propulsion), complementing its EW and C2 systems portfolio. "
+            "Advisors — L3Harris: Barclays Capital, Goldman Sachs (financial), Simpson Thacher & Bartlett (legal); "
+            "Aerojet: Citi, Evercore (financial), Wachtell Lipton (legal)."
         ),
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "aerojet.com",
-        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
+        "source_url": "https://www.l3harris.com/newsroom/press-release/2023/07/l3harris-completes-aerojet-rocketdyne-acquisition",
         "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
-        "stake_percentage": None,
+        "stake_percentage": 100.0,
         "round_type": None,
         "is_disclosed": True,
     },
