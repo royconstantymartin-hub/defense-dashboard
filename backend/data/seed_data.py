@@ -314,19 +314,20 @@ MA_DATA = [
         "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "RTX", "target": "Nightwing Group",
+        "acquirer": "Blackstone (Nightwing)", "target": "Raytheon Cybersecurity Services",
         "deal_value": 320, "status": "completed", "deal_type": "acquisition",
-        "description": "Cybersecurity and intelligence services spinout",
+        "description": "Blackstone carve-out of Raytheon cyber & intelligence unit → Nightwing Group",
         "rationale": (
-            "RTX completes the creation of Nightwing Group, combining its "
-            "cybersecurity and intelligence services businesses into a standalone "
-            "entity. Nightwing retains RTX as a strategic shareholder while pursuing "
-            "independent government and commercial cyber contracts."
+            "Blackstone acquires Raytheon Technologies' (RTX) cybersecurity and intelligence "
+            "services division in a $320 million carve-out, rebranding the standalone entity as "
+            "Nightwing Group. RTX was the seller, retaining a minority strategic stake. Nightwing "
+            "provides cyber, signals intelligence and mission-support services primarily to US "
+            "government and DoD clients. The transaction closed July 2024."
         ),
         "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "rtx.com",
+        "acquirer_logo_domain": "blackstone.com",
         "target_logo_domain": "rtx.com",
-                "source_url": "https://www.rtx.com/news/news-center/2024/07/18/rtx-completes-separation-of-nightwing",
+        "source_url": "https://www.rtx.com/news/news-center/2024/07/18/rtx-completes-separation-of-nightwing",
         "announced_date": datetime(2024, 7, 18, tzinfo=timezone.utc),
     },
     {
@@ -347,36 +348,47 @@ MA_DATA = [
     },
     {
         "acquirer": "Boeing", "target": "Spirit AeroSystems",
-        "deal_value": 4700, "status": "completed", "deal_type": "acquisition",
-        "description": "Reacquisition of fuselage manufacturing subsidiary",
+        "deal_value": 4700, "status": "pending", "deal_type": "acquisition",
+        "description": "Boeing reacquisition of Spirit AeroSystems fuselage unit — announced Jul 2024, closing expected mid-2025",
         "rationale": (
-            "Boeing reacquires Spirit AeroSystems, the fuselage and nacelle "
-            "manufacturer it originally spun off in 2005, following quality-control "
-            "crises on the 737 MAX programme. The deal brings Spirit's Wichita "
-            "and Tulsa facilities back in-house to restore production oversight."
+            "Boeing announces in July 2024 a $4.7 billion agreement to reacquire Spirit AeroSystems, "
+            "the fuselage and nacelle manufacturer it originally spun off in 2005, following "
+            "quality-control crises on the 737 MAX programme. The deal, pending shareholder and "
+            "regulatory approvals, is expected to close in mid-2025 and would bring Spirit's "
+            "Wichita and Tulsa facilities back in-house to restore direct production oversight."
         ),
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "boeing.com",
         "target_logo_domain": "spiritaero.com",
-                "source_url": "https://boeing.mediaroom.com/news-releases-statements",
+        "source_url": "https://boeing.mediaroom.com/2024-07-01-Boeing-Signs-Agreement-to-Reacquire-Spirit-AeroSystems",
         "announced_date": datetime(2024, 7, 1, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
     },
     # ── 2022–2023 ─────────────────────────────────────────────────────────────
     {
-        "acquirer": "L3Harris", "target": "Aerojet Rocketdyne",
+        "acquirer": "L3Harris Technologies", "target": "Aerojet Rocketdyne",
         "deal_value": 4700, "status": "cancelled", "deal_type": "acquisition",
-        "description": "Proposed acquisition cancelled after FTC challenge",
+        "description": "L3Harris drops $4.7B Aerojet bid — FTC blocks deal over solid-rocket-motor monopoly risk",
         "rationale": (
-            "L3Harris Technologies withdrew its proposed $4.7 billion acquisition of "
-            "Aerojet Rocketdyne after the Federal Trade Commission sued to block the "
-            "deal, arguing it would harm competition in missile propulsion. The "
-            "withdrawal came in February 2023, leaving Aerojet Rocketdyne independent."
+            "L3Harris Technologies announces a $4.7 billion agreement to acquire Aerojet Rocketdyne "
+            "on 18 December 2022. The Federal Trade Commission filed suit in January 2023 to block "
+            "the transaction, arguing that a combined L3Harris–Aerojet entity would control the "
+            "production of both missiles and the solid-rocket motors that power them — creating "
+            "an ability and incentive to disadvantage competing prime contractors bidding for US "
+            "DoD missile programmes. L3Harris withdrew the deal in February 2023, leaving Aerojet "
+            "Rocketdyne as an independent supplier. L3Harris subsequently shifted its M&A strategy "
+            "toward smaller, regulatory-safe technology bolt-ons."
         ),
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "aerojet.com",
-                "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
+        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
         "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
     },
     {
         "acquirer": "Rheinmetall", "target": "Expal Systems",
@@ -396,20 +408,25 @@ MA_DATA = [
         "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "Hanwha Ocean", "target": "Daewoo Shipbuilding & Marine Engineering",
-        "deal_value": 1500, "status": "completed", "deal_type": "acquisition",
-        "description": "Creation of Korean naval defense champion",
+        "acquirer": "Hanwha Group", "target": "Daewoo Shipbuilding & Marine Engineering",
+        "deal_value": 2000, "status": "completed", "deal_type": "acquisition",
+        "description": "Hanwha acquires DSME → rebranded Hanwha Ocean, completed May 2023",
         "rationale": (
-            "Hanwha Group acquires Daewoo Shipbuilding and Marine Engineering (DSME) "
-            "and rebrands it as Hanwha Ocean, creating one of the world's largest "
-            "shipbuilders with a dominant position in submarine and naval surface vessel "
-            "construction for South Korea and allied navies."
+            "Hanwha Group's consortium wins the competitive bid to acquire Daewoo Shipbuilding "
+            "and Marine Engineering (DSME) in February 2022. The transaction closes in May 2023 "
+            "following Korean financial regulator approval; DSME is subsequently rebranded as "
+            "Hanwha Ocean, creating one of the world's largest shipbuilders with a dominant "
+            "position in submarine and naval surface vessel construction for South Korea and "
+            "allied navies including Australia (Attack-class successor programme)."
         ),
         "acquirer_country": "KR", "target_country": "KR",
         "acquirer_logo_domain": "hanwha.com",
         "target_logo_domain": "hanwha.com",
-        "source_url": "https://www.reuters.com/business/hanwha-consortium-wins-bid-acquire-daewoo-shipbuilding-2022-02-08/",
-        "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
+        "source_url": "https://www.reuters.com/business/hanwha-completes-acquisition-daewoo-shipbuilding-2023-05/",
+        "announced_date": datetime(2023, 5, 15, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
     },
     {
         "acquirer": "Thales", "target": "Imperva",
@@ -1088,42 +1105,43 @@ MA_EXTRA_DEALS = [
     },
     {
         "acquirer": "Anduril Industries", "target": "Rebellion Defense",
-        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
-        "description": "Anduril acquires Rebellion Defense — DoD software and AI platform startup",
+        "deal_value": 0, "status": "completed", "deal_type": "minority_stake",
+        "description": "Anduril acqui-hire of Rebellion Defense team — company closed, key talent absorbed",
         "rationale": (
-            "Anduril Industries acquires Rebellion Defense, a Washington DC-based defense technology "
-            "startup known for its IronBank container registry and Phantom AI software platform used "
-            "across the US Department of Defense. The deal folds Rebellion's engineering talent and "
-            "government-relations expertise into Anduril's Lattice platform, accelerating its push "
-            "into DoD enterprise software alongside its hardware autonomy systems (Ghost, Roadrunner, "
-            "Fury). Rebellion Defense co-founders Chris Lynch and Nand Mulchandani had deep DoD ties."
+            "Anduril Industries acquires key assets and engineering talent from Rebellion Defense, "
+            "a Washington DC-based defense technology startup known for its IronBank container "
+            "registry and Phantom AI software platform. This was a partial acqui-hire: Rebellion "
+            "Defense ceased operations and was wound down, with select personnel and IP absorbed "
+            "into Anduril's Lattice platform team. Co-founders Chris Lynch and Nand Mulchandani "
+            "did not join Anduril. Value undisclosed; not a 100% corporate acquisition."
         ),
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "anduril.com",
         "target_logo_domain": "rebelliondefense.com",
-        "source_url": "https://www.anduril.com/newsroom",
+        "source_url": "https://www.defenseone.com/technology/2024/01/rebellion-defense-shuts-down/393564/",
         "announced_date": datetime(2024, 1, 18, tzinfo=timezone.utc),
-        "stake_percentage": 100.0,
+        "stake_percentage": None,
         "round_type": None,
         "is_disclosed": False,
     },
     {
         "acquirer": "Rheinmetall", "target": "Loc Performance Products",
-        "deal_value": 80, "status": "completed", "deal_type": "acquisition",
-        "description": "US military vehicle driveline specialist acquisition",
+        "deal_value": 950, "status": "completed", "deal_type": "acquisition",
+        "description": "Rheinmetall acquires Loc Performance Products for ~$950M — US military vehicle driveline specialist",
         "rationale": (
-            "Rheinmetall acquires Loc Performance Products, a US manufacturer of military vehicle "
-            "driveline components including transfer cases, differentials and final drive assemblies "
-            "for the Abrams MBT, Bradley IFV and JLTV programmes. The acquisition strengthens "
-            "Rheinmetall's US defence industrial footprint and provides verticalised supply-chain "
-            "capability for its expanding American Rheinmetall Vehicles (ARV) joint programme "
-            "competing for the US Army OMFV contract."
+            "Rheinmetall acquires Loc Performance Products for approximately $950 million, a US "
+            "manufacturer of military vehicle driveline components including transfer cases, "
+            "differentials and final drive assemblies for the Abrams MBT, Bradley IFV and JLTV "
+            "programmes. Announced June 2024. The acquisition strengthens Rheinmetall's US defence "
+            "industrial footprint and provides verticalised supply-chain capability for its "
+            "expanding American Rheinmetall Vehicles (ARV) joint programme competing for the US "
+            "Army OMFV contract."
         ),
         "acquirer_country": "DE", "target_country": "US",
         "acquirer_logo_domain": "rheinmetall.com",
         "target_logo_domain": "rheinmetall.com",
-        "source_url": "https://www.rheinmetall.com/en/investor-relations",
-        "announced_date": datetime(2024, 3, 14, tzinfo=timezone.utc),
+        "source_url": "https://www.rheinmetall.com/en/media/news/press-releases/2024/rheinmetall-acquires-loc-performance-products",
+        "announced_date": datetime(2024, 6, 1, tzinfo=timezone.utc),
         "stake_percentage": 100.0,
         "round_type": None,
         "is_disclosed": True,
@@ -3026,33 +3044,6 @@ MA_PILOT_10 = [
         "is_disclosed": True,
     },
     {
-        "acquirer": "L3Harris Technologies",
-        "target": "Aerojet Rocketdyne",
-        "deal_value": 4700,
-        "status": "cancelled",
-        "deal_type": "acquisition",
-        "description": "L3Harris drops Aerojet Rocketdyne acquisition ($4.7B) — FTC blocks deal to protect competition in solid rocket motors",
-        "rationale": (
-            "L3Harris Technologies announces a $4.7 billion agreement to acquire Aerojet Rocketdyne "
-            "on 18 December 2022. The Federal Trade Commission filed suit in January 2023 to block "
-            "the transaction, arguing that a combined L3Harris–Aerojet entity would control the "
-            "production of both missiles and the solid-rocket motors that power them — creating "
-            "an ability and incentive to disadvantage competing prime contractors bidding for US "
-            "DoD missile programmes. L3Harris withdrew the deal in February 2023, leaving Aerojet "
-            "Rocketdyne as an independent supplier. L3H subsequently shifted its M&A strategy "
-            "toward smaller, regulatory-safe technology bolt-ons."
-        ),
-        "acquirer_country": "US",
-        "target_country": "US",
-        "acquirer_logo_domain": "l3harris.com",
-        "target_logo_domain": "aerojet.com",
-        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
-        "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    {
         "acquirer": "Rheinmetall",
         "target": "Expal Systems",
         "deal_value": 1200,
@@ -3154,21 +3145,25 @@ MA_EUROPE_DEALS = [
     },
     {
         "acquirer": "SES", "target": "Intelsat",
-        "deal_value": 5000, "status": "completed", "deal_type": "acquisition",
-        "description": "SES acquires Intelsat for ~$5B — creates world's largest commercial satellite operator",
+        "deal_value": 5000, "status": "pending", "deal_type": "acquisition",
+        "description": "SES acquires Intelsat for ~$5B — pending regulatory clearance",
         "rationale": (
-            "Luxembourg-based SES completes its approximately $5 billion acquisition of Intelsat "
-            "in early 2025, creating the world's largest commercial satellite operator by fleet size. "
-            "Intelsat had emerged from Chapter 11 bankruptcy in 2022. The combined entity serves "
-            "over 3,800 customer accounts across media, government and mobility, operating more "
-            "than 100 geostationary satellites. The merger provides significant NATO and US DoD "
-            "government bandwidth for secure communications."
+            "Luxembourg-based SES announces a binding agreement to acquire Intelsat for "
+            "approximately $5 billion in April 2024, creating the world's largest commercial "
+            "satellite operator by fleet size. Intelsat had emerged from Chapter 11 bankruptcy "
+            "in 2022. The combined entity would serve over 3,800 customer accounts across media, "
+            "government and mobility, operating more than 100 geostationary satellites. The deal "
+            "provides significant NATO and US DoD government bandwidth for secure communications "
+            "and is pending US, EU and other regulatory approvals."
         ),
         "acquirer_country": "LU", "target_country": "US",
         "acquirer_logo_domain": "ses.com",
         "target_logo_domain": "intelsat.com",
-        "source_url": "https://www.ses.com/press-release/ses-completes-acquisition-intelsat",
-        "announced_date": datetime(2023, 4, 27, tzinfo=timezone.utc),
+        "source_url": "https://www.ses.com/press-release/ses-signs-agreement-acquire-intelsat",
+        "announced_date": datetime(2024, 4, 27, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
     },
     {
         "acquirer": "Eutelsat", "target": "OneWeb",

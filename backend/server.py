@@ -1944,6 +1944,10 @@ _STALE_MA_DEALS = [
     {"acquirer": "Thales", "target": "Preligens"},         # acquired by Safran, not Thales
     {"acquirer": "Dassault Aviation", "target": "Harmattan.ai",
      "deal_type": {"$ne": "funding_round"}},               # fix old strategic_investment entry
+    # phase1.1 corrections — purge old/incorrect entries so upserts apply cleanly:
+    {"acquirer": "RTX", "target": "Nightwing Group"},      # RTX was seller; corrected to Blackstone acq.
+    {"acquirer": "L3Harris", "target": "Aerojet Rocketdyne"},  # old short-name dup; canonical is L3Harris Technologies
+    {"acquirer": "Hanwha Ocean", "target": "Daewoo Shipbuilding & Marine Engineering"},  # old entry with wrong acquirer name
 ]
 
 async def _migrate_ma_enrichments():
