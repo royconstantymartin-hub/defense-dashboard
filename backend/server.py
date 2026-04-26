@@ -85,17 +85,20 @@ class Announcement(BaseModel):
 class MAActivityCreate(BaseModel):
     acquirer: str
     target: str
-    deal_value: float  # in millions USD
+    deal_value: float  # equity value in millions USD (convention: equity, not EV)
     status: str  # announced, pending, under_review, completed, active, cancelled, dissolved, exited
-    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake, funding_round
+    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake, funding_round, asset_acquisition, investment
     description: str
     announced_date: Optional[datetime] = None   # if None, defaults to now in MAActivity
+    closed_date: Optional[datetime] = None      # actual closing date (None until deal completes)
     acquirer_country: Optional[str] = None      # ISO 3166-1 alpha-2
     target_country: Optional[str] = None
     acquirer_logo_domain: Optional[str] = None
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
     rationale: Optional[str] = None             # 2-3 sentence strategic context
+    notes: Optional[str] = None                 # deal structure notes (CVR, earnout, etc.)
+    confidence: Optional[str] = None            # high / medium / low
     # Enriched deal metadata
     stake_percentage: Optional[float] = None    # % of capital acquired/invested (minority deals)
     round_type: Optional[str] = None            # seed / series_a / series_b / series_c / growth / buyout
@@ -107,17 +110,20 @@ class MAActivity(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     acquirer: str
     target: str
-    deal_value: float
+    deal_value: float  # equity value in millions USD — see DATA_CONVENTIONS.md
     status: str
     deal_type: str
     description: str
     announced_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    closed_date: Optional[datetime] = None
     acquirer_country: Optional[str] = None
     target_country: Optional[str] = None
     acquirer_logo_domain: Optional[str] = None
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
     rationale: Optional[str] = None
+    notes: Optional[str] = None
+    confidence: Optional[str] = None
     # Enriched deal metadata
     stake_percentage: Optional[float] = None
     round_type: Optional[str] = None
@@ -948,6 +954,69 @@ async def get_dashboard_stats():
         "expenditure_year": latest_year
     }
 
+# ============= DATA CONSISTENCY HEALTH CHECK =============
+
+@api_router.get("/health/data-consistency")
+async def data_consistency_check():
+    """
+    Checks internal consistency of the ma_activities collection.
+    Returns counts by type/status, and flags blocker issues.
+    Usable as a monitoring probe and as a sanity check in CI.
+    """
+    from datetime import timezone as _tz
+
+    docs = await db.ma_activities.find({}, {"_id": 0}).to_list(5000)
+    total = len(docs)
+
+    by_type: dict[str, int] = {}
+    by_status: dict[str, int] = {}
+    blockers: list[str] = []
+    warnings_list: list[str] = []
+
+    for doc in docs:
+        dt = doc.get("deal_type", "unknown")
+        st = doc.get("status", "unknown")
+        by_type[dt] = by_type.get(dt, 0) + 1
+        by_status[st] = by_status.get(st, 0) + 1
+
+        label = f"{doc.get('acquirer','?')} → {doc.get('target','?')}"
+
+        # closed_date < announced_date
+        ann_raw = doc.get("announced_date")
+        cl_raw  = doc.get("closed_date")
+        if ann_raw and cl_raw:
+            try:
+                ann = ann_raw if isinstance(ann_raw, datetime) else datetime.fromisoformat(str(ann_raw).replace("Z", "+00:00"))
+                cl  = cl_raw  if isinstance(cl_raw,  datetime) else datetime.fromisoformat(str(cl_raw).replace("Z", "+00:00"))
+                if cl < ann:
+                    blockers.append(f"{label}: closed_date {cl.date()} < announced_date {ann.date()}")
+            except Exception:
+                pass
+
+        # completed without closed_date
+        if st == "completed" and not cl_raw:
+            warnings_list.append(f"{label}: status=completed but no closed_date")
+
+        # no source
+        if not doc.get("source_url") and not doc.get("sources"):
+            blockers.append(f"{label}: no source")
+
+        # aberrant value
+        val = doc.get("deal_value", 0) or 0
+        if val > 100_000:
+            blockers.append(f"{label}: deal_value ${val}M > $100B")
+
+    ok = len(blockers) == 0
+    return {
+        "status": "ok" if ok else "error",
+        "total_deals": total,
+        "by_type": by_type,
+        "by_status": by_status,
+        "blockers": blockers,
+        "warnings": warnings_list,
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+    }
+
 # ============= SEED DATA ENDPOINT =============
 
 async def _run_seed() -> dict:
@@ -1045,6 +1114,8 @@ async def _run_seed() -> dict:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc['announced_date'] = doc['announced_date'].isoformat()
+        if doc.get('closed_date') and isinstance(doc['closed_date'], datetime):
+            doc['closed_date'] = doc['closed_date'].isoformat()
         # Set normalized names so scraper deduplication recognises these entries
         doc['acquirer_norm'] = _norm(m['acquirer'])
         doc['target_norm'] = _norm(m['target'])
@@ -1971,6 +2042,8 @@ async def _migrate_ma_enrichments():
             activity = MAActivity(**m)
             doc = activity.model_dump()
             doc["announced_date"] = doc["announced_date"].isoformat()
+            if doc.get("closed_date") and isinstance(doc["closed_date"], datetime):
+                doc["closed_date"] = doc["closed_date"].isoformat()
             await db.ma_activities.update_one(
                 {"acquirer": m["acquirer"], "target": m["target"]},
                 {"$set": doc},

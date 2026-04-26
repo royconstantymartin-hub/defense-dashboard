@@ -217,6 +217,17 @@ ANNOUNCEMENTS_DATA = [
 
 # Extended M&A Data — enriched with countries, logo domains, rationale and explicit dates.
 # All deals are verified historical events from public sources.
+#
+# DEAL VALUE CONVENTION (deal_value field, in millions USD):
+#   → Equity value (consideration paid to sellers / fundraise amount), NOT Enterprise Value.
+#   → For acquisitions: price paid for 100% of equity, or proportional for partial stakes.
+#   → For PE buyouts with assumed debt: deal_value = equity consideration; notes field
+#     documents total EV including assumed debt if materially different.
+#   → For VC/growth rounds: post-money valuation is in the "valuation" field;
+#     deal_value = amount raised in the round.
+#   → Undisclosed deals: deal_value = 0, is_disclosed = False.
+#   Example: SES/Intelsat → deal_value=3100 (equity), notes documents EV ~$5.0B with debt.
+#
 MA_DATA = [
     # ── 2026 (recent / active) ────────────────────────────────────────────────
     {
@@ -3168,23 +3179,33 @@ MA_EUROPE_DEALS = [
     },
     {
         "acquirer": "SES", "target": "Intelsat",
-        "deal_value": 5000, "status": "pending", "deal_type": "acquisition",
-        "description": "SES acquires Intelsat for ~$5B — pending regulatory clearance",
+        # deal_value = equity consideration ($3.1B cash at signing); EV higher due to assumed debt.
+        # Convention: equity value throughout. CVRs excluded from base value.
+        "deal_value": 3100, "status": "completed", "deal_type": "acquisition",
+        "description": "SES acquires Intelsat ($3.1B equity) — closed Jul 17 2025, world's largest commercial satellite operator",
         "rationale": (
-            "Luxembourg-based SES announces a binding agreement to acquire Intelsat for "
-            "approximately $5 billion in April 2024, creating the world's largest commercial "
-            "satellite operator by fleet size. Intelsat had emerged from Chapter 11 bankruptcy "
-            "in 2022. The combined entity would serve over 3,800 customer accounts across media, "
-            "government and mobility, operating more than 100 geostationary satellites. The deal "
-            "provides significant NATO and US DoD government bandwidth for secure communications "
-            "and is pending US, EU and other regulatory approvals."
+            "Luxembourg-based SES signs a Share Purchase Agreement on 30 April 2024 to acquire "
+            "Intelsat for $3.1 billion (initial cash consideration; equity value convention used "
+            "throughout this database). The transaction closes on 17 July 2025 following US FCC, "
+            "EU and other multi-jurisdictional regulatory approvals. Intelsat had emerged from "
+            "Chapter 11 bankruptcy in 2022. The combined entity serves over 3,800 customer "
+            "accounts across media, government and mobility, operating more than 100 geostationary "
+            "satellites across 100+ countries. Significant NATO and US DoD government bandwidth "
+            "contracts underpin the strategic rationale."
         ),
+        "notes": (
+            "Cash + Contingent Value Rights (CVR) structure. CVRs distributed to Intelsat "
+            "shareholders via Equiniti Trust as rights agent. EV including assumed net debt "
+            "was approximately $5.0B; equity consideration was $3.1B at signing."
+        ),
+        "confidence": "high",
         "acquirer_country": "LU", "target_country": "US",
         "acquirer_logo_domain": "ses.com",
         "target_logo_domain": "intelsat.com",
-        "source_url": "https://www.ses.com/press-release/ses-signs-agreement-acquire-intelsat",
-        "announced_date": datetime(2024, 4, 27, tzinfo=timezone.utc),
-        "stake_percentage": None,
+        "source_url": "https://www.ses.com/press-release/ses-completes-acquisition-intelsat-creating-global-multi-orbit-connectivity",
+        "announced_date": datetime(2024, 4, 30, tzinfo=timezone.utc),
+        "closed_date": datetime(2025, 7, 17, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
         "round_type": None,
         "is_disclosed": True,
     },
