@@ -348,19 +348,23 @@ MA_DATA = [
     },
     {
         "acquirer": "Boeing", "target": "Spirit AeroSystems",
-        "deal_value": 4700, "status": "completed", "deal_type": "acquisition",
-        "description": "Reacquisition of fuselage manufacturing subsidiary",
+        "deal_value": 4700, "status": "pending", "deal_type": "acquisition",
+        "description": "Boeing reacquisition of Spirit AeroSystems fuselage unit — announced Jul 2024, closing expected mid-2025",
         "rationale": (
-            "Boeing reacquires Spirit AeroSystems, the fuselage and nacelle "
-            "manufacturer it originally spun off in 2005, following quality-control "
-            "crises on the 737 MAX programme. The deal brings Spirit's Wichita "
-            "and Tulsa facilities back in-house to restore production oversight."
+            "Boeing announces in July 2024 a $4.7 billion agreement to reacquire Spirit AeroSystems, "
+            "the fuselage and nacelle manufacturer it originally spun off in 2005, following "
+            "quality-control crises on the 737 MAX programme. The deal, pending shareholder and "
+            "regulatory approvals, is expected to close in mid-2025 and would bring Spirit's "
+            "Wichita and Tulsa facilities back in-house to restore direct production oversight."
         ),
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "boeing.com",
         "target_logo_domain": "spiritaero.com",
-                "source_url": "https://boeing.mediaroom.com/news-releases-statements",
+        "source_url": "https://boeing.mediaroom.com/2024-07-01-Boeing-Signs-Agreement-to-Reacquire-Spirit-AeroSystems",
         "announced_date": datetime(2024, 7, 1, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
     },
     # ── 2022–2023 ─────────────────────────────────────────────────────────────
     {
