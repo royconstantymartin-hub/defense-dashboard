@@ -3135,21 +3135,25 @@ MA_EUROPE_DEALS = [
     },
     {
         "acquirer": "SES", "target": "Intelsat",
-        "deal_value": 5000, "status": "completed", "deal_type": "acquisition",
-        "description": "SES acquires Intelsat for ~$5B — creates world's largest commercial satellite operator",
+        "deal_value": 5000, "status": "pending", "deal_type": "acquisition",
+        "description": "SES acquires Intelsat for ~$5B — pending regulatory clearance",
         "rationale": (
-            "Luxembourg-based SES completes its approximately $5 billion acquisition of Intelsat "
-            "in early 2025, creating the world's largest commercial satellite operator by fleet size. "
-            "Intelsat had emerged from Chapter 11 bankruptcy in 2022. The combined entity serves "
-            "over 3,800 customer accounts across media, government and mobility, operating more "
-            "than 100 geostationary satellites. The merger provides significant NATO and US DoD "
-            "government bandwidth for secure communications."
+            "Luxembourg-based SES announces a binding agreement to acquire Intelsat for "
+            "approximately $5 billion in April 2024, creating the world's largest commercial "
+            "satellite operator by fleet size. Intelsat had emerged from Chapter 11 bankruptcy "
+            "in 2022. The combined entity would serve over 3,800 customer accounts across media, "
+            "government and mobility, operating more than 100 geostationary satellites. The deal "
+            "provides significant NATO and US DoD government bandwidth for secure communications "
+            "and is pending US, EU and other regulatory approvals."
         ),
         "acquirer_country": "LU", "target_country": "US",
         "acquirer_logo_domain": "ses.com",
         "target_logo_domain": "intelsat.com",
-        "source_url": "https://www.ses.com/press-release/ses-completes-acquisition-intelsat",
-        "announced_date": datetime(2023, 4, 27, tzinfo=timezone.utc),
+        "source_url": "https://www.ses.com/press-release/ses-signs-agreement-acquire-intelsat",
+        "announced_date": datetime(2024, 4, 27, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
     },
     {
         "acquirer": "Eutelsat", "target": "OneWeb",
