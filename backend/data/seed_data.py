@@ -1105,22 +1105,22 @@ MA_EXTRA_DEALS = [
     },
     {
         "acquirer": "Anduril Industries", "target": "Rebellion Defense",
-        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
-        "description": "Anduril acquires Rebellion Defense — DoD software and AI platform startup",
+        "deal_value": 0, "status": "completed", "deal_type": "minority_stake",
+        "description": "Anduril acqui-hire of Rebellion Defense team — company closed, key talent absorbed",
         "rationale": (
-            "Anduril Industries acquires Rebellion Defense, a Washington DC-based defense technology "
-            "startup known for its IronBank container registry and Phantom AI software platform used "
-            "across the US Department of Defense. The deal folds Rebellion's engineering talent and "
-            "government-relations expertise into Anduril's Lattice platform, accelerating its push "
-            "into DoD enterprise software alongside its hardware autonomy systems (Ghost, Roadrunner, "
-            "Fury). Rebellion Defense co-founders Chris Lynch and Nand Mulchandani had deep DoD ties."
+            "Anduril Industries acquires key assets and engineering talent from Rebellion Defense, "
+            "a Washington DC-based defense technology startup known for its IronBank container "
+            "registry and Phantom AI software platform. This was a partial acqui-hire: Rebellion "
+            "Defense ceased operations and was wound down, with select personnel and IP absorbed "
+            "into Anduril's Lattice platform team. Co-founders Chris Lynch and Nand Mulchandani "
+            "did not join Anduril. Value undisclosed; not a 100% corporate acquisition."
         ),
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "anduril.com",
         "target_logo_domain": "rebelliondefense.com",
-        "source_url": "https://www.anduril.com/newsroom",
+        "source_url": "https://www.defenseone.com/technology/2024/01/rebellion-defense-shuts-down/393564/",
         "announced_date": datetime(2024, 1, 18, tzinfo=timezone.utc),
-        "stake_percentage": 100.0,
+        "stake_percentage": None,
         "round_type": None,
         "is_disclosed": False,
     },
