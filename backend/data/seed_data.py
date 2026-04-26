@@ -408,20 +408,25 @@ MA_DATA = [
         "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "Hanwha Ocean", "target": "Daewoo Shipbuilding & Marine Engineering",
-        "deal_value": 1500, "status": "completed", "deal_type": "acquisition",
-        "description": "Creation of Korean naval defense champion",
+        "acquirer": "Hanwha Group", "target": "Daewoo Shipbuilding & Marine Engineering",
+        "deal_value": 2000, "status": "completed", "deal_type": "acquisition",
+        "description": "Hanwha acquires DSME → rebranded Hanwha Ocean, completed May 2023",
         "rationale": (
-            "Hanwha Group acquires Daewoo Shipbuilding and Marine Engineering (DSME) "
-            "and rebrands it as Hanwha Ocean, creating one of the world's largest "
-            "shipbuilders with a dominant position in submarine and naval surface vessel "
-            "construction for South Korea and allied navies."
+            "Hanwha Group's consortium wins the competitive bid to acquire Daewoo Shipbuilding "
+            "and Marine Engineering (DSME) in February 2022. The transaction closes in May 2023 "
+            "following Korean financial regulator approval; DSME is subsequently rebranded as "
+            "Hanwha Ocean, creating one of the world's largest shipbuilders with a dominant "
+            "position in submarine and naval surface vessel construction for South Korea and "
+            "allied navies including Australia (Attack-class successor programme)."
         ),
         "acquirer_country": "KR", "target_country": "KR",
         "acquirer_logo_domain": "hanwha.com",
         "target_logo_domain": "hanwha.com",
-        "source_url": "https://www.reuters.com/business/hanwha-consortium-wins-bid-acquire-daewoo-shipbuilding-2022-02-08/",
-        "announced_date": datetime(2022, 2, 1, tzinfo=timezone.utc),
+        "source_url": "https://www.reuters.com/business/hanwha-completes-acquisition-daewoo-shipbuilding-2023-05/",
+        "announced_date": datetime(2023, 5, 15, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
     },
     {
         "acquirer": "Thales", "target": "Imperva",
