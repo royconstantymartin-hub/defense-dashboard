@@ -314,19 +314,20 @@ MA_DATA = [
         "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "RTX", "target": "Nightwing Group",
+        "acquirer": "Blackstone (Nightwing)", "target": "Raytheon Cybersecurity Services",
         "deal_value": 320, "status": "completed", "deal_type": "acquisition",
-        "description": "Cybersecurity and intelligence services spinout",
+        "description": "Blackstone carve-out of Raytheon cyber & intelligence unit → Nightwing Group",
         "rationale": (
-            "RTX completes the creation of Nightwing Group, combining its "
-            "cybersecurity and intelligence services businesses into a standalone "
-            "entity. Nightwing retains RTX as a strategic shareholder while pursuing "
-            "independent government and commercial cyber contracts."
+            "Blackstone acquires Raytheon Technologies' (RTX) cybersecurity and intelligence "
+            "services division in a $320 million carve-out, rebranding the standalone entity as "
+            "Nightwing Group. RTX was the seller, retaining a minority strategic stake. Nightwing "
+            "provides cyber, signals intelligence and mission-support services primarily to US "
+            "government and DoD clients. The transaction closed July 2024."
         ),
         "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "rtx.com",
+        "acquirer_logo_domain": "blackstone.com",
         "target_logo_domain": "rtx.com",
-                "source_url": "https://www.rtx.com/news/news-center/2024/07/18/rtx-completes-separation-of-nightwing",
+        "source_url": "https://www.rtx.com/news/news-center/2024/07/18/rtx-completes-separation-of-nightwing",
         "announced_date": datetime(2024, 7, 18, tzinfo=timezone.utc),
     },
     {
