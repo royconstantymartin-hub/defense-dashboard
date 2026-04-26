@@ -364,20 +364,27 @@ MA_DATA = [
     },
     # ── 2022–2023 ─────────────────────────────────────────────────────────────
     {
-        "acquirer": "L3Harris", "target": "Aerojet Rocketdyne",
+        "acquirer": "L3Harris Technologies", "target": "Aerojet Rocketdyne",
         "deal_value": 4700, "status": "cancelled", "deal_type": "acquisition",
-        "description": "Proposed acquisition cancelled after FTC challenge",
+        "description": "L3Harris drops $4.7B Aerojet bid — FTC blocks deal over solid-rocket-motor monopoly risk",
         "rationale": (
-            "L3Harris Technologies withdrew its proposed $4.7 billion acquisition of "
-            "Aerojet Rocketdyne after the Federal Trade Commission sued to block the "
-            "deal, arguing it would harm competition in missile propulsion. The "
-            "withdrawal came in February 2023, leaving Aerojet Rocketdyne independent."
+            "L3Harris Technologies announces a $4.7 billion agreement to acquire Aerojet Rocketdyne "
+            "on 18 December 2022. The Federal Trade Commission filed suit in January 2023 to block "
+            "the transaction, arguing that a combined L3Harris–Aerojet entity would control the "
+            "production of both missiles and the solid-rocket motors that power them — creating "
+            "an ability and incentive to disadvantage competing prime contractors bidding for US "
+            "DoD missile programmes. L3Harris withdrew the deal in February 2023, leaving Aerojet "
+            "Rocketdyne as an independent supplier. L3Harris subsequently shifted its M&A strategy "
+            "toward smaller, regulatory-safe technology bolt-ons."
         ),
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "aerojet.com",
-                "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
+        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
         "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
     },
     {
         "acquirer": "Rheinmetall", "target": "Expal Systems",
@@ -3022,33 +3029,6 @@ MA_PILOT_10 = [
         "target_logo_domain": "imperva.com",
         "source_url": "https://www.prnewswire.com/news-releases/thales-completes-acquisition-of-imperva-301730785.html",
         "announced_date": datetime(2022, 12, 8, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    {
-        "acquirer": "L3Harris Technologies",
-        "target": "Aerojet Rocketdyne",
-        "deal_value": 4700,
-        "status": "cancelled",
-        "deal_type": "acquisition",
-        "description": "L3Harris drops Aerojet Rocketdyne acquisition ($4.7B) — FTC blocks deal to protect competition in solid rocket motors",
-        "rationale": (
-            "L3Harris Technologies announces a $4.7 billion agreement to acquire Aerojet Rocketdyne "
-            "on 18 December 2022. The Federal Trade Commission filed suit in January 2023 to block "
-            "the transaction, arguing that a combined L3Harris–Aerojet entity would control the "
-            "production of both missiles and the solid-rocket motors that power them — creating "
-            "an ability and incentive to disadvantage competing prime contractors bidding for US "
-            "DoD missile programmes. L3Harris withdrew the deal in February 2023, leaving Aerojet "
-            "Rocketdyne as an independent supplier. L3H subsequently shifted its M&A strategy "
-            "toward smaller, regulatory-safe technology bolt-ons."
-        ),
-        "acquirer_country": "US",
-        "target_country": "US",
-        "acquirer_logo_domain": "l3harris.com",
-        "target_logo_domain": "aerojet.com",
-        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
-        "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
         "stake_percentage": None,
         "round_type": None,
         "is_disclosed": True,
