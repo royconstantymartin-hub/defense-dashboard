@@ -165,6 +165,7 @@ class DefensePlayer(BaseModel):
     description: Optional[str] = None
     programs: Optional[List[str]] = None
     export_countries: Optional[List[str]] = None
+    aliases: Optional[List[str]] = None   # alternative names for matching (news, deals, profile lookup)
 
 # Defense Expenditure Model
 class ExpenditureCreate(BaseModel):
@@ -778,23 +779,43 @@ async def get_stock_prices(tickers: str = ""):
 
 @api_router.get("/companies/{name}")
 async def get_company_profile(name: str):
-    """Return Crunchbase-style company profile + related M&A activity."""
-    pattern = re.compile(re.escape(name), re.IGNORECASE)
-    player = await db.defense_players.find_one({"name": pattern}, {"_id": 0})
+    """Return Crunchbase-style company profile + related M&A activity.
+    Lookup order: 1) exact name, 2) name regex, 3) aliases array.
+    """
+    esc = re.escape(name)
+    player = await db.defense_players.find_one(
+        {"name": {"$regex": f"^{esc}$", "$options": "i"}}, {"_id": 0}
+    )
     if not player:
-        # Partial match fallback
+        # Partial name match
         player = await db.defense_players.find_one(
-            {"name": {"$regex": re.escape(name), "$options": "i"}}, {"_id": 0}
+            {"name": {"$regex": esc, "$options": "i"}}, {"_id": 0}
+        )
+    if not player:
+        # Alias match (any element of aliases[] matches the requested name)
+        player = await db.defense_players.find_one(
+            {"aliases": {"$elemMatch": {"$regex": esc, "$options": "i"}}}, {"_id": 0}
         )
     if player and isinstance(player.get("updated_at"), str):
         player["updated_at"] = datetime.fromisoformat(player["updated_at"])
 
-    # Related M&A activities (acquirer or target)
-    ma_query = {"$or": [
-        {"acquirer": {"$regex": re.escape(name), "$options": "i"}},
-        {"target":   {"$regex": re.escape(name), "$options": "i"}},
-    ]}
-    ma = await db.ma_activities.find(ma_query, {"_id": 0}).sort("announced_date", -1).limit(10).to_list(10)
+    # Build all name variants for M&A lookup (canonical name + aliases)
+    name_variants = [name]
+    if player:
+        name_variants.append(player.get("name", name))
+        name_variants += player.get("aliases") or []
+    name_variants = list(dict.fromkeys(name_variants))  # dedupe, preserve order
+
+    ma_or_clauses = []
+    for v in name_variants:
+        v_esc = re.escape(v)
+        ma_or_clauses += [
+            {"acquirer": {"$regex": v_esc, "$options": "i"}},
+            {"target":   {"$regex": v_esc, "$options": "i"}},
+        ]
+    ma = await db.ma_activities.find(
+        {"$or": ma_or_clauses}, {"_id": 0}
+    ).sort("announced_date", -1).limit(10).to_list(10)
     for a in ma:
         if isinstance(a.get("announced_date"), str):
             a["announced_date"] = datetime.fromisoformat(a["announced_date"])
@@ -1507,28 +1528,54 @@ async def get_news(
 @api_router.get("/news/company")
 async def get_company_news(name: str, limit: int = 5):
     """
-    Return articles mentioning a company name.
-    Priority 1: articles tagged with the canonical company name in the `companies` array.
-    Priority 2: case-insensitive regex fallback on title + summary.
-    Sorted by most recent first. Max 20 articles.
+    Return articles about a specific company.
+
+    Matching strategy (strict — no noise):
+      1. Look up the company's aliases from defense_players.
+      2. An article is included only when the company name OR one of its aliases
+         appears in the article TITLE (score >= 3 threshold).
+      3. Fallback: canonical name in the pre-tagged `companies` array.
+      4. Returns [] rather than unrelated articles — "0 news" is better than
+         articles about a different company that happens to share a keyword.
+
+    Sorted by publishedAt DESC. Max 20 articles.
     """
     limit = min(max(limit, 1), 20)
+    esc = re.escape(name)
 
-    # First try the fast pre-tagged field
-    tagged = await db.news_articles.find(
-        {"companies": name}, {"_id": 0}
-    ).sort("publishedAt", -1).limit(limit).to_list(limit)
+    # Resolve canonical name + aliases from DB
+    player = await db.defense_players.find_one(
+        {"$or": [
+            {"name":    {"$regex": f"^{esc}$", "$options": "i"}},
+            {"name":    {"$regex": esc, "$options": "i"}},
+            {"aliases": {"$elemMatch": {"$regex": esc, "$options": "i"}}},
+        ]},
+        {"_id": 0, "name": 1, "aliases": 1},
+    )
+    canonical = player.get("name", name) if player else name
+    aliases   = player.get("aliases") or [] if player else []
+    all_names = list(dict.fromkeys([canonical] + aliases + [name]))
 
-    if tagged:
-        return [_normalise_article(a) for a in tagged]
-
-    # Fallback: broad regex search on title and summary
-    regex = {"$regex": name, "$options": "i"}
-    query = {"$or": [{"title": regex}, {"summary": regex}]}
+    # Build title-match query (strict: company must appear in article TITLE)
+    title_clauses = [
+        {"title": {"$regex": re.escape(n), "$options": "i"}}
+        for n in all_names
+    ]
+    title_query = {"$or": title_clauses}
     articles = await db.news_articles.find(
-        query, {"_id": 0}
+        title_query, {"_id": 0}
     ).sort("publishedAt", -1).limit(limit).to_list(limit)
-    return [_normalise_article(a) for a in articles]
+
+    if articles:
+        return [_normalise_article(a) for a in articles]
+
+    # Fallback: check pre-tagged companies[] field (set at scrape time)
+    tagged_clauses = [{"companies": n} for n in all_names]
+    tagged = await db.news_articles.find(
+        {"$or": tagged_clauses}, {"_id": 0}
+    ).sort("publishedAt", -1).limit(limit).to_list(limit)
+
+    return [_normalise_article(a) for a in tagged]
 
 
 # ============= BOOKMARKS =============
@@ -2013,8 +2060,7 @@ async def _apply_company_enrichments():
 # These crept in via old seeds or scraper hallucinations and have the wrong acquirer.
 _STALE_MA_DEALS = [
     {"acquirer": "Thales", "target": "Preligens"},         # acquired by Safran, not Thales
-    {"acquirer": "Dassault Aviation", "target": "Harmattan.ai",
-     "deal_type": {"$ne": "funding_round"}},               # fix old strategic_investment entry
+    {"acquirer": "Dassault Aviation", "target": "Harmattan.ai"},   # renamed target to "Harmattan AI"
     # phase1.1 corrections — purge old/incorrect entries so upserts apply cleanly:
     {"acquirer": "RTX", "target": "Nightwing Group"},      # RTX was seller; corrected to Blackstone acq.
     {"acquirer": "L3Harris", "target": "Aerojet Rocketdyne"},  # old short-name dup; canonical is L3Harris Technologies

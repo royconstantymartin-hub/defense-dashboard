@@ -24,7 +24,8 @@ DEFENSE_COMPANIES = [
     {"name": "Curtiss-Wright", "ticker": "CW", "country": "USA", "market_cap": 8.9, "stock_price": 245.67, "change_percent": 0.78, "revenue": 2.9, "employees": 8500, "specializations": ["Components", "Naval", "Nuclear"]},
     {"name": "TransDigm", "ticker": "TDG", "country": "USA", "market_cap": 72.4, "stock_price": 1289.45, "change_percent": 0.45, "revenue": 6.6, "employees": 14000, "specializations": ["Components", "Aerospace"]},
     {"name": "Anduril Industries", "ticker": "ANDR-PRIV", "country": "USA", "market_cap": 14.0, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 2500, "specializations": ["AI", "Autonomous", "Counter-UAS"]},
-    {"name": "Shield AI", "ticker": "SHLD-PRIV", "country": "USA", "market_cap": 2.7, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["AI", "Autonomous", "UAV"]},
+    {"name": "Shield AI", "ticker": "SHLD-PRIV", "country": "USA", "market_cap": 2.7, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["AI", "Autonomous", "UAV"],
+     "aliases": ["ShieldAI", "Shield Artificial Intelligence", "Shield AI Inc"]},
     {"name": "Palantir Technologies", "ticker": "PLTR", "country": "USA", "market_cap": 45.6, "stock_price": 21.34, "change_percent": 3.45, "revenue": 2.2, "employees": 3700, "specializations": ["Software", "AI", "Analytics", "Intelligence"]},
     {"name": "Rocket Lab", "ticker": "RKLB", "country": "USA", "market_cap": 8.9, "stock_price": 18.90, "change_percent": 4.56, "revenue": 0.5, "employees": 1800, "specializations": ["Space", "Launch", "Satellites"]},
     {"name": "Parsons Corporation", "ticker": "PSN", "country": "USA", "market_cap": 8.1, "stock_price": 78.90, "change_percent": 1.34, "revenue": 5.4, "employees": 17500, "specializations": ["Engineering", "Cyber", "Infrastructure"]},
@@ -161,10 +162,84 @@ DEFENSE_COMPANIES = [
     {"name": "Theon Sensors", "ticker": "THSN-PRIV", "country": "Greece", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 280, "specializations": ["Optronics", "Night Vision", "Thermal Imaging"]},
     {"name": "PZL Mielec", "ticker": "PZL-PRIV", "country": "Poland", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2200, "specializations": ["Aircraft", "Helicopters", "MRO"]},
     # === France — Defense Tech Startups ===
-    {"name": "Harmattan AI", "ticker": "HARM-PRIV", "country": "France", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 120, "specializations": ["AI", "Command & Control", "Mission Planning", "Battlespace"]},
-    {"name": "Exail Technologies", "ticker": "EXAI-PRIV", "country": "France", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.35, "employees": 1800, "specializations": ["Naval Autonomy", "USV", "UUV", "Navigation", "Simulation"]},
+    {
+        "name": "Harmattan AI", "ticker": "HARM-PRIV", "country": "France",
+        "market_cap": 1.0, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.1, "employees": 120,
+        "specializations": ["AI", "Command & Control", "Mission Planning", "Battlespace"],
+        "founded_year": 2020, "headquarters": "Paris, France", "website": "harmattan.ai",
+        "funding_stage": "Series B — €200M (Dassault Aviation lead, Mar 2025)",
+        "is_public": False,
+        "description": (
+            "Harmattan AI is a French defense AI startup specialising in AI-assisted "
+            "command-and-control and real-time battlespace analysis. Its platform integrates "
+            "sensor fusion, mission planning and decision-support for the French Army and "
+            "Air Force, and is being embedded into the Rafale F5 and FCAS programmes."
+        ),
+        "programs": ["AI-C2 for Armée de Terre", "Rafale F5 integration", "FCAS decision layer"],
+        "export_countries": ["FR", "DE", "AE"],
+        "aliases": ["Harmattan.ai", "harmattan.ai", "Harmattan"],
+    },
+    {
+        "name": "Exail Technologies", "ticker": "EXAI-PRIV", "country": "France",
+        "market_cap": 0.5, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.35, "employees": 1800,
+        "specializations": ["Naval Autonomy", "USV", "UUV", "Navigation", "Simulation"],
+        "founded_year": 2022, "headquarters": "Saint-Germain-en-Laye, France", "website": "exail.com",
+        "funding_stage": "Private (iXBlue + ECA Group merger, PE-backed by Tikehau Capital)",
+        "is_public": False,
+        "description": (
+            "Exail Technologies is a French defense and technology group created in 2022 "
+            "from the merger of iXBlue (inertial navigation, USV) and ECA Group (inspection "
+            "robots, military simulators, mine-countermeasure UUVs). Exail serves naval, "
+            "energy and scientific markets with a strong NATO export footprint."
+        ),
+        "programs": ["DriX USV", "Inspector AUV", "SIGMA INS", "MTTS submarine simulation"],
+        "export_countries": ["FR", "DE", "GB", "IT", "AU"],
+        "aliases": ["iXBlue", "ECA Group", "Exail"],
+    },
+    # === USA — Defense Tech Startups (hypersonics) ===
+    {
+        "name": "Hermeus", "ticker": "HERM-PRIV", "country": "USA",
+        "market_cap": 0, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.05, "employees": 200,
+        "specializations": ["Hypersonics", "Autonomous Aircraft", "Air Mobility", "Propulsion"],
+        "founded_year": 2018, "headquarters": "Atlanta, GA, USA", "website": "hermeus.com",
+        "funding_stage": "Series C — $350M (General Catalyst lead, 2024)",
+        "is_public": False,
+        "description": (
+            "Hermeus is a US defense technology company developing Mach 5+ autonomous and "
+            "crewed hypersonic aircraft for national security and commercial applications. "
+            "Its Quarterhorse unmanned demonstrator is supported by USAF AFWERX research "
+            "contracts. The Halcyon programme targets autonomous hypersonic strike platforms."
+        ),
+        "programs": ["Quarterhorse (USAF demonstrator)", "Halcyon (autonomous strike)", "Darkhorse"],
+        "export_countries": [],
+        "aliases": ["Hermeus Corp", "Hermeus Corporation"],
+    },
+    # === France — Satellite Operators ===
+    {
+        "name": "Eutelsat", "ticker": "ETL.PA", "country": "France",
+        "market_cap": 1.2, "stock_price": 3.50, "change_percent": 0,
+        "revenue": 1.3, "employees": 1600,
+        "specializations": ["Satellite Communications", "GEO", "LEO (OneWeb)", "Government Connectivity", "Broadband"],
+        "founded_year": 1977, "headquarters": "Paris, France", "website": "eutelsat.com",
+        "funding_stage": "Public — Euronext Paris: ETL",
+        "is_public": True,
+        "description": (
+            "Eutelsat is a French GEO satellite operator providing broadband, video broadcast "
+            "and government secure communications services. Following its 2023 merger with "
+            "OneWeb, Eutelsat operates a combined GEO/LEO constellation serving government, "
+            "maritime and aviation clients. It holds contracts with European governments and "
+            "NATO for resilient satcom. The OneWeb LEO constellation provides global broadband coverage."
+        ),
+        "programs": ["OneWeb LEO (648 sats)", "HOTBIRD media distribution", "KONNECT VHTS broadband"],
+        "export_countries": ["FR", "GB", "DE", "IT", "ES", "AE", "IN"],
+        "aliases": ["Eutelsat Communications", "Eutelsat S.A.", "ETL"],
+    },
     # === Germany — Defense Tech Startups ===
-    {"name": "Quantum Systems", "ticker": "QSYS-PRIV", "country": "Germany", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 250, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"]},
+    {"name": "Quantum Systems", "ticker": "QSYS-PRIV", "country": "Germany", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 250, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"],
+     "aliases": ["Quantum Systems GmbH"]},
 ]
 
 # Extended Announcements from specialized sources
@@ -840,9 +915,9 @@ MA_DATA = [
 # that do not constitute full acquisitions.
 MA_EXTRA_DEALS = [
     {
-        "acquirer": "Dassault Aviation", "target": "Harmattan.ai",
+        "acquirer": "Dassault Aviation", "target": "Harmattan AI",
         "deal_value": 200, "status": "completed", "deal_type": "funding_round",
-        "description": "Dassault Aviation participates in Harmattan.ai $200M Series B — AI-powered C2 for French defence",
+        "description": "Dassault Aviation participates in Harmattan AI $200M Series B — AI-powered C2 for French defence",
         "rationale": (
             "Harmattan.ai, French defence AI start-up specialising in AI-assisted command-and-control "
             "decision support, closes a $200 million Series B funding round with Dassault Aviation as "
