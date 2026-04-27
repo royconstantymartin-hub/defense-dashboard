@@ -3654,4 +3654,193 @@ MA_EUROPE_DEALS = [
         "source_url": "https://www.businesswire.com/news/home/20260115005600/en/Ondas-Holdings-Acquires-Roboteam",
         "announced_date": datetime(2026, 1, 20, tzinfo=timezone.utc),
     },
+
+    # ── Phase 2.3 — Missing acquisitions ──────────────────────────────────────
+    {
+        "acquirer": "Czechoslovak Group", "target": "Kinetic Group (Vista Outdoor)",
+        "deal_value": 2200, "status": "completed", "deal_type": "acquisition",
+        "description": "CSG acquires Vista Outdoor's Kinetic Group (ammunition & accessories) for $2.2B",
+        "rationale": (
+            "Czechoslovak Group (CSG) acquires the Kinetic Group, Vista Outdoor's sporting "
+            "products and ammunition segment (brands: Federal, Remington, CCI, Speer), for "
+            "$2.2 billion in October 2024. The deal makes CSG one of the world's largest "
+            "ammunition manufacturers, combining Czech Republic military cartridge production "
+            "with US commercial and NATO-supply ammunition brands. The acquisition strengthens "
+            "CSG's position as a key NATO ammunition supplier amid surging demand post-Ukraine."
+        ),
+        "acquirer_country": "CZ", "target_country": "US",
+        "acquirer_logo_domain": "czechoslovakgroup.cz",
+        "target_logo_domain": "vistaoutdoor.com",
+        "source_url": "https://www.vistaoutdoor.com/news/",
+        "announced_date": datetime(2024, 10, 1, tzinfo=timezone.utc),
+        "closed_date": datetime(2024, 10, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Saab AB", "target": "BlueBear Systems Research",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Saab acquires UK AI and autonomous systems specialist BlueBear",
+        "rationale": (
+            "Saab AB acquires BlueBear Systems Research, a Bedford, UK-based company "
+            "specialising in AI software for autonomous air vehicles and mission-systems "
+            "integration. BlueBear's AETHER AI framework provides autonomous flight, "
+            "mission planning and multi-agent coordination for fixed-wing and rotary UAS. "
+            "The acquisition accelerates Saab's GlobalEye airborne early-warning programme "
+            "and its growing UK autonomous systems franchise."
+        ),
+        "acquirer_country": "SE", "target_country": "GB",
+        "acquirer_logo_domain": "saab.com",
+        "target_logo_domain": "bluebear.aero",
+        "source_url": "https://www.saab.com/newsroom/press-releases/",
+        "announced_date": datetime(2023, 9, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Babcock International", "target": "Frazer-Nash Consultancy",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Babcock divests Frazer-Nash Consultancy to PE firm Inflexion",
+        "rationale": (
+            "Babcock International divests Frazer-Nash Consultancy, a UK engineering "
+            "and technology consultancy serving defence, nuclear and energy sectors, "
+            "to private equity firm Inflexion Private Equity as part of Babcock's "
+            "portfolio rationalisation strategy. The deal allows Babcock to focus on "
+            "its core naval, land and aviation services, while Frazer-Nash continues "
+            "independently with defence advisory and engineering services."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "inflexion.com",
+        "target_logo_domain": "frazernash.com",
+        "source_url": "https://www.babcockinternational.com/news-and-media/",
+        "announced_date": datetime(2022, 6, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+        "notes": "Acquirer in this deal is effectively Inflexion PE (buyer), Babcock is the seller/target-parent.",
+    },
+    {
+        "acquirer": "Hanwha Aerospace", "target": "Austal",
+        "deal_value": 570, "status": "cancelled", "deal_type": "acquisition",
+        "description": "Hanwha's A$834M bid for Australian shipbuilder Austal rejected",
+        "rationale": (
+            "Hanwha Aerospace submits an unsolicited acquisition proposal for Australian "
+            "defence shipbuilder Austal at A$2.825/share (approx. A$834M / ~$570M USD) "
+            "in March 2023. Austal's board rejects the offer as inadequate and not in "
+            "shareholders' best interests. The bid reflected Hanwha's ambition to enter "
+            "the Australian naval shipbuilding market, but faced headwinds from Australian "
+            "government concerns over foreign ownership of a sovereign naval supplier."
+        ),
+        "acquirer_country": "KR", "target_country": "AU",
+        "acquirer_logo_domain": "hanwhaaerospace.com",
+        "target_logo_domain": "austal.com",
+        "source_url": "https://www.austal.com/investors/asx-announcements/",
+        "announced_date": datetime(2023, 3, 14, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "confidence": "high",
+    },
+
+    # ── Phase 2.3 — Structuring JVs ───────────────────────────────────────────
+    {
+        "acquirer": "Naval Group + Fincantieri", "target": "Naviris",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Naviris — Franco-Italian naval JV (Naval Group + Fincantieri, 50/50)",
+        "rationale": (
+            "Naval Group (France) and Fincantieri (Italy) create Naviris, a 50/50 joint "
+            "venture based in Genoa, Italy, to coordinate and manage naval export programmes "
+            "and European naval cooperation. Founded June 2020, Naviris serves as the common "
+            "industrial vehicle for joint bids on European naval projects including the PANG "
+            "(Porte-Avions de Nouvelle Génération) aircraft carrier studies. The JV reinforces "
+            "the Franco-Italian FREMM frigate cooperation and positions both groups for future "
+            "European naval consolidation under EDIP and PESCO frameworks."
+        ),
+        "acquirer_country": "FR", "target_country": "IT",
+        "acquirer_logo_domain": "naval-group.com",
+        "target_logo_domain": "fincantieri.com",
+        "source_url": "https://www.naval-group.com/en/news/creation-of-naviris-the-naval-group-and-fincantieri-joint-company",
+        "announced_date": datetime(2020, 6, 1, tzinfo=timezone.utc),
+        "stake_percentage": 50.0, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "MBDA + Thales", "target": "Eurosam",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Eurosam — Franco-Italian air defense missile JV (MBDA 66% + Thales 34%)",
+        "rationale": (
+            "Eurosam is a joint venture between MBDA (66%) and Thales (34%) producing the "
+            "SAMP/T (Aster 30) medium-range surface-to-air missile system and the Aster family "
+            "of missiles. Founded in 1989, Eurosam is the industrial vehicle for the "
+            "Principal Anti-Air Missile System (PAAMS / CAMM-ER successor discussions). "
+            "The JV has delivered SAMP/T to France, Italy, and Singapore, with the modernised "
+            "SAMP/T NG version now being delivered to Ukraine and NATO allies."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "mbda-systems.com",
+        "target_logo_domain": "thalesgroup.com",
+        "source_url": "https://www.eurosam.com/",
+        "announced_date": datetime(1989, 1, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Airbus + Dassault + Leonardo", "target": "Eurodrone Programme JV",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Eurodrone — MALE UAS tri-national JV (Airbus 40% / Dassault 40% / Leonardo 20%)",
+        "rationale": (
+            "Airbus Defence and Space, Dassault Aviation and Leonardo form a joint venture "
+            "to develop the Eurodrone, Europe's medium-altitude long-endurance (MALE) UAS, "
+            "under a €7.1 billion ESA/OCCAR contract signed in 2023. Airbus leads the "
+            "programme (40%), Dassault brings avionics integration (40%), Leonardo provides "
+            "mission systems (20%). Eurodrone will serve Germany, France, Spain and Italy, "
+            "with first flight targeted for 2028. It replaces aging MALE platforms including "
+            "the Heron-TP leases."
+        ),
+        "acquirer_country": "DE", "target_country": "EU",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "airbus.com",
+        "source_url": "https://www.airbus.com/en/products-services/defence/uas/eurodrone",
+        "announced_date": datetime(2020, 3, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Airbus Helicopters + Leonardo + Fokker", "target": "NHIndustries",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "NHIndustries — NH90 helicopter industrial consortium (NH90 prime contractor)",
+        "rationale": (
+            "NHIndustries is the industrial consortium formed by Airbus Helicopters (France/Germany), "
+            "Leonardo Helicopters (Italy) and GKN Fokker (Netherlands/formerly Fokker) to develop, "
+            "produce and support the NH90 medium tactical helicopter. The NH90 is the most produced "
+            "European military helicopter, with 14 nations operating or on order for over 800 units. "
+            "NHIndustries manages the Type Certificate, production coordination and through-life "
+            "support for the NH90 TTH (troop transport) and NFH (naval) variants."
+        ),
+        "acquirer_country": "FR", "target_country": "EU",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "nhindustries.com",
+        "source_url": "https://www.nhindustries.com/",
+        "announced_date": datetime(1992, 9, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "KNDS France + KNDS Deutschland + Rheinmetall + Thales", "target": "MGCS Programme Alliance",
+        "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
+        "description": "MGCS — Main Ground Combat System, Franco-German programme alliance (2035+)",
+        "rationale": (
+            "The Main Ground Combat System (MGCS) programme is a Franco-German initiative "
+            "to develop a next-generation battle tank for the Bundeswehr and Armée de Terre, "
+            "replacing Leopard 2 and Leclerc by 2035+. The industrial alliance involves KNDS "
+            "France (lead on French side), KNDS Deutschland (formerly KMW), Rheinmetall and "
+            "Thales. Programme architecture and work-share have been contentious, with Rheinmetall "
+            "pushing for a larger role. France and Germany signed the MGCS framework agreement "
+            "in 2018; industrial organisation remains under negotiation as of 2026."
+        ),
+        "acquirer_country": "FR", "target_country": "DE",
+        "acquirer_logo_domain": "knds.com",
+        "target_logo_domain": "knds.com",
+        "source_url": "https://www.bmvg.de/de/themen/ruestung/projekte-und-vorhaben/mgcs",
+        "announced_date": datetime(2018, 7, 13, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
 ]
