@@ -496,12 +496,12 @@ def _extract_summary(entry) -> str:
 
 # ── OG image fallback ───────────────────────────────────────────────────────
 
-def _fetch_og_image(article_url: str) -> Optional[str]:
+def _fetch_og_image(article_url: str, timeout: int = 6) -> Optional[str]:
     """Fetch the Open Graph / Twitter Card image from an article page.
     Used as a fallback when the RSS entry carries no image metadata.
-    Short timeout (4 s) so it never blocks the scraper for long."""
+    Short timeout so it never blocks the scraper for long."""
     try:
-        resp = requests.get(article_url, headers=HEADERS, timeout=6, stream=True)
+        resp = requests.get(article_url, headers=HEADERS, timeout=timeout, stream=True)
         resp.raise_for_status()
         # Read only the first 32 KB — enough to find <meta> tags in <head>
         chunk = resp.raw.read(32768).decode("utf-8", errors="ignore")

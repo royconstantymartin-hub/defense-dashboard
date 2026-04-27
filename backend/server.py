@@ -2007,6 +2007,26 @@ async def run_ma_scraper_job() -> dict:
 
 # ============= COMPANY NEWS SCRAPER JOB =============
 
+async def _enrich_article_image_bg(article_url: str, article_title: str) -> None:
+    """Background task: fetch og:image for a single article and patch its DB record.
+
+    Called with asyncio.create_task() right after a new article is inserted so the
+    main scraper loop is never blocked.  Uses a 3 s timeout to keep things snappy.
+    Only writes to the DB when an image is found AND the document still has none
+    (avoids racing with a concurrent scrape that already set an image).
+    """
+    from services.news_scraper import _fetch_og_image
+    try:
+        img = await asyncio.to_thread(_fetch_og_image, article_url, 3)
+        if img:
+            await db.news_articles.update_one(
+                {"url": article_url, "image": None},
+                {"$set": {"image": img}},
+            )
+    except Exception as exc:
+        logger.debug("Image enrichment for '%s' failed: %s", article_title, exc)
+
+
 async def run_company_news_scraper_job() -> dict:
     """
     Every 6 hours: for each company in defense_players, fetch the 5 most
@@ -2047,6 +2067,8 @@ async def run_company_news_scraper_job() -> dict:
                     "image":             article.get("image"),
                     "summary":           article.get("summary", ""),
                     "source":            article.get("source", ""),
+                    "realSource":        article.get("realSource", ""),
+                    "sourceLogo":        article.get("sourceLogo", ""),
                     "publishedAt":       pub_at.isoformat() if isinstance(pub_at, datetime) else pub_at,
                     "scrapedAt":         scraped_at.isoformat(),
                     "category":          article.get("category", "INDUSTRY"),
@@ -2067,6 +2089,12 @@ async def run_company_news_scraper_job() -> dict:
                 )
                 if result.upserted_id is not None:
                     saved += 1
+                    # Problem 2: enrich image in the background for new articles
+                    # that have no image (Google News RSS carries none).
+                    if not article.get("image"):
+                        asyncio.create_task(
+                            _enrich_article_image_bg(url, article.get("title", ""))
+                        )
                 else:
                     skipped += 1
             except Exception as exc:
