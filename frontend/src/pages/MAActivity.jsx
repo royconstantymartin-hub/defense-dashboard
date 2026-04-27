@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
+  ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
 
 // ── Constants ──────────────────────────────────────────────────────────────
@@ -2002,31 +2002,57 @@ export default function MAActivity() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold text-slate-800">Quarterly Activity</p>
-              <span className="text-xs text-slate-400 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">Last 8 quarters</span>
+              <div className="flex items-center gap-3 text-[10px] text-slate-400">
+                <span className="flex items-center gap-1"><span className="inline-block w-3 h-2.5 rounded-sm bg-purple-200" /> Deal count</span>
+                <span className="flex items-center gap-1"><span className="inline-block w-6 border-t-2 border-dashed border-emerald-400" /> Value ($B)</span>
+                <span className="bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">Last 8 quarters</span>
+              </div>
             </div>
-            <ResponsiveContainer width="100%" height={100}>
-              <BarChart data={quarterlyData} margin={{ top: 2, right: 8, left: 0, bottom: 0 }}>
+            <ResponsiveContainer width="100%" height={110}>
+              <ComposedChart data={quarterlyData} margin={{ top: 4, right: 36, left: 0, bottom: 0 }}>
                 <XAxis dataKey="quarter" tick={{ fill: "#94A3B8", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fill: "#94A3B8", fontSize: 10 }} axisLine={false} tickLine={false} width={22} />
+                <YAxis
+                  yAxisId="count"
+                  allowDecimals={false}
+                  tick={{ fill: "#94A3B8", fontSize: 10 }}
+                  axisLine={false} tickLine={false} width={22}
+                />
+                <YAxis
+                  yAxisId="value"
+                  orientation="right"
+                  tickFormatter={v => v >= 1000 ? `$${(v/1000).toFixed(0)}B` : v > 0 ? `$${v}M` : ""}
+                  tick={{ fill: "#94A3B8", fontSize: 10 }}
+                  axisLine={false} tickLine={false} width={36}
+                />
                 <Tooltip content={({ active, payload }) => {
                   if (active && payload?.length) {
                     const d = payload[0].payload;
                     return (
                       <div className="bg-white border border-slate-200 rounded-lg px-3 py-2 shadow text-xs">
-                        <p className="font-semibold text-slate-700">{d.quarter}</p>
+                        <p className="font-semibold text-slate-700 mb-1">{d.quarter}</p>
                         <p className="text-purple-700 font-mono">{d.count} deal{d.count !== 1 ? "s" : ""}</p>
-                        {d.value > 0 && <p className="text-slate-500">{d.value >= 1000 ? `$${(d.value/1000).toFixed(1)}B` : `$${d.value}M`}</p>}
+                        {d.value > 0 && <p className="text-emerald-600 font-mono">{d.value >= 1000 ? `$${(d.value/1000).toFixed(1)}B` : `$${d.value}M`} disclosed</p>}
                       </div>
                     );
                   }
                   return null;
                 }} />
-                <Bar dataKey="count" radius={[3, 3, 0, 0]}>
+                <Bar yAxisId="count" dataKey="count" radius={[3, 3, 0, 0]}>
                   {quarterlyData.map((_, i) => (
                     <Cell key={i} fill={i === quarterlyData.length - 1 ? "#7E22CE" : "#E9D5FF"} />
                   ))}
                 </Bar>
-              </BarChart>
+                <Line
+                  yAxisId="value"
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#10B981"
+                  strokeWidth={1.5}
+                  strokeDasharray="4 2"
+                  dot={false}
+                  activeDot={{ r: 3, fill: "#10B981" }}
+                />
+              </ComposedChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
