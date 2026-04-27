@@ -1109,6 +1109,57 @@ function resolvePlayerName(name) {
 // ── Company cell — opens profile sheet for known players, website for others ─
 // Supports multi-party strings like "Airbus + BAE Systems + Leonardo"
 
+// Avatar group — overlapping horizontal logo stack, max 3 visible + "+N" badge
+function AvatarGroup({ parties, activity, side, onOpenProfile }) {
+  const MAX_VIS = 3;
+  const visible  = parties.slice(0, MAX_VIS);
+  const overflow = parties.length - MAX_VIS;
+
+  return (
+    <TooltipProvider>
+      <UITooltip>
+        <TooltipTrigger asChild>
+          {/* Inline-flex so row height tracks logo height, not flex-col */}
+          <div className="inline-flex items-center" style={{ lineHeight: 0 }}>
+            {visible.map((p, i) => {
+              const synth = partyActivity(p.name, activity, side);
+              return (
+                <button
+                  key={i}
+                  onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(p.name) || p.name); }}
+                  className="relative shrink-0 rounded-xl hover:ring-2 hover:ring-purple-300 focus:outline-none transition-all"
+                  style={{ marginLeft: i > 0 ? -10 : 0, zIndex: MAX_VIS - i }}
+                  aria-label={p.name}
+                >
+                  <CompanyLogo activity={synth} side={side} size="sm" />
+                </button>
+              );
+            })}
+            {overflow > 0 && (
+              <div
+                className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-slate-100 border-2 border-white text-[9px] font-bold text-slate-500 shrink-0 select-none"
+                style={{ marginLeft: -10, zIndex: 0 }}
+              >
+                +{overflow}
+              </div>
+            )}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent className="text-xs max-w-[240px] p-2">
+          <div className="space-y-1">
+            {parties.map((p, i) => (
+              <div key={i} className="flex items-center gap-1.5">
+                <span className="text-slate-400 select-none shrink-0">·</span>
+                <span className="font-medium">{p.name}</span>
+              </div>
+            ))}
+          </div>
+        </TooltipContent>
+      </UITooltip>
+    </TooltipProvider>
+  );
+}
+
 function CompanyCell({ activity, side, onOpenProfile }) {
   const rawName = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const parties = parseParties(rawName);
@@ -1131,29 +1182,8 @@ function CompanyCell({ activity, side, onOpenProfile }) {
     );
   }
 
-  // Multi-party: show each party inline with their logo
-  return (
-    <div className="flex items-center gap-2 flex-wrap">
-      {parties.map((p, idx) => {
-        const synth     = partyActivity(p.name, activity, side);
-        const canonical = resolvePlayerName(p.name);
-        return (
-          <div key={idx} className="flex items-center gap-1">
-            {idx > 0 && <span className="text-slate-300 text-[10px] select-none px-0.5">+</span>}
-            <button onClick={e => { e.stopPropagation(); onOpenProfile(canonical || p.name); }} className="shrink-0">
-              <CompanyLogo activity={synth} side={side} size="sm" />
-            </button>
-            <button
-              onClick={e => { e.stopPropagation(); onOpenProfile(canonical || p.name); }}
-              className="text-xs font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
-            >
-              {p.name}
-            </button>
-          </div>
-        );
-      })}
-    </div>
-  );
+  // Multi-party → compact avatar group (logos stacked horizontally, tooltip lists all)
+  return <AvatarGroup parties={parties} activity={activity} side={side} onOpenProfile={onOpenProfile} />;
 }
 
 // ── Table row ──────────────────────────────────────────────────────────────

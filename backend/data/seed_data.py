@@ -198,6 +198,30 @@ DEFENSE_COMPANIES = [
         "export_countries": ["FR", "DE", "GB", "IT", "AU"],
         "aliases": ["iXBlue", "ECA Group", "Exail"],
     },
+    # === USA — Defense Tech Startups (autonomous systems / UAV) ===
+    {
+        "name": "Skydio", "ticker": "SKYD-PRIV", "country": "USA",
+        "market_cap": 2.2, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.1, "employees": 500,
+        "specializations": ["UAV", "AI", "Autonomous", "ISR", "Counter-UAS"],
+        "founded_year": 2014, "headquarters": "San Mateo, CA, USA", "website": "skydio.com",
+        "funding_stage": "Series E — $230M (Linse Capital lead, Sep 2022), valuation $2.2B",
+        "is_public": False,
+        "description": (
+            "Skydio is an American drone manufacturer specialising in AI-powered autonomous "
+            "flight. Originally focused on consumer obstacle-avoidance drones, Skydio pivoted "
+            "to defense and public sector applications after 2020. Its X2D and X10D platforms "
+            "are NDAA-compliant (no Chinese components) and serve US Army, law enforcement and "
+            "allied government customers. Skydio won the US Army Short Range Reconnaissance (SRR) "
+            "programme in 2021, providing small tactical drones to infantry squads."
+        ),
+        "programs": [
+            "X2D (US Army Short Range Reconnaissance / SRR)",
+            "X10D (enterprise / government ISR)",
+        ],
+        "export_countries": ["US", "UA"],
+        "aliases": ["Skydio Inc", "Skydio, Inc."],
+    },
     # === USA — Defense Tech Startups (hypersonics) ===
     {
         "name": "Hermeus", "ticker": "HERM-PRIV", "country": "USA",
@@ -1079,7 +1103,7 @@ MA_EXTRA_DEALS = [
         ),
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "airbus.com",
-        "target_logo_domain": "safran-group.com",
+        "target_logo_domain": "arianegroup.com",
         "source_url": "https://www.arianegroup.com/en/news/press-releases",
         "announced_date": datetime(2015, 6, 23, tzinfo=timezone.utc),
         "stake_percentage": 50.0,
@@ -1301,48 +1325,34 @@ MA_EXTRA_DEALS = [
     },
     # ── European Joint Programmes ─────────────────────────────────────────────
     {
-        "acquirer": "Airbus + Dassault Aviation + Indra", "target": "SCAF/FCAS Industrial JV",
-        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
-        "description": "Tri-national industrial JV — SCAF next-generation combat air system (FR/DE/ES)",
+        "acquirer": "Airbus + Dassault Aviation + Indra", "target": "SCAF/FCAS Programme",
+        "deal_value": 0, "status": "under_review", "deal_type": "joint_venture",
+        "description": "Trinational programme — SCAF/FCAS next-generation combat air system (FR/DE/ES, 2040+)",
         "rationale": (
-            "Airbus Defence & Space (Germany/Spain) and Dassault Aviation (France) alongside "
-            "Indra (Spain) establish formal industrial joint venture structures for the Système de "
-            "Combat Aérien du Futur (SCAF/FCAS). The programme develops Europe's next-generation "
-            "combat air system for entry into service around 2040, combining a Next-Generation "
-            "Fighter (NGF), remote carriers (loyal wingmen), a new engine (MGDE) and a combat cloud "
-            "network. Phase 1B is co-funded at €3.5 billion by France, Germany and Spain and covers "
-            "technology maturation through 2027 before a Phase 2 production decision."
+            "France, Germany and Spain launch the Système de Combat Aérien du Futur (SCAF/FCAS) "
+            "programme at the Franco-German Aix-la-Chapelle summit (Jul 2017), designating "
+            "Dassault Aviation (France, NGF prime), Airbus Defence & Space (Germany/Spain, "
+            "Remote Carriers and combat cloud architecture) and Indra (Spain, EW/sensors) as "
+            "industrial leads. The programme targets a Next-Generation Fighter, loyal wingman "
+            "Remote Carriers, a new engine (MGDE, Safran + MTU) and a combat cloud network for "
+            "IOC around 2040. Phase 1B contracts worth €3.5 billion were signed in Dec 2022. "
+            "Industrial work-share has been repeatedly contested between Airbus DS and Dassault, "
+            "with multiple near-breakdowns in 2021 and ongoing renegotiation in 2025-2026."
         ),
         "acquirer_country": "FR", "target_country": "DE",
         "acquirer_logo_domain": "dassault-aviation.com",
         "target_logo_domain": "airbus.com",
         "source_url": "https://www.dassault-aviation.com/en/group/press/",
-        "announced_date": datetime(2022, 1, 15, tzinfo=timezone.utc),
+        "announced_date": datetime(2017, 7, 13, tzinfo=timezone.utc),
         "stake_percentage": None,
         "round_type": None,
         "is_disclosed": False,
-    },
-    {
-        "acquirer": "KNDS + Rheinmetall", "target": "MGCS Programme JV",
-        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
-        "description": "Franco-German Main Ground Combat System (MGCS) industrial programme JV",
-        "rationale": (
-            "KNDS (France/Germany) and Rheinmetall establish a joint programme organisation for "
-            "the Main Ground Combat System (MGCS), the successor to both the Leopard 2 and Leclerc "
-            "MBT platforms, targeting entry into service around 2035-2040. Work-share covers turret "
-            "and weapon system (KNDS), active protection and automotive (Rheinmetall). The programme "
-            "represents the largest single land-systems investment in European defence industrial "
-            "history and is central to the Franco-German ambition for sovereign armoured warfare "
-            "capability under the LPM 2024-2030 and Bundeswehr Zeitenwende plans."
+        "confidence": "high",
+        "notes": (
+            "No formal joint venture entity constituted as of 2026. Programme governance is via "
+            "OCCAR/DGA contracts. Phase 1B contracts signed Dec 2022 (€3.5B). Work-share "
+            "between Airbus DS and Dassault Aviation under renegotiation."
         ),
-        "acquirer_country": "FR", "target_country": "DE",
-        "acquirer_logo_domain": "knds.com",
-        "target_logo_domain": "rheinmetall.com",
-        "source_url": "https://www.knds.com/en",
-        "announced_date": datetime(2020, 9, 10, tzinfo=timezone.utc),
-        "stake_percentage": 50.0,
-        "round_type": None,
-        "is_disclosed": False,
     },
     # ── 2019 ──────────────────────────────────────────────────────────────────
     {
@@ -3950,29 +3960,6 @@ MA_EUROPE_DEALS = [
         "source_url": "https://www.atlas-elektronik.com/about/",
         "announced_date": datetime(2006, 1, 1, tzinfo=timezone.utc),
         "stake_percentage": 50.0, "round_type": None, "is_disclosed": False,
-        "confidence": "high",
-    },
-    {
-        "acquirer": "Airbus + Dassault + Indra", "target": "FCAS / SCAF Industrial JV",
-        "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
-        "description": "FCAS/SCAF — 6th-gen fighter tri-national JV (Airbus DE/FR + Dassault + Indra)",
-        "rationale": (
-            "The Future Combat Air System (FCAS / SCAF) is a Franco-German-Spanish programme "
-            "for a 6th-generation air superiority system. The industrial JV involves Airbus "
-            "Defence and Space (Germany/Spain lead), Dassault Aviation (France lead and "
-            "programme architect of the Next Generation Fighter NGF) and Indra (Spain, "
-            "responsible for the combat cloud and electronic warfare). The programme covers "
-            "the NGF aircraft, Remote Carrier drones, combat cloud networking and weapons. "
-            "Germany, France and Spain signed the FCAS agreement in 2017. The programme target "
-            "is IOC by 2040. Work-share disputes between Airbus and Dassault were resolved in "
-            "2021, allowing Phase 1B development contracts to proceed."
-        ),
-        "acquirer_country": "DE", "target_country": "EU",
-        "acquirer_logo_domain": "airbus.com",
-        "target_logo_domain": "dassault-aviation.com",
-        "source_url": "https://www.fcas-program.com/",
-        "announced_date": datetime(2017, 7, 13, tzinfo=timezone.utc),
-        "stake_percentage": None, "round_type": None, "is_disclosed": False,
         "confidence": "high",
     },
 ]
