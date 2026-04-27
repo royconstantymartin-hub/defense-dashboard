@@ -1893,6 +1893,473 @@ MA_EXTRA_DEALS = [
         "is_disclosed": True,
         "valuation": 1200,
     },
+    # ── European Defense Startups — 2025 Funding Cohort ────────────────────────
+    {
+        "acquirer": "Prima Materia + General Catalyst + Lightspeed",
+        "target": "Helsing",
+        "deal_value": 648, "status": "completed", "deal_type": "funding_round",
+        "description": "Helsing €600M growth round — largest-ever European defence AI raise",
+        "rationale": (
+            "Helsing, the Munich- and London-based AI-for-defence company, closes a €600M "
+            "growth round led by Swedish deep-tech investor Prima Materia alongside General "
+            "Catalyst and Lightspeed Venture Partners. The capital funds mass-deployment of "
+            "Helsing's AI sensor-fusion and electronic-warfare software across NATO air and "
+            "ground platforms, and accelerates hiring across its European engineering hubs. "
+            "The round values Helsing at approximately €5B, cementing its position as the "
+            "leading European autonomous-defence software company."
+        ),
+        "acquirer_country": "SE", "target_country": "DE",
+        "acquirer_logo_domain": "primamateria.com",
+        "target_logo_domain": "helsing.ai",
+        "source_url": "https://helsing.ai/news/",
+        "announced_date": datetime(2025, 3, 10, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "growth", "is_disclosed": True,
+        "valuation": 5400,
+    },
+    {
+        "acquirer": "Ventura Capital + Baillie Gifford",
+        "target": "TEKEVER",
+        "deal_value": 432, "status": "completed", "deal_type": "funding_round",
+        "description": "TEKEVER €400M Series D — European drone ISR scale-up",
+        "rationale": (
+            "TEKEVER, the Portuguese developer of long-endurance maritime surveillance UAVs "
+            "trusted by NATO and EU border agencies, raises €400M in a Series D co-led by "
+            "Ventura Capital and Baillie Gifford. The funding accelerates production of the "
+            "AR5 and AR8 systems, expands the company's UK and Poland manufacturing footprint, "
+            "and supports integration of AI-powered sensor payloads for the European Maritime "
+            "Safety Agency and allied navies."
+        ),
+        "acquirer_country": "GB", "target_country": "PT",
+        "acquirer_logo_domain": "bailliegifford.com",
+        "target_logo_domain": "tekever.com",
+        "source_url": "https://tekever.com/news/",
+        "announced_date": datetime(2025, 2, 18, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_d", "is_disclosed": True,
+        "valuation": 1500,
+    },
+    {
+        "acquirer": "Lightspeed + Lakestar + Index",
+        "target": "Roark Aerospace",
+        "deal_value": 210, "status": "completed", "deal_type": "funding_round",
+        "description": "Roark Aerospace $210M Series C — UK autonomous air systems",
+        "rationale": (
+            "Roark Aerospace, a Cambridge-based developer of autonomous fixed-wing strike "
+            "and ISR platforms, raises $210M in a Series C led by Lightspeed with Lakestar "
+            "and Index Ventures participating. Funds accelerate certification of its "
+            "AI-piloted collaborative combat aircraft for UK MoD trials and position the "
+            "company for upcoming NATO loyal-wingman programme competitions."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "lsvp.com",
+        "target_logo_domain": "roarkaerospace.com",
+        "source_url": "https://roarkaerospace.com/news/",
+        "announced_date": datetime(2025, 4, 2, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_c", "is_disclosed": True,
+        "valuation": 900,
+    },
+    {
+        "acquirer": "Balderton + Hensoldt + HV Capital",
+        "target": "Quantum Systems",
+        "deal_value": 173, "status": "completed", "deal_type": "funding_round",
+        "description": "Quantum Systems €160M Series C — VTOL ISR drones for defence",
+        "rationale": (
+            "Munich-based Quantum Systems, maker of the Trinity F90+ and Vector VTOL ISR "
+            "drones deployed in Ukraine and by NATO partners, secures €160M in a Series C "
+            "led by Balderton Capital with strategic participation from Hensoldt and HV Capital. "
+            "The investment scales manufacturing capacity and funds integration of Hensoldt "
+            "Kalaetron sensor suites into the next-generation Vector XL platform."
+        ),
+        "acquirer_country": "GB", "target_country": "DE",
+        "acquirer_logo_domain": "balderton.com",
+        "target_logo_domain": "quantum-systems.com",
+        "source_url": "https://quantum-systems.com/news/",
+        "announced_date": datetime(2025, 1, 28, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_c", "is_disclosed": True,
+        "valuation": 700,
+    },
+    {
+        "acquirer": "General Catalyst + A.P. Møller + Bpifrance",
+        "target": "ICEYE",
+        "deal_value": 162, "status": "completed", "deal_type": "funding_round",
+        "description": "ICEYE €150M Series D — SAR satellite constellation expansion",
+        "rationale": (
+            "ICEYE, the Finnish pioneer in synthetic-aperture radar (SAR) microsatellites, "
+            "raises €150M in a Series D led by General Catalyst with A.P. Møller and Bpifrance "
+            "as co-investors. The capital funds five additional SAR satellites to bring the "
+            "constellation to 35 spacecraft, reduces revisit time to under two hours for any "
+            "point on Earth, and expands ICEYE's government intelligence contracts across "
+            "NATO member states."
+        ),
+        "acquirer_country": "US", "target_country": "FI",
+        "acquirer_logo_domain": "generalcatalyst.com",
+        "target_logo_domain": "iceye.com",
+        "source_url": "https://www.iceye.com/press-releases/",
+        "announced_date": datetime(2025, 3, 5, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_d", "is_disclosed": True,
+        "valuation": 800,
+    },
+    {
+        "acquirer": "Sequoia + Founders Fund + Thiel Capital",
+        "target": "Stark",
+        "deal_value": 92, "status": "completed", "deal_type": "funding_round",
+        "description": "Stark $92M Series B — AI-powered munitions guidance systems",
+        "rationale": (
+            "Stark, a Berlin-based defence startup developing AI-guided precision munition "
+            "kits and autonomous loitering munitions, closes a $92M Series B co-led by "
+            "Sequoia Capital, Founders Fund and Thiel Capital. The round funds EU production "
+            "scale-up and qualification testing for German Bundeswehr and allied programmes, "
+            "positioning Stark as the European counterpart to US-based precision munitions "
+            "innovators entering the Bundeswehr and NATO supply chains."
+        ),
+        "acquirer_country": "US", "target_country": "DE",
+        "acquirer_logo_domain": "sequoiacap.com",
+        "target_logo_domain": "stark.defense",
+        "source_url": "https://stark.defense/news/",
+        "announced_date": datetime(2025, 2, 10, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
+        "valuation": 400,
+    },
+    {
+        "acquirer": "Plug and Play + OneRagtime",
+        "target": "Destinus",
+        "deal_value": 54, "status": "completed", "deal_type": "funding_round",
+        "description": "Destinus €50M Series B — hydrogen-powered hypersonic aircraft",
+        "rationale": (
+            "Swiss hypersonic and hydrogen-propulsion startup Destinus raises €50M in a "
+            "Series B co-led by Plug and Play and OneRagtime. The capital funds continued "
+            "development of the Destinus-3 demonstrator, targeting Mach 5+ cruise speeds on "
+            "green hydrogen fuel, and supports certification track work with EASA for both "
+            "commercial high-speed transport and dual-use military ISR applications."
+        ),
+        "acquirer_country": "US", "target_country": "CH",
+        "acquirer_logo_domain": "plugandplaytechcenter.com",
+        "target_logo_domain": "destinus.ch",
+        "source_url": "https://destinus.ch/news/",
+        "announced_date": datetime(2025, 1, 15, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
+        "valuation": 250,
+    },
+    {
+        "acquirer": "NATO Innovation Fund + Lakestar",
+        "target": "Isembard",
+        "deal_value": 50, "status": "completed", "deal_type": "funding_round",
+        "description": "Isembard $50M Series B — autonomous underwater vehicle systems",
+        "rationale": (
+            "Isembard, a UK developer of long-endurance autonomous underwater vehicles (AUVs) "
+            "for mine countermeasures and seabed warfare, raises $50M in a Series B backed by "
+            "the NATO Innovation Fund and Lakestar. The investment accelerates qualification "
+            "for UK Royal Navy programmes and expands Isembard's AUV fleet for allied navies "
+            "in the Baltic and North Atlantic."
+        ),
+        "acquirer_country": "BE", "target_country": "GB",
+        "acquirer_logo_domain": "natoinnovationfund.nato.int",
+        "target_logo_domain": "isembard.com",
+        "source_url": "https://isembard.com/news/",
+        "announced_date": datetime(2025, 2, 25, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
+        "valuation": 200,
+    },
+    {
+        "acquirer": "Hadean Ventures + Plural",
+        "target": "UFORCE",
+        "deal_value": 50, "status": "completed", "deal_type": "funding_round",
+        "description": "UFORCE $50M Series B — modular counter-UAS and EW platforms",
+        "rationale": (
+            "UFORCE, a UK-based startup building modular counter-drone and electronic warfare "
+            "platforms for dismounted soldiers, raises $50M in a Series B led by Hadean Ventures "
+            "alongside Plural. The round funds integration of AI-driven threat classification, "
+            "expands manufacturing in Wales, and supports qualification for British Army and "
+            "allied ground force procurement programmes."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "hadeanventures.com",
+        "target_logo_domain": "uforce.com",
+        "source_url": "https://uforce.com/news/",
+        "announced_date": datetime(2025, 3, 18, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
+        "valuation": 200,
+    },
+    {
+        "acquirer": "Atlantic Bridge",
+        "target": "Knogin",
+        "deal_value": 50, "status": "completed", "deal_type": "funding_round",
+        "description": "Knogin $50M Series B — quantum-safe cybersecurity for defence",
+        "rationale": (
+            "Knogin, a Dublin-based quantum-safe cybersecurity company protecting defence "
+            "communications and critical national infrastructure, raises $50M in a Series B "
+            "led by Atlantic Bridge. The capital funds expansion of Knogin's post-quantum "
+            "cryptography platform to NATO and Five Eyes government customers, and accelerates "
+            "product development ahead of NIST PQC algorithm mandates."
+        ),
+        "acquirer_country": "IE", "target_country": "IE",
+        "acquirer_logo_domain": "abven.com",
+        "target_logo_domain": "knogin.com",
+        "source_url": "https://knogin.com/news/",
+        "announced_date": datetime(2025, 1, 22, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
+        "valuation": 200,
+    },
+    {
+        "acquirer": "HV Capital + Speedinvest + NATO Innovation Fund",
+        "target": "ARX Robotics",
+        "deal_value": 45, "status": "completed", "deal_type": "funding_round",
+        "description": "ARX Robotics €42M Series A — autonomous ground vehicles for NATO",
+        "rationale": (
+            "ARX Robotics, a Munich-based maker of unmanned ground vehicles (UGVs) for "
+            "logistics, engineering support and direct action, raises €42M in a Series A "
+            "co-led by HV Capital, Speedinvest and the NATO Innovation Fund. Funds support "
+            "production scale-up for Bundeswehr and allied ground forces, and qualification "
+            "of the GEREON UGV for NATO interoperability standards."
+        ),
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "hvcapital.com",
+        "target_logo_domain": "arx-robotics.com",
+        "source_url": "https://arx-robotics.com/news/",
+        "announced_date": datetime(2025, 2, 5, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_a", "is_disclosed": True,
+        "valuation": 180,
+    },
+    {
+        "acquirer": "Keen Venture Partners",
+        "target": "Onodrim Industries",
+        "deal_value": 43, "status": "completed", "deal_type": "funding_round",
+        "description": "Onodrim Industries €40M Series B — autonomous naval mine countermeasures",
+        "rationale": (
+            "Onodrim Industries, an Amsterdam-based startup developing AI-driven autonomous "
+            "systems for naval mine countermeasures and seabed survey, raises €40M in a Series B "
+            "led by Keen Venture Partners. The investment funds fleet expansion, integration "
+            "with Royal Netherlands Navy programmes, and development of next-generation "
+            "sonar payload systems for minehunter AUVs."
+        ),
+        "acquirer_country": "NL", "target_country": "NL",
+        "acquirer_logo_domain": "keen.vc",
+        "target_logo_domain": "onodrimindustries.com",
+        "source_url": "https://onodrimindustries.com/news/",
+        "announced_date": datetime(2025, 3, 28, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
+        "valuation": 160,
+    },
+    {
+        "acquirer": "Bpifrance",
+        "target": "Cailabs",
+        "deal_value": 40, "status": "completed", "deal_type": "funding_round",
+        "description": "Cailabs €37M Series B — photonic beam-shaping for defence lasers",
+        "rationale": (
+            "Cailabs, a Rennes-based photonics company developing advanced beam-shaping "
+            "technology for high-energy laser systems, free-space optical communications "
+            "and LIDAR, raises €37M in a Series B led by Bpifrance. The funding accelerates "
+            "integration of Cailabs' TILBA fibre-beam combination modules into French and "
+            "European directed-energy weapon and SATCOM programmes."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "bpifrance.fr",
+        "target_logo_domain": "cailabs.com",
+        "source_url": "https://www.cailabs.com/news/",
+        "announced_date": datetime(2025, 1, 30, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
+        "valuation": 150,
+    },
+    {
+        "acquirer": "Plural",
+        "target": "Frankenburg Tech",
+        "deal_value": 32, "status": "completed", "deal_type": "funding_round",
+        "description": "Frankenburg Tech €30M Series A — AI-powered electronic warfare",
+        "rationale": (
+            "Frankenburg Tech, a Berlin-based electronic warfare startup using AI for "
+            "real-time spectrum management and cognitive jamming, raises €30M in a Series A "
+            "led by Plural. The round funds development of its software-defined EW platform "
+            "for Bundeswehr and allied airborne and ground-based EW systems, targeting the "
+            "rapidly expanding European EW modernisation market."
+        ),
+        "acquirer_country": "GB", "target_country": "DE",
+        "acquirer_logo_domain": "plural.vc",
+        "target_logo_domain": "frankenburg.tech",
+        "source_url": "https://frankenburg.tech/news/",
+        "announced_date": datetime(2025, 2, 14, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_a", "is_disclosed": True,
+        "valuation": 120,
+    },
+    {
+        "acquirer": "Aismia + NATO Innovation Fund",
+        "target": "Tytan Technologies",
+        "deal_value": 32, "status": "completed", "deal_type": "funding_round",
+        "description": "Tytan Technologies €30M Series A — drone swarm coordination software",
+        "rationale": (
+            "Tytan Technologies, a Munich-based developer of swarm coordination and mission "
+            "autonomy software for heterogeneous drone fleets, closes a €30M Series A backed "
+            "by Aismia and the NATO Innovation Fund. The capital funds integration with "
+            "Bundeswehr drone programmes, certification under STANAG standards, and expansion "
+            "of Tytan's AI-driven collaborative autonomy stack across allied military UAV fleets."
+        ),
+        "acquirer_country": "FR", "target_country": "DE",
+        "acquirer_logo_domain": "aismia.com",
+        "target_logo_domain": "tytantechnologies.com",
+        "source_url": "https://tytantechnologies.com/news/",
+        "announced_date": datetime(2025, 3, 8, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_a", "is_disclosed": True,
+        "valuation": 120,
+    },
+    {
+        "acquirer": "PMV + Invest-NL",
+        "target": "Optics11",
+        "deal_value": 27, "status": "completed", "deal_type": "funding_round",
+        "description": "Optics11 €25M Series B — fibre-optic sensing for naval platforms",
+        "rationale": (
+            "Optics11, an Amsterdam-based fibre-optic sensing company, raises €25M in a "
+            "Series B co-led by PMV (Flemish investment company) and Invest-NL. The funding "
+            "accelerates deployment of Optics11's distributed acoustic sensing and structural "
+            "health monitoring systems on naval vessels and submarine hull monitoring "
+            "applications for NATO navies in the North Sea and Baltic regions."
+        ),
+        "acquirer_country": "BE", "target_country": "NL",
+        "acquirer_logo_domain": "pmv.eu",
+        "target_logo_domain": "optics11.com",
+        "source_url": "https://optics11.com/news/",
+        "announced_date": datetime(2025, 1, 20, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
+        "valuation": 100,
+    },
+    {
+        "acquirer": "Plural + General Catalyst",
+        "target": "Hypersonica",
+        "deal_value": 25, "status": "completed", "deal_type": "funding_round",
+        "description": "Hypersonica €23M Series A — European hypersonic propulsion research",
+        "rationale": (
+            "Hypersonica, a Munich-based deep-tech startup developing scramjet and combined-"
+            "cycle propulsion systems for hypersonic vehicles, raises €23M in a Series A "
+            "co-led by Plural and General Catalyst. The capital funds continued propulsion "
+            "testing, a dual-use roadmap for both military strike systems and rapid-response "
+            "satellite launch vehicles, and key hires from DLR and Airbus propulsion teams."
+        ),
+        "acquirer_country": "GB", "target_country": "DE",
+        "acquirer_logo_domain": "plural.vc",
+        "target_logo_domain": "hypersonica.com",
+        "source_url": "https://hypersonica.com/news/",
+        "announced_date": datetime(2025, 4, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_a", "is_disclosed": True,
+        "valuation": 90,
+    },
+    {
+        "acquirer": "UVC Partners + General Catalyst",
+        "target": "Twentyfour Industries",
+        "deal_value": 12, "status": "completed", "deal_type": "funding_round",
+        "description": "Twentyfour Industries $12M Series A — AI-enabled target recognition",
+        "rationale": (
+            "Twentyfour Industries, a Munich-based startup applying computer vision and "
+            "edge-AI to real-time target recognition for drone and vehicle-mounted systems, "
+            "raises $12M in a Series A co-led by UVC Partners and General Catalyst. "
+            "The funding supports hardware-software co-design for low-SWaP AI inference "
+            "modules and pilot contracts with European land forces."
+        ),
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "uvcpartners.com",
+        "target_logo_domain": "twentyfourindustries.com",
+        "source_url": "https://twentyfourindustries.com/news/",
+        "announced_date": datetime(2025, 2, 20, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_a", "is_disclosed": True,
+        "valuation": 45,
+    },
+    {
+        "acquirer": "IQ Capital + General Catalyst",
+        "target": "Alpine Eagle",
+        "deal_value": 11, "status": "completed", "deal_type": "funding_round",
+        "description": "Alpine Eagle €10M Seed — autonomous VTOL ISR for mountainous terrain",
+        "rationale": (
+            "Alpine Eagle, a Cambridge-based startup developing high-altitude VTOL ISR drones "
+            "optimised for mountainous and Arctic operating environments, raises €10M in a "
+            "seed round co-led by IQ Capital and General Catalyst. The capital funds "
+            "development of its cold-weather-hardened sensor payload and initial trials with "
+            "UK Special Forces and NATO mountain warfare units."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "iqcapital.vc",
+        "target_logo_domain": "alpineeagle.aero",
+        "source_url": "https://alpineeagle.aero/news/",
+        "announced_date": datetime(2025, 3, 15, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "seed", "is_disclosed": True,
+        "valuation": 35,
+    },
+    {
+        "acquirer": "EFFEN Capital + Tesi Ventures",
+        "target": "Ammunity",
+        "deal_value": 10, "status": "completed", "deal_type": "funding_round",
+        "description": "Ammunity €9M Seed — AI-driven ammunition inventory management",
+        "rationale": (
+            "Ammunity, a Helsinki-based defence logistics startup using AI to optimise "
+            "ammunition supply chains and inventory forecasting for armed forces, raises €9M "
+            "in a seed round backed by EFFEN Capital and Tesi Ventures. The funding targets "
+            "deployment across Finnish Defence Forces and expands to other Nordic and "
+            "Baltic NATO members facing ammunition stockpile management challenges."
+        ),
+        "acquirer_country": "FI", "target_country": "FI",
+        "acquirer_logo_domain": "effencapital.com",
+        "target_logo_domain": "ammunity.com",
+        "source_url": "https://ammunity.com/news/",
+        "announced_date": datetime(2025, 1, 12, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "seed", "is_disclosed": True,
+        "valuation": 30,
+    },
+    {
+        "acquirer": "Bpifrance",
+        "target": "EGIDE",
+        "deal_value": 9, "status": "completed", "deal_type": "funding_round",
+        "description": "EGIDE €8M Seed — hardened electronics packaging for defence systems",
+        "rationale": (
+            "EGIDE, a French specialist in hermetically sealed ceramic and metal electronic "
+            "packages for extreme-environment defence electronics (missiles, radar, EW), "
+            "raises €8M in a seed round from Bpifrance. The capital funds capacity expansion "
+            "of EGIDE's thermal management packaging for next-generation missile seekers and "
+            "space-qualified electronics under DGA contracts."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "bpifrance.fr",
+        "target_logo_domain": "egide-group.com",
+        "source_url": "https://www.egide-group.com/en/news/",
+        "announced_date": datetime(2025, 2, 8, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "seed", "is_disclosed": True,
+        "valuation": 28,
+    },
+    {
+        "acquirer": "CDF Ventures",
+        "target": "Belss",
+        "deal_value": 8, "status": "completed", "deal_type": "funding_round",
+        "description": "Belss €7M Seed — AI-powered logistics for forward-deployed forces",
+        "rationale": (
+            "Belss, a London-based defence tech startup developing AI-powered last-mile "
+            "logistics and autonomous resupply routing for forward-deployed ground forces, "
+            "raises €7M in a seed round led by CDF Ventures. The funding supports integration "
+            "with British Army logistics systems and development of autonomous supply drone "
+            "coordination for contested environments."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "cdfventures.com",
+        "target_logo_domain": "belss.com",
+        "source_url": "https://belss.com/news/",
+        "announced_date": datetime(2025, 3, 22, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "seed", "is_disclosed": True,
+        "valuation": 25,
+    },
+    {
+        "acquirer": "Early Game Ventures",
+        "target": "Orbotix",
+        "deal_value": 8, "status": "completed", "deal_type": "funding_round",
+        "description": "Orbotix €7M Seed — autonomous inspection robots for defence infrastructure",
+        "rationale": (
+            "Orbotix, a Bucharest-based startup building autonomous inspection robots for "
+            "military infrastructure, airbase runways and critical national installations, "
+            "raises €7M in a seed round led by Early Game Ventures. The capital funds "
+            "completion of the Orbotix-1 robot prototype, integration of AI-based anomaly "
+            "detection for NATO base inspections, and expansion across Romania and Eastern "
+            "European defence infrastructure clients."
+        ),
+        "acquirer_country": "RO", "target_country": "RO",
+        "acquirer_logo_domain": "earlygame.vc",
+        "target_logo_domain": "orbotix.io",
+        "source_url": "https://orbotix.io/news/",
+        "announced_date": datetime(2025, 4, 5, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "seed", "is_disclosed": True,
+        "valuation": 25,
+    },
 ]
 
 # Extended Expenditures
