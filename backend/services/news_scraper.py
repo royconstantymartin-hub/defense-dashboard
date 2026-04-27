@@ -496,6 +496,20 @@ def _extract_summary(entry) -> str:
 
 # ── OG image fallback ───────────────────────────────────────────────────────
 
+def _resolve_redirect(url: str, timeout: int = 4) -> str:
+    """Follow HTTP redirects and return the final canonical URL.
+    Used to unwrap Google News redirect links (news.google.com/rss/articles/…)
+    so we store the real publisher URL — correct favicon, dedup, and OG images."""
+    try:
+        r = requests.head(url, headers=HEADERS, timeout=timeout, allow_redirects=True)
+        final = r.url or url
+        if final and not final.startswith("https://news.google.com"):
+            return final
+    except Exception:
+        pass
+    return url
+
+
 def _fetch_og_image(article_url: str, timeout: int = 6) -> Optional[str]:
     """Fetch the Open Graph / Twitter Card image from an article page.
     Used as a fallback when the RSS entry carries no image metadata.
@@ -993,6 +1007,22 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
                 "region":         region_det,
                 "companies":      detect_companies(title, summary),
             })
+
+        # Resolve Google redirect URLs → real publisher URLs (correct favicon + dedup)
+        if articles:
+            with ThreadPoolExecutor(max_workers=10) as pool:
+                url_futures = {
+                    pool.submit(_resolve_redirect, a["url"]): i
+                    for i, a in enumerate(articles)
+                }
+                for future in as_completed(url_futures):
+                    idx = url_futures[future]
+                    try:
+                        resolved = future.result()
+                        if resolved != articles[idx]["url"]:
+                            articles[idx]["url"] = resolved
+                    except Exception:
+                        pass
 
         logger.info("[GNews:%s] Fetched %d articles", query[:45], len(articles))
     except Exception as exc:
