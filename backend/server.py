@@ -2061,10 +2061,19 @@ async def _apply_company_enrichments():
 _STALE_MA_DEALS = [
     {"acquirer": "Thales", "target": "Preligens"},         # acquired by Safran, not Thales
     {"acquirer": "Dassault Aviation", "target": "Harmattan.ai"},   # renamed target to "Harmattan AI"
-    # phase1.1 corrections — purge old/incorrect entries so upserts apply cleanly:
+    # phase1.1 corrections:
     {"acquirer": "RTX", "target": "Nightwing Group"},      # RTX was seller; corrected to Blackstone acq.
-    {"acquirer": "L3Harris", "target": "Aerojet Rocketdyne"},  # old short-name dup; canonical is L3Harris Technologies
-    {"acquirer": "Hanwha Ocean", "target": "Daewoo Shipbuilding & Marine Engineering"},  # old entry with wrong acquirer name
+    {"acquirer": "L3Harris", "target": "Aerojet Rocketdyne"},  # old short-name dup
+    {"acquirer": "Hanwha Ocean", "target": "Daewoo Shipbuilding & Marine Engineering"},  # wrong acquirer name
+    # phase1.5 corrections:
+    # SCAF/FCAS Phase 2.3 duplicate (different acquirer string + target name)
+    {"acquirer": "Airbus + Dassault + Indra", "target": "FCAS / SCAF Industrial JV"},
+    # Old SCAF entry with "active" status and Jan 2022 date (replaced by corrected entry)
+    {"acquirer": "Airbus + Dassault Aviation + Indra", "target": "SCAF/FCAS Industrial JV"},
+    # Old MGCS entry with 2-party acquirer string (replaced by full 4-party Phase 2.3 entry)
+    {"acquirer": "KNDS + Rheinmetall", "target": "MGCS Programme JV"},
+    # Guard against L3Harris merger duplicate (scraper may inject "L3Harris Technologies" as acquirer)
+    {"acquirer": "L3Harris Technologies", "target": "L3 Technologies"},
 ]
 
 async def _migrate_ma_enrichments():
