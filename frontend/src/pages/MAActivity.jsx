@@ -3,13 +3,14 @@ import axios from "axios";
 import { API, useAuth } from "@/App";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Card, CardContent } from "@/components/ui/card";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Search, ArrowRight, ArrowLeftRight, Plus, CircleDot,
   Clock, Database, Filter, TrendingUp, ChevronDown, ChevronUp,
   ChevronLeft, ChevronRight,
   ExternalLink, Download, Calendar, User, AlertTriangle,
-  RefreshCw, Trophy, Info,
+  RefreshCw, Trophy, Info, SlidersHorizontal, FileText, X,
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -18,8 +19,16 @@ import {
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
-const PAGE_SIZE      = 50;   // items per page — recent view
-const HIST_PAGE_SIZE = 100;  // items per page — historical view
+const PAGE_SIZE      = 50;
+const HIST_PAGE_SIZE = 100;
+
+const MIN_VALUE_OPTIONS = [
+  { value: 0,    label: "All" },
+  { value: 100,  label: "≥$100M" },
+  { value: 500,  label: "≥$500M" },
+  { value: 1000, label: "≥$1B" },
+  { value: 5000, label: "≥$5B" },
+];
 
 const STATUS_OPTIONS = [
   { value: "all",          label: "All Statuses" },
@@ -413,7 +422,7 @@ function CompanyLogo({ activity, side, size = "md" }) {
 
 // ── Defense Tech Leaderboard ───────────────────────────────────────────────
 
-function DefenseTechLeaderboard({ deals, onOpenProfile, players = [] }) {
+function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = [] }) {
   // Deduplicate by target company — keep entry with highest valuation, then latest date
   const byCompany = new Map();
   for (const d of deals) {
@@ -466,7 +475,8 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, players = [] }) {
             {rows.map((d, i) => (
               <tr
                 key={d.id || d.target}
-                className={`border-b border-slate-50 hover:bg-purple-50/50 transition-colors ${i % 2 === 0 ? "bg-white" : "bg-slate-50/30"}`}
+                className={`border-b border-slate-50 hover:bg-purple-50/50 transition-colors cursor-pointer ${i % 2 === 0 ? "bg-white" : "bg-slate-50/30"}`}
+                onClick={() => onSelectDeal?.(d)}
               >
                 <td className="px-3 py-3 text-slate-400 font-mono text-[11px]">
                   {i === 0 ? <span className="text-amber-500 font-bold">①</span>
@@ -1148,15 +1158,14 @@ function CompanyCell({ activity, side, onOpenProfile }) {
 
 // ── Table row ──────────────────────────────────────────────────────────────
 
-function TableRow({ activity, index, onOpenProfile }) {
-  const [open, setOpen] = useState(false);
-  const hasDetail = !!(activity.rationale || activity.description);
+function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
+  const hasDetail = !!(activity.rationale || activity.description || activity.notes);
 
   return (
     <>
       <tr
         className={`${index % 2 === 0 ? "bg-white" : "bg-slate-50/60"} hover:bg-purple-50 transition-colors cursor-pointer border-b border-slate-100`}
-        onClick={() => hasDetail && setOpen(v => !v)}
+        onClick={() => onSelectDeal(activity)}
       >
         <td className="px-3 py-2.5 text-xs text-slate-400 font-mono w-10 select-none">{index + 1}</td>
 
@@ -1218,23 +1227,11 @@ function TableRow({ activity, index, onOpenProfile }) {
           ) : null}
         </td>
 
-        {/* Expand toggle */}
+        {/* Open detail hint */}
         <td className="px-2 py-2.5 w-6">
-          {hasDetail && (
-            <span className="text-slate-300">
-              {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            </span>
-          )}
+          <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
         </td>
       </tr>
-
-      {open && hasDetail && (
-        <tr className="bg-purple-50/60">
-          <td colSpan={10} className="px-5 py-3 text-sm text-slate-600 leading-relaxed border-b border-purple-100">
-            {activity.rationale || activity.description}
-          </td>
-        </tr>
-      )}
     </>
   );
 }
@@ -1242,7 +1239,7 @@ function TableRow({ activity, index, onOpenProfile }) {
 // ── Investment consolidated view ────────────────────────────────────────────
 // Target company on LEFT, all investor rounds grouped and expandable.
 
-function InvestmentConsolidatedView({ deals, onOpenProfile }) {
+function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
   const [expanded, setExpanded] = useState(new Set());
 
   const groups = useMemo(() => {
@@ -1380,7 +1377,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile }) {
                   </thead>
                   <tbody>
                     {group.rounds.map((r, rIdx) => (
-                      <tr key={r.id || rIdx} className={`border-b border-purple-50 last:border-0 ${rIdx % 2 === 0 ? "bg-white/60" : "bg-purple-50/20"}`}>
+                      <tr key={r.id || rIdx} className={`border-b border-purple-50 last:border-0 cursor-pointer hover:bg-purple-100/40 transition-colors ${rIdx % 2 === 0 ? "bg-white/60" : "bg-purple-50/20"}`} onClick={() => onSelectDeal?.(r)}>
                         <td className="px-5 pl-16 py-2.5">
                           <div className="flex items-center gap-2">
                             <button onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(r.acquirer) || r.acquirer); }} className="shrink-0">
@@ -1490,6 +1487,248 @@ function CountryFilter({ allDeals, selected, onSelect }) {
   );
 }
 
+// ── Deal Detail Drawer ─────────────────────────────────────────────────────
+
+function ConfidencePill({ confidence }) {
+  const map = {
+    high:   "bg-emerald-50 text-emerald-700 border-emerald-200",
+    medium: "bg-amber-50 text-amber-700 border-amber-200",
+    low:    "bg-slate-100 text-slate-500 border-slate-200",
+  };
+  const cls = map[confidence] || map.low;
+  const label = confidence ? confidence.charAt(0).toUpperCase() + confidence.slice(1) : "Low";
+  return (
+    <UITooltip>
+      <TooltipTrigger asChild>
+        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border cursor-default ${cls}`}>
+          {label} confidence
+        </span>
+      </TooltipTrigger>
+      <TooltipContent className="text-xs max-w-xs">
+        High = 2+ concordant primary sources. Medium = 1 primary source. Low = unverified / estimated.
+      </TooltipContent>
+    </UITooltip>
+  );
+}
+
+function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
+  if (!deal) return null;
+  const labels = getDealLabels(deal.deal_type);
+  const acquirerParties = parseParties(deal.acquirer);
+  const isMultiAcquirer = acquirerParties.length > 1;
+
+  return (
+    <Sheet open={!!deal} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <SheetContent
+        className="w-full sm:max-w-lg overflow-y-auto p-0 border-l border-slate-200"
+        style={{ maxWidth: 520 }}
+      >
+        {/* ── Header ── */}
+        <div className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5" /> Deal Detail
+            </span>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors"
+              aria-label="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Acquirer → Target */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="min-w-0">
+              <p className="text-[9px] text-slate-400 font-mono uppercase tracking-widest mb-1">{labels.left}</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                {acquirerParties.map((p, idx) => {
+                  const synth = partyActivity(p.name, deal, "acquirer");
+                  return (
+                    <div key={idx} className="flex items-center gap-1.5">
+                      {idx > 0 && <span className="text-slate-300 text-xs">+</span>}
+                      <button onClick={() => onOpenProfile(resolvePlayerName(p.name) || p.name)} className="shrink-0">
+                        <CompanyLogo activity={synth} side="acquirer" size="sm" />
+                      </button>
+                      <button
+                        onClick={() => onOpenProfile(resolvePlayerName(p.name) || p.name)}
+                        className="font-semibold text-slate-900 hover:text-purple-700 text-sm text-left transition-colors"
+                      >
+                        {p.name}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <DealSep type={labels.sep} />
+
+            <div className="min-w-0">
+              <p className="text-[9px] text-slate-400 font-mono uppercase tracking-widest mb-1">{labels.right}</p>
+              <div className="flex items-center gap-2">
+                <button onClick={() => onOpenProfile(resolvePlayerName(deal.target) || deal.target)} className="shrink-0">
+                  <CompanyLogo activity={deal} side="target" size="sm" />
+                </button>
+                <button
+                  onClick={() => onOpenProfile(resolvePlayerName(deal.target) || deal.target)}
+                  className="font-semibold text-slate-900 hover:text-purple-700 text-sm text-left transition-colors"
+                >
+                  {deal.target}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Body ── */}
+        <div className="px-6 py-5 space-y-5">
+
+          {/* Meta grid */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1">
+                {["strategic_investment","minority_stake","funding_round"].includes(deal.deal_type) ? "Amount Raised" : "Value"}
+              </p>
+              <p className="text-2xl font-mono font-bold text-purple-700 leading-none">
+                {formatValue(deal.deal_value, deal.is_disclosed ?? true)}
+              </p>
+              {deal.stake_percentage != null && (
+                <p className="text-xs text-emerald-600 font-mono font-semibold mt-0.5">{deal.stake_percentage}% stake</p>
+              )}
+            </div>
+
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">Status</p>
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${getStatusStyle(deal.status)}`}>
+                {formatStatus(deal.status)}
+              </span>
+              {deal.round_type && <div className="mt-1"><RoundBadge roundType={deal.round_type} /></div>}
+            </div>
+
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">Type</p>
+              <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded capitalize font-medium">
+                {deal.deal_type.replaceAll("_", " ")}
+              </span>
+            </div>
+
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">Data Quality</p>
+              <TooltipProvider>
+                <ConfidencePill confidence={deal.confidence} />
+              </TooltipProvider>
+            </div>
+
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1">Announced</p>
+              <p className="text-sm font-medium text-slate-800">{format(new Date(deal.announced_date), "d MMM yyyy")}</p>
+            </div>
+
+            {deal.closed_date ? (
+              <div>
+                <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1">Closed</p>
+                <p className="text-sm font-medium text-slate-800">{format(new Date(deal.closed_date), "d MMM yyyy")}</p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1">Closed</p>
+                <p className="text-sm text-slate-400">—</p>
+              </div>
+            )}
+          </div>
+
+          {/* Countries */}
+          {(deal.acquirer_country || deal.target_country) && (
+            <div className="flex items-center gap-2 py-2 border-t border-slate-100 text-xs text-slate-500">
+              {deal.acquirer_country && (
+                <span className="flex items-center gap-1.5">
+                  <FlagImg iso2={deal.acquirer_country} />
+                  {deal.acquirer_country}
+                </span>
+              )}
+              {deal.acquirer_country && deal.target_country && (
+                <ArrowRight className="w-3 h-3 text-slate-300 shrink-0" />
+              )}
+              {deal.target_country && (
+                <span className="flex items-center gap-1.5">
+                  <FlagImg iso2={deal.target_country} />
+                  {deal.target_country}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Description */}
+          {deal.description && (
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Summary</p>
+              <p className="text-sm text-slate-600 leading-relaxed">{deal.description}</p>
+            </div>
+          )}
+
+          {/* Rationale */}
+          {deal.rationale && (
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Strategic Rationale</p>
+              <p className="text-sm text-slate-600 leading-relaxed">{deal.rationale}</p>
+            </div>
+          )}
+
+          {/* Notes (deal structure) */}
+          {deal.notes && (
+            <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-600 mb-2">Deal Structure Notes</p>
+              <p className="text-sm text-amber-900 leading-relaxed">{deal.notes}</p>
+            </div>
+          )}
+
+          {/* Source */}
+          {deal.source_url ? (
+            <a
+              href={deal.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 hover:bg-emerald-100 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4 shrink-0" />
+              View primary source
+            </a>
+          ) : (
+            <div className="flex items-center gap-2 text-sm text-slate-400 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+              <ExternalLink className="w-4 h-4 shrink-0 opacity-40" />
+              No source URL available
+            </div>
+          )}
+
+          {/* Open profiles */}
+          <div className="border-t border-slate-100 pt-4 grid grid-cols-2 gap-3">
+            {acquirerParties.slice(0, 1).map((p) => (
+              <button
+                key={p.name}
+                onClick={() => { onClose(); onOpenProfile(resolvePlayerName(p.name) || p.name); }}
+                className="flex items-center gap-2 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 hover:bg-purple-100 transition-colors"
+              >
+                <CompanyLogo activity={partyActivity(p.name, deal, "acquirer")} side="acquirer" size="sm" />
+                <span className="truncate">{p.name}</span>
+              </button>
+            ))}
+            <button
+              onClick={() => { onClose(); onOpenProfile(resolvePlayerName(deal.target) || deal.target); }}
+              className="flex items-center gap-2 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 hover:bg-purple-100 transition-colors"
+            >
+              <CompanyLogo activity={deal} side="target" size="sm" />
+              <span className="truncate">{deal.target}</span>
+            </button>
+          </div>
+
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────────────────
 
 export default function MAActivity() {
@@ -1506,12 +1745,14 @@ export default function MAActivity() {
   const [selectedStatus, setSelectedStatus]    = useState("all");
   const [selectedYear,   setSelectedYear]      = useState("all");
   const [profileName,    setProfileName]       = useState(null);
+  const [selectedDeal,   setSelectedDeal]      = useState(null);
   const [sortField,      setSortField]         = useState("announced_date");
   const [sortDir,        setSortDir]           = useState("desc");
   const [scraping,       setScraping]          = useState(false);
   const [metaTotal,      setMetaTotal]         = useState(null);
   const [metaLastScraped, setMetaLastScraped]  = useState(null);
   const [selectedCountry, setSelectedCountry]  = useState("all");
+  const [minValue,       setMinValue]          = useState(0);
 
   const fetchRecent = async () => {
     setLoading(true);
@@ -1610,6 +1851,9 @@ export default function MAActivity() {
         a.acquirer_country === selectedCountry || a.target_country === selectedCountry
       );
     }
+    if (minValue > 0) {
+      list = list.filter(a => (a.is_disclosed ?? true) && (a.deal_value || 0) >= minValue);
+    }
     if (searchTerm) {
       const t = searchTerm.toLowerCase();
       list = list.filter(a =>
@@ -1623,10 +1867,10 @@ export default function MAActivity() {
       const vb = sortField === "deal_value" ? (b.deal_value || 0) : new Date(b.announced_date).getTime();
       return sortDir === "asc" ? va - vb : vb - va;
     });
-  }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir]);
+  }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir, selectedCountry, minValue]);
 
   // Reset page on filter change
-  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir]);
+  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir, minValue]);
 
   const pageDeals  = filteredDeals.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(filteredDeals.length / PAGE_SIZE);
@@ -1634,7 +1878,7 @@ export default function MAActivity() {
   const rangeEnd   = Math.min((page + 1) * PAGE_SIZE, filteredDeals.length);
 
   const totalValue = filteredDeals.filter(a => a.is_disclosed ?? true).reduce((s, a) => s + (a.deal_value || 0), 0);
-  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all"].filter(Boolean).length;
+  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all", minValue > 0].filter(Boolean).length;
 
   // Quarterly chart
   const quarterlyData = useMemo(() => {
@@ -1803,7 +2047,7 @@ export default function MAActivity() {
               </span>
               {activeFilterCount > 0 && (
                 <button
-                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); }}
+                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); }}
                   className="text-[11px] text-rose-500 hover:text-rose-700 font-medium"
                 >
                   Clear
@@ -1864,6 +2108,28 @@ export default function MAActivity() {
               </div>
             </div>
 
+            {/* Min deal value */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
+                <SlidersHorizontal className="w-3 h-3" /> Min Value
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {MIN_VALUE_OPTIONS.map(o => (
+                  <button
+                    key={o.value}
+                    onClick={() => setMinValue(o.value)}
+                    className={`text-[10px] font-mono px-1.5 py-0.5 rounded border transition-colors ${
+                      minValue === o.value
+                        ? "bg-purple-600 text-white border-purple-600"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-purple-300"
+                    }`}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Country */}
             <CountryFilter
               allDeals={allDeals}
@@ -1878,12 +2144,18 @@ export default function MAActivity() {
 
           {/* ── Defense Tech leaderboard view ── */}
           {dealTypeTab === "defense_tech" && (
-            <DefenseTechLeaderboard deals={filteredDeals} onOpenProfile={setProfileName} players={players} />
+            <>
+              <p className="text-xs text-slate-500 bg-purple-50 border border-purple-100 rounded-lg px-3 py-2">
+                Defense-native startups &amp; scaleups receiving strategic investments, minority stakes, and funding rounds.
+                Ranked by latest post-money valuation.
+              </p>
+              <DefenseTechLeaderboard deals={filteredDeals} onOpenProfile={setProfileName} onSelectDeal={setSelectedDeal} players={players} />
+            </>
           )}
 
           {/* ── Investment consolidated view ── */}
           {dealTypeTab === "investments" && (
-            <InvestmentConsolidatedView deals={filteredDeals} onOpenProfile={setProfileName} />
+            <InvestmentConsolidatedView deals={filteredDeals} onOpenProfile={setProfileName} onSelectDeal={setSelectedDeal} />
           )}
 
           {/* ── Normal deal table (Acquisitions, Mergers, JV) ── */}
@@ -1959,6 +2231,7 @@ export default function MAActivity() {
                         activity={activity}
                         index={page * PAGE_SIZE + i}
                         onOpenProfile={setProfileName}
+                        onSelectDeal={setSelectedDeal}
                       />
                     ))}
                   </tbody>
@@ -1997,6 +2270,13 @@ export default function MAActivity() {
       <CompanyProfileSheet
         name={profileName}
         onClose={() => setProfileName(null)}
+      />
+
+      {/* Deal detail drawer */}
+      <DealDetailDrawer
+        deal={selectedDeal}
+        onClose={() => setSelectedDeal(null)}
+        onOpenProfile={(name) => { setSelectedDeal(null); setProfileName(name); }}
       />
     </div>
   );
