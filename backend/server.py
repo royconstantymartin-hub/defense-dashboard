@@ -2005,6 +2005,96 @@ async def run_ma_scraper_job() -> dict:
         logger.error("M&A scraper job failed: %s", exc)
         return {"error": str(exc)}
 
+# ============= COMPANY NEWS SCRAPER JOB =============
+
+async def run_company_news_scraper_job() -> dict:
+    """
+    Every 6 hours: for each company in defense_players, fetch the 5 most
+    recent Google News articles and insert new ones into news_articles.
+
+    Deduplication is URL-based: articles that already exist in the collection
+    are skipped entirely (no overwrite of curated fields).
+    """
+    from services.company_news_scraper import scrape_company_news
+
+    logger.info("Company news scraper job started")
+    try:
+        # Fetch every tracked company name
+        players = await db.defense_players.find({}, {"_id": 0, "name": 1}).to_list(None)
+        company_names = [p["name"] for p in players if p.get("name")]
+        if not company_names:
+            logger.warning("Company news scraper: no companies found in defense_players")
+            return {"status": "no_companies"}
+
+        logger.info("Company news scraper: processing %d companies", len(company_names))
+
+        # Run synchronous HTTP calls in a thread to avoid blocking the event loop
+        raw_articles = await asyncio.to_thread(scrape_company_news, company_names)
+
+        scraped_at = datetime.now(timezone.utc)
+        saved = 0
+        skipped = 0
+
+        for article in raw_articles:
+            url = article.get("url", "")
+            if not url:
+                continue
+            try:
+                pub_at = article.get("publishedAt", scraped_at)
+                doc = {
+                    "title":             article.get("title", ""),
+                    "url":               url,
+                    "image":             article.get("image"),
+                    "summary":           article.get("summary", ""),
+                    "source":            article.get("source", ""),
+                    "publishedAt":       pub_at.isoformat() if isinstance(pub_at, datetime) else pub_at,
+                    "scrapedAt":         scraped_at.isoformat(),
+                    "category":          article.get("category", "INDUSTRY"),
+                    "relevanceScore":    article.get("relevanceScore", 0),
+                    "language":          "en",
+                    "region":            article.get("region", "global"),
+                    "source_count":      1,
+                    "covered_by":        [article.get("source", "")],
+                    "companies":         article.get("companies", []),
+                    "companyTag":        article.get("companyTag", ""),
+                    "isCompanySpecific": True,
+                }
+                # $setOnInsert: only writes doc when the URL is new — never overwrites
+                result = await db.news_articles.update_one(
+                    {"url": url},
+                    {"$setOnInsert": doc},
+                    upsert=True,
+                )
+                if result.upserted_id is not None:
+                    saved += 1
+                else:
+                    skipped += 1
+            except Exception as exc:
+                logger.error("Company news: error saving '%s': %s", article.get("title", ""), exc)
+
+        stats = {
+            "companies_processed": len(company_names),
+            "articles_found":      len(raw_articles),
+            "articles_saved":      saved,
+            "articles_skipped":    skipped,
+        }
+        logger.info("Company news scraper job complete: %s", stats)
+        return stats
+
+    except Exception as exc:
+        logger.error("Company news scraper job failed: %s", exc)
+        return {"error": str(exc)}
+
+
+@api_router.post("/news/scrape-company-news")
+async def trigger_company_news_scraper(current_user: dict = Depends(get_current_user)):
+    """Admin endpoint: manually trigger the company-specific news scraper."""
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin only")
+    result = await run_company_news_scraper_job()
+    return result
+
+
 # ============= ROOT =============
 
 @api_router.get("/")
@@ -2384,6 +2474,8 @@ async def startup_event():
         await db.news_articles.create_index([("region", 1)])
         await db.bookmarks.create_index([("userId", 1)])
         await db.bookmarks.create_index([("userId", 1), ("article.url", 1)], unique=True)
+        await db.news_articles.create_index([("companyTag", 1)])
+        await db.news_articles.create_index([("isCompanySpecific", 1)])
         logger.info("news_articles + bookmarks indexes ready")
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
@@ -2393,8 +2485,16 @@ async def startup_event():
     scheduler.add_job(clear_breaking_intel_job,   "cron", hour=7,  minute=5, id="morning_breaking_intel_clear")
     scheduler.add_job(clear_breaking_intel_job,   "cron", hour=19, minute=5, id="evening_breaking_intel_clear")
     scheduler.add_job(run_ma_scraper_job,         "interval", hours=6,       id="ma_scraper")
+    scheduler.add_job(
+        run_company_news_scraper_job,
+        "interval",
+        hours=6,
+        id="company_news_scraper",
+        # First run 10 minutes after startup — avoids hammering APIs at boot
+        next_run_time=datetime.now(timezone.utc) + timedelta(minutes=10),
+    )
     scheduler.start()
-    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, Breaking Intel clear at 07:05 + 19:05 UTC, M&A every 6 h")
+    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, Breaking Intel clear at 07:05 + 19:05 UTC, M&A every 6 h, company news every 6 h (first run +10 min)")
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())
