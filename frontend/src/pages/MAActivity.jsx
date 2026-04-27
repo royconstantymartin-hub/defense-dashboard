@@ -1910,10 +1910,18 @@ export default function MAActivity() {
   const totalValue = filteredDeals.filter(a => a.is_disclosed ?? true).reduce((s, a) => s + (a.deal_value || 0), 0);
   const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all", minValue > 0].filter(Boolean).length;
 
-  // Quarterly chart
+  // Quarterly chart — uses the same tab filter as the deal list, but ignores
+  // the sidebar filters (status/year/country/value) so the chart always shows
+  // the full shape of the tab's deal type over time.
+  const chartDeals = useMemo(() => {
+    if (dealTypeTab === "all") return allDeals;
+    const tabDef = DEAL_TYPE_TABS.find(t => t.value === dealTypeTab);
+    return tabDef?.types ? allDeals.filter(a => tabDef.types.includes(a.deal_type)) : allDeals;
+  }, [allDeals, dealTypeTab]);
+
   const quarterlyData = useMemo(() => {
     const map = {};
-    allDeals.forEach(a => {
+    chartDeals.forEach(a => {
       const d = new Date(a.announced_date);
       const q = `Q${Math.ceil((d.getMonth() + 1) / 3)} ${d.getFullYear()}`;
       if (!map[q]) map[q] = { quarter: q, count: 0, value: 0, ts: d.getTime() };
@@ -1921,7 +1929,7 @@ export default function MAActivity() {
       map[q].value += a.deal_value || 0;
     });
     return Object.values(map).sort((a, b) => a.ts - b.ts).slice(-8);
-  }, [allDeals]);
+  }, [chartDeals]);
 
   if (loading) {
     return (
@@ -2031,7 +2039,12 @@ export default function MAActivity() {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold text-slate-800">Quarterly Activity</p>
+              <div>
+                <p className="text-sm font-semibold text-slate-800">Quarterly Activity</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  {DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label ?? "All deals"}
+                </p>
+              </div>
               <div className="flex items-center gap-3 text-[10px] text-slate-400">
                 <span className="flex items-center gap-1"><span className="inline-block w-3 h-2.5 rounded-sm bg-purple-200" /> Deal count</span>
                 <span className="flex items-center gap-1"><span className="inline-block w-6 border-t-2 border-dashed border-emerald-400" /> Value ($B)</span>

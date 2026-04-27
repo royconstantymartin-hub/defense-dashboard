@@ -2166,6 +2166,19 @@ _STALE_MA_DEALS = [
     {"acquirer": "L3Harris Technologies", "target": "L3 Technologies"},
 ]
 
+_HIGH_CONF_URL_RE = re.compile(
+    r"businesswire\.com|prnewswire\.com|reuters\.com|bloomberg\.com|"
+    r"spaceflightnow\.com|defensenews\.com|breakingdefense\.com|"
+    r"aviationweek\.com|janes\.com|flightglobal\.com|"
+    r"/newsroom/press-release|/press-releases?/|/news-releases?[/\?]|"
+    r"/completes-acquisition|/completes-merger|/completes-takeover|"
+    r"/finalizes-acquisition|/signs-agreement|/signs-definitive|"
+    r"mediaroom\.com|"
+    r"/\d{4}/\d{2}/",   # dated path like /2024/07/
+    re.I,
+)
+
+
 async def _migrate_ma_enrichments():
     """
     On startup, unconditionally upsert all seed-data enrichments into MA documents.
@@ -2195,6 +2208,26 @@ async def _migrate_ma_enrichments():
                 upsert=True,
             )
         logger.info("MA migration complete — %d deals upserted", len(all_deals))
+
+        # Apply confidence defaults for deals that don't have it explicitly set in seed data.
+        # "high"   → specific press-release URL (dated path, wire service, or known trade press)
+        # "medium" → everything else (generic newsroom homepage, company website, etc.)
+        high_result = await db.ma_activities.update_many(
+            {
+                "confidence": None,
+                "source_url": {"$regex": _HIGH_CONF_URL_RE.pattern, "$options": "i"},
+            },
+            {"$set": {"confidence": "high"}},
+        )
+        medium_result = await db.ma_activities.update_many(
+            {"confidence": None},
+            {"$set": {"confidence": "medium"}},
+        )
+        logger.info(
+            "MA migration: confidence defaults — %d high, %d medium",
+            high_result.modified_count,
+            medium_result.modified_count,
+        )
     except Exception as exc:
         logger.error("MA migration error: %s", exc)
 
