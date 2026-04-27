@@ -1439,6 +1439,9 @@ def _build_news_query(
     # Always exclude admin-rejected articles from the public feed
     conditions.append({"adminRejected": {"$ne": True}})
 
+    # Company-specific Google News articles belong on company profile pages only
+    conditions.append({"isCompanySpecific": {"$ne": True}})
+
     # Always enforce: specialty sources need score >= 5, mainstream need >= _MIN_MAINSTREAM_SCORE
     conditions.append({"$or": [
         {"source": {"$in": _SPECIALTY_SOURCES_LIST}, "relevanceScore": {"$gte": 5}},
