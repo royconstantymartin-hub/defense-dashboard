@@ -1295,9 +1295,9 @@ async def run_news_scraper_job() -> dict:
         unique_articles = cluster_articles(raw_articles)
         duplicates_removed = articles_found - len(unique_articles)
 
-        # Drop clearly off-topic articles — specialty sources need score >= 5,
+        # Drop clearly off-topic articles — specialty sources pass freely,
         # mainstream sources need score >= 20
-        MIN_SPECIALTY_SCORE  = 5
+        MIN_SPECIALTY_SCORE  = 0
         MIN_MAINSTREAM_SCORE = 20
         unique_articles = [
             a for a in unique_articles
@@ -2602,9 +2602,14 @@ async def startup_event():
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
 
+    # News scraper: 4× per day (every 6 hours) — 01:00, 07:00, 13:00, 19:00 UTC
+    scheduler.add_job(run_news_scraper_job,       "cron", hour=1,  minute=0, id="night_news_scraper")
     scheduler.add_job(run_news_scraper_job,       "cron", hour=7,  minute=0, id="morning_news_scraper")
+    scheduler.add_job(run_news_scraper_job,       "cron", hour=13, minute=0, id="midday_news_scraper")
     scheduler.add_job(run_news_scraper_job,       "cron", hour=19, minute=0, id="evening_news_scraper")
+    scheduler.add_job(clear_breaking_intel_job,   "cron", hour=1,  minute=5, id="night_breaking_intel_clear")
     scheduler.add_job(clear_breaking_intel_job,   "cron", hour=7,  minute=5, id="morning_breaking_intel_clear")
+    scheduler.add_job(clear_breaking_intel_job,   "cron", hour=13, minute=5, id="midday_breaking_intel_clear")
     scheduler.add_job(clear_breaking_intel_job,   "cron", hour=19, minute=5, id="evening_breaking_intel_clear")
     scheduler.add_job(run_ma_scraper_job,         "interval", hours=6,       id="ma_scraper")
     scheduler.add_job(
@@ -2616,7 +2621,7 @@ async def startup_event():
         next_run_time=datetime.now(timezone.utc) + timedelta(minutes=10),
     )
     scheduler.start()
-    logger.info("Schedulers started — news at 07:00 + 19:00 UTC, Breaking Intel clear at 07:05 + 19:05 UTC, M&A every 6 h, company news every 6 h (first run +10 min)")
+    logger.info("Schedulers started — news at 01:00/07:00/13:00/19:00 UTC, Breaking Intel clear +5 min, M&A every 6 h, company news every 6 h (first run +10 min)")
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())

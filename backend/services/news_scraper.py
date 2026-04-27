@@ -16,7 +16,7 @@ from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
-REQUEST_TIMEOUT = 8  # seconds
+REQUEST_TIMEOUT = 12  # seconds
 
 HEADERS = {
     "User-Agent": (
@@ -388,7 +388,7 @@ def cluster_articles(articles: List[Dict]) -> List[Dict]:
         matched: Optional[List[Dict]] = None
         for cluster in clusters:
             rep_title = cluster[0].get("title", "")
-            if word_overlap_ratio(title, rep_title) >= 0.50:
+            if word_overlap_ratio(title, rep_title) >= 0.60:
                 matched = cluster
                 break
 
@@ -868,31 +868,191 @@ RSS_SOURCES: List[Dict] = [
     {"name": "L'Agefi",                  "url": "https://www.agefi.fr/rss/finance.rss",                                      "language": "fr", "region": "europe"},
     {"name": "Capital",                  "url": "https://www.capital.fr/rss",                                                 "language": "fr", "region": "europe"},
     {"name": "BFM Business",             "url": "https://bfmbusiness.bfmtv.com/rss/news-feed-bfmbusiness/",                  "language": "fr", "region": "europe"},
+    # ── Additional English specialty ────────────────────────────────────────
+    # Military.com — very popular US military news + benefits site
+    {"name": "Military.com",             "url": "https://www.military.com/rss/daily-news",                                   "language": "en", "region": "us",      "max_items": 40},
+    # Military Times (Sightline Media) — large military audience, pay/benefits + ops
+    {"name": "Military Times",           "url": "https://www.militarytimes.com/arc/outboundfeeds/rss/",                      "language": "en", "region": "us",      "max_items": 30},
+    # The Hill — Defense section; strong US policy/Congress defense coverage
+    {"name": "The Hill Defense",         "url": "https://thehill.com/policy/defense/feed/",                                  "language": "en", "region": "us",      "max_items": 30},
+    # ASPI Strategist — Australian Strategic Policy Institute, Indo-Pacific focus
+    {"name": "ASPI Strategist",          "url": "https://www.aspistrategist.org.au/feed/",                                   "language": "en", "region": "asia-pacific", "max_items": 30},
+    # Modern War Institute (West Point) — doctrine, strategy, military innovation
+    {"name": "Modern War Institute",     "url": "https://mwi.westpoint.edu/feed/",                                           "language": "en", "region": "global",  "max_items": 20},
+    # Small Wars Journal — COIN, special ops, irregular warfare
+    {"name": "Small Wars Journal",       "url": "https://smallwarsjournal.com/blog/feed",                                    "language": "en", "region": "global",  "max_items": 20},
+    # The Cipher Brief — intelligence community analysis
+    {"name": "The Cipher Brief",         "url": "https://www.thecipherbrief.com/feed",                                      "language": "en", "region": "global",  "max_items": 20},
+    # Just Security — national security law and policy
+    {"name": "Just Security",            "url": "https://www.justsecurity.org/feed/",                                        "language": "en", "region": "us",      "max_items": 20},
+    # Lawfare — national security law, technology policy
+    {"name": "Lawfare",                  "url": "https://www.lawfaremedia.org/feed",                                         "language": "en", "region": "us",      "max_items": 20},
+    # Forces.net — UK Royal British Legion, British military news
+    {"name": "Forces.net",               "url": "https://www.forces.net/rss",                                                "language": "en", "region": "europe",  "max_items": 25},
+    # DefenceWeb — South Africa, African defense + global arms market
+    {"name": "DefenceWeb",               "url": "https://www.defenceweb.co.za/feed/",                                       "language": "en", "region": "africa",  "max_items": 25},
+    # Euromaidan Press — Ukraine war, Russian military, Eastern Europe
+    {"name": "Euromaidan Press",         "url": "https://euromaidanpress.com/feed/",                                         "language": "en", "region": "europe",  "max_items": 25},
+    # Defense Express (Ukraine) — Ukrainian defense industry & battlefield reporting
+    {"name": "Defense Express",          "url": "https://defence-ua.com/feed",                                               "language": "en", "region": "europe",  "max_items": 25},
+    # Sandboxx — US military lifestyle, gear, technology stories
+    {"name": "Sandboxx",                 "url": "https://www.sandboxx.us/news/feed/",                                        "language": "en", "region": "us",      "max_items": 20},
+    # European Leadership Network — nuclear policy, arms control
+    {"name": "ELN",                      "url": "https://www.europeanleadershipnetwork.org/feed/",                           "language": "en", "region": "europe",  "max_items": 15},
+    # Arms Control Association — disarmament, treaties, proliferation
+    {"name": "Arms Control",             "url": "https://www.armscontrol.org/taxonomy/term/1/feed",                          "language": "en", "region": "global",  "max_items": 15},
+    # Stimson Center — international security think tank
+    {"name": "Stimson Center",           "url": "https://www.stimson.org/feed/",                                             "language": "en", "region": "global",  "max_items": 15},
+    # Kyiv Independent — Ukraine war ground-level reporting
+    {"name": "Kyiv Independent",         "url": "https://kyivindependent.com/feed/",                                         "language": "en", "region": "europe",  "max_items": 20},
+    # Defence Connect (Australia) — Australian defence industry procurement
+    {"name": "Defence Connect",          "url": "https://www.defenceconnect.com.au/feed",                                    "language": "en", "region": "asia-pacific", "max_items": 25},
 ]
 
 HTML_SCRAPERS = [_scrape_nato, _scrape_janes, _scrape_defensepost]
+
+
+# ── Google News RSS ──────────────────────────────────────────────────────────
+# Each query searches Google's full news index and returns up to 20 fresh articles
+# from any publisher — massive extra coverage at zero extra scraping effort.
+
+_GOOGLE_NEWS_QUERIES: List[Dict] = [
+    {"q": "defense contract award military procurement",       "region": "us"},
+    {"q": "Pentagon DoD defense budget spending",              "region": "us"},
+    {"q": "military aircraft fighter jet strike",              "region": "global"},
+    {"q": "navy warship frigate destroyer submarine",          "region": "global"},
+    {"q": "missile hypersonic weapons system defense",         "region": "global"},
+    {"q": "NATO alliance military Europe Ukraine",             "region": "europe"},
+    {"q": "defense technology drone autonomous cyber",         "region": "global"},
+    {"q": "arms deal weapons export sale defense",             "region": "global"},
+    {"q": "defense industry merger acquisition deal",          "region": "global"},
+    {"q": "Lockheed Raytheon Northrop Boeing defense contract","region": "us"},
+    {"q": "Rheinmetall BAE Thales Airbus Leonardo defense",    "region": "europe"},
+    {"q": "space force satellite reconnaissance military",     "region": "global"},
+    {"q": "electronic warfare radar stealth defense",          "region": "global"},
+    {"q": "China Russia military threat defense",              "region": "asia-pacific"},
+    {"q": "Israel IDF military Gaza air strike",               "region": "middle-east"},
+    {"q": "India Pakistan military Asia defense",              "region": "asia-pacific"},
+    {"q": "UK France Germany defence ministry military",       "region": "europe"},
+    {"q": "Golden Dome Iron Dome missile defense shield",      "region": "us"},
+    {"q": "Ukraine weapons artillery ammunition war",          "region": "europe"},
+    {"q": "defense ministry Army Navy Air Force budget",       "region": "global"},
+]
+
+
+def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) -> List[Dict]:
+    """Fetch Google News RSS for a defense search query.
+    Titles arrive as 'Article headline - Publisher Name'; we split them."""
+    from urllib.parse import quote as url_quote
+    url = (
+        f"https://news.google.com/rss/search"
+        f"?q={url_quote(query)}&hl=en-US&gl=US&ceid=US:en"
+    )
+    articles: List[Dict] = []
+    try:
+        resp = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
+        resp.raise_for_status()
+        feed = feedparser.parse(resp.content)
+
+        for entry in feed.entries[:max_items]:
+            raw_title = getattr(entry, "title", "").strip()
+            article_url = getattr(entry, "link", "").strip()
+            if not raw_title or not article_url:
+                continue
+
+            # Split "Headline - Publisher" (last segment only, keep short publisher names)
+            title = raw_title
+            real_source = "Google News"
+            if " - " in raw_title:
+                parts = raw_title.rsplit(" - ", 1)
+                if len(parts) == 2 and len(parts[1]) <= 60:
+                    title = parts[0].strip()
+                    real_source = parts[1].strip()
+
+            # feedparser sometimes has entry.source.title
+            entry_src = getattr(entry, "source", None)
+            if entry_src:
+                src_title = getattr(entry_src, "title", "")
+                if src_title:
+                    real_source = src_title
+
+            summary = _extract_summary(entry)
+            region_det = detect_region_from_text(title, summary) or region
+            score = compute_relevance_score(title, summary)
+
+            articles.append({
+                "title":          title,
+                "url":            article_url,
+                "image":          _extract_image_from_entry(entry),
+                "summary":        summary,
+                "source":         real_source,
+                "publishedAt":    _parse_entry_date(entry),
+                "category":       assign_category(title),
+                "relevanceScore": score,
+                "language":       "en",
+                "region":         region_det,
+                "companies":      detect_companies(title, summary),
+            })
+
+        logger.info("[GNews:%s] Fetched %d articles", query[:45], len(articles))
+    except Exception as exc:
+        logger.error("[GNews:%s] Failed: %s", query[:45], exc)
+    return articles
 
 
 # ── Public API ───────────────────────────────────────────────────────────────
 
 def scrape_all_sources() -> List[Dict]:
     """
-    Scrape all configured sources and return raw article dicts.
+    Scrape all configured sources in parallel and return raw article dicts.
     Never raises — failed sources are logged and skipped.
+
+    All RSS feeds and HTML scrapers run concurrently (up to 25 workers).
+    Google News RSS queries run in a second parallel batch (10 workers).
+    This replaces the previous sequential loop which caused most sources to
+    timeout or be skipped entirely, resulting in only a handful of articles.
     """
     all_articles: List[Dict] = []
 
-    for source in RSS_SOURCES:
+    def _safe_rss(source: Dict) -> List[Dict]:
         try:
-            all_articles.extend(_fetch_rss(source))
+            return _fetch_rss(source)
         except Exception as exc:
             logger.error("[%s] Unexpected error: %s", source["name"], exc)
+            return []
 
-    for scraper_fn in HTML_SCRAPERS:
+    def _safe_html(fn) -> List[Dict]:
         try:
-            all_articles.extend(scraper_fn())
+            return fn()
         except Exception as exc:
-            logger.error("HTML scraper %s unexpected error: %s", scraper_fn.__name__, exc)
+            logger.error("HTML scraper %s unexpected error: %s", fn.__name__, exc)
+            return []
+
+    def _safe_gnews(item: Dict) -> List[Dict]:
+        try:
+            return _fetch_google_news(item["q"], item.get("region", "global"))
+        except Exception as exc:
+            logger.error("[GNews] Unexpected error: %s", exc)
+            return []
+
+    # ── Phase 1: all RSS feeds + HTML scrapers in parallel ────────────────
+    with ThreadPoolExecutor(max_workers=25) as pool:
+        rss_futures   = [pool.submit(_safe_rss, src) for src in RSS_SOURCES]
+        html_futures  = [pool.submit(_safe_html, fn)  for fn  in HTML_SCRAPERS]
+        for future in as_completed(rss_futures + html_futures):
+            try:
+                all_articles.extend(future.result())
+            except Exception as exc:
+                logger.error("Phase-1 scraper future error: %s", exc)
+
+    # ── Phase 2: Google News RSS queries in parallel ───────────────────────
+    with ThreadPoolExecutor(max_workers=10) as pool:
+        gn_futures = [pool.submit(_safe_gnews, item) for item in _GOOGLE_NEWS_QUERIES]
+        for future in as_completed(gn_futures):
+            try:
+                all_articles.extend(future.result())
+            except Exception as exc:
+                logger.error("Phase-2 Google News future error: %s", exc)
 
     logger.info("Total raw articles collected: %d", len(all_articles))
 
