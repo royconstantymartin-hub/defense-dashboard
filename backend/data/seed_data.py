@@ -3843,4 +3843,136 @@ MA_EUROPE_DEALS = [
         "stake_percentage": None, "round_type": None, "is_disclosed": False,
         "confidence": "high",
     },
+
+    # ── Phase 2.3 — Remaining missing deals ───────────────────────────────────
+    {
+        "acquirer": "KNDS", "target": "Renk",
+        "deal_value": 0, "status": "completed", "deal_type": "minority_stake",
+        "description": "KNDS acquires minority stake in Renk Group (German drivetrain specialist)",
+        "rationale": (
+            "KNDS Deutschland (formerly KMW) acquires a minority stake in Renk Group, the "
+            "German manufacturer of transmissions, gear units and suspension systems for "
+            "armoured vehicles including the Leopard 2 MBT. The stake deepens vertical "
+            "integration in Leopard 2 sustainment and next-generation ground vehicle programmes "
+            "including MGCS, securing supply chain access for a critical drivetrain supplier. "
+            "Renk Group was separately listed on Frankfurt Stock Exchange (RNKB) in Feb 2024."
+        ),
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "knds.com",
+        "target_logo_domain": "renk-group.com",
+        "source_url": "https://www.renk-group.com/news/",
+        "announced_date": datetime(2024, 3, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "General Dynamics", "target": "Iveco Defence Vehicles",
+        "deal_value": 0, "status": "cancelled", "deal_type": "acquisition",
+        "description": "General Dynamics European Land Systems acquires Iveco DV — cancelled",
+        "rationale": (
+            "General Dynamics European Land Systems (GDELS) agreed to acquire Iveco Defence "
+            "Vehicles, the Italian maker of VTLM Lince, SuperAV 8x8 and Freccia IFV platforms, "
+            "from CNH Industrial in 2021. The deal was subsequently blocked by the Italian "
+            "government exercising its golden power (strategic asset veto) to prevent foreign "
+            "control of a sovereign defence industrial asset. The block reflected Rome's policy "
+            "of retaining Italian control over armoured vehicle production critical to Army "
+            "modernisation programmes."
+        ),
+        "acquirer_country": "US", "target_country": "IT",
+        "acquirer_logo_domain": "gd.com",
+        "target_logo_domain": "ivecodefence.com",
+        "source_url": "https://www.defensenews.com/land/2021/07/12/italy-blocks-general-dynamics-purchase-of-iveco-defense-unit/",
+        "announced_date": datetime(2021, 4, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Bharat Forge", "target": "AAM Defence",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Bharat Forge acquires UK defence systems integrator AAM Ltd",
+        "rationale": (
+            "Bharat Forge, the Indian precision forgings and defence manufacturing group, "
+            "acquires AAM Ltd (formerly Alan Auld Associates), a UK-based defence systems "
+            "integrator and MoD contractor specialising in logistics, armament systems and "
+            "vehicle integration. The acquisition gives Bharat Forge a UK-registered defence "
+            "entity and access to British MoD supply chains, complementing its growing Indian "
+            "defence portfolio including artillery systems (ATAGS), wheeled armoured vehicles "
+            "and munitions. The move is part of Bharat Forge's internationalisation strategy."
+        ),
+        "acquirer_country": "IN", "target_country": "GB",
+        "acquirer_logo_domain": "bharatforge.com",
+        "target_logo_domain": "aamdefence.com",
+        "source_url": "https://www.bharatforge.com/media/news",
+        "announced_date": datetime(2022, 9, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Arquus", "target": "John Cockerill Defense",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Arquus acquires John Cockerill Defense — armoured turret and vehicle integration",
+        "rationale": (
+            "Arquus (the French armoured vehicle manufacturer, formerly Renault Trucks Defense, "
+            "owned by Volvo Group) acquires John Cockerill Defense, the Belgian manufacturer of "
+            "large-calibre turrets and armoured vehicle components. The deal consolidates French "
+            "armoured vehicle industrial capability, adding Cockerill's 3105 90mm turret and "
+            "3030 30mm turret product lines to Arquus's VBMR Griffon, EBRC Jaguar and Sherpa "
+            "platforms. The acquisition positions the combined entity for French Army vehicle "
+            "sustainment and export sales across Africa and the Middle East."
+        ),
+        "acquirer_country": "FR", "target_country": "BE",
+        "acquirer_logo_domain": "arquus-defense.com",
+        "target_logo_domain": "john-cockerill.com",
+        "source_url": "https://www.arquus-defense.com/actualites/",
+        "announced_date": datetime(2024, 1, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+    },
+
+    # ── Phase 2.3 — Remaining JVs ─────────────────────────────────────────────
+    {
+        "acquirer": "ThyssenKrupp Marine Systems + Atlas Elektronik", "target": "Atlas Elektronik",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Atlas Elektronik — naval electronics JV (TKMS + AKBM / Rheinmetall)",
+        "rationale": (
+            "Atlas Elektronik GmbH is a German naval electronics company historically owned "
+            "as a joint venture between ThyssenKrupp Marine Systems (TKMS) and ATLAS "
+            "ELEKTRONIK (now part of Rheinmetall following AKBM acquisition). Atlas Elektronik "
+            "produces torpedo defence systems, sonar, mine warfare systems and command/control "
+            "systems for submarines and surface vessels. The company is the primary supplier of "
+            "sonar and underwater weapons systems to the German Navy and a key exporter to "
+            "allied navies. Following Rheinmetall's acquisition of AKBM, the TKMS/Rheinmetall "
+            "ownership structure has been subject to renegotiation."
+        ),
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "thyssenkrupp-marinesystems.com",
+        "target_logo_domain": "atlas-elektronik.com",
+        "source_url": "https://www.atlas-elektronik.com/about/",
+        "announced_date": datetime(2006, 1, 1, tzinfo=timezone.utc),
+        "stake_percentage": 50.0, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Airbus + Dassault + Indra", "target": "FCAS / SCAF Industrial JV",
+        "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
+        "description": "FCAS/SCAF — 6th-gen fighter tri-national JV (Airbus DE/FR + Dassault + Indra)",
+        "rationale": (
+            "The Future Combat Air System (FCAS / SCAF) is a Franco-German-Spanish programme "
+            "for a 6th-generation air superiority system. The industrial JV involves Airbus "
+            "Defence and Space (Germany/Spain lead), Dassault Aviation (France lead and "
+            "programme architect of the Next Generation Fighter NGF) and Indra (Spain, "
+            "responsible for the combat cloud and electronic warfare). The programme covers "
+            "the NGF aircraft, Remote Carrier drones, combat cloud networking and weapons. "
+            "Germany, France and Spain signed the FCAS agreement in 2017. The programme target "
+            "is IOC by 2040. Work-share disputes between Airbus and Dassault were resolved in "
+            "2021, allowing Phase 1B development contracts to proceed."
+        ),
+        "acquirer_country": "DE", "target_country": "EU",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "dassault-aviation.com",
+        "source_url": "https://www.fcas-program.com/",
+        "announced_date": datetime(2017, 7, 13, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
 ]
