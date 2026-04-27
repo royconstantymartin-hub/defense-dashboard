@@ -186,18 +186,25 @@ function NewsPlaceholder({ source, category }) {
 
 // ── SourceFavicon ─────────────────────────────────────────────────────────────
 
-function SourceFavicon({ url, source }) {
+function SourceFavicon({ url, source, sourceLogo }) {
   const [err, setErr] = useState(false);
-  let domain = "";
-  try { domain = new URL(url).hostname; } catch { /* empty */ }
+
+  // Prefer the stored Clearbit logo (set for Google News articles).
+  // Fall back to deriving a favicon from the article URL domain.
+  let logoUrl = sourceLogo || null;
+  if (!logoUrl) {
+    let domain = "";
+    try { domain = new URL(url).hostname; } catch { /* empty */ }
+    if (domain) logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+  }
+
   const initial = source ? source.charAt(0).toUpperCase() : "?";
-  const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : null;
 
   return (
     <span className="flex items-center gap-1.5 min-w-0">
       <span className="w-4 h-4 rounded flex-shrink-0 overflow-hidden bg-slate-100 flex items-center justify-center">
-        {faviconUrl && !err ? (
-          <img src={faviconUrl} alt="" width={16} height={16} className="w-full h-full object-contain" onError={() => setErr(true)} />
+        {logoUrl && !err ? (
+          <img src={logoUrl} alt="" width={16} height={16} className="w-full h-full object-contain" onError={() => setErr(true)} />
         ) : (
           <span className="text-[8px] font-bold text-slate-500 leading-none">{initial}</span>
         )}
@@ -293,7 +300,11 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
 
         {/* Source + category row */}
         <div className="flex items-center justify-between gap-2">
-          <SourceFavicon url={article.url} source={article.source} />
+          <SourceFavicon
+            url={article.url}
+            source={article.realSource || article.source}
+            sourceLogo={article.sourceLogo}
+          />
           <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border flex-shrink-0 uppercase tracking-widest ${getCategoryStyle(article.category)}`}>
             {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
           </span>
