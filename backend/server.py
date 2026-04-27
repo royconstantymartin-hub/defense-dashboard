@@ -1439,6 +1439,9 @@ def _build_news_query(
     # Always exclude admin-rejected articles from the public feed
     conditions.append({"adminRejected": {"$ne": True}})
 
+    # Company-specific Google News articles belong on company profile pages only
+    conditions.append({"isCompanySpecific": {"$ne": True}})
+
     # Always enforce: specialty sources need score >= 5, mainstream need >= _MIN_MAINSTREAM_SCORE
     conditions.append({"$or": [
         {"source": {"$in": _SPECIALTY_SOURCES_LIST}, "relevanceScore": {"$gte": 5}},
@@ -2061,18 +2064,12 @@ async def run_company_news_scraper_job() -> dict:
                 continue
             try:
                 pub_at = article.get("publishedAt", scraped_at)
-                doc = {
-                    "title":             article.get("title", ""),
+                # Fields set only on first insert (stable metadata)
+                on_insert = {
                     "url":               url,
                     "image":             article.get("image"),
-                    "summary":           article.get("summary", ""),
-                    "source":            article.get("source", ""),
-                    "realSource":        article.get("realSource", ""),
-                    "sourceLogo":        article.get("sourceLogo", ""),
                     "publishedAt":       pub_at.isoformat() if isinstance(pub_at, datetime) else pub_at,
                     "scrapedAt":         scraped_at.isoformat(),
-                    "category":          article.get("category", "INDUSTRY"),
-                    "relevanceScore":    article.get("relevanceScore", 0),
                     "language":          "en",
                     "region":            article.get("region", "global"),
                     "source_count":      1,
@@ -2081,16 +2078,24 @@ async def run_company_news_scraper_job() -> dict:
                     "companyTag":        article.get("companyTag", ""),
                     "isCompanySpecific": True,
                 }
-                # $setOnInsert: only writes doc when the URL is new — never overwrites
+                # Display fields always refreshed so re-scraped articles pick up
+                # the cleaned title / real outlet from _parse_google_title.
+                always_set = {
+                    "title":          article.get("title", ""),
+                    "summary":        article.get("summary", ""),
+                    "source":         article.get("source", ""),
+                    "realSource":     article.get("realSource", ""),
+                    "sourceLogo":     article.get("sourceLogo", ""),
+                    "category":       article.get("category", "INDUSTRY"),
+                    "relevanceScore": article.get("relevanceScore", 0),
+                }
                 result = await db.news_articles.update_one(
                     {"url": url},
-                    {"$setOnInsert": doc},
+                    {"$setOnInsert": on_insert, "$set": always_set},
                     upsert=True,
                 )
                 if result.upserted_id is not None:
                     saved += 1
-                    # Problem 2: enrich image in the background for new articles
-                    # that have no image (Google News RSS carries none).
                     if not article.get("image"):
                         asyncio.create_task(
                             _enrich_article_image_bg(url, article.get("title", ""))
@@ -2533,6 +2538,53 @@ async def _auto_seed():
         logger.warning("Auto-seed failed (non-fatal): %s", exc)
 
 
+async def _migrate_google_news_sources() -> None:
+    """One-time migration: back-fill realSource / sourceLogo / cleaned title on
+    existing company-specific articles that were inserted before this logic existed.
+
+    Safe to re-run (idempotent): the query only matches documents still missing
+    realSource, so once all articles are migrated the function exits immediately.
+    """
+    from services.company_news_scraper import (
+        _parse_google_title,
+        _source_to_clearbit_domain,
+        _GOOGLE_NEWS_LOGO,
+    )
+
+    pending = await db.news_articles.count_documents({
+        "isCompanySpecific": True,
+        "$or": [{"realSource": {"$exists": False}}, {"realSource": ""}],
+    })
+    if pending == 0:
+        return
+
+    logger.info("Google News source migration: %d articles to update", pending)
+    cursor = db.news_articles.find(
+        {"isCompanySpecific": True, "$or": [{"realSource": {"$exists": False}}, {"realSource": ""}]},
+        {"_id": 1, "url": 1, "title": 1, "image": 1},
+    )
+    updated = 0
+    async for article in cursor:
+        raw_title    = article.get("title", "")
+        clean_title, real_source = _parse_google_title(raw_title)
+        domain       = _source_to_clearbit_domain(real_source) if real_source else ""
+        source_logo  = f"https://logo.clearbit.com/{domain}" if domain else _GOOGLE_NEWS_LOGO
+        await db.news_articles.update_one(
+            {"_id": article["_id"]},
+            {"$set": {
+                "title":      clean_title,
+                "source":     real_source or article.get("source", ""),
+                "realSource": real_source,
+                "sourceLogo": source_logo,
+            }},
+        )
+        updated += 1
+        if not article.get("image") and article.get("url"):
+            asyncio.create_task(_enrich_article_image_bg(article["url"], clean_title))
+
+    logger.info("Google News source migration complete: %d articles updated", updated)
+
+
 @app.on_event("startup")
 async def startup_event():
     """Create news_articles indexes, start scheduler, and auto-scrape if empty."""
@@ -2581,6 +2633,8 @@ async def startup_event():
     asyncio.create_task(_auto_seed())
     # Purge scraper junk immediately — no button click needed
     asyncio.create_task(_purge_scraper_junk())
+    # Back-fill realSource / sourceLogo on old Google News articles (runs once)
+    asyncio.create_task(_migrate_google_news_sources())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
