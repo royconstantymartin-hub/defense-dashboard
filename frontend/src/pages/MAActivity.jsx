@@ -222,6 +222,61 @@ const LOGO_FALLBACK = {
   "S21sec":                              "s21sec.com",
   "Roboteam":                            "roboteam.com",
   "Paragon Solutions":                   "paragon-solutions.co.uk",
+  // ── European Defense Startups (2025 funding cohort) ──────────────────────────
+  "TEKEVER":                             "tekever.com",
+  "Roark Aerospace":                     "roarkaerospace.com",
+  "Quantum Systems":                     "quantum-systems.com",
+  "ICEYE":                               "iceye.com",
+  "Stark":                               "stark.defense",
+  "Isembard":                            "isembard.com",
+  "UFORCE":                              "uforce.com",
+  "Knogin":                              "knogin.com",
+  "ARX Robotics":                        "arx-robotics.com",
+  "Onodrim Industries":                  "onodrimindustries.com",
+  "Cailabs":                             "cailabs.com",
+  "Frankenburg Tech":                    "frankenburg.tech",
+  "Tytan Technologies":                  "tytantechnologies.com",
+  "Optics11":                            "optics11.com",
+  "Hypersonica":                         "hypersonica.com",
+  "Twentyfour Industries":               "twentyfourindustries.com",
+  "Alpine Eagle":                        "alpineeagle.aero",
+  "Ammunity":                            "ammunity.com",
+  "EGIDE":                               "egide-group.com",
+  "Belss":                               "belss.com",
+  "Orbotix":                             "orbotix.io",
+  "Harmattan AI":                        "harmattan.ai",
+  // ── European VCs & deep-tech investors ───────────────────────────────────────
+  "Prima Materia":                       "primamateria.com",
+  "Lightspeed":                          "lsvp.com",
+  "Ventura Capital":                     "ventura.capital",
+  "Baillie Gifford":                     "bailliegifford.com",
+  "Lakestar":                            "lakestar.com",
+  "Index":                               "indexventures.com",
+  "Index Ventures":                      "indexventures.com",
+  "Balderton":                           "balderton.com",
+  "Balderton Capital":                   "balderton.com",
+  "HV Capital":                          "hvcapital.com",
+  "Bpifrance":                           "bpifrance.fr",
+  "A.P. Møller":                         "apmollerholding.com",
+  "Sequoia":                             "sequoiacap.com",
+  "Thiel Capital":                       "thielcapital.com",
+  "Plug and Play":                       "plugandplaytechcenter.com",
+  "OneRagtime":                          "oneragtime.com",
+  "NATO Innovation Fund":                "natoinnovationfund.nato.int",
+  "Hadean Ventures":                     "hadeanventures.com",
+  "Plural":                              "plural.vc",
+  "Atlantic Bridge":                     "abven.com",
+  "Keen Venture Partners":               "keen.vc",
+  "Speedinvest":                         "speedinvest.com",
+  "PMV":                                 "pmv.eu",
+  "Invest-NL":                           "invest-nl.nl",
+  "Aismia":                              "aismia.com",
+  "UVC Partners":                        "uvcpartners.com",
+  "IQ Capital":                          "iqcapital.vc",
+  "EFFEN Capital":                       "effencapital.com",
+  "Tesi Ventures":                       "tesi.fi",
+  "CDF Ventures":                        "cdfventures.com",
+  "Early Game Ventures":                 "earlygame.vc",
 };
 
 // Initials avatar colour palette (deterministic by name)
@@ -953,7 +1008,7 @@ function exportCSV(data) {
 // ── Deal-type tabs ─────────────────────────────────────────────────────────
 
 const DEAL_TYPE_TABS = [
-  { value: "defense_tech",  label: "Defense Tech",          types: INVEST_TYPES },
+  { value: "defense_tech",  label: "Defense Startups",       types: INVEST_TYPES },
   { value: "acquisitions",  label: "Acquisitions",          types: ["acquisition"] },
   { value: "mergers",       label: "Mergers",               types: ["merger"] },
   { value: "investments",   label: "Investments & Funding", types: INVEST_TYPES },
@@ -1182,8 +1237,28 @@ function CompanyCell({ activity, side, onOpenProfile }) {
     );
   }
 
-  // Multi-party → compact avatar group (logos stacked horizontally, tooltip lists all)
-  return <AvatarGroup parties={parties} activity={activity} side={side} onOpenProfile={onOpenProfile} />;
+  // Multi-party → avatar stack + inline name list (one name per line, truncated)
+  return (
+    <div className="flex items-start gap-2 min-w-0">
+      <div className="shrink-0 mt-0.5">
+        <AvatarGroup parties={parties} activity={activity} side={side} onOpenProfile={onOpenProfile} />
+      </div>
+      <div className="min-w-0">
+        {parties.slice(0, 3).map((p, i) => (
+          <button
+            key={i}
+            onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(p.name) || p.name); }}
+            className="block text-xs font-medium text-slate-800 hover:text-purple-700 transition-colors text-left truncate max-w-[110px] leading-snug"
+          >
+            {p.name}
+          </button>
+        ))}
+        {parties.length > 3 && (
+          <span className="text-[10px] text-slate-400">+{parties.length - 3} more</span>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ── Table row ──────────────────────────────────────────────────────────────
@@ -1958,7 +2033,7 @@ export default function MAActivity() {
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs text-xs leading-relaxed">
                   Global count of all unique deals in the database. A deal may appear in multiple tabs
-                  (e.g. an acquisition of a Defense Tech company counts in both "Acquisitions" and "Defense Tech").
+                  (e.g. an acquisition of a Defense Startups company counts in both "Acquisitions" and "Defense Startups").
                   Tab badges count deals; "Companies tracked" counts unique portfolio companies.
                 </TooltipContent>
               </UITooltip>
