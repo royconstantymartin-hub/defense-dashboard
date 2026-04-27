@@ -85,17 +85,20 @@ class Announcement(BaseModel):
 class MAActivityCreate(BaseModel):
     acquirer: str
     target: str
-    deal_value: float  # in millions USD
+    deal_value: float  # equity value in millions USD (convention: equity, not EV)
     status: str  # announced, pending, under_review, completed, active, cancelled, dissolved, exited
-    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake, funding_round
+    deal_type: str  # acquisition, merger, joint_venture, strategic_investment, minority_stake, funding_round, asset_acquisition, investment
     description: str
     announced_date: Optional[datetime] = None   # if None, defaults to now in MAActivity
+    closed_date: Optional[datetime] = None      # actual closing date (None until deal completes)
     acquirer_country: Optional[str] = None      # ISO 3166-1 alpha-2
     target_country: Optional[str] = None
     acquirer_logo_domain: Optional[str] = None
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
     rationale: Optional[str] = None             # 2-3 sentence strategic context
+    notes: Optional[str] = None                 # deal structure notes (CVR, earnout, etc.)
+    confidence: Optional[str] = None            # high / medium / low
     # Enriched deal metadata
     stake_percentage: Optional[float] = None    # % of capital acquired/invested (minority deals)
     round_type: Optional[str] = None            # seed / series_a / series_b / series_c / growth / buyout
@@ -107,17 +110,20 @@ class MAActivity(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     acquirer: str
     target: str
-    deal_value: float
+    deal_value: float  # equity value in millions USD — see DATA_CONVENTIONS.md
     status: str
     deal_type: str
     description: str
     announced_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    closed_date: Optional[datetime] = None
     acquirer_country: Optional[str] = None
     target_country: Optional[str] = None
     acquirer_logo_domain: Optional[str] = None
     target_logo_domain: Optional[str] = None
     source_url: Optional[str] = None
     rationale: Optional[str] = None
+    notes: Optional[str] = None
+    confidence: Optional[str] = None
     # Enriched deal metadata
     stake_percentage: Optional[float] = None
     round_type: Optional[str] = None
@@ -159,6 +165,7 @@ class DefensePlayer(BaseModel):
     description: Optional[str] = None
     programs: Optional[List[str]] = None
     export_countries: Optional[List[str]] = None
+    aliases: Optional[List[str]] = None   # alternative names for matching (news, deals, profile lookup)
 
 # Defense Expenditure Model
 class ExpenditureCreate(BaseModel):
@@ -772,23 +779,43 @@ async def get_stock_prices(tickers: str = ""):
 
 @api_router.get("/companies/{name}")
 async def get_company_profile(name: str):
-    """Return Crunchbase-style company profile + related M&A activity."""
-    pattern = re.compile(re.escape(name), re.IGNORECASE)
-    player = await db.defense_players.find_one({"name": pattern}, {"_id": 0})
+    """Return Crunchbase-style company profile + related M&A activity.
+    Lookup order: 1) exact name, 2) name regex, 3) aliases array.
+    """
+    esc = re.escape(name)
+    player = await db.defense_players.find_one(
+        {"name": {"$regex": f"^{esc}$", "$options": "i"}}, {"_id": 0}
+    )
     if not player:
-        # Partial match fallback
+        # Partial name match
         player = await db.defense_players.find_one(
-            {"name": {"$regex": re.escape(name), "$options": "i"}}, {"_id": 0}
+            {"name": {"$regex": esc, "$options": "i"}}, {"_id": 0}
+        )
+    if not player:
+        # Alias match (any element of aliases[] matches the requested name)
+        player = await db.defense_players.find_one(
+            {"aliases": {"$elemMatch": {"$regex": esc, "$options": "i"}}}, {"_id": 0}
         )
     if player and isinstance(player.get("updated_at"), str):
         player["updated_at"] = datetime.fromisoformat(player["updated_at"])
 
-    # Related M&A activities (acquirer or target)
-    ma_query = {"$or": [
-        {"acquirer": {"$regex": re.escape(name), "$options": "i"}},
-        {"target":   {"$regex": re.escape(name), "$options": "i"}},
-    ]}
-    ma = await db.ma_activities.find(ma_query, {"_id": 0}).sort("announced_date", -1).limit(10).to_list(10)
+    # Build all name variants for M&A lookup (canonical name + aliases)
+    name_variants = [name]
+    if player:
+        name_variants.append(player.get("name", name))
+        name_variants += player.get("aliases") or []
+    name_variants = list(dict.fromkeys(name_variants))  # dedupe, preserve order
+
+    ma_or_clauses = []
+    for v in name_variants:
+        v_esc = re.escape(v)
+        ma_or_clauses += [
+            {"acquirer": {"$regex": v_esc, "$options": "i"}},
+            {"target":   {"$regex": v_esc, "$options": "i"}},
+        ]
+    ma = await db.ma_activities.find(
+        {"$or": ma_or_clauses}, {"_id": 0}
+    ).sort("announced_date", -1).limit(10).to_list(10)
     for a in ma:
         if isinstance(a.get("announced_date"), str):
             a["announced_date"] = datetime.fromisoformat(a["announced_date"])
@@ -948,6 +975,69 @@ async def get_dashboard_stats():
         "expenditure_year": latest_year
     }
 
+# ============= DATA CONSISTENCY HEALTH CHECK =============
+
+@api_router.get("/health/data-consistency")
+async def data_consistency_check():
+    """
+    Checks internal consistency of the ma_activities collection.
+    Returns counts by type/status, and flags blocker issues.
+    Usable as a monitoring probe and as a sanity check in CI.
+    """
+    from datetime import timezone as _tz
+
+    docs = await db.ma_activities.find({}, {"_id": 0}).to_list(5000)
+    total = len(docs)
+
+    by_type: dict[str, int] = {}
+    by_status: dict[str, int] = {}
+    blockers: list[str] = []
+    warnings_list: list[str] = []
+
+    for doc in docs:
+        dt = doc.get("deal_type", "unknown")
+        st = doc.get("status", "unknown")
+        by_type[dt] = by_type.get(dt, 0) + 1
+        by_status[st] = by_status.get(st, 0) + 1
+
+        label = f"{doc.get('acquirer','?')} → {doc.get('target','?')}"
+
+        # closed_date < announced_date
+        ann_raw = doc.get("announced_date")
+        cl_raw  = doc.get("closed_date")
+        if ann_raw and cl_raw:
+            try:
+                ann = ann_raw if isinstance(ann_raw, datetime) else datetime.fromisoformat(str(ann_raw).replace("Z", "+00:00"))
+                cl  = cl_raw  if isinstance(cl_raw,  datetime) else datetime.fromisoformat(str(cl_raw).replace("Z", "+00:00"))
+                if cl < ann:
+                    blockers.append(f"{label}: closed_date {cl.date()} < announced_date {ann.date()}")
+            except Exception:
+                pass
+
+        # completed without closed_date
+        if st == "completed" and not cl_raw:
+            warnings_list.append(f"{label}: status=completed but no closed_date")
+
+        # no source
+        if not doc.get("source_url") and not doc.get("sources"):
+            blockers.append(f"{label}: no source")
+
+        # aberrant value
+        val = doc.get("deal_value", 0) or 0
+        if val > 100_000:
+            blockers.append(f"{label}: deal_value ${val}M > $100B")
+
+    ok = len(blockers) == 0
+    return {
+        "status": "ok" if ok else "error",
+        "total_deals": total,
+        "by_type": by_type,
+        "by_status": by_status,
+        "blockers": blockers,
+        "warnings": warnings_list,
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+    }
+
 # ============= SEED DATA ENDPOINT =============
 
 async def _run_seed() -> dict:
@@ -1045,6 +1135,8 @@ async def _run_seed() -> dict:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc['announced_date'] = doc['announced_date'].isoformat()
+        if doc.get('closed_date') and isinstance(doc['closed_date'], datetime):
+            doc['closed_date'] = doc['closed_date'].isoformat()
         # Set normalized names so scraper deduplication recognises these entries
         doc['acquirer_norm'] = _norm(m['acquirer'])
         doc['target_norm'] = _norm(m['target'])
@@ -1436,28 +1528,54 @@ async def get_news(
 @api_router.get("/news/company")
 async def get_company_news(name: str, limit: int = 5):
     """
-    Return articles mentioning a company name.
-    Priority 1: articles tagged with the canonical company name in the `companies` array.
-    Priority 2: case-insensitive regex fallback on title + summary.
-    Sorted by most recent first. Max 20 articles.
+    Return articles about a specific company.
+
+    Matching strategy (strict — no noise):
+      1. Look up the company's aliases from defense_players.
+      2. An article is included only when the company name OR one of its aliases
+         appears in the article TITLE (score >= 3 threshold).
+      3. Fallback: canonical name in the pre-tagged `companies` array.
+      4. Returns [] rather than unrelated articles — "0 news" is better than
+         articles about a different company that happens to share a keyword.
+
+    Sorted by publishedAt DESC. Max 20 articles.
     """
     limit = min(max(limit, 1), 20)
+    esc = re.escape(name)
 
-    # First try the fast pre-tagged field
-    tagged = await db.news_articles.find(
-        {"companies": name}, {"_id": 0}
-    ).sort("publishedAt", -1).limit(limit).to_list(limit)
+    # Resolve canonical name + aliases from DB
+    player = await db.defense_players.find_one(
+        {"$or": [
+            {"name":    {"$regex": f"^{esc}$", "$options": "i"}},
+            {"name":    {"$regex": esc, "$options": "i"}},
+            {"aliases": {"$elemMatch": {"$regex": esc, "$options": "i"}}},
+        ]},
+        {"_id": 0, "name": 1, "aliases": 1},
+    )
+    canonical = player.get("name", name) if player else name
+    aliases   = player.get("aliases") or [] if player else []
+    all_names = list(dict.fromkeys([canonical] + aliases + [name]))
 
-    if tagged:
-        return [_normalise_article(a) for a in tagged]
-
-    # Fallback: broad regex search on title and summary
-    regex = {"$regex": name, "$options": "i"}
-    query = {"$or": [{"title": regex}, {"summary": regex}]}
+    # Build title-match query (strict: company must appear in article TITLE)
+    title_clauses = [
+        {"title": {"$regex": re.escape(n), "$options": "i"}}
+        for n in all_names
+    ]
+    title_query = {"$or": title_clauses}
     articles = await db.news_articles.find(
-        query, {"_id": 0}
+        title_query, {"_id": 0}
     ).sort("publishedAt", -1).limit(limit).to_list(limit)
-    return [_normalise_article(a) for a in articles]
+
+    if articles:
+        return [_normalise_article(a) for a in articles]
+
+    # Fallback: check pre-tagged companies[] field (set at scrape time)
+    tagged_clauses = [{"companies": n} for n in all_names]
+    tagged = await db.news_articles.find(
+        {"$or": tagged_clauses}, {"_id": 0}
+    ).sort("publishedAt", -1).limit(limit).to_list(limit)
+
+    return [_normalise_article(a) for a in tagged]
 
 
 # ============= BOOKMARKS =============
@@ -1942,8 +2060,7 @@ async def _apply_company_enrichments():
 # These crept in via old seeds or scraper hallucinations and have the wrong acquirer.
 _STALE_MA_DEALS = [
     {"acquirer": "Thales", "target": "Preligens"},         # acquired by Safran, not Thales
-    {"acquirer": "Dassault Aviation", "target": "Harmattan.ai",
-     "deal_type": {"$ne": "funding_round"}},               # fix old strategic_investment entry
+    {"acquirer": "Dassault Aviation", "target": "Harmattan.ai"},   # renamed target to "Harmattan AI"
     # phase1.1 corrections — purge old/incorrect entries so upserts apply cleanly:
     {"acquirer": "RTX", "target": "Nightwing Group"},      # RTX was seller; corrected to Blackstone acq.
     {"acquirer": "L3Harris", "target": "Aerojet Rocketdyne"},  # old short-name dup; canonical is L3Harris Technologies
@@ -1971,6 +2088,8 @@ async def _migrate_ma_enrichments():
             activity = MAActivity(**m)
             doc = activity.model_dump()
             doc["announced_date"] = doc["announced_date"].isoformat()
+            if doc.get("closed_date") and isinstance(doc["closed_date"], datetime):
+                doc["closed_date"] = doc["closed_date"].isoformat()
             await db.ma_activities.update_one(
                 {"acquirer": m["acquirer"], "target": m["target"]},
                 {"$set": doc},

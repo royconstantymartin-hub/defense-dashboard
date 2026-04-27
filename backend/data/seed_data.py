@@ -24,7 +24,8 @@ DEFENSE_COMPANIES = [
     {"name": "Curtiss-Wright", "ticker": "CW", "country": "USA", "market_cap": 8.9, "stock_price": 245.67, "change_percent": 0.78, "revenue": 2.9, "employees": 8500, "specializations": ["Components", "Naval", "Nuclear"]},
     {"name": "TransDigm", "ticker": "TDG", "country": "USA", "market_cap": 72.4, "stock_price": 1289.45, "change_percent": 0.45, "revenue": 6.6, "employees": 14000, "specializations": ["Components", "Aerospace"]},
     {"name": "Anduril Industries", "ticker": "ANDR-PRIV", "country": "USA", "market_cap": 14.0, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 2500, "specializations": ["AI", "Autonomous", "Counter-UAS"]},
-    {"name": "Shield AI", "ticker": "SHLD-PRIV", "country": "USA", "market_cap": 2.7, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["AI", "Autonomous", "UAV"]},
+    {"name": "Shield AI", "ticker": "SHLD-PRIV", "country": "USA", "market_cap": 2.7, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["AI", "Autonomous", "UAV"],
+     "aliases": ["ShieldAI", "Shield Artificial Intelligence", "Shield AI Inc"]},
     {"name": "Palantir Technologies", "ticker": "PLTR", "country": "USA", "market_cap": 45.6, "stock_price": 21.34, "change_percent": 3.45, "revenue": 2.2, "employees": 3700, "specializations": ["Software", "AI", "Analytics", "Intelligence"]},
     {"name": "Rocket Lab", "ticker": "RKLB", "country": "USA", "market_cap": 8.9, "stock_price": 18.90, "change_percent": 4.56, "revenue": 0.5, "employees": 1800, "specializations": ["Space", "Launch", "Satellites"]},
     {"name": "Parsons Corporation", "ticker": "PSN", "country": "USA", "market_cap": 8.1, "stock_price": 78.90, "change_percent": 1.34, "revenue": 5.4, "employees": 17500, "specializations": ["Engineering", "Cyber", "Infrastructure"]},
@@ -161,10 +162,84 @@ DEFENSE_COMPANIES = [
     {"name": "Theon Sensors", "ticker": "THSN-PRIV", "country": "Greece", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 280, "specializations": ["Optronics", "Night Vision", "Thermal Imaging"]},
     {"name": "PZL Mielec", "ticker": "PZL-PRIV", "country": "Poland", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2200, "specializations": ["Aircraft", "Helicopters", "MRO"]},
     # === France — Defense Tech Startups ===
-    {"name": "Harmattan AI", "ticker": "HARM-PRIV", "country": "France", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 120, "specializations": ["AI", "Command & Control", "Mission Planning", "Battlespace"]},
-    {"name": "Exail Technologies", "ticker": "EXAI-PRIV", "country": "France", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.35, "employees": 1800, "specializations": ["Naval Autonomy", "USV", "UUV", "Navigation", "Simulation"]},
+    {
+        "name": "Harmattan AI", "ticker": "HARM-PRIV", "country": "France",
+        "market_cap": 1.0, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.1, "employees": 120,
+        "specializations": ["AI", "Command & Control", "Mission Planning", "Battlespace"],
+        "founded_year": 2020, "headquarters": "Paris, France", "website": "harmattan.ai",
+        "funding_stage": "Series B — €200M (Dassault Aviation lead, Mar 2025)",
+        "is_public": False,
+        "description": (
+            "Harmattan AI is a French defense AI startup specialising in AI-assisted "
+            "command-and-control and real-time battlespace analysis. Its platform integrates "
+            "sensor fusion, mission planning and decision-support for the French Army and "
+            "Air Force, and is being embedded into the Rafale F5 and FCAS programmes."
+        ),
+        "programs": ["AI-C2 for Armée de Terre", "Rafale F5 integration", "FCAS decision layer"],
+        "export_countries": ["FR", "DE", "AE"],
+        "aliases": ["Harmattan.ai", "harmattan.ai", "Harmattan"],
+    },
+    {
+        "name": "Exail Technologies", "ticker": "EXAI-PRIV", "country": "France",
+        "market_cap": 0.5, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.35, "employees": 1800,
+        "specializations": ["Naval Autonomy", "USV", "UUV", "Navigation", "Simulation"],
+        "founded_year": 2022, "headquarters": "Saint-Germain-en-Laye, France", "website": "exail.com",
+        "funding_stage": "Private (iXBlue + ECA Group merger, PE-backed by Tikehau Capital)",
+        "is_public": False,
+        "description": (
+            "Exail Technologies is a French defense and technology group created in 2022 "
+            "from the merger of iXBlue (inertial navigation, USV) and ECA Group (inspection "
+            "robots, military simulators, mine-countermeasure UUVs). Exail serves naval, "
+            "energy and scientific markets with a strong NATO export footprint."
+        ),
+        "programs": ["DriX USV", "Inspector AUV", "SIGMA INS", "MTTS submarine simulation"],
+        "export_countries": ["FR", "DE", "GB", "IT", "AU"],
+        "aliases": ["iXBlue", "ECA Group", "Exail"],
+    },
+    # === USA — Defense Tech Startups (hypersonics) ===
+    {
+        "name": "Hermeus", "ticker": "HERM-PRIV", "country": "USA",
+        "market_cap": 0, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.05, "employees": 200,
+        "specializations": ["Hypersonics", "Autonomous Aircraft", "Air Mobility", "Propulsion"],
+        "founded_year": 2018, "headquarters": "Atlanta, GA, USA", "website": "hermeus.com",
+        "funding_stage": "Series C — $350M (General Catalyst lead, 2024)",
+        "is_public": False,
+        "description": (
+            "Hermeus is a US defense technology company developing Mach 5+ autonomous and "
+            "crewed hypersonic aircraft for national security and commercial applications. "
+            "Its Quarterhorse unmanned demonstrator is supported by USAF AFWERX research "
+            "contracts. The Halcyon programme targets autonomous hypersonic strike platforms."
+        ),
+        "programs": ["Quarterhorse (USAF demonstrator)", "Halcyon (autonomous strike)", "Darkhorse"],
+        "export_countries": [],
+        "aliases": ["Hermeus Corp", "Hermeus Corporation"],
+    },
+    # === France — Satellite Operators ===
+    {
+        "name": "Eutelsat", "ticker": "ETL.PA", "country": "France",
+        "market_cap": 1.2, "stock_price": 3.50, "change_percent": 0,
+        "revenue": 1.3, "employees": 1600,
+        "specializations": ["Satellite Communications", "GEO", "LEO (OneWeb)", "Government Connectivity", "Broadband"],
+        "founded_year": 1977, "headquarters": "Paris, France", "website": "eutelsat.com",
+        "funding_stage": "Public — Euronext Paris: ETL",
+        "is_public": True,
+        "description": (
+            "Eutelsat is a French GEO satellite operator providing broadband, video broadcast "
+            "and government secure communications services. Following its 2023 merger with "
+            "OneWeb, Eutelsat operates a combined GEO/LEO constellation serving government, "
+            "maritime and aviation clients. It holds contracts with European governments and "
+            "NATO for resilient satcom. The OneWeb LEO constellation provides global broadband coverage."
+        ),
+        "programs": ["OneWeb LEO (648 sats)", "HOTBIRD media distribution", "KONNECT VHTS broadband"],
+        "export_countries": ["FR", "GB", "DE", "IT", "ES", "AE", "IN"],
+        "aliases": ["Eutelsat Communications", "Eutelsat S.A.", "ETL"],
+    },
     # === Germany — Defense Tech Startups ===
-    {"name": "Quantum Systems", "ticker": "QSYS-PRIV", "country": "Germany", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 250, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"]},
+    {"name": "Quantum Systems", "ticker": "QSYS-PRIV", "country": "Germany", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 250, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"],
+     "aliases": ["Quantum Systems GmbH"]},
 ]
 
 # Extended Announcements from specialized sources
@@ -217,8 +292,42 @@ ANNOUNCEMENTS_DATA = [
 
 # Extended M&A Data — enriched with countries, logo domains, rationale and explicit dates.
 # All deals are verified historical events from public sources.
+#
+# DEAL VALUE CONVENTION (deal_value field, in millions USD):
+#   → Equity value (consideration paid to sellers / fundraise amount), NOT Enterprise Value.
+#   → For acquisitions: price paid for 100% of equity, or proportional for partial stakes.
+#   → For PE buyouts with assumed debt: deal_value = equity consideration; notes field
+#     documents total EV including assumed debt if materially different.
+#   → For VC/growth rounds: post-money valuation is in the "valuation" field;
+#     deal_value = amount raised in the round.
+#   → Undisclosed deals: deal_value = 0, is_disclosed = False.
+#   Example: SES/Intelsat → deal_value=3100 (equity), notes documents EV ~$5.0B with debt.
+#
 MA_DATA = [
     # ── 2026 (recent / active) ────────────────────────────────────────────────
+    {
+        "acquirer": "AE Industrial Partners", "target": "Rocketdyne (L3Harris Space Propulsion)",
+        "deal_value": 845, "status": "pending", "deal_type": "acquisition",
+        "description": "L3Harris divests majority of Rocketdyne to AE Industrial for $845M — PE carve-out, H2 2026 closing",
+        "rationale": (
+            "L3Harris Technologies announces a $845 million agreement in January 2026 to sell the "
+            "majority of its Aerojet Rocketdyne business (Space Propulsion and Power Systems — RL10, "
+            "RS-68A, electric propulsion) to AE Industrial Partners, a defense-focused PE firm. "
+            "L3Harris retains the RS-25 programme (sole supplier for NASA SLS) and certain "
+            "tactical-missile propulsion lines. The divestiture reflects L3Harris's perimeter "
+            "rationalisation strategy: the RS-25 retention preserves a strategically irreplaceable "
+            "government contract; the remainder is monetised at ~12× EBITDA, consistent with space "
+            "propulsion sector comps. Closing expected H2 2026 pending regulatory approvals."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "aerojet.com",
+        "target_logo_domain": "l3harris.com",
+        "source_url": "https://spaceflightnow.com/2026/01/09/l3harris-announces-845-million-majority-sale-of-space-propulsion-and-power-systems-business/",
+        "announced_date": datetime(2026, 1, 9, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": True,
+    },
     {
         "acquirer": "Shark Robotics", "target": "Tencore",
         "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
@@ -369,24 +478,24 @@ MA_DATA = [
     # ── 2022–2023 ─────────────────────────────────────────────────────────────
     {
         "acquirer": "L3Harris Technologies", "target": "Aerojet Rocketdyne",
-        "deal_value": 4700, "status": "cancelled", "deal_type": "acquisition",
-        "description": "L3Harris drops $4.7B Aerojet bid — FTC blocks deal over solid-rocket-motor monopoly risk",
+        "deal_value": 4700, "status": "completed", "deal_type": "acquisition",
+        "description": "L3Harris acquires Aerojet Rocketdyne for $4.7B — closed Jul 28 2023",
         "rationale": (
-            "L3Harris Technologies announces a $4.7 billion agreement to acquire Aerojet Rocketdyne "
-            "on 18 December 2022. The Federal Trade Commission filed suit in January 2023 to block "
-            "the transaction, arguing that a combined L3Harris–Aerojet entity would control the "
-            "production of both missiles and the solid-rocket motors that power them — creating "
-            "an ability and incentive to disadvantage competing prime contractors bidding for US "
-            "DoD missile programmes. L3Harris withdrew the deal in February 2023, leaving Aerojet "
-            "Rocketdyne as an independent supplier. L3Harris subsequently shifted its M&A strategy "
-            "toward smaller, regulatory-safe technology bolt-ons."
+            "L3Harris Technologies announces a $4.7 billion all-cash acquisition of Aerojet Rocketdyne "
+            "on 18 December 2022 ($58/share, including net debt). The Federal Trade Commission filed suit "
+            "in January 2023 to block the deal; L3Harris successfully contested and completed the "
+            "acquisition on 28 July 2023, forming a fourth business segment (Aerojet Rocketdyne). "
+            "The deal gives L3Harris full vertical integration in solid-rocket-motor propulsion "
+            "(RS-25, RL10, JASSM/LRASM propulsion), complementing its EW and C2 systems portfolio. "
+            "Advisors — L3Harris: Barclays Capital, Goldman Sachs (financial), Simpson Thacher & Bartlett (legal); "
+            "Aerojet: Citi, Evercore (financial), Wachtell Lipton (legal)."
         ),
         "acquirer_country": "US", "target_country": "US",
         "acquirer_logo_domain": "l3harris.com",
         "target_logo_domain": "aerojet.com",
-        "source_url": "https://www.ftc.gov/news-events/news/press-releases/2023/01/ftc-sues-block-l3harris-technologies-acquisition-aerojet-rocketdyne",
+        "source_url": "https://www.l3harris.com/newsroom/press-release/2023/07/l3harris-completes-aerojet-rocketdyne-acquisition",
         "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
-        "stake_percentage": None,
+        "stake_percentage": 100.0,
         "round_type": None,
         "is_disclosed": True,
     },
@@ -806,9 +915,9 @@ MA_DATA = [
 # that do not constitute full acquisitions.
 MA_EXTRA_DEALS = [
     {
-        "acquirer": "Dassault Aviation", "target": "Harmattan.ai",
+        "acquirer": "Dassault Aviation", "target": "Harmattan AI",
         "deal_value": 200, "status": "completed", "deal_type": "funding_round",
-        "description": "Dassault Aviation participates in Harmattan.ai $200M Series B — AI-powered C2 for French defence",
+        "description": "Dassault Aviation participates in Harmattan AI $200M Series B — AI-powered C2 for French defence",
         "rationale": (
             "Harmattan.ai, French defence AI start-up specialising in AI-assisted command-and-control "
             "decision support, closes a $200 million Series B funding round with Dassault Aviation as "
@@ -3145,23 +3254,33 @@ MA_EUROPE_DEALS = [
     },
     {
         "acquirer": "SES", "target": "Intelsat",
-        "deal_value": 5000, "status": "pending", "deal_type": "acquisition",
-        "description": "SES acquires Intelsat for ~$5B — pending regulatory clearance",
+        # deal_value = equity consideration ($3.1B cash at signing); EV higher due to assumed debt.
+        # Convention: equity value throughout. CVRs excluded from base value.
+        "deal_value": 3100, "status": "completed", "deal_type": "acquisition",
+        "description": "SES acquires Intelsat ($3.1B equity) — closed Jul 17 2025, world's largest commercial satellite operator",
         "rationale": (
-            "Luxembourg-based SES announces a binding agreement to acquire Intelsat for "
-            "approximately $5 billion in April 2024, creating the world's largest commercial "
-            "satellite operator by fleet size. Intelsat had emerged from Chapter 11 bankruptcy "
-            "in 2022. The combined entity would serve over 3,800 customer accounts across media, "
-            "government and mobility, operating more than 100 geostationary satellites. The deal "
-            "provides significant NATO and US DoD government bandwidth for secure communications "
-            "and is pending US, EU and other regulatory approvals."
+            "Luxembourg-based SES signs a Share Purchase Agreement on 30 April 2024 to acquire "
+            "Intelsat for $3.1 billion (initial cash consideration; equity value convention used "
+            "throughout this database). The transaction closes on 17 July 2025 following US FCC, "
+            "EU and other multi-jurisdictional regulatory approvals. Intelsat had emerged from "
+            "Chapter 11 bankruptcy in 2022. The combined entity serves over 3,800 customer "
+            "accounts across media, government and mobility, operating more than 100 geostationary "
+            "satellites across 100+ countries. Significant NATO and US DoD government bandwidth "
+            "contracts underpin the strategic rationale."
         ),
+        "notes": (
+            "Cash + Contingent Value Rights (CVR) structure. CVRs distributed to Intelsat "
+            "shareholders via Equiniti Trust as rights agent. EV including assumed net debt "
+            "was approximately $5.0B; equity consideration was $3.1B at signing."
+        ),
+        "confidence": "high",
         "acquirer_country": "LU", "target_country": "US",
         "acquirer_logo_domain": "ses.com",
         "target_logo_domain": "intelsat.com",
-        "source_url": "https://www.ses.com/press-release/ses-signs-agreement-acquire-intelsat",
-        "announced_date": datetime(2024, 4, 27, tzinfo=timezone.utc),
-        "stake_percentage": None,
+        "source_url": "https://www.ses.com/press-release/ses-completes-acquisition-intelsat-creating-global-multi-orbit-connectivity",
+        "announced_date": datetime(2024, 4, 30, tzinfo=timezone.utc),
+        "closed_date": datetime(2025, 7, 17, tzinfo=timezone.utc),
+        "stake_percentage": 100.0,
         "round_type": None,
         "is_disclosed": True,
     },
@@ -3534,5 +3653,326 @@ MA_EUROPE_DEALS = [
         "target_logo_domain": "roboteam.com",
         "source_url": "https://www.businesswire.com/news/home/20260115005600/en/Ondas-Holdings-Acquires-Roboteam",
         "announced_date": datetime(2026, 1, 20, tzinfo=timezone.utc),
+    },
+
+    # ── Phase 2.3 — Missing acquisitions ──────────────────────────────────────
+    {
+        "acquirer": "Czechoslovak Group", "target": "Kinetic Group (Vista Outdoor)",
+        "deal_value": 2200, "status": "completed", "deal_type": "acquisition",
+        "description": "CSG acquires Vista Outdoor's Kinetic Group (ammunition & accessories) for $2.2B",
+        "rationale": (
+            "Czechoslovak Group (CSG) acquires the Kinetic Group, Vista Outdoor's sporting "
+            "products and ammunition segment (brands: Federal, Remington, CCI, Speer), for "
+            "$2.2 billion in October 2024. The deal makes CSG one of the world's largest "
+            "ammunition manufacturers, combining Czech Republic military cartridge production "
+            "with US commercial and NATO-supply ammunition brands. The acquisition strengthens "
+            "CSG's position as a key NATO ammunition supplier amid surging demand post-Ukraine."
+        ),
+        "acquirer_country": "CZ", "target_country": "US",
+        "acquirer_logo_domain": "czechoslovakgroup.cz",
+        "target_logo_domain": "vistaoutdoor.com",
+        "source_url": "https://www.vistaoutdoor.com/news/",
+        "announced_date": datetime(2024, 10, 1, tzinfo=timezone.utc),
+        "closed_date": datetime(2024, 10, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Saab AB", "target": "BlueBear Systems Research",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Saab acquires UK AI and autonomous systems specialist BlueBear",
+        "rationale": (
+            "Saab AB acquires BlueBear Systems Research, a Bedford, UK-based company "
+            "specialising in AI software for autonomous air vehicles and mission-systems "
+            "integration. BlueBear's AETHER AI framework provides autonomous flight, "
+            "mission planning and multi-agent coordination for fixed-wing and rotary UAS. "
+            "The acquisition accelerates Saab's GlobalEye airborne early-warning programme "
+            "and its growing UK autonomous systems franchise."
+        ),
+        "acquirer_country": "SE", "target_country": "GB",
+        "acquirer_logo_domain": "saab.com",
+        "target_logo_domain": "bluebear.aero",
+        "source_url": "https://www.saab.com/newsroom/press-releases/",
+        "announced_date": datetime(2023, 9, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Babcock International", "target": "Frazer-Nash Consultancy",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Babcock divests Frazer-Nash Consultancy to PE firm Inflexion",
+        "rationale": (
+            "Babcock International divests Frazer-Nash Consultancy, a UK engineering "
+            "and technology consultancy serving defence, nuclear and energy sectors, "
+            "to private equity firm Inflexion Private Equity as part of Babcock's "
+            "portfolio rationalisation strategy. The deal allows Babcock to focus on "
+            "its core naval, land and aviation services, while Frazer-Nash continues "
+            "independently with defence advisory and engineering services."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "inflexion.com",
+        "target_logo_domain": "frazernash.com",
+        "source_url": "https://www.babcockinternational.com/news-and-media/",
+        "announced_date": datetime(2022, 6, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+        "notes": "Acquirer in this deal is effectively Inflexion PE (buyer), Babcock is the seller/target-parent.",
+    },
+    {
+        "acquirer": "Hanwha Aerospace", "target": "Austal",
+        "deal_value": 570, "status": "cancelled", "deal_type": "acquisition",
+        "description": "Hanwha's A$834M bid for Australian shipbuilder Austal rejected",
+        "rationale": (
+            "Hanwha Aerospace submits an unsolicited acquisition proposal for Australian "
+            "defence shipbuilder Austal at A$2.825/share (approx. A$834M / ~$570M USD) "
+            "in March 2023. Austal's board rejects the offer as inadequate and not in "
+            "shareholders' best interests. The bid reflected Hanwha's ambition to enter "
+            "the Australian naval shipbuilding market, but faced headwinds from Australian "
+            "government concerns over foreign ownership of a sovereign naval supplier."
+        ),
+        "acquirer_country": "KR", "target_country": "AU",
+        "acquirer_logo_domain": "hanwhaaerospace.com",
+        "target_logo_domain": "austal.com",
+        "source_url": "https://www.austal.com/investors/asx-announcements/",
+        "announced_date": datetime(2023, 3, 14, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "confidence": "high",
+    },
+
+    # ── Phase 2.3 — Structuring JVs ───────────────────────────────────────────
+    {
+        "acquirer": "Naval Group + Fincantieri", "target": "Naviris",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Naviris — Franco-Italian naval JV (Naval Group + Fincantieri, 50/50)",
+        "rationale": (
+            "Naval Group (France) and Fincantieri (Italy) create Naviris, a 50/50 joint "
+            "venture based in Genoa, Italy, to coordinate and manage naval export programmes "
+            "and European naval cooperation. Founded June 2020, Naviris serves as the common "
+            "industrial vehicle for joint bids on European naval projects including the PANG "
+            "(Porte-Avions de Nouvelle Génération) aircraft carrier studies. The JV reinforces "
+            "the Franco-Italian FREMM frigate cooperation and positions both groups for future "
+            "European naval consolidation under EDIP and PESCO frameworks."
+        ),
+        "acquirer_country": "FR", "target_country": "IT",
+        "acquirer_logo_domain": "naval-group.com",
+        "target_logo_domain": "fincantieri.com",
+        "source_url": "https://www.naval-group.com/en/news/creation-of-naviris-the-naval-group-and-fincantieri-joint-company",
+        "announced_date": datetime(2020, 6, 1, tzinfo=timezone.utc),
+        "stake_percentage": 50.0, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "MBDA + Thales", "target": "Eurosam",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Eurosam — Franco-Italian air defense missile JV (MBDA 66% + Thales 34%)",
+        "rationale": (
+            "Eurosam is a joint venture between MBDA (66%) and Thales (34%) producing the "
+            "SAMP/T (Aster 30) medium-range surface-to-air missile system and the Aster family "
+            "of missiles. Founded in 1989, Eurosam is the industrial vehicle for the "
+            "Principal Anti-Air Missile System (PAAMS / CAMM-ER successor discussions). "
+            "The JV has delivered SAMP/T to France, Italy, and Singapore, with the modernised "
+            "SAMP/T NG version now being delivered to Ukraine and NATO allies."
+        ),
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "mbda-systems.com",
+        "target_logo_domain": "thalesgroup.com",
+        "source_url": "https://www.eurosam.com/",
+        "announced_date": datetime(1989, 1, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Airbus + Dassault + Leonardo", "target": "Eurodrone Programme JV",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Eurodrone — MALE UAS tri-national JV (Airbus 40% / Dassault 40% / Leonardo 20%)",
+        "rationale": (
+            "Airbus Defence and Space, Dassault Aviation and Leonardo form a joint venture "
+            "to develop the Eurodrone, Europe's medium-altitude long-endurance (MALE) UAS, "
+            "under a €7.1 billion ESA/OCCAR contract signed in 2023. Airbus leads the "
+            "programme (40%), Dassault brings avionics integration (40%), Leonardo provides "
+            "mission systems (20%). Eurodrone will serve Germany, France, Spain and Italy, "
+            "with first flight targeted for 2028. It replaces aging MALE platforms including "
+            "the Heron-TP leases."
+        ),
+        "acquirer_country": "DE", "target_country": "EU",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "airbus.com",
+        "source_url": "https://www.airbus.com/en/products-services/defence/uas/eurodrone",
+        "announced_date": datetime(2020, 3, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Airbus Helicopters + Leonardo + Fokker", "target": "NHIndustries",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "NHIndustries — NH90 helicopter industrial consortium (NH90 prime contractor)",
+        "rationale": (
+            "NHIndustries is the industrial consortium formed by Airbus Helicopters (France/Germany), "
+            "Leonardo Helicopters (Italy) and GKN Fokker (Netherlands/formerly Fokker) to develop, "
+            "produce and support the NH90 medium tactical helicopter. The NH90 is the most produced "
+            "European military helicopter, with 14 nations operating or on order for over 800 units. "
+            "NHIndustries manages the Type Certificate, production coordination and through-life "
+            "support for the NH90 TTH (troop transport) and NFH (naval) variants."
+        ),
+        "acquirer_country": "FR", "target_country": "EU",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "nhindustries.com",
+        "source_url": "https://www.nhindustries.com/",
+        "announced_date": datetime(1992, 9, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "KNDS France + KNDS Deutschland + Rheinmetall + Thales", "target": "MGCS Programme Alliance",
+        "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
+        "description": "MGCS — Main Ground Combat System, Franco-German programme alliance (2035+)",
+        "rationale": (
+            "The Main Ground Combat System (MGCS) programme is a Franco-German initiative "
+            "to develop a next-generation battle tank for the Bundeswehr and Armée de Terre, "
+            "replacing Leopard 2 and Leclerc by 2035+. The industrial alliance involves KNDS "
+            "France (lead on French side), KNDS Deutschland (formerly KMW), Rheinmetall and "
+            "Thales. Programme architecture and work-share have been contentious, with Rheinmetall "
+            "pushing for a larger role. France and Germany signed the MGCS framework agreement "
+            "in 2018; industrial organisation remains under negotiation as of 2026."
+        ),
+        "acquirer_country": "FR", "target_country": "DE",
+        "acquirer_logo_domain": "knds.com",
+        "target_logo_domain": "knds.com",
+        "source_url": "https://www.bmvg.de/de/themen/ruestung/projekte-und-vorhaben/mgcs",
+        "announced_date": datetime(2018, 7, 13, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+
+    # ── Phase 2.3 — Remaining missing deals ───────────────────────────────────
+    {
+        "acquirer": "KNDS", "target": "Renk",
+        "deal_value": 0, "status": "completed", "deal_type": "minority_stake",
+        "description": "KNDS acquires minority stake in Renk Group (German drivetrain specialist)",
+        "rationale": (
+            "KNDS Deutschland (formerly KMW) acquires a minority stake in Renk Group, the "
+            "German manufacturer of transmissions, gear units and suspension systems for "
+            "armoured vehicles including the Leopard 2 MBT. The stake deepens vertical "
+            "integration in Leopard 2 sustainment and next-generation ground vehicle programmes "
+            "including MGCS, securing supply chain access for a critical drivetrain supplier. "
+            "Renk Group was separately listed on Frankfurt Stock Exchange (RNKB) in Feb 2024."
+        ),
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "knds.com",
+        "target_logo_domain": "renk-group.com",
+        "source_url": "https://www.renk-group.com/news/",
+        "announced_date": datetime(2024, 3, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "General Dynamics", "target": "Iveco Defence Vehicles",
+        "deal_value": 0, "status": "cancelled", "deal_type": "acquisition",
+        "description": "General Dynamics European Land Systems acquires Iveco DV — cancelled",
+        "rationale": (
+            "General Dynamics European Land Systems (GDELS) agreed to acquire Iveco Defence "
+            "Vehicles, the Italian maker of VTLM Lince, SuperAV 8x8 and Freccia IFV platforms, "
+            "from CNH Industrial in 2021. The deal was subsequently blocked by the Italian "
+            "government exercising its golden power (strategic asset veto) to prevent foreign "
+            "control of a sovereign defence industrial asset. The block reflected Rome's policy "
+            "of retaining Italian control over armoured vehicle production critical to Army "
+            "modernisation programmes."
+        ),
+        "acquirer_country": "US", "target_country": "IT",
+        "acquirer_logo_domain": "gd.com",
+        "target_logo_domain": "ivecodefence.com",
+        "source_url": "https://www.defensenews.com/land/2021/07/12/italy-blocks-general-dynamics-purchase-of-iveco-defense-unit/",
+        "announced_date": datetime(2021, 4, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Bharat Forge", "target": "AAM Defence",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Bharat Forge acquires UK defence systems integrator AAM Ltd",
+        "rationale": (
+            "Bharat Forge, the Indian precision forgings and defence manufacturing group, "
+            "acquires AAM Ltd (formerly Alan Auld Associates), a UK-based defence systems "
+            "integrator and MoD contractor specialising in logistics, armament systems and "
+            "vehicle integration. The acquisition gives Bharat Forge a UK-registered defence "
+            "entity and access to British MoD supply chains, complementing its growing Indian "
+            "defence portfolio including artillery systems (ATAGS), wheeled armoured vehicles "
+            "and munitions. The move is part of Bharat Forge's internationalisation strategy."
+        ),
+        "acquirer_country": "IN", "target_country": "GB",
+        "acquirer_logo_domain": "bharatforge.com",
+        "target_logo_domain": "aamdefence.com",
+        "source_url": "https://www.bharatforge.com/media/news",
+        "announced_date": datetime(2022, 9, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Arquus", "target": "John Cockerill Defense",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Arquus acquires John Cockerill Defense — armoured turret and vehicle integration",
+        "rationale": (
+            "Arquus (the French armoured vehicle manufacturer, formerly Renault Trucks Defense, "
+            "owned by Volvo Group) acquires John Cockerill Defense, the Belgian manufacturer of "
+            "large-calibre turrets and armoured vehicle components. The deal consolidates French "
+            "armoured vehicle industrial capability, adding Cockerill's 3105 90mm turret and "
+            "3030 30mm turret product lines to Arquus's VBMR Griffon, EBRC Jaguar and Sherpa "
+            "platforms. The acquisition positions the combined entity for French Army vehicle "
+            "sustainment and export sales across Africa and the Middle East."
+        ),
+        "acquirer_country": "FR", "target_country": "BE",
+        "acquirer_logo_domain": "arquus-defense.com",
+        "target_logo_domain": "john-cockerill.com",
+        "source_url": "https://www.arquus-defense.com/actualites/",
+        "announced_date": datetime(2024, 1, 1, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "confidence": "medium",
+    },
+
+    # ── Phase 2.3 — Remaining JVs ─────────────────────────────────────────────
+    {
+        "acquirer": "ThyssenKrupp Marine Systems + Atlas Elektronik", "target": "Atlas Elektronik",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "description": "Atlas Elektronik — naval electronics JV (TKMS + AKBM / Rheinmetall)",
+        "rationale": (
+            "Atlas Elektronik GmbH is a German naval electronics company historically owned "
+            "as a joint venture between ThyssenKrupp Marine Systems (TKMS) and ATLAS "
+            "ELEKTRONIK (now part of Rheinmetall following AKBM acquisition). Atlas Elektronik "
+            "produces torpedo defence systems, sonar, mine warfare systems and command/control "
+            "systems for submarines and surface vessels. The company is the primary supplier of "
+            "sonar and underwater weapons systems to the German Navy and a key exporter to "
+            "allied navies. Following Rheinmetall's acquisition of AKBM, the TKMS/Rheinmetall "
+            "ownership structure has been subject to renegotiation."
+        ),
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "thyssenkrupp-marinesystems.com",
+        "target_logo_domain": "atlas-elektronik.com",
+        "source_url": "https://www.atlas-elektronik.com/about/",
+        "announced_date": datetime(2006, 1, 1, tzinfo=timezone.utc),
+        "stake_percentage": 50.0, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Airbus + Dassault + Indra", "target": "FCAS / SCAF Industrial JV",
+        "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
+        "description": "FCAS/SCAF — 6th-gen fighter tri-national JV (Airbus DE/FR + Dassault + Indra)",
+        "rationale": (
+            "The Future Combat Air System (FCAS / SCAF) is a Franco-German-Spanish programme "
+            "for a 6th-generation air superiority system. The industrial JV involves Airbus "
+            "Defence and Space (Germany/Spain lead), Dassault Aviation (France lead and "
+            "programme architect of the Next Generation Fighter NGF) and Indra (Spain, "
+            "responsible for the combat cloud and electronic warfare). The programme covers "
+            "the NGF aircraft, Remote Carrier drones, combat cloud networking and weapons. "
+            "Germany, France and Spain signed the FCAS agreement in 2017. The programme target "
+            "is IOC by 2040. Work-share disputes between Airbus and Dassault were resolved in "
+            "2021, allowing Phase 1B development contracts to proceed."
+        ),
+        "acquirer_country": "DE", "target_country": "EU",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "dassault-aviation.com",
+        "source_url": "https://www.fcas-program.com/",
+        "announced_date": datetime(2017, 7, 13, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "confidence": "high",
     },
 ]
