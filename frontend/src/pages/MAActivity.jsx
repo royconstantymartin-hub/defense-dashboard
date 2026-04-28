@@ -66,8 +66,9 @@ const LOGO_FALLBACK = {
   "RTX Ventures":                        "rtx.com",
   "L3Harris":                            "l3harris.com",
   "L3Harris Technologies":               "l3harris.com",
-  "Harris Corporation":                  "l3harris.com",
-  "L3 Technologies":                     "l3harris.com",
+  "Harris Corporation":                  "harris.com",
+  "L3 Technologies":                     "l3t.com",
+  "United Technologies Corporation":     "utc.com",
   "Northrop Grumman":                    "northropgrumman.com",
   "General Dynamics":                    "gd.com",
   "BAE Systems":                         "baesystems.com",
@@ -1263,81 +1264,111 @@ function CompanyCell({ activity, side, onOpenProfile }) {
 
 // ── Table row ──────────────────────────────────────────────────────────────
 
+// Detect URLs that point to a specific article/press-release (not just a homepage)
+const SPECIFIC_URL_RE = /\/20\d{2}[/-]|press-release|news-release|newsroom\/20|mediaroom|prnewswire\.com|businesswire\.com|reuters\.com\/|bloomberg\.com\/news|breakingdefense|defensenews|janes\.com|aviationweek|spaceflightnow/i;
+
+// Target cell without logo — used when acquirer and target share the same logo domain
+// (prevents showing the same logo twice in merger/acquisition rows)
+function CompanyCellNoLogo({ activity, side, onOpenProfile }) {
+  const rawName = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
+  const canonical = resolvePlayerName(rawName);
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[9px] font-bold text-white shrink-0 select-none ${avatarColor(rawName)}`}>
+        {initials(rawName)}
+      </div>
+      <button
+        onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }}
+        className="text-sm font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
+      >
+        {rawName}
+      </button>
+    </div>
+  );
+}
+
 function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
-  const hasDetail = !!(activity.rationale || activity.description || activity.notes);
+  const acquirerDomain = getLogoDomain(activity, "acquirer");
+  const targetDomain   = getLogoDomain(activity, "target");
+  const sameLogos      = !!(acquirerDomain && acquirerDomain === targetDomain);
+  const isSpecificUrl  = !!(activity.source_url && SPECIFIC_URL_RE.test(activity.source_url));
+
+  const rowBg = index % 2 === 0 ? "bg-white" : "bg-slate-50/40";
 
   return (
-    <>
-      <tr
-        className={`${index % 2 === 0 ? "bg-white" : "bg-slate-50/60"} hover:bg-purple-50 transition-colors cursor-pointer border-b border-slate-100`}
-        onClick={() => onSelectDeal(activity)}
-      >
-        <td className="px-3 py-2.5 text-xs text-slate-400 font-mono w-10 select-none">{index + 1}</td>
+    <tr
+      className={`${rowBg} hover:bg-purple-50/60 transition-colors cursor-pointer border-b border-slate-100 group`}
+      onClick={() => onSelectDeal(activity)}
+    >
+      <td className="px-3 py-2 text-[11px] text-slate-400 font-mono w-10 select-none">{index + 1}</td>
 
-        {/* Acquirer */}
-        <td className="px-3 py-2.5">
-          <CompanyCell activity={activity} side="acquirer" onOpenProfile={onOpenProfile} />
-        </td>
+      {/* Acquirer */}
+      <td className="px-3 py-2">
+        <CompanyCell activity={activity} side="acquirer" onOpenProfile={onOpenProfile} />
+      </td>
 
-        {/* Arrow */}
-        <td className="px-1 py-2.5 text-slate-300 text-xs">→</td>
+      {/* Arrow */}
+      <td className="px-1 py-2 text-slate-300 text-xs">→</td>
 
-        {/* Target */}
-        <td className="px-3 py-2.5">
-          <CompanyCell activity={activity} side="target" onOpenProfile={onOpenProfile} />
-        </td>
+      {/* Target — use initials badge when logo would duplicate acquirer's */}
+      <td className="px-3 py-2">
+        {sameLogos
+          ? <CompanyCellNoLogo activity={activity} side="target" onOpenProfile={onOpenProfile} />
+          : <CompanyCell activity={activity} side="target" onOpenProfile={onOpenProfile} />
+        }
+      </td>
 
-        {/* Type */}
-        <td className="px-3 py-2.5">
-          <span className="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium capitalize whitespace-nowrap">
-            {activity.deal_type.replaceAll("_", " ")}
-          </span>
-          {activity.round_type && (
-            <div className="mt-0.5"><RoundBadge roundType={activity.round_type} /></div>
-          )}
-        </td>
+      {/* Type */}
+      <td className="px-3 py-2">
+        <span className="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium capitalize whitespace-nowrap">
+          {activity.deal_type.replaceAll("_", " ")}
+        </span>
+        {activity.round_type && (
+          <div className="mt-0.5"><RoundBadge roundType={activity.round_type} /></div>
+        )}
+      </td>
 
-        {/* Value */}
-        <td className="px-3 py-2.5 text-sm font-mono font-semibold text-purple-700 whitespace-nowrap">
-          {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
-          {activity.stake_percentage != null && (
-            <span className="text-[10px] text-slate-400 ml-1">{activity.stake_percentage}%</span>
-          )}
-        </td>
+      {/* Value */}
+      <td className="px-3 py-2 text-sm font-mono font-semibold text-purple-700 whitespace-nowrap">
+        {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
+        {activity.stake_percentage != null && (
+          <span className="text-[10px] text-slate-400 ml-1">{activity.stake_percentage}%</span>
+        )}
+      </td>
 
-        {/* Status */}
-        <td className="px-3 py-2.5">
-          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap ${getStatusStyle(activity.status)}`}>
-            {formatStatus(activity.status)}
-          </span>
-        </td>
+      {/* Status */}
+      <td className="px-3 py-2">
+        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap ${getStatusStyle(activity.status)}`}>
+          {formatStatus(activity.status)}
+        </span>
+      </td>
 
-        {/* Date */}
-        <td className="px-3 py-2.5 text-xs text-slate-500 whitespace-nowrap">
-          {format(new Date(activity.announced_date), "MMM yyyy")}
-        </td>
+      {/* Date */}
+      <td className="px-3 py-2 text-xs text-slate-500 whitespace-nowrap">
+        {format(new Date(activity.announced_date), "MMM yyyy")}
+      </td>
 
-        {/* Source */}
-        <td className="px-3 py-2.5 text-center">
-          {activity.source_url ? (
-            <a
-              href={activity.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={e => e.stopPropagation()}
-              className="text-slate-400 hover:text-purple-600 transition-colors inline-flex"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          ) : null}
-        </td>
+      {/* Source — only show for specific article URLs, not homepage links */}
+      <td className="px-3 py-2 text-center">
+        {isSpecificUrl && (
+          <a
+            href={activity.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => e.stopPropagation()}
+            className="text-slate-300 hover:text-purple-600 transition-colors inline-flex opacity-0 group-hover:opacity-100"
+            title="Source"
+          >
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        )}
+      </td>
 
-        {/* Open detail hint */}
-        <td className="px-2 py-2.5 w-6">
-          <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-        </td>
-      </tr>
-    </>
+      {/* Open detail hint */}
+      <td className="px-2 py-2 w-6">
+        <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-slate-400 transition-colors" />
+      </td>
+    </tr>
   );
 }
 
