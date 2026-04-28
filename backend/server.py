@@ -2211,6 +2211,8 @@ _STALE_MA_DEALS = [
     {"acquirer": "KNDS + Rheinmetall", "target": "MGCS Programme JV"},
     # Guard against L3Harris merger duplicate (scraper may inject "L3Harris Technologies" as acquirer)
     {"acquirer": "L3Harris Technologies", "target": "L3 Technologies"},
+    # Stale short-name variant of the Hanwha/DSME deal (superseded by "Hanwha Group" entry)
+    {"acquirer": "Hanwha", "target": "Daewoo Shipbuilding"},
 ]
 
 _HIGH_CONF_URL_RE = re.compile(
