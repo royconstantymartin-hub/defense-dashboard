@@ -1266,6 +1266,13 @@ async def run_news_scraper_job() -> dict:
         # Defense acquisition & programs
         "Warrior Maven", "DoD News", "Federal News Network",
         "Defense Aerospace", "CSIS Defense", "Scout Warrior",
+        # Added in news-scraping improvement — must be here to bypass score threshold
+        "Military.com", "Military Times", "The Hill Defense",
+        "ASPI Strategist", "Modern War Institute", "Small Wars Journal",
+        "The Cipher Brief", "Just Security", "Lawfare",
+        "Forces.net", "DefenceWeb", "Euromaidan Press", "Defense Express",
+        "Sandboxx", "ELN", "Arms Control", "Stimson Center",
+        "Kyiv Independent", "Defence Connect",
     }
     _FR_SOURCES = {
         "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
@@ -1421,6 +1428,13 @@ _SPECIALTY_SOURCES_LIST = [
     # Defense acquisition & programs
     "Warrior Maven", "DoD News", "Federal News Network",
     "Defense Aerospace", "CSIS Defense", "Scout Warrior",
+    # Added in news-scraping improvement
+    "Military.com", "Military Times", "The Hill Defense",
+    "ASPI Strategist", "Modern War Institute", "Small Wars Journal",
+    "The Cipher Brief", "Just Security", "Lawfare",
+    "Forces.net", "DefenceWeb", "Euromaidan Press", "Defense Express",
+    "Sandboxx", "ELN", "Arms Control", "Stimson Center",
+    "Kyiv Independent", "Defence Connect",
 ]
 _MIN_MAINSTREAM_SCORE = 15
 

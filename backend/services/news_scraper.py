@@ -1086,6 +1086,18 @@ def scrape_all_sources() -> List[Dict]:
 
     logger.info("Total raw articles collected: %d", len(all_articles))
 
+    # Sort by (relevance desc, date desc, source, title) BEFORE clustering.
+    # as_completed() produces nondeterministic ordering across runs; cluster_articles
+    # compares each article against cluster[0], so the representative and covered_by
+    # list would differ between runs without a stable sort applied first.
+    _epoch = datetime.min.replace(tzinfo=timezone.utc)
+    all_articles.sort(key=lambda a: (
+        -(a.get("relevanceScore") or 0),
+        -(a.get("publishedAt", _epoch).timestamp() if isinstance(a.get("publishedAt"), datetime) else 0),
+        a.get("source", ""),
+        a.get("title", ""),
+    ))
+
     # Enrich articles that have no image with OG image from article page
     missing_before = sum(1 for a in all_articles if not a.get("image"))
     _enrich_images(all_articles)
