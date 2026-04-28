@@ -146,10 +146,10 @@ const LOGO_FALLBACK = {
   "Patria":                              "patriagroup.com",
   "Patria Oyj":                          "patriagroup.com",
   "Leidos":                              "leidos.com",
-  "Dynetics":                            "leidos.com",
+  "Dynetics":                            "dynetics.com",
   "Loc Performance Products":            "rheinmetall.com",
   "Indra":                               "indracompany.com",
-  "Expal Systems":                       "maxamcorp.com",
+  "Expal Systems":                       "expal.com",
   "Imperva":                             "imperva.com",
   "Aerojet Rocketdyne":                  "aerojetrocketdyne.com",
   "Aerojet":                             "aerojetrocketdyne.com",
@@ -157,32 +157,32 @@ const LOGO_FALLBACK = {
   "QinetiQ":                             "qinetiq.com",
   "Babcock":                             "babcock.com",
   "Babcock International":               "babcock.com",
-  "Frazer-Nash Consultancy":             "babcock.com",
+  "Frazer-Nash Consultancy":             "fnc.co.uk",
   "Elbit Systems":                       "elbitsystems.com",
-  "IMI Systems":                         "elbitsystems.com",
+  "IMI Systems":                         "imi-israel.com",
   "HEICO":                               "heico.com",
   "HEICO Corporation":                   "heico.com",
-  "Wencor Group":                        "heico.com",
+  "Wencor Group":                        "wencorgroup.com",
   "Huntington Ingalls Industries":       "hii.com",
   "HII":                                 "hii.com",
-  "Alion Science and Technology":        "hii.com",
+  "Alion Science and Technology":        "alionscience.com",
   "Peraton":                             "peraton.com",
-  "Perspecta":                           "peraton.com",
+  "Perspecta":                           "perspecta.com",
   "ManTech International":               "mantech.com",
   "Exail":                               "exail.com",
-  "iXBlue":                              "exail.com",
+  "iXBlue":                              "ixblue.com",
   "ECA Group":                           "ecagroup.com",
-  "Avantus Federal":                     "qinetiq.com",
-  "Condor Systems":                      "l3harris.com",
-  "Blue Canyon Technologies":            "rtx.com",
-  "Martin UAV":                          "shield.ai",
-  "Gibbs & Cox":                         "leidos.com",
-  "Ercom":                               "thalesgroup.com",
+  "Avantus Federal":                     "avantus.com",
+  "Condor Systems":                      "condorsystems.com",
+  "Blue Canyon Technologies":            "bluecanyontech.com",
+  "Martin UAV":                          "martinuav.com",
+  "Gibbs & Cox":                         "gibbscox.com",
+  "Ercom":                               "ercom.fr",
   "Bombardier":                          "bombardier.com",
   "Bombardier C Series":                 "bombardier.com",
   "Bombardier C Series programme":       "bombardier.com",
-  "Adranos":                             "anduril.com",
-  "Area-I":                              "anduril.com",
+  "Adranos":                             "adranos.com",
+  "Area-I":                              "area-i.com",
   // ── European deals (Top-30 list) ────────────────────────────────────────────
   "Viasat":                              "viasat.com",
   "Inmarsat":                            "inmarsat.com",
@@ -1216,46 +1216,80 @@ function AvatarGroup({ parties, activity, side, onOpenProfile }) {
   );
 }
 
+// CompanyCell used in the main deal TABLE — logo + bold name + country flag
+// Multi-party: overlapping logos (max 2) + comma-separated names on one line
 function CompanyCell({ activity, side, onOpenProfile }) {
   const rawName = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
+  const countryField = side === "acquirer" ? "acquirer_country" : "target_country";
+  const country = activity[countryField];
   const parties = parseParties(rawName);
   const isMulti = parties.length > 1;
 
   if (!isMulti) {
     const canonical = resolvePlayerName(rawName);
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2.5 min-w-0">
         <button onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }} className="shrink-0">
           <CompanyLogo activity={activity} side={side} size="sm" />
         </button>
-        <button
-          onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }}
-          className="text-sm font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
-        >
-          {rawName}
-        </button>
+        <div className="min-w-0">
+          <button
+            onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }}
+            className="block text-[13px] font-semibold text-slate-800 hover:text-purple-700 transition-colors text-left leading-snug truncate max-w-[160px]"
+          >
+            {rawName}
+          </button>
+          {country && (
+            <div className="flex items-center gap-1 mt-0.5">
+              <FlagImg iso2={country} />
+              <span className="text-[9px] text-slate-400 font-mono">{country}</span>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 
-  // Multi-party → avatar stack + inline name list (one name per line, truncated)
+  // Multi-party: 2 overlapping logos + names on a single truncated line
+  const visible = parties.slice(0, 2);
+  const overflow = parties.length - 2;
   return (
-    <div className="flex items-start gap-2 min-w-0">
-      <div className="shrink-0 mt-0.5">
-        <AvatarGroup parties={parties} activity={activity} side={side} onOpenProfile={onOpenProfile} />
-      </div>
-      <div className="min-w-0">
-        {parties.slice(0, 3).map((p, i) => (
+    <div className="flex items-center gap-2 min-w-0">
+      {/* Overlapping logos */}
+      <div className="inline-flex items-center shrink-0">
+        {visible.map((p, i) => (
           <button
             key={i}
             onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(p.name) || p.name); }}
-            className="block text-xs font-medium text-slate-800 hover:text-purple-700 transition-colors text-left truncate max-w-[110px] leading-snug"
+            className="relative rounded-lg hover:ring-2 hover:ring-purple-300 focus:outline-none transition-all shrink-0"
+            style={{ marginLeft: i > 0 ? -8 : 0, zIndex: 2 - i }}
           >
-            {p.name}
+            <CompanyLogo activity={partyActivity(p.name, activity, side)} side={side} size="sm" />
           </button>
         ))}
-        {parties.length > 3 && (
-          <span className="text-[10px] text-slate-400">+{parties.length - 3} more</span>
+        {overflow > 0 && (
+          <div className="relative w-8 h-8 rounded-lg bg-slate-100 border-2 border-white text-[9px] font-bold text-slate-500 flex items-center justify-center shrink-0" style={{ marginLeft: -8, zIndex: 0 }}>
+            +{overflow}
+          </div>
+        )}
+      </div>
+      {/* Compact name list — single line */}
+      <div className="min-w-0">
+        <p className="text-[11px] font-medium text-slate-700 leading-snug truncate max-w-[130px]">
+          {parties.map((p, i) => (
+            <span key={i}>
+              {i > 0 && <span className="text-slate-300 mx-0.5">·</span>}
+              <button
+                onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(p.name) || p.name); }}
+                className="hover:text-purple-700 transition-colors"
+              >{p.name}</button>
+            </span>
+          ))}
+        </p>
+        {country && (
+          <div className="flex items-center gap-1 mt-0.5">
+            <FlagImg iso2={country} />
+          </div>
         )}
       </div>
     </div>
@@ -1267,22 +1301,31 @@ function CompanyCell({ activity, side, onOpenProfile }) {
 // Detect URLs that point to a specific article/press-release (not just a homepage)
 const SPECIFIC_URL_RE = /\/20\d{2}[/-]|press-release|news-release|newsroom\/20|mediaroom|prnewswire\.com|businesswire\.com|reuters\.com\/|bloomberg\.com\/news|breakingdefense|defensenews|janes\.com|aviationweek|spaceflightnow/i;
 
-// Target cell without logo — used when acquirer and target share the same logo domain
-// (prevents showing the same logo twice in merger/acquisition rows)
+// Target cell without logo — used when acquirer and target share the same resolved logo domain
 function CompanyCellNoLogo({ activity, side, onOpenProfile }) {
   const rawName = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
+  const countryField = side === "acquirer" ? "acquirer_country" : "target_country";
+  const country = activity[countryField];
   const canonical = resolvePlayerName(rawName);
   return (
-    <div className="flex items-center gap-2">
-      <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[9px] font-bold text-white shrink-0 select-none ${avatarColor(rawName)}`}>
+    <div className="flex items-center gap-2.5 min-w-0">
+      <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-[9px] font-bold text-white shrink-0 select-none ${avatarColor(rawName)}`}>
         {initials(rawName)}
       </div>
-      <button
-        onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }}
-        className="text-sm font-medium text-slate-800 hover:text-purple-700 transition-colors text-left leading-tight"
-      >
-        {rawName}
-      </button>
+      <div className="min-w-0">
+        <button
+          onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }}
+          className="block text-[13px] font-semibold text-slate-800 hover:text-purple-700 transition-colors text-left leading-snug truncate max-w-[160px]"
+        >
+          {rawName}
+        </button>
+        {country && (
+          <div className="flex items-center gap-1 mt-0.5">
+            <FlagImg iso2={country} />
+            <span className="text-[9px] text-slate-400 font-mono">{country}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
