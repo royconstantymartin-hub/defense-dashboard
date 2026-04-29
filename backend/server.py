@@ -2555,11 +2555,15 @@ async def _auto_seed():
 
 
 async def _migrate_google_news_sources() -> None:
-    """One-time migration: back-fill realSource / sourceLogo / cleaned title on
-    existing company-specific articles that were inserted before this logic existed.
+    """Back-fill realSource / sourceLogo on articles that were inserted before
+    this logic existed.
 
-    Safe to re-run (idempotent): the query only matches documents still missing
-    realSource, so once all articles are migrated the function exits immediately.
+    Two passes:
+    1. Company-specific articles: parse title suffix to extract real outlet.
+    2. All other articles missing sourceLogo: derive logo from existing source name.
+
+    Safe to re-run (idempotent): each pass only touches documents still missing
+    the field, so both exit immediately once all articles are migrated.
     """
     from services.company_news_scraper import (
         _parse_google_title,
@@ -2567,38 +2571,60 @@ async def _migrate_google_news_sources() -> None:
         _GOOGLE_NEWS_LOGO,
     )
 
+    # ── Pass 1: company-specific — parse title to extract outlet ─────────────
     pending = await db.news_articles.count_documents({
         "isCompanySpecific": True,
         "$or": [{"realSource": {"$exists": False}}, {"realSource": ""}],
     })
-    if pending == 0:
-        return
-
-    logger.info("Google News source migration: %d articles to update", pending)
-    cursor = db.news_articles.find(
-        {"isCompanySpecific": True, "$or": [{"realSource": {"$exists": False}}, {"realSource": ""}]},
-        {"_id": 1, "url": 1, "title": 1, "image": 1},
-    )
-    updated = 0
-    async for article in cursor:
-        raw_title    = article.get("title", "")
-        clean_title, real_source = _parse_google_title(raw_title)
-        domain       = _source_to_clearbit_domain(real_source) if real_source else ""
-        source_logo  = f"https://logo.clearbit.com/{domain}" if domain else _GOOGLE_NEWS_LOGO
-        await db.news_articles.update_one(
-            {"_id": article["_id"]},
-            {"$set": {
-                "title":      clean_title,
-                "source":     real_source or article.get("source", ""),
-                "realSource": real_source,
-                "sourceLogo": source_logo,
-            }},
+    if pending > 0:
+        logger.info("Google News source migration (company): %d articles to update", pending)
+        cursor = db.news_articles.find(
+            {"isCompanySpecific": True, "$or": [{"realSource": {"$exists": False}}, {"realSource": ""}]},
+            {"_id": 1, "url": 1, "title": 1, "image": 1},
         )
-        updated += 1
-        if not article.get("image") and article.get("url"):
-            asyncio.create_task(_enrich_article_image_bg(article["url"], clean_title))
+        updated = 0
+        async for article in cursor:
+            raw_title    = article.get("title", "")
+            clean_title, real_source = _parse_google_title(raw_title)
+            domain       = _source_to_clearbit_domain(real_source) if real_source else ""
+            source_logo  = f"https://logo.clearbit.com/{domain}" if domain else _GOOGLE_NEWS_LOGO
+            await db.news_articles.update_one(
+                {"_id": article["_id"]},
+                {"$set": {
+                    "title":      clean_title,
+                    "source":     real_source or article.get("source", ""),
+                    "realSource": real_source,
+                    "sourceLogo": source_logo,
+                }},
+            )
+            updated += 1
+            if not article.get("image") and article.get("url"):
+                asyncio.create_task(_enrich_article_image_bg(article["url"], clean_title))
+        logger.info("Google News source migration (company) complete: %d updated", updated)
 
-    logger.info("Google News source migration complete: %d articles updated", updated)
+    # ── Pass 2: all articles missing sourceLogo — derive from source name ─────
+    pending2 = await db.news_articles.count_documents({
+        "$or": [{"sourceLogo": {"$exists": False}}, {"sourceLogo": ""}],
+    })
+    if pending2 > 0:
+        logger.info("Source logo migration (all): %d articles to update", pending2)
+        cursor2 = db.news_articles.find(
+            {"$or": [{"sourceLogo": {"$exists": False}}, {"sourceLogo": ""}]},
+            {"_id": 1, "source": 1, "url": 1, "image": 1, "title": 1},
+        )
+        updated2 = 0
+        async for article in cursor2:
+            src_name    = article.get("source", "")
+            domain      = _source_to_clearbit_domain(src_name) if src_name else ""
+            source_logo = f"https://logo.clearbit.com/{domain}" if domain else ""
+            await db.news_articles.update_one(
+                {"_id": article["_id"]},
+                {"$set": {"sourceLogo": source_logo, "realSource": src_name}},
+            )
+            updated2 += 1
+            if not article.get("image") and article.get("url"):
+                asyncio.create_task(_enrich_article_image_bg(article["url"], article.get("title", "")))
+        logger.info("Source logo migration (all) complete: %d updated", updated2)
 
 
 @app.on_event("startup")
