@@ -559,12 +559,17 @@ def _enrich_images(articles: List[Dict]) -> None:
 
 def _fetch_rss(source: Dict) -> List[Dict]:
     """Fetch and parse an RSS/Atom feed. Returns list of article dicts."""
+    from services.company_news_scraper import _source_to_clearbit_domain
     articles: List[Dict] = []
     max_items = source.get("max_items", 20)
     try:
         resp = requests.get(source["url"], headers=HEADERS, timeout=REQUEST_TIMEOUT)
         resp.raise_for_status()
         feed = feedparser.parse(resp.content)
+
+        src_name   = source["name"]
+        src_domain = _source_to_clearbit_domain(src_name)
+        src_logo   = f"https://logo.clearbit.com/{src_domain}" if src_domain else ""
 
         for entry in feed.entries[:max_items]:
             title = getattr(entry, "title", "").strip()
@@ -577,13 +582,15 @@ def _fetch_rss(source: Dict) -> List[Dict]:
             # For global sources try to narrow down region from content
             region = (detect_region_from_text(title, summary) or src_region) if src_region == "global" else src_region
             raw_score = compute_relevance_score(title, summary)
-            weight    = _SOURCE_DEFENSE_WEIGHT.get(source["name"], 1.0)
+            weight    = _SOURCE_DEFENSE_WEIGHT.get(src_name, 1.0)
             articles.append({
                 "title":          title,
                 "url":            url,
                 "image":          _extract_image_from_entry(entry),
                 "summary":        summary,
-                "source":         source["name"],
+                "source":         src_name,
+                "realSource":     src_name,
+                "sourceLogo":     src_logo,
                 "publishedAt":    _parse_entry_date(entry),
                 "category":       assign_category(title),
                 "relevanceScore": int(raw_score * weight),
@@ -958,6 +965,8 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
     """Fetch Google News RSS for a defense search query.
     Titles arrive as 'Article headline - Publisher Name'; we split them."""
     from urllib.parse import quote as url_quote
+    # Lazy import to avoid circular dependency (company_news_scraper imports news_scraper)
+    from services.company_news_scraper import _source_to_clearbit_domain, _GOOGLE_NEWS_LOGO
     url = (
         f"https://news.google.com/rss/search"
         f"?q={url_quote(query)}&hl=en-US&gl=US&ceid=US:en"
@@ -994,12 +1003,17 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
             region_det = detect_region_from_text(title, summary) or region
             score = compute_relevance_score(title, summary)
 
+            domain = _source_to_clearbit_domain(real_source) if real_source else ""
+            source_logo = f"https://logo.clearbit.com/{domain}" if domain else _GOOGLE_NEWS_LOGO
+
             articles.append({
                 "title":          title,
                 "url":            article_url,
                 "image":          _extract_image_from_entry(entry),
                 "summary":        summary,
                 "source":         real_source,
+                "realSource":     real_source,
+                "sourceLogo":     source_logo,
                 "publishedAt":    _parse_entry_date(entry),
                 "category":       assign_category(title),
                 "relevanceScore": score,

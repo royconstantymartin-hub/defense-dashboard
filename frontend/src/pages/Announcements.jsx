@@ -250,7 +250,7 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
 
       {/* ── Cover image ── */}
       <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative block flex-shrink-0 overflow-hidden" style={{ height: "220px" }}>
-        {!imgError && article.image ? (
+        {!imgError && displayImage ? (
           <img
             src={displayImage}
             alt={article.title}
