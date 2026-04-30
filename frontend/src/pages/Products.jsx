@@ -455,12 +455,21 @@ export default function Products() {
     }
   }, []);
 
-  // Pre-fetch Wikipedia images for every product so the fallback is ready
-  // immediately when a stored image_url is broken or missing
+  // Pre-fetch Wikipedia images, staggered in batches to avoid rate-limiting
+  // the Wikipedia REST API when the full catalog (140+ products) is visible.
   useEffect(() => {
-    filteredProducts.forEach(p => {
-      fetchWikiImage(p.id, p.name);
+    const BATCH_SIZE = 8;
+    const BATCH_DELAY_MS = 250;
+    const timeouts = [];
+    filteredProducts.forEach((p, i) => {
+      const delay = Math.floor(i / BATCH_SIZE) * BATCH_DELAY_MS;
+      if (delay === 0) {
+        fetchWikiImage(p.id, p.name);
+      } else {
+        timeouts.push(setTimeout(() => fetchWikiImage(p.id, p.name), delay));
+      }
     });
+    return () => timeouts.forEach(clearTimeout);
   }, [filteredProducts, fetchWikiImage]);
 
 

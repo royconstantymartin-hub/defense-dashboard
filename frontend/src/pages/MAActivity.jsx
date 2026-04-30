@@ -102,6 +102,18 @@ const LOGO_FALLBACK = {
   "Dassault Aviation":                   "dassault-aviation.com",
   "Dassault":                            "dassault-aviation.com",
   "Naval Group":                         "naval-group.com",
+  "Fincantieri":                         "fincantieri.com",
+  "Shark Robotics":                      "shark-robotics.com",
+  "RBSL":                                "rbsl.co.uk",
+  "KNDS Deutschland":                    "knds.com",
+  "Airbus Helicopters":                  "airbus.com",
+  "Airbus Defence & Space":              "airbus.com",
+  "Airbus Defence and Space":            "airbus.com",
+  "Fokker":                              "fokker.com",
+  "GKN Fokker":                          "fokker.com",
+  "Eurosam":                             "eurosam.com",
+  "NHIndustries":                        "nhindustries.com",
+  "Tencore":                             "tencore.net",
   "Anduril":                             "anduril.com",
   "Anduril Industries":                  "anduril.com",
   "Palantir":                            "palantir.com",
@@ -306,6 +318,26 @@ function FlagImg({ iso2, className = "" }) {
       style={{ width: 16, height: 11 }}
     />
   );
+}
+
+// EU member states (ISO 3166-1 alpha-2)
+const EU_MEMBERS = new Set([
+  "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU",
+  "IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE",
+]);
+
+// For a JV with multi-party acquirer where both acquirer_country and target_country
+// are EU members → the resulting entity is a European JV → show EU flag.
+function resolveTargetCountry(activity) {
+  if (
+    activity.deal_type === "joint_venture" &&
+    activity.acquirer?.includes("+") &&
+    activity.acquirer_country && EU_MEMBERS.has(activity.acquirer_country) &&
+    activity.target_country && EU_MEMBERS.has(activity.target_country)
+  ) {
+    return "EU";
+  }
+  return activity.target_country;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -622,7 +654,9 @@ function parseParties(name) {
 
 // Build a synthetic activity for a single named party (so CompanyLogo works)
 function partyActivity(name, activity, side) {
-  const domain = LOGO_FALLBACK[name] ?? getLogoDomain(activity, side);
+  // Only use LOGO_FALLBACK — never inherit the parent activity's domain.
+  // Inheriting causes the first party's logo to duplicate across all unlisted partners.
+  const domain = LOGO_FALLBACK[name] ?? null;
   return {
     ...activity,
     acquirer: side === "acquirer" ? name : activity.acquirer,
@@ -1221,7 +1255,7 @@ function AvatarGroup({ parties, activity, side, onOpenProfile }) {
 function CompanyCell({ activity, side, onOpenProfile }) {
   const rawName = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const countryField = side === "acquirer" ? "acquirer_country" : "target_country";
-  const country = activity[countryField];
+  const country = side === "target" ? resolveTargetCountry(activity) : activity[countryField];
   const parties = parseParties(rawName);
   const isMulti = parties.length > 1;
 
@@ -1304,8 +1338,7 @@ const SPECIFIC_URL_RE = /\/20\d{2}[/-]|press-release|news-release|newsroom\/20|m
 // Target cell without logo — used when acquirer and target share the same resolved logo domain
 function CompanyCellNoLogo({ activity, side, onOpenProfile }) {
   const rawName = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
-  const countryField = side === "acquirer" ? "acquirer_country" : "target_country";
-  const country = activity[countryField];
+  const country = side === "target" ? resolveTargetCountry(activity) : activity.acquirer_country;
   const canonical = resolvePlayerName(rawName);
   return (
     <div className="flex items-center gap-2.5 min-w-0">
