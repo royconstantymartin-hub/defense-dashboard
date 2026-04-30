@@ -67,7 +67,7 @@ export default function Layout() {
           {/* Logo */}
           <div className="p-5 border-b border-slate-100">
             <Link to="/" className="flex items-center gap-3">
-              <img src="/logo.png" alt="Defense Dashboard" className="w-10 h-10 object-contain" />
+              <img src="/favicon.png" alt="Defense Dashboard" className="w-10 h-10 object-contain" />
               <div>
                 <h1 className="font-heading font-bold text-slate-900 tracking-tight">DEFENSE</h1>
                 <p className="text-[10px] font-mono text-purple-600 tracking-widest">DASHBOARD</p>
