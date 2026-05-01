@@ -1082,7 +1082,7 @@ MA_EXTRA_DEALS = [
         ),
         "acquirer_country": "DE", "target_country": "GB",
         "acquirer_logo_domain": "rheinmetall.com",
-        "target_logo_domain": "baesystems.com",
+        "target_logo_domain": "rbsl.co.uk",
         "source_url": "https://www.baesystems.com/en/our-company/news-and-events/bae-systems-investor-news",
         "announced_date": datetime(2019, 5, 8, tzinfo=timezone.utc),
         "stake_percentage": 50.0,
@@ -1143,7 +1143,7 @@ MA_EXTRA_DEALS = [
             "ensures member nations retain export sovereignty while pooling R&D."
         ),
         "acquirer_country": "FR", "target_country": "FR",
-        "acquirer_logo_domain": "mbda-systems.com",
+        "acquirer_logo_domain": "airbus.com",
         "target_logo_domain": "mbda-systems.com",
         "source_url": "https://www.mbda-systems.com/",
         "announced_date": datetime(2001, 12, 18, tzinfo=timezone.utc),
@@ -1339,9 +1339,9 @@ MA_EXTRA_DEALS = [
             "Industrial work-share has been repeatedly contested between Airbus DS and Dassault, "
             "with multiple near-breakdowns in 2021 and ongoing renegotiation in 2025-2026."
         ),
-        "acquirer_country": "FR", "target_country": "DE",
+        "acquirer_country": "FR", "target_country": "EU",
         "acquirer_logo_domain": "dassault-aviation.com",
-        "target_logo_domain": "airbus.com",
+        "target_logo_domain": None,
         "source_url": "https://www.dassault-aviation.com/en/group/press/",
         "announced_date": datetime(2017, 7, 13, tzinfo=timezone.utc),
         "stake_percentage": None,
@@ -4230,7 +4230,7 @@ MA_EUROPE_DEALS = [
             "the Franco-Italian FREMM frigate cooperation and positions both groups for future "
             "European naval consolidation under EDIP and PESCO frameworks."
         ),
-        "acquirer_country": "FR", "target_country": "IT",
+        "acquirer_country": "FR", "target_country": "EU",
         "acquirer_logo_domain": "naval-group.com",
         "target_logo_domain": "fincantieri.com",
         "source_url": "https://www.naval-group.com/en/news/creation-of-naviris-the-naval-group-and-fincantieri-joint-company",
@@ -4252,7 +4252,7 @@ MA_EUROPE_DEALS = [
         ),
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "mbda-systems.com",
-        "target_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "eurosam.com",
         "source_url": "https://www.eurosam.com/",
         "announced_date": datetime(1989, 1, 1, tzinfo=timezone.utc),
         "stake_percentage": None, "round_type": None, "is_disclosed": False,
@@ -4312,9 +4312,9 @@ MA_EUROPE_DEALS = [
             "pushing for a larger role. France and Germany signed the MGCS framework agreement "
             "in 2018; industrial organisation remains under negotiation as of 2026."
         ),
-        "acquirer_country": "FR", "target_country": "DE",
+        "acquirer_country": "FR", "target_country": "EU",
         "acquirer_logo_domain": "knds.com",
-        "target_logo_domain": "knds.com",
+        "target_logo_domain": None,
         "source_url": "https://www.bmvg.de/de/themen/ruestung/projekte-und-vorhaben/mgcs",
         "announced_date": datetime(2018, 7, 13, tzinfo=timezone.utc),
         "stake_percentage": None, "round_type": None, "is_disclosed": False,
