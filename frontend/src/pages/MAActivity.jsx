@@ -113,7 +113,7 @@ const LOGO_FALLBACK = {
   "GKN Fokker":                          "fokker.com",
   "Eurosam":                             "eurosam.com",
   "NHIndustries":                        "nhindustries.com",
-  "Tencore":                             "tencore.net",
+  "Tencore":                             "tencore.com",
   "Anduril":                             "anduril.com",
   "Anduril Industries":                  "anduril.com",
   "Palantir":                            "palantir.com",
@@ -326,14 +326,24 @@ const EU_MEMBERS = new Set([
   "IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE",
 ]);
 
-// For a JV with multi-party acquirer where both acquirer_country and target_country
-// are EU members → the resulting entity is a European JV → show EU flag.
+// Programme structures (no legal entity, no logo)
+const PROGRAMME_ENTITIES = new Set([
+  "SCAF/FCAS Programme",
+  "MGCS Programme Alliance",
+  "Eurodrone Programme JV",
+]);
+
+// JV from partners in DIFFERENT EU countries → the entity is a European JV → EU flag.
+// Same-country JVs (e.g. Airbus FR + Safran FR → ArianeGroup FR) stay with their country.
 function resolveTargetCountry(activity) {
   if (
     activity.deal_type === "joint_venture" &&
     activity.acquirer?.includes("+") &&
-    activity.acquirer_country && EU_MEMBERS.has(activity.acquirer_country) &&
-    activity.target_country && EU_MEMBERS.has(activity.target_country)
+    activity.acquirer_country &&
+    activity.target_country &&
+    activity.acquirer_country !== activity.target_country &&
+    EU_MEMBERS.has(activity.acquirer_country) &&
+    EU_MEMBERS.has(activity.target_country)
   ) {
     return "EU";
   }
@@ -433,6 +443,9 @@ function getLogoDomain(activity, side) {
   const domainField = side === "acquirer" ? "acquirer_logo_domain" : "target_logo_domain";
   const nameField   = side === "acquirer" ? "acquirer" : "target";
   const name = activity[nameField] ?? "";
+
+  // Programme structures have no company logo — always use initials
+  if (PROGRAMME_ENTITIES.has(name)) return null;
 
   // 1. Explicit domain from DB
   if (activity[domainField]) return activity[domainField];
