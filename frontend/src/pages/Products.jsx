@@ -53,7 +53,7 @@ const MANUFACTURERS = [
   { value: "Elbit Systems", label: "Elbit Systems" },
   { value: "Kongsberg Defence", label: "Kongsberg Defence" },
   { value: "Baykar", label: "Baykar" },
-  { value: "Nexter Systems", label: "Nexter Systems" },
+  { value: "KNDS", label: "KNDS" },
   { value: "Fincantieri", label: "Fincantieri" },
   { value: "Huntington Ingalls", label: "Huntington Ingalls" },
   { value: "L3Harris Technologies", label: "L3Harris Technologies" },
@@ -457,20 +457,15 @@ export default function Products() {
       console.warn('[Products] Wikipedia pageimages fetch failed for', productName, e?.message);
     }
 
-    // Fallback: REST summary API
+    // Fallback: REST summary API — use the thumbnail URL as-is (it's a pre-generated size)
     try {
       const r = await fetch(
         `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
       );
       if (r.ok) {
         const d = await r.json();
-        const raw = d.thumbnail?.source || d.originalimage?.source;
-        if (raw) {
-          const src = raw.includes('/thumb/')
-            ? raw.replace(/\/\d+px-([^/]+)$/, '/400px-$1')
-            : raw;
-          setWikiImages(prev => ({ ...prev, [productId]: src }));
-        }
+        const src = d.thumbnail?.source || d.originalimage?.source;
+        if (src) setWikiImages(prev => ({ ...prev, [productId]: src }));
       }
     } catch (e) {
       console.warn('[Products] Wikipedia REST fetch failed for', productName, e?.message);
@@ -506,13 +501,12 @@ export default function Products() {
   };
 
   // Choose which image URL to show for a product.
-  // Prefers the fresh Wikipedia thumbnail; falls back to the thumb-converted DB url;
-  // returns null when both have failed (triggering the icon placeholder).
+  // Prefers the fresh Wikipedia thumbnail; falls back to the raw DB url.
+  // Returns null when both have failed (triggering the icon placeholder).
   const resolveImgSrc = (productId, dbUrl) => {
     const wikiSrc = wikiImages[productId];
     if (wikiSrc && !wikiErr[productId]) return wikiSrc;
-    const thumbUrl = toWikiThumb(dbUrl);
-    if (thumbUrl && !primaryErr[productId]) return thumbUrl;
+    if (dbUrl && !primaryErr[productId]) return dbUrl;
     return null;
   };
 
@@ -926,8 +920,8 @@ export default function Products() {
         return (
           <div className="flex items-center justify-between bg-white border border-slate-200 rounded-xl px-4 py-3">
             <p className="text-sm text-slate-500">
-              Affichage <span className="font-medium text-slate-900">{start}–{end}</span> sur{' '}
-              <span className="font-medium text-slate-900">{filteredProducts.length}</span> produits
+              Showing <span className="font-medium text-slate-900">{start}–{end}</span> of{' '}
+              <span className="font-medium text-slate-900">{filteredProducts.length}</span> products
             </p>
             <div className="flex items-center gap-1">
               <Button
@@ -937,7 +931,7 @@ export default function Products() {
                 disabled={currentPage === 1}
                 className="border-slate-200 text-slate-700 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 disabled:opacity-40"
               >
-                ← Précédent
+                ← Previous
               </Button>
               {Array.from({ length: totalPages }, (_, i) => i + 1)
                 .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
@@ -972,7 +966,7 @@ export default function Products() {
                 disabled={currentPage === totalPages}
                 className="border-slate-200 text-slate-700 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 disabled:opacity-40"
               >
-                Suivant →
+                Next →
               </Button>
             </div>
           </div>
