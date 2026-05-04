@@ -420,6 +420,8 @@ export default function Products() {
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showComparison, setShowComparison]= useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 24;
 
   // YouTube video availability: track which product names have a broken/deleted video
   const [brokenVideos, setBrokenVideos] = useState(new Set());
@@ -434,15 +436,35 @@ export default function Products() {
     if (fetchedIds.current.has(productId)) return;
     fetchedIds.current.add(productId);
     const title = (WIKI_TITLES[productName] || productName).replace(/ /g, '_');
+
+    // Primary: MediaWiki pageimages API — returns pre-generated thumbs at the exact size requested.
+    // More reliable than the REST summary API which can return full-res URLs or sizes Wikimedia
+    // hasn't pre-generated (causing 404s on the <img> element).
+    try {
+      const r = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=400&origin=*`
+      );
+      if (r.ok) {
+        const d = await r.json();
+        const pages = d.query?.pages;
+        const src = pages && Object.values(pages)[0]?.thumbnail?.source;
+        if (src) {
+          setWikiImages(prev => ({ ...prev, [productId]: src }));
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('[Products] Wikipedia pageimages fetch failed for', productName, e?.message);
+    }
+
+    // Fallback: REST summary API
     try {
       const r = await fetch(
         `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
       );
       if (r.ok) {
         const d = await r.json();
-        // Prefer originalimage (full resolution); fall back to thumbnail.
-        // Use 400px which Wikimedia reliably pre-generates (vs. 600px which can 404).
-        const raw = d.originalimage?.source || d.thumbnail?.source;
+        const raw = d.thumbnail?.source || d.originalimage?.source;
         if (raw) {
           const src = raw.includes('/thumb/')
             ? raw.replace(/\/\d+px-([^/]+)$/, '/400px-$1')
@@ -451,7 +473,7 @@ export default function Products() {
         }
       }
     } catch (e) {
-      console.warn('[Products] Wikipedia fetch failed for', productName, e?.message);
+      console.warn('[Products] Wikipedia REST fetch failed for', productName, e?.message);
     }
   }, []);
 
@@ -550,6 +572,7 @@ export default function Products() {
     }
     
     setFilteredProducts(filtered);
+    setCurrentPage(1);
   }, [searchTerm, selectedCategory, selectedManufacturer, products]);
 
   const getCategoryIcon = (category) => {
@@ -798,7 +821,7 @@ export default function Products() {
 
       {/* Products Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" data-testid="products-grid">
-        {filteredProducts.map((product) => {
+        {filteredProducts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map((product) => {
           const Icon = getCategoryIcon(product.category);
           const isSelectedForCompare = selectedForCompare.find(p => p.id === product.id);
           const logoUrl = getClearbitUrl(product.manufacturer);
@@ -894,6 +917,67 @@ export default function Products() {
           No products found matching your criteria
         </div>
       )}
+
+      {/* Pagination */}
+      {filteredProducts.length > ITEMS_PER_PAGE && (() => {
+        const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+        const start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+        const end = Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length);
+        return (
+          <div className="flex items-center justify-between bg-white border border-slate-200 rounded-xl px-4 py-3">
+            <p className="text-sm text-slate-500">
+              Affichage <span className="font-medium text-slate-900">{start}–{end}</span> sur{' '}
+              <span className="font-medium text-slate-900">{filteredProducts.length}</span> produits
+            </p>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="border-slate-200 text-slate-700 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 disabled:opacity-40"
+              >
+                ← Précédent
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                .reduce((acc, p, idx, arr) => {
+                  if (idx > 0 && p - arr[idx - 1] > 1) acc.push('…');
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, idx) =>
+                  p === '…' ? (
+                    <span key={`ellipsis-${idx}`} className="px-2 text-slate-400 text-sm">…</span>
+                  ) : (
+                    <Button
+                      key={p}
+                      variant={p === currentPage ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setCurrentPage(p)}
+                      className={p === currentPage
+                        ? 'bg-purple-700 hover:bg-purple-800 text-white border-purple-700 min-w-[36px]'
+                        : 'border-slate-200 text-slate-700 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 min-w-[36px]'
+                      }
+                    >
+                      {p}
+                    </Button>
+                  )
+                )
+              }
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="border-slate-200 text-slate-700 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 disabled:opacity-40"
+              >
+                Suivant →
+              </Button>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Comparison Modal – portaled to body to escape CSS transform containing block */}
       {showComparison && createPortal(
