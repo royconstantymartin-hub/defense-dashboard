@@ -599,8 +599,8 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
                       </button>
                       {d.target_country && (
                         <div className="flex items-center gap-1 mt-0.5">
-                          <FlagImg iso2={d.target_country} />
-                          <span className="text-[9px] text-slate-400 font-mono">{d.target_country}</span>
+                          <FlagImg iso2={resolveTargetCountry(d)} />
+                          <span className="text-[9px] text-slate-400 font-mono">{resolveTargetCountry(d)}</span>
                         </div>
                       )}
                       {(() => {
@@ -898,7 +898,7 @@ function MACard({ activity, onOpenProfile }) {
                 <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
                   <FlagImg iso2={activity.acquirer_country} /> {activity.acquirer_country}
                   {" → "}
-                  {activity.target_country && <><FlagImg iso2={activity.target_country} /> {activity.target_country}</>}
+                  {activity.target_country && <><FlagImg iso2={resolveTargetCountry(activity)} /> {resolveTargetCountry(activity)}</>}
                 </span>
               )}
               {activity.source_url && !["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type) && (
@@ -1878,8 +1878,8 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
               )}
               {deal.target_country && (
                 <span className="flex items-center gap-1.5">
-                  <FlagImg iso2={deal.target_country} />
-                  {deal.target_country}
+                  <FlagImg iso2={resolveTargetCountry(deal)} />
+                  {resolveTargetCountry(deal)}
                 </span>
               )}
             </div>
