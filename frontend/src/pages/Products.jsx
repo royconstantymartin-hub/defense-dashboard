@@ -436,15 +436,35 @@ export default function Products() {
     if (fetchedIds.current.has(productId)) return;
     fetchedIds.current.add(productId);
     const title = (WIKI_TITLES[productName] || productName).replace(/ /g, '_');
+
+    // Primary: MediaWiki pageimages API — returns pre-generated thumbs at the exact size requested.
+    // More reliable than the REST summary API which can return full-res URLs or sizes Wikimedia
+    // hasn't pre-generated (causing 404s on the <img> element).
+    try {
+      const r = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=400&origin=*`
+      );
+      if (r.ok) {
+        const d = await r.json();
+        const pages = d.query?.pages;
+        const src = pages && Object.values(pages)[0]?.thumbnail?.source;
+        if (src) {
+          setWikiImages(prev => ({ ...prev, [productId]: src }));
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('[Products] Wikipedia pageimages fetch failed for', productName, e?.message);
+    }
+
+    // Fallback: REST summary API
     try {
       const r = await fetch(
         `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
       );
       if (r.ok) {
         const d = await r.json();
-        // Prefer originalimage (full resolution); fall back to thumbnail.
-        // Use 400px which Wikimedia reliably pre-generates (vs. 600px which can 404).
-        const raw = d.originalimage?.source || d.thumbnail?.source;
+        const raw = d.thumbnail?.source || d.originalimage?.source;
         if (raw) {
           const src = raw.includes('/thumb/')
             ? raw.replace(/\/\d+px-([^/]+)$/, '/400px-$1')
@@ -453,7 +473,7 @@ export default function Products() {
         }
       }
     } catch (e) {
-      console.warn('[Products] Wikipedia fetch failed for', productName, e?.message);
+      console.warn('[Products] Wikipedia REST fetch failed for', productName, e?.message);
     }
   }, []);
 
