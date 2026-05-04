@@ -290,6 +290,25 @@ const LOGO_FALLBACK = {
   "Tesi Ventures":                       "tesi.fi",
   "CDF Ventures":                        "cdfventures.com",
   "Early Game Ventures":                 "earlygame.vc",
+  // ── European JV Programs (2024-2026) ────────────────────────────────────────
+  "Auterion":                            "auterion.com",
+  "Airlogix":                            "airlogix.com",
+  "WIY Drones":                          "wiydrones.com",
+  "Culver Aerospace":                    "culveraerospace.com",
+  "THYRA":                               "thyra.ai",
+  "TAF Industries":                      "tafindustries.fi",
+  "Summa Defence":                       "summadefence.com",
+  "New Paakkola Oy":                     "paakkola.fi",
+  "Skyeton":                             "skyeton.com",
+  "Wingcopter":                          "wingcopter.com",
+  "Space42":                             "space42.ai",
+  "AIRO":                                "airo.at",
+  "Griselda":                            "griselda.fi",
+  "Frontline Robotics":                  "frontlinerobotics.com",
+  "Prevail Partners":                    "prevailpartners.co.uk",
+  "PGZ":                                 "pgzsa.pl",
+  "Bullet":                              "bullet.fi",
+  "Remtecnology":                        "remtecnology.com",
 };
 
 // Initials avatar colour palette (deterministic by name)
@@ -1051,6 +1070,189 @@ function exportCSV(data) {
   a.download = `defense-ma-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+// ── European JV Programs data (static, sourced from public filings) ───────────
+
+const JV_EU_PROGRAMS = [
+  { id: 1,  party1: "Auterion",          p1_iso: "DE", party2: "Airlogix",              p2_iso: "DE", products: "AI strike drones",        year: 2026 },
+  { id: 2,  party1: "Quantum Systems",   p1_iso: "DE", party2: "WIY Drones",            p2_iso: "DE", products: "STRILA interceptors",       year: 2026 },
+  { id: 3,  party1: "Quantum Systems",   p1_iso: "DE", party2: "Tencore",               p2_iso: "EE", products: "UGVs (TerMit UGV)",         year: 2026 },
+  { id: 4,  party1: "Tencore",           p1_iso: "EE", party2: "Shark Robotics",        p2_iso: "FR", products: "Combat UGVs",               year: 2026 },
+  { id: 5,  party1: "Rheinmetall",       p1_iso: "DE", party2: "Destinus",              p2_iso: "CH", products: "Cruise missiles",           year: 2026 },
+  { id: 6,  party1: "Helsing",           p1_iso: "DE", party2: "Culver Aerospace",      p2_iso: "DE", products: "Deep-strike UAS",           year: 2026 },
+  { id: 7,  party1: "THYRA",             p1_iso: "DE", party2: "TAF Industries",        p2_iso: "FI", products: "Interceptors / C-UAS",      year: 2026 },
+  { id: 8,  party1: "Summa Defence",     p1_iso: "FI", party2: "TAF Industries",        p2_iso: "FI", products: "FPV / ISR / C-UAS",         year: 2026 },
+  { id: 9,  party1: "Frankenburg Tech",  p1_iso: "DE", party2: "PGZ",                  p2_iso: "PL", products: "LEGIT tactical UGV",        year: 2026 },
+  { id: 10, party1: "Remtecnology",      p1_iso: "DE", party2: "New Paakkola Oy",       p2_iso: "FI", products: "LEGIT tactical UGV",        year: 2026 },
+  { id: 11, party1: "Ondas",             p1_iso: "US", party2: "HDAT (Heidelberger)",   p2_iso: "DE", products: "C-UAS Iron Drone",          year: 2026 },
+  { id: 12, party1: "Rheinmetall",       p1_iso: "DE", party2: "ICEYE",                p2_iso: "FI", products: "SAR satellites",            year: 2025 },
+  { id: 13, party1: "Quantum Systems",   p1_iso: "DE", party2: "Frontline Robotics",    p2_iso: "DE", products: "Recon UAV",                 year: 2025 },
+  { id: 14, party1: "Prevail Partners",  p1_iso: "GB", party2: "Skyeton",              p2_iso: "UA", products: "Raybird UAS",               year: 2025 },
+  { id: 15, party1: "NVL / Rheinmetall", p1_iso: "DE", party2: "Kraken Technology",    p2_iso: "NO", products: "Autonomous vessels",        year: 2025 },
+  { id: 16, party1: "AIRO",             p1_iso: "AT", party2: "Nord Drone Group",      p2_iso: "NO", products: "FPV / loitering",           year: 2025 },
+  { id: 17, party1: "Summa Defence",     p1_iso: "FI", party2: "Griselda",             p2_iso: "FI", products: "AI situational awareness",  year: 2025 },
+  { id: 18, party1: "MITS Industries",   p1_iso: "DE", party2: "Tencore / Infozahyst", p2_iso: "UA", products: "UGVs",                      year: 2025 },
+  { id: 19, party1: "Wingcopter",        p1_iso: "DE", party2: "TAF Industries",       p2_iso: "FI", products: "Recon UAVs",                year: 2025 },
+  { id: 20, party1: "AIRO",             p1_iso: "AT", party2: "Bullet",               p2_iso: "FI", products: "Interceptors",              year: 2025 },
+  { id: 21, party1: "Kongsberg",         p1_iso: "NO", party2: "Helsing",              p2_iso: "DE", products: "ISR satellite constellation", year: 2025 },
+  { id: 22, party1: "Summa Defence",     p1_iso: "FI", party2: "Kort / Elf / Skyassist", p2_iso: "FI", products: "UAV / UGV / USV",        year: 2024 },
+  { id: 23, party1: "Space42",           p1_iso: "AE", party2: "ICEYE",               p2_iso: "FI", products: "SAR satellite manufacturing", year: 2024 },
+];
+
+// ── JV Programs table view ────────────────────────────────────────────────────
+
+function PartyLogoSmall({ name, iso }) {
+  const [lvl, setLvl] = useState(1);
+  const domain = LOGO_FALLBACK[name];
+  useEffect(() => { setLvl(1); }, [name]);
+
+  function box(src) {
+    return (
+      <div className="w-7 h-7 rounded-lg bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center shrink-0">
+        <img src={src} alt={name} className="w-full h-full object-contain p-0.5" onError={() => setLvl(l => l + 1)} />
+      </div>
+    );
+  }
+  if (lvl === 1 && domain) return box(`https://logo.clearbit.com/${domain}?size=64`);
+  if (lvl === 2 && domain) return box(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=64`);
+  return (
+    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${avatarColor(name)}`}>
+      <span className="text-[8px] font-bold text-white">{initials(name)}</span>
+    </div>
+  );
+}
+
+function JVProgramsView() {
+  const [sortYear, setSortYear] = useState("desc");
+  const [filterYear, setFilterYear] = useState("all");
+  const [search, setSearch] = useState("");
+
+  const years = [...new Set(JV_EU_PROGRAMS.map(r => r.year))].sort((a, b) => b - a);
+
+  const rows = useMemo(() => {
+    let list = JV_EU_PROGRAMS.filter(r => {
+      if (filterYear !== "all" && String(r.year) !== filterYear) return false;
+      if (search) {
+        const q = search.toLowerCase();
+        return (
+          r.party1.toLowerCase().includes(q) ||
+          r.party2.toLowerCase().includes(q) ||
+          r.products.toLowerCase().includes(q)
+        );
+      }
+      return true;
+    });
+    list = [...list].sort((a, b) => sortYear === "desc" ? b.year - a.year : a.year - b.year);
+    return list;
+  }, [filterYear, search, sortYear]);
+
+  return (
+    <div className="space-y-3">
+      {/* Header + filters */}
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-slate-900 px-5 py-4">
+          <p className="text-[10px] font-semibold tracking-[0.18em] text-slate-400 uppercase mb-0.5">Aerospace &amp; Defense</p>
+          <h2 className="text-sm font-bold text-white tracking-wider uppercase">Joint Ventures — Europe</h2>
+          <p className="text-[10px] text-slate-400 mt-1">Sources: company press releases, regulatory filings, Breaking Defense, Defense News, Reuters, Bloomberg</p>
+        </div>
+
+        {/* Filters bar */}
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 bg-slate-50/60">
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search party or program…"
+              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+            />
+          </div>
+          <select
+            value={filterYear}
+            onChange={e => setFilterYear(e.target.value)}
+            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+          >
+            <option value="all">All Years</option>
+            {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
+          </select>
+          <span className="text-xs text-slate-400 ml-auto">{rows.length} joint ventures</span>
+        </div>
+
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-slate-100">
+                <th className="px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 w-8">#</th>
+                <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">JV / Party 1</th>
+                <th className="px-2 py-2.5 w-6" />
+                <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Party 2</th>
+                <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Product(s) / Programme</th>
+                <th
+                  onClick={() => setSortYear(s => s === "desc" ? "asc" : "desc")}
+                  className="px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 select-none whitespace-nowrap"
+                >
+                  Year {sortYear === "desc" ? "↓" : "↑"}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr key={row.id} className="border-b border-slate-50 hover:bg-purple-50/40 transition-colors group">
+                  {/* Index */}
+                  <td className="px-4 py-3 text-[11px] font-mono text-slate-400">
+                    {String(i + 1).padStart(2, "0")}
+                  </td>
+
+                  {/* Party 1 */}
+                  <td className="px-3 py-3">
+                    <div className="flex items-center gap-2">
+                      <PartyLogoSmall name={row.party1} iso={row.p1_iso} />
+                      <div className="flex items-center gap-1.5">
+                        <FlagImg iso2={row.p1_iso} />
+                        <span className="text-xs font-medium text-slate-800">{row.party1}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Arrow */}
+                  <td className="px-1 py-3 text-slate-300 text-center">
+                    <ArrowRight className="w-3 h-3" />
+                  </td>
+
+                  {/* Party 2 */}
+                  <td className="px-3 py-3">
+                    <div className="flex items-center gap-2">
+                      <PartyLogoSmall name={row.party2} iso={row.p2_iso} />
+                      <div className="flex items-center gap-1.5">
+                        <FlagImg iso2={row.p2_iso} />
+                        <span className="text-xs font-medium text-slate-800">{row.party2}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Products */}
+                  <td className="px-3 py-3">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-50 border border-purple-100 text-[11px] font-medium text-purple-700">
+                      {row.products}
+                    </span>
+                  </td>
+
+                  {/* Year */}
+                  <td className="px-4 py-3">
+                    <span className={`text-xs font-semibold font-mono ${row.year === 2026 ? "text-purple-700" : row.year === 2025 ? "text-blue-600" : "text-slate-500"}`}>
+                      {row.year}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ── Deal-type tabs ─────────────────────────────────────────────────────────
@@ -2422,8 +2624,11 @@ export default function MAActivity() {
             <InvestmentConsolidatedView deals={filteredDeals} onOpenProfile={setProfileName} onSelectDeal={setSelectedDeal} />
           )}
 
-          {/* ── Normal deal table (Acquisitions, Mergers, JV) ── */}
-          {!["defense_tech", "investments"].includes(dealTypeTab) && <>
+          {/* ── JV Programs table ── */}
+          {dealTypeTab === "jv" && <JVProgramsView />}
+
+          {/* ── Normal deal table (Acquisitions, Mergers) ── */}
+          {!["defense_tech", "investments", "jv"].includes(dealTypeTab) && <>
 
           {/* Toolbar */}
           <div className="flex items-center justify-between">
