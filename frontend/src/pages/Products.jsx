@@ -122,6 +122,173 @@ const MANUFACTURERS = [
   { value: "Uralvagonzavod", label: "Uralvagonzavod" },
 ];
 
+// Stable Wikimedia Commons image URLs for flagship products.
+// Uses Special:FilePath redirects which survive file renames on Commons.
+// These are checked as a final fallback when both the Wikipedia API and the DB URL fail.
+const WKC = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+const STATIC_PRODUCT_IMAGES = {
+  // Fighters
+  "F-35 Lightning II":        WKC + "F-35A_CTOL_variant.jpg",
+  "F-22 Raptor":              WKC + "F-22_Raptor_edit1_(cropped).jpg",
+  "Rafale F4":                WKC + "Dassault_Rafale_C_(cropped).jpg",
+  "Eurofighter Typhoon":      WKC + "Eurofighter_Typhoon_(Ala_11)_MG_3894_(15939726449).jpg",
+  "Gripen E":                 WKC + "Saab_JAS_39E_Gripen.jpg",
+  "KF-21 Boramae":            WKC + "KAI_KF-21_Boramae_first_flight.jpg",
+  "F-15EX Eagle II":          WKC + "F-15EX_Eagle_II_in_flight.jpg",
+  "F/A-18E/F Super Hornet":   WKC + "F-A-18E_Super_Hornet_breaking_the_sound_barrier_(July_7,_1999).jpg",
+  "Su-57 Felon":              WKC + "Su-57_Felon.jpg",
+  "J-20 Mighty Dragon":       WKC + "Chengdu_J-20_20170919.jpg",
+  "HAL Tejas Mk2":            WKC + "HAL_Tejas_LCA.jpg",
+  "B-21 Raider":              WKC + "B-21_Raider_first_flight.jpg",
+  "B-2 Spirit":               WKC + "B-2_spirit_bombing.jpg",
+  "A-10 Thunderbolt II":      WKC + "A-10_Thunderbolt_II_In-flight-2.jpg",
+  "B-52H Stratofortress":     WKC + "B-52H_Stratofortress.jpg",
+  "F-16 Block 70/72":         WKC + "F-16_June_2008.jpg",
+  "F/A-18C Hornet":           WKC + "FA-18_Hornet_VFA-82.jpg",
+  "F-14 Tomcat":              WKC + "F-14A_Tomcat_of_VF-1.jpg",
+  "Mirage 2000-5":            WKC + "Mirage_2000C_Dijon_2012.jpg",
+  "Tornado IDS":              WKC + "Tornado_GR4_of_31_Squadron_RAF.jpg",
+  "MiG-29 Fulcrum":           WKC + "MiG-29_Fulcrum_(8476806338).jpg",
+  // Bombers / ISR
+  "SR-71 Blackbird":          WKC + "SR-71_Blackbird_831_over_snow.jpg",
+  "Tu-160 Blackjack":         WKC + "Tu-160.jpg",
+  // UAV
+  "MQ-9 Reaper":              WKC + "MQ-9_Reaper_in_flight_(disheveled).jpg",
+  "Bayraktar TB2":            WKC + "Bayraktar_TB2_UAS.jpg",
+  "RQ-4 Global Hawk":         WKC + "Global_Hawk.jpg",
+  "MQ-4C Triton":             WKC + "MQ-4C_Triton.jpg",
+  "XQ-58 Valkyrie":           WKC + "XQ-58A_Valkyrie_demonstrator_leading_two_F-22A_Raptors.jpg",
+  "Bayraktar TB3":            WKC + "Bayraktar_TB3.jpg",
+  // Helicopters
+  "AH-64E Apache Guardian":   WKC + "AH-64D_Apache_Longbow.jpg",
+  "UH-60M Black Hawk":        WKC + "Uh-60_blackhawk.jpg",
+  "NH90":                     WKC + "NH90_TTH_1.jpg",
+  "CH-47F Chinook":           WKC + "CH-47_Chinook.jpg",
+  "V-22 Osprey":              WKC + "MV-22B_Osprey.jpg",
+  "MH-60R Seahawk":           WKC + "MH-60R_Seahawk.jpg",
+  "Tigre HAD":                WKC + "Tigre_HAP.jpg",
+  "AW101 Merlin HM2":         WKC + "Merlin_HM2_ZJ116_(9457988891).jpg",
+  // Transport
+  "A400M Atlas":              WKC + "A400M_Atlas_7.jpg",
+  "C-17 Globemaster III":     WKC + "C-17_Globemaster_III.jpg",
+  "C-130J Super Hercules":    WKC + "C-130J_Hercules.jpg",
+  // Land - Tanks
+  "M1A2 Abrams SEPv3":        WKC + "M1A2_Abrams.jpg",
+  "Leopard 2A7+":             WKC + "Leopard_2A7_(Randers_2022).jpg",
+  "K2 Black Panther":         WKC + "K2_Black_Panther.jpg",
+  "Leclerc":                  WKC + "Leclerc_tank_HD.jpg",
+  "Challenger 3":             WKC + "Challenger_2_Bovington.jpg",
+  "T-14 Armata":              WKC + "T-14_Armata.jpg",
+  "Merkava Mk 4M":            WKC + "Merkava_Mk._4M.jpg",
+  "Altay Tank":               WKC + "Altay_tank.jpg",
+  "Type 10 Hitomaru":         WKC + "Type_10_Tank.jpg",
+  "Arjun Mk-1A":              WKC + "Arjun_Mk-1A.jpg",
+  "VT-4 Tank":                WKC + "VT4.jpg",
+  // Land - IFV / APC
+  "VBCI":                     WKC + "VBCI_2010.jpg",
+  "CV90 Mk IV":               WKC + "CV90.jpg",
+  "Bradley M2A4":             WKC + "Bradley_IFV_Front.jpg",
+  "Puma IFV":                 WKC + "Puma_Heer_2020_Koblenz.jpg",
+  "Boxer MRAV":               WKC + "Boxer_MRAV.jpg",
+  "Lynx KF41":                WKC + "Lynx_KF41.jpg",
+  "Marder IFV":               WKC + "Marder_IFV_2.jpg",
+  "K21 IFV":                  WKC + "K21_IFV.jpg",
+  "Namer APC":                WKC + "Namer-APC.jpg",
+  "VBMR Griffon":             WKC + "VBMR_Griffon.jpg",
+  "Stryker ICVV":             WKC + "Stryker_2.jpg",
+  "AMX-10RC":                 WKC + "AMX-10RC.jpg",
+  "8x8 Eitan APC":            WKC + "Eitan_APC.jpg",
+  // Land - Artillery / MLRS
+  "K9 Thunder":               WKC + "K9_Thunder.jpg",
+  "CAESAR":                   WKC + "CAESAR_155mm_wheeled_self-propelled_howitzer.jpg",
+  "CAESAR NG (Next Gen)":     WKC + "CAESAR_155mm_wheeled_self-propelled_howitzer.jpg",
+  "PzH 2000":                 WKC + "PzH_2000_(cropped).jpg",
+  "HIMARS":                   WKC + "M142_HIMARS.jpg",
+  "M270 MLRS":                WKC + "M270_MLRS.jpg",
+  "ARCHER 155mm":             WKC + "Archer_artillery_system.jpg",
+  "AS-90 Braveheart":         WKC + "AS-90_Braveheart.jpg",
+  "M109A7 Paladin":           WKC + "M109A6_Paladin.jpg",
+  "Zuzana 2":                 WKC + "Zuzana_2.jpg",
+  // Missiles / SAM
+  "Patriot PAC-3":            WKC + "MIM-104_Patriot.jpg",
+  "S-400 Triumf":             WKC + "S-400_missile_system_2019.jpg",
+  "Iron Dome":                WKC + "Iron_Dome_battery_near_Ashkelon.jpg",
+  "THAAD":                    WKC + "THAAD_Battery.jpg",
+  "NASAMS":                   WKC + "NASAMS.jpg",
+  "David's Sling":            WKC + "David%27s_Sling_Defense_System.jpg",
+  "Arrow 3":                  WKC + "Arrow_3_missile_system.jpg",
+  "ASTER 30 SAMP/T":          WKC + "SAMP-T.jpg",
+  "Javelin FGM-148":          WKC + "Javelin_missile_launched.jpg",
+  "SCALP/Storm Shadow":       WKC + "Storm_Shadow_Missile_MOD_45155538.jpg",
+  "Tomahawk Block V":         WKC + "Tomahawk_Block_IV_cruise_missile.jpg",
+  "AGM-158 JASSM-ER":         WKC + "AGM-158_JASSM.jpg",
+  "Meteor BVRAAM":            WKC + "Meteor_BVR_missile.jpg",
+  "AIM-120D AMRAAM":          WKC + "AIM-120C-7_AMRAAM.jpg",
+  "NSM Naval Strike Missile": WKC + "Naval_Strike_Missile.jpg",
+  "Harpoon Block II":         WKC + "AGM-84_Harpoon.jpg",
+  "BrahMos":                  WKC + "BrahMos_Aerospace.jpg",
+  "Kinzhal":                  WKC + "Kh-47M2_Kinzhal.jpg",
+  "Barak 8 LRSAM":            WKC + "Barak_8.jpg",
+  "Spike NLOS":               WKC + "Spike_NLOS_missile.jpg",
+  "Stinger FIM-92":           WKC + "FIM-92_Stinger.jpg",
+  "Starstreak HVM":           WKC + "Starstreak_missile.jpg",
+  "IRIS-T SLM":               WKC + "IRIS-T_SLM.jpg",
+  "Switchblade 600":          WKC + "AeroVironment_Switchblade_600.jpg",
+  "Switchblade 300":          WKC + "AeroVironment_Switchblade_300.jpg",
+  "Taurus KEPD 350":          WKC + "Taurus_KEPD_350.jpg",
+  "SPEAR 3":                  WKC + "SPEAR3.jpg",
+  "Exocet MM40 Block 3":      WKC + "Exocet_MM40.jpg",
+  "RIM-161 SM-3":             WKC + "RIM-161_SM-3.jpg",
+  "SM-6 Standard Missile":    WKC + "SM-6.jpg",
+  // Naval - Submarines
+  "Virginia-class Submarine":    WKC + "USS_Virginia_(SSN_774)_underway.jpg",
+  "Astute-class Submarine":      WKC + "HMS_Astute_at_HMNB_Clyde.jpg",
+  "Suffren-class Submarine":     WKC + "Suffren_at_Cape_Brun_off_Toulon_on_26_July_2020.jpg",
+  "Columbia-class Submarine":    WKC + "Columbia-class_submarine.jpg",
+  "Dreadnought-class Submarine": WKC + "Dreadnought-class_submarine.jpg",
+  "Le Triomphant-class":         WKC + "Le_Triomphant.jpg",
+  "Borei-class Submarine":       WKC + "SSBN-Borei.jpg",
+  "Yasen-class Submarine":       WKC + "Kazan_submarine.jpg",
+  "Seawolf-class Submarine":     WKC + "USS_Connecticut.jpg",
+  "Vanguard-class Submarine":    WKC + "HMS_Vanguard_(S28).jpg",
+  "Type 212 Submarine":          WKC + "U212_type_submarine.jpg",
+  "Soryu-class Submarine":       WKC + "JS_Soryu.jpg",
+  "Scorpene-class Submarine":    WKC + "Scorpene_Submarine.jpg",
+  "KSS-III Submarine":           WKC + "KSS-III_submarine.jpg",
+  "Gotland-class Submarine":     WKC + "HSwMS_Gotland.jpg",
+  "Taigei-class Submarine":      WKC + "JS_Taigei.jpg",
+  // Naval - Surface
+  "Arleigh Burke Flight III":    WKC + "USS_Arleigh_Burke_(DDG-51)_FRAMv1.jpg",
+  "Zumwalt-class Destroyer":     WKC + "USS_Zumwalt_(DDG-1000).jpg",
+  "Type 45 Daring-class":        WKC + "HMS_Diamond_(D34)_MOD_45147547.jpg",
+  "Type 055 Destroyer":          WKC + "Type_055_destroyer.jpg",
+  "Type 26 Frigate":             WKC + "HMS_Glasgow_(50733966826).jpg",
+  "FREMM Frigate":               WKC + "FREMM_DA_Martinengo.jpg",
+  "Constellation-class Frigate": WKC + "FFG-62.jpg",
+  "Horizon-class Frigate":       WKC + "FS_Forbin_(D620).jpg",
+  "Visby-class Corvette":        WKC + "HMS_Helsingborg_K31.jpg",
+  "Sa'ar 6 Corvette":            WKC + "INS_Magen.jpg",
+  "Gowind-class Corvette":       WKC + "Gowind2500.jpg",
+  "Gerald R. Ford-class":        WKC + "USS_Gerald_R._Ford_(CVN-78).jpg",
+  "Queen Elizabeth-class":       WKC + "HMS_Queen_Elizabeth_(R08)_(41426987832).jpg",
+  "Charles de Gaulle":           WKC + "Charles_de_Gaulle_porte-avions.jpg",
+  "Mistral-class LHD":           WKC + "Mistral_class_BPC.jpg",
+  "INS Vikrant":                 WKC + "INS_Vikrant_(R11)_2022.jpg",
+  // Radar / Sensors
+  "AN/TPY-2":                    WKC + "AN-TPY-2_radar.jpg",
+  "SPY-6 AMDR":                  WKC + "AN-SPY-6_radar.jpg",
+  "TRML-4D":                     WKC + "TRML-4D.jpg",
+  // Space
+  "GPS III Satellite":           WKC + "GPS_Block_IIIA.jpg",
+  "X-37B Space Plane":           WKC + "X-37B_OTV-5_landing.jpg",
+  // UGV / Autonomous
+  "THeMIS UGV":                  WKC + "THeMIS_UGV.jpg",
+  "Vision 60 Q-UGV":             WKC + "Ghost_Robotics_Vision_60.jpg",
+  // Misc
+  "Trophy APS":                  WKC + "Trophy-APS-hatzerim-1.jpg",
+  "JLTV":                        WKC + "Joint_Light_Tactical_Vehicle.jpg",
+};
+
 // Wikipedia article title overrides for products whose names differ from their article titles
 const WIKI_TITLES = {
   "F-35 Lightning II": "Lockheed Martin F-35 Lightning II",
@@ -520,12 +687,14 @@ export default function Products() {
   };
 
   // Choose which image URL to show for a product.
-  // Prefers the fresh Wikipedia thumbnail; falls back to the raw DB url.
-  // Returns null when both have failed (triggering the icon placeholder).
-  const resolveImgSrc = (productId, dbUrl) => {
+  // Priority: 1) Wikipedia API thumbnail  2) DB url  3) STATIC_PRODUCT_IMAGES (Special:FilePath, most stable)
+  // Returns null only when all three sources have failed (triggers the illustrated placeholder).
+  const resolveImgSrc = (productId, dbUrl, productName) => {
     const wikiSrc = wikiImages[productId];
     if (wikiSrc && !wikiErr[productId]) return wikiSrc;
     if (dbUrl && !primaryErr[productId]) return dbUrl;
+    const staticSrc = STATIC_PRODUCT_IMAGES[productName];
+    if (staticSrc) return staticSrc;
     return null;
   };
 
@@ -849,7 +1018,7 @@ export default function Products() {
               {/* Image or Placeholder */}
               <div className="h-40 bg-gradient-to-br from-slate-100 to-slate-50 relative">
                 {(() => {
-                  const imgSrc = resolveImgSrc(product.id, product.image_url);
+                  const imgSrc = resolveImgSrc(product.id, product.image_url, product.name);
                   return imgSrc ? (
                     <img
                       key={imgSrc}
@@ -1026,15 +1195,18 @@ export default function Products() {
                             return (
                               <div className="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden bg-slate-100 relative flex items-center justify-center">
                                 <ProductIllustration category={product.category} productType={product.product_type} name={product.name} className="absolute inset-0" />
-                                {resolveImgSrc(product.id, product.image_url) && (
-                                  <img
-                                    key={resolveImgSrc(product.id, product.image_url)}
-                                    src={resolveImgSrc(product.id, product.image_url)}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover relative z-10"
-                                    onError={(ev) => handleImgError(ev, product.id, resolveImgSrc(product.id, product.image_url))}
-                                  />
-                                )}
+                                {(() => {
+                                  const cmpSrc = resolveImgSrc(product.id, product.image_url, product.name);
+                                  return cmpSrc ? (
+                                    <img
+                                      key={cmpSrc}
+                                      src={cmpSrc}
+                                      alt={product.name}
+                                      className="w-full h-full object-cover relative z-10"
+                                      onError={(ev) => handleImgError(ev, product.id, cmpSrc)}
+                                    />
+                                  ) : null;
+                                })()}
                               </div>
                             );
                           })()}
@@ -1138,7 +1310,7 @@ export default function Products() {
             {/* Header Image – fixed height, never collapses */}
             <div className="h-52 bg-gradient-to-br from-slate-100 to-slate-50 flex-shrink-0 relative">
               {(() => {
-                const modalImgSrc = resolveImgSrc(selectedProduct.id, selectedProduct.image_url);
+                const modalImgSrc = resolveImgSrc(selectedProduct.id, selectedProduct.image_url, selectedProduct.name);
                 if (modalImgSrc) {
                   return (
                     <img
