@@ -241,14 +241,12 @@ const CATEGORY_SVG = {
 };
 
 function NewsPlaceholder({ source, category, url, sourceLogo }) {
-  const [logoPhase, setLogoPhase] = useState(0);
+  const [logoErr, setLogoErr] = useState(false);
 
   const domain = (() => { try { return url ? new URL(url).hostname : ""; } catch { return ""; } })();
-  const logoSrcs = [
-    sourceLogo || (domain ? `https://logo.clearbit.com/${domain}` : null),
-    domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null,
-  ].filter(Boolean);
-  const currentLogo = logoPhase < logoSrcs.length ? logoSrcs[logoPhase] : null;
+  const logoUrl = !logoErr
+    ? (sourceLogo || (domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null))
+    : null;
 
   const gradient = PLACEHOLDER_GRADIENT[category] || "from-slate-900 via-slate-800 to-slate-700";
   const Icon = CATEGORY_SVG[category] || CATEGORY_SVG.INDUSTRY;
@@ -259,12 +257,12 @@ function NewsPlaceholder({ source, category, url, sourceLogo }) {
         {Icon}
       </div>
       <div className="relative z-10 w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-lg mb-2">
-        {currentLogo ? (
+        {logoUrl ? (
           <img
-            src={currentLogo}
+            src={logoUrl}
             alt={source}
             className="w-10 h-10 object-contain"
-            onError={() => setLogoPhase(p => p + 1)}
+            onError={() => setLogoErr(true)}
           />
         ) : (
           <span className="text-white/80 text-2xl font-bold">{source?.charAt(0)?.toUpperCase() || "?"}</span>
