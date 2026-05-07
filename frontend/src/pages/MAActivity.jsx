@@ -1377,7 +1377,6 @@ function JVProgramsView() {
 // ── Deal-type tabs ─────────────────────────────────────────────────────────
 
 const DEAL_TYPE_TABS = [
-  { value: "defense_tech",  label: "Defense Startups",       types: INVEST_TYPES },
   { value: "acquisitions",  label: "Acquisitions",          types: ["acquisition"] },
   { value: "mergers",       label: "Mergers",               types: ["merger"] },
   { value: "investments",   label: "Investments & Funding", types: INVEST_TYPES },
@@ -2290,7 +2289,7 @@ export default function MAActivity() {
   const [loading,        setLoading]           = useState(true);
   const [histLoading,    setHistLoading]       = useState(false);
   const [error,          setError]             = useState(null);
-  const [dealTypeTab,    setDealTypeTab]       = useState("defense_tech");
+  const [dealTypeTab,    setDealTypeTab]       = useState("acquisitions");
   const [page,           setPage]              = useState(0);
   const [searchTerm,     setSearchTerm]        = useState("");
   const [selectedStatus, setSelectedStatus]    = useState("all");
@@ -2376,12 +2375,8 @@ export default function MAActivity() {
   const tabCounts = useMemo(() => {
     const raw = {};
     for (const a of allDeals) raw[a.deal_type] = (raw[a.deal_type] || 0) + 1;
-    const investDeals = allDeals.filter(a => INVEST_TYPES.includes(a.deal_type));
-    const uniqueTargets = new Set(investDeals.map(a => a.target)).size;
     const fundingRounds = (raw.strategic_investment || 0) + (raw.minority_stake || 0) + (raw.funding_round || 0) + (raw.investment || 0);
     return {
-      defense_tech:         uniqueTargets,
-      defense_tech_rounds:  fundingRounds,   // separate counter: deals vs companies
       acquisitions:         (raw.acquisition || 0) + (raw.asset_acquisition || 0),
       mergers:              raw.merger || 0,
       investments:          fundingRounds,
@@ -2485,8 +2480,8 @@ export default function MAActivity() {
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs text-xs leading-relaxed">
                   Global count of all unique deals in the database. A deal may appear in multiple tabs
-                  (e.g. an acquisition of a Defense Startups company counts in both "Acquisitions" and "Defense Startups").
-                  Tab badges count deals; "Companies tracked" counts unique portfolio companies.
+                  (e.g. an investment also counted under Investments &amp; Funding).
+                  Tab badges count deals of that type.
                 </TooltipContent>
               </UITooltip>
             </TooltipProvider>
@@ -2544,9 +2539,7 @@ export default function MAActivity() {
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" data-testid="kpi-strip">
         {[
-          dealTypeTab === "defense_tech"
-            ? { label: "COMPANIES TRACKED", value: tabCounts.defense_tech,        sub: `${tabCounts.defense_tech_rounds} funding rounds`, color: "text-slate-900", testid: "kpi-companies" }
-            : { label: "TOTAL DEALS",        value: filteredDeals.length,          sub: DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900", testid: "kpi-total-deals" },
+            { label: "TOTAL DEALS", value: filteredDeals.length, sub: DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900", testid: "kpi-total-deals" },
           { label: "TOTAL VALUE",  value: formatValue(totalValue), sub: "Disclosed only",       color: "text-slate-900",  testid: "kpi-total-value" },
           { label: "IN PROGRESS",  value: filteredDeals.filter(a => ["announced","pending","under_review"].includes(a.status)).length, sub: "Announced + Pending", color: "text-amber-600",  testid: "kpi-in-progress" },
           { label: "CLOSED",       value: filteredDeals.filter(a => ["completed","active"].includes(a.status)).length,                sub: "Completed + Active", color: "text-emerald-600", testid: "kpi-closed" },
@@ -2738,17 +2731,6 @@ export default function MAActivity() {
         {/* Right — content */}
         <div className="flex-1 min-w-0 space-y-3">
 
-          {/* ── Defense Tech leaderboard view ── */}
-          {dealTypeTab === "defense_tech" && (
-            <>
-              <p className="text-xs text-slate-500 bg-purple-50 border border-purple-100 rounded-lg px-3 py-2">
-                Defense-native startups &amp; scaleups receiving strategic investments, minority stakes, and funding rounds.
-                Ranked by latest post-money valuation.
-              </p>
-              <DefenseTechLeaderboard deals={filteredDeals} onOpenProfile={setProfileName} onSelectDeal={setSelectedDeal} players={players} />
-            </>
-          )}
-
           {/* ── Investment consolidated view ── */}
           {dealTypeTab === "investments" && (
             <InvestmentConsolidatedView deals={filteredDeals} onOpenProfile={setProfileName} onSelectDeal={setSelectedDeal} />
@@ -2758,7 +2740,7 @@ export default function MAActivity() {
           {dealTypeTab === "jv" && <JVProgramsView />}
 
           {/* ── Normal deal table (Acquisitions, Mergers) ── */}
-          {!["defense_tech", "investments", "jv"].includes(dealTypeTab) && <>
+          {!["investments", "jv"].includes(dealTypeTab) && <>
 
           {/* Toolbar */}
           <div className="flex items-center justify-between">
