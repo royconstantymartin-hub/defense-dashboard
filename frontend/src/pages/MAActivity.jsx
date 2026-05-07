@@ -106,6 +106,8 @@ const LOGO_FALLBACK = {
   "Shark Robotics":                      "shark-robotics.com",
   "RBSL":                                "rbsl.co.uk",
   "KNDS Deutschland":                    "knds.com",
+  "Airbus D&S":                          "airbus.com",
+  "Thales Alenia Space":                 "thalesgroup.com",
   "Airbus Helicopters":                  "airbus.com",
   "Airbus Defence & Space":              "airbus.com",
   "Airbus Defence and Space":            "airbus.com",
@@ -1076,77 +1078,77 @@ function exportCSV(data) {
 
 const JV_EU_PROGRAMS = [
   // 2026 ──────────────────────────────────────────────────────────────────────
-  { id: 1,  party1: "Auterion",          p1_iso: "DE", party2: "Airlogix",                p2_iso: "DE", products: "AI strike drones",           year: 2026,
-    description: "Auterion, la plateforme logicielle derrière le contrôleur de vol open-source Skynode, s'associe à la startup de drones de frappe Airlogix pour développer des systèmes de drones autonomes guidés par IA. Le JV cible les appels d'offres des forces armées allemandes et européennes dans le cadre du réarmement accéléré post-2022." },
-  { id: 2,  party1: "Quantum Systems",   p1_iso: "DE", party2: "WIY Drones",              p2_iso: "DE", products: "STRILA interceptors",          year: 2026,
-    description: "Quantum Systems (drones de reconnaissance Vector VTOL) et WIY Drones collaborent pour produire les intercepteurs STRILA, un système de contre-drones à guidance autonome. L'accord cible les marchés de défense aérienne de courte portée en Europe centrale et orientale, où la menace drone est jugée prioritaire." },
-  { id: 3,  party1: "Quantum Systems",   p1_iso: "DE", party2: "Tencore",                 p2_iso: "UA", products: "UGVs (TerMit UGV)",            year: 2026,
-    description: "Quantum Systems associe ses capacités de reconnaissance aérienne (drone Vector) à l'expertise d'engins terrestres sans pilote de Tencore (UGV TerMit, 800+ exemplaires déployés en Ukraine). Le partenariat vise une solution combinée drone-robot terrestre pour les standards OTAN." },
-  { id: 4,  party1: "Tencore",           p1_iso: "UA", party2: "Shark Robotics",          p2_iso: "FR", products: "Combat UGVs",                  year: 2026,
-    description: "Alliance stratégique annoncée le 21 avril 2026 entre Tencore (Ukraine, TerMit UGV) et Shark Robotics (France, Colossus UGV). Les deux champions de la robotique terrestre unissent leur expertise pour développer et co-produire des UGVs multi-missions de nouvelle génération destinés aux marchés européens et OTAN." },
-  { id: 5,  party1: "Rheinmetall",       p1_iso: "DE", party2: "Destinus",                p2_iso: "CH", products: "Cruise missiles",              year: 2026,
-    description: "Rheinmetall, géant allemand de l'armement, s'associe à Destinus, startup suisse de vols hypersoniques à hydrogène, pour développer des missiles de croisière à haute vitesse. Le JV combine le savoir-faire industriel de Rheinmetall en munitions avec la technologie de propulsion avancée de Destinus." },
-  { id: 6,  party1: "Helsing",           p1_iso: "DE", party2: "Culver Aerospace",        p2_iso: "DE", products: "Deep-strike UAS",              year: 2026,
-    description: "Helsing, société d'IA de défense (logiciels de traitement du signal et ciblage), s'allie à Culver Aerospace pour développer des drones de frappe longue portée. Helsing apporte la couche IA de décision autonome tandis que Culver fournit l'architecture de l'aéronef et la propulsion." },
-  { id: 7,  party1: "THYRA",             p1_iso: "DE", party2: "TAF Industries",          p2_iso: "FI", products: "Interceptors / C-UAS",         year: 2026,
-    description: "La startup d'IA de défense allemande THYRA et le fabricant finlandais TAF Industries combinent leurs technologies pour des intercepteurs anti-drones. THYRA apporte la détection et le ciblage par IA, TAF les systèmes d'interception physique, ciblant les armées nordiques et d'Europe centrale." },
-  { id: 8,  party1: "Summa Defence",     p1_iso: "FI", party2: "TAF Industries",          p2_iso: "FI", products: "FPV / ISR / C-UAS",            year: 2026,
-    description: "Deux entreprises finlandaises de l'écosystème drone forment un JV pour produire des drones FPV d'attaque, des plateformes ISR de surveillance et des systèmes anti-drones. Le consortium répond aux programmes d'acquisition accélérés des forces armées finlandaises et des alliés nordiques de l'OTAN." },
-  { id: 9,  party1: "Frankenburg Tech",  p1_iso: "DE", party2: "PGZ",                    p2_iso: "PL", products: "LEGIT tactical UGV",           year: 2026,
-    description: "Frankenburg Tech (robotique autonome, Allemagne) s'associe à PGZ, le groupe industriel de défense polonais public, pour codévelopper le robot terrestre tactique LEGIT. Le JV donne à Frankenburg un accès à l'appareil d'acquisition polonais, l'un des budgets défense les plus en croissance d'Europe." },
-  { id: 10, party1: "Remtecnology",      p1_iso: "DE", party2: "New Paakkola Oy",         p2_iso: "FI", products: "LEGIT tactical UGV",           year: 2026,
-    description: "Remtecnology (systèmes robotiques, Allemagne) et le fabricant finlandais New Paakkola Oy collaborent pour produire le robot terrestre tactique LEGIT. L'accord combine l'ingénierie robot de Remtecnology avec les capacités de fabrication de véhicules établies de Paakkola en Finlande." },
-  { id: 11, party1: "Ondas",             p1_iso: "US", party2: "HDAT (Heidelberger)",     p2_iso: "DE", products: "C-UAS Iron Drone",             year: 2026,
-    description: "Ondas Holdings (USA) et HDAT (Heidelberger, Allemagne) s'associent pour déployer le système Iron Drone — un drone intercepteur autonome — sur les marchés européens. Le système protège les infrastructures critiques et bases militaires contre les menaces drones en les neutralisant physiquement." },
+  { id: 1,  party1: "Auterion",          p1_iso: "DE", party2: "Airlogix",                p2_iso: "DE", products: "AI strike drones",             year: 2026,
+    description: "Auterion, the software platform behind the open-source Skynode flight controller, partners with strike drone startup Airlogix to develop AI-guided autonomous drone systems. The JV targets procurement bids from German and European armed forces under the accelerated post-2022 rearmament drive." },
+  { id: 2,  party1: "Quantum Systems",   p1_iso: "DE", party2: "WIY Drones",              p2_iso: "DE", products: "STRILA interceptors",            year: 2026,
+    description: "Quantum Systems (Vector VTOL reconnaissance drones) and WIY Drones collaborate to produce STRILA interceptors, an autonomous-guided counter-drone system. The deal targets short-range air defense markets in central and eastern Europe, where the drone threat is considered a top priority." },
+  { id: 3,  party1: "Quantum Systems",   p1_iso: "DE", party2: "Tencore",                 p2_iso: "UA", products: "UGVs (TerMit UGV)",              year: 2026,
+    description: "Quantum Systems pairs its aerial reconnaissance capabilities (Vector drone) with Tencore's ground unmanned vehicle expertise (TerMit UGV, 800+ units deployed in Ukraine). The partnership aims at a combined drone-ground robot solution meeting NATO standards." },
+  { id: 4,  party1: "Tencore",           p1_iso: "UA", party2: "Shark Robotics",          p2_iso: "FR", products: "Combat UGVs",                    year: 2026,
+    description: "Strategic alliance announced on 21 April 2026 between Tencore (Ukraine, TerMit UGV) and Shark Robotics (France, Colossus UGV). The two ground robotics champions combine their expertise to develop and co-produce next-generation multi-mission UGVs for European and NATO markets." },
+  { id: 5,  party1: "Rheinmetall",       p1_iso: "DE", party2: "Destinus",                p2_iso: "CH", products: "Cruise missiles",                year: 2026,
+    description: "German armament giant Rheinmetall partners with Destinus, a Swiss hydrogen hypersonic flight startup, to develop high-speed cruise missiles. The JV combines Rheinmetall's industrial ammunition know-how with Destinus's advanced propulsion technology." },
+  { id: 6,  party1: "Helsing",           p1_iso: "DE", party2: "Culver Aerospace",        p2_iso: "DE", products: "Deep-strike UAS",                year: 2026,
+    description: "Helsing, a defense AI company specializing in signal processing and targeting software, teams with Culver Aerospace to develop long-range strike drones. Helsing provides the autonomous decision AI layer while Culver supplies the airframe architecture and propulsion." },
+  { id: 7,  party1: "THYRA",             p1_iso: "DE", party2: "TAF Industries",          p2_iso: "FI", products: "Interceptors / C-UAS",           year: 2026,
+    description: "German defense AI startup THYRA and Finnish manufacturer TAF Industries combine their technologies for counter-drone interceptors. THYRA brings AI-based detection and targeting, TAF the physical interception systems, targeting Nordic and central European armed forces." },
+  { id: 8,  party1: "Summa Defence",     p1_iso: "FI", party2: "TAF Industries",          p2_iso: "FI", products: "FPV / ISR / C-UAS",              year: 2026,
+    description: "Two Finnish companies from the drone ecosystem form a JV to produce FPV attack drones, ISR surveillance platforms, and counter-drone systems. The consortium responds to accelerated procurement programs of the Finnish armed forces and Nordic NATO allies." },
+  { id: 9,  party1: "Frankenburg Tech",  p1_iso: "DE", party2: "PGZ",                    p2_iso: "PL", products: "LEGIT tactical UGV",             year: 2026,
+    description: "Frankenburg Tech (autonomous robotics, Germany) partners with PGZ, Poland's public defense industrial group, to co-develop the LEGIT tactical ground robot. The JV gives Frankenburg access to the Polish procurement apparatus, one of Europe's fastest-growing defense budgets." },
+  { id: 10, party1: "Remtecnology",      p1_iso: "DE", party2: "New Paakkola Oy",         p2_iso: "FI", products: "LEGIT tactical UGV",             year: 2026,
+    description: "Remtecnology (robotic systems, Germany) and Finnish manufacturer New Paakkola Oy collaborate to produce the LEGIT tactical ground robot. The deal combines Remtecnology's robot engineering with Paakkola's established vehicle manufacturing capabilities in Finland." },
+  { id: 11, party1: "Ondas",             p1_iso: "US", party2: "HDAT (Heidelberger)",     p2_iso: "DE", products: "C-UAS Iron Drone",               year: 2026,
+    description: "Ondas Holdings (USA) and HDAT (Heidelberger, Germany) partner to deploy the Iron Drone system — an autonomous interceptor drone — on European markets. The system protects critical infrastructure and military bases against drone threats by physically neutralizing them." },
   // 2025 ──────────────────────────────────────────────────────────────────────
-  { id: 12, party1: "Rheinmetall",       p1_iso: "DE", party2: "ICEYE",                  p2_iso: "FI", products: "SAR satellites",               year: 2025,
-    description: "Rheinmetall et l'opérateur de satellites radar finlandais ICEYE forment un JV pour fournir des images satellitaires SAR (radar à synthèse d'ouverture) persistantes aux forces armées. ICEYE apporte sa constellation de mini-satellites, Rheinmetall son réseau de clients défense et son intégration aux systèmes C2." },
-  { id: 13, party1: "Quantum Systems",   p1_iso: "DE", party2: "Frontline Robotics",      p2_iso: "DE", products: "Recon UAV",                    year: 2025,
-    description: "Quantum Systems et Frontline Robotics collaborent sur la prochaine génération de drones de reconnaissance VTOL à voilure fixe. Le JV combine la plateforme Vector éprouvée de Quantum avec l'intégration capteurs et les communications de Frontline pour les clients défense européens." },
-  { id: 14, party1: "Prevail Partners",  p1_iso: "GB", party2: "Skyeton",                p2_iso: "UA", products: "Raybird UAS",                   year: 2025,
-    description: "Le fonds d'investissement britannique Prevail Partners finance le fabricant de drones ukrainien Skyeton pour accélérer la production du Raybird-3, un drone de reconnaissance longue endurance testé au combat en Ukraine. Le deal ouvre à Skyeton l'accès au marché défense britannique et OTAN." },
-  { id: 15, party1: "NVL / Rheinmetall", p1_iso: "DE", party2: "Kraken Technology",      p2_iso: "NO", products: "Autonomous vessels",            year: 2025,
-    description: "Le chantier naval allemand NVL et Rheinmetall s'associent au spécialiste norvégien Kraken Technology pour développer des navires de surface autonomes (USV). Le consortium tri-partite cible les exigences navales de l'OTAN : lutte anti-mines, ISR maritime et protection des forces côtières." },
-  { id: 16, party1: "AIRO",             p1_iso: "AT", party2: "Nord Drone Group",        p2_iso: "NO", products: "FPV / loitering",              year: 2025,
-    description: "La société autrichienne AIRO et le groupe norvégien Nord Drone s'associent pour développer des drones FPV d'attaque et des munitions rôdeuses. Le JV cible les marchés Scandinavie et Europe centrale où la demande pour des munitions autonomes à bas coût est en forte croissance." },
-  { id: 17, party1: "Summa Defence",     p1_iso: "FI", party2: "Griselda",               p2_iso: "FI", products: "AI situational awareness",     year: 2025,
-    description: "Summa Defence (Finlande) et Griselda collaborent pour développer des systèmes de conscience situationnelle alimentés par IA sur le champ de bataille. Le JV agrège les flux de données de drones et capteurs pour produire une intelligence opérationnelle en temps réel pour les forces armées nordiques." },
-  { id: 18, party1: "MITS Industries",   p1_iso: "DE", party2: "Tencore / Infozahyst",   p2_iso: "UA", products: "UGVs",                         year: 2025,
-    description: "MITS Industries (Allemagne) s'associe au consortium ukrainien Tencore / Infozahyst pour développer des robots terrestres combinant mobilité autonome et guerre électronique. L'accord intègre la technologie ukrainienne éprouvée au combat dans des systèmes répondant aux standards qualité allemands." },
-  { id: 19, party1: "Wingcopter",        p1_iso: "DE", party2: "TAF Industries",         p2_iso: "FI", products: "Recon UAVs",                   year: 2025,
-    description: "Le fabricant allemand de drones VTOL Wingcopter (reconnu pour la livraison médicale) transpose son expertise au domaine militaire en partenariat avec TAF Industries finlandais. Le JV adapte les plateformes VTOL civiles à des missions ISR et de reconnaissance tactique pour clients défense nordiques." },
-  { id: 20, party1: "AIRO",             p1_iso: "AT", party2: "Bullet",                 p2_iso: "FI", products: "Interceptors",                 year: 2025,
-    description: "AIRO (Autriche) et Bullet (Finlande) développent des systèmes d'interception de drones, répondant à la demande croissante des pays nordiques de l'OTAN pour des capacités C-UAS. L'accord combine les plateformes aériennes d'AIRO avec les charges utiles d'interception de Bullet." },
-  { id: 21, party1: "Kongsberg",         p1_iso: "NO", party2: "Helsing",                p2_iso: "DE", products: "ISR satellite constellation",  year: 2025,
-    description: "Kongsberg (Norvège, leader de systèmes de défense) et Helsing (IA de défense, Allemagne) s'associent pour développer une constellation de satellites ISR à traitement IA embarqué. Le JV vise à fournir aux armées européennes une surveillance spatiale persistante et autonome pour un coût abordable." },
+  { id: 12, party1: "Rheinmetall",       p1_iso: "DE", party2: "ICEYE",                  p2_iso: "FI", products: "SAR satellites",                 year: 2025,
+    description: "Rheinmetall and Finnish radar satellite operator ICEYE form a JV to supply persistent SAR (Synthetic Aperture Radar) satellite imagery to armed forces. ICEYE brings its mini-satellite constellation, Rheinmetall its defense customer network and C2 systems integration." },
+  { id: 13, party1: "Quantum Systems",   p1_iso: "DE", party2: "Frontline Robotics",      p2_iso: "DE", products: "Recon UAV",                      year: 2025,
+    description: "Quantum Systems and Frontline Robotics collaborate on the next generation of fixed-wing VTOL reconnaissance drones. The JV combines Quantum's proven Vector platform with Frontline's sensor integration and communications for European defense customers." },
+  { id: 14, party1: "Prevail Partners",  p1_iso: "GB", party2: "Skyeton",                p2_iso: "UA", products: "Raybird UAS",                     year: 2025,
+    description: "British investment fund Prevail Partners finances Ukrainian drone manufacturer Skyeton to accelerate production of the Raybird-3, a long-endurance reconnaissance drone combat-tested in Ukraine. The deal opens the British and NATO defense market to Skyeton." },
+  { id: 15, party1: "NVL",              p1_iso: "DE", party2: "Rheinmetall",             p2_iso: "DE", party3: "Kraken Technology", p3_iso: "NO",   products: "Autonomous vessels",              year: 2025,
+    description: "German shipyard NVL and Rheinmetall partner with Norwegian specialist Kraken Technology to develop autonomous surface vessels (USV). The tri-party consortium targets NATO naval requirements: mine countermeasures, maritime ISR, and coastal force protection." },
+  { id: 16, party1: "AIRO",             p1_iso: "AT", party2: "Nord Drone Group",        p2_iso: "NO", products: "FPV / loitering",                year: 2025,
+    description: "Austrian company AIRO and Norwegian group Nord Drone partner to develop FPV attack drones and loitering munitions. The JV targets Scandinavian and central European markets where demand for low-cost autonomous munitions is growing rapidly." },
+  { id: 17, party1: "Summa Defence",     p1_iso: "FI", party2: "Griselda",               p2_iso: "FI", products: "AI situational awareness",       year: 2025,
+    description: "Summa Defence (Finland) and Griselda collaborate to develop AI-powered battlefield situational awareness systems. The JV aggregates drone and sensor data streams to deliver real-time operational intelligence to Nordic armed forces." },
+  { id: 18, party1: "MITS Industries",   p1_iso: "DE", party2: "Tencore / Infozahyst",   p2_iso: "UA", products: "UGVs",                           year: 2025,
+    description: "MITS Industries (Germany) partners with the Ukrainian consortium Tencore / Infozahyst to develop ground robots combining autonomous mobility and electronic warfare. The deal integrates Ukrainian combat-proven technology into systems meeting German quality standards." },
+  { id: 19, party1: "Wingcopter",        p1_iso: "DE", party2: "TAF Industries",         p2_iso: "FI", products: "Recon UAVs",                     year: 2025,
+    description: "German VTOL drone manufacturer Wingcopter (known for medical delivery) pivots its expertise to the military domain in partnership with Finnish TAF Industries. The JV adapts civilian VTOL platforms for ISR and tactical reconnaissance missions for Nordic defense customers." },
+  { id: 20, party1: "AIRO",             p1_iso: "AT", party2: "Bullet",                 p2_iso: "FI", products: "Interceptors",                   year: 2025,
+    description: "AIRO (Austria) and Bullet (Finland) develop drone interception systems, responding to growing Nordic NATO demand for C-UAS capabilities. The deal combines AIRO's aerial platforms with Bullet's interception payloads." },
+  { id: 21, party1: "Kongsberg",         p1_iso: "NO", party2: "Helsing",                p2_iso: "DE", products: "ISR satellite constellation",    year: 2025,
+    description: "Kongsberg (Norway, defense systems leader) and Helsing (defense AI, Germany) partner to develop an ISR satellite constellation with onboard AI processing. The JV aims to provide European armed forces with persistent, autonomous space surveillance at an affordable cost." },
   // 2024 ──────────────────────────────────────────────────────────────────────
-  { id: 22, party1: "Summa Defence",     p1_iso: "FI", party2: "Kort / Elf / Skyassist", p2_iso: "FI", products: "UAV / UGV / USV",             year: 2024,
-    description: "Summa Defence mène un consortium multi-entreprises avec Kort, Elf et Skyassist pour bâtir un portefeuille complet de systèmes autonomes couvrant air, terre et mer. Ce JV à large spectre cible l'acquisition des forces armées finlandaises dans le cadre de l'investissement défense post-adhésion à l'OTAN." },
-  { id: 23, party1: "Space42",           p1_iso: "AE", party2: "ICEYE",                 p2_iso: "FI", products: "SAR satellite manufacturing",  year: 2024,
-    description: "Space42 (EAU, anciennement Yahsat) et ICEYE (Finlande) s'associent pour localiser la fabrication de satellites radar SAR aux Émirats arabes unis. Le JV crée un hub moyen-oriental pour la production de satellites de reconnaissance avancés, avec accès au savoir-faire finlandais d'ICEYE." },
-  // Programmes structurants historiques ────────────────────────────────────────
-  { id: 24, party1: "Airbus D&S",        p1_iso: "DE", party2: "Thales Alenia Space + RADMOR", p2_iso: "PL", products: "Poland military GEO satellite", year: 2026,
-    description: "Airbus Defence & Space, Thales Alenia Space et le polonais RADMOR (WB Group) signent un accord de coopération industrielle le 20 avril 2026 à Gdańsk pour le premier satellite militaire géostationnaire souverain polonais. Airbus dirige la plateforme, Thales les charges utiles de communication militaire, RADMOR l'infrastructure sol cybersécurisée." },
-  { id: 25, party1: "NVL / Rheinmetall", p1_iso: "DE", party2: "Rheinmetall (OMFV)",    p2_iso: "US", products: "Lynx KF41 OMFV (US Army)",    year: 2022,
-    description: "Rheinmetall crée la joint-venture American Rheinmetall Vehicles LLC pour concourir à l'appel d'offres OMFV de l'US Army (véhicule de combat d'infanterie de nouvelle génération). La proposition repose sur le Lynx KF41 produit aux États-Unis, avec un programme estimé à plus de 45 milliards de dollars sur sa durée de vie." },
-  { id: 26, party1: "Naval Group",       p1_iso: "FR", party2: "Fincantieri",            p2_iso: "IT", products: "Naviris — naval export JV",   year: 2020,
-    description: "Naval Group (France) et Fincantieri (Italie) créent Naviris, une JV 50/50 basée à Gênes, pour coordonner les programmes navals d'exportation et la coopération européenne. Naviris sert de véhicule commun pour les appels d'offres européens (PANG, FREMM) et renforce la consolidation navale franco-italienne." },
-  { id: 27, party1: "Airbus D&S",        p1_iso: "DE", party2: "Dassault + Leonardo",   p2_iso: "EU", products: "Eurodrone MALE UAS",           year: 2020,
-    description: "Airbus D&S (40%), Dassault Aviation (40%) et Leonardo (20%) forment une JV pour développer l'Eurodrone, le drone MALE européen commandé sous contrat ESA/OCCAR de 7,1 milliards d'euros. L'Eurodrone servira l'Allemagne, la France, l'Espagne et l'Italie avec un premier vol visé en 2028." },
-  { id: 28, party1: "Rheinmetall",       p1_iso: "DE", party2: "BAE Systems",            p2_iso: "GB", products: "RBSL — Ajax / Boxer / CR3",   year: 2019,
-    description: "Rheinmetall et BAE Systems créent RBSL (Rheinmetall BAE Systems Land), une JV 50/50, pour livrer les véhicules blindés de nouvelle génération de l'Armée britannique. RBSL détient le contrat prime de l'Ajax, assure l'intégration nationale du Boxer et soutient la modernisation Challenger 3." },
-  { id: 29, party1: "KNDS France",       p1_iso: "FR", party2: "KNDS Deutschland + Rheinmetall", p2_iso: "DE", products: "MGCS next-gen battle tank (2035+)", year: 2018,
-    description: "Le programme franco-allemand MGCS vise un char de combat de nouvelle génération pour remplacer Leclerc et Leopard 2 à l'horizon 2035+. L'alliance industrielle réunit KNDS France, KNDS Deutschland et Rheinmetall, avec Thales pour les systèmes de mission — le partage des travaux fait l'objet de négociations permanentes en 2026." },
-  { id: 30, party1: "Dassault Aviation", p1_iso: "FR", party2: "Airbus D&S + Indra",    p2_iso: "EU", products: "FCAS / SCAF NGF (2040+)",      year: 2017,
-    description: "La France, l'Allemagne et l'Espagne lancent le programme SCAF (Système de Combat Aérien du Futur) avec Dassault (NGF prime), Airbus D&S (Remote Carriers) et Indra (EW). Contrats Phase 1B de 3,5 milliards d'euros signés en 2022 ; tensions persistantes sur le partage industriel entre Airbus et Dassault." },
-  { id: 31, party1: "Airbus",            p1_iso: "FR", party2: "Safran",                 p2_iso: "FR", products: "ArianeGroup — Ariane 6 / M51", year: 2015,
-    description: "Airbus et Safran fusionnent leurs activités de lanceurs et propulsion spatiale dans ArianeGroup, une holding 50/50, créant le champion européen souverain des accès à l'espace. ArianeGroup est le prime contractor exclusif de l'ESA pour Ariane 6 et développe le missile balistique M51 pour la Marine nationale française." },
-  { id: 32, party1: "Airbus",            p1_iso: "FR", party2: "BAE Systems + Leonardo", p2_iso: "EU", products: "MBDA — Meteor / Aster / Storm Shadow", year: 2001,
-    description: "Airbus (37,5%), BAE Systems (37,5%) et Leonardo (25%) créent MBDA, le plus grand intégrateur européen de missiles. MBDA produit Meteor, Aster, Brimstone, Exocet, Storm Shadow/SCALP et la famille CAMM. La gouvernance tri-nationale préserve la souveraineté d'exportation de chaque nation tout en mutualisant la R&D." },
-  { id: 33, party1: "MBDA",              p1_iso: "FR", party2: "Thales",                 p2_iso: "FR", products: "Eurosam — SAMP/T Aster 30",    year: 1989,
-    description: "Eurosam est une JV entre MBDA (66%) et Thales (34%) qui produit le système sol-air SAMP/T (Aster 30), déployé en France, Italie, Singapour et Ukraine. Le JV développe la version modernisée SAMP/T NG livrée aux alliés OTAN, offrant une défense anti-missile de théâtre à moyenne portée." },
-  { id: 34, party1: "Airbus Helicopters", p1_iso: "FR", party2: "Leonardo + GKN Fokker", p2_iso: "EU", products: "NHIndustries — NH90 helicopter", year: 1992,
-    description: "NHIndustries est le consortium industriel d'Airbus Helicopters, Leonardo et GKN Fokker pour développer, produire et soutenir l'hélicoptère tactique moyen NH90. Plus de 800 appareils ont été livrés à 14 nations opératrices, faisant du NH90 l'hélicoptère militaire européen le plus produit." },
+  { id: 22, party1: "Summa Defence",     p1_iso: "FI", party2: "Kort / Elf / Skyassist", p2_iso: "FI", products: "UAV / UGV / USV",               year: 2024,
+    description: "Summa Defence leads a multi-company consortium with Kort, Elf, and Skyassist to build a comprehensive autonomous systems portfolio covering air, ground, and sea. This broad-spectrum JV targets Finnish armed forces procurement within the defense investment framework post-NATO accession." },
+  { id: 23, party1: "Space42",           p1_iso: "AE", party2: "ICEYE",                 p2_iso: "FI", products: "SAR satellite manufacturing",    year: 2024,
+    description: "Space42 (UAE, formerly Yahsat) and ICEYE (Finland) partner to localize SAR radar satellite manufacturing in the United Arab Emirates. The JV creates a Middle Eastern hub for advanced reconnaissance satellite production, leveraging ICEYE's Finnish expertise." },
+  // Structural programmes ───────────────────────────────────────────────────
+  { id: 24, party1: "Airbus D&S",        p1_iso: "DE", party2: "Thales Alenia Space",    p2_iso: "FR", party3: "RADMOR",           p3_iso: "PL",   products: "Poland military GEO satellite",   year: 2026,
+    description: "Airbus Defence & Space, Thales Alenia Space, and Polish firm RADMOR (WB Group) signed an industrial cooperation agreement on 20 April 2026 in Gdańsk for Poland's first sovereign military geostationary satellite. Airbus leads the platform, Thales the military communication payloads, RADMOR the cyber-secure ground infrastructure." },
+  { id: 25, party1: "Rheinmetall",       p1_iso: "DE", party2: "American Rheinmetall Vehicles", p2_iso: "US", products: "Lynx KF41 OMFV (US Army)", year: 2022,
+    description: "Rheinmetall establishes American Rheinmetall Vehicles LLC to compete for the US Army's OMFV bid (next-generation infantry fighting vehicle). The proposal is based on the Lynx KF41 manufactured in the United States, with the program estimated at over $45 billion over its lifetime." },
+  { id: 26, party1: "Naval Group",       p1_iso: "FR", party2: "Fincantieri",            p2_iso: "IT", products: "Naviris — naval export JV",     year: 2020,
+    description: "Naval Group (France) and Fincantieri (Italy) establish Naviris, a 50/50 JV based in Genoa, to coordinate naval export programs and European cooperation. Naviris serves as the common vehicle for European tenders (PANG, FREMM) and strengthens Franco-Italian naval consolidation." },
+  { id: 27, party1: "Airbus D&S",        p1_iso: "DE", party2: "Dassault Aviation",      p2_iso: "FR", party3: "Leonardo",         p3_iso: "IT",   products: "Eurodrone MALE UAS",             year: 2020,
+    description: "Airbus D&S (40%), Dassault Aviation (40%), and Leonardo (20%) form a JV to develop the Eurodrone, the European MALE drone ordered under an ESA/OCCAR contract worth €7.1 billion. The Eurodrone will serve Germany, France, Spain, and Italy with a first flight targeted for 2028." },
+  { id: 28, party1: "Rheinmetall",       p1_iso: "DE", party2: "BAE Systems",            p2_iso: "GB", products: "RBSL — Ajax / Boxer / CR3",     year: 2019,
+    description: "Rheinmetall and BAE Systems create RBSL (Rheinmetall BAE Systems Land), a 50/50 JV, to deliver next-generation armored vehicles for the British Army. RBSL holds the Ajax prime contract, manages Boxer national integration, and supports Challenger 3 modernization." },
+  { id: 29, party1: "KNDS France",       p1_iso: "FR", party2: "KNDS Deutschland",       p2_iso: "DE", party3: "Rheinmetall",       p3_iso: "DE",   products: "MGCS next-gen battle tank (2035+)", year: 2018,
+    description: "The Franco-German MGCS program targets a next-generation main battle tank to replace the Leclerc and Leopard 2 by 2035+. The industrial alliance brings together KNDS France, KNDS Deutschland, and Rheinmetall — with Thales for mission systems — with workshare negotiations ongoing in 2026." },
+  { id: 30, party1: "Dassault Aviation", p1_iso: "FR", party2: "Airbus D&S",             p2_iso: "DE", party3: "Indra",             p3_iso: "ES",   products: "FCAS / SCAF NGF (2040+)",        year: 2017,
+    description: "France, Germany, and Spain launched the SCAF (Future Air Combat System) program with Dassault (NGF prime), Airbus D&S (Remote Carriers), and Indra (EW). Phase 1B contracts worth €3.5 billion were signed in 2022; persistent tensions over industrial workshare between Airbus and Dassault remain." },
+  { id: 31, party1: "Airbus",            p1_iso: "FR", party2: "Safran",                 p2_iso: "FR", products: "ArianeGroup — Ariane 6 / M51",  year: 2015,
+    description: "Airbus and Safran merged their launcher and space propulsion activities into ArianeGroup, a 50/50 holding company, creating Europe's sovereign space access champion. ArianeGroup is ESA's exclusive prime contractor for Ariane 6 and develops the M51 ballistic missile for the French Navy." },
+  { id: 32, party1: "Airbus",            p1_iso: "FR", party2: "BAE Systems",            p2_iso: "GB", party3: "Leonardo",         p3_iso: "IT",   products: "MBDA — Meteor / Aster / Storm Shadow", year: 2001,
+    description: "Airbus (37.5%), BAE Systems (37.5%), and Leonardo (25%) create MBDA, Europe's largest missile integrator. MBDA produces Meteor, Aster, Brimstone, Exocet, Storm Shadow/SCALP, and the CAMM family. The tri-national governance preserves each nation's export sovereignty while pooling R&D." },
+  { id: 33, party1: "MBDA",              p1_iso: "FR", party2: "Thales",                 p2_iso: "FR", products: "Eurosam — SAMP/T Aster 30",     year: 1989,
+    description: "Eurosam is a JV between MBDA (66%) and Thales (34%) producing the SAMP/T ground-to-air system (Aster 30), deployed in France, Italy, Singapore, and Ukraine. The JV is developing the modernized SAMP/T NG version delivered to NATO allies, offering medium-range theater missile defense." },
+  { id: 34, party1: "Airbus Helicopters", p1_iso: "FR", party2: "Leonardo",              p2_iso: "IT", party3: "GKN Fokker",       p3_iso: "NL",   products: "NHIndustries — NH90 helicopter",  year: 1992,
+    description: "NHIndustries is the industrial consortium of Airbus Helicopters, Leonardo, and GKN Fokker to develop, produce, and support the NH90 medium tactical helicopter. Over 800 aircraft have been delivered to 14 operator nations, making the NH90 the most produced European military helicopter." },
 ];
 
 // ── JV Programs table view ────────────────────────────────────────────────────
@@ -1207,7 +1209,25 @@ function JVProgramsView() {
 
   function handlePartyClick(e, name) {
     e.stopPropagation();
-    setProfileName(name);
+    const resolved = resolvePlayerName(name);
+    if (resolved) setProfileName(resolved);
+  }
+
+  function PartyCell({ name, iso }) {
+    return (
+      <div className="flex items-center gap-2">
+        <PartyLogoSmall name={name} iso={iso} />
+        <div className="flex items-center gap-1.5">
+          <FlagImg iso2={iso} />
+          <button
+            onClick={e => handlePartyClick(e, name)}
+            className={`text-xs font-medium text-left ${resolvePlayerName(name) ? "text-slate-800 hover:text-purple-700 hover:underline cursor-pointer" : "text-slate-600 cursor-default"}`}
+          >
+            {name}
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -1248,9 +1268,11 @@ function JVProgramsView() {
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 w-8">#</th>
-                <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">JV / Party 1</th>
-                <th className="px-2 py-2.5 w-6" />
+                <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Party 1</th>
+                <th className="px-1 py-2.5 w-5" />
                 <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Party 2</th>
+                <th className="px-1 py-2.5 w-5" />
+                <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Party 3</th>
                 <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Product(s) / Programme</th>
                 <th
                   onClick={() => setSortYear(s => s === "desc" ? "asc" : "desc")}
@@ -1277,39 +1299,33 @@ function JVProgramsView() {
 
                       {/* Party 1 */}
                       <td className="px-3 py-3">
-                        <div className="flex items-center gap-2">
-                          <PartyLogoSmall name={row.party1} iso={row.p1_iso} />
-                          <div className="flex items-center gap-1.5">
-                            <FlagImg iso2={row.p1_iso} />
-                            <button
-                              onClick={e => handlePartyClick(e, row.party1)}
-                              className="text-xs font-medium text-slate-800 hover:text-purple-700 hover:underline text-left"
-                            >
-                              {row.party1}
-                            </button>
-                          </div>
-                        </div>
+                        <PartyCell name={row.party1} iso={row.p1_iso} />
                       </td>
 
-                      {/* Arrow */}
+                      {/* Arrow 1→2 */}
                       <td className="px-1 py-3 text-slate-300 text-center">
                         <ArrowRight className="w-3 h-3" />
                       </td>
 
                       {/* Party 2 */}
                       <td className="px-3 py-3">
-                        <div className="flex items-center gap-2">
-                          <PartyLogoSmall name={row.party2} iso={row.p2_iso} />
-                          <div className="flex items-center gap-1.5">
-                            <FlagImg iso2={row.p2_iso} />
-                            <button
-                              onClick={e => handlePartyClick(e, row.party2)}
-                              className="text-xs font-medium text-slate-800 hover:text-purple-700 hover:underline text-left"
-                            >
-                              {row.party2}
-                            </button>
-                          </div>
-                        </div>
+                        <PartyCell name={row.party2} iso={row.p2_iso} />
+                      </td>
+
+                      {/* Arrow 2→3 (only shown when party3 exists) */}
+                      <td className="px-1 py-3 text-center">
+                        {row.party3
+                          ? <ArrowRight className="w-3 h-3 text-slate-300" />
+                          : <span className="block w-3" />
+                        }
+                      </td>
+
+                      {/* Party 3 */}
+                      <td className="px-3 py-3">
+                        {row.party3
+                          ? <PartyCell name={row.party3} iso={row.p3_iso} />
+                          : <span className="text-slate-200 text-xs font-mono">—</span>
+                        }
                       </td>
 
                       {/* Products */}
@@ -1336,7 +1352,7 @@ function JVProgramsView() {
                     {isOpen && row.description && (
                       <tr key={`desc-${row.id}`} className="bg-purple-50/40 border-b border-purple-100/60">
                         <td />
-                        <td colSpan={5} className="px-3 pb-4 pt-2">
+                        <td colSpan={7} className="px-3 pb-4 pt-2">
                           <div className="flex items-start gap-2">
                             <Info className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
                             <p className="text-[12px] text-slate-600 leading-relaxed">{row.description}</p>
@@ -1409,6 +1425,10 @@ const PROFILE_NAME_MAP = {
   "Airbus": "Airbus Defence & Space",
   "Airbus Defence & Space": "Airbus Defence & Space",
   "Airbus Defense": "Airbus Defence & Space",
+  "Airbus D&S": "Airbus Defence & Space",
+  "Airbus Helicopters": "Airbus Defence & Space",
+  // Thales subsidiaries / JV names
+  "Thales Alenia Space": "Thales",
   // Rheinmetall
   "Rheinmetall": "Rheinmetall",
   "Rheinmetall AG": "Rheinmetall",
@@ -1418,6 +1438,7 @@ const PROFILE_NAME_MAP = {
   "KNDS": "KNDS",
   "KNDS France": "KNDS",
   "KNDS Germany": "KNDS",
+  "KNDS Deutschland": "KNDS",
   // Hanwha
   "Hanwha": "Hanwha Aerospace",
   "Hanwha Aerospace": "Hanwha Aerospace",
@@ -2508,7 +2529,7 @@ export default function MAActivity() {
             <span className={`ml-1.5 text-[10px] font-mono px-1.5 py-0.5 rounded-full ${
               dealTypeTab === t.value ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-500"
             }`}>
-              {tabCounts[t.value] || 0}
+              {t.value === "jv" ? JV_EU_PROGRAMS.length : (tabCounts[t.value] || 0)}
             </span>
           </button>
         ))}
