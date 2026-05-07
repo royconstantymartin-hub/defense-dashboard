@@ -16,7 +16,8 @@ import {
   Search, TrendingUp, Clock, Database,
   ArrowUpDown, Globe2, BarChart2, Percent, Shield,
   Anchor, Plane, Satellite, Zap, Lock, Flag, ExternalLink,
-  FileText, Building2, Newspaper, Users, Globe,
+  FileText, Building2, Newspaper, Users, Globe, Crosshair,
+  Target, Gauge,
 } from "lucide-react";
 import { getLogoUrls } from "@/lib/companyLogos";
 import { getCountryBanner } from "@/lib/countryBanners";
@@ -166,6 +167,233 @@ function formatAmount(min, max) {
   return fmt(min || max);
 }
 
+// ── Defense Capabilities Data (IISS Military Balance 2024 / Global Firepower) ─
+const DEFENSE_CAPABILITIES = {
+  US: { combat_aircraft: 2085, surface_combatants: 107, submarines: 68, tanks: 5500 },
+  CN: { combat_aircraft: 1571, surface_combatants: 83,  submarines: 60, tanks: 5800 },
+  RU: { combat_aircraft: 769,  surface_combatants: 54,  submarines: 65, tanks: 12420 },
+  IN: { combat_aircraft: 628,  surface_combatants: 36,  submarines: 17, tanks: 4614 },
+  SA: { combat_aircraft: 356,  surface_combatants: 12,  submarines: 0,  tanks: 1062 },
+  GB: { combat_aircraft: 227,  surface_combatants: 24,  submarines: 10, tanks: 213 },
+  DE: { combat_aircraft: 146,  surface_combatants: 12,  submarines: 6,  tanks: 321 },
+  FR: { combat_aircraft: 228,  surface_combatants: 24,  submarines: 10, tanks: 222 },
+  JP: { combat_aircraft: 354,  surface_combatants: 36,  submarines: 22, tanks: 920 },
+  KR: { combat_aircraft: 406,  surface_combatants: 28,  submarines: 22, tanks: 2202 },
+  AU: { combat_aircraft: 100,  surface_combatants: 12,  submarines: 6,  tanks: 59 },
+  IT: { combat_aircraft: 190,  surface_combatants: 22,  submarines: 8,  tanks: 200 },
+  BR: { combat_aircraft: 122,  surface_combatants: 16,  submarines: 5,  tanks: 469 },
+  CA: { combat_aircraft: 87,   surface_combatants: 12,  submarines: 4,  tanks: 82 },
+  IL: { combat_aircraft: 354,  surface_combatants: 6,   submarines: 5,  tanks: 2200 },
+  TR: { combat_aircraft: 207,  surface_combatants: 24,  submarines: 12, tanks: 3022 },
+  ES: { combat_aircraft: 142,  surface_combatants: 17,  submarines: 4,  tanks: 327 },
+  PL: { combat_aircraft: 128,  surface_combatants: 4,   submarines: 4,  tanks: 1009 },
+  NL: { combat_aircraft: 61,   surface_combatants: 12,  submarines: 4,  tanks: 18 },
+  TW: { combat_aircraft: 422,  surface_combatants: 32,  submarines: 4,  tanks: 1110 },
+  SG: { combat_aircraft: 100,  surface_combatants: 8,   submarines: 4,  tanks: 156 },
+  GR: { combat_aircraft: 191,  surface_combatants: 21,  submarines: 11, tanks: 1350 },
+  NO: { combat_aircraft: 57,   surface_combatants: 6,   submarines: 6,  tanks: 52 },
+  SE: { combat_aircraft: 60,   surface_combatants: 7,   submarines: 5,  tanks: 120 },
+  FI: { combat_aircraft: 55,   surface_combatants: 4,   submarines: 0,  tanks: 200 },
+  AE: { combat_aircraft: 294,  surface_combatants: 8,   submarines: 0,  tanks: 735 },
+  PK: { combat_aircraft: 425,  surface_combatants: 14,  submarines: 8,  tanks: 2496 },
+  ID: { combat_aircraft: 93,   surface_combatants: 22,  submarines: 4,  tanks: 475 },
+  VN: { combat_aircraft: 189,  surface_combatants: 12,  submarines: 6,  tanks: 2575 },
+  EG: { combat_aircraft: 601,  surface_combatants: 28,  submarines: 8,  tanks: 4624 },
+  UA: { combat_aircraft: 98,   surface_combatants: 4,   submarines: 0,  tanks: 1082 },
+  IR: { combat_aircraft: 372,  surface_combatants: 21,  submarines: 29, tanks: 4071 },
+  QA: { combat_aircraft: 96,   surface_combatants: 4,   submarines: 0,  tanks: 62 },
+  KW: { combat_aircraft: 52,   surface_combatants: 5,   submarines: 0,  tanks: 433 },
+  DZ: { combat_aircraft: 237,  surface_combatants: 14,  submarines: 6,  tanks: 2540 },
+  MA: { combat_aircraft: 89,   surface_combatants: 14,  submarines: 3,  tanks: 1016 },
+  TH: { combat_aircraft: 162,  surface_combatants: 14,  submarines: 0,  tanks: 777 },
+  MY: { combat_aircraft: 65,   surface_combatants: 20,  submarines: 2,  tanks: 48 },
+  PH: { combat_aircraft: 49,   surface_combatants: 12,  submarines: 0,  tanks: 10 },
+  NZ: { combat_aircraft: 0,    surface_combatants: 6,   submarines: 0,  tanks: 0 },
+  ZA: { combat_aircraft: 49,   surface_combatants: 6,   submarines: 3,  tanks: 172 },
+  NG: { combat_aircraft: 78,   surface_combatants: 3,   submarines: 0,  tanks: 155 },
+  AR: { combat_aircraft: 99,   surface_combatants: 14,  submarines: 3,  tanks: 360 },
+  CO: { combat_aircraft: 91,   surface_combatants: 8,   submarines: 4,  tanks: 24 },
+  CL: { combat_aircraft: 66,   surface_combatants: 12,  submarines: 4,  tanks: 172 },
+  MX: { combat_aircraft: 64,   surface_combatants: 14,  submarines: 0,  tanks: 90 },
+  PT: { combat_aircraft: 30,   surface_combatants: 9,   submarines: 2,  tanks: 37 },
+  BE: { combat_aircraft: 54,   surface_combatants: 2,   submarines: 0,  tanks: 11 },
+  CH: { combat_aircraft: 53,   surface_combatants: 0,   submarines: 0,  tanks: 134 },
+  AT: { combat_aircraft: 15,   surface_combatants: 0,   submarines: 0,  tanks: 56 },
+  DK: { combat_aircraft: 44,   surface_combatants: 6,   submarines: 0,  tanks: 44 },
+  CZ: { combat_aircraft: 14,   surface_combatants: 0,   submarines: 0,  tanks: 123 },
+  RO: { combat_aircraft: 51,   surface_combatants: 7,   submarines: 1,  tanks: 740 },
+  HU: { combat_aircraft: 12,   surface_combatants: 0,   submarines: 0,  tanks: 44 },
+  JO: { combat_aircraft: 79,   surface_combatants: 0,   submarines: 0,  tanks: 1351 },
+  IQ: { combat_aircraft: 83,   surface_combatants: 0,   submarines: 0,  tanks: 490 },
+  AZ: { combat_aircraft: 64,   surface_combatants: 4,   submarines: 0,  tanks: 800 },
+  BD: { combat_aircraft: 109,  surface_combatants: 12,  submarines: 2,  tanks: 580 },
+  MM: { combat_aircraft: 146,  surface_combatants: 8,   submarines: 0,  tanks: 545 },
+  PE: { combat_aircraft: 76,   surface_combatants: 8,   submarines: 6,  tanks: 380 },
+};
+
+const CAP_CATEGORIES = [
+  {
+    key: "combat_aircraft",
+    label: "Combat Aircraft",
+    sublabel: "Fighters & Bombers",
+    Icon: Plane,
+    scale: 50,
+    scaleLabel: "50 aircraft",
+    bg: "bg-sky-50",
+    border: "border-sky-100",
+    iconColor: "text-sky-600",
+    labelColor: "text-sky-700",
+    countColor: "text-sky-900",
+    dotColor: "text-sky-300",
+    badgeBg: "bg-sky-100",
+  },
+  {
+    key: "surface_combatants",
+    label: "Surface Combatants",
+    sublabel: "Frigates, Destroyers & Corvettes",
+    Icon: Anchor,
+    scale: 4,
+    scaleLabel: "4 vessels",
+    bg: "bg-blue-50",
+    border: "border-blue-100",
+    iconColor: "text-blue-600",
+    labelColor: "text-blue-700",
+    countColor: "text-blue-900",
+    dotColor: "text-blue-300",
+    badgeBg: "bg-blue-100",
+  },
+  {
+    key: "tanks",
+    label: "Main Battle Tanks",
+    sublabel: "MBTs & Heavy Armour",
+    Icon: Shield,
+    scale: 300,
+    scaleLabel: "300 tanks",
+    bg: "bg-emerald-50",
+    border: "border-emerald-100",
+    iconColor: "text-emerald-600",
+    labelColor: "text-emerald-700",
+    countColor: "text-emerald-900",
+    dotColor: "text-emerald-300",
+    badgeBg: "bg-emerald-100",
+  },
+  {
+    key: "submarines",
+    label: "Submarines",
+    sublabel: "Attack & Ballistic SSBNs",
+    Icon: Crosshair,
+    scale: 3,
+    scaleLabel: "3 submarines",
+    bg: "bg-purple-50",
+    border: "border-purple-100",
+    iconColor: "text-purple-600",
+    labelColor: "text-purple-700",
+    countColor: "text-purple-900",
+    dotColor: "text-purple-300",
+    badgeBg: "bg-purple-100",
+  },
+];
+
+function useCountUp(target, duration = 900) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!target) { setValue(0); return; }
+    let frame;
+    const start = performance.now();
+    const tick = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.floor(eased * target));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [target, duration]);
+  return value;
+}
+
+function CapabilityTile({ cat, count }) {
+  const animated = useCountUp(count);
+  const iconCount = count === 0 ? 0 : Math.max(1, Math.min(Math.floor(count / cat.scale), 18));
+
+  return (
+    <div className={`${cat.bg} border ${cat.border} rounded-xl p-4 flex flex-col gap-3`}>
+      {/* Header */}
+      <div className="flex items-center gap-2">
+        <span className={`p-1.5 rounded-lg ${cat.badgeBg}`}>
+          <cat.Icon className={`w-4 h-4 ${cat.iconColor}`} />
+        </span>
+        <div>
+          <p className={`text-xs font-bold ${cat.labelColor} leading-tight`}>{cat.label}</p>
+          <p className="text-[10px] text-slate-400 leading-tight">{cat.sublabel}</p>
+        </div>
+      </div>
+
+      {/* Count */}
+      <div>
+        <p className={`text-3xl font-mono font-bold ${cat.countColor} tabular-nums`}>
+          {count === 0 ? "—" : animated.toLocaleString()}
+        </p>
+        {count === 0 && (
+          <p className="text-[10px] text-slate-400 mt-0.5">No data / not applicable</p>
+        )}
+      </div>
+
+      {/* ISOTYPE pictogram row */}
+      {iconCount > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {Array.from({ length: iconCount }).map((_, i) => (
+            <cat.Icon key={i} className={`w-3.5 h-3.5 ${cat.dotColor}`} />
+          ))}
+        </div>
+      )}
+
+      {/* Scale hint */}
+      {count > 0 && (
+        <p className={`text-[10px] ${cat.labelColor} opacity-60`}>
+          1 icon ≈ {cat.scaleLabel}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function DefenseCapabilitiesCard({ countryCode }) {
+  const cap = DEFENSE_CAPABILITIES[countryCode];
+
+  return (
+    <Card className="bg-white border-slate-200 shadow-sm">
+      <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Gauge className="w-4 h-4 text-purple-600" />
+            <CardTitle className="font-heading text-base text-slate-900">Military Capabilities</CardTitle>
+          </div>
+          <span className="text-[10px] text-slate-400 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
+            IISS Military Balance 2024 · estimates
+          </span>
+        </div>
+      </CardHeader>
+      <CardContent className="p-4">
+        {!cap ? (
+          <div className="flex items-center justify-center py-8 text-slate-400 text-sm gap-2">
+            <Target className="w-4 h-4" />
+            No capability data available for this country.
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {CAP_CATEGORIES.map((cat) => (
+              <CapabilityTile key={cat.key} cat={cat} count={cap[cat.key] ?? 0} />
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 // ── Country Profile Section ──────────────────────────────────────────────────
 
 function CountryProfileSection({ country, allExpenditures }) {
@@ -244,6 +472,9 @@ function CountryProfileSection({ country, allExpenditures }) {
           </div>
         </div>
       </div>
+
+      {/* Defense Capabilities Infographic */}
+      <DefenseCapabilitiesCard countryCode={country.country_code} />
 
       {/* Row 1: Military Branches + Regional Comparison */}
       <div className="grid lg:grid-cols-2 gap-5">
