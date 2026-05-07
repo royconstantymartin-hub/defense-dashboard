@@ -15,8 +15,9 @@ import {
   Search, TrendingUp, Clock, Database,
   ArrowUpDown, Globe2, BarChart2, Percent, Shield,
   Anchor, Plane, Satellite, Zap, Lock, Flag, ExternalLink,
-  FileText, Building2, Newspaper, Users,
+  FileText, Building2, Newspaper, Users, Globe,
 } from "lucide-react";
+import { getLogoUrls } from "@/lib/companyLogos";
 import {
   BarChart,
   Bar,
@@ -98,10 +99,56 @@ const CONTRACT_STATUS_STYLE = {
   cancelled: "bg-rose-50 text-rose-600",
 };
 
+const CONTRACT_CATEGORY_COLOR = {
+  aerospace: "border-l-sky-400",
+  naval:     "border-l-blue-400",
+  land:      "border-l-emerald-400",
+  cyber:     "border-l-slate-400",
+  services:  "border-l-amber-400",
+  logistics: "border-l-orange-400",
+  space:     "border-l-violet-400",
+};
+
 const CATEGORY_LABEL = {
   aerospace: "Aerospace", naval: "Naval", land: "Land",
   cyber: "Cyber", services: "Services", logistics: "Logistics", space: "Space",
 };
+
+// ── Logo helpers (mirrors MarketData.jsx) ────────────────────────────────────
+const AVATAR_COLORS = [
+  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
+  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
+  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
+  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
+];
+function avatarColor(name = "") {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+function initials(name = "") {
+  return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
+function CompanyLogo({ name, size = "md" }) {
+  const urls = getLogoUrls(name);
+  const [idx, setIdx] = useState(0);
+  const sz = size === "sm" ? "w-7 h-7 text-[9px]" : "w-9 h-9 text-[11px]";
+  if (!urls.length || idx >= urls.length) {
+    return (
+      <div className={`${sz} bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
+        <span className="font-bold text-white tracking-tight">{initials(name)}</span>
+      </div>
+    );
+  }
+  return (
+    <img
+      src={urls[idx]}
+      alt={name}
+      className={`${sz} rounded-lg object-contain bg-white border border-slate-100 shrink-0 p-0.5`}
+      onError={() => setIdx(i => i + 1)}
+    />
+  );
+}
 
 function formatPersonnel(n) {
   if (!n) return null;
@@ -122,14 +169,17 @@ function formatAmount(min, max) {
 function CountryProfileSection({ country, allExpenditures }) {
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [industryTab, setIndustryTab] = useState("national");
 
   useEffect(() => {
+    let cancelled = false;
     setLoadingProfile(true);
     setProfile(null);
     axios.get(`${API}/country-profile`, { params: { country_name: country.country } })
-      .then(r => setProfile(r.data))
-      .catch(() => setProfile({ military_branches: [], contracts: [], companies: [], news: [] }))
-      .finally(() => setLoadingProfile(false));
+      .then(r => { if (!cancelled) setProfile(r.data); })
+      .catch(() => { if (!cancelled) setProfile({ military_branches: [], contracts: [], companies: [], news: [] }); })
+      .finally(() => { if (!cancelled) setLoadingProfile(false); });
+    return () => { cancelled = true; };
   }, [country.country]);
 
   // Build regional peers data for the comparison bar chart
@@ -299,12 +349,15 @@ function CountryProfileSection({ country, allExpenditures }) {
           <CardContent className="p-4">
             {loadingProfile ? (
               <div className="space-y-2">
-                {[1, 2, 3].map(i => <div key={i} className="h-14 bg-slate-100 rounded-lg animate-pulse" />)}
+                {[1, 2, 3].map(i => <div key={i} className="h-16 bg-slate-100 rounded-lg animate-pulse" />)}
               </div>
             ) : profile?.contracts?.length > 0 ? (
               <div className="space-y-2">
                 {profile.contracts.map((c, i) => (
-                  <div key={c.id || i} className="p-3 rounded-lg border border-slate-100 hover:border-purple-100 hover:bg-slate-50/60 transition-colors">
+                  <div
+                    key={c.id || i}
+                    className={`pl-3 pr-3 py-3 rounded-lg border border-slate-100 border-l-4 hover:border-purple-100 hover:bg-slate-50/60 transition-colors ${CONTRACT_CATEGORY_COLOR[c.category] || "border-l-slate-300"}`}
+                  >
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <p className="text-sm font-medium text-slate-800 leading-snug line-clamp-2">{c.title}</p>
                       <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${CONTRACT_STATUS_STYLE[c.status] || "bg-slate-100 text-slate-500"}`}>
@@ -318,10 +371,10 @@ function CountryProfileSection({ country, allExpenditures }) {
                         </span>
                       )}
                       {c.program && (
-                        <span className="text-xs text-purple-600 font-medium">{c.program}</span>
+                        <span className="text-xs text-purple-600 font-semibold">{c.program}</span>
                       )}
                       {formatAmount(c.amount_min, c.amount_max) && (
-                        <span className="text-xs font-mono text-slate-600 ml-auto">
+                        <span className="text-xs font-mono text-slate-700 font-semibold ml-auto">
                           {formatAmount(c.amount_min, c.amount_max)}
                         </span>
                       )}
@@ -341,9 +394,30 @@ function CountryProfileSection({ country, allExpenditures }) {
         {/* Defense Companies */}
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
-            <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-purple-600" />
-              <CardTitle className="font-heading text-base text-slate-900">Defense Industry</CardTitle>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-purple-600" />
+                <CardTitle className="font-heading text-base text-slate-900">Defense Industry</CardTitle>
+              </div>
+              {/* National / Multinational tabs */}
+              <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+                <button
+                  onClick={() => setIndustryTab("national")}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+                    industryTab === "national" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <Flag className="w-3 h-3" /> National
+                </button>
+                <button
+                  onClick={() => setIndustryTab("multinational")}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+                    industryTab === "multinational" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <Globe className="w-3 h-3" /> Multinational
+                </button>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="p-4">
@@ -351,46 +425,42 @@ function CountryProfileSection({ country, allExpenditures }) {
               <div className="space-y-2">
                 {[1, 2, 3].map(i => <div key={i} className="h-14 bg-slate-100 rounded-lg animate-pulse" />)}
               </div>
-            ) : profile?.companies?.length > 0 ? (
-              <div className="space-y-2">
-                {profile.companies.map((c, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-purple-100 hover:bg-slate-50/60 transition-colors gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <img
-                        src={`https://logo.clearbit.com/${c.name.toLowerCase().replace(/\s+/g, '')}.com`}
-                        alt={c.name}
-                        className="w-7 h-7 rounded object-contain shrink-0 bg-white border border-slate-100"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.nextSibling.style.display = "flex";
-                        }}
-                      />
-                      <span className="hidden w-7 h-7 rounded bg-slate-100 items-center justify-center shrink-0">
-                        <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
-                        <div className="flex gap-1 flex-wrap mt-0.5">
-                          {c.specializations.slice(0, 2).map((s, si) => (
-                            <span key={si} className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">
-                              {s}
-                            </span>
-                          ))}
+            ) : (() => {
+              const list = (profile?.companies || []).filter(c =>
+                industryTab === "national" ? c.is_national !== false : c.is_national === false
+              );
+              return list.length > 0 ? (
+                <div className="space-y-2">
+                  {list.map((c, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-purple-100 hover:bg-slate-50/60 transition-colors gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <CompanyLogo name={c.name} size="sm" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
+                          <div className="flex gap-1 flex-wrap mt-0.5">
+                            {c.specializations.slice(0, 2).map((s, si) => (
+                              <span key={si} className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">
+                                {s}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
+                      <div className="text-right shrink-0">
+                        {c.market_cap > 0 && (
+                          <p className="text-xs font-mono text-slate-700 font-semibold">${c.market_cap}B</p>
+                        )}
+                        <p className="text-[10px] text-slate-400 font-mono">{c.ticker}</p>
+                      </div>
                     </div>
-                    <div className="text-right shrink-0">
-                      {c.market_cap > 0 && (
-                        <p className="text-xs font-mono text-slate-700 font-semibold">${c.market_cap}B</p>
-                      )}
-                      <p className="text-[10px] text-slate-400 font-mono">{c.ticker}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-slate-400 py-4 text-center">No companies found for this country.</p>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-400 py-4 text-center">
+                  {industryTab === "multinational" ? "No multinational companies found." : "No national companies found."}
+                </p>
+              );
+            })()}
           </CardContent>
         </Card>
       </div>
@@ -408,7 +478,7 @@ function CountryProfileSection({ country, allExpenditures }) {
         <CardContent className="p-4">
           {loadingProfile ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {[1, 2, 3].map(i => <div key={i} className="h-20 bg-slate-100 rounded-lg animate-pulse" />)}
+              {[1, 2, 3].map(i => <div key={i} className="h-32 bg-slate-100 rounded-lg animate-pulse" />)}
             </div>
           ) : profile?.news?.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -418,19 +488,32 @@ function CountryProfileSection({ country, allExpenditures }) {
                   href={article.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block p-3 rounded-lg border border-slate-100 hover:border-purple-200 hover:bg-purple-50/20 transition-all"
+                  className="group flex flex-col rounded-lg border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all overflow-hidden"
                 >
-                  <p className="text-sm font-medium text-slate-800 group-hover:text-purple-700 line-clamp-2 leading-snug mb-1.5 transition-colors">
-                    {article.title}
-                  </p>
-                  {article.description && (
-                    <p className="text-xs text-slate-400 line-clamp-2 mb-2">{article.description}</p>
+                  {article.image ? (
+                    <div className="w-full h-28 bg-slate-100 overflow-hidden shrink-0">
+                      <img
+                        src={article.image}
+                        alt={article.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => { e.target.parentElement.style.display = "none"; }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full h-14 bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shrink-0">
+                      <Newspaper className="w-6 h-6 text-slate-300" />
+                    </div>
                   )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
-                      {article.source}
-                    </span>
-                    <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-400 transition-colors" />
+                  <div className="p-3 flex flex-col flex-1">
+                    <p className="text-sm font-medium text-slate-800 group-hover:text-purple-700 line-clamp-2 leading-snug mb-auto transition-colors">
+                      {article.title}
+                    </p>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-[10px] text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded truncate max-w-[70%]">
+                        {article.source}
+                      </span>
+                      <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-400 transition-colors shrink-0" />
+                    </div>
                   </div>
                 </a>
               ))}
@@ -605,8 +688,8 @@ export default function Expenditures() {
         </Card>
       </div>
 
-      {/* Charts */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      {/* Charts — hidden when a single country is in focus */}
+      {!focusCountry && <div className="grid lg:grid-cols-2 gap-6">
         {/* Top Countries Bar Chart */}
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
@@ -740,7 +823,7 @@ export default function Expenditures() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div>}
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
