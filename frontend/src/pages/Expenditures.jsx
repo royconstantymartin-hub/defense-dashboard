@@ -11,7 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, TrendingUp, DollarSign, Clock, Database, ArrowUpDown, Globe2, BarChart2, Percent } from "lucide-react";
+import {
+  Search, TrendingUp, Clock, Database,
+  ArrowUpDown, Globe2, BarChart2, Percent, Shield,
+  Anchor, Plane, Satellite, Zap, Lock, Flag, ExternalLink,
+  FileText, Building2, Newspaper, Users,
+} from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -22,8 +27,7 @@ import {
   PieChart,
   Pie,
   Cell,
-  ComposedChart,
-  Area
+  Legend,
 } from "recharts";
 
 const REGIONS = [
@@ -36,12 +40,6 @@ const REGIONS = [
   { value: "Africa", label: "Africa" },
 ];
 
-const SUB_REGIONS = {
-  "Europe": ["Western Europe", "Eastern Europe", "Nordic", "Southern Europe"],
-  "Asia-Pacific": ["East Asia", "South Asia", "Southeast Asia", "Oceania"],
-  "Middle East": ["Gulf States", "Levant", "North Africa"],
-};
-
 const SORT_OPTIONS = [
   { value: "expenditure_desc", label: "Expenditure (High to Low)" },
   { value: "expenditure_asc", label: "Expenditure (Low to High)" },
@@ -52,7 +50,6 @@ const SORT_OPTIONS = [
 
 const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899', '#84CC16'];
 
-// Country code mapping for flags
 const COUNTRY_FLAGS = {
   "US": "us", "CN": "cn", "RU": "ru", "IN": "in", "SA": "sa",
   "GB": "gb", "DE": "de", "FR": "fr", "JP": "jp", "KR": "kr",
@@ -68,6 +65,387 @@ const COUNTRY_FLAGS = {
   "IQ": "iq", "AZ": "az", "BD": "bd", "MM": "mm", "PE": "pe",
 };
 
+const BRANCH_ICON = {
+  army:          <Shield className="w-4 h-4" />,
+  navy:          <Anchor className="w-4 h-4" />,
+  air:           <Plane className="w-4 h-4" />,
+  space:         <Satellite className="w-4 h-4" />,
+  special:       <Zap className="w-4 h-4" />,
+  cyber:         <Lock className="w-4 h-4" />,
+  strategic:     <Flag className="w-4 h-4" />,
+  gendarmerie:   <Shield className="w-4 h-4" />,
+  coast_guard:   <Anchor className="w-4 h-4" />,
+  national_guard:<Shield className="w-4 h-4" />,
+};
+
+const BRANCH_COLOR = {
+  army:          "bg-emerald-50 text-emerald-700 border-emerald-200",
+  navy:          "bg-blue-50 text-blue-700 border-blue-200",
+  air:           "bg-sky-50 text-sky-700 border-sky-200",
+  space:         "bg-violet-50 text-violet-700 border-violet-200",
+  special:       "bg-amber-50 text-amber-700 border-amber-200",
+  cyber:         "bg-slate-50 text-slate-700 border-slate-200",
+  strategic:     "bg-rose-50 text-rose-700 border-rose-200",
+  gendarmerie:   "bg-indigo-50 text-indigo-700 border-indigo-200",
+  coast_guard:   "bg-cyan-50 text-cyan-700 border-cyan-200",
+  national_guard:"bg-teal-50 text-teal-700 border-teal-200",
+};
+
+const CONTRACT_STATUS_STYLE = {
+  awarded:   "bg-emerald-50 text-emerald-700",
+  open:      "bg-blue-50 text-blue-700",
+  closed:    "bg-slate-100 text-slate-500",
+  cancelled: "bg-rose-50 text-rose-600",
+};
+
+const CATEGORY_LABEL = {
+  aerospace: "Aerospace", naval: "Naval", land: "Land",
+  cyber: "Cyber", services: "Services", logistics: "Logistics", space: "Space",
+};
+
+function formatPersonnel(n) {
+  if (!n) return null;
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+  if (n >= 1000) return `${Math.round(n / 1000)}k`;
+  return n.toString();
+}
+
+function formatAmount(min, max) {
+  if (!min && !max) return null;
+  const fmt = (v) => v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v}M`;
+  if (min && max && min !== max) return `${fmt(min)} – ${fmt(max)}`;
+  return fmt(min || max);
+}
+
+// ── Country Profile Section ──────────────────────────────────────────────────
+
+function CountryProfileSection({ country, allExpenditures }) {
+  const [profile, setProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+
+  useEffect(() => {
+    setLoadingProfile(true);
+    setProfile(null);
+    axios.get(`${API}/country-profile`, { params: { country_name: country.country } })
+      .then(r => setProfile(r.data))
+      .catch(() => setProfile({ military_branches: [], contracts: [], companies: [], news: [] }))
+      .finally(() => setLoadingProfile(false));
+  }, [country.country]);
+
+  // Build regional peers data for the comparison bar chart
+  const regionalPeers = allExpenditures
+    .filter(e => e.region === country.region)
+    .sort((a, b) => b.expenditure - a.expenditure)
+    .slice(0, 10);
+
+  const getFlag = (code) => {
+    const c = COUNTRY_FLAGS[code] || code.toLowerCase();
+    return `https://flagcdn.com/w40/${c}.png`;
+  };
+
+  return (
+    <div className="space-y-5">
+      {/* Profile header */}
+      <div className="flex items-center gap-4 px-1">
+        <div className="w-0.5 h-8 bg-purple-600 rounded-full" />
+        <div className="flex items-center gap-3">
+          <img
+            src={getFlag(country.country_code)}
+            alt={country.country}
+            className="w-10 h-7 object-cover rounded shadow border border-slate-200"
+          />
+          <div>
+            <h2 className="font-heading text-xl font-bold text-slate-900">
+              {country.country} — Defense Profile
+            </h2>
+            <p className="text-xs text-slate-500">
+              {country.region} · ${country.expenditure}B budget · {country.gdp_percent}% of GDP
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Row 1: Military Branches + Regional Comparison */}
+      <div className="grid lg:grid-cols-2 gap-5">
+        {/* Military Branches */}
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-purple-600" />
+              <CardTitle className="font-heading text-base text-slate-900">Military Branches</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4">
+            {loadingProfile ? (
+              <div className="space-y-2">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="h-12 bg-slate-100 rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : profile?.military_branches?.length > 0 ? (
+              <div className="space-y-2">
+                {profile.military_branches.map((branch, i) => (
+                  <a
+                    key={i}
+                    href={branch.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 rounded-lg border hover:border-purple-200 hover:bg-purple-50/30 transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`p-1.5 rounded-md border ${BRANCH_COLOR[branch.type] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
+                        {BRANCH_ICON[branch.type] || <Shield className="w-4 h-4" />}
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-800 group-hover:text-purple-700 leading-tight">
+                          {branch.name}
+                        </p>
+                        <p className="text-xs text-slate-500">{branch.role}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-right">
+                      {branch.personnel > 0 && (
+                        <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
+                          <Users className="w-3 h-3" />
+                          {formatPersonnel(branch.personnel)}
+                        </span>
+                      )}
+                      <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-400 transition-colors" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-400 py-4 text-center">No branch data available for this country.</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Regional Comparison Bar Chart */}
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
+            <div className="flex items-center gap-2">
+              <BarChart2 className="w-4 h-4 text-purple-600" />
+              <CardTitle className="font-heading text-base text-slate-900">
+                {country.region} — Comparison
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="h-[260px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={regionalPeers} layout="vertical" margin={{ left: 0, right: 8 }}>
+                  <XAxis
+                    type="number"
+                    tick={{ fill: '#64748B', fontSize: 10 }}
+                    axisLine={false}
+                    tickLine={false}
+                    tickFormatter={(v) => `$${v}B`}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="country_code"
+                    tick={{ fill: '#64748B', fontSize: 10 }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={30}
+                  />
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const d = payload[0].payload;
+                        return (
+                          <div className="bg-white border border-slate-200 p-2.5 rounded-lg shadow-lg text-sm">
+                            <p className="font-semibold text-slate-800">{d.country}</p>
+                            <p className="font-mono text-purple-700">${d.expenditure}B</p>
+                            <p className="text-slate-400 text-xs">{d.gdp_percent}% of GDP</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Bar dataKey="expenditure" radius={[0, 5, 5, 0]}>
+                    {regionalPeers.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.country_code === country.country_code ? '#7E22CE' : '#DDD6FE'}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-purple-700 inline-block" />
+              {country.country} highlighted
+              <span className="w-2 h-2 rounded-full bg-violet-200 inline-block ml-2" />
+              Regional peers
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Row 2: Contracts + Companies */}
+      <div className="grid lg:grid-cols-2 gap-5">
+        {/* Key Contracts */}
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-purple-600" />
+              <CardTitle className="font-heading text-base text-slate-900">Key Contracts & Programs</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4">
+            {loadingProfile ? (
+              <div className="space-y-2">
+                {[1, 2, 3].map(i => <div key={i} className="h-14 bg-slate-100 rounded-lg animate-pulse" />)}
+              </div>
+            ) : profile?.contracts?.length > 0 ? (
+              <div className="space-y-2">
+                {profile.contracts.map((c, i) => (
+                  <div key={c.id || i} className="p-3 rounded-lg border border-slate-100 hover:border-purple-100 hover:bg-slate-50/60 transition-colors">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <p className="text-sm font-medium text-slate-800 leading-snug line-clamp-2">{c.title}</p>
+                      <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${CONTRACT_STATUS_STYLE[c.status] || "bg-slate-100 text-slate-500"}`}>
+                        {c.status}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap mt-1">
+                      {c.category && (
+                        <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">
+                          {CATEGORY_LABEL[c.category] || c.category}
+                        </span>
+                      )}
+                      {c.program && (
+                        <span className="text-xs text-purple-600 font-medium">{c.program}</span>
+                      )}
+                      {formatAmount(c.amount_min, c.amount_max) && (
+                        <span className="text-xs font-mono text-slate-600 ml-auto">
+                          {formatAmount(c.amount_min, c.amount_max)}
+                        </span>
+                      )}
+                    </div>
+                    {c.awarded_to && (
+                      <p className="text-xs text-slate-400 mt-1 truncate">→ {c.awarded_to}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-400 py-4 text-center">No contracts found for this country.</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Defense Companies */}
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-purple-600" />
+              <CardTitle className="font-heading text-base text-slate-900">Defense Industry</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4">
+            {loadingProfile ? (
+              <div className="space-y-2">
+                {[1, 2, 3].map(i => <div key={i} className="h-14 bg-slate-100 rounded-lg animate-pulse" />)}
+              </div>
+            ) : profile?.companies?.length > 0 ? (
+              <div className="space-y-2">
+                {profile.companies.map((c, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-purple-100 hover:bg-slate-50/60 transition-colors gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src={`https://logo.clearbit.com/${c.name.toLowerCase().replace(/\s+/g, '')}.com`}
+                        alt={c.name}
+                        className="w-7 h-7 rounded object-contain shrink-0 bg-white border border-slate-100"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "flex";
+                        }}
+                      />
+                      <span className="hidden w-7 h-7 rounded bg-slate-100 items-center justify-center shrink-0">
+                        <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
+                        <div className="flex gap-1 flex-wrap mt-0.5">
+                          {c.specializations.slice(0, 2).map((s, si) => (
+                            <span key={si} className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      {c.market_cap > 0 && (
+                        <p className="text-xs font-mono text-slate-700 font-semibold">${c.market_cap}B</p>
+                      )}
+                      <p className="text-[10px] text-slate-400 font-mono">{c.ticker}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-400 py-4 text-center">No companies found for this country.</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Row 3: Recent News */}
+      <Card className="bg-white border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
+          <div className="flex items-center gap-2">
+            <Newspaper className="w-4 h-4 text-purple-600" />
+            <CardTitle className="font-heading text-base text-slate-900">
+              Recent Defense News — {country.country}
+            </CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4">
+          {loadingProfile ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {[1, 2, 3].map(i => <div key={i} className="h-20 bg-slate-100 rounded-lg animate-pulse" />)}
+            </div>
+          ) : profile?.news?.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {profile.news.slice(0, 6).map((article, i) => (
+                <a
+                  key={i}
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block p-3 rounded-lg border border-slate-100 hover:border-purple-200 hover:bg-purple-50/20 transition-all"
+                >
+                  <p className="text-sm font-medium text-slate-800 group-hover:text-purple-700 line-clamp-2 leading-snug mb-1.5 transition-colors">
+                    {article.title}
+                  </p>
+                  {article.description && (
+                    <p className="text-xs text-slate-400 line-clamp-2 mb-2">{article.description}</p>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
+                      {article.source}
+                    </span>
+                    <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-400 transition-colors" />
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400 py-4 text-center">No recent news found for this country.</p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
+
 export default function Expenditures() {
   const [searchParams] = useSearchParams();
   const [expenditures, setExpenditures] = useState([]);
@@ -77,7 +455,7 @@ export default function Expenditures() {
   const [searchTerm, setSearchTerm] = useState(searchParams.get("country") || "");
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [sortBy, setSortBy] = useState("expenditure_desc");
-  const [chartMode, setChartMode] = useState("absolute"); // "absolute" | "gdp"
+  const [chartMode, setChartMode] = useState("absolute");
 
   const fetchExpenditures = async () => {
     setLoading(true);
@@ -97,20 +475,16 @@ export default function Expenditures() {
 
   useEffect(() => {
     let filtered = [...expenditures];
-    
     if (selectedRegion !== "all") {
       filtered = filtered.filter(e => e.region === selectedRegion);
     }
-    
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(e => 
-        e.country.toLowerCase().includes(term) || 
+      filtered = filtered.filter(e =>
+        e.country.toLowerCase().includes(term) ||
         e.country_code.toLowerCase().includes(term)
       );
     }
-
-    // Sorting
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "expenditure_desc": return b.expenditure - a.expenditure;
@@ -121,12 +495,13 @@ export default function Expenditures() {
         default: return 0;
       }
     });
-    
     setFilteredExpenditures(filtered);
   }, [searchTerm, selectedRegion, sortBy, expenditures]);
 
+  const focusCountry = filteredExpenditures.length === 1 ? filteredExpenditures[0] : null;
+
   const totalExpenditure = filteredExpenditures.reduce((sum, e) => sum + e.expenditure, 0);
-  const avgGdpPercent = filteredExpenditures.length 
+  const avgGdpPercent = filteredExpenditures.length
     ? (filteredExpenditures.reduce((sum, e) => sum + e.gdp_percent, 0) / filteredExpenditures.length).toFixed(1)
     : 0;
 
@@ -136,11 +511,8 @@ export default function Expenditures() {
 
   const regionData = filteredExpenditures.reduce((acc, exp) => {
     const existing = acc.find(r => r.name === exp.region);
-    if (existing) {
-      existing.value += exp.expenditure;
-    } else {
-      acc.push({ name: exp.region, value: exp.expenditure });
-    }
+    if (existing) { existing.value += exp.expenditure; }
+    else { acc.push({ name: exp.region, value: exp.expenditure }); }
     return acc;
   }, []).sort((a, b) => b.value - a.value);
 
@@ -242,14 +614,11 @@ export default function Expenditures() {
               <CardTitle className="font-heading text-lg text-slate-900">
                 {chartMode === "absolute" ? "Top Countries — Absolute Budget" : "Top Countries — % of GDP"}
               </CardTitle>
-              {/* Toggle absolute / % GDP */}
               <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
                 <button
                   onClick={() => setChartMode("absolute")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                    chartMode === "absolute"
-                      ? "bg-white text-purple-700 shadow-sm"
-                      : "text-slate-500 hover:text-slate-700"
+                    chartMode === "absolute" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   <BarChart2 className="w-3.5 h-3.5" /> $B
@@ -257,9 +626,7 @@ export default function Expenditures() {
                 <button
                   onClick={() => setChartMode("gdp")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                    chartMode === "gdp"
-                      ? "bg-white text-purple-700 shadow-sm"
-                      : "text-slate-500 hover:text-slate-700"
+                    chartMode === "gdp" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   <Percent className="w-3.5 h-3.5" /> GDP
@@ -309,11 +676,7 @@ export default function Expenditures() {
                       return null;
                     }}
                   />
-                  <Bar
-                    dataKey={chartMode === "gdp" ? "gdp_percent" : "expenditure"}
-                    fill="#7E22CE"
-                    radius={[0, 6, 6, 0]}
-                  />
+                  <Bar dataKey={chartMode === "gdp" ? "gdp_percent" : "expenditure"} fill="#7E22CE" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -368,10 +731,7 @@ export default function Expenditures() {
               {regionData.map((region, idx) => (
                 <div key={region.name} className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
-                    <span 
-                      className="w-2 h-2 rounded-full" 
-                      style={{ backgroundColor: COLORS[idx % COLORS.length] }}
-                    />
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
                     <span className="text-slate-600">{region.name}</span>
                   </div>
                   <span className="font-mono text-slate-900 font-medium">${region.value.toFixed(1)}B</span>
@@ -422,7 +782,12 @@ export default function Expenditures() {
         </Select>
       </div>
 
-      {/* Data Table with Flags */}
+      {/* ── Country Profile (only when exactly 1 country is in view) ── */}
+      {focusCountry && (
+        <CountryProfileSection country={focusCountry} allExpenditures={expenditures} />
+      )}
+
+      {/* Data Table */}
       <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto" data-testid="expenditures-table">
@@ -439,8 +804,8 @@ export default function Expenditures() {
               </thead>
               <tbody>
                 {filteredExpenditures.map((exp, idx) => (
-                  <tr 
-                    key={exp.id} 
+                  <tr
+                    key={exp.id}
                     className="border-b border-slate-100 hover:bg-purple-50/30 transition-colors"
                     data-testid={`expenditure-row-${exp.id}`}
                   >
@@ -449,8 +814,8 @@ export default function Expenditures() {
                         <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
                           {idx + 1}
                         </span>
-                        <img 
-                          src={getFlag(exp.country_code)} 
+                        <img
+                          src={getFlag(exp.country_code)}
                           alt={exp.country}
                           className="w-8 h-6 object-cover rounded shadow-sm border border-slate-100"
                           onError={(e) => { e.target.src = `https://flagcdn.com/w40/${exp.country_code.toLowerCase()}.png`; }}
@@ -462,9 +827,7 @@ export default function Expenditures() {
                       </div>
                     </td>
                     <td className="p-4">
-                      <span className="text-sm text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full">
-                        {exp.region}
-                      </span>
+                      <span className="text-sm text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full">{exp.region}</span>
                     </td>
                     <td className="p-4 text-right">
                       <span className="font-mono text-sm text-slate-900 font-semibold">${exp.expenditure}B</span>
@@ -494,7 +857,7 @@ export default function Expenditures() {
         </CardContent>
       </Card>
 
-      {/* Top 5 focus cards — données dynamiques */}
+      {/* Top 5 focus cards */}
       <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
           <div className="flex items-center justify-between">
