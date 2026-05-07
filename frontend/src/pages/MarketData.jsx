@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getClearbitUrl, getLogoUrls } from "@/lib/companyLogos";
+import { getLogoUrls } from "@/lib/companyLogos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle, Star, Pin } from "lucide-react";
+import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle, Star, Pin, ChevronLeft, ChevronRight } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
@@ -485,6 +485,9 @@ export default function MarketData() {
   const [lastUpdated, setLastUpdated] = useState(null);
   // watchlist: Set of company names
   const [watchlist, setWatchlist] = useState(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 20;
+
   // pinnedCompanies: up to 3 company names, persisted in localStorage
   const [pinnedCompanies, setPinnedCompanies] = useState(() => {
     try { return JSON.parse(localStorage.getItem("market_pinned_v1")) || []; }
@@ -639,7 +642,14 @@ export default function MarketData() {
     });
 
     setFilteredPlayers(filtered);
+    setCurrentPage(1);
   }, [searchTerm, selectedCountry, selectedSegment, watchlistOnly, sortBy, players, liveData, watchlist]);
+
+  const totalPages = Math.ceil(filteredPlayers.length / ITEMS_PER_PAGE);
+  const paginatedPlayers = filteredPlayers.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const totalMarketCap = filteredPlayers.reduce((sum, p) => sum + p.market_cap, 0);
   const totalRevenue = filteredPlayers.reduce((sum, p) => sum + p.revenue, 0);
@@ -649,8 +659,6 @@ export default function MarketData() {
     const code = COUNTRY_FLAGS[country];
     return code ? `https://flagcdn.com/w40/${code}.png` : null;
   };
-
-  const getLogo = (companyName) => getClearbitUrl(companyName);
 
   const isPrivate = (ticker) => !ticker || ticker === "Private" || ticker.includes("PRIV");
 
@@ -913,9 +921,8 @@ export default function MarketData() {
                 </tr>
               </thead>
               <tbody>
-                {filteredPlayers.map((player, idx) => {
+                {paginatedPlayers.map((player, idx) => {
                   const flagUrl = getFlag(player.country);
-                  const logoUrl = getLogo(player.name);
                   const live = liveData[player.ticker];
                   const displayPrice = live?.price ?? player.stock_price;
                   const displayChange = live?.change_percent ?? player.change_percent;
@@ -968,7 +975,7 @@ export default function MarketData() {
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium shrink-0">
-                            {idx + 1}
+                            {(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}
                           </span>
                           <button
                             onClick={(e) => { e.stopPropagation(); setProfileName(player.name); }}
@@ -1065,6 +1072,55 @@ export default function MarketData() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
+              <p className="text-xs text-slate-500">
+                {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredPlayers.length)} sur {filteredPlayers.length} entreprises
+              </p>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:border-purple-300 hover:text-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                  .reduce((acc, p, i, arr) => {
+                    if (i > 0 && p - arr[i - 1] > 1) acc.push("...");
+                    acc.push(p);
+                    return acc;
+                  }, [])
+                  .map((item, i) =>
+                    item === "..." ? (
+                      <span key={`ellipsis-${i}`} className="px-1 text-slate-400 text-sm">…</span>
+                    ) : (
+                      <button
+                        key={item}
+                        onClick={() => setCurrentPage(item)}
+                        className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${
+                          item === currentPage
+                            ? "bg-purple-700 text-white"
+                            : "border border-slate-200 text-slate-600 hover:border-purple-300 hover:text-purple-700"
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    )
+                  )}
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:border-purple-300 hover:text-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
