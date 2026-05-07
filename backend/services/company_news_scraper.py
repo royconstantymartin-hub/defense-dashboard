@@ -230,9 +230,19 @@ def _source_to_clearbit_domain(outlet_name: str) -> str:
 
 # ── Per-company fetcher ──────────────────────────────────────────────────────
 
+# Companies that are primarily software/tech — drop the "defense" suffix so
+# their earnings and financial results news also gets captured.
+_TECH_FIRST_COMPANIES = {
+    "Palantir Technologies", "Anduril Industries", "Axon Enterprise",
+    "Rocket Lab", "AeroVironment", "Kratos Defense", "Mercury Systems",
+    "Booz Allen Hamilton", "SAIC", "Leidos Holdings",
+}
+
+
 def _google_news_rss_url(company_name: str) -> str:
     """Build a Google News RSS search URL for a company name."""
-    query = quote_plus(f"{company_name} defense")
+    suffix = "" if company_name in _TECH_FIRST_COMPANIES else " defense"
+    query = quote_plus(f"{company_name}{suffix}")
     return f"https://news.google.com/rss/search?q={query}&hl=en-US&gl=US&ceid=US:en"
 
 
