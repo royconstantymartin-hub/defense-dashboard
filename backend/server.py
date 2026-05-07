@@ -1206,9 +1206,28 @@ async def _run_seed() -> dict:
     """Idempotent seed — safe to call on every startup."""
     from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
 
-    # Seed Defense Players
+    # Remove duplicate defense players by name — keep the entry matching the seed ticker
+    seed_ticker_by_name = {p['name']: p['ticker'] for p in DEFENSE_COMPANIES}
+    all_players = await db.defense_players.find({}, {"_id": 0, "id": 1, "name": 1, "ticker": 1}).to_list(None)
+    seen_player_names: dict = {}
+    for player in all_players:
+        name = player.get('name', '')
+        if name in seen_player_names:
+            prev = seen_player_names[name]
+            correct_ticker = seed_ticker_by_name.get(name)
+            if player.get('ticker') == correct_ticker:
+                await db.defense_players.delete_one({"id": prev['id']})
+                seen_player_names[name] = player
+            else:
+                await db.defense_players.delete_one({"id": player['id']})
+        else:
+            seen_player_names[name] = player
+
+    # Seed Defense Players — check by name OR ticker to prevent duplicates
     for p in DEFENSE_COMPANIES:
-        existing = await db.defense_players.find_one({"ticker": p['ticker']})
+        existing = await db.defense_players.find_one(
+            {"$or": [{"ticker": p['ticker']}, {"name": p['name']}]}
+        )
         if not existing:
             player = DefensePlayer(**p)
             doc = player.model_dump()
