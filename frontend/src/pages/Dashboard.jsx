@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import axios from "axios";
 import { API, useAuth, useT } from "@/App";
-import { getClearbitUrl } from "@/lib/companyLogos";
+import { getLogoUrls } from "@/lib/companyLogos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   TrendingUp,
@@ -52,9 +52,10 @@ function avatarColor(name = "") {
 function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
-function CompanyLogoCell({ name, url }) {
-  const [failed, setFailed] = useState(false);
-  if (!url || failed) {
+function CompanyLogoCell({ name }) {
+  const urls = getLogoUrls(name);
+  const [urlIndex, setUrlIndex] = useState(0);
+  if (!urls.length || urlIndex >= urls.length) {
     return (
       <div className={`w-8 h-8 bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
         <span className="text-[10px] font-bold text-white tracking-tight">{initials(name)}</span>
@@ -62,9 +63,9 @@ function CompanyLogoCell({ name, url }) {
     );
   }
   return (
-    <img src={url} alt={name}
+    <img src={urls[urlIndex]} alt={name}
       className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 shrink-0"
-      onError={() => setFailed(true)} />
+      onError={() => setUrlIndex((i) => i + 1)} />
   );
 }
 
@@ -319,7 +320,7 @@ export default function Dashboard() {
                       className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-purple-50 transition-colors text-left"
                       onClick={() => { setSelectedCompany(company.name); setShowSearch(false); setSearchQuery(""); }}
                     >
-                      <CompanyLogoCell name={company.name} url={getClearbitUrl(company.name)} />
+                      <CompanyLogoCell name={company.name} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-slate-900 truncate">{company.name}</p>
                         <div className="flex items-center gap-1.5 mt-0.5">
@@ -518,7 +519,7 @@ export default function Dashboard() {
                             <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
                               {idx + 1}
                             </span>
-                            <CompanyLogoCell name={player.name} url={getClearbitUrl(player.name)} />
+                            <CompanyLogoCell name={player.name} />
                             <div>
                               <p className="text-slate-900 font-medium text-sm">{player.name}</p>
                               <div className="flex items-center gap-1.5 mt-0.5">

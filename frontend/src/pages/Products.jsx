@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
-import { getLogoUrl, getClearbitUrl } from "@/lib/companyLogos";
+import { getLogoUrls } from "@/lib/companyLogos";
 import ProductIllustration from "@/components/ProductIllustration";
 
 const CATEGORIES = [
@@ -404,6 +404,20 @@ const YOUTUBE_VIDEOS = {
   "E-2D Advanced Hawkeye": "u9LmpUS6-pE", // northropgrumman.com – FLOW: E-2D Enhancement
 };
 
+
+function ManufacturerLogo({ name, sizeClass = "w-5 h-5", fallback }) {
+  const urls = getLogoUrls(name);
+  const [urlIndex, setUrlIndex] = useState(0);
+  if (!urls.length || urlIndex >= urls.length) return fallback ?? null;
+  return (
+    <img
+      src={urls[urlIndex]}
+      alt=""
+      className={`${sizeClass} rounded object-contain shrink-0`}
+      onError={() => setUrlIndex((i) => i + 1)}
+    />
+  );
+}
 
 export default function Products() {
   const navigate = useNavigate();
@@ -821,7 +835,6 @@ export default function Products() {
         {filteredProducts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map((product) => {
           const Icon = getCategoryIcon(product.category);
           const isSelectedForCompare = selectedForCompare.find(p => p.id === product.id);
-          const logoUrl = getClearbitUrl(product.manufacturer);
           return (
             <Card 
               key={product.id}
@@ -873,20 +886,10 @@ export default function Products() {
                       title={`View ${product.manufacturer} profile`}
                     >
                       <span className="w-5 h-5 rounded-full bg-white ring-1 ring-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
-                        {logoUrl ? (
-                          <img
-                            src={logoUrl}
-                            alt=""
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextElementSibling.style.display = 'block';
-                            }}
-                          />
-                        ) : null}
-                        <Building2
-                          className="w-3 h-3 text-slate-400 group-hover:text-purple-500 transition-colors"
-                          style={{ display: logoUrl ? 'none' : 'block' }}
+                        <ManufacturerLogo
+                          name={product.manufacturer}
+                          sizeClass="w-full h-full"
+                          fallback={<Building2 className="w-3 h-3 text-slate-400 group-hover:text-purple-500 transition-colors" />}
                         />
                       </span>
                       <p className="text-xs text-slate-600 group-hover:text-purple-700 font-medium transition-colors truncate max-w-[120px]">
@@ -1169,17 +1172,10 @@ export default function Products() {
                   className="flex items-center gap-2 mt-2 group text-left bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-200 rounded-lg px-2.5 py-1.5 transition-all"
                   title={`View ${selectedProduct.manufacturer} profile`}
                 >
-                  {getClearbitUrl(selectedProduct.manufacturer) ? (
-                    <img
-                      src={getClearbitUrl(selectedProduct.manufacturer)}
-                      alt={selectedProduct.manufacturer}
-                      className="w-5 h-5 rounded object-contain shrink-0"
-                      onError={(ev) => { ev.target.style.display = 'none'; ev.target.nextElementSibling.style.display = 'block'; }}
-                    />
-                  ) : null}
-                  <Building2
-                    className="w-4 h-4 text-slate-400 group-hover:text-purple-500 shrink-0 transition-colors"
-                    style={{ display: getClearbitUrl(selectedProduct.manufacturer) ? 'none' : 'block' }}
+                  <ManufacturerLogo
+                    name={selectedProduct.manufacturer}
+                    sizeClass="w-5 h-5"
+                    fallback={<Building2 className="w-4 h-4 text-slate-400 group-hover:text-purple-500 shrink-0 transition-colors" />}
                   />
                   <span className="text-sm text-slate-600 group-hover:text-purple-700 font-medium transition-colors">
                     {selectedProduct.manufacturer}
