@@ -156,29 +156,121 @@ const TIME_BAND_LABELS = {
 
 // ── Placeholder ───────────────────────────────────────────────────────────────
 
-const PLACEHOLDER_BG = {
-  CONTRACT:    "bg-emerald-900",
-  TECHNOLOGY:  "bg-purple-900",
-  CONFLICT:    "bg-red-900",
-  POLICY:      "bg-amber-900",
-  GEOPOLITICS: "bg-sky-900",
-  "M&A":       "bg-blue-900",
-  INDUSTRY:    "bg-slate-800",
+const PLACEHOLDER_GRADIENT = {
+  CONTRACT:    "from-emerald-950 via-emerald-900 to-emerald-800",
+  TECHNOLOGY:  "from-purple-950 via-purple-900 to-purple-800",
+  CONFLICT:    "from-red-950 via-red-900 to-red-800",
+  POLICY:      "from-amber-950 via-amber-900 to-amber-800",
+  GEOPOLITICS: "from-sky-950 via-sky-900 to-sky-800",
+  "M&A":       "from-blue-950 via-blue-900 to-blue-800",
+  INDUSTRY:    "from-slate-900 via-slate-800 to-slate-700",
 };
 
-function NewsPlaceholder({ source, category }) {
-  const bg = PLACEHOLDER_BG[category] || "bg-slate-800";
+const CATEGORY_SVG = {
+  TECHNOLOGY: (
+    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
+      <circle cx="48" cy="48" r="40" stroke="white" strokeWidth="1.5"/>
+      <circle cx="48" cy="48" r="26" stroke="white" strokeWidth="1.5"/>
+      <circle cx="48" cy="48" r="12" stroke="white" strokeWidth="1.5"/>
+      <line x1="48" y1="48" x2="84" y2="20" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+      <line x1="48" y1="8" x2="48" y2="88" stroke="white" strokeWidth="1" strokeDasharray="4 4"/>
+      <line x1="8" y1="48" x2="88" y2="48" stroke="white" strokeWidth="1" strokeDasharray="4 4"/>
+    </svg>
+  ),
+  CONTRACT: (
+    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
+      <rect x="18" y="8" width="48" height="62" rx="4" stroke="white" strokeWidth="1.5"/>
+      <line x1="28" y1="28" x2="56" y2="28" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="28" y1="38" x2="56" y2="38" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="28" y1="48" x2="44" y2="48" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M60 68 L75 53 L83 61 L68 76 Z" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
+      <line x1="60" y1="68" x2="55" y2="82" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  ),
+  POLICY: (
+    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
+      <polygon points="48,8 88,30 8,30" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
+      <rect x="20" y="32" width="8" height="32" stroke="white" strokeWidth="1.5"/>
+      <rect x="36" y="32" width="8" height="32" stroke="white" strokeWidth="1.5"/>
+      <rect x="52" y="32" width="8" height="32" stroke="white" strokeWidth="1.5"/>
+      <rect x="68" y="32" width="8" height="32" stroke="white" strokeWidth="1.5"/>
+      <line x1="12" y1="64" x2="84" y2="64" stroke="white" strokeWidth="2"/>
+      <line x1="6" y1="72" x2="90" y2="72" stroke="white" strokeWidth="2"/>
+    </svg>
+  ),
+  CONFLICT: (
+    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
+      <circle cx="48" cy="48" r="34" stroke="white" strokeWidth="1.5"/>
+      <circle cx="48" cy="48" r="18" stroke="white" strokeWidth="1.5"/>
+      <circle cx="48" cy="48" r="5" fill="white"/>
+      <line x1="48" y1="6" x2="48" y2="26" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="48" y1="70" x2="48" y2="90" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="6" y1="48" x2="26" y2="48" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="70" y1="48" x2="90" y2="48" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
+  "M&A": (
+    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
+      <circle cx="30" cy="48" r="22" stroke="white" strokeWidth="1.5"/>
+      <circle cx="66" cy="48" r="22" stroke="white" strokeWidth="1.5"/>
+      <line x1="48" y1="36" x2="48" y2="60" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+      <polyline points="42,42 48,36 54,42" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <polyline points="42,54 48,60 54,54" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  GEOPOLITICS: (
+    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
+      <circle cx="48" cy="48" r="36" stroke="white" strokeWidth="1.5"/>
+      <ellipse cx="48" cy="48" rx="15" ry="36" stroke="white" strokeWidth="1"/>
+      <ellipse cx="48" cy="48" rx="28" ry="36" stroke="white" strokeWidth="1"/>
+      <line x1="12" y1="48" x2="84" y2="48" stroke="white" strokeWidth="1"/>
+      <ellipse cx="48" cy="35" rx="30" ry="9" stroke="white" strokeWidth="1"/>
+      <ellipse cx="48" cy="61" rx="30" ry="9" stroke="white" strokeWidth="1"/>
+    </svg>
+  ),
+  INDUSTRY: (
+    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
+      <rect x="8" y="50" width="80" height="38" stroke="white" strokeWidth="1.5"/>
+      <path d="M8 50 L8 30 L32 44 L32 30 L56 44 L56 30 L80 44 L80 50" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
+      <rect x="65" y="16" width="10" height="34" stroke="white" strokeWidth="1.5"/>
+      <rect x="24" y="62" width="12" height="26" stroke="white" strokeWidth="1.5"/>
+      <rect x="44" y="62" width="12" height="26" stroke="white" strokeWidth="1.5"/>
+      <rect x="64" y="62" width="12" height="26" stroke="white" strokeWidth="1.5"/>
+    </svg>
+  ),
+};
+
+function NewsPlaceholder({ source, category, url, sourceLogo }) {
+  const [logoErr, setLogoErr] = useState(false);
+
+  const domain = (() => { try { return url ? new URL(url).hostname : ""; } catch { return ""; } })();
+  const logoUrl = !logoErr
+    ? (sourceLogo || (domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null))
+    : null;
+
+  const gradient = PLACEHOLDER_GRADIENT[category] || "from-slate-900 via-slate-800 to-slate-700";
+  const Icon = CATEGORY_SVG[category] || CATEGORY_SVG.INDUSTRY;
+
   return (
-    <div className={`w-full h-full flex flex-col items-center justify-center ${bg}`}>
-      <svg width="44" height="44" viewBox="0 0 48 48" fill="none" opacity="0.35">
-        <rect x="6" y="8" width="36" height="32" rx="3" stroke="white" strokeWidth="2" />
-        <line x1="12" y1="18" x2="36" y2="18" stroke="white" strokeWidth="2" strokeLinecap="round" />
-        <line x1="12" y1="24" x2="36" y2="24" stroke="white" strokeWidth="2" strokeLinecap="round" />
-        <line x1="12" y1="30" x2="26" y2="30" stroke="white" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-      <span className="text-slate-300 text-[11px] mt-3 font-semibold tracking-wide uppercase">{source}</span>
-      {category && category !== "INDUSTRY" && (
-        <span className="text-slate-500 text-[9px] mt-1 tracking-widest uppercase">{category}</span>
+    <div className={`w-full h-full flex flex-col items-center justify-center bg-gradient-to-br ${gradient} relative overflow-hidden`}>
+      <div className="absolute inset-0 flex items-center justify-center opacity-[0.13] scale-150 pointer-events-none">
+        {Icon}
+      </div>
+      <div className="relative z-10 w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-lg mb-2">
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt={source}
+            className="w-10 h-10 object-contain"
+            onError={() => setLogoErr(true)}
+          />
+        ) : (
+          <span className="text-white/80 text-2xl font-bold">{source?.charAt(0)?.toUpperCase() || "?"}</span>
+        )}
+      </div>
+      <span className="relative z-10 text-white/70 text-[11px] font-semibold tracking-wide uppercase mt-1">{source}</span>
+      {category && (
+        <span className="relative z-10 text-white/40 text-[9px] mt-0.5 tracking-widest uppercase">{category}</span>
       )}
     </div>
   );
@@ -259,7 +351,7 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
             className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
           />
         ) : (
-          <NewsPlaceholder source={article.source} category={article.category} />
+          <NewsPlaceholder source={article.source} category={article.category} url={article.url} sourceLogo={article.sourceLogo} />
         )}
 
         {/* Bottom scrim for badge legibility */}
