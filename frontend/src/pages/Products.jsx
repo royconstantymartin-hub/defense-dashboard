@@ -616,6 +616,7 @@ export default function Products() {
   const [wikiImages, setWikiImages] = useState({});     // productId → url
   const [primaryErr, setPrimaryErr] = useState({});     // productId → true when DB url failed
   const [wikiErr, setWikiErr] = useState({});           // productId → true when wiki url failed
+  const [staticErr, setStaticErr] = useState({});       // productId → true when static fallback url failed
   const fetchedIds = useRef(new Set());
 
   const fetchWikiImage = useCallback(async (productId, productName) => {
@@ -694,15 +695,16 @@ export default function Products() {
     if (wikiSrc && !wikiErr[productId]) return wikiSrc;
     if (dbUrl && !primaryErr[productId]) return dbUrl;
     const staticSrc = STATIC_PRODUCT_IMAGES[productName];
-    if (staticSrc) return staticSrc;
+    if (staticSrc && !staticErr[productId]) return staticSrc;
     return null;
   };
 
   const handleImgError = (ev, productId, imgSrc) => {
-    const wikiSrc = wikiImages[productId];
     ev.target.style.display = 'none';
-    if (imgSrc === wikiSrc) {
+    if (imgSrc === wikiImages[productId]) {
       setWikiErr(prev => ({ ...prev, [productId]: true }));
+    } else if (Object.values(STATIC_PRODUCT_IMAGES).includes(imgSrc)) {
+      setStaticErr(prev => ({ ...prev, [productId]: true }));
     } else {
       setPrimaryErr(prev => ({ ...prev, [productId]: true }));
     }
