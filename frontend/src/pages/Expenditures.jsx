@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -172,6 +173,7 @@ function CountryProfileSection({ country, allExpenditures }) {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [industryTab, setIndustryTab] = useState("national");
   const [showAllCompanies, setShowAllCompanies] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
   const [bannerError, setBannerError] = useState(false);
   const banner = getCountryBanner(country.country);
 
@@ -461,29 +463,47 @@ function CountryProfileSection({ country, allExpenditures }) {
               const list = showAllCompanies ? all : all.slice(0, PREVIEW);
               return all.length > 0 ? (
                 <div className="space-y-2">
-                  {list.map((c, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-purple-100 hover:bg-slate-50/60 transition-colors gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <CompanyLogo name={c.name} size="sm" />
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
-                          <div className="flex gap-1 flex-wrap mt-0.5">
-                            {c.specializations.slice(0, 2).map((s, si) => (
-                              <span key={si} className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">
-                                {s}
-                              </span>
-                            ))}
+                  {list.map((c, i) => {
+                    const isCluster = c.company_type === "cluster";
+                    return (
+                      <div
+                        key={i}
+                        onClick={() => !isCluster && setSelectedCompany(c.name)}
+                        className={`flex items-center justify-between p-3 rounded-lg border border-slate-100 transition-colors gap-3 ${
+                          isCluster
+                            ? "bg-slate-50/80"
+                            : "hover:border-purple-100 hover:bg-slate-50/60 cursor-pointer"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <CompanyLogo name={c.name} size="sm" />
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
+                              {isCluster && (
+                                <span className="text-[9px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-semibold shrink-0">
+                                  Conglomérat d'État
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex gap-1 flex-wrap mt-0.5">
+                              {c.specializations.slice(0, 2).map((s, si) => (
+                                <span key={si} className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">
+                                  {s}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
+                        <div className="text-right shrink-0">
+                          {c.market_cap > 0 && (
+                            <p className="text-xs font-mono text-slate-700 font-semibold">${c.market_cap}B</p>
+                          )}
+                          <p className="text-[10px] text-slate-400 font-mono">{c.ticker}</p>
+                        </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        {c.market_cap > 0 && (
-                          <p className="text-xs font-mono text-slate-700 font-semibold">${c.market_cap}B</p>
-                        )}
-                        <p className="text-[10px] text-slate-400 font-mono">{c.ticker}</p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   {all.length > PREVIEW && (
                     <button
                       onClick={() => setShowAllCompanies(v => !v)}
@@ -561,6 +581,9 @@ function CountryProfileSection({ country, allExpenditures }) {
           )}
         </CardContent>
       </Card>
+      {selectedCompany && (
+        <CompanyProfileSheet name={selectedCompany} onClose={() => setSelectedCompany(null)} />
+      )}
     </div>
   );
 }

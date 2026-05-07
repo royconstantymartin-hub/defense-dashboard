@@ -128,7 +128,7 @@ DEFENSE_COMPANIES = [
     {"name": "Denel", "ticker": "DENE-PRIV", "country": "South Africa", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 3500, "specializations": ["Land Systems", "Missiles", "Aviation"]},
     {"name": "Paramount Group", "ticker": "PARA-PRIV", "country": "South Africa", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 2000, "specializations": ["Land Systems", "Naval", "Aviation"]},
     # === Ukraine ===
-    {"name": "Ukroboronprom", "ticker": "UKR-PRIV", "country": "Ukraine", "market_cap": 3.2, "stock_price": 0, "change_percent": 0, "revenue": 2.1, "employees": 70000, "specializations": ["Land Systems", "Aircraft", "Missiles", "Naval"]},
+    {"name": "Ukroboronprom", "ticker": "UKR-PRIV", "country": "Ukraine", "market_cap": 3.2, "stock_price": 0, "change_percent": 0, "revenue": 2.1, "employees": 70000, "specializations": ["Land Systems", "Aircraft", "Missiles", "Naval"], "company_type": "cluster"},
     {"name": "Antonov", "ticker": "ANTN-PRIV", "country": "Ukraine", "market_cap": 0.9, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 6000, "specializations": ["Transport Aircraft", "An-178", "An-132"]},
     {"name": "UkrSpecSystems", "ticker": "USS-PRIV", "country": "Ukraine", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 400, "specializations": ["UAV", "Leleka-100", "PD-2", "ISR"]},
     {"name": "Skyeton", "ticker": "SKYT-PRIV", "country": "Ukraine", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.08, "employees": 150, "specializations": ["Loitering Munitions", "UAV", "Raybird-3"]},

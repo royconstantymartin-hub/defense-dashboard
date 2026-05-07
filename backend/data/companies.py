@@ -76,8 +76,8 @@ DEFENSE_COMPANIES = [
     {"name": "Airbus Defence Spain", "ticker": "AIR.PA", "country": "Spain", "market_cap": 2.8, "stock_price": 0, "change_percent": 0, "revenue": 1.8, "employees": 7500, "specializations": ["Aircraft", "Space", "UAV"]},
     
     # === EU/Multinational ===
-    {"name": "Airbus Defence & Space", "ticker": "AIR.PA", "country": "EU", "market_cap": 98.5, "stock_price": 156.23, "change_percent": 0.98, "revenue": 52.1, "employees": 130000, "specializations": ["Aircraft", "Space", "Helicopters", "UAV"]},
-    {"name": "KNDS", "ticker": "PRIVATE", "country": "EU", "market_cap": 6.5, "stock_price": 0, "change_percent": 0, "revenue": 4.2, "employees": 9000, "specializations": ["Land Systems", "Tanks", "Artillery"]},
+    {"name": "Airbus Defence & Space", "ticker": "AIR.PA", "country": "EU", "market_cap": 98.5, "stock_price": 156.23, "change_percent": 0.98, "revenue": 52.1, "employees": 130000, "specializations": ["Aircraft", "Space", "Helicopters", "UAV"], "multinational_for": ["France", "Germany", "Spain", "United Kingdom", "Belgium", "Netherlands", "Italy", "Portugal", "Poland", "Sweden", "Denmark", "Finland", "Norway", "Austria", "Czech Republic", "Romania", "Hungary", "Switzerland", "Greece"]},
+    {"name": "KNDS", "ticker": "PRIVATE", "country": "EU", "market_cap": 6.5, "stock_price": 0, "change_percent": 0, "revenue": 4.2, "employees": 9000, "specializations": ["Land Systems", "Tanks", "Artillery"], "multinational_for": ["France", "Germany", "Netherlands", "Belgium"]},
     
     # === Sweden ===
     {"name": "Saab AB", "ticker": "SAAB-B.ST", "country": "Sweden", "market_cap": 18.5, "stock_price": 678.90, "change_percent": 2.45, "revenue": 5.8, "employees": 21000, "specializations": ["Aircraft", "Radar", "Missiles", "Submarines"]},
