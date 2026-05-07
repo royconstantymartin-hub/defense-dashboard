@@ -94,6 +94,7 @@ export const COMPANY_LOGOS = {
   "Avio": "avio.com",
   // Scandinavia
   "Saab AB": "saab.com",
+  "Saab Kockums": "saabkockums.se",
   "Nammo": "nammo.com",
   "Nammo Lapua": "nammo.com",
   "Kongsberg Defence": "kongsberg.com",
@@ -103,6 +104,7 @@ export const COMPANY_LOGOS = {
   "Navantia": "navantia.es",
   // Benelux
   "Damen Shipyards": "damen.com",
+  "Damen Naval": "damen.com",
   "CMI Defence": "cmigroupe.com",
   "FN Herstal": "fnherstal.com",
   // Switzerland
@@ -128,6 +130,7 @@ export const COMPANY_LOGOS = {
   // South Korea
   "Hanwha Aerospace": "hanwhaaerospace.com",
   "Hanwha Defense": "hanwhadefense.com",
+  "Hanwha Ocean": "hanwhaocean.com",
   "Korea Aerospace Industries": "koreaaero.com",
   "Hyundai Rotem": "hyundai-rotem.com",
   "LIG Nex1": "lignex1.com",
@@ -170,7 +173,10 @@ export const COMPANY_LOGOS = {
   "Avibras": "avibras.com.br",
   // Canada
   "CAE Inc": "cae.com",
+  // Russia
+  "Sevmash": "sevmash.ru",
   // New companies
+  "Exail Technologies": "exail-technologies.com",
   "Teledyne Technologies": "teledyne.com",
   "SERCO Group": "serco.com",
   "Milrem Robotics": "milremrobotics.com",
@@ -248,14 +254,17 @@ export const COMPANY_WIKI_LOGOS = {
   "Krauss-Maffei Wegmann":         WP + "KMW-logo.svg",
   "Diehl Defence":                 WP + "Diehl_Defence_Logo.svg",
   "Hensoldt":                      WP + "Hensoldt_Logo_2020.svg",
+  "ThyssenKrupp Marine":           WP + "Thyssenkrupp_Logo.svg",
   // Italy
   "Leonardo":                      WP + "Logo_Leonardo.svg",
   "Fincantieri":                   WP + "Fincantieri_logo.svg",
   // Sweden / Norway
   "Saab AB":                       WP + "Saab_wordmark_blue.svg",
+  "Saab Kockums":                  WP + "Saab_wordmark_blue.svg",
   "Kongsberg Defence":             WP + "Kongsberg_logo.svg",
   // Spain
   "Indra Sistemas":                WP + "Indra_Sistemas_logo.svg",
+  "Navantia":                      WP + "Navantia.svg",
   // Benelux
   "FN Herstal":                    WP + "FN-Herstal-logo.svg",
   // Switzerland
@@ -271,8 +280,10 @@ export const COMPANY_WIKI_LOGOS = {
   "Korea Aerospace Industries":    WP + "Korea_Aerospace_Industries_logo.svg",
   "Hanwha Aerospace":              WP + "Hanwha_Aerospace_logo.svg",
   "Hanwha Defense":                WP + "Hanwha_logo.svg",
+  "Hanwha Ocean":                  WP + "Hanwha_logo.svg",
   // Russia
   "Rostec":                        WP + "Rostec_logo.svg",
+  "United Shipbuilding Corporation": WP + "United_Shipbuilding_Corporation_logo.svg",
   // Singapore
   "ST Engineering":                WP + "Singapore_Technologies_Engineering_logo.svg",
   // Turkey
