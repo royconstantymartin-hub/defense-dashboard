@@ -275,6 +275,7 @@ export const COMPANY_WIKI_LOGOS = {
   "Rafael Advanced Defense":       WP + "RAFAEL_logo.png",
   // Japan
   "Mitsubishi Heavy Industries":   WP + "Mhi_logo_en.svg",
+  "Mitsubishi/Kawasaki":           WP + "Mhi_logo_en.svg",
   "Kawasaki Heavy Industries":     WP + "Kawasaki_Heavy_Industries_Logo.svg",
   // South Korea
   "Korea Aerospace Industries":    WP + "Korea_Aerospace_Industries_logo.svg",

@@ -256,6 +256,8 @@ const WIKI_TITLES = {
   "KSS-III Submarine": "KSS-III submarine",
   "Borei-class Submarine": "Borei-class submarine",
   "Yasen-class Submarine": "Yasen-class submarine",
+  "DG100 Autonomous USV": "Unmanned surface vehicle",
+  "IDEFX Autonomous UUV": "Autonomous underwater vehicle",
   "Marder IFV": "Marder (IFV)",
   "AMX-10RC": "AMX-10 RC",
   "Altay Tank": "Altay (tank)",

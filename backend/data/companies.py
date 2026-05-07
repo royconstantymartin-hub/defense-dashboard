@@ -83,6 +83,7 @@ DEFENSE_COMPANIES = [
     
     # === Sweden ===
     {"name": "Saab AB", "ticker": "SAAB-B.ST", "country": "Sweden", "market_cap": 18.5, "stock_price": 678.90, "change_percent": 2.45, "revenue": 5.8, "employees": 21000, "specializations": ["Aircraft", "Radar", "Missiles", "Submarines"]},
+    {"name": "Saab Kockums", "ticker": "PRIVATE", "country": "Sweden", "market_cap": 1.2, "stock_price": 0, "change_percent": 0, "revenue": 0.6, "employees": 1600, "specializations": ["Submarines", "Naval", "AIP Systems"]},
     {"name": "Nammo", "ticker": "PRIVATE", "country": "Norway", "market_cap": 1.2, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 3000, "specializations": ["Ammunition", "Rockets", "Space"]},
     {"name": "Kongsberg Defence", "ticker": "KOG.OL", "country": "Norway", "market_cap": 8.5, "stock_price": 85.67, "change_percent": 1.78, "revenue": 3.5, "employees": 12000, "specializations": ["Missiles", "Remote Weapons", "Maritime"]},
     
@@ -105,6 +106,7 @@ DEFENSE_COMPANIES = [
     {"name": "LIG Nex1", "ticker": "079550.KS", "country": "South Korea", "market_cap": 3.2, "stock_price": 98.45, "change_percent": 0.89, "revenue": 1.8, "employees": 4200, "specializations": ["Missiles", "Torpedoes", "Electronics"]},
     {"name": "Hyundai Rotem", "ticker": "064350.KS", "country": "South Korea", "market_cap": 2.8, "stock_price": 34.56, "change_percent": 1.45, "revenue": 2.5, "employees": 5500, "specializations": ["Tanks", "K2", "Rail"]},
     {"name": "Hanwha Defense", "ticker": "PRIVATE", "country": "South Korea", "market_cap": 4.5, "stock_price": 0, "change_percent": 0, "revenue": 2.2, "employees": 4800, "specializations": ["Land Systems", "K9", "Artillery"]},
+    {"name": "Hanwha Ocean", "ticker": "042660.KS", "country": "South Korea", "market_cap": 6.8, "stock_price": 34.50, "change_percent": 1.12, "revenue": 7.2, "employees": 12000, "specializations": ["Naval", "Submarines", "KSS-III", "Destroyers"]},
     
     # === Japan ===
     {"name": "Mitsubishi Heavy Industries", "ticker": "7011.T", "country": "Japan", "market_cap": 45.6, "stock_price": 1234.56, "change_percent": 0.78, "revenue": 38.5, "employees": 82000, "specializations": ["Ships", "Aircraft", "Space", "Power"]},
