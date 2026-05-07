@@ -1170,7 +1170,7 @@ async def _run_seed() -> dict:
     for name in PRODUCTS_TO_DELETE:
         await db.products.delete_one({"name": name})
 
-    # Seed Products (insert new, update image_url + specifications for existing)
+    # Seed Products (insert new, update image_url + specifications + manufacturer for existing)
     for p in PRODUCTS_DATA:
         existing = await db.products.find_one({"name": p['name']})
         if not existing:
@@ -1182,6 +1182,8 @@ async def _run_seed() -> dict:
                 updates['image_url'] = p['image_url']
             if p.get('specifications') and existing.get('specifications') != p.get('specifications'):
                 updates['specifications'] = p['specifications']
+            if p.get('manufacturer') and existing.get('manufacturer') != p.get('manufacturer'):
+                updates['manufacturer'] = p['manufacturer']
             if updates:
                 await db.products.update_one({"name": p['name']}, {"$set": updates})
 
