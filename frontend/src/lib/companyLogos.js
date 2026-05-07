@@ -90,7 +90,6 @@ export const COMPANY_LOGOS = {
   "Sofradir": "lynred.com",
   // Germany
   "Rheinmetall": "rheinmetall.com",
-  "Krauss-Maffei Wegmann": "kmweg.de",
   "Diehl Defence": "diehl.com",
   "Hensoldt": "hensoldt.net",
   "MTU Aero Engines": "mtu.de",
@@ -275,13 +274,12 @@ export const COMPANY_WIKI_LOGOS = {
   "Dassault Aviation":             WP + "Dassault_Aviation_Logo.jpg",
   "MBDA":                          WP + "MBDA-Logo.svg",
   "Naval Group":                   WP + "Naval_Group_logo.svg",
-  // France — KNDS group
-  "KNDS":                          WP + "KNDS_Logo.svg",
-  "KNDS France":                   WP + "KNDS_Logo.svg",
-  "Nexter Systems":                WP + "Nexter_Logo.svg",
+  // France/Germany — KNDS group (merged from Nexter + KMW in 2015)
+  "KNDS":                          WP + "KNDS_logo.svg",
+  "KNDS France":                   WP + "KNDS_logo.svg",
+  "KNDS Deutschland":              WP + "KNDS_logo.svg",
   // Germany
   "Rheinmetall":                   WP + "Rheinmetall_Logo_2021.svg",
-  "Krauss-Maffei Wegmann":         WP + "KMW-logo.svg",
   "Diehl Defence":                 WP + "Diehl_Defence_Logo.svg",
   "Hensoldt":                      WP + "Hensoldt_Logo_2020.svg",
   "ThyssenKrupp Marine":           WP + "Thyssenkrupp_Logo.svg",
