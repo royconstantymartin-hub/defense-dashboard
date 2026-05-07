@@ -239,13 +239,14 @@ const CAP_CATEGORIES = [
     Icon: Plane,
     scale: 50,
     scaleLabel: "50 aircraft",
-    bg: "bg-sky-50",
-    border: "border-sky-100",
-    iconColor: "text-sky-600",
+    bg: "bg-sky-50/60",
+    border: "border-sky-200",
     labelColor: "text-sky-700",
     countColor: "text-sky-900",
-    dotColor: "text-sky-300",
-    badgeBg: "bg-sky-100",
+    dotColor: "text-sky-400",
+    progressColor: "bg-sky-500",
+    iconBadgeBg: "bg-sky-500/20",
+    iconColor: "text-sky-400",
   },
   {
     key: "surface_combatants",
@@ -254,13 +255,14 @@ const CAP_CATEGORIES = [
     Icon: Anchor,
     scale: 4,
     scaleLabel: "4 vessels",
-    bg: "bg-blue-50",
-    border: "border-blue-100",
-    iconColor: "text-blue-600",
+    bg: "bg-blue-50/60",
+    border: "border-blue-200",
     labelColor: "text-blue-700",
     countColor: "text-blue-900",
-    dotColor: "text-blue-300",
-    badgeBg: "bg-blue-100",
+    dotColor: "text-blue-400",
+    progressColor: "bg-blue-500",
+    iconBadgeBg: "bg-blue-500/20",
+    iconColor: "text-blue-400",
   },
   {
     key: "tanks",
@@ -269,13 +271,14 @@ const CAP_CATEGORIES = [
     Icon: Shield,
     scale: 300,
     scaleLabel: "300 tanks",
-    bg: "bg-emerald-50",
-    border: "border-emerald-100",
-    iconColor: "text-emerald-600",
+    bg: "bg-emerald-50/60",
+    border: "border-emerald-200",
     labelColor: "text-emerald-700",
     countColor: "text-emerald-900",
-    dotColor: "text-emerald-300",
-    badgeBg: "bg-emerald-100",
+    dotColor: "text-emerald-400",
+    progressColor: "bg-emerald-500",
+    iconBadgeBg: "bg-emerald-500/20",
+    iconColor: "text-emerald-400",
   },
   {
     key: "submarines",
@@ -284,15 +287,27 @@ const CAP_CATEGORIES = [
     Icon: Crosshair,
     scale: 3,
     scaleLabel: "3 submarines",
-    bg: "bg-purple-50",
-    border: "border-purple-100",
-    iconColor: "text-purple-600",
-    labelColor: "text-purple-700",
-    countColor: "text-purple-900",
-    dotColor: "text-purple-300",
-    badgeBg: "bg-purple-100",
+    bg: "bg-violet-50/60",
+    border: "border-violet-200",
+    labelColor: "text-violet-700",
+    countColor: "text-violet-900",
+    dotColor: "text-violet-400",
+    progressColor: "bg-violet-500",
+    iconBadgeBg: "bg-violet-500/20",
+    iconColor: "text-violet-400",
   },
 ];
+
+// Pre-computed world ranks and max values for capability tiles
+const CAP_MAX = {};
+const CAP_RANKS = {};
+CAP_CATEGORIES.forEach(({ key }) => {
+  const sorted = Object.entries(DEFENSE_CAPABILITIES)
+    .filter(([, v]) => (v[key] || 0) > 0)
+    .sort((a, b) => b[1][key] - a[1][key]);
+  CAP_MAX[key] = sorted[0]?.[1][key] ?? 0;
+  CAP_RANKS[key] = sorted.map(([code]) => code);
+});
 
 function useCountUp(target, duration = 900) {
   const [value, setValue] = useState(0);
@@ -314,48 +329,72 @@ function useCountUp(target, duration = 900) {
   return value;
 }
 
-function CapabilityTile({ cat, count }) {
+function CapabilityTile({ cat, count, rank, maxCount }) {
   const animated = useCountUp(count);
-  const iconCount = count === 0 ? 0 : Math.max(1, Math.min(Math.floor(count / cat.scale), 18));
+  const iconCount = count === 0 ? 0 : Math.max(1, Math.min(Math.floor(count / cat.scale), 20));
+  const pct = maxCount > 0 && count > 0 ? Math.min((count / maxCount) * 100, 100) : 0;
 
   return (
-    <div className={`${cat.bg} border ${cat.border} rounded-xl p-4 flex flex-col gap-3`}>
-      {/* Header */}
-      <div className="flex items-center gap-2">
-        <span className={`p-1.5 rounded-lg ${cat.badgeBg}`}>
-          <cat.Icon className={`w-4 h-4 ${cat.iconColor}`} />
-        </span>
-        <div>
-          <p className={`text-xs font-bold ${cat.labelColor} leading-tight`}>{cat.label}</p>
-          <p className="text-[10px] text-slate-400 leading-tight">{cat.sublabel}</p>
+    <div className={`rounded-xl overflow-hidden border ${cat.border} shadow-sm`}>
+      {/* Dark intelligence-style header */}
+      <div className="bg-slate-800 px-3 py-2.5 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className={`shrink-0 p-1.5 rounded-md ${cat.iconBadgeBg}`}>
+            <cat.Icon className={`w-4 h-4 ${cat.iconColor}`} />
+          </span>
+          <div className="min-w-0">
+            <p className="text-xs font-bold text-white leading-tight truncate">{cat.label}</p>
+            <p className="text-[10px] text-slate-400 leading-tight truncate">{cat.sublabel}</p>
+          </div>
         </div>
-      </div>
-
-      {/* Count */}
-      <div>
-        <p className={`text-3xl font-mono font-bold ${cat.countColor} tabular-nums`}>
-          {count === 0 ? "—" : animated.toLocaleString()}
-        </p>
-        {count === 0 && (
-          <p className="text-[10px] text-slate-400 mt-0.5">No data / not applicable</p>
+        {rank > 0 && count > 0 && (
+          <span className={`shrink-0 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+            rank === 1 ? "bg-amber-500/25 text-amber-400 border-amber-500/40" :
+            rank <= 3 ? "bg-slate-500/30 text-slate-300 border-slate-500/40" :
+            "bg-slate-700/60 text-slate-400 border-slate-600/50"
+          }`}>
+            #{rank}
+          </span>
         )}
       </div>
 
-      {/* ISOTYPE pictogram row */}
-      {iconCount > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {Array.from({ length: iconCount }).map((_, i) => (
-            <cat.Icon key={i} className={`w-3.5 h-3.5 ${cat.dotColor}`} />
-          ))}
-        </div>
-      )}
-
-      {/* Scale hint */}
-      {count > 0 && (
-        <p className={`text-[10px] ${cat.labelColor} opacity-60`}>
-          1 icon ≈ {cat.scaleLabel}
+      {/* Body */}
+      <div className={`${cat.bg} p-3 flex flex-col gap-2`}>
+        <p className={`text-3xl font-mono font-bold ${cat.countColor} tabular-nums leading-none`}>
+          {count === 0 ? "—" : animated.toLocaleString()}
         </p>
-      )}
+
+        {count === 0 && (
+          <p className="text-[10px] text-slate-400">No data / not applicable</p>
+        )}
+
+        {/* Progress bar vs world leader */}
+        {count > 0 && (
+          <div>
+            <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full ${cat.progressColor}`}
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* ISOTYPE pictogram row */}
+        {iconCount > 0 && (
+          <div className="flex flex-wrap gap-0.5">
+            {Array.from({ length: iconCount }).map((_, i) => (
+              <cat.Icon key={i} className={`w-3 h-3 ${cat.dotColor}`} />
+            ))}
+          </div>
+        )}
+
+        {count > 0 && (
+          <p className={`text-[10px] ${cat.labelColor} opacity-60`}>
+            1 icon ≈ {cat.scaleLabel}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -384,13 +423,83 @@ function DefenseCapabilitiesCard({ countryCode }) {
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {CAP_CATEGORIES.map((cat) => (
-              <CapabilityTile key={cat.key} cat={cat} count={cap[cat.key] ?? 0} />
-            ))}
+            {CAP_CATEGORIES.map((cat) => {
+              const rank = CAP_RANKS[cat.key].indexOf(countryCode) + 1;
+              return (
+                <CapabilityTile
+                  key={cat.key}
+                  cat={cat}
+                  count={cap[cat.key] ?? 0}
+                  rank={rank > 0 ? rank : null}
+                  maxCount={CAP_MAX[cat.key]}
+                />
+              );
+            })}
           </div>
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function getBranchLogo(website) {
+  try {
+    const domain = new URL(website).hostname;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+  } catch {
+    return null;
+  }
+}
+
+function BranchCard({ branch }) {
+  const [logoError, setLogoError] = useState(false);
+  const logoUrl = getBranchLogo(branch.website);
+  const colorCls = BRANCH_COLOR[branch.type] || "bg-slate-50 text-slate-600 border-slate-200";
+  const icon = BRANCH_ICON[branch.type] || <Shield className="w-5 h-5" />;
+
+  return (
+    <a
+      href={branch.website}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex flex-col gap-3 p-4 rounded-xl border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all bg-white"
+    >
+      {/* Logo + type badge */}
+      <div className="flex items-center justify-between">
+        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center overflow-hidden ${colorCls} shrink-0`}>
+          {logoUrl && !logoError ? (
+            <img
+              src={logoUrl}
+              alt={branch.name}
+              className="w-8 h-8 object-contain"
+              onError={() => setLogoError(true)}
+            />
+          ) : (
+            <span className="scale-125">{icon}</span>
+          )}
+        </div>
+        <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-400 transition-colors shrink-0" />
+      </div>
+
+      {/* Name + role */}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-slate-800 group-hover:text-purple-700 leading-tight transition-colors line-clamp-2">
+          {branch.name}
+        </p>
+        <p className="text-[11px] text-slate-500 mt-0.5">{branch.role}</p>
+      </div>
+
+      {/* Personnel */}
+      {branch.personnel > 0 && (
+        <div className="flex items-center gap-1.5 pt-2 border-t border-slate-100">
+          <Users className="w-3.5 h-3.5 text-slate-400" />
+          <span className="text-sm font-mono font-bold text-slate-700">
+            {formatPersonnel(branch.personnel)}
+          </span>
+          <span className="text-[10px] text-slate-400">personnel</span>
+        </div>
+      )}
+    </a>
   );
 }
 
@@ -488,42 +597,15 @@ function CountryProfileSection({ country, allExpenditures }) {
           </CardHeader>
           <CardContent className="p-4">
             {loadingProfile ? (
-              <div className="space-y-2">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="h-12 bg-slate-100 rounded-lg animate-pulse" />
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="h-32 bg-slate-100 rounded-xl animate-pulse" />
                 ))}
               </div>
             ) : profile?.military_branches?.length > 0 ? (
-              <div className="space-y-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {profile.military_branches.map((branch, i) => (
-                  <a
-                    key={i}
-                    href={branch.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 rounded-lg border hover:border-purple-200 hover:bg-purple-50/30 transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className={`p-1.5 rounded-md border ${BRANCH_COLOR[branch.type] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
-                        {BRANCH_ICON[branch.type] || <Shield className="w-4 h-4" />}
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-slate-800 group-hover:text-purple-700 leading-tight">
-                          {branch.name}
-                        </p>
-                        <p className="text-xs text-slate-500">{branch.role}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-right">
-                      {branch.personnel > 0 && (
-                        <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
-                          <Users className="w-3 h-3" />
-                          {formatPersonnel(branch.personnel)}
-                        </span>
-                      )}
-                      <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-400 transition-colors" />
-                    </div>
-                  </a>
+                  <BranchCard key={i} branch={branch} />
                 ))}
               </div>
             ) : (
@@ -1213,20 +1295,28 @@ export default function Expenditures() {
                     data-testid={`expenditure-row-${exp.id}`}
                   >
                     <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
-                          {idx + 1}
-                        </span>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-3">
+                          <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium shrink-0">
+                            {idx + 1}
+                          </span>
+                          <img
+                            src={getFlag(exp.country_code)}
+                            alt={exp.country}
+                            className="w-8 h-6 object-cover rounded shadow-sm border border-slate-100 shrink-0"
+                            onError={(e) => { e.target.src = `https://flagcdn.com/w40/${exp.country_code.toLowerCase()}.png`; }}
+                          />
+                          <div>
+                            <p className="text-slate-900 font-medium text-sm">{exp.country}</p>
+                            <p className="text-xs text-slate-500 font-mono">{exp.country_code}</p>
+                          </div>
+                        </div>
                         <img
                           src={getFlag(exp.country_code)}
-                          alt={exp.country}
-                          className="w-8 h-6 object-cover rounded shadow-sm border border-slate-100"
-                          onError={(e) => { e.target.src = `https://flagcdn.com/w40/${exp.country_code.toLowerCase()}.png`; }}
+                          alt=""
+                          className="w-10 h-7 object-cover rounded-md shadow-sm border border-slate-100 opacity-40 shrink-0 hidden sm:block"
+                          aria-hidden="true"
                         />
-                        <div>
-                          <p className="text-slate-900 font-medium text-sm">{exp.country}</p>
-                          <p className="text-xs text-slate-500 font-mono">{exp.country_code}</p>
-                        </div>
                       </div>
                     </td>
                     <td className="p-4">
