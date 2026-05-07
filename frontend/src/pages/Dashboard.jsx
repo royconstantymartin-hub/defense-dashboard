@@ -519,7 +519,7 @@ export default function Dashboard() {
                             <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
                               {idx + 1}
                             </span>
-                            <CompanyLogoCell name={player.name} url={getClearbitUrl(player.name)} />
+                            <CompanyLogoCell name={player.name} />
                             <div>
                               <p className="text-slate-900 font-medium text-sm">{player.name}</p>
                               <div className="flex items-center gap-1.5 mt-0.5">
