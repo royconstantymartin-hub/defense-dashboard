@@ -15,6 +15,8 @@ export const COMPANY_LOGOS = {
   // USA — Mid-Tier
   "General Atomics": "ga.com",
   "Textron": "textron.com",
+  "Huntington Ingalls": "hii.com",
+  "Axon Enterprise": "axon.com",
   "Kratos Defense": "kratosdefense.com",
   "Mercury Systems": "mrcy.com",
   "AeroVironment": "avinc.com",
@@ -183,6 +185,9 @@ export const COMPANY_LOGOS = {
   "CAE Inc": "cae.com",
   // Russia
   "Sevmash": "sevmash.ru",
+  "Rostec": "rostec.ru",
+  "Almaz-Antey": "almaz-antey.ru",
+  "United Aircraft Corporation": "uacrussia.ru",
   // New companies
   "Exail Technologies": "exail-technologies.com",
   "Teledyne Technologies": "teledyne.com",
@@ -325,6 +330,13 @@ export const COMPANY_WIKI_LOGOS = {
   // Latin America
   "Embraer Defense":               WP + "Embraer_logo.svg",
   // USA — mid-tier
+  "Huntington Ingalls":            WP + "Huntington_Ingalls_Industries_logo.svg",
+  "Axon Enterprise":               WP + "Axon_Enterprise_logo.svg",
+  "Triumph Group":                 WP + "Triumph_Group_logo.svg",
+  "ManTech International":         WP + "ManTech_International_logo.svg",
+  "Hexcel":                        WP + "Hexcel_logo.svg",
+  "V2X Inc":                       WP + "V2X_Inc_logo.svg",
+  "Redwire Corporation":           WP + "Redwire_Space_logo.svg",
   "HEICO Corporation":             WP + "HEICO_logo.png",
   "Parsons Corporation":           WP + "Parsons_Corporation_logo.svg",
   "SAIC":                          WP + "SAIC_logo.svg",
@@ -372,6 +384,7 @@ export const COMPANY_WIKI_LOGOS = {
   "LUCH Design Bureau":            WP + "Luch_Design_Bureau_logo.png",
   "UkrSpecSystems":                WP + "UkrSpecSystems_logo.png",
   // Russia — additional
+  "Rostec":                        WP + "Rostec_logo.svg",
   "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
   "Uralvagonzavod":                WP + "Uralvagonzavod_logo.svg",
   "RSK MiG":                       WP + "Mikoyan_logo.svg",
@@ -462,12 +475,15 @@ export function getClearbitUrl(name) {
   return null;
 }
 
-// Returns ordered list of logo URLs to try: [wikipedia?, clearbit?]
+// Returns ordered list of logo URLs to try: [wikipedia?, clearbit?, google-favicon?]
 // Allows the UI to fall through each URL on error before showing a letter avatar.
 export function getLogoUrls(name) {
   const urls = [];
   if (COMPANY_WIKI_LOGOS[name]) urls.push(COMPANY_WIKI_LOGOS[name]);
   const domain = COMPANY_LOGOS[name];
-  if (domain) urls.push(`https://logo.clearbit.com/${domain}`);
+  if (domain) {
+    urls.push(`https://logo.clearbit.com/${domain}`);
+    urls.push(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
+  }
   return urls;
 }

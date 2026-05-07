@@ -977,7 +977,7 @@ export default function MarketData() {
                           >
                           <LogoWithFallback
                             name={player.name}
-                            clearbitUrl={logoUrl}
+                            urls={getLogoUrls(player.name)}
                           />
                             <div>
                               <p className="text-slate-900 group-hover:text-purple-700 font-medium text-sm transition-colors">{player.name}</p>
@@ -1092,7 +1092,7 @@ export default function MarketData() {
               <div className="flex items-center gap-4">
                 <LogoWithFallback
                   name={selectedPlayer.name}
-                  clearbitUrl={getLogo(selectedPlayer.name)}
+                  urls={getLogoUrls(selectedPlayer.name)}
                   sizeClass="w-14 h-14"
                   textClass="text-sm"
                   rounded="rounded-xl"
