@@ -1321,11 +1321,28 @@ async def _run_seed() -> dict:
         # Set normalized names so scraper deduplication recognises these entries
         doc['acquirer_norm'] = _norm(m['acquirer'])
         doc['target_norm'] = _norm(m['target'])
+        new_id = doc.pop('id')  # preserve existing id on update; only set on insert
         await db.ma_activities.update_one(
             {"acquirer": m['acquirer'], "target": m['target']},
-            {"$set": doc},
+            {"$set": doc, "$setOnInsert": {"id": new_id}},
             upsert=True,
         )
+
+    # After upserting seeds, purge any scraper entries whose first words match a seed pair.
+    # Scraper runs can create near-duplicate entries (e.g. "Bombardier" vs "Bombardier C Series")
+    # between seed runs; this pass cleans them up immediately after every seed.
+    all_scraped_post = await db.ma_activities.find(
+        {"scraped_at": {"$exists": True}},
+        {"_id": 0, "id": 1, "acquirer": 1, "target": 1, "source_url": 1}
+    ).to_list(2000)
+    for entry in all_scraped_post:
+        acq_words = _norm(entry.get("acquirer", "")).split()
+        tgt_words = _norm(entry.get("target", "")).split()
+        if not acq_words or not tgt_words:
+            await db.ma_activities.delete_one({"id": entry["id"]})
+            continue
+        if (acq_words[0], tgt_words[0]) in seed_acq_tgt_first:
+            await db.ma_activities.delete_one({"id": entry["id"]})
 
     # Seed Expenditures
     for e in EXPENDITURES_DATA:

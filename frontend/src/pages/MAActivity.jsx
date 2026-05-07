@@ -2356,12 +2356,18 @@ export default function MAActivity() {
     axios.get(`${API}/defense-players`).then(r => setPlayers(r.data)).catch(() => {});
   }, []);
 
-  // Merge + deduplicate recent and historical
+  // Merge + deduplicate recent and historical.
+  // Dedup by id first; also dedup by (acquirer_first_word, target_first_word) to catch
+  // near-duplicate scraper entries like "Bombardier" vs "Bombardier C Series".
   const allDeals = useMemo(() => {
-    const seen = new Set();
+    const seenId  = new Set();
+    const seenKey = new Set();
     return [...activities, ...historical].filter(a => {
-      if (seen.has(a.id)) return false;
-      seen.add(a.id);
+      if (seenId.has(a.id)) return false;
+      const normKey = `${(a.acquirer||'').toLowerCase().trim().split(/\s+/)[0]}|${(a.target||'').toLowerCase().trim().split(/\s+/)[0]}`;
+      if (seenKey.has(normKey)) return false;
+      seenId.add(a.id);
+      seenKey.add(normKey);
       return true;
     });
   }, [activities, historical]);
