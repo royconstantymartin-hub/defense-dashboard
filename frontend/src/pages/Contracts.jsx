@@ -121,11 +121,13 @@ const AUTH_COUNTRY_CODES = {
   "Belgium": "be", "Finland": "fi", "Greece": "gr", "Portugal": "pt",
   "Czech Republic": "cz", "Romania": "ro", "Turkey": "tr",
   "Israel": "il", "India": "in", "South Korea": "kr", "EU": "eu",
+  "Switzerland": "ch", "Saudi Arabia": "sa", "Russia": "ru",
+  "Ukraine": "ua", "Singapore": "sg", "Qatar": "qa", "UAE": "ae",
 };
 
 function AuthorityFlag({ country, authority = "" }) {
-  // OCCAR = organisation internationale → globe
-  if (authority.includes("OCCAR")) {
+  // OCCAR or multi-nation → globe
+  if (authority.includes("OCCAR") || country === "Europe" || country === "Multi-Nation") {
     return (
       <Globe2 size={13} className="text-slate-500 shrink-0" title="Organisation internationale" />
     );
@@ -134,6 +136,13 @@ function AuthorityFlag({ country, authority = "" }) {
     return (
       <span className="inline-flex items-center text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded px-1 py-0.5 leading-none shrink-0">
         NATO
+      </span>
+    );
+  }
+  if (country === "EU") {
+    return (
+      <span className="inline-flex items-center text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 rounded px-1 py-0.5 leading-none shrink-0">
+        EU
       </span>
     );
   }
