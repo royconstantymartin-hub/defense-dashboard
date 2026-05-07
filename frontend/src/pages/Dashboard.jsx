@@ -154,7 +154,7 @@ export default function Dashboard() {
       const [statsRes, playersRes, newsRes, expendituresRes, maRes] = await Promise.all([
         axios.get(`${API}/dashboard/stats`),
         axios.get(`${API}/defense-players`),
-        axios.get(`${API}/news?limit=5`),
+        axios.get(`${API}/news?limit=5&hours=48`),
         axios.get(`${API}/expenditures?year=2024`),
         axios.get(`${API}/ma-activities`),
       ]);
@@ -231,11 +231,20 @@ export default function Dashboard() {
     [recentNews]
   );
 
-  // Sort by publishedAt descending so the hero is always the newest article,
-  // regardless of the relevance-first ordering returned by the API.
+  const yesterday = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  // Only articles from J-1 max, sorted newest first for the hero slot
   const sortedNews = useMemo(
-    () => [...recentNews].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)),
-    [recentNews]
+    () =>
+      [...recentNews]
+        .filter(n => n.publishedAt && new Date(n.publishedAt) >= yesterday)
+        .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)),
+    [recentNews, yesterday]
   );
 
   if (loading) {

@@ -1448,7 +1448,7 @@ def _build_news_query(
     Build a MongoDB query that works for both new articles (with language/region fields)
     and old articles (without those fields, identified by source name).
     """
-    conditions: list = [{"scrapedAt": {"$gte": cutoff}}]
+    conditions: list = [{"publishedAt": {"$gte": cutoff}}]
 
     # Always exclude admin-rejected articles from the public feed
     conditions.append({"adminRejected": {"$ne": True}})
