@@ -128,6 +128,17 @@ DEFENSE_COMPANIES = [
     # === South Africa ===
     {"name": "Denel", "ticker": "DENE-PRIV", "country": "South Africa", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 3500, "specializations": ["Land Systems", "Missiles", "Aviation"]},
     {"name": "Paramount Group", "ticker": "PARA-PRIV", "country": "South Africa", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 2000, "specializations": ["Land Systems", "Naval", "Aviation"]},
+    # === Ukraine ===
+    {"name": "Ukroboronprom", "ticker": "UKR-PRIV", "country": "Ukraine", "market_cap": 3.2, "stock_price": 0, "change_percent": 0, "revenue": 2.1, "employees": 70000, "specializations": ["Land Systems", "Aircraft", "Missiles", "Naval"]},
+    {"name": "Antonov", "ticker": "ANTN-PRIV", "country": "Ukraine", "market_cap": 0.9, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 6000, "specializations": ["Transport Aircraft", "An-178", "An-132"]},
+    {"name": "UkrSpecSystems", "ticker": "USS-PRIV", "country": "Ukraine", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 400, "specializations": ["UAV", "Leleka-100", "PD-2", "ISR"]},
+    {"name": "Skyeton", "ticker": "SKYT-PRIV", "country": "Ukraine", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.08, "employees": 150, "specializations": ["Loitering Munitions", "UAV", "Raybird-3"]},
+    {"name": "Kvertus", "ticker": "KVER-PRIV", "country": "Ukraine", "market_cap": 0.15, "stock_price": 0, "change_percent": 0, "revenue": 0.06, "employees": 120, "specializations": ["Counter-UAS", "Drone Jamming", "Electronic Warfare"]},
+    {"name": "LUCH Design Bureau", "ticker": "LUCH-PRIV", "country": "Ukraine", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 1200, "specializations": ["Missiles", "Stugna-P ATGM", "Vilkha MLRS"]},
+    {"name": "Infozahyst", "ticker": "INFZ-PRIV", "country": "Ukraine", "market_cap": 0.12, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 200, "specializations": ["Electronic Warfare", "Signals Intelligence", "EW Systems"]},
+    {"name": "Motor Sich", "ticker": "MSICH-PRIV", "country": "Ukraine", "market_cap": 0.6, "stock_price": 0, "change_percent": 0, "revenue": 0.35, "employees": 11000, "specializations": ["Helicopter Engines", "Aircraft Engines", "Turbines"]},
+    {"name": "Tencore", "ticker": "TENCORE-PRIV", "country": "Ukraine", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.04, "employees": 80, "specializations": ["UAV", "FPV Drones", "Autonomous Systems"]},
+    {"name": "Ukrainian Armor", "ticker": "UA-ARMOR-PRIV", "country": "Ukraine", "market_cap": 0.18, "stock_price": 0, "change_percent": 0, "revenue": 0.08, "employees": 350, "specializations": ["Armored Vehicles", "APC", "Ballistic Protection"]},
     # === Saudi Arabia ===
     {"name": "SAMI", "ticker": "SAMI-PRIV", "country": "Saudi Arabia", "market_cap": 5.5, "stock_price": 0, "change_percent": 0, "revenue": 1.8, "employees": 8000, "specializations": ["Aviation", "Land Systems", "Missiles"]},
     # === China (Public info only) ===

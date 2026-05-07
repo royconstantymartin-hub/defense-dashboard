@@ -1046,7 +1046,7 @@ async def get_country_profile(country_name: str):
     player_countries = COUNTRY_TO_PLAYER_COUNTRY.get(country_name, [country_name])
     national_raw = await db.defense_players.find(
         {"country": {"$in": player_countries}}, {"_id": 0}
-    ).sort("market_cap", -1).limit(8).to_list(8)
+    ).sort("market_cap", -1).limit(20).to_list(20)
 
     eu_raw = []
     if country_name in _EU_MEMBERS:
@@ -2807,6 +2807,14 @@ async def startup_event():
         logger.info("news_articles + bookmarks indexes ready")
     except Exception as exc:
         logger.warning("Index creation warning: %s", exc)
+
+    # One-time data migration: remove legacy Nexter Systems (superseded by KNDS)
+    try:
+        result = await db.defense_players.delete_one({"name": "Nexter Systems"})
+        if result.deleted_count:
+            logger.info("Migration: removed legacy 'Nexter Systems' company (replaced by KNDS)")
+    except Exception as exc:
+        logger.warning("Migration cleanup warning: %s", exc)
 
     # News scraper: 4× per day (every 6 hours) — 01:00, 07:00, 13:00, 19:00 UTC
     scheduler.add_job(run_news_scraper_job,       "cron", hour=1,  minute=0, id="night_news_scraper")

@@ -18,6 +18,7 @@ import {
   FileText, Building2, Newspaper, Users, Globe,
 } from "lucide-react";
 import { getLogoUrls } from "@/lib/companyLogos";
+import { getCountryBanner } from "@/lib/countryBanners";
 import {
   BarChart,
   Bar,
@@ -170,6 +171,9 @@ function CountryProfileSection({ country, allExpenditures }) {
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [industryTab, setIndustryTab] = useState("national");
+  const [showAllCompanies, setShowAllCompanies] = useState(false);
+  const [bannerError, setBannerError] = useState(false);
+  const banner = getCountryBanner(country.country);
 
   useEffect(() => {
     let cancelled = false;
@@ -195,22 +199,46 @@ function CountryProfileSection({ country, allExpenditures }) {
 
   return (
     <div className="space-y-5">
-      {/* Profile header */}
-      <div className="flex items-center gap-4 px-1">
-        <div className="w-0.5 h-8 bg-purple-600 rounded-full" />
-        <div className="flex items-center gap-3">
+      {/* Hero banner */}
+      <div className="relative w-full h-48 rounded-xl overflow-hidden shadow-md">
+        {banner && !bannerError ? (
           <img
-            src={getFlag(country.country_code)}
-            alt={country.country}
-            className="w-10 h-7 object-cover rounded shadow border border-slate-200"
+            src={banner}
+            alt={`${country.country} military`}
+            className="w-full h-full object-cover"
+            onError={() => setBannerError(true)}
           />
-          <div>
-            <h2 className="font-heading text-xl font-bold text-slate-900">
-              {country.country} — Defense Profile
-            </h2>
-            <p className="text-xs text-slate-500">
-              {country.region} · ${country.expenditure}B budget · {country.gdp_percent}% of GDP
-            </p>
+        ) : (
+          <div className="w-full h-full bg-gradient-to-r from-slate-800 to-slate-700" />
+        )}
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        {/* Content over image */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src={getFlag(country.country_code)}
+              alt={country.country}
+              className="w-12 h-8 object-cover rounded shadow-lg border-2 border-white/30"
+            />
+            <div>
+              <h2 className="font-heading text-2xl font-bold text-white tracking-tight drop-shadow">
+                {country.country}
+              </h2>
+              <p className="text-sm text-white/70">{country.region} · Defense Profile</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 text-right">
+            <div>
+              <p className="text-xl font-mono font-bold text-white">${country.expenditure}B</p>
+              <p className="text-xs text-white/60">Defense budget</p>
+            </div>
+            <div>
+              <p className={`text-xl font-mono font-bold ${country.gdp_percent >= 2 ? "text-emerald-300" : "text-amber-300"}`}>
+                {country.gdp_percent}%
+              </p>
+              <p className="text-xs text-white/60">of GDP</p>
+            </div>
           </div>
         </div>
       </div>
@@ -402,7 +430,7 @@ function CountryProfileSection({ country, allExpenditures }) {
               {/* National / Multinational tabs */}
               <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
                 <button
-                  onClick={() => setIndustryTab("national")}
+                  onClick={() => { setIndustryTab("national"); setShowAllCompanies(false); }}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
                     industryTab === "national" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
@@ -410,7 +438,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                   <Flag className="w-3 h-3" /> National
                 </button>
                 <button
-                  onClick={() => setIndustryTab("multinational")}
+                  onClick={() => { setIndustryTab("multinational"); setShowAllCompanies(false); }}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
                     industryTab === "multinational" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
@@ -426,10 +454,12 @@ function CountryProfileSection({ country, allExpenditures }) {
                 {[1, 2, 3].map(i => <div key={i} className="h-14 bg-slate-100 rounded-lg animate-pulse" />)}
               </div>
             ) : (() => {
-              const list = (profile?.companies || []).filter(c =>
+              const all = (profile?.companies || []).filter(c =>
                 industryTab === "national" ? c.is_national !== false : c.is_national === false
               );
-              return list.length > 0 ? (
+              const PREVIEW = 5;
+              const list = showAllCompanies ? all : all.slice(0, PREVIEW);
+              return all.length > 0 ? (
                 <div className="space-y-2">
                   {list.map((c, i) => (
                     <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-purple-100 hover:bg-slate-50/60 transition-colors gap-3">
@@ -454,6 +484,14 @@ function CountryProfileSection({ country, allExpenditures }) {
                       </div>
                     </div>
                   ))}
+                  {all.length > PREVIEW && (
+                    <button
+                      onClick={() => setShowAllCompanies(v => !v)}
+                      className="w-full text-xs text-purple-600 hover:text-purple-800 font-medium py-2 border border-dashed border-purple-200 rounded-lg hover:bg-purple-50/40 transition-colors"
+                    >
+                      {showAllCompanies ? `Show less` : `See all ${all.length} companies`}
+                    </button>
+                  )}
                 </div>
               ) : (
                 <p className="text-sm text-slate-400 py-4 text-center">
