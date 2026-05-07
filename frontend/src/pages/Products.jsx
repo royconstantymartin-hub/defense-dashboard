@@ -16,6 +16,7 @@ import {
 import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { getLogoUrl, getClearbitUrl } from "@/lib/companyLogos";
+import ProductIllustration from "@/components/ProductIllustration";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -841,9 +842,11 @@ export default function Products() {
                       onError={(ev) => handleImgError(ev, product.id, imgSrc)}
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Icon className="w-16 h-16 text-slate-300" />
-                    </div>
+                    <ProductIllustration
+                      category={product.category}
+                      productType={product.product_type}
+                      name={product.name}
+                    />
                   );
                 })()}
                 <span className={`absolute top-2 right-2 text-xs font-medium px-2 py-0.5 rounded-full border ${getStatusStyle(product.status)}`}>
@@ -1015,7 +1018,7 @@ export default function Products() {
                             const CmpIcon = getCategoryIcon(product.category);
                             return (
                               <div className="w-20 h-20 rounded-lg border border-slate-200 overflow-hidden bg-slate-100 relative flex items-center justify-center">
-                                <CmpIcon className="w-10 h-10 text-slate-300 absolute" />
+                                <ProductIllustration category={product.category} productType={product.product_type} name={product.name} className="absolute inset-0" />
                                 {resolveImgSrc(product.id, product.image_url) && (
                                   <img
                                     key={resolveImgSrc(product.id, product.image_url)}
@@ -1140,8 +1143,14 @@ export default function Products() {
                     />
                   );
                 }
-                const DIcon = getCategoryIcon(selectedProduct.category);
-                return <DIcon className="w-20 h-20 text-slate-200 absolute inset-0 m-auto" />;
+                return (
+                  <ProductIllustration
+                    category={selectedProduct.category}
+                    productType={selectedProduct.product_type}
+                    name={selectedProduct.name}
+                    className="absolute inset-0"
+                  />
+                );
               })()}
               <span className={`absolute top-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full border ${getStatusStyle(selectedProduct.status)}`}>
                 {selectedProduct.status.toUpperCase()}
