@@ -284,6 +284,70 @@ export const COMPANY_WIKI_LOGOS = {
   "CAE Inc":                       WP + "CAE_inc._logo_2022.svg",
   // Latin America
   "Embraer Defense":               WP + "Embraer_logo.svg",
+  // USA — mid-tier
+  "HEICO Corporation":             WP + "HEICO_logo.png",
+  "Parsons Corporation":           WP + "Parsons_Corporation_logo.svg",
+  "SAIC":                          WP + "SAIC_logo.svg",
+  "Leidos Holdings":               WP + "Leidos_logo_2013.svg",
+  "Mercury Systems":               WP + "Mercury_Systems_logo.svg",
+  "AeroVironment":                 WP + "AeroVironment_logo.svg",
+  "Curtiss-Wright":                WP + "Curtiss-Wright_logo.svg",
+  "Moog Inc":                      WP + "Moog_Inc_logo.svg",
+  "CACI International":            WP + "CACI_logo.svg",
+  "Peraton":                       WP + "Peraton_logo.svg",
+  "Collins Aerospace":             WP + "Collins_Aerospace_logo.svg",
+  "Pratt & Whitney":               WP + "Pratt_%26_Whitney_logo.svg",
+  "General Electric Aviation":     WP + "General_Electric_logo.svg",
+  "Kaman Aerospace":               WP + "Kaman_Corporation_logo.svg",
+  "Maxar Technologies":            WP + "Maxar_Technologies_logo.svg",
+  "Sierra Nevada Corporation":     WP + "Sierra_Nevada_Corporation_logo.svg",
+  "Shield AI":                     WP + "Shield_AI_logo.svg",
+  "General Atomics":               WP + "General_Atomics_logo.svg",
+  "Spirit AeroSystems":            WP + "Spirit_AeroSystems_logo.svg",
+  "BWX Technologies":              WP + "BWX_Technologies_logo.svg",
+  "TransDigm":                     WP + "TransDigm_Group_logo.svg",
+  // Japan — additional
+  "IHI Corporation":               WP + "IHI_Corporation_logo.svg",
+  "NEC Corporation":               WP + "NEC_logo.svg",
+  "Fujitsu Defense":               WP + "Fujitsu_logo.svg",
+  // South Korea — additional
+  "Hyundai Rotem":                 WP + "Hyundai_Rotem_Logo.svg",
+  // India — additional
+  "Cochin Shipyard":               WP + "Cochin_Shipyard_logo.svg",
+  "BEML":                          WP + "BEML_logo.png",
+  // Scandinavia
+  "Nammo":                         WP + "Nammo_logo.svg",
+  "Patria":                        WP + "Patria_logo.svg",
+  // Germany — additional
+  "MTU Aero Engines":              WP + "MTU_Aero_Engines_Logo.svg",
+  "Renk Group":                    WP + "RENK_AG_logo.svg",
+  "ThyssenKrupp Marine":           WP + "Thyssenkrupp_AG_logo.svg",
+  // Middle East
+  "SAMI":                          WP + "SAMI_logo.svg",
+  "Paramount Group":               WP + "Paramount_Group_logo.svg",
+  // Russia — additional
+  "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
+  // Italy
+  "Elettronica":                   WP + "Elettronica_spa_logo.svg",
+  "Avio":                          WP + "Avio_logo.svg",
+  // UK — additional
+  "Cohort":                        WP + "Cohort_plc_logo.svg",
+  "Chemring Group":                WP + "Chemring_logo.svg",
+  // Switzerland
+  "RUAG":                          WP + "RUAG_logo.svg",
+  // Poland
+  "Polska Grupa Zbrojeniowa":      WP + "PGZ_logo.svg",
+  // Benelux
+  "Damen Shipyards":               WP + "Damen_Group_logo.svg",
+  "CMI Defence":                   WP + "CMI_Defence_logo.svg",
+  // UAE
+  "Emirates Defence Industries":   WP + "Emirates_Defence_Industries_logo.svg",
+  // Canada — additional
+  "MDA Space":                     WP + "MDA_Ltd._logo.svg",
+  // Australia — additional
+  "Austal":                        WP + "Austal_logo.svg",
+  // Latin America
+  "Taurus Armas":                  WP + "Taurus_Armas_logo.svg",
   // USA — additional
   "Anduril Industries":            WP + "Anduril_Industries_Logo.svg",
   "Kratos Defense":                WP + "Kratos_Defense_%26_Security_Solutions_logo.svg",
