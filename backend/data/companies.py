@@ -52,7 +52,6 @@ DEFENSE_COMPANIES = [
     {"name": "Safran", "ticker": "SAF.PA", "country": "France", "market_cap": 78.5, "stock_price": 185.67, "change_percent": 0.89, "revenue": 23.2, "employees": 83000, "specializations": ["Engines", "Equipment", "Defense", "Space"]},
     {"name": "Naval Group", "ticker": "PRIVATE", "country": "France", "market_cap": 4.5, "stock_price": 0, "change_percent": 0, "revenue": 4.8, "employees": 17000, "specializations": ["Naval", "Submarines", "Surface Ships"]},
     {"name": "MBDA", "ticker": "PRIVATE", "country": "France", "market_cap": 5.2, "stock_price": 0, "change_percent": 0, "revenue": 4.2, "employees": 14000, "specializations": ["Missiles", "Air Defense"]},
-    {"name": "Nexter Systems", "ticker": "PRIVATE", "country": "France", "market_cap": 2.8, "stock_price": 0, "change_percent": 0, "revenue": 1.2, "employees": 3400, "specializations": ["Land Systems", "Artillery", "Ammunition"]},
     {"name": "Arquus", "ticker": "PRIVATE", "country": "France", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.6, "employees": 2200, "specializations": ["Military Vehicles", "VAB", "Griffon"]},
     {"name": "Sofradir", "ticker": "PRIVATE", "country": "France", "market_cap": 0.6, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 800, "specializations": ["Infrared", "Detectors", "Optronics"]},
     {"name": "CS Group", "ticker": "CSG.PA", "country": "France", "market_cap": 0.3, "stock_price": 12.45, "change_percent": 0.34, "revenue": 0.2, "employees": 2200, "specializations": ["IT", "Cybersecurity", "Systems"]},
@@ -63,7 +62,6 @@ DEFENSE_COMPANIES = [
     {"name": "Diehl Defence", "ticker": "PRIVATE", "country": "Germany", "market_cap": 2.1, "stock_price": 0, "change_percent": 0, "revenue": 0.9, "employees": 3500, "specializations": ["Missiles", "Ammunition", "Sensors"]},
     {"name": "ThyssenKrupp Marine", "ticker": "TKA.DE", "country": "Germany", "market_cap": 3.2, "stock_price": 4.56, "change_percent": -0.45, "revenue": 2.1, "employees": 8000, "specializations": ["Naval", "Submarines"]},
     {"name": "MTU Aero Engines", "ticker": "MTX.DE", "country": "Germany", "market_cap": 14.5, "stock_price": 275.90, "change_percent": 0.67, "revenue": 6.3, "employees": 12000, "specializations": ["Engines", "MRO"]},
-    {"name": "Krauss-Maffei Wegmann", "ticker": "PRIVATE", "country": "Germany", "market_cap": 3.5, "stock_price": 0, "change_percent": 0, "revenue": 2.8, "employees": 5500, "specializations": ["Tanks", "Leopard", "Land Systems"]},
     {"name": "Renk Group", "ticker": "R3NK.DE", "country": "Germany", "market_cap": 2.8, "stock_price": 28.90, "change_percent": 2.34, "revenue": 0.9, "employees": 3400, "specializations": ["Transmissions", "Propulsion", "Components"]},
     
     # === Italy ===
