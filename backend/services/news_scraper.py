@@ -33,6 +33,15 @@ HEADERS = {
 # so that "drone strike" → CONFLICT (not TECHNOLOGY) and "acquires" → M&A.
 
 CATEGORY_KEYWORDS: Dict[str, List[str]] = {
+    # EARNINGS: quarterly/annual financial results for defense companies.
+    "EARNINGS":    ["earnings", "quarterly results", "annual results", "revenue beat",
+                    "eps beat", "earnings per share", "q1 results", "q2 results",
+                    "q3 results", "q4 results", "full-year results", "fiscal year",
+                    "net income", "operating income", "guidance raised", "guidance lowered",
+                    "raises guidance", "beats expectations", "misses expectations",
+                    "beats estimates", "misses estimates", "revenue grew", "revenue growth",
+                    "résultats trimestriels", "résultats annuels", "chiffre d'affaires",
+                    "bénéfice net", "résultat opérationnel", "prévisions relevées"],
     # CONFLICT: actual ongoing armed conflict, casualties, kinetic events.
     # Deliberately narrow to avoid misclassifying technology/doctrine articles.
     "CONFLICT":    ["war crimes", "killed in action", "troops killed", "soldiers killed",
@@ -282,6 +291,11 @@ _RELEVANCE_TERMS: Dict[str, int] = {
     # Procurement — 7 pts
     "contract": 7, "procurement": 7, "award": 7, "acquisition": 7,
     "billion": 5, "million": 4,
+    # Earnings / financial results — 6 pts (defense company financials are relevant)
+    "earnings": 6, "quarterly results": 6, "annual results": 6,
+    "revenue beat": 6, "beats estimates": 6, "beats expectations": 6,
+    "eps beat": 6, "raises guidance": 6, "guidance raised": 6,
+    "q1 results": 5, "q2 results": 5, "q3 results": 5, "q4 results": 5,
     # Key companies — 7 pts
     "lockheed": 7, "raytheon": 7, "northrop": 7, "bae systems": 7,
     "rheinmetall": 7, "thales": 7, "dassault": 7, "leonardo": 7,
@@ -958,6 +972,11 @@ _GOOGLE_NEWS_QUERIES: List[Dict] = [
     {"q": "Golden Dome Iron Dome missile defense shield",      "region": "us"},
     {"q": "Ukraine weapons artillery ammunition war",          "region": "europe"},
     {"q": "defense ministry Army Navy Air Force budget",       "region": "global"},
+    # Earnings / financial results for defense & defense-tech companies
+    {"q": "Palantir earnings results revenue quarterly",       "region": "us"},
+    {"q": "Lockheed Raytheon Northrop Boeing earnings quarterly results", "region": "us"},
+    {"q": "defense company earnings revenue quarterly results","region": "global"},
+    {"q": "Anduril Kratos AeroVironment Mercury earnings",     "region": "us"},
 ]
 
 
