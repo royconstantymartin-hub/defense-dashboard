@@ -1328,6 +1328,8 @@ async def _run_seed() -> dict:
         "Harmattan EW Suite",
         "Harmattan C2 Platform",
         "Heron Systems AI Dogfighter",  # mis-attributed to Helsing
+        "SSBN Le Terrible",            # bateau de la classe Le Triomphant, pas une classe
+        "Barracuda-class Submarine",   # doublon de Suffren-class
     ]
     for name in PRODUCTS_TO_DELETE:
         await db.products.delete_one({"name": name})
