@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
@@ -577,6 +577,8 @@ export default function Expenditures() {
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [sortBy, setSortBy] = useState("expenditure_desc");
   const [chartMode, setChartMode] = useState("absolute");
+  const [pinnedCountry, setPinnedCountry] = useState(null);
+  const profileRef = useRef(null);
 
   const fetchExpenditures = async () => {
     setLoading(true);
@@ -619,7 +621,13 @@ export default function Expenditures() {
     setFilteredExpenditures(filtered);
   }, [searchTerm, selectedRegion, sortBy, expenditures]);
 
-  const focusCountry = filteredExpenditures.length === 1 ? filteredExpenditures[0] : null;
+  const focusCountry = pinnedCountry
+    ?? (filteredExpenditures.length === 1 ? filteredExpenditures[0] : null);
+
+  const handleRowClick = (exp) => {
+    setPinnedCountry(prev => prev?.id === exp.id ? null : exp);
+    setTimeout(() => profileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  };
 
   const totalExpenditure = filteredExpenditures.reduce((sum, e) => sum + e.expenditure, 0);
   const avgGdpPercent = filteredExpenditures.length
@@ -903,9 +911,24 @@ export default function Expenditures() {
         </Select>
       </div>
 
-      {/* ── Country Profile (only when exactly 1 country is in view) ── */}
+      {/* ── Country Profile ── */}
       {focusCountry && (
-        <CountryProfileSection country={focusCountry} allExpenditures={expenditures} />
+        <div ref={profileRef}>
+          {pinnedCountry && (
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-slate-500">
+                Profil de <span className="font-semibold text-slate-700">{focusCountry.country}</span> — cliquez à nouveau sur la ligne pour fermer
+              </p>
+              <button
+                onClick={() => setPinnedCountry(null)}
+                className="text-xs text-slate-400 hover:text-slate-700 underline"
+              >
+                Fermer
+              </button>
+            </div>
+          )}
+          <CountryProfileSection country={focusCountry} allExpenditures={expenditures} />
+        </div>
       )}
 
       {/* Data Table */}
@@ -927,7 +950,12 @@ export default function Expenditures() {
                 {filteredExpenditures.map((exp, idx) => (
                   <tr
                     key={exp.id}
-                    className="border-b border-slate-100 hover:bg-purple-50/30 transition-colors"
+                    onClick={() => handleRowClick(exp)}
+                    className={`border-b border-slate-100 cursor-pointer transition-colors ${
+                      pinnedCountry?.id === exp.id
+                        ? "bg-purple-50 border-l-2 border-l-purple-600"
+                        : "hover:bg-purple-50/30"
+                    }`}
                     data-testid={`expenditure-row-${exp.id}`}
                   >
                     <td className="p-4">
