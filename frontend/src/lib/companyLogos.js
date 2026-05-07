@@ -76,7 +76,16 @@ export const COMPANY_LOGOS = {
   "Naval Group": "naval-group.com",
   "Nexter Systems": "knds.com",
   "KNDS": "knds.com",
+  "KNDS France": "knds.com",
   "Arquus": "arquus-defense.com",
+  // Joint programs / subsidiaries
+  "Sikorsky": "lockheedmartin.com",
+  "Oshkosh Defense": "oshkoshdefense.com",
+  "ARTEC": "artec-vehicle.com",
+  "Norinco": "norinco.com",
+  "Ghost Robotics": "ghostrobotics.io",
+  "Quantum Systems": "quantum-systems.com",
+  "Harmattan AI": "harmattan.ai",
   "CS Group": "cs-group.com",
   "Sofradir": "lynred.com",
   // Germany
@@ -249,6 +258,10 @@ export const COMPANY_WIKI_LOGOS = {
   "Dassault Aviation":             WP + "Dassault_Aviation_Logo.jpg",
   "MBDA":                          WP + "MBDA-Logo.svg",
   "Naval Group":                   WP + "Naval_Group_logo.svg",
+  // France — KNDS group
+  "KNDS":                          WP + "KNDS_Logo.svg",
+  "KNDS France":                   WP + "KNDS_Logo.svg",
+  "Nexter Systems":                WP + "Nexter_Logo.svg",
   // Germany
   "Rheinmetall":                   WP + "Rheinmetall_Logo_2021.svg",
   "Krauss-Maffei Wegmann":         WP + "KMW-logo.svg",
@@ -338,6 +351,17 @@ export const COMPANY_WIKI_LOGOS = {
   "Paramount Group":               WP + "Paramount_Group_logo.svg",
   // Russia — additional
   "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
+  "Uralvagonzavod":                WP + "Uralvagonzavod_logo.svg",
+  "RSK MiG":                       WP + "Mikoyan_logo.svg",
+  "Tupolev":                       WP + "Tupolev_logo.svg",
+  "Sevmash":                       WP + "Sevmash_logo.svg",
+  "Tactical Missiles Corporation": WP + "Tactical_Missiles_Corporation_logo.svg",
+  // USA — additional manufacturers
+  "Sikorsky":                      WP + "Sikorsky_Aircraft_Corporation_logo.svg",
+  "Oshkosh Defense":               WP + "Oshkosh_Corporation_logo.svg",
+  "Ghost Robotics":                WP + "Ghost_Robotics_logo.svg",
+  // Norinco (case variant used in Products)
+  "Norinco":                       WP + "Norinco_logo.svg",
   // Italy
   "Elettronica":                   WP + "Elettronica_spa_logo.svg",
   "Avio":                          WP + "Avio_logo.svg",
