@@ -166,6 +166,8 @@ class DefensePlayer(BaseModel):
     programs: Optional[List[str]] = None
     export_countries: Optional[List[str]] = None
     aliases: Optional[List[str]] = None   # alternative names for matching (news, deals, profile lookup)
+    multinational_for: Optional[List[str]] = None  # countries that see this company in the multinational tab
+    company_type: Optional[str] = None   # "cluster" for state industrial conglomerates
 
 # Defense Expenditure Model
 class ExpenditureCreate(BaseModel):
@@ -1227,6 +1229,16 @@ async def _run_seed() -> dict:
             doc = player.model_dump()
             doc['updated_at'] = doc['updated_at'].isoformat()
             await db.defense_players.insert_one(doc)
+        else:
+            # Patch newly-introduced fields onto existing records so a re-seed
+            # propagates multinational_for and company_type without a full drop.
+            patch = {}
+            if 'multinational_for' in p:
+                patch['multinational_for'] = p['multinational_for']
+            if 'company_type' in p:
+                patch['company_type'] = p['company_type']
+            if patch:
+                await db.defense_players.update_one({"name": p['name']}, {"$set": patch})
 
     # Seed Announcements
     for a in ANNOUNCEMENTS_DATA:
