@@ -1037,22 +1037,15 @@ async def get_country_profile(country_name: str):
     ]
 
     # --- Companies (national + EU multinationals for European countries) ---
-    _EU_MEMBERS = {
-        "France", "Germany", "Italy", "Spain", "Poland", "Netherlands",
-        "Belgium", "Sweden", "Denmark", "Finland", "Norway", "Greece",
-        "Portugal", "Austria", "Czech Republic", "Romania", "Hungary",
-        "Switzerland", "Ukraine", "United Kingdom",
-    }
     player_countries = COUNTRY_TO_PLAYER_COUNTRY.get(country_name, [country_name])
     national_raw = await db.defense_players.find(
         {"country": {"$in": player_countries}}, {"_id": 0}
     ).sort("market_cap", -1).limit(20).to_list(20)
 
-    eu_raw = []
-    if country_name in _EU_MEMBERS:
-        eu_raw = await db.defense_players.find(
-            {"country": "EU"}, {"_id": 0}
-        ).sort("market_cap", -1).limit(6).to_list(6)
+    # Multinationals: only companies that explicitly list this country as a member
+    eu_raw = await db.defense_players.find(
+        {"country": "EU", "multinational_for": country_name}, {"_id": 0}
+    ).sort("market_cap", -1).limit(6).to_list(6)
 
     def _shape(p, is_national):
         return {
@@ -1064,6 +1057,7 @@ async def get_country_profile(country_name: str):
             "stock_price":     p.get("stock_price", 0),
             "change_percent":  p.get("change_percent", 0),
             "is_national":     is_national,
+            "company_type":    p.get("company_type", "company"),
         }
 
     companies = [_shape(p, True) for p in national_raw] + [_shape(p, False) for p in eu_raw]

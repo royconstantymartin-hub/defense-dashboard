@@ -367,6 +367,12 @@ export const COMPANY_WIKI_LOGOS = {
   // Middle East
   "SAMI":                          WP + "SAMI_logo.svg",
   "Paramount Group":               WP + "Paramount_Group_logo.svg",
+  // Ukraine
+  "Ukroboronprom":                 WP + "Ukroboronprom_logo.svg",
+  "Antonov":                       WP + "Antonov_logo.svg",
+  "Motor Sich":                    WP + "Motor_Sich_logo.svg",
+  "LUCH Design Bureau":            WP + "Luch_Design_Bureau_logo.png",
+  "UkrSpecSystems":                WP + "UkrSpecSystems_logo.png",
   // Russia — additional
   "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
   "Uralvagonzavod":                WP + "Uralvagonzavod_logo.svg",
