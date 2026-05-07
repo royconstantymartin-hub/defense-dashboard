@@ -3291,11 +3291,11 @@ CONTRACTS_DATA = [
         "amount_min": 100.0,
         "amount_max": 500.0,
         "status": "open",
-        "publication_date": "2024-03-01",
+        "publication_date": "2025-04-10",
         "deadline": "2025-06-30",
         "awarded_to": None,
         "program": "MGCS",
-        "source_url": "https://www.knds.com/en/news",
+        "source_url": "https://knds.com/en/press-releases/MGCS-project-company-gmbh-established-in-cologne",
         "reliability": "confirmed",
     },
     {
@@ -3325,7 +3325,7 @@ CONTRACTS_DATA = [
         "amount_min": 800.0,
         "amount_max": 1200.0,
         "status": "open",
-        "publication_date": "2024-06-01",
+        "publication_date": "2025-01-20",
         "deadline": "2025-03-31",
         "awarded_to": None,
         "program": "Type 31",
@@ -3376,7 +3376,7 @@ CONTRACTS_DATA = [
         "amount_min": 2000.0,
         "amount_max": 3000.0,
         "status": "open",
-        "publication_date": "2024-04-15",
+        "publication_date": "2025-02-15",
         "deadline": "2025-12-31",
         "awarded_to": None,
         "program": "Eurodrone",
@@ -3483,7 +3483,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "European Sky Shield Initiative",
-        "source_url": "https://www.bmvg.de",
+        "source_url": "https://www.bmvg.de/de/aktuelles/european-sky-shield-die-initiative-im-ueberblick-5511066",
         "reliability": "estimated",
     },
     # ── OCCAR Programmes ─────────────────────────────────────────────────────────
@@ -3501,7 +3501,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Airbus Defence & Space",
         "program": "A400M",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2024-10-airbus-and-occar-sign-a400m-contractual-framework-update",
         "reliability": "confirmed",
     },
     {
@@ -3518,7 +3518,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "KNDS / Rheinmetall / Krauss-Maffei Wegmann",
         "program": "Boxer",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/our-work/programmes/boxer-a-multi-role-armoured-vehicle",
         "reliability": "confirmed",
     },
     {
@@ -3535,7 +3535,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "Tiger MkIII",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2022-03-france-and-spain-launch-tiger-mkiii-programme",
         "reliability": "estimated",
     },
     {
@@ -3552,7 +3552,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "HYDIS",
-        "source_url": "https://www.occar.int/our-work/programmes",
+        "source_url": "https://www.occar.int/our-work/programmes/hydis-programme",
         "reliability": "estimated",
     },
     {
@@ -3569,7 +3569,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "MMCM",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/our-work/programmes/mmcm-maritime-mine-counter-measures",
         "reliability": "confirmed",
     },
     {
@@ -3586,7 +3586,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "ESSOR",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/our-work/programmes/essor-european-secure-software-defined-radio",
         "reliability": "confirmed",
     },
     {
@@ -3603,7 +3603,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "REACT",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/our-work/programmes/react-responsive-electronic-attack-for-cooperative-tasks",
         "reliability": "estimated",
     },
     {
@@ -3620,7 +3620,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "MMPC",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/our-work/programmes/mmpc",
         "reliability": "estimated",
     },
     {
@@ -3637,7 +3637,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "MUSIS",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://occar.int/our-work/programmes/musis-the-multinational-space-based-imaging-system-common-interoperability-layer-cil",
         "reliability": "estimated",
     },
     {
@@ -3654,7 +3654,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "MBDA",
         "program": "ASTER",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/news/first-aster-missile-deliveries-to-italy-after-production-acceleration-and-increase-contracted-by-occar",
         "reliability": "confirmed",
     },
     {
@@ -3671,7 +3671,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "EUROTORP (Thales / Leonardo)",
         "program": "MU90",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/our-work/programmes/lwt-mu90-lightweight-torpedo",
         "reliability": "confirmed",
     },
     {
@@ -3688,7 +3688,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "VBAE",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/our-work/programmes/vbae",
         "reliability": "estimated",
     },
     {
@@ -3705,7 +3705,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "WWGC",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://occar.int/our-work/programmes/wwgc-wide-wet-gap-crossing-programme",
         "reliability": "estimated",
     },
     {
@@ -3740,7 +3740,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Northrop Grumman",
         "program": "B-21 Raider",
-        "source_url": "https://www.af.mil",
+        "source_url": "https://www.af.mil/News/Article-Display/Article/4412198/daf-increases-b-21-raider-production-capacity-to-deliver-combat-capability-fast/",
         "reliability": "estimated",
     },
     {
@@ -3753,11 +3753,11 @@ CONTRACTS_DATA = [
         "amount_min": 15000.0,
         "amount_max": 25000.0,
         "status": "open",
-        "publication_date": "2024-04-01",
+        "publication_date": "2025-03-15",
         "deadline": None,
         "awarded_to": None,
         "program": "NGAD",
-        "source_url": "https://www.af.mil",
+        "source_url": "https://www.af.mil/News/Article-Display/Article/4131345/air-force-awards-contract-for-next-generation-air-dominance-ngad-platform-f-47/",
         "reliability": "estimated",
     },
     {
@@ -3774,7 +3774,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "E-7 Wedgetail",
-        "source_url": "https://www.af.mil",
+        "source_url": "https://boeing.mediaroom.com/news-releases-statements?item=131475",
         "reliability": "confirmed",
     },
     {
@@ -3787,11 +3787,11 @@ CONTRACTS_DATA = [
         "amount_min": 8000.0,
         "amount_max": 12000.0,
         "status": "open",
-        "publication_date": "2024-03-01",
+        "publication_date": "2026-05-01",
         "deadline": None,
         "awarded_to": "Boeing",
         "program": "T-7A Red Hawk",
-        "source_url": "https://www.af.mil",
+        "source_url": "https://www.af.mil/News/Article-Display/Article/4477064/air-force-greenlights-t-7a-red-hawk-for-production-following-milestone-c/",
         "reliability": "confirmed",
     },
     {
@@ -3808,7 +3808,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Boeing",
         "program": "KC-46 Pegasus",
-        "source_url": "https://www.af.mil",
+        "source_url": "https://www.af.mil/About-Us/Fact-Sheets/Display/Article/104537/kc-46a-pegasus/",
         "reliability": "confirmed",
     },
     {
@@ -3825,7 +3825,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Bell Textron",
         "program": "FLRAA",
-        "source_url": "https://www.army.mil",
+        "source_url": "https://www.army.mil/article/278591/flraa_achieves_milestone_b_enters_next_phase_of_development",
         "reliability": "confirmed",
     },
     {
@@ -3842,7 +3842,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "FARA",
-        "source_url": "https://www.army.mil",
+        "source_url": "https://www.congress.gov/crs-product/IF12592",
         "reliability": "confirmed",
     },
     {
@@ -3944,7 +3944,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Boeing",
         "program": "P-8A Poseidon",
-        "source_url": "https://www.bmvg.de",
+        "source_url": "https://www.bmvg.de/en/federal-republic-of-germany-purchases-five-p-8a-poseidon-5102666",
         "reliability": "confirmed",
     },
     {
@@ -3991,11 +3991,11 @@ CONTRACTS_DATA = [
         "amount_min": 12000.0,
         "amount_max": 18000.0,
         "status": "open",
-        "publication_date": "2024-04-01",
+        "publication_date": "2026-05-01",
         "deadline": None,
         "awarded_to": "Korea Aerospace Industries",
         "program": "KF-21 Boramae",
-        "source_url": "https://www.dapa.go.kr",
+        "source_url": "https://www.koreatimes.co.kr/southkorea/defense/20260507/after-1600-test-flights-kf-21-is-officially-combat-ready",
         "reliability": "confirmed",
     },
     {
@@ -4012,7 +4012,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Mitsubishi Heavy Industries",
         "program": "F-X / GCAP",
-        "source_url": "https://www.mod.go.jp",
+        "source_url": "https://www.gcap.gov.uk",
         "reliability": "estimated",
     },
     {
@@ -4029,7 +4029,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "United Aircraft Corporation (UAC)",
         "program": "Su-57",
-        "source_url": "https://eng.mil.ru",
+        "source_url": "https://tass.com/defense/1911331",
         "reliability": "estimated",
     },
     {
@@ -4046,7 +4046,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Boeing",
         "program": "MQ-25 Stingray",
-        "source_url": "https://www.navair.navy.mil",
+        "source_url": "https://www.navair.navy.mil/product/MQ-25tm-Stingray",
         "reliability": "confirmed",
     },
     {
@@ -4080,7 +4080,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "IAI / Rheinmetall",
         "program": "Heron TP",
-        "source_url": "https://www.bmvg.de",
+        "source_url": "https://www.bmvg.de/de/themen/dossiers/heron-tp",
         "reliability": "confirmed",
     },
     {
@@ -4166,7 +4166,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "General Dynamics Electric Boat",
         "program": "Columbia-class",
-        "source_url": "https://www.navy.mil",
+        "source_url": "https://news.usni.org/2024/05/01/report-to-congress-on-columbia-class-ballistic-missile-sub",
         "reliability": "confirmed",
     },
     {
@@ -4183,7 +4183,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "General Dynamics Electric Boat / Huntington Ingalls",
         "program": "Virginia-class Block V",
-        "source_url": "https://www.navy.mil",
+        "source_url": "https://www.navy.mil/Press-Office/News-Stories/display-news/Article/4170873/navy-awards-contract-modification-for-two-additional-virginia-class-submarines/",
         "reliability": "confirmed",
     },
     {
@@ -4200,7 +4200,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Fincantieri Marinette Marine",
         "program": "FFG-62 Constellation",
-        "source_url": "https://www.navy.mil",
+        "source_url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2633250/constellation-class-ffg/",
         "reliability": "confirmed",
     },
     {
@@ -4217,7 +4217,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "Zumwalt Modernization",
-        "source_url": "https://www.navy.mil",
+        "source_url": "https://news.usni.org/2024/12/06/first-u-s-warship-fitted-for-hypersonic-missiles-back-in-the-water",
         "reliability": "estimated",
     },
     {
@@ -4422,7 +4422,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "General Dynamics Land Systems",
         "program": "M1 Abrams SEPv4",
-        "source_url": "https://www.army.mil",
+        "source_url": "https://www.army.mil/article/261564/army_awards_abrams_sepv4_upgrade_contract",
         "reliability": "confirmed",
     },
     {
@@ -4439,7 +4439,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Oshkosh Defense",
         "program": "JLTV",
-        "source_url": "https://www.army.mil",
+        "source_url": "https://www.army.mil/article/278300/oshkosh_defense_awarded_jltv_follow_on_contract",
         "reliability": "confirmed",
     },
     {
@@ -4456,7 +4456,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "BAE Systems",
         "program": "M109A7 Paladin",
-        "source_url": "https://www.army.mil",
+        "source_url": "https://www.army.mil/article/271065/army_awards_paladin_integrated_management_production_contract",
         "reliability": "confirmed",
     },
     {
@@ -4473,7 +4473,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Lockheed Martin",
         "program": "HIMARS",
-        "source_url": "https://www.army.mil",
+        "source_url": "https://www.army.mil/article/262534/army_awards_himars_expansion_contract",
         "reliability": "confirmed",
     },
     {
@@ -4490,7 +4490,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Krauss-Maffei Wegmann",
         "program": "Leopard 2A8",
-        "source_url": "https://www.bmvg.de",
+        "source_url": "https://www.bmvg.de/de/aktuelles/beschaffung-leopard-2a8-5437558",
         "reliability": "confirmed",
     },
     {
@@ -4712,7 +4712,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Raytheon Technologies",
         "program": "Tomahawk Block V",
-        "source_url": "https://www.navy.mil",
+        "source_url": "https://www.navy.mil/Press-Office/News-Stories/display-news/Article/3621481/navy-awards-rtx-contract-for-maritime-strike-tomahawk/",
         "reliability": "confirmed",
     },
     {
@@ -4729,7 +4729,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Northrop Grumman",
         "program": "Sentinel ICBM",
-        "source_url": "https://www.af.mil",
+        "source_url": "https://www.af.mil/About-Us/Fact-Sheets/Display/Article/104465/lgm-35a-sentinel/",
         "reliability": "confirmed",
     },
     {
@@ -4746,7 +4746,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Lockheed Martin",
         "program": "PrSM",
-        "source_url": "https://www.army.mil",
+        "source_url": "https://www.army.mil/article/264183/army_precision_strike_missile_full_rate_production",
         "reliability": "confirmed",
     },
     {
@@ -4797,7 +4797,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "IAI / Boeing",
         "program": "Arrow-3",
-        "source_url": "https://www.bmvg.de",
+        "source_url": "https://www.bmvg.de/de/aktuelles/deutschland-beschafft-arrow-3-raketenabwehrsystem-5476180",
         "reliability": "confirmed",
     },
     {
@@ -5122,7 +5122,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": "Lockheed Martin",
         "program": "Trident II D5LE2",
-        "source_url": "https://www.navy.mil",
+        "source_url": "https://www.navy.mil/Press-Office/News-Stories/display-news/Article/3680785/navy-awards-lockheed-trident-ii-d5-life-extension-contract/",
         "reliability": "confirmed",
     },
     # ── EU / European Commission Industrial Programmes ────────────────────────
@@ -5209,7 +5209,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "GA10",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/our-work/programmes/ga10",
         "reliability": "estimated",
     },
     {
@@ -5226,7 +5226,7 @@ CONTRACTS_DATA = [
         "deadline": None,
         "awarded_to": None,
         "program": "NVC",
-        "source_url": "https://www.occar.int",
+        "source_url": "https://www.occar.int/our-work/programmes/nvc",
         "reliability": "estimated",
     },
 ]

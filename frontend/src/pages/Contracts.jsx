@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API, useT } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -90,7 +91,9 @@ const T = {
   estimated:   { en: "~ Estimated",   fr: "~ Estimé" },
   category:    { en: "Category",      fr: "Catégorie" },
   reliability: { en: "Reliability",   fr: "Fiabilité" },
-  viewProfile: { en: "View profile for", fr: "Voir le profil de" },
+  viewProfile:  { en: "View profile for",      fr: "Voir le profil de" },
+  seeExpend:    { en: "Defense budget →",       fr: "Budget défense →" },
+  seeExpendTip: { en: "See defense expenditure for this country", fr: "Voir les dépenses défense de ce pays" },
 };
 
 const CATEGORY_COLORS = {
@@ -185,6 +188,16 @@ function AwardedToButton({ name, onOpenProfile }) {
   );
 }
 
+function fmtVal(n) {
+  if (n >= 1000) return `$${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}B`;
+  return `$${n}M`;
+}
+function fmtRecentAmount(min, max) {
+  if (min && max) return `${fmtVal(min)}–${fmtVal(max)}`;
+  if (min) return `≥${fmtVal(min)}`;
+  return `≤${fmtVal(max)}`;
+}
+
 function RecentStrip({ contracts }) {
   const tRecent  = useT(T.recent);
   const tRecentS = useT(T.recentSub);
@@ -214,7 +227,7 @@ function RecentStrip({ contracts }) {
               <p className="text-[11px] text-slate-400 mt-0.5 font-mono">
                 {c.publication_date?.slice(0, 10)}
                 {c.amount_min || c.amount_max
-                  ? ` · $${c.amount_min ?? "?"}M–$${c.amount_max ?? "?"}M`
+                  ? ` · ${fmtRecentAmount(c.amount_min, c.amount_max)}`
                   : ` · ${tUndis}`}
               </p>
             </div>
@@ -225,7 +238,7 @@ function RecentStrip({ contracts }) {
   );
 }
 
-function ContractCard({ contract, onOpenProfile, onSelect }) {
+function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
   const tStatus    = { open: useT(T.sOpen), awarded: useT(T.sAwarded), closed: useT(T.sClosed), cancelled: useT(T.sCancelled) };
   const tAuthority = { national: useT(T.aNational), nato: useT(T.aNato), eu: useT(T.aEu), bilateral: useT(T.aBilateral) };
   const tCategory  = { aerospace: useT(T.cAero), naval: useT(T.cNaval), land: useT(T.cLand), cyber: useT(T.cCyber), services: useT(T.cSvc), logistics: useT(T.cLog), space: useT(T.cSpace), missiles: useT(T.cMissiles) };
@@ -251,12 +264,14 @@ function ContractCard({ contract, onOpenProfile, onSelect }) {
   const tNoSrc     = useT(T.noSrc);
   const tConfirmed = useT(T.confirmed);
   const tEstimated = useT(T.estimated);
+  const tSeeExpend = useT(T.seeExpend);
+  const tSeeExpendTip = useT(T.seeExpendTip);
 
   function fmtAmount(min, max) {
     if (!min && !max) return tUndis;
-    if (min && max) return `$${min}M – $${max}M`;
-    if (min) return `≥ $${min}M`;
-    return `≤ $${max}M`;
+    if (min && max) return `${fmtVal(min)} – ${fmtVal(max)}`;
+    if (min) return `≥ ${fmtVal(min)}`;
+    return `≤ ${fmtVal(max)}`;
   }
 
   return (
@@ -273,6 +288,15 @@ function ContractCard({ contract, onOpenProfile, onSelect }) {
             <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
               <AuthorityFlag country={contract.authority_country} authority={contract.contracting_authority} />
               {contract.contracting_authority}
+              {contract.authority_country && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onGoExpend(contract.authority_country); }}
+                  title={tSeeExpendTip}
+                  className="ml-auto text-[10px] text-purple-600 hover:text-purple-800 hover:underline leading-none"
+                >
+                  {tSeeExpend}
+                </button>
+              )}
             </p>
           </div>
           <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${statusColor}`}>
@@ -347,7 +371,7 @@ function ContractCard({ contract, onOpenProfile, onSelect }) {
   );
 }
 
-function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
+function ContractDetailDialog({ contract, onClose, onOpenProfile, onGoExpend }) {
   const tEstVal    = useT(T.estVal);
   const tPub       = useT(T.published);
   const tDeadline  = useT(T.deadline);
@@ -358,6 +382,8 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
   const tConfirmed = useT(T.confirmed);
   const tEstimated = useT(T.estimated);
   const tUndis     = useT(T.undisclosed);
+  const tSeeExpend    = useT(T.seeExpend);
+  const tSeeExpendTip = useT(T.seeExpendTip);
   const tStatus    = { open: useT(T.sOpen), awarded: useT(T.sAwarded), closed: useT(T.sClosed), cancelled: useT(T.sCancelled) };
 
   if (!contract) return null;
@@ -373,9 +399,9 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
 
   function fmtAmount(min, max) {
     if (!min && !max) return tUndis;
-    if (min && max) return `$${min}M – $${max}M`;
-    if (min) return `≥ $${min}M`;
-    return `≤ $${max}M`;
+    if (min && max) return `${fmtVal(min)} – ${fmtVal(max)}`;
+    if (min) return `≥ ${fmtVal(min)}`;
+    return `≤ ${fmtVal(max)}`;
   }
 
   return (
@@ -396,10 +422,21 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
           <DialogTitle className="font-heading text-base font-bold text-slate-900 leading-snug mt-2">
             {contract.title}
           </DialogTitle>
-          <p className="text-xs text-slate-500 flex items-center gap-1.5 flex-wrap mt-1">
-            <AuthorityFlag country={contract.authority_country} authority={contract.contracting_authority} />
-            {contract.contracting_authority} · {contract.authority_country}
-          </p>
+          <div className="flex items-center justify-between gap-2 mt-1 flex-wrap">
+            <p className="text-xs text-slate-500 flex items-center gap-1.5 flex-wrap">
+              <AuthorityFlag country={contract.authority_country} authority={contract.contracting_authority} />
+              {contract.contracting_authority} · {contract.authority_country}
+            </p>
+            {contract.authority_country && (
+              <button
+                onClick={() => { onClose(); onGoExpend(contract.authority_country); }}
+                title={tSeeExpendTip}
+                className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 hover:border-purple-300 transition-colors whitespace-nowrap"
+              >
+                {tSeeExpend}
+              </button>
+            )}
+          </div>
         </DialogHeader>
 
         <div className="space-y-4 mt-1">
@@ -463,6 +500,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile }) {
 }
 
 export default function Contracts() {
+  const navigate = useNavigate();
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -699,6 +737,7 @@ export default function Contracts() {
               contract={c}
               onOpenProfile={setProfileName}
               onSelect={setSelectedContract}
+              onGoExpend={(country) => navigate(`/expenditures?country=${encodeURIComponent(country)}`)}
             />
           ))}
         </div>
@@ -708,6 +747,7 @@ export default function Contracts() {
         contract={selectedContract}
         onClose={() => setSelectedContract(null)}
         onOpenProfile={setProfileName}
+        onGoExpend={(country) => { setSelectedContract(null); navigate(`/expenditures?country=${encodeURIComponent(country)}`); }}
       />
       <CompanyProfileSheet name={profileName} onClose={() => setProfileName(null)} />
     </div>
