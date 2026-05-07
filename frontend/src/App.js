@@ -18,6 +18,7 @@ import Bookmarks from "@/pages/Bookmarks";
 import Contracts from "@/pages/Contracts";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
+import Startups from "@/pages/Startups";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -132,6 +133,7 @@ function App() {
             <Route path="follow" element={<Follow />} />
             <Route path="bookmarks" element={<Bookmarks />} />
             <Route path="contracts" element={<Contracts />} />
+            <Route path="startups" element={<Startups />} />
             <Route path="admin" element={<Admin />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

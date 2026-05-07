@@ -2,9 +2,9 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { useAuth, useLang } from "@/App";
 import {
   Activity,
-  Globe, 
-  FileText, 
-  Package, 
+  Globe,
+  FileText,
+  Package,
   LayoutDashboard,
   Handshake,
   TrendingUp,
@@ -16,7 +16,8 @@ import {
   Rss,
   Bell,
   Bookmark,
-  FileCheck
+  FileCheck,
+  Rocket
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ const navItems = [
   { path: "/announcements", icon: Activity, label: "Announcements" },
   { path: "/ma-activity", icon: Handshake, label: "M&A Activity" },
   { path: "/market-data", icon: TrendingUp, label: "Market Data" },
+  { path: "/startups", icon: Rocket, label: "Startups" },
   { path: "/expenditures", icon: Globe, label: "Expenditures" },
   { path: "/regulations", icon: FileText, label: "Regulations" },
   { path: "/products", icon: Package, label: "Products" },
