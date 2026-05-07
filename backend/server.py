@@ -941,6 +941,137 @@ async def delete_contract(contract_id: str, current_user: dict = Depends(get_cur
         raise HTTPException(status_code=404, detail="Contract not found")
     return {"status": "deleted"}
 
+# ============= COUNTRY PROFILE =============
+
+def _fetch_rss_country_news(country_name: str, limit: int = 5) -> list:
+    """Fetch recent defense news mentioning country_name from RSS feeds."""
+    import feedparser as _fp
+    import requests as _req
+    feeds = [
+        {"name": "Defense News",     "url": "https://www.defensenews.com/arc/outboundfeeds/rss/"},
+        {"name": "The Defense Post", "url": "https://thedefensepost.com/feed/"},
+        {"name": "Breaking Defense", "url": "https://breakingdefense.com/feed/"},
+    ]
+    articles = []
+    term = country_name.lower()
+    for feed_meta in feeds:
+        try:
+            resp = _req.get(feed_meta["url"], timeout=8, headers={"User-Agent": "Mozilla/5.0"})
+            feed = _fp.parse(resp.content)
+            for entry in feed.entries:
+                text = f"{entry.get('title', '')} {entry.get('summary', '')}".lower()
+                if term in text:
+                    articles.append({
+                        "title":       entry.get("title", ""),
+                        "url":         entry.get("link", ""),
+                        "source":      feed_meta["name"],
+                        "publishedAt": entry.get("published", ""),
+                        "description": entry.get("summary", "")[:220] if entry.get("summary") else "",
+                        "image":       None,
+                    })
+                    if len(articles) >= limit:
+                        return articles
+        except Exception:
+            continue
+    return articles
+
+
+@api_router.get("/country-profile")
+async def get_country_profile(country_name: str):
+    """
+    Returns a rich profile for a given country:
+    - military_branches: static data
+    - contracts: top 5 contracts from DB (by authority_country)
+    - companies: top 6 defense companies from DB
+    - news: up to 5 recent articles (DB-first, RSS fallback)
+    """
+    from data.military_branches import MILITARY_BRANCHES, COUNTRY_TO_PLAYER_COUNTRY
+
+    # --- Branches ---
+    branches = MILITARY_BRANCHES.get(country_name, [])
+
+    # --- Contracts ---
+    contracts_raw = await db.contracts.find(
+        {"authority_country": country_name}, {"_id": 0}
+    ).sort("publication_date", -1).limit(5).to_list(5)
+    # Also try alternate spellings (UK / United Kingdom)
+    if not contracts_raw and country_name == "United Kingdom":
+        contracts_raw = await db.contracts.find(
+            {"authority_country": "UK"}, {"_id": 0}
+        ).sort("publication_date", -1).limit(5).to_list(5)
+    if not contracts_raw and country_name == "United States":
+        contracts_raw = await db.contracts.find(
+            {"authority_country": "USA"}, {"_id": 0}
+        ).sort("publication_date", -1).limit(5).to_list(5)
+
+    contracts = [
+        {
+            "id":           c.get("id", ""),
+            "title":        c.get("title", ""),
+            "category":     c.get("category", ""),
+            "status":       c.get("status", ""),
+            "amount_min":   c.get("amount_min"),
+            "amount_max":   c.get("amount_max"),
+            "awarded_to":   c.get("awarded_to", ""),
+            "program":      c.get("program", ""),
+            "publication_date": c.get("publication_date", ""),
+        }
+        for c in contracts_raw
+    ]
+
+    # --- Companies ---
+    player_countries = COUNTRY_TO_PLAYER_COUNTRY.get(country_name, [country_name])
+    companies_raw = await db.defense_players.find(
+        {"country": {"$in": player_countries}}, {"_id": 0}
+    ).sort("market_cap", -1).limit(6).to_list(6)
+    companies = [
+        {
+            "name":            p.get("name", ""),
+            "ticker":          p.get("ticker", ""),
+            "market_cap":      p.get("market_cap", 0),
+            "revenue":         p.get("revenue", 0),
+            "specializations": p.get("specializations", []),
+            "stock_price":     p.get("stock_price", 0),
+            "change_percent":  p.get("change_percent", 0),
+        }
+        for p in companies_raw
+    ]
+
+    # --- News (DB first, RSS fallback) ---
+    esc = re.escape(country_name)
+    db_news = await db.news_articles.find(
+        {"title": {"$regex": esc, "$options": "i"}},
+        {"_id": 0, "title": 1, "url": 1, "source": 1, "publishedAt": 1, "description": 1, "image": 1}
+    ).sort("publishedAt", -1).limit(5).to_list(5)
+
+    news = [
+        {
+            "title":       a.get("title", ""),
+            "url":         a.get("url", ""),
+            "source":      a.get("source", ""),
+            "publishedAt": a.get("publishedAt", ""),
+            "description": a.get("description", ""),
+            "image":       a.get("image"),
+        }
+        for a in db_news
+    ]
+
+    if len(news) < 3:
+        try:
+            rss_articles = await asyncio.to_thread(_fetch_rss_country_news, country_name, 5 - len(news))
+            news.extend(rss_articles)
+        except Exception:
+            pass
+
+    return {
+        "country_name":      country_name,
+        "military_branches": branches,
+        "contracts":         contracts,
+        "companies":         companies,
+        "news":              news,
+    }
+
+
 # ============= DASHBOARD STATS =============
 
 @api_router.get("/dashboard/stats")
