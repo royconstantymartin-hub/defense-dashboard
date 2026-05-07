@@ -124,12 +124,14 @@ function CountryProfileSection({ country, allExpenditures }) {
   const [loadingProfile, setLoadingProfile] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     setLoadingProfile(true);
     setProfile(null);
     axios.get(`${API}/country-profile`, { params: { country_name: country.country } })
-      .then(r => setProfile(r.data))
-      .catch(() => setProfile({ military_branches: [], contracts: [], companies: [], news: [] }))
-      .finally(() => setLoadingProfile(false));
+      .then(r => { if (!cancelled) setProfile(r.data); })
+      .catch(() => { if (!cancelled) setProfile({ military_branches: [], contracts: [], companies: [], news: [] }); })
+      .finally(() => { if (!cancelled) setLoadingProfile(false); });
+    return () => { cancelled = true; };
   }, [country.country]);
 
   // Build regional peers data for the comparison bar chart

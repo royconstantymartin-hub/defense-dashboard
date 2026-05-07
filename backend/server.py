@@ -944,24 +944,33 @@ async def delete_contract(contract_id: str, current_user: dict = Depends(get_cur
 # ============= COUNTRY PROFILE =============
 
 def _fetch_rss_country_news(country_name: str, limit: int = 5) -> list:
-    """Fetch recent defense news mentioning country_name from RSS feeds."""
+    """Fetch recent defense news mentioning country_name from RSS feeds.
+
+    All feeds are fetched in parallel with a 5-second per-feed timeout and an
+    8-second wall-clock cap so the worst-case wait is ~8s regardless of how
+    many feeds are slow or unreachable.
+    """
     import feedparser as _fp
     import requests as _req
+    from concurrent.futures import ThreadPoolExecutor, as_completed as _as_completed
+
     feeds = [
         {"name": "Defense News",     "url": "https://www.defensenews.com/arc/outboundfeeds/rss/"},
         {"name": "The Defense Post", "url": "https://thedefensepost.com/feed/"},
         {"name": "Breaking Defense", "url": "https://breakingdefense.com/feed/"},
     ]
-    articles = []
     term = country_name.lower()
-    for feed_meta in feeds:
+    _headers = {"User-Agent": "Mozilla/5.0"}
+
+    def _fetch_one(feed_meta: dict) -> list:
         try:
-            resp = _req.get(feed_meta["url"], timeout=8, headers={"User-Agent": "Mozilla/5.0"})
+            resp = _req.get(feed_meta["url"], timeout=5, headers=_headers)
             feed = _fp.parse(resp.content)
+            results = []
             for entry in feed.entries:
                 text = f"{entry.get('title', '')} {entry.get('summary', '')}".lower()
                 if term in text:
-                    articles.append({
+                    results.append({
                         "title":       entry.get("title", ""),
                         "url":         entry.get("link", ""),
                         "source":      feed_meta["name"],
@@ -969,11 +978,19 @@ def _fetch_rss_country_news(country_name: str, limit: int = 5) -> list:
                         "description": entry.get("summary", "")[:220] if entry.get("summary") else "",
                         "image":       None,
                     })
-                    if len(articles) >= limit:
-                        return articles
+            return results
         except Exception:
-            continue
-    return articles
+            return []
+
+    articles = []
+    with ThreadPoolExecutor(max_workers=len(feeds)) as pool:
+        futures = {pool.submit(_fetch_one, f): f for f in feeds}
+        for future in _as_completed(futures, timeout=8):
+            try:
+                articles.extend(future.result())
+            except Exception:
+                pass
+    return articles[:limit]
 
 
 @api_router.get("/country-profile")
