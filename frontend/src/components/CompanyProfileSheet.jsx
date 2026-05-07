@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getClearbitUrl } from "@/lib/companyLogos";
+import { getLogoUrls } from "@/lib/companyLogos";
 import {
   Sheet, SheetContent,
 } from "@/components/ui/sheet";
@@ -95,41 +95,22 @@ function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-function CompanyLogo({ name, domain: domainOverride, size = "lg" }) {
-  const [level, setLevel] = useState(1);
+function CompanyLogo({ name, size = "lg" }) {
+  const urls = getLogoUrls(name);
+  const [idx, setIdx] = useState(0);
   const sizeClass = size === "lg" ? "w-16 h-16" : "w-10 h-10";
   const textClass = size === "lg" ? "text-xl" : "text-sm";
-  const logoUrl = getClearbitUrl(name);
-  // Domain for Google Favicon fallback: explicit override > extracted from Clearbit URL
-  const domain = domainOverride
-    || (logoUrl?.startsWith("https://logo.clearbit.com/")
-        ? logoUrl.replace("https://logo.clearbit.com/", "").split("?")[0]
-        : null);
 
-  useEffect(() => { setLevel(1); }, [name]);
+  useEffect(() => { setIdx(0); }, [name]);
 
   const imgClass = `${sizeClass} rounded-2xl object-contain bg-white border border-white/20 shadow-lg p-1.5`;
 
-  // Level 1 — Clearbit HD or Wikipedia SVG
-  if (level === 1 && logoUrl) {
+  if (idx < urls.length) {
     return (
-      <img src={logoUrl} alt={name} className={imgClass} onError={() => setLevel(2)} />
+      <img src={urls[idx]} alt={name} className={imgClass} onError={() => setIdx((i) => i + 1)} />
     );
   }
 
-  // Level 2 — Google Favicon (instant, works for any registered domain)
-  if (level <= 2 && domain) {
-    return (
-      <img
-        src={`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`}
-        alt={name}
-        className={imgClass}
-        onError={() => setLevel(3)}
-      />
-    );
-  }
-
-  // Level 3 — Coloured initials avatar
   return (
     <div className={`${sizeClass} bg-gradient-to-br ${avatarColor(name)} rounded-2xl flex items-center justify-center shadow-lg shrink-0`}>
       <span className={`${textClass} font-bold text-white tracking-tight`}>{initials(name)}</span>
