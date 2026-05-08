@@ -11,16 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Search,
-  Rocket,
-  Globe,
-  Users,
-  Building2,
-  ExternalLink,
-  DollarSign,
-  Calendar,
-  MapPin,
-  Filter,
+  Search, Rocket, Globe, Users, Building2, ExternalLink,
+  DollarSign, Calendar, Filter,
+  Brain, Bot, Plane, Truck, Star, Zap, Target, Flame,
+  Anchor, Command, Eye, Radio, GraduationCap, ScanLine,
+  Crosshair, Server, Wrench, Network, Cpu, ChevronRight,
+  ShieldAlert,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
@@ -36,6 +32,43 @@ const COUNTRY_ISO = {
   "Brazil": "br", "Canada": "ca", "Singapore": "sg",
   "South Africa": "za",
 };
+
+// Icon mapped to each type of military/defense specialization
+const SPEC_ICON_MAP = [
+  { keys: ["AI", "Machine Learning", "Artificial"],  Icon: Brain },
+  { keys: ["Autonomous", "Autonomy", "Self-"],       Icon: Bot },
+  { keys: ["UAV", "Drone", "UAS", "UCAV"],           Icon: Plane },
+  { keys: ["UGV", "Ground Vehicle", "Land Robot"],   Icon: Truck },
+  { keys: ["Cyber", "Cybersecurity", "Hacking"],     Icon: ShieldAlert },
+  { keys: ["Space", "Satellite", "Orbital"],         Icon: Star },
+  { keys: ["Electronic Warfare", "EW", "Jamming", "SIGINT"], Icon: Zap },
+  { keys: ["Counter-UAS", "C-UAS", "Anti-drone"],   Icon: Target },
+  { keys: ["Hypersonics", "Hypersonic"],             Icon: Flame },
+  { keys: ["Naval", "Maritime", "Submarine", "Underwater"], Icon: Anchor },
+  { keys: ["Robotics", "Robot"],                     Icon: Bot },
+  { keys: ["Missile", "Rockets", "Munitions"],       Icon: Crosshair },
+  { keys: ["Command", "C2", "C4ISR", "C4"],         Icon: Command },
+  { keys: ["Intelligence", "ISR", "Reconnaissance"], Icon: Eye },
+  { keys: ["Communications", "Comms", "Radio", "Datalink"], Icon: Radio },
+  { keys: ["Training", "Simulation", "Simulator"],  Icon: GraduationCap },
+  { keys: ["Directed Energy", "HPM", "Laser", "DEW"], Icon: Zap },
+  { keys: ["Sensor", "Detection", "Radar", "Sonar"], Icon: ScanLine },
+  { keys: ["Aircraft", "Aviation", "Fixed-wing"],   Icon: Plane },
+  { keys: ["Ammunition", "Ammo", "Projectile"],     Icon: Crosshair },
+  { keys: ["Land Systems", "Armoured", "Armor"],    Icon: Truck },
+  { keys: ["Engineering", "Infrastructure"],        Icon: Wrench },
+  { keys: ["IT", "Software", "Platform"],           Icon: Cpu },
+  { keys: ["Network", "Connectivity"],              Icon: Network },
+  { keys: ["Logistics", "Supply"],                  Icon: Truck },
+];
+
+function getSpecIcon(spec) {
+  const lower = spec.toLowerCase();
+  for (const { keys, Icon } of SPEC_ICON_MAP) {
+    if (keys.some((k) => lower.includes(k.toLowerCase()))) return Icon;
+  }
+  return null;
+}
 
 const SPEC_COLOR = {
   "AI":                  "bg-violet-100 text-violet-700 border-violet-200",
@@ -58,8 +91,6 @@ function specBadgeClass(spec) {
   return "bg-slate-100 text-slate-600 border-slate-200";
 }
 
-// A company is a startup if it is private, has fewer than 5 000 employees,
-// and a market cap under $3B — this excludes large primes like Naval Group.
 function isStartup(company) {
   const isPrivate =
     company.is_public === false ||
@@ -71,15 +102,44 @@ function isStartup(company) {
   return true;
 }
 
-function CompanyLogo({ company }) {
-  const [src, setSrc] = useState(null);
+// Avatar colors based on first letter
+const AVATAR_COLORS = [
+  "from-purple-100 to-purple-200 text-purple-700",
+  "from-blue-100 to-blue-200 text-blue-700",
+  "from-emerald-100 to-emerald-200 text-emerald-700",
+  "from-amber-100 to-amber-200 text-amber-700",
+  "from-rose-100 to-rose-200 text-rose-700",
+  "from-cyan-100 to-cyan-200 text-cyan-700",
+  "from-indigo-100 to-indigo-200 text-indigo-700",
+  "from-teal-100 to-teal-200 text-teal-700",
+];
+
+function avatarColor(name) {
+  const idx = (name.charCodeAt(0) || 0) % AVATAR_COLORS.length;
+  return AVATAR_COLORS[idx];
+}
+
+function CompanyLogo({ company, size = 44 }) {
+  const [imgSrc, setImgSrc] = useState(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    const domain = company.website
-      ? company.website.replace(/^https?:\/\//, "").split("/")[0]
+    setFailed(false);
+    const website = company.website;
+    const domain = website
+      ? website.replace(/^https?:\/\//, "").split("/")[0]
       : null;
-    if (domain) setSrc(`https://logo.clearbit.com/${domain}`);
-  }, [company.website]);
+
+    if (domain) {
+      setImgSrc(`https://logo.clearbit.com/${domain}`);
+    } else {
+      // Try guessing from company name: e.g. "Shield AI" → shieldai.com
+      const guessed = company.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "") + ".com";
+      setImgSrc(`https://logo.clearbit.com/${guessed}`);
+    }
+  }, [company.name, company.website]);
 
   const initials = company.name
     .split(" ")
@@ -88,20 +148,26 @@ function CompanyLogo({ company }) {
     .join("")
     .toUpperCase();
 
-  if (!src) {
+  const sizeClass = `w-[${size}px] h-[${size}px]`;
+
+  if (failed || !imgSrc) {
     return (
-      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center flex-shrink-0">
-        <span className="font-bold text-purple-700 text-sm">{initials}</span>
+      <div
+        className={`rounded-xl bg-gradient-to-br ${avatarColor(company.name)} flex items-center justify-center flex-shrink-0 font-bold text-sm`}
+        style={{ width: size, height: size }}
+      >
+        {initials}
       </div>
     );
   }
 
   return (
     <img
-      src={src}
+      src={imgSrc}
       alt={company.name}
-      className="w-10 h-10 rounded-lg object-contain bg-white border border-slate-100 flex-shrink-0"
-      onError={() => setSrc(null)}
+      className="rounded-xl object-contain bg-white border border-slate-100 flex-shrink-0"
+      style={{ width: size, height: size }}
+      onError={() => setFailed(true)}
     />
   );
 }
@@ -118,111 +184,120 @@ function FundingBadge({ stage }) {
   else if (s.includes("seed"))      cls = "bg-amber-100 text-amber-700";
   else if (s.includes("acquired"))  cls = "bg-rose-100 text-rose-700";
 
-  const short = stage.length > 40 ? stage.slice(0, 40) + "…" : stage;
+  const short = stage.length > 36 ? stage.slice(0, 36) + "…" : stage;
   return (
-    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${cls}`}>
-      <DollarSign className="w-3 h-3" />
+    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${cls}`}>
+      <DollarSign className="w-3 h-3 flex-shrink-0" />
       {short}
     </span>
   );
 }
 
-function StartupCard({ company, onClick }) {
+// ── Row card ──────────────────────────────────────────────────────────────────
+
+function StartupRow({ company, onClick }) {
   const iso = COUNTRY_ISO[(company.country || "").trim()];
+  const specs = company.specializations || [];
 
   return (
-    <Card
-      className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg hover:border-purple-200 transition-all duration-200 cursor-pointer group"
+    <div
+      className="flex items-center gap-4 px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-[0_1px_4px_-1px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-purple-200 transition-all duration-150 cursor-pointer group"
       onClick={onClick}
     >
-      <CardContent className="p-4">
-        {/* Header row */}
-        <div className="flex items-start gap-3 mb-3">
-          <CompanyLogo company={company} />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold text-slate-900 text-sm leading-tight group-hover:text-purple-700 transition-colors truncate">
-                {company.name}
-              </h3>
-              {company.website && (
-                <a
-                  href={company.website.startsWith("http") ? company.website : `https://${company.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-slate-400 hover:text-purple-600 transition-colors flex-shrink-0"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              )}
-            </div>
+      {/* Logo */}
+      <CompanyLogo company={company} size={44} />
 
-            <div className="flex flex-wrap items-center gap-2 mt-1">
-              {iso && (
-                <img
-                  src={`https://flagcdn.com/w20/${iso}.png`}
-                  alt={company.country}
-                  title={company.country}
-                  className="w-4 h-auto rounded-sm"
-                  onError={(e) => { e.target.style.display = "none"; }}
-                />
-              )}
-              {company.headquarters && (
-                <span className="flex items-center gap-1 text-xs text-slate-500 truncate max-w-[140px]">
-                  <MapPin className="w-3 h-3 flex-shrink-0" />
-                  {company.headquarters}
-                </span>
-              )}
-              {company.founded_year && (
-                <span className="flex items-center gap-1 text-xs text-slate-500">
-                  <Calendar className="w-3 h-3" />
-                  {company.founded_year}
-                </span>
-              )}
-            </div>
-          </div>
+      {/* Name + location */}
+      <div className="w-52 flex-shrink-0 min-w-0">
+        <div className="flex items-center gap-1.5">
+          <h3 className="font-semibold text-sm text-slate-900 group-hover:text-purple-700 transition-colors truncate">
+            {company.name}
+          </h3>
+          {company.website && (
+            <a
+              href={company.website.startsWith("http") ? company.website : `https://${company.website}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-slate-300 hover:text-purple-500 transition-colors flex-shrink-0"
+            >
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
         </div>
+        <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+          {iso && (
+            <img
+              src={`https://flagcdn.com/w20/${iso}.png`}
+              alt={company.country}
+              title={company.country}
+              className="w-4 h-auto rounded-sm flex-shrink-0"
+              onError={(e) => { e.target.style.display = "none"; }}
+            />
+          )}
+          {company.headquarters ? (
+            <span className="text-xs text-slate-500 truncate max-w-[120px]">
+              {company.headquarters}
+            </span>
+          ) : company.country ? (
+            <span className="text-xs text-slate-500">{company.country}</span>
+          ) : null}
+          {company.founded_year && (
+            <span className="text-xs text-slate-400 flex items-center gap-0.5 flex-shrink-0">
+              <Calendar className="w-2.5 h-2.5" />
+              {company.founded_year}
+            </span>
+          )}
+        </div>
+      </div>
 
-        {/* Funding stage */}
-        {company.funding_stage && (
-          <div className="mb-3">
-            <FundingBadge stage={company.funding_stage} />
-          </div>
-        )}
-
-        {/* Specializations */}
-        {company.specializations?.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-3">
-            {company.specializations.slice(0, 3).map((s) => (
-              <span
-                key={s}
-                className={`text-xs font-medium px-2 py-0.5 rounded-full border ${specBadgeClass(s)}`}
-              >
-                {s}
-              </span>
-            ))}
-            {company.specializations.length > 3 && (
-              <span className="text-xs text-slate-400 px-1 py-0.5">
-                +{company.specializations.length - 3}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Description — 2 lines max, full details in profile sheet */}
-        {company.description && (
-          <p className="text-xs text-slate-600 leading-relaxed line-clamp-2 mb-3">
+      {/* Description */}
+      <div className="flex-1 min-w-0 hidden lg:block">
+        {company.description ? (
+          <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
             {company.description}
           </p>
+        ) : (
+          <span className="text-xs text-slate-300 italic">No description</span>
         )}
+      </div>
 
-        <div className="pt-2 border-t border-slate-100">
-          <span className="text-xs font-medium text-purple-700 group-hover:text-purple-900 transition-colors">
-            View full profile →
+      {/* Specialization badges with icons */}
+      <div className="flex flex-wrap gap-1.5 w-72 flex-shrink-0">
+        {specs.slice(0, 5).map((s) => {
+          const SpecIcon = getSpecIcon(s);
+          return (
+            <span
+              key={s}
+              className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border ${specBadgeClass(s)}`}
+            >
+              {SpecIcon && <SpecIcon className="w-3 h-3 flex-shrink-0" />}
+              {s}
+            </span>
+          );
+        })}
+        {specs.length > 5 && (
+          <span className="text-xs text-slate-400 self-center">+{specs.length - 5}</span>
+        )}
+      </div>
+
+      {/* Funding + employees */}
+      <div className="w-48 flex-shrink-0 flex flex-col items-end gap-1.5">
+        {company.funding_stage ? (
+          <FundingBadge stage={company.funding_stage} />
+        ) : (
+          <span className="text-xs text-slate-300 italic">No funding data</span>
+        )}
+        {company.employees ? (
+          <span className="text-xs text-slate-500 flex items-center gap-1">
+            <Users className="w-3 h-3" />
+            {company.employees.toLocaleString()} emp.
           </span>
-        </div>
-      </CardContent>
-    </Card>
+        ) : null}
+      </div>
+
+      <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-purple-400 transition-colors flex-shrink-0" />
+    </div>
   );
 }
 
@@ -260,7 +335,6 @@ export default function Startups() {
     return Array.from(set).sort();
   }, [startups]);
 
-  // [country, count] pairs sorted by count desc
   const countryCounts = useMemo(() => {
     const map = {};
     startups.forEach((c) => {
@@ -316,10 +390,10 @@ export default function Startups() {
       {!loading && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Startups",         value: startups.length,                  icon: Rocket,   color: "text-purple-700" },
-            { label: "Countries",         value: countryCounts.length,             icon: Globe,    color: "text-blue-600" },
-            { label: "Total Employees",   value: totalEmployees.toLocaleString(),  icon: Users,    color: "text-emerald-600" },
-            { label: "Funded",            value: totalFunded,                      icon: DollarSign, color: "text-amber-600" },
+            { label: "Startups",       value: startups.length,                 icon: Rocket,    color: "text-purple-700" },
+            { label: "Countries",       value: countryCounts.length,            icon: Globe,     color: "text-blue-600" },
+            { label: "Total Employees", value: totalEmployees.toLocaleString(), icon: Users,     color: "text-emerald-600" },
+            { label: "Funded",          value: totalFunded,                     icon: DollarSign, color: "text-amber-600" },
           ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
@@ -355,9 +429,17 @@ export default function Startups() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All specializations</SelectItem>
-            {allSpecs.map((s) => (
-              <SelectItem key={s} value={s}>{s}</SelectItem>
-            ))}
+            {allSpecs.map((s) => {
+              const SpecIcon = getSpecIcon(s);
+              return (
+                <SelectItem key={s} value={s}>
+                  <span className="flex items-center gap-1.5">
+                    {SpecIcon && <SpecIcon className="w-3.5 h-3.5 text-slate-400" />}
+                    {s}
+                  </span>
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
 
@@ -391,7 +473,6 @@ export default function Startups() {
               Countries
             </p>
             <div className="flex flex-col gap-0.5">
-              {/* "All" row */}
               <button
                 onClick={() => setFilterCountry("all")}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
@@ -410,7 +491,6 @@ export default function Startups() {
                 </span>
               </button>
 
-              {/* Per-country rows */}
               {countryCounts.map(([country, count]) => {
                 const iso    = COUNTRY_ISO[country];
                 const active = filterCountry === country;
@@ -448,7 +528,7 @@ export default function Startups() {
             </div>
           </div>
 
-          {/* ── Cards grid ── */}
+          {/* ── Rows list ── */}
           <div className="flex-1 min-w-0">
             {filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 gap-2">
@@ -457,27 +537,36 @@ export default function Startups() {
               </div>
             ) : (
               <>
-                <p className="text-xs text-slate-500 mb-4">
-                  {filtered.length} startup{filtered.length !== 1 ? "s" : ""}
-                  {filterCountry !== "all" ? ` · ${filterCountry}` : ""}
-                  {filterSpec !== "all" ? ` · ${filterSpec}` : ""}
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {/* Column headers */}
+                <div className="flex items-center gap-4 px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <div className="w-44 flex-shrink-0 ml-14">Company</div>
+                  <div className="flex-1 hidden lg:block">Description</div>
+                  <div className="w-72 flex-shrink-0">Specializations</div>
+                  <div className="w-48 flex-shrink-0 text-right">Funding · Team</div>
+                  <div className="w-4 flex-shrink-0" />
+                </div>
+
+                <div className="flex flex-col gap-2">
                   {filtered.map((company) => (
-                    <StartupCard
+                    <StartupRow
                       key={company.id || company.name}
                       company={company}
                       onClick={() => setProfileName(company.name)}
                     />
                   ))}
                 </div>
+
+                <p className="text-xs text-slate-400 mt-4 text-right">
+                  {filtered.length} startup{filtered.length !== 1 ? "s" : ""}
+                  {filterCountry !== "all" ? ` · ${filterCountry}` : ""}
+                  {filterSpec !== "all" ? ` · ${filterSpec}` : ""}
+                </p>
               </>
             )}
           </div>
         </div>
       )}
 
-      {/* CompanyProfileSheet manages its own Sheet/drawer internally */}
       <CompanyProfileSheet name={profileName} onClose={() => setProfileName(null)} />
     </div>
   );
