@@ -33,8 +33,16 @@ function avatarColor(name = "") {
 function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
-function LogoWithFallback({ name, size = 44 }) {
-  const urls = useMemo(() => getLogoUrls(name), [name]);
+function LogoWithFallback({ name, website, size = 44 }) {
+  const urls = useMemo(() => {
+    const curated = getLogoUrls(name);
+    if (curated.length > 0) return curated;
+    if (website) {
+      const domain = website.replace(/^https?:\/\//, "").split("/")[0].toLowerCase();
+      return [`https://logo.clearbit.com/${domain}`];
+    }
+    return [];
+  }, [name, website]);
   const [urlIndex, setUrlIndex] = useState(0);
 
   if (!urls.length || urlIndex >= urls.length) {
@@ -164,7 +172,7 @@ function StartupRow({ company, onClick }) {
       <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
 
       {/* Logo */}
-      <LogoWithFallback name={company.name} size={44} />
+      <LogoWithFallback name={company.name} website={company.website} size={44} />
 
       {/* Name + meta */}
       <div className="w-48 flex-shrink-0 min-w-0">
