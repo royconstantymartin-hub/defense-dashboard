@@ -238,6 +238,46 @@ const BRANCH_LOGOS = {
   "Norwegian Army":             WP + "Norwegian_Army_logo.svg" + WPS,
   "Royal Norwegian Navy":       WP + "Naval_Ensign_of_Norway.svg" + WPS,
   "Royal Norwegian Air Force":  WP + "Norwegian_Air_Force_roundel.svg" + WPS,
+  // Israel — branches missing from the original list
+  "Israeli Navy":               WP + "Emblem_of_the_Israeli_Navy.svg" + WPS,
+  "Intelligence Directorate (AMAN)": WP + "IDF_Military_Intelligence_Directorate_emblem.svg" + WPS,
+  // Turkey — Jandarma
+  "Jandarma (Gendarmerie)":     WP + "Jandarma_Genel_Komutanligi.svg" + WPS,
+  // Egypt
+  "Egyptian Army":              WP + "Egyptian_Army_logo.svg" + WPS,
+  "Egyptian Navy":              WP + "Egyptian_Navy_logo.svg" + WPS,
+  "Egyptian Air Force":         WP + "Egyptian_Air_Force_roundel.svg" + WPS,
+  // Saudi Arabia — additional
+  "Saudi Arabian National Guard": WP + "Saudi_Arabian_National_Guard_Emblem.svg" + WPS,
+};
+
+// Unsplash source photos shown as photo header in BranchCard (one per branch type).
+const UB = (q) => `https://source.unsplash.com/featured/400x200/?${encodeURIComponent(q)}`;
+const BRANCH_TYPE_PHOTO = {
+  army:          UB("army soldiers infantry military troops"),
+  navy:          UB("navy warship destroyer ocean military"),
+  air:           UB("fighter jet aircraft military air force"),
+  space:         UB("rocket launch space satellite military"),
+  special:       UB("special forces commando military elite"),
+  cyber:         UB("cybersecurity computer network technology"),
+  strategic:     UB("missile military defense ballistic"),
+  gendarmerie:   UB("police military patrol gendarmerie"),
+  coast_guard:   UB("coast guard patrol boat sea maritime"),
+  national_guard:UB("national guard military troops"),
+};
+
+// Dark gradient fallback per branch type used when Unsplash photo fails.
+const BRANCH_BG_GRADIENT = {
+  army:          "from-emerald-800 to-emerald-950",
+  navy:          "from-blue-800 to-blue-950",
+  air:           "from-sky-700 to-blue-900",
+  space:         "from-violet-800 to-violet-950",
+  special:       "from-amber-700 to-amber-900",
+  cyber:         "from-slate-700 to-slate-900",
+  strategic:     "from-rose-800 to-rose-950",
+  gendarmerie:   "from-indigo-700 to-indigo-900",
+  coast_guard:   "from-cyan-700 to-cyan-900",
+  national_guard:"from-teal-700 to-teal-900",
 };
 
 const CONTRACT_STATUS_STYLE = {
@@ -598,51 +638,72 @@ function getBranchLogoUrls(branch) {
 function BranchCard({ branch }) {
   const logoUrls = getBranchLogoUrls(branch);
   const [logoIdx, setLogoIdx] = useState(0);
-  const colorCls = BRANCH_COLOR[branch.type] || "bg-slate-50 text-slate-600 border-slate-200";
+  const [photoError, setPhotoError] = useState(false);
   const icon = BRANCH_ICON[branch.type] || <Shield className="w-5 h-5" />;
+  const typePhoto = BRANCH_TYPE_PHOTO[branch.type];
+  const bgGradient = BRANCH_BG_GRADIENT[branch.type] || "from-slate-700 to-slate-900";
 
   return (
     <a
       href={branch.website}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col gap-3 p-4 rounded-xl border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all bg-white"
+      className="group flex flex-col rounded-xl border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all bg-white overflow-hidden"
     >
-      {/* Logo + type badge */}
-      <div className="flex items-center justify-between">
-        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center overflow-hidden ${colorCls} shrink-0`}>
+      {/* Photo header area */}
+      <div className="relative w-full h-24 overflow-hidden shrink-0">
+        {typePhoto && !photoError ? (
+          <img
+            src={typePhoto}
+            alt={branch.type}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setPhotoError(true)}
+          />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-br ${bgGradient} flex items-center justify-center`}>
+            <span className="text-white/20 scale-[4]">{icon}</span>
+          </div>
+        )}
+        {/* Gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+        {/* Official emblem / logo in bottom-left corner */}
+        <div className="absolute bottom-2 left-2 w-8 h-8 rounded-lg bg-white/90 border border-white/30 flex items-center justify-center overflow-hidden shrink-0 shadow">
           {logoUrls.length > 0 && logoIdx < logoUrls.length ? (
             <img
               src={logoUrls[logoIdx]}
               alt={branch.name}
-              className="w-8 h-8 object-contain"
+              className="w-6 h-6 object-contain"
               onError={() => setLogoIdx(i => i + 1)}
             />
           ) : (
-            <span className="scale-125">{icon}</span>
+            <span className={`${(BRANCH_COLOR[branch.type] || "text-slate-600").split(" ").find(c => c.startsWith("text-")) || "text-slate-600"} scale-110`}>{icon}</span>
           )}
         </div>
-        <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-purple-400 transition-colors shrink-0" />
+
+        {/* External link icon in top-right */}
+        <ExternalLink className="absolute top-2 right-2 w-3.5 h-3.5 text-white/40 group-hover:text-white/80 transition-colors" />
       </div>
 
-      {/* Name + role */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-bold text-slate-800 group-hover:text-purple-700 leading-tight transition-colors line-clamp-2">
-          {branch.name}
-        </p>
-        <p className="text-[11px] text-slate-500 mt-0.5">{branch.role}</p>
-      </div>
-
-      {/* Personnel */}
-      {branch.personnel > 0 && (
-        <div className="flex items-center gap-1.5 pt-2 border-t border-slate-100">
-          <Users className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-sm font-mono font-bold text-slate-700">
-            {formatPersonnel(branch.personnel)}
-          </span>
-          <span className="text-[10px] text-slate-400">personnel</span>
+      {/* Text area */}
+      <div className="p-3 flex flex-col gap-1.5">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-slate-800 group-hover:text-purple-700 leading-tight transition-colors line-clamp-2">
+            {branch.name}
+          </p>
+          <p className="text-[11px] text-slate-500 mt-0.5">{branch.role}</p>
         </div>
-      )}
+
+        {branch.personnel > 0 && (
+          <div className="flex items-center gap-1.5 pt-1.5 border-t border-slate-100">
+            <Users className="w-3.5 h-3.5 text-slate-400" />
+            <span className="text-sm font-mono font-bold text-slate-700">
+              {formatPersonnel(branch.personnel)}
+            </span>
+            <span className="text-[10px] text-slate-400">personnel</span>
+          </div>
+        )}
+      </div>
     </a>
   );
 }
@@ -712,24 +773,24 @@ function NewsCard({ article }) {
 }
 
 // ── Flag tick for the regional comparison bar chart ───────────────────────────
+// Uses <foreignObject><img> instead of SVG <image> — more reliable in browsers
+// that block cross-origin URLs in SVG image elements due to CSP/CORS policies.
 function FlagYTick({ x, y, payload }) {
   const code = COUNTRY_FLAGS[payload.value] || payload.value.toLowerCase();
   const flagUrl = `https://flagcdn.com/w40/${code}.png`;
   return (
     <g transform={`translate(${x},${y})`}>
-      {/* Text fallback always rendered underneath; the image covers it when it loads */}
+      {/* Country code text shown if image fails */}
       <text x={-16} y={4} textAnchor="middle" fontSize={7} fill="#94a3b8" fontFamily="monospace">
         {payload.value}
       </text>
-      <image
-        href={flagUrl}
-        xlinkHref={flagUrl}
-        x={-30}
-        y={-9}
-        width={26}
-        height={18}
-        preserveAspectRatio="xMidYMid slice"
-      />
+      <foreignObject x={-30} y={-9} width={26} height={18}>
+        <img
+          src={flagUrl}
+          alt={payload.value}
+          style={{ width: "26px", height: "18px", objectFit: "cover", borderRadius: "2px", display: "block" }}
+        />
+      </foreignObject>
     </g>
   );
 }
