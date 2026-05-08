@@ -81,25 +81,11 @@ const COUNTRY_ISO = {
   "South Africa": "za",
 };
 
-const SPEC_COLOR = {
-  "AI":                 "bg-violet-50 text-violet-700 border-violet-200",
-  "Autonomous":         "bg-blue-50 text-blue-700 border-blue-200",
-  "UAV":                "bg-sky-50 text-sky-700 border-sky-200",
-  "UGV":                "bg-teal-50 text-teal-700 border-teal-200",
-  "Cyber":              "bg-rose-50 text-rose-700 border-rose-200",
-  "Space":              "bg-indigo-50 text-indigo-700 border-indigo-200",
-  "Electronic Warfare": "bg-amber-50 text-amber-700 border-amber-200",
-  "Counter-UAS":        "bg-orange-50 text-orange-700 border-orange-200",
-  "Hypersonics":        "bg-red-50 text-red-700 border-red-200",
-  "Naval":              "bg-cyan-50 text-cyan-700 border-cyan-200",
-  "Robotics":           "bg-emerald-50 text-emerald-700 border-emerald-200",
-};
-
 function specBadgeClass(spec) {
-  for (const [key, cls] of Object.entries(SPEC_COLOR)) {
-    if (spec.toLowerCase().includes(key.toLowerCase())) return cls;
-  }
-  return "bg-slate-50 text-slate-600 border-slate-200";
+  const s = spec.toLowerCase();
+  if (s.includes("ai") || s.includes("autonomous") || s.includes("cyber") || s.includes("software") || s.includes("intelligence"))
+    return "bg-purple-50 text-purple-700 border-purple-100";
+  return "bg-slate-100 text-slate-600 border-transparent";
 }
 
 // ── Business logic ────────────────────────────────────────────────────────────
@@ -111,7 +97,7 @@ function isStartup(company) {
     company.ticker === "PRIVATE";
   if (!isPrivate) return false;
   if ((company.employees || 0) > 5000) return false;
-  if ((company.market_cap || 0) > 3) return false;
+  if ((company.market_cap || 0) > 20) return false;
   return true;
 }
 
