@@ -19,6 +19,43 @@ import {
   FileText, Building2, Newspaper, Users, Globe, Crosshair,
   Target, Gauge,
 } from "lucide-react";
+
+// ── Custom military SVG icons ─────────────────────────────────────────────────
+function FighterJetIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 2 L13.5 7 L20 10 L20 12 L13.5 11 L13 17 L16 18 L16 20 L12 19 L8 20 L8 18 L11 17 L10.5 11 L4 12 L4 10 L10.5 7 Z" />
+    </svg>
+  );
+}
+function WarshipIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M3 16 L4 13 L7 13 L7 10 L9 10 L9 8 L11 7 L13 7 L15 8 L15 10 L17 10 L17 13 L20 13 L21 16 Z" />
+      <rect x="10" y="4" width="4" height="3" rx="0.5" />
+    </svg>
+  );
+}
+function TankIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <rect x="3" y="13" width="18" height="5" rx="1.5" />
+      <rect x="6" y="10" width="12" height="3" rx="1" />
+      <rect x="9" y="7" width="7" height="3" rx="0.5" />
+      <line x1="16" y1="8.5" x2="21" y2="8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+function SubmarineIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <ellipse cx="11" cy="14" rx="8" ry="4.5" />
+      <rect x="9" y="8" width="5" height="4" rx="1" />
+      <path d="M19 12.5 L22 11 L22 17 L19 15.5" />
+      <circle cx="5.5" cy="14" r="1" fill="white" />
+    </svg>
+  );
+}
 import { getLogoUrls } from "@/lib/companyLogos";
 import { getCountryBanner } from "@/lib/countryBanners";
 import {
@@ -93,6 +130,69 @@ const BRANCH_COLOR = {
   gendarmerie:   "bg-indigo-50 text-indigo-700 border-indigo-200",
   coast_guard:   "bg-cyan-50 text-cyan-700 border-cyan-200",
   national_guard:"bg-teal-50 text-teal-700 border-teal-200",
+};
+
+// Per-branch Wikimedia Commons emblems keyed by exact branch name.
+// The UI uses these first; if the image errors it falls back to the type icon.
+const WP = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+const BRANCH_LOGOS = {
+  // United States
+  "U.S. Army":                  WP + "United_States_Army_logo.svg",
+  "U.S. Navy":                  WP + "United_States_Navy_logo.svg",
+  "U.S. Air Force":             WP + "United_States_Air_Force_Logo.svg",
+  "U.S. Marine Corps":          WP + "United_States_Marine_Corps_logo.svg",
+  "U.S. Space Force":           WP + "United_States_Space_Force_logo.svg",
+  "U.S. Coast Guard":           WP + "United_States_Coast_Guard_Emblem.svg",
+  // France
+  "Armée de Terre":             WP + "Insigne_Arme_Infanterie.svg",
+  "Marine Nationale":           WP + "Logo_Marine_Nationale.svg",
+  "Armée de l'Air et de l'Espace": WP + "Armee_de_lair_et_de_lespace_insignes.svg",
+  "Gendarmerie Nationale":      WP + "Logo_gendarmerie_nationale.svg",
+  // United Kingdom
+  "British Army":               WP + "British_Army_logo_(2022).svg",
+  "Royal Navy":                 WP + "Naval_Ensign_of_the_United_Kingdom.svg",
+  "Royal Air Force":            WP + "Royal_Air_Force_roundel.svg",
+  "Royal Marines":              WP + "Royal_Marines_badge.svg",
+  // Germany
+  "Heer (Army)":                WP + "Bundeswehr_Logo_Heer_with_lettering.svg",
+  "Marine (Navy)":              WP + "Bundeswehr_Logo_Marine_with_lettering.svg",
+  "Luftwaffe (Air Force)":      WP + "Bundeswehr_Logo_Luftwaffe_with_lettering.svg",
+  "Cyber & Information Domain": WP + "Bundeswehr_Logo_CIR_with_lettering.svg",
+  // Russia
+  "Russian Ground Forces":      WP + "Emblem_of_Ground_Forces_of_Russia.svg",
+  "Russian Navy":               WP + "Emblem_of_the_Russian_Navy.svg",
+  "Russian Air Force":          WP + "Roundel_of_Russia.svg",
+  "Strategic Missile Troops":   WP + "Emblem_of_Strategic_Missile_Forces_of_Russia.svg",
+  // Japan
+  "JGSDF (Ground)":             WP + "JGSDF_Camp_Emblem.svg",
+  "JMSDF (Maritime)":           WP + "JMSDF_Logo.svg",
+  "JASDF (Air)":                WP + "Japan_Air_Self-Defense_Force_Roundel.svg",
+  // South Korea
+  "Republic of Korea Army":     WP + "Republic_of_Korea_Army_Emblem.svg",
+  "Republic of Korea Navy":     WP + "Republic_of_Korea_Navy_Emblem.svg",
+  "Republic of Korea Air Force":WP + "Republic_of_Korea_Air_Force_Roundel.svg",
+  // Italy
+  "Esercito (Army)":            WP + "Italian_Army_Emblem.svg",
+  "Marina Militare":            WP + "Insegna_Marina_Militare_italiana.svg",
+  "Aeronautica Militare":       WP + "Italian_Air_Force_roundel.svg",
+  "Carabinieri":                WP + "Emblem_of_the_Carabinieri.svg",
+  // Australia
+  "Australian Army":            WP + "Australian_Army_logo.svg",
+  "Royal Australian Navy":      WP + "Royal_Australian_Navy_Ensign.svg",
+  "Royal Australian Air Force": WP + "RAAF_roundel.svg",
+  // Spain
+  "Guardia Civil":              WP + "Guardia_Civil_Logo.svg",
+  // India
+  "Indian Army":                WP + "Indian_Army_Logo.svg",
+  "Indian Navy":                WP + "Indian_Naval_Ensign.svg",
+  "Indian Air Force":           WP + "Indian_Air_Force_Logo.svg",
+  // Israel
+  "IDF Ground Forces":          WP + "IDF_Ground_Forces_Branch_Logo.svg",
+  "Israeli Air Force (IAF)":    WP + "Israeli_Air_Force_roundel.svg",
+  // Turkey
+  "Turkish Land Forces":        WP + "Turkish_Land_Forces_Logo.svg",
+  "Turkish Naval Forces":       WP + "Turkish_Naval_Forces_Logo.svg",
+  "Turkish Air Force":          WP + "Turkish_Air_Force_roundel.svg",
 };
 
 const CONTRACT_STATUS_STYLE = {
@@ -236,7 +336,7 @@ const CAP_CATEGORIES = [
     key: "combat_aircraft",
     label: "Combat Aircraft",
     sublabel: "Fighters & Bombers",
-    Icon: Plane,
+    Icon: FighterJetIcon,
     scale: 50,
     scaleLabel: "50 aircraft",
     bg: "bg-sky-50/60",
@@ -252,7 +352,7 @@ const CAP_CATEGORIES = [
     key: "surface_combatants",
     label: "Surface Combatants",
     sublabel: "Frigates, Destroyers & Corvettes",
-    Icon: Anchor,
+    Icon: WarshipIcon,
     scale: 4,
     scaleLabel: "4 vessels",
     bg: "bg-blue-50/60",
@@ -268,7 +368,7 @@ const CAP_CATEGORIES = [
     key: "tanks",
     label: "Main Battle Tanks",
     sublabel: "MBTs & Heavy Armour",
-    Icon: Shield,
+    Icon: TankIcon,
     scale: 300,
     scaleLabel: "300 tanks",
     bg: "bg-emerald-50/60",
@@ -284,7 +384,7 @@ const CAP_CATEGORIES = [
     key: "submarines",
     label: "Submarines",
     sublabel: "Attack & Ballistic SSBNs",
-    Icon: Crosshair,
+    Icon: SubmarineIcon,
     scale: 3,
     scaleLabel: "3 submarines",
     bg: "bg-violet-50/60",
@@ -442,18 +542,19 @@ function DefenseCapabilitiesCard({ countryCode }) {
   );
 }
 
-function getBranchLogo(website) {
+function getBranchLogoUrls(branch) {
+  const urls = [];
+  if (BRANCH_LOGOS[branch.name]) urls.push(BRANCH_LOGOS[branch.name]);
   try {
-    const domain = new URL(website).hostname;
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-  } catch {
-    return null;
-  }
+    const domain = new URL(branch.website).hostname;
+    urls.push(`https://www.google.com/s2/favicons?domain=${domain}&sz=64`);
+  } catch { /* ignore */ }
+  return urls;
 }
 
 function BranchCard({ branch }) {
-  const [logoError, setLogoError] = useState(false);
-  const logoUrl = getBranchLogo(branch.website);
+  const logoUrls = getBranchLogoUrls(branch);
+  const [logoIdx, setLogoIdx] = useState(0);
   const colorCls = BRANCH_COLOR[branch.type] || "bg-slate-50 text-slate-600 border-slate-200";
   const icon = BRANCH_ICON[branch.type] || <Shield className="w-5 h-5" />;
 
@@ -467,12 +568,12 @@ function BranchCard({ branch }) {
       {/* Logo + type badge */}
       <div className="flex items-center justify-between">
         <div className={`w-10 h-10 rounded-xl border flex items-center justify-center overflow-hidden ${colorCls} shrink-0`}>
-          {logoUrl && !logoError ? (
+          {logoUrls.length > 0 && logoIdx < logoUrls.length ? (
             <img
-              src={logoUrl}
+              src={logoUrls[logoIdx]}
               alt={branch.name}
               className="w-8 h-8 object-contain"
-              onError={() => setLogoError(true)}
+              onError={() => setLogoIdx(i => i + 1)}
             />
           ) : (
             <span className="scale-125">{icon}</span>
@@ -500,6 +601,24 @@ function BranchCard({ branch }) {
         </div>
       )}
     </a>
+  );
+}
+
+// ── Flag tick for the regional comparison bar chart ───────────────────────────
+function FlagYTick({ x, y, payload }) {
+  const code = COUNTRY_FLAGS[payload.value] || payload.value.toLowerCase();
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <image
+        href={`https://flagcdn.com/w40/${code}.png`}
+        x={-30}
+        y={-9}
+        width={26}
+        height={18}
+        preserveAspectRatio="xMidYMid meet"
+        style={{ borderRadius: 3 }}
+      />
+    </g>
   );
 }
 
@@ -638,10 +757,10 @@ function CountryProfileSection({ country, allExpenditures }) {
                   <YAxis
                     type="category"
                     dataKey="country_code"
-                    tick={{ fill: '#64748B', fontSize: 10 }}
+                    tick={<FlagYTick />}
                     axisLine={false}
                     tickLine={false}
-                    width={30}
+                    width={36}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
