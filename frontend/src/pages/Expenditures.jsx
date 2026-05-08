@@ -133,108 +133,111 @@ const BRANCH_COLOR = {
 };
 
 // Per-branch Wikimedia Commons emblems keyed by exact branch name.
-// The UI uses these first; if the image errors it falls back to the type icon.
-const WP = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+// Uses Special:Redirect/file/ + &width=100 to get a PNG thumbnail — avoids SVG
+// cross-origin issues and the unreliable Special:FilePath redirect.
+const WP  = "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/";
+const WPS = "&width=100";
 const BRANCH_LOGOS = {
   // United States
-  "U.S. Army":                  WP + "United_States_Army_logo.svg",
-  "U.S. Navy":                  WP + "United_States_Navy_logo.svg",
-  "U.S. Air Force":             WP + "United_States_Air_Force_Logo.svg",
-  "U.S. Marine Corps":          WP + "United_States_Marine_Corps_logo.svg",
-  "U.S. Space Force":           WP + "United_States_Space_Force_logo.svg",
-  "U.S. Coast Guard":           WP + "United_States_Coast_Guard_Emblem.svg",
-  // France
-  "Armée de Terre":             WP + "Insigne_Arme_Infanterie.svg",
-  "Marine Nationale":           WP + "Logo_Marine_Nationale.svg",
-  "Armée de l'Air et de l'Espace": WP + "Armee_de_lair_et_de_lespace_insignes.svg",
-  "Gendarmerie Nationale":      WP + "Logo_gendarmerie_nationale.svg",
+  "U.S. Army":                  WP + "United_States_Army_logo.svg" + WPS,
+  "U.S. Navy":                  WP + "United_States_Navy_logo.svg" + WPS,
+  "U.S. Air Force":             WP + "United_States_Air_Force_Logo.svg" + WPS,
+  "U.S. Marine Corps":          WP + "United_States_Marine_Corps_logo.svg" + WPS,
+  "U.S. Space Force":           WP + "United_States_Space_Force_logo.svg" + WPS,
+  "U.S. Coast Guard":           WP + "United_States_Coast_Guard_Emblem.svg" + WPS,
+  // France — correct Wikimedia Commons filenames for each branch emblem
+  "Armée de Terre":             WP + "Insigne_de_l%27arm%C3%A9e_de_Terre.svg" + WPS,
+  "Marine Nationale":           WP + "Marine_nationale_(insigne).svg" + WPS,
+  "Armée de l'Air et de l'Espace": WP + "Insigne_de_l%27Arm%C3%A9e_de_l%27Air_et_de_l%27Espace.svg" + WPS,
+  "Gendarmerie Nationale":      WP + "Insigne_de_la_Gendarmerie_nationale_(France).svg" + WPS,
+  "Cyber Défense":              WP + "Insigne_du_commandement_de_la_cyberd%C3%A9fense.svg" + WPS,
   // United Kingdom
-  "British Army":               WP + "British_Army_logo_(2022).svg",
-  "Royal Navy":                 WP + "Naval_Ensign_of_the_United_Kingdom.svg",
-  "Royal Air Force":            WP + "Royal_Air_Force_roundel.svg",
-  "Royal Marines":              WP + "Royal_Marines_badge.svg",
+  "British Army":               WP + "British_Army_logo_(2022).svg" + WPS,
+  "Royal Navy":                 WP + "Naval_Ensign_of_the_United_Kingdom.svg" + WPS,
+  "Royal Air Force":            WP + "Royal_Air_Force_roundel.svg" + WPS,
+  "Royal Marines":              WP + "Royal_Marines_badge.svg" + WPS,
   // Germany
-  "Heer (Army)":                WP + "Bundeswehr_Logo_Heer_with_lettering.svg",
-  "Marine (Navy)":              WP + "Bundeswehr_Logo_Marine_with_lettering.svg",
-  "Luftwaffe (Air Force)":      WP + "Bundeswehr_Logo_Luftwaffe_with_lettering.svg",
-  "Cyber & Information Domain": WP + "Bundeswehr_Logo_CIR_with_lettering.svg",
+  "Heer (Army)":                WP + "Bundeswehr_Logo_Heer_with_lettering.svg" + WPS,
+  "Marine (Navy)":              WP + "Bundeswehr_Logo_Marine_with_lettering.svg" + WPS,
+  "Luftwaffe (Air Force)":      WP + "Bundeswehr_Logo_Luftwaffe_with_lettering.svg" + WPS,
+  "Cyber & Information Domain": WP + "Bundeswehr_Logo_CIR_with_lettering.svg" + WPS,
   // Russia
-  "Russian Ground Forces":      WP + "Emblem_of_Ground_Forces_of_Russia.svg",
-  "Russian Navy":               WP + "Emblem_of_the_Russian_Navy.svg",
-  "Russian Air Force":          WP + "Roundel_of_Russia.svg",
-  "Strategic Missile Troops":   WP + "Emblem_of_Strategic_Missile_Forces_of_Russia.svg",
+  "Russian Ground Forces":      WP + "Emblem_of_Ground_Forces_of_Russia.svg" + WPS,
+  "Russian Navy":               WP + "Emblem_of_the_Russian_Navy.svg" + WPS,
+  "Russian Air Force":          WP + "Roundel_of_Russia.svg" + WPS,
+  "Strategic Missile Troops":   WP + "Emblem_of_Strategic_Missile_Forces_of_Russia.svg" + WPS,
   // Japan
-  "JGSDF (Ground)":             WP + "JGSDF_Camp_Emblem.svg",
-  "JMSDF (Maritime)":           WP + "JMSDF_Logo.svg",
-  "JASDF (Air)":                WP + "Japan_Air_Self-Defense_Force_Roundel.svg",
+  "JGSDF (Ground)":             WP + "JGSDF_Camp_Emblem.svg" + WPS,
+  "JMSDF (Maritime)":           WP + "JMSDF_Logo.svg" + WPS,
+  "JASDF (Air)":                WP + "Japan_Air_Self-Defense_Force_Roundel.svg" + WPS,
   // South Korea
-  "Republic of Korea Army":     WP + "Republic_of_Korea_Army_Emblem.svg",
-  "Republic of Korea Navy":     WP + "Republic_of_Korea_Navy_Emblem.svg",
-  "Republic of Korea Air Force":WP + "Republic_of_Korea_Air_Force_Roundel.svg",
+  "Republic of Korea Army":     WP + "Republic_of_Korea_Army_Emblem.svg" + WPS,
+  "Republic of Korea Navy":     WP + "Republic_of_Korea_Navy_Emblem.svg" + WPS,
+  "Republic of Korea Air Force":WP + "Republic_of_Korea_Air_Force_Roundel.svg" + WPS,
   // Italy
-  "Esercito (Army)":            WP + "Italian_Army_Emblem.svg",
-  "Marina Militare":            WP + "Insegna_Marina_Militare_italiana.svg",
-  "Aeronautica Militare":       WP + "Italian_Air_Force_roundel.svg",
-  "Carabinieri":                WP + "Emblem_of_the_Carabinieri.svg",
+  "Esercito (Army)":            WP + "Italian_Army_Emblem.svg" + WPS,
+  "Marina Militare":            WP + "Insegna_Marina_Militare_italiana.svg" + WPS,
+  "Aeronautica Militare":       WP + "Italian_Air_Force_roundel.svg" + WPS,
+  "Carabinieri":                WP + "Emblem_of_the_Carabinieri.svg" + WPS,
   // Australia
-  "Australian Army":            WP + "Australian_Army_logo.svg",
-  "Royal Australian Navy":      WP + "Royal_Australian_Navy_Ensign.svg",
-  "Royal Australian Air Force": WP + "RAAF_roundel.svg",
+  "Australian Army":            WP + "Australian_Army_logo.svg" + WPS,
+  "Royal Australian Navy":      WP + "Royal_Australian_Navy_Ensign.svg" + WPS,
+  "Royal Australian Air Force": WP + "RAAF_roundel.svg" + WPS,
   // Spain
-  "Guardia Civil":              WP + "Guardia_Civil_Logo.svg",
+  "Guardia Civil":              WP + "Guardia_Civil_Logo.svg" + WPS,
   // India
-  "Indian Army":                WP + "Indian_Army_Logo.svg",
-  "Indian Navy":                WP + "Indian_Naval_Ensign.svg",
-  "Indian Air Force":           WP + "Indian_Air_Force_Logo.svg",
+  "Indian Army":                WP + "Indian_Army_Logo.svg" + WPS,
+  "Indian Navy":                WP + "Indian_Naval_Ensign.svg" + WPS,
+  "Indian Air Force":           WP + "Indian_Air_Force_Logo.svg" + WPS,
   // Israel
-  "IDF Ground Forces":          WP + "IDF_Ground_Forces_Branch_Logo.svg",
-  "Israeli Air Force (IAF)":    WP + "Israeli_Air_Force_roundel.svg",
+  "IDF Ground Forces":          WP + "IDF_Ground_Forces_Branch_Logo.svg" + WPS,
+  "Israeli Air Force (IAF)":    WP + "Israeli_Air_Force_roundel.svg" + WPS,
   // Turkey
-  "Turkish Land Forces":        WP + "Turkish_Land_Forces_Logo.svg",
-  "Turkish Naval Forces":       WP + "Turkish_Naval_Forces_Logo.svg",
-  "Turkish Air Force":          WP + "Turkish_Air_Force_roundel.svg",
+  "Turkish Land Forces":        WP + "Turkish_Land_Forces_Logo.svg" + WPS,
+  "Turkish Naval Forces":       WP + "Turkish_Naval_Forces_Logo.svg" + WPS,
+  "Turkish Air Force":          WP + "Turkish_Air_Force_roundel.svg" + WPS,
   // China — each branch has its own distinct emblem on Wikimedia
-  "PLA Ground Force":           WP + "People%27s_Liberation_Army_Ground_Force_emblem.svg",
-  "PLA Navy (PLAN)":            WP + "People%27s_Liberation_Army_Navy_emblem.svg",
-  "PLA Air Force (PLAAF)":      WP + "China_Air_Force_roundel.svg",
-  "PLA Rocket Force":           WP + "People%27s_Liberation_Army_Rocket_Force_emblem.svg",
-  "PLA Strategic Support":      WP + "People%27s_Liberation_Army_Strategic_Support_Force_emblem.svg",
+  "PLA Ground Force":           WP + "People%27s_Liberation_Army_Ground_Force_emblem.svg" + WPS,
+  "PLA Navy (PLAN)":            WP + "People%27s_Liberation_Army_Navy_emblem.svg" + WPS,
+  "PLA Air Force (PLAAF)":      WP + "China_Air_Force_roundel.svg" + WPS,
+  "PLA Rocket Force":           WP + "People%27s_Liberation_Army_Rocket_Force_emblem.svg" + WPS,
+  "PLA Strategic Support":      WP + "People%27s_Liberation_Army_Strategic_Support_Force_emblem.svg" + WPS,
   // Taiwan
-  "Republic of China Army":     WP + "Republic_of_China_Army_Seal.svg",
-  "Republic of China Navy":     WP + "Republic_of_China_Navy_Seal.svg",
-  "Republic of China Air Force":WP + "Republic_of_China_Air_Force_Roundel.svg",
+  "Republic of China Army":     WP + "Republic_of_China_Army_Seal.svg" + WPS,
+  "Republic of China Navy":     WP + "Republic_of_China_Navy_Seal.svg" + WPS,
+  "Republic of China Air Force":WP + "Republic_of_China_Air_Force_Roundel.svg" + WPS,
   // Canada
-  "Canadian Army":              WP + "Canadian_Army_badge.svg",
-  "Royal Canadian Navy":        WP + "Naval_Ensign_of_Canada.svg",
-  "Royal Canadian Air Force":   WP + "RCAF_Roundel.svg",
+  "Canadian Army":              WP + "Canadian_Army_badge.svg" + WPS,
+  "Royal Canadian Navy":        WP + "Naval_Ensign_of_Canada.svg" + WPS,
+  "Royal Canadian Air Force":   WP + "RCAF_Roundel.svg" + WPS,
   // Poland
-  "Polish Land Forces":         WP + "Polish_Land_Forces.svg",
-  "Polish Navy":                WP + "Polish_Naval_Ensign.svg",
-  "Polish Air Force":           WP + "Polish_Air_Force_Roundel.svg",
+  "Polish Land Forces":         WP + "Polish_Land_Forces.svg" + WPS,
+  "Polish Navy":                WP + "Polish_Naval_Ensign.svg" + WPS,
+  "Polish Air Force":           WP + "Polish_Air_Force_Roundel.svg" + WPS,
   // Saudi Arabia
-  "Royal Saudi Land Forces":    WP + "Saudi_Arabia_land_forces.svg",
-  "Royal Saudi Naval Forces":   WP + "Royal_Saudi_Naval_Forces_Emblem.svg",
-  "Royal Saudi Air Force":      WP + "Royal_Saudi_Air_Force_emblem.svg",
+  "Royal Saudi Land Forces":    WP + "Saudi_Arabia_land_forces.svg" + WPS,
+  "Royal Saudi Naval Forces":   WP + "Royal_Saudi_Naval_Forces_Emblem.svg" + WPS,
+  "Royal Saudi Air Force":      WP + "Royal_Saudi_Air_Force_emblem.svg" + WPS,
   // Ukraine
-  "Ukrainian Ground Forces":    WP + "Ukrainian_Ground_Forces_Emblem.svg",
-  "Ukrainian Navy":             WP + "Naval_Ensign_of_Ukraine.svg",
-  "Ukrainian Air Force":        WP + "Ukraine_Air_Force_Roundel.svg",
+  "Ukrainian Ground Forces":    WP + "Ukrainian_Ground_Forces_Emblem.svg" + WPS,
+  "Ukrainian Navy":             WP + "Naval_Ensign_of_Ukraine.svg" + WPS,
+  "Ukrainian Air Force":        WP + "Ukraine_Air_Force_Roundel.svg" + WPS,
   // Brazil
-  "Brazilian Army":             WP + "Brazilian_Army_Emblem.svg",
-  "Brazilian Navy":             WP + "Coat_of_arms_of_the_Brazilian_Navy.svg",
-  "Brazilian Air Force":        WP + "Brazilian_Air_Force_Roundel.svg",
+  "Brazilian Army":             WP + "Brazilian_Army_Emblem.svg" + WPS,
+  "Brazilian Navy":             WP + "Coat_of_arms_of_the_Brazilian_Navy.svg" + WPS,
+  "Brazilian Air Force":        WP + "Brazilian_Air_Force_Roundel.svg" + WPS,
   // Netherlands
-  "Royal Netherlands Army":     WP + "Royal_Netherlands_Army_emblem.svg",
-  "Royal Netherlands Navy":     WP + "Royal_Netherlands_Navy_Ensign.svg",
-  "Royal Netherlands Air Force":WP + "Royal_Netherlands_Air_Force_roundel.svg",
+  "Royal Netherlands Army":     WP + "Royal_Netherlands_Army_emblem.svg" + WPS,
+  "Royal Netherlands Navy":     WP + "Royal_Netherlands_Navy_Ensign.svg" + WPS,
+  "Royal Netherlands Air Force":WP + "Royal_Netherlands_Air_Force_roundel.svg" + WPS,
   // Sweden
-  "Swedish Army":               WP + "Swedish_Army_logo.svg",
-  "Swedish Navy":               WP + "Naval_Ensign_of_Sweden.svg",
-  "Swedish Air Force":          WP + "Swedish_Air_Force_roundel.svg",
+  "Swedish Army":               WP + "Swedish_Army_logo.svg" + WPS,
+  "Swedish Navy":               WP + "Naval_Ensign_of_Sweden.svg" + WPS,
+  "Swedish Air Force":          WP + "Swedish_Air_Force_roundel.svg" + WPS,
   // Norway
-  "Norwegian Army":             WP + "Norwegian_Army_logo.svg",
-  "Royal Norwegian Navy":       WP + "Naval_Ensign_of_Norway.svg",
-  "Royal Norwegian Air Force":  WP + "Norwegian_Air_Force_roundel.svg",
+  "Norwegian Army":             WP + "Norwegian_Army_logo.svg" + WPS,
+  "Royal Norwegian Navy":       WP + "Naval_Ensign_of_Norway.svg" + WPS,
+  "Royal Norwegian Air Force":  WP + "Norwegian_Air_Force_roundel.svg" + WPS,
 };
 
 const CONTRACT_STATUS_STYLE = {
@@ -587,10 +590,8 @@ function DefenseCapabilitiesCard({ countryCode }) {
 function getBranchLogoUrls(branch) {
   const urls = [];
   if (BRANCH_LOGOS[branch.name]) urls.push(BRANCH_LOGOS[branch.name]);
-  try {
-    const domain = new URL(branch.website).hostname;
-    urls.push(`https://www.google.com/s2/favicons?domain=${domain}&sz=64`);
-  } catch { /* ignore */ }
+  // No Google-favicon fallback: government sites (.gouv.fr, .mod.uk …) return the
+  // generic national seal which is indistinguishable between branches.
   return urls;
 }
 
@@ -871,7 +872,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                     tick={<FlagYTick />}
                     axisLine={false}
                     tickLine={false}
-                    width={36}
+                    width={40}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
