@@ -193,6 +193,48 @@ const BRANCH_LOGOS = {
   "Turkish Land Forces":        WP + "Turkish_Land_Forces_Logo.svg",
   "Turkish Naval Forces":       WP + "Turkish_Naval_Forces_Logo.svg",
   "Turkish Air Force":          WP + "Turkish_Air_Force_roundel.svg",
+  // China — each branch has its own distinct emblem on Wikimedia
+  "PLA Ground Force":           WP + "People%27s_Liberation_Army_Ground_Force_emblem.svg",
+  "PLA Navy (PLAN)":            WP + "People%27s_Liberation_Army_Navy_emblem.svg",
+  "PLA Air Force (PLAAF)":      WP + "China_Air_Force_roundel.svg",
+  "PLA Rocket Force":           WP + "People%27s_Liberation_Army_Rocket_Force_emblem.svg",
+  "PLA Strategic Support":      WP + "People%27s_Liberation_Army_Strategic_Support_Force_emblem.svg",
+  // Taiwan
+  "Republic of China Army":     WP + "Republic_of_China_Army_Seal.svg",
+  "Republic of China Navy":     WP + "Republic_of_China_Navy_Seal.svg",
+  "Republic of China Air Force":WP + "Republic_of_China_Air_Force_Roundel.svg",
+  // Canada
+  "Canadian Army":              WP + "Canadian_Army_badge.svg",
+  "Royal Canadian Navy":        WP + "Naval_Ensign_of_Canada.svg",
+  "Royal Canadian Air Force":   WP + "RCAF_Roundel.svg",
+  // Poland
+  "Polish Land Forces":         WP + "Polish_Land_Forces.svg",
+  "Polish Navy":                WP + "Polish_Naval_Ensign.svg",
+  "Polish Air Force":           WP + "Polish_Air_Force_Roundel.svg",
+  // Saudi Arabia
+  "Royal Saudi Land Forces":    WP + "Saudi_Arabia_land_forces.svg",
+  "Royal Saudi Naval Forces":   WP + "Royal_Saudi_Naval_Forces_Emblem.svg",
+  "Royal Saudi Air Force":      WP + "Royal_Saudi_Air_Force_emblem.svg",
+  // Ukraine
+  "Ukrainian Ground Forces":    WP + "Ukrainian_Ground_Forces_Emblem.svg",
+  "Ukrainian Navy":             WP + "Naval_Ensign_of_Ukraine.svg",
+  "Ukrainian Air Force":        WP + "Ukraine_Air_Force_Roundel.svg",
+  // Brazil
+  "Brazilian Army":             WP + "Brazilian_Army_Emblem.svg",
+  "Brazilian Navy":             WP + "Coat_of_arms_of_the_Brazilian_Navy.svg",
+  "Brazilian Air Force":        WP + "Brazilian_Air_Force_Roundel.svg",
+  // Netherlands
+  "Royal Netherlands Army":     WP + "Royal_Netherlands_Army_emblem.svg",
+  "Royal Netherlands Navy":     WP + "Royal_Netherlands_Navy_Ensign.svg",
+  "Royal Netherlands Air Force":WP + "Royal_Netherlands_Air_Force_roundel.svg",
+  // Sweden
+  "Swedish Army":               WP + "Swedish_Army_logo.svg",
+  "Swedish Navy":               WP + "Naval_Ensign_of_Sweden.svg",
+  "Swedish Air Force":          WP + "Swedish_Air_Force_roundel.svg",
+  // Norway
+  "Norwegian Army":             WP + "Norwegian_Army_logo.svg",
+  "Royal Norwegian Navy":       WP + "Naval_Ensign_of_Norway.svg",
+  "Royal Norwegian Air Force":  WP + "Norwegian_Air_Force_roundel.svg",
 };
 
 const CONTRACT_STATUS_STYLE = {
@@ -604,19 +646,88 @@ function BranchCard({ branch }) {
   );
 }
 
+// ── News card — uniform h-36 image area regardless of image presence ──────────
+function NewsCard({ article }) {
+  const [imgError, setImgError] = useState(false);
+  const hasImage = !!article.image && !imgError;
+
+  const fmtDate = (raw) => {
+    if (!raw) return null;
+    try {
+      return new Date(raw).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+    } catch { return null; }
+  };
+
+  return (
+    <a
+      href={article.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex flex-col rounded-lg border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all overflow-hidden bg-white"
+    >
+      {/* Fixed-height image zone — always h-36, always the same visual weight */}
+      <div className="w-full h-36 overflow-hidden shrink-0 relative">
+        {hasImage ? (
+          <img
+            src={article.image}
+            alt={article.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex flex-col items-center justify-center gap-2">
+            <Newspaper className="w-7 h-7 text-slate-500" />
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center px-4 line-clamp-1">
+              {article.source}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Text content */}
+      <div className="p-3 flex flex-col flex-1">
+        <p className="text-sm font-semibold text-slate-800 group-hover:text-purple-700 line-clamp-2 leading-snug transition-colors">
+          {article.title}
+        </p>
+        {article.description && (
+          <p className="text-[11px] text-slate-400 line-clamp-2 mt-1 leading-snug">
+            {article.description.replace(/<[^>]+>/g, "")}
+          </p>
+        )}
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-50">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="text-[10px] text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded truncate max-w-[140px]">
+              {article.source}
+            </span>
+            {fmtDate(article.publishedAt) && (
+              <span className="text-[10px] text-slate-300 shrink-0">· {fmtDate(article.publishedAt)}</span>
+            )}
+          </div>
+          <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-400 transition-colors shrink-0 ml-1" />
+        </div>
+      </div>
+    </a>
+  );
+}
+
 // ── Flag tick for the regional comparison bar chart ───────────────────────────
 function FlagYTick({ x, y, payload }) {
   const code = COUNTRY_FLAGS[payload.value] || payload.value.toLowerCase();
+  const flagUrl = `https://flagcdn.com/w40/${code}.png`;
   return (
     <g transform={`translate(${x},${y})`}>
+      {/* Text fallback always rendered underneath; the image covers it when it loads */}
+      <text x={-16} y={4} textAnchor="middle" fontSize={7} fill="#94a3b8" fontFamily="monospace">
+        {payload.value}
+      </text>
       <image
-        href={`https://flagcdn.com/w40/${code}.png`}
+        href={flagUrl}
+        xlinkHref={flagUrl}
         x={-30}
         y={-9}
         width={26}
         height={18}
-        preserveAspectRatio="xMidYMid meet"
-        style={{ borderRadius: 3 }}
+        preserveAspectRatio="xMidYMid slice"
       />
     </g>
   );
@@ -966,46 +1077,14 @@ function CountryProfileSection({ country, allExpenditures }) {
           </div>
         </CardHeader>
         <CardContent className="p-4">
-          {loadingProfile ? (
+              {loadingProfile ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {[1, 2, 3].map(i => <div key={i} className="h-32 bg-slate-100 rounded-lg animate-pulse" />)}
+              {[1, 2, 3].map(i => <div key={i} className="h-52 bg-slate-100 rounded-lg animate-pulse" />)}
             </div>
           ) : profile?.news?.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {profile.news.slice(0, 6).map((article, i) => (
-                <a
-                  key={i}
-                  href={article.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex flex-col rounded-lg border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all overflow-hidden"
-                >
-                  {article.image ? (
-                    <div className="w-full h-28 bg-slate-100 overflow-hidden shrink-0">
-                      <img
-                        src={article.image}
-                        alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => { e.target.parentElement.style.display = "none"; }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full h-14 bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center shrink-0">
-                      <Newspaper className="w-6 h-6 text-slate-300" />
-                    </div>
-                  )}
-                  <div className="p-3 flex flex-col flex-1">
-                    <p className="text-sm font-medium text-slate-800 group-hover:text-purple-700 line-clamp-2 leading-snug mb-auto transition-colors">
-                      {article.title}
-                    </p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded truncate max-w-[70%]">
-                        {article.source}
-                      </span>
-                      <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-400 transition-colors shrink-0" />
-                    </div>
-                  </div>
-                </a>
+                <NewsCard key={i} article={article} />
               ))}
             </div>
           ) : (

@@ -439,11 +439,13 @@ export const COMPANY_WIKI_LOGOS = {
   "Bharat Electronics":            WP + "Bharat_Electronics_Limited_logo.svg",
   "Bharat Dynamics":               WP + "Bharat_Dynamics_Limited_logo.svg",
   "Mazagon Dock":                  WP + "Mazagon_Dock_Shipbuilders_Limited_logo.svg",
-  // China
-  "AVIC":                          WP + "Avic_logo.svg",
-  "NORINCO":                       WP + "Norinco_logo.svg",
+  // China — state enterprises (Clearbit blocks .cn; Wikipedia is the only reliable source)
+  "AVIC":                          WP + "Aviation_Industry_Corporation_of_China_logo.svg",
+  "NORINCO":                       WP + "China_North_Industries_Corporation_logo.svg",
   "CSSC":                          WP + "China_State_Shipbuilding_Corporation_logo.svg",
   "CASIC":                         WP + "China_Aerospace_Science_and_Industry_Corporation_logo.svg",
+  "CETC":                          WP + "China_Electronics_Technology_Group_Corporation_logo.svg",
+  "CSGC":                          WP + "China_South_Industries_Group_Corporation_logo.svg",
   // Russia
   "United Aircraft Corporation":   WP + "United_Aircraft_Corporation_logo.svg",
   "United Shipbuilding Corporation": WP + "United_Shipbuilding_Corporation_logo.svg",
@@ -480,11 +482,13 @@ export function getClearbitUrl(name) {
 // Wikipedia SVGs are last because Special:FilePath redirects can fail silently.
 export function getLogoUrls(name) {
   const urls = [];
+  // Wikipedia SVGs are served from a reliable CDN and never blocked by ad-blockers.
+  // Try them first; Clearbit is a useful fallback for companies without a Wiki entry.
+  if (COMPANY_WIKI_LOGOS[name]) urls.push(COMPANY_WIKI_LOGOS[name]);
   const domain = COMPANY_LOGOS[name];
   if (domain) {
     urls.push(`https://logo.clearbit.com/${domain}`);
     urls.push(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
   }
-  if (COMPANY_WIKI_LOGOS[name]) urls.push(COMPANY_WIKI_LOGOS[name]);
   return urls;
 }
