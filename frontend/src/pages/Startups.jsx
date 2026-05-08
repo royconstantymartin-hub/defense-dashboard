@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { API } from "@/App";
+import { getLogoUrls } from "@/lib/companyLogos";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,13 +13,50 @@ import {
 } from "@/components/ui/select";
 import {
   Search, Rocket, Globe, Users, Building2, ExternalLink,
-  DollarSign, Calendar, Filter,
-  Brain, Bot, Plane, Truck, Star, Zap, Target, Flame,
-  Anchor, Command, Eye, Radio, GraduationCap, ScanLine,
-  Crosshair, Server, Wrench, Network, Cpu, ChevronRight,
-  ShieldAlert,
+  DollarSign, Filter, ChevronRight,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
+
+// ── Logo helpers (mirrors MarketData pattern) ─────────────────────────────────
+
+const AVATAR_COLORS = [
+  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
+  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
+  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
+  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
+];
+function avatarColor(name = "") {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+function initials(name = "") {
+  return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
+function LogoWithFallback({ name, size = 44 }) {
+  const urls = useMemo(() => getLogoUrls(name), [name]);
+  const [urlIndex, setUrlIndex] = useState(0);
+
+  if (!urls.length || urlIndex >= urls.length) {
+    return (
+      <div
+        className={`bg-gradient-to-br ${avatarColor(name)} rounded-xl flex items-center justify-center shrink-0`}
+        style={{ width: size, height: size }}
+      >
+        <span className="text-sm font-bold text-white tracking-tight">{initials(name)}</span>
+      </div>
+    );
+  }
+  return (
+    <img
+      src={urls[urlIndex]}
+      alt={name}
+      className="rounded-xl object-contain bg-white border border-slate-100 shrink-0"
+      style={{ width: size, height: size }}
+      onError={() => setUrlIndex((i) => i + 1)}
+    />
+  );
+}
 
 // ── Static maps ───────────────────────────────────────────────────────────────
 
@@ -34,41 +72,6 @@ const COUNTRY_ISO = {
   "Brazil": "br", "Canada": "ca", "Singapore": "sg",
   "South Africa": "za",
 };
-
-const SPEC_ICON_MAP = [
-  { keys: ["AI", "Machine Learning", "Artificial"],       Icon: Brain },
-  { keys: ["Autonomous", "Autonomy"],                     Icon: Bot },
-  { keys: ["UAV", "Drone", "UAS", "UCAV"],               Icon: Plane },
-  { keys: ["UGV", "Ground Vehicle", "Land Robot"],        Icon: Truck },
-  { keys: ["Cyber", "Cybersecurity"],                     Icon: ShieldAlert },
-  { keys: ["Space", "Satellite", "Orbital"],              Icon: Star },
-  { keys: ["Electronic Warfare", "EW", "SIGINT"],        Icon: Zap },
-  { keys: ["Counter-UAS", "C-UAS", "Anti-drone"],        Icon: Target },
-  { keys: ["Hypersonics", "Hypersonic"],                  Icon: Flame },
-  { keys: ["Naval", "Maritime", "Submarine"],             Icon: Anchor },
-  { keys: ["Robotics", "Robot"],                          Icon: Bot },
-  { keys: ["Missile", "Rockets", "Munitions"],            Icon: Crosshair },
-  { keys: ["Command", "C2", "C4ISR", "C4"],              Icon: Command },
-  { keys: ["Intelligence", "ISR", "Reconnaissance"],      Icon: Eye },
-  { keys: ["Communications", "Comms", "Radio", "Datalink"], Icon: Radio },
-  { keys: ["Training", "Simulation"],                     Icon: GraduationCap },
-  { keys: ["Directed Energy", "HPM", "Laser", "DEW"],    Icon: Zap },
-  { keys: ["Sensor", "Detection", "Radar", "Sonar"],     Icon: ScanLine },
-  { keys: ["Aircraft", "Aviation", "Fixed-wing"],        Icon: Plane },
-  { keys: ["Ammunition", "Ammo"],                        Icon: Crosshair },
-  { keys: ["Land Systems", "Armoured"],                   Icon: Truck },
-  { keys: ["Engineering"],                                Icon: Wrench },
-  { keys: ["IT", "Software", "Platform"],                Icon: Cpu },
-  { keys: ["Network", "Connectivity"],                   Icon: Network },
-];
-
-function getSpecIcon(spec) {
-  const lower = spec.toLowerCase();
-  for (const { keys, Icon } of SPEC_ICON_MAP) {
-    if (keys.some((k) => lower.includes(k.toLowerCase()))) return Icon;
-  }
-  return null;
-}
 
 const SPEC_COLOR = {
   "AI":                 "bg-violet-50 text-violet-700 border-violet-200",
@@ -111,104 +114,6 @@ function autoDescription(company) {
   if (specs && country) return `${country} defense company · ${specs}`;
   if (specs) return specs;
   return null;
-}
-
-// Build a list of Clearbit domains to try in order
-function trialDomains(company) {
-  const seen = new Set();
-  const out  = [];
-  const add  = (d) => {
-    if (d && !seen.has(d)) { seen.add(d); out.push(d); }
-  };
-
-  // 1. Explicit website
-  if (company.website) {
-    add(company.website.replace(/^https?:\/\//, "").split("/")[0].toLowerCase());
-  }
-
-  // 2. Name-derived slug, multiple TLDs
-  const slug = company.name
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
-  add(`${slug}.com`);
-  add(`${slug}.io`);
-  add(`${slug}.ai`);
-  add(`${slug}.defense`);
-
-  // 3. First word only (e.g. "Skydio" from "Skydio Inc")
-  const first = company.name.split(/\s+/)[0].toLowerCase().replace(/[^a-z0-9]/g, "");
-  if (first !== slug) {
-    add(`${first}.com`);
-    add(`${first}.io`);
-    add(`${first}.ai`);
-  }
-
-  return out;
-}
-
-// ── Avatar colors (consistent per company, 8 palette) ─────────────────────────
-
-const AVATAR_PALETTES = [
-  { bg: "bg-violet-100", text: "text-violet-700" },
-  { bg: "bg-blue-100",   text: "text-blue-700" },
-  { bg: "bg-emerald-100",text: "text-emerald-700" },
-  { bg: "bg-amber-100",  text: "text-amber-700" },
-  { bg: "bg-rose-100",   text: "text-rose-700" },
-  { bg: "bg-cyan-100",   text: "text-cyan-700" },
-  { bg: "bg-indigo-100", text: "text-indigo-700" },
-  { bg: "bg-teal-100",   text: "text-teal-700" },
-];
-
-function avatarPalette(name) {
-  const idx = (name.charCodeAt(0) + (name.charCodeAt(1) || 0)) % AVATAR_PALETTES.length;
-  return AVATAR_PALETTES[idx];
-}
-
-// ── Logo component (progressive Clearbit fallback) ───────────────────────────
-
-function CompanyLogo({ company, size = 44 }) {
-  const domains = useMemo(() => trialDomains(company), [company]);
-  const [idx, setIdx]       = useState(0);
-  const [allFailed, setAllFailed] = useState(false);
-
-  useEffect(() => {
-    setIdx(0);
-    setAllFailed(false);
-  }, [company.name]);
-
-  const initials = company.name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-
-  const { bg, text } = avatarPalette(company.name);
-
-  if (allFailed || domains.length === 0) {
-    return (
-      <div
-        className={`${bg} ${text} rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm`}
-        style={{ width: size, height: size }}
-      >
-        {initials}
-      </div>
-    );
-  }
-
-  return (
-    <img
-      key={domains[idx]}
-      src={`https://logo.clearbit.com/${domains[idx]}`}
-      alt={company.name}
-      className="rounded-xl object-contain bg-white border border-slate-100 flex-shrink-0"
-      style={{ width: size, height: size }}
-      onError={() => {
-        if (idx + 1 < domains.length) setIdx(idx + 1);
-        else setAllFailed(true);
-      }}
-    />
-  );
 }
 
 // ── Funding badge ─────────────────────────────────────────────────────────────
@@ -259,7 +164,7 @@ function StartupRow({ company, onClick }) {
       <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
 
       {/* Logo */}
-      <CompanyLogo company={company} size={44} />
+      <LogoWithFallback name={company.name} size={44} />
 
       {/* Name + meta */}
       <div className="w-48 flex-shrink-0 min-w-0">
@@ -305,20 +210,16 @@ function StartupRow({ company, onClick }) {
         ) : null}
       </div>
 
-      {/* Specialization badges with icons */}
+      {/* Specialization badges */}
       <div className="flex flex-wrap gap-1.5 w-64 flex-shrink-0">
-        {specs.slice(0, 4).map((s) => {
-          const SpecIcon = getSpecIcon(s);
-          return (
-            <span
-              key={s}
-              className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border ${specBadgeClass(s)}`}
-            >
-              {SpecIcon && <SpecIcon className="w-3 h-3 flex-shrink-0" />}
-              {s}
-            </span>
-          );
-        })}
+        {specs.slice(0, 4).map((s) => (
+          <span
+            key={s}
+            className={`text-xs font-medium px-2 py-0.5 rounded-full border ${specBadgeClass(s)}`}
+          >
+            {s}
+          </span>
+        ))}
         {specs.length > 4 && (
           <span className="text-xs text-slate-400 self-center">+{specs.length - 4}</span>
         )}
@@ -470,17 +371,9 @@ export default function Startups() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All specializations</SelectItem>
-            {allSpecs.map((s) => {
-              const SpecIcon = getSpecIcon(s);
-              return (
-                <SelectItem key={s} value={s}>
-                  <span className="flex items-center gap-1.5">
-                    {SpecIcon && <SpecIcon className="w-3.5 h-3.5 text-slate-400" />}
-                    {s}
-                  </span>
-                </SelectItem>
-              );
-            })}
+            {allSpecs.map((s) => (
+              <SelectItem key={s} value={s}>{s}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
