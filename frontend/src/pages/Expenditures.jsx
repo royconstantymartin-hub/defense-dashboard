@@ -57,7 +57,7 @@ function SubmarineIcon({ className }) {
   );
 }
 import { getLogoUrls } from "@/lib/companyLogos";
-import { getCountryBanner } from "@/lib/countryBanners";
+import { getCountryWikiArticle } from "@/lib/countryBanners";
 import {
   BarChart,
   Bar,
@@ -251,22 +251,47 @@ const BRANCH_LOGOS = {
   "Saudi Arabian National Guard": WP + "Saudi_Arabian_National_Guard_Emblem.svg" + WPS,
 };
 
-// Unsplash source photos shown as photo header in BranchCard (one per branch type).
-const UB = (q) => `https://source.unsplash.com/featured/400x200/?${encodeURIComponent(q)}`;
-const BRANCH_TYPE_PHOTO = {
-  army:          UB("army soldiers infantry military troops"),
-  navy:          UB("navy warship destroyer ocean military"),
-  air:           UB("fighter jet aircraft military air force"),
-  space:         UB("rocket launch space satellite military"),
-  special:       UB("special forces commando military elite"),
-  cyber:         UB("cybersecurity computer network technology"),
-  strategic:     UB("missile military defense ballistic"),
-  gendarmerie:   UB("police military patrol gendarmerie"),
-  coast_guard:   UB("coast guard patrol boat sea maritime"),
-  national_guard:UB("national guard military troops"),
+// Wikipedia article titles whose main image best represents each branch type.
+// The useBranchTypePhotos hook fetches the actual image URLs at runtime.
+const BRANCH_WIKI_ARTICLES = {
+  army:          "Infantry",
+  navy:          "Guided-missile_destroyer",
+  air:           "Fighter_aircraft",
+  space:         "United_States_Space_Force",
+  special:       "Special_forces",
+  cyber:         "Cyberwarfare",
+  strategic:     "Intercontinental_ballistic_missile",
+  gendarmerie:   "Gendarmerie",
+  coast_guard:   "Coast_guard",
+  national_guard:"National_Guard_(United_States)",
 };
 
-// Dark gradient fallback per branch type used when Unsplash photo fails.
+// Module-level cache so photos are fetched only once per session.
+const BRANCH_PHOTO_CACHE = {};
+
+function useBranchTypePhotos() {
+  const [photos, setPhotos] = useState({ ...BRANCH_PHOTO_CACHE });
+  useEffect(() => {
+    Object.entries(BRANCH_WIKI_ARTICLES).forEach(([type, article]) => {
+      if (BRANCH_PHOTO_CACHE[type]) return;
+      fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=${encodeURIComponent(article)}&pithumbsize=600&format=json&origin=*`
+      )
+        .then(r => r.json())
+        .then(data => {
+          const url = Object.values(data?.query?.pages || {})[0]?.thumbnail?.source;
+          if (url) {
+            BRANCH_PHOTO_CACHE[type] = url;
+            setPhotos(p => ({ ...p, [type]: url }));
+          }
+        })
+        .catch(() => {});
+    });
+  }, []);
+  return photos;
+}
+
+// Dark gradient fallback per branch type (shown while photo loads or if fetch fails).
 const BRANCH_BG_GRADIENT = {
   army:          "from-emerald-800 to-emerald-950",
   navy:          "from-blue-800 to-blue-950",
@@ -635,12 +660,11 @@ function getBranchLogoUrls(branch) {
   return urls;
 }
 
-function BranchCard({ branch }) {
+function BranchCard({ branch, typePhoto }) {
   const logoUrls = getBranchLogoUrls(branch);
   const [logoIdx, setLogoIdx] = useState(0);
   const [photoError, setPhotoError] = useState(false);
   const icon = BRANCH_ICON[branch.type] || <Shield className="w-5 h-5" />;
-  const typePhoto = BRANCH_TYPE_PHOTO[branch.type];
   const bgGradient = BRANCH_BG_GRADIENT[branch.type] || "from-slate-700 to-slate-900";
 
   return (
@@ -803,9 +827,10 @@ function CountryProfileSection({ country, allExpenditures }) {
   const [industryTab, setIndustryTab] = useState("national");
   const [showAllCompanies, setShowAllCompanies] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
-  const [bannerError, setBannerError] = useState(false);
-  const banner = getCountryBanner(country.country);
+  const [bannerUrl, setBannerUrl] = useState(null);
+  const branchTypePhotos = useBranchTypePhotos();
 
+  // Fetch country profile from backend
   useEffect(() => {
     let cancelled = false;
     setLoadingProfile(true);
@@ -814,6 +839,24 @@ function CountryProfileSection({ country, allExpenditures }) {
       .then(r => { if (!cancelled) setProfile(r.data); })
       .catch(() => { if (!cancelled) setProfile({ military_branches: [], contracts: [], companies: [], news: [] }); })
       .finally(() => { if (!cancelled) setLoadingProfile(false); });
+    return () => { cancelled = true; };
+  }, [country.country]);
+
+  // Fetch banner image URL from Wikipedia API — returns a direct CDN URL, very reliable
+  useEffect(() => {
+    let cancelled = false;
+    setBannerUrl(null);
+    const article = getCountryWikiArticle(country.country);
+    fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=${encodeURIComponent(article)}&pithumbsize=1280&format=json&origin=*`
+    )
+      .then(r => r.json())
+      .then(data => {
+        if (cancelled) return;
+        const url = Object.values(data?.query?.pages || {})[0]?.thumbnail?.source;
+        if (url) setBannerUrl(url);
+      })
+      .catch(() => {});
     return () => { cancelled = true; };
   }, [country.country]);
 
@@ -832,12 +875,12 @@ function CountryProfileSection({ country, allExpenditures }) {
     <div className="space-y-5">
       {/* Hero banner */}
       <div className="relative w-full h-48 rounded-xl overflow-hidden shadow-md">
-        {banner && !bannerError ? (
+        {bannerUrl ? (
           <img
-            src={banner}
+            src={bannerUrl}
             alt={`${country.country} military`}
             className="w-full h-full object-cover"
-            onError={() => setBannerError(true)}
+            onError={() => setBannerUrl(null)}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-r from-slate-800 to-slate-700" />
@@ -897,7 +940,7 @@ function CountryProfileSection({ country, allExpenditures }) {
             ) : profile?.military_branches?.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {profile.military_branches.map((branch, i) => (
-                  <BranchCard key={i} branch={branch} />
+                  <BranchCard key={i} branch={branch} typePhoto={branchTypePhotos[branch.type]} />
                 ))}
               </div>
             ) : (
