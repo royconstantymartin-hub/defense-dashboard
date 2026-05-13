@@ -166,112 +166,105 @@ const PLACEHOLDER_GRADIENT = {
   INDUSTRY:    "from-slate-900 via-slate-800 to-slate-700",
 };
 
-const CATEGORY_SVG = {
-  TECHNOLOGY: (
-    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
-      <circle cx="48" cy="48" r="40" stroke="white" strokeWidth="1.5"/>
-      <circle cx="48" cy="48" r="26" stroke="white" strokeWidth="1.5"/>
-      <circle cx="48" cy="48" r="12" stroke="white" strokeWidth="1.5"/>
-      <line x1="48" y1="48" x2="84" y2="20" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-      <line x1="48" y1="8" x2="48" y2="88" stroke="white" strokeWidth="1" strokeDasharray="4 4"/>
-      <line x1="8" y1="48" x2="88" y2="48" stroke="white" strokeWidth="1" strokeDasharray="4 4"/>
-    </svg>
-  ),
-  CONTRACT: (
-    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
-      <rect x="18" y="8" width="48" height="62" rx="4" stroke="white" strokeWidth="1.5"/>
-      <line x1="28" y1="28" x2="56" y2="28" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="28" y1="38" x2="56" y2="38" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="28" y1="48" x2="44" y2="48" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M60 68 L75 53 L83 61 L68 76 Z" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-      <line x1="60" y1="68" x2="55" y2="82" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  ),
-  POLICY: (
-    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
-      <polygon points="48,8 88,30 8,30" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-      <rect x="20" y="32" width="8" height="32" stroke="white" strokeWidth="1.5"/>
-      <rect x="36" y="32" width="8" height="32" stroke="white" strokeWidth="1.5"/>
-      <rect x="52" y="32" width="8" height="32" stroke="white" strokeWidth="1.5"/>
-      <rect x="68" y="32" width="8" height="32" stroke="white" strokeWidth="1.5"/>
-      <line x1="12" y1="64" x2="84" y2="64" stroke="white" strokeWidth="2"/>
-      <line x1="6" y1="72" x2="90" y2="72" stroke="white" strokeWidth="2"/>
-    </svg>
-  ),
-  CONFLICT: (
-    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
-      <circle cx="48" cy="48" r="34" stroke="white" strokeWidth="1.5"/>
-      <circle cx="48" cy="48" r="18" stroke="white" strokeWidth="1.5"/>
-      <circle cx="48" cy="48" r="5" fill="white"/>
-      <line x1="48" y1="6" x2="48" y2="26" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-      <line x1="48" y1="70" x2="48" y2="90" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-      <line x1="6" y1="48" x2="26" y2="48" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-      <line x1="70" y1="48" x2="90" y2="48" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  ),
-  "M&A": (
-    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
-      <circle cx="30" cy="48" r="22" stroke="white" strokeWidth="1.5"/>
-      <circle cx="66" cy="48" r="22" stroke="white" strokeWidth="1.5"/>
-      <line x1="48" y1="36" x2="48" y2="60" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-      <polyline points="42,42 48,36 54,42" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <polyline points="42,54 48,60 54,54" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  GEOPOLITICS: (
-    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
-      <circle cx="48" cy="48" r="36" stroke="white" strokeWidth="1.5"/>
-      <ellipse cx="48" cy="48" rx="15" ry="36" stroke="white" strokeWidth="1"/>
-      <ellipse cx="48" cy="48" rx="28" ry="36" stroke="white" strokeWidth="1"/>
-      <line x1="12" y1="48" x2="84" y2="48" stroke="white" strokeWidth="1"/>
-      <ellipse cx="48" cy="35" rx="30" ry="9" stroke="white" strokeWidth="1"/>
-      <ellipse cx="48" cy="61" rx="30" ry="9" stroke="white" strokeWidth="1"/>
-    </svg>
-  ),
-  INDUSTRY: (
-    <svg viewBox="0 0 96 96" fill="none" className="w-full h-full">
-      <rect x="8" y="50" width="80" height="38" stroke="white" strokeWidth="1.5"/>
-      <path d="M8 50 L8 30 L32 44 L32 30 L56 44 L56 30 L80 44 L80 50" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-      <rect x="65" y="16" width="10" height="34" stroke="white" strokeWidth="1.5"/>
-      <rect x="24" y="62" width="12" height="26" stroke="white" strokeWidth="1.5"/>
-      <rect x="44" y="62" width="12" height="26" stroke="white" strokeWidth="1.5"/>
-      <rect x="64" y="62" width="12" height="26" stroke="white" strokeWidth="1.5"/>
-    </svg>
-  ),
+// Curated stock photos per category — fallback to gradient if all fail
+const CATEGORY_STOCK_PHOTOS = {
+  TECHNOLOGY: [
+    "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1526956282041-9a9e68b75285?auto=format&fit=crop&w=800&q=80",
+  ],
+  CONTRACT: [
+    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80",
+  ],
+  CONFLICT: [
+    "https://images.unsplash.com/photo-1569517282132-25d22f4573e6?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1579532536935-619928decd08?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1588412079929-790b9f593d8e?auto=format&fit=crop&w=800&q=80",
+  ],
+  POLICY: [
+    "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1555848962-6e79363ec58f?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1521618755572-156ae0cdd74d?auto=format&fit=crop&w=800&q=80",
+  ],
+  GEOPOLITICS: [
+    "https://images.unsplash.com/photo-1483401757487-2ced3d4364a0?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1589519160732-57fc498494f8?auto=format&fit=crop&w=800&q=80",
+  ],
+  "M&A": [
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1444653614773-995cb1ef9efa?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80",
+  ],
+  INDUSTRY: [
+    "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?auto=format&fit=crop&w=800&q=80",
+  ],
 };
 
-function NewsPlaceholder({ source, category, url, sourceLogo }) {
+function NewsPlaceholder({ source, category, url, sourceLogo, articleSeed }) {
   const [logoErr, setLogoErr] = useState(false);
+  const photos = CATEGORY_STOCK_PHOTOS[category] || CATEGORY_STOCK_PHOTOS.INDUSTRY;
+  const [photoIdx, setPhotoIdx] = useState(() => {
+    const seed = articleSeed || source || category || "";
+    const hash = [...seed].reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return hash % photos.length;
+  });
+  const [allPhotosFailed, setAllPhotosFailed] = useState(false);
 
   const domain = (() => { try { return url ? new URL(url).hostname : ""; } catch { return ""; } })();
+  const isGoogleDomain = !domain || domain.includes("google.com");
+  const isGoogleLogo = sourceLogo?.includes("news.google.com");
+  const effectiveLogo = !isGoogleLogo ? sourceLogo : null;
+
   const logoUrl = !logoErr
-    ? (sourceLogo || (domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null))
+    ? (effectiveLogo || (!isGoogleDomain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null))
     : null;
 
   const gradient = PLACEHOLDER_GRADIENT[category] || "from-slate-900 via-slate-800 to-slate-700";
-  const Icon = CATEGORY_SVG[category] || CATEGORY_SVG.INDUSTRY;
+
+  const handlePhotoError = () => {
+    if (photoIdx + 1 < photos.length) {
+      setPhotoIdx(photoIdx + 1);
+    } else {
+      setAllPhotosFailed(true);
+    }
+  };
 
   return (
-    <div className={`w-full h-full flex flex-col items-center justify-center bg-gradient-to-br ${gradient} relative overflow-hidden`}>
-      <div className="absolute inset-0 flex items-center justify-center opacity-[0.13] scale-150 pointer-events-none">
-        {Icon}
-      </div>
-      <div className="relative z-10 w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-lg mb-2">
-        {logoUrl ? (
-          <img
-            src={logoUrl}
-            alt={source}
-            className="w-10 h-10 object-contain"
-            onError={() => setLogoErr(true)}
-          />
-        ) : (
-          <span className="text-white/80 text-2xl font-bold">{source?.charAt(0)?.toUpperCase() || "?"}</span>
+    <div className="w-full h-full relative overflow-hidden">
+      {!allPhotosFailed ? (
+        <img
+          src={photos[photoIdx]}
+          alt=""
+          className="w-full h-full object-cover"
+          onError={handlePhotoError}
+        />
+      ) : (
+        <div className={`w-full h-full bg-gradient-to-br ${gradient}`} />
+      )}
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+        <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-lg mb-2">
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt={source}
+              className="w-10 h-10 object-contain"
+              onError={() => setLogoErr(true)}
+            />
+          ) : (
+            <span className="text-white/80 text-2xl font-bold">{source?.charAt(0)?.toUpperCase() || "?"}</span>
+          )}
+        </div>
+        <span className="text-white/70 text-[11px] font-semibold tracking-wide uppercase mt-1">{source}</span>
+        {category && (
+          <span className="text-white/40 text-[9px] mt-0.5 tracking-widest uppercase">{category}</span>
         )}
       </div>
-      <span className="relative z-10 text-white/70 text-[11px] font-semibold tracking-wide uppercase mt-1">{source}</span>
-      {category && (
-        <span className="relative z-10 text-white/40 text-[9px] mt-0.5 tracking-widest uppercase">{category}</span>
-      )}
     </div>
   );
 }
@@ -281,13 +274,14 @@ function NewsPlaceholder({ source, category, url, sourceLogo }) {
 function SourceFavicon({ url, source, sourceLogo }) {
   const [err, setErr] = useState(false);
 
-  // Prefer the stored Clearbit logo (set for Google News articles).
-  // Fall back to deriving a favicon from the article URL domain.
-  let logoUrl = sourceLogo || null;
+  const isGoogleLogo = sourceLogo?.includes("news.google.com");
+  let logoUrl = (!isGoogleLogo && sourceLogo) || null;
   if (!logoUrl) {
     let domain = "";
     try { domain = new URL(url).hostname; } catch { /* empty */ }
-    if (domain) logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+    if (domain && !domain.includes("google.com")) {
+      logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+    }
   }
 
   const initial = source ? source.charAt(0).toUpperCase() : "?";
@@ -351,7 +345,7 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
             className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
           />
         ) : (
-          <NewsPlaceholder source={article.source} category={article.category} url={article.url} sourceLogo={article.sourceLogo} />
+          <NewsPlaceholder source={article.source} category={article.category} url={article.url} sourceLogo={article.sourceLogo} articleSeed={article.id || article.title} />
         )}
 
         {/* Bottom scrim for badge legibility */}
