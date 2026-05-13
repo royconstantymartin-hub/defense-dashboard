@@ -269,21 +269,135 @@ const BRANCH_WIKI_ARTICLES = {
 // Module-level cache so photos are fetched only once per session.
 const BRANCH_PHOTO_CACHE = {};
 
-// Module-level cache for emblem thumbnail URLs (fetched via Wikimedia imageinfo API).
+// Module-level cache for emblem thumbnail URLs.
 const EMBLEM_CACHE = {};
 
-// Fetches official emblem thumbnail URLs for a list of branches using the
-// Wikimedia Commons imageinfo API, which returns the real CDN thumbnail URL
-// (upload.wikimedia.org/…) instead of the unreliable Special:Redirect redirect.
+// Maps each branch name to its English Wikipedia article title.
+// Wikipedia pageimages with pithumbsize=100 returns the article's representative
+// image — for military branch articles this is typically the unit badge/roundel.
+const BRANCH_WP_ARTICLE = {
+  // United States
+  "U.S. Army": "United States Army",
+  "U.S. Navy": "United States Navy",
+  "U.S. Air Force": "United States Air Force",
+  "U.S. Marine Corps": "United States Marine Corps",
+  "U.S. Space Force": "United States Space Force",
+  "U.S. Coast Guard": "United States Coast Guard",
+  // France
+  "Armée de Terre": "French Army",
+  "Marine Nationale": "French Navy",
+  "Armée de l'Air et de l'Espace": "French Air and Space Force",
+  "Gendarmerie Nationale": "National Gendarmerie",
+  "Cyber Défense": "Commandement de la cyberdéfense",
+  // United Kingdom
+  "British Army": "British Army",
+  "Royal Navy": "Royal Navy",
+  "Royal Air Force": "Royal Air Force",
+  "Royal Marines": "Royal Marines",
+  // Germany
+  "Heer (Army)": "German Army",
+  "Marine (Navy)": "German Navy",
+  "Luftwaffe (Air Force)": "German Air Force",
+  "Cyber & Information Domain": "Cyber and Information Domain Service",
+  // Russia
+  "Russian Ground Forces": "Russian Ground Forces",
+  "Russian Navy": "Russian Navy",
+  "Russian Air Force": "Russian Aerospace Forces",
+  "Strategic Missile Troops": "Strategic Missile Forces",
+  "Airborne Forces (VDV)": "Russian Airborne Forces",
+  // China
+  "PLA Ground Force": "People's Liberation Army Ground Force",
+  "PLA Navy (PLAN)": "People's Liberation Army Navy",
+  "PLA Air Force (PLAAF)": "People's Liberation Army Air Force",
+  "PLA Rocket Force": "People's Liberation Army Rocket Force",
+  "PLA Strategic Support": "People's Liberation Army Strategic Support Force",
+  // Japan
+  "JGSDF (Ground)": "Japan Ground Self-Defense Force",
+  "JMSDF (Maritime)": "Japan Maritime Self-Defense Force",
+  "JASDF (Air)": "Japan Air Self-Defense Force",
+  // South Korea
+  "Republic of Korea Army": "Republic of Korea Army",
+  "Republic of Korea Navy": "Republic of Korea Navy",
+  "Republic of Korea Air Force": "Republic of Korea Air Force",
+  "Marine Corps (ROKMC)": "Republic of Korea Marine Corps",
+  // India
+  "Indian Army": "Indian Army",
+  "Indian Navy": "Indian Navy",
+  "Indian Air Force": "Indian Air Force",
+  // Australia
+  "Australian Army": "Australian Army",
+  "Royal Australian Navy": "Royal Australian Navy",
+  "Royal Australian Air Force": "Royal Australian Air Force",
+  // Italy
+  "Esercito (Army)": "Italian Army",
+  "Marina Militare": "Italian Navy",
+  "Aeronautica Militare": "Italian Air Force",
+  "Carabinieri": "Carabinieri",
+  // Brazil
+  "Exército Brasileiro": "Brazilian Army",
+  "Marinha do Brasil": "Brazilian Navy",
+  "Força Aérea Brasileira": "Brazilian Air Force",
+  // Canada
+  "Canadian Army": "Canadian Army",
+  "Royal Canadian Navy": "Royal Canadian Navy",
+  "Royal Canadian Air Force": "Royal Canadian Air Force",
+  // Israel
+  "IDF Ground Forces": "Israel Defense Forces",
+  "Israeli Navy": "Israeli Navy",
+  "Israeli Air Force (IAF)": "Israeli Air Force",
+  "Intelligence Directorate (AMAN)": "Directorate of Military Intelligence (Israel)",
+  // Turkey
+  "Turkish Land Forces": "Turkish Land Forces",
+  "Turkish Naval Forces": "Turkish Naval Forces",
+  "Turkish Air Force": "Turkish Air Force",
+  // Saudi Arabia
+  "Royal Saudi Land Forces": "Royal Saudi Land Forces",
+  "Royal Saudi Naval Forces": "Royal Saudi Naval Forces",
+  "Royal Saudi Air Force": "Royal Saudi Air Force",
+  "Royal Saudi Air Defense": "Royal Saudi Air Defense Forces",
+  "Saudi National Guard": "Saudi Arabian National Guard",
+  // Poland
+  "Polish Land Forces": "Polish Land Forces",
+  "Polish Navy": "Polish Navy",
+  "Polish Air Force": "Polish Air Force",
+  // Ukraine
+  "Ukrainian Ground Forces": "Ukrainian Ground Forces",
+  "Ukrainian Navy": "Ukrainian Navy",
+  "Ukrainian Air Force": "Ukrainian Air Force",
+  // Egypt
+  "Egyptian Army": "Egyptian Army",
+  "Egyptian Navy": "Egyptian Navy",
+  "Egyptian Air Force": "Egyptian Air Force",
+  // Sweden
+  "Swedish Army": "Swedish Army",
+  "Swedish Navy": "Swedish Navy",
+  "Swedish Air Force": "Swedish Air Force",
+  // Norway
+  "Norwegian Army": "Norwegian Army",
+  "Royal Norwegian Navy": "Royal Norwegian Navy",
+  "Royal Norwegian Air Force": "Royal Norwegian Air Force",
+  // Spain
+  "Spanish Army": "Spanish Army",
+  "Spanish Navy": "Spanish Navy",
+  "Spanish Air Force": "Spanish Air Force",
+  // Netherlands
+  "Royal Netherlands Army": "Royal Netherlands Army",
+  "Royal Netherlands Navy": "Royal Netherlands Navy",
+  "Royal Netherlands Air Force": "Royal Netherlands Air Force",
+  // Taiwan
+  "Republic of China Army": "Republic of China Army",
+  "Republic of China Navy": "Republic of China Navy",
+  "Republic of China Air Force": "Republic of China Air Force",
+};
+
+// Fetches branch emblem URLs via the EN Wikipedia pageimages API (same API
+// already used for branch-type background photos — proven to work reliably).
 function useBranchEmblems(branches) {
   const [emblems, setEmblems] = useState({});
   const branchesKey = branches?.map(b => b.name).join(',') || '';
 
   useEffect(() => {
     if (!branches?.length) return;
-    const WP_PRE = "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/";
-    const WP_SUF = "&width=100";
-
     branches.forEach(branch => {
       if (EMBLEM_CACHE[branch.name] !== undefined) {
         if (EMBLEM_CACHE[branch.name]) {
@@ -291,20 +405,14 @@ function useBranchEmblems(branches) {
         }
         return;
       }
-      const logoUrl = BRANCH_LOGOS[branch.name];
-      if (!logoUrl) { EMBLEM_CACHE[branch.name] = null; return; }
-
-      const encoded = logoUrl.slice(WP_PRE.length, logoUrl.length - WP_SUF.length);
-      const fileName = decodeURIComponent(encoded);
-      const fileTitle = encodeURIComponent("File:" + fileName);
-
+      const article = BRANCH_WP_ARTICLE[branch.name];
+      if (!article) { EMBLEM_CACHE[branch.name] = null; return; }
       fetch(
-        `https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url&iiurlwidth=80&format=json&origin=*&titles=${fileTitle}`
+        `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=${encodeURIComponent(article)}&pithumbsize=100&format=json&origin=*`
       )
         .then(r => r.json())
         .then(data => {
-          const page = Object.values(data?.query?.pages || {})[0];
-          const thumbUrl = page?.imageinfo?.[0]?.thumburl || null;
+          const thumbUrl = Object.values(data?.query?.pages || {})[0]?.thumbnail?.source || null;
           EMBLEM_CACHE[branch.name] = thumbUrl;
           if (thumbUrl) setEmblems(prev => ({ ...prev, [branch.name]: thumbUrl }));
         })
@@ -835,25 +943,32 @@ function NewsCard({ article }) {
 }
 
 // ── Flag tick for the regional comparison bar chart ───────────────────────────
-function FlagYTick({ x, y, payload }) {
-  const code = COUNTRY_FLAGS[payload.value] || payload.value.toLowerCase();
-  const flagUrl = `https://flagcdn.com/w40/${code}.png`;
-  const [failed, setFailed] = useState(false);
+// FlagOverlay renders flag <img> elements as a HTML overlay aligned with chart bars.
+// Plain HTML <img> tags are used instead of SVG <image> / foreignObject to avoid
+// cross-origin and iOS-Safari SVG image loading bugs.
+function FlagOverlay({ peers, chartMarginTop = 12, chartMarginBottom = 4 }) {
+  if (!peers?.length) return null;
   return (
-    <g transform={`translate(${x},${y})`}>
-      {failed ? (
-        <text x={-16} y={4} textAnchor="middle" fontSize={8} fill="#94a3b8" fontFamily="monospace">
-          {payload.value}
-        </text>
-      ) : (
-        <image
-          href={flagUrl}
-          x={-30} y={-9} width={26} height={18}
-          preserveAspectRatio="xMidYMid slice"
-          onError={() => setFailed(true)}
-        />
-      )}
-    </g>
+    <div
+      className="absolute inset-y-0 left-0 w-10 flex flex-col pointer-events-none"
+      style={{ paddingTop: chartMarginTop, paddingBottom: chartMarginBottom }}
+    >
+      {peers.map(entry => {
+        const code = COUNTRY_FLAGS[entry.country_code] || entry.country_code.toLowerCase();
+        return (
+          <div key={entry.country_code} className="flex-1 flex items-center justify-center">
+            <img
+              src={`https://flagcdn.com/w40/${code}.png`}
+              alt={entry.country}
+              width={26}
+              height={18}
+              className="rounded-sm object-cover"
+              onError={e => { e.currentTarget.style.opacity = '0'; }}
+            />
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -999,7 +1114,8 @@ function CountryProfileSection({ country, allExpenditures }) {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="h-[260px]">
+            <div className="relative h-[260px]">
+              <FlagOverlay peers={regionalPeers} chartMarginTop={12} chartMarginBottom={4} />
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={regionalPeers} layout="vertical" margin={{ top: 12, left: 0, right: 8, bottom: 4 }}>
                   <XAxis
@@ -1012,7 +1128,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                   <YAxis
                     type="category"
                     dataKey="country_code"
-                    tick={<FlagYTick />}
+                    tick={false}
                     axisLine={false}
                     tickLine={false}
                     width={40}
