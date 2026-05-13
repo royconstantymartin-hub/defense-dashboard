@@ -269,6 +269,53 @@ const BRANCH_WIKI_ARTICLES = {
 // Module-level cache so photos are fetched only once per session.
 const BRANCH_PHOTO_CACHE = {};
 
+// Module-level cache for emblem thumbnail URLs (fetched via Wikimedia imageinfo API).
+const EMBLEM_CACHE = {};
+
+// Fetches official emblem thumbnail URLs for a list of branches using the
+// Wikimedia Commons imageinfo API, which returns the real CDN thumbnail URL
+// (upload.wikimedia.org/…) instead of the unreliable Special:Redirect redirect.
+function useBranchEmblems(branches) {
+  const [emblems, setEmblems] = useState({});
+  const branchesKey = branches?.map(b => b.name).join(',') || '';
+
+  useEffect(() => {
+    if (!branches?.length) return;
+    const WP_PRE = "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/";
+    const WP_SUF = "&width=100";
+
+    branches.forEach(branch => {
+      if (EMBLEM_CACHE[branch.name] !== undefined) {
+        if (EMBLEM_CACHE[branch.name]) {
+          setEmblems(prev => ({ ...prev, [branch.name]: EMBLEM_CACHE[branch.name] }));
+        }
+        return;
+      }
+      const logoUrl = BRANCH_LOGOS[branch.name];
+      if (!logoUrl) { EMBLEM_CACHE[branch.name] = null; return; }
+
+      const encoded = logoUrl.slice(WP_PRE.length, logoUrl.length - WP_SUF.length);
+      const fileName = decodeURIComponent(encoded);
+      const fileTitle = encodeURIComponent("File:" + fileName);
+
+      fetch(
+        `https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url&iiurlwidth=80&format=json&origin=*&titles=${fileTitle}`
+      )
+        .then(r => r.json())
+        .then(data => {
+          const page = Object.values(data?.query?.pages || {})[0];
+          const thumbUrl = page?.imageinfo?.[0]?.thumburl || null;
+          EMBLEM_CACHE[branch.name] = thumbUrl;
+          if (thumbUrl) setEmblems(prev => ({ ...prev, [branch.name]: thumbUrl }));
+        })
+        .catch(() => { EMBLEM_CACHE[branch.name] = null; });
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [branchesKey]);
+
+  return emblems;
+}
+
 function useBranchTypePhotos() {
   const [photos, setPhotos] = useState({ ...BRANCH_PHOTO_CACHE });
   useEffect(() => {
@@ -652,18 +699,9 @@ function DefenseCapabilitiesCard({ countryCode }) {
   );
 }
 
-function getBranchLogoUrls(branch) {
-  const urls = [];
-  if (BRANCH_LOGOS[branch.name]) urls.push(BRANCH_LOGOS[branch.name]);
-  // No Google-favicon fallback: government sites (.gouv.fr, .mod.uk …) return the
-  // generic national seal which is indistinguishable between branches.
-  return urls;
-}
-
-function BranchCard({ branch, typePhoto }) {
-  const logoUrls = getBranchLogoUrls(branch);
-  const [logoIdx, setLogoIdx] = useState(0);
+function BranchCard({ branch, typePhoto, emblemUrl }) {
   const [photoError, setPhotoError] = useState(false);
+  const [emblemError, setEmblemError] = useState(false);
   const icon = BRANCH_ICON[branch.type] || <Shield className="w-5 h-5" />;
   const bgGradient = BRANCH_BG_GRADIENT[branch.type] || "from-slate-700 to-slate-900";
 
@@ -693,12 +731,12 @@ function BranchCard({ branch, typePhoto }) {
 
         {/* Official emblem / logo in bottom-left corner */}
         <div className="absolute bottom-2 left-2 w-8 h-8 rounded-lg bg-white/90 border border-white/30 flex items-center justify-center overflow-hidden shrink-0 shadow">
-          {logoUrls.length > 0 && logoIdx < logoUrls.length ? (
+          {emblemUrl && !emblemError ? (
             <img
-              src={logoUrls[logoIdx]}
+              src={emblemUrl}
               alt={branch.name}
               className="w-6 h-6 object-contain"
-              onError={() => setLogoIdx(i => i + 1)}
+              onError={() => setEmblemError(true)}
             />
           ) : (
             <span className={`${(BRANCH_COLOR[branch.type] || "text-slate-600").split(" ").find(c => c.startsWith("text-")) || "text-slate-600"} scale-110`}>{icon}</span>
@@ -797,24 +835,24 @@ function NewsCard({ article }) {
 }
 
 // ── Flag tick for the regional comparison bar chart ───────────────────────────
-// Uses <foreignObject><img> instead of SVG <image> — more reliable in browsers
-// that block cross-origin URLs in SVG image elements due to CSP/CORS policies.
 function FlagYTick({ x, y, payload }) {
   const code = COUNTRY_FLAGS[payload.value] || payload.value.toLowerCase();
   const flagUrl = `https://flagcdn.com/w40/${code}.png`;
+  const [failed, setFailed] = useState(false);
   return (
     <g transform={`translate(${x},${y})`}>
-      {/* Country code text shown if image fails */}
-      <text x={-16} y={4} textAnchor="middle" fontSize={7} fill="#94a3b8" fontFamily="monospace">
-        {payload.value}
-      </text>
-      <foreignObject x={-30} y={-9} width={26} height={18}>
-        <img
-          src={flagUrl}
-          alt={payload.value}
-          style={{ width: "26px", height: "18px", objectFit: "cover", borderRadius: "2px", display: "block" }}
+      {failed ? (
+        <text x={-16} y={4} textAnchor="middle" fontSize={8} fill="#94a3b8" fontFamily="monospace">
+          {payload.value}
+        </text>
+      ) : (
+        <image
+          href={flagUrl}
+          x={-30} y={-9} width={26} height={18}
+          preserveAspectRatio="xMidYMid slice"
+          onError={() => setFailed(true)}
         />
-      </foreignObject>
+      )}
     </g>
   );
 }
@@ -829,6 +867,7 @@ function CountryProfileSection({ country, allExpenditures }) {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [bannerUrl, setBannerUrl] = useState(null);
   const branchTypePhotos = useBranchTypePhotos();
+  const branchEmblems = useBranchEmblems(profile?.military_branches);
 
   // Fetch country profile from backend
   useEffect(() => {
@@ -940,7 +979,7 @@ function CountryProfileSection({ country, allExpenditures }) {
             ) : profile?.military_branches?.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {profile.military_branches.map((branch, i) => (
-                  <BranchCard key={i} branch={branch} typePhoto={branchTypePhotos[branch.type]} />
+                  <BranchCard key={i} branch={branch} typePhoto={branchTypePhotos[branch.type]} emblemUrl={branchEmblems[branch.name]} />
                 ))}
               </div>
             ) : (
@@ -962,7 +1001,7 @@ function CountryProfileSection({ country, allExpenditures }) {
           <CardContent className="pt-4">
             <div className="h-[260px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={regionalPeers} layout="vertical" margin={{ left: 0, right: 8 }}>
+                <BarChart data={regionalPeers} layout="vertical" margin={{ top: 12, left: 0, right: 8, bottom: 4 }}>
                   <XAxis
                     type="number"
                     tick={{ fill: '#64748B', fontSize: 10 }}
