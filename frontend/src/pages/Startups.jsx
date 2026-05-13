@@ -98,7 +98,14 @@ function isStartup(company) {
   if (!isPrivate) return false;
   if ((company.employees || 0) > 5000) return false;
   if ((company.market_cap || 0) > 20) return false;
-  return true;
+  // Require at least one startup-specific metadata field to exclude traditional
+  // defense primes that happen to be private (e.g. Hanwha Defense, Baykar, Roketsan)
+  const hasStartupMetadata = !!(
+    company.funding_stage ||
+    company.founded_year ||
+    company.description
+  );
+  return hasStartupMetadata;
 }
 
 function autoDescription(company) {

@@ -23,8 +23,8 @@ DEFENSE_COMPANIES = [
     {"name": "Maxar Technologies", "ticker": "MAXR", "country": "USA", "market_cap": 3.1, "stock_price": 52.34, "change_percent": 1.23, "revenue": 1.8, "employees": 4600, "specializations": ["Space", "Imagery", "Satellites"]},
     {"name": "Curtiss-Wright", "ticker": "CW", "country": "USA", "market_cap": 8.9, "stock_price": 245.67, "change_percent": 0.78, "revenue": 2.9, "employees": 8500, "specializations": ["Components", "Naval", "Nuclear"]},
     {"name": "TransDigm", "ticker": "TDG", "country": "USA", "market_cap": 72.4, "stock_price": 1289.45, "change_percent": 0.45, "revenue": 6.6, "employees": 14000, "specializations": ["Components", "Aerospace"]},
-    {"name": "Anduril Industries", "ticker": "ANDR-PRIV", "country": "USA", "market_cap": 14.0, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 2500, "specializations": ["AI", "Autonomous", "Counter-UAS"]},
-    {"name": "Shield AI", "ticker": "SHLD-PRIV", "country": "USA", "market_cap": 2.7, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["AI", "Autonomous", "UAV"],
+    {"name": "Anduril Industries", "ticker": "ANDR-PRIV", "country": "USA", "market_cap": 14.0, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 2500, "specializations": ["AI", "Autonomous", "Counter-UAS"], "founded_year": 2017, "headquarters": "Costa Mesa, CA, USA", "website": "anduril.com", "funding_stage": "Late Stage — $3B+ (Founders Fund, a16z)", "is_public": False},
+    {"name": "Shield AI", "ticker": "SHLD-PRIV", "country": "USA", "market_cap": 2.7, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["AI", "Autonomous", "UAV"], "founded_year": 2015, "headquarters": "San Diego, CA, USA", "website": "shield.ai", "funding_stage": "Series F — $1B+ (Andreessen Horowitz)", "is_public": False,
      "aliases": ["ShieldAI", "Shield Artificial Intelligence", "Shield AI Inc"]},
     {"name": "Palantir Technologies", "ticker": "PLTR", "country": "USA", "market_cap": 45.6, "stock_price": 21.34, "change_percent": 3.45, "revenue": 2.2, "employees": 3700, "specializations": ["Software", "AI", "Analytics", "Intelligence"]},
     {"name": "Rocket Lab", "ticker": "RKLB", "country": "USA", "market_cap": 8.9, "stock_price": 18.90, "change_percent": 4.56, "revenue": 0.5, "employees": 1800, "specializations": ["Space", "Launch", "Satellites"]},
@@ -52,7 +52,7 @@ DEFENSE_COMPANIES = [
     {"name": "ThyssenKrupp Marine", "ticker": "TKA.DE", "country": "Germany", "market_cap": 3.2, "stock_price": 4.56, "change_percent": -0.45, "revenue": 2.1, "employees": 8000, "specializations": ["Naval", "Submarines"]},
     {"name": "MTU Aero Engines", "ticker": "MTX.DE", "country": "Germany", "market_cap": 14.5, "stock_price": 275.90, "change_percent": 0.67, "revenue": 6.3, "employees": 12000, "specializations": ["Engines", "MRO"]},
     {"name": "Renk Group", "ticker": "R3NK.DE", "country": "Germany", "market_cap": 2.8, "stock_price": 28.90, "change_percent": 2.34, "revenue": 0.9, "employees": 3400, "specializations": ["Transmissions", "Propulsion", "Components"]},
-    {"name": "Helsing", "ticker": "HELS-PRIV", "country": "Germany", "market_cap": 3.7, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 450, "specializations": ["AI", "Electronic Warfare", "Autonomous", "Software"]},
+    {"name": "Helsing", "ticker": "HELS-PRIV", "country": "Germany", "market_cap": 3.7, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 450, "specializations": ["AI", "Electronic Warfare", "Autonomous", "Software"], "founded_year": 2021, "headquarters": "Munich, Germany", "website": "helsing.ai", "funding_stage": "Series C — €700M+ (General Catalyst, Saab)", "is_public": False},
     # === Italy ===
     {"name": "Leonardo", "ticker": "LDO.MI", "country": "Italy", "market_cap": 14.8, "stock_price": 25.67, "change_percent": 1.56, "revenue": 15.3, "employees": 53000, "specializations": ["Helicopters", "Electronics", "Cyber", "Space"]},
     {"name": "Fincantieri", "ticker": "FCT.MI", "country": "Italy", "market_cap": 2.1, "stock_price": 1.23, "change_percent": 0.89, "revenue": 7.8, "employees": 21000, "specializations": ["Naval", "Shipbuilding", "Cruise Ships"]},
@@ -171,8 +171,8 @@ DEFENSE_COMPANIES = [
     {"name": "Theon Sensors", "ticker": "THSN-PRIV", "country": "Greece", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 280, "specializations": ["Optronics", "Night Vision", "Thermal Imaging"]},
     {"name": "PZL Mielec", "ticker": "PZL-PRIV", "country": "Poland", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2200, "specializations": ["Aircraft", "Helicopters", "MRO"]},
     # === France — Defense Tech Startups ===
-    {"name": "Shark Robotics", "ticker": "SHRK-PRIV", "country": "France", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 60, "specializations": ["UGV", "Robotics", "Counter-IED", "Autonomous"]},
-    {"name": "Preligens", "ticker": "PREL-PRIV", "country": "France", "market_cap": 0.17, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 130, "specializations": ["AI", "Satellite Imagery", "GEOINT", "ISR"]},
+    {"name": "Shark Robotics", "ticker": "SHRK-PRIV", "country": "France", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 60, "specializations": ["UGV", "Robotics", "Counter-IED", "Autonomous"], "founded_year": 2014, "headquarters": "La Rochelle, France", "website": "shark-robotics.com", "funding_stage": "Growth", "is_public": False},
+    {"name": "Preligens", "ticker": "PREL-PRIV", "country": "France", "market_cap": 0.17, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 130, "specializations": ["AI", "Satellite Imagery", "GEOINT", "ISR"], "founded_year": 2016, "headquarters": "Paris, France", "website": "preligens.com", "funding_stage": "Growth", "is_public": False},
     {
         "name": "Harmattan AI", "ticker": "HARM-PRIV", "country": "France",
         "market_cap": 1.0, "stock_price": 0, "change_percent": 0,
@@ -273,28 +273,23 @@ DEFENSE_COMPANIES = [
         "aliases": ["Eutelsat Communications", "Eutelsat S.A.", "ETL"],
     },
     # === Germany — Defense Tech Startups ===
-    {"name": "Quantum Systems", "ticker": "QSYS-PRIV", "country": "Germany", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 250, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"],
+    {"name": "Quantum Systems", "ticker": "QSYS-PRIV", "country": "Germany", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 400, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"], "founded_year": 2015, "headquarters": "Munich, Germany", "website": "quantum-systems.com", "funding_stage": "Growth — €100M+ (HV Capital, Project A)", "is_public": False,
      "aliases": ["Quantum Systems GmbH"]},
-    {"name": "Dedrone", "ticker": "DEDR-PRIV", "country": "Germany", "market_cap": 0.06, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 120, "specializations": ["Counter-UAS", "Drone Detection", "AI", "Security"]},
+    {"name": "Dedrone", "ticker": "DEDR-PRIV", "country": "Germany", "market_cap": 0.06, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 120, "specializations": ["Counter-UAS", "Drone Detection", "AI", "Security"], "founded_year": 2014, "headquarters": "San Francisco, CA, USA", "website": "dedrone.com", "funding_stage": "Growth", "is_public": False},
     # === UK — Defense Tech Startups ===
-    {"name": "Roke Manor Research", "ticker": "ROKE-PRIV", "country": "UK", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 700, "specializations": ["SIGINT", "Cyber", "Electronic Warfare", "Autonomous"]},
-    {"name": "Reaction Engines", "ticker": "RENG-PRIV", "country": "UK", "market_cap": 0.35, "stock_price": 0, "change_percent": 0, "revenue": 0.04, "employees": 200, "specializations": ["Hypersonics", "Propulsion", "Space", "Engines"]},
-    {"name": "Blue Bear Systems", "ticker": "BBSR-PRIV", "country": "UK", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.03, "employees": 80, "specializations": ["UAV", "Swarm", "Autonomous", "AI"]},
-    {"name": "Basecamp Research", "ticker": "BCMP-PRIV", "country": "UK", "market_cap": 0.12, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 90, "specializations": ["Biodefence", "AI", "Biosecurity", "R&D"]},
+    {"name": "Blue Bear Systems", "ticker": "BBSR-PRIV", "country": "UK", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.03, "employees": 80, "specializations": ["UAV", "Swarm", "Autonomous", "AI"], "founded_year": 2002, "headquarters": "Bedford, UK", "website": "bluebear.aero", "funding_stage": "Growth", "is_public": False},
+    {"name": "Basecamp Research", "ticker": "BCMP-PRIV", "country": "UK", "market_cap": 0.12, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 90, "specializations": ["Biodefence", "AI", "Biosecurity", "R&D"], "founded_year": 2021, "headquarters": "London, UK", "website": "basecampresearch.com", "funding_stage": "Series A", "is_public": False},
     # === Israel — Defense Tech Startups ===
-    {"name": "Orca AI", "ticker": "ORCA-PRIV", "country": "Israel", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 60, "specializations": ["Naval Autonomy", "AI", "Maritime Surveillance", "Navigation"]},
-    # === Ukraine — Defense Tech Startups ===
-    {"name": "Shark Robotics Ukraine JV", "ticker": "SHRK-UA-PRIV", "country": "Ukraine", "market_cap": 0.02, "stock_price": 0, "change_percent": 0, "revenue": 0.005, "employees": 20, "specializations": ["UGV", "Autonomous", "Robotics"]},
+    {"name": "Orca AI", "ticker": "ORCA-PRIV", "country": "Israel", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 60, "specializations": ["Naval Autonomy", "AI", "Maritime Surveillance", "Navigation"], "founded_year": 2018, "headquarters": "Tel Aviv, Israel", "website": "orca.ai", "funding_stage": "Series A", "is_public": False},
     # === Australia — Defense Tech Startups ===
-    {"name": "SYPAQ Systems", "ticker": "SYPA-PRIV", "country": "Australia", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 120, "specializations": ["UAV", "Autonomous", "Logistics", "ISTAR"]},
-    {"name": "Advanced Navigation", "ticker": "ADVN-PRIV", "country": "Australia", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.025, "employees": 150, "specializations": ["Navigation", "INS", "Autonomous", "Underwater"]},
+    {"name": "SYPAQ Systems", "ticker": "SYPA-PRIV", "country": "Australia", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 120, "specializations": ["UAV", "Autonomous", "Logistics", "ISTAR"], "founded_year": 2015, "headquarters": "Melbourne, Australia", "website": "sypaq.com.au", "funding_stage": "Growth", "is_public": False},
+    {"name": "Advanced Navigation", "ticker": "ADVN-PRIV", "country": "Australia", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.025, "employees": 150, "specializations": ["Navigation", "INS", "Autonomous", "Underwater"], "founded_year": 2012, "headquarters": "Sydney, Australia", "website": "advancednavigation.com", "funding_stage": "Growth", "is_public": False},
     # === India — Defense Tech Startups ===
-    {"name": "ideaForge Technology", "ticker": "IDEAFORGE.NS", "country": "India", "market_cap": 0.18, "stock_price": 580.0, "change_percent": 1.2, "revenue": 0.025, "employees": 350, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"]},
-    {"name": "Sagar Defence Engineering", "ticker": "SDAG-PRIV", "country": "India", "market_cap": 0.02, "stock_price": 0, "change_percent": 0, "revenue": 0.005, "employees": 80, "specializations": ["Naval", "USV", "AUV", "Autonomous"]},
+    {"name": "ideaForge Technology", "ticker": "IDEAFORGE.NS", "country": "India", "market_cap": 0.18, "stock_price": 580.0, "change_percent": 1.2, "revenue": 0.025, "employees": 350, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"], "founded_year": 2012, "headquarters": "Mumbai, India", "website": "ideaforgetech.com"},
     # === UAE — Defense Scale-ups ===
-    {"name": "Calidus", "ticker": "CALD-PRIV", "country": "UAE", "market_cap": 0.25, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 200, "specializations": ["Aircraft", "Light Attack", "COIN", "Trainer"]},
+    {"name": "Calidus", "ticker": "CALD-PRIV", "country": "UAE", "market_cap": 0.25, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 200, "specializations": ["Aircraft", "Light Attack", "COIN", "Trainer"], "founded_year": 2018, "headquarters": "Abu Dhabi, UAE", "website": "calidus.ae", "funding_stage": "Growth", "is_public": False},
     # === South Korea — Defense Tech Startups ===
-    {"name": "Hancom InSpace", "ticker": "HICS-PRIV", "country": "South Korea", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 180, "specializations": ["Space", "SAR", "GEOINT", "Satellites"]},
+    {"name": "Hancom InSpace", "ticker": "HICS-PRIV", "country": "South Korea", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 180, "specializations": ["Space", "SAR", "GEOINT", "Satellites"], "founded_year": 2012, "headquarters": "Seoul, South Korea", "website": "hancom-inspace.com", "funding_stage": "Growth", "is_public": False},
     # === Canada — Defense Tech Startups ===
     {
         "name": "Xona Space Systems", "ticker": "XONA-PRIV", "country": "USA",
@@ -315,7 +310,7 @@ DEFENSE_COMPANIES = [
         "aliases": ["Xona Space", "Xona"],
     },
     # === Estonia — Defense Tech Startups ===
-    {"name": "Frankenburg Technologies", "ticker": "FRTG-PRIV", "country": "Estonia", "market_cap": 0.005, "stock_price": 0, "change_percent": 0, "revenue": 0.001, "employees": 15, "specializations": ["Counter-UAS", "AI", "Detection", "Autonomous"]},
+    {"name": "Frankenburg Technologies", "ticker": "FRTG-PRIV", "country": "Estonia", "market_cap": 0.005, "stock_price": 0, "change_percent": 0, "revenue": 0.001, "employees": 15, "specializations": ["Counter-UAS", "AI", "Detection", "Autonomous"], "founded_year": 2020, "headquarters": "Tallinn, Estonia", "funding_stage": "Seed", "is_public": False},
     # === Turkey — Defense Tech Startups ===
     {"name": "STM Savunma", "ticker": "STMS-PRIV", "country": "Turkey", "market_cap": 0.6, "stock_price": 0, "change_percent": 0, "revenue": 0.12, "employees": 500, "specializations": ["Autonomous", "AI", "Naval", "Cyber"]},
 
