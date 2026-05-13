@@ -23,8 +23,8 @@ DEFENSE_COMPANIES = [
     {"name": "Maxar Technologies", "ticker": "MAXR", "country": "USA", "market_cap": 3.1, "stock_price": 52.34, "change_percent": 1.23, "revenue": 1.8, "employees": 4600, "specializations": ["Space", "Imagery", "Satellites"]},
     {"name": "Curtiss-Wright", "ticker": "CW", "country": "USA", "market_cap": 8.9, "stock_price": 245.67, "change_percent": 0.78, "revenue": 2.9, "employees": 8500, "specializations": ["Components", "Naval", "Nuclear"]},
     {"name": "TransDigm", "ticker": "TDG", "country": "USA", "market_cap": 72.4, "stock_price": 1289.45, "change_percent": 0.45, "revenue": 6.6, "employees": 14000, "specializations": ["Components", "Aerospace"]},
-    {"name": "Anduril Industries", "ticker": "ANDR-PRIV", "country": "USA", "market_cap": 14.0, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 2500, "specializations": ["AI", "Autonomous", "Counter-UAS"]},
-    {"name": "Shield AI", "ticker": "SHLD-PRIV", "country": "USA", "market_cap": 2.7, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["AI", "Autonomous", "UAV"],
+    {"name": "Anduril Industries", "ticker": "ANDR-PRIV", "country": "USA", "market_cap": 14.0, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 2500, "specializations": ["AI", "Autonomous", "Counter-UAS"], "founded_year": 2017, "headquarters": "Costa Mesa, CA, USA", "website": "anduril.com", "funding_stage": "Late Stage — $3B+ (Founders Fund, a16z)", "is_public": False},
+    {"name": "Shield AI", "ticker": "SHLD-PRIV", "country": "USA", "market_cap": 2.7, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 800, "specializations": ["AI", "Autonomous", "UAV"], "founded_year": 2015, "headquarters": "San Diego, CA, USA", "website": "shield.ai", "funding_stage": "Series F — $1B+ (Andreessen Horowitz)", "is_public": False,
      "aliases": ["ShieldAI", "Shield Artificial Intelligence", "Shield AI Inc"]},
     {"name": "Palantir Technologies", "ticker": "PLTR", "country": "USA", "market_cap": 45.6, "stock_price": 21.34, "change_percent": 3.45, "revenue": 2.2, "employees": 3700, "specializations": ["Software", "AI", "Analytics", "Intelligence"]},
     {"name": "Rocket Lab", "ticker": "RKLB", "country": "USA", "market_cap": 8.9, "stock_price": 18.90, "change_percent": 4.56, "revenue": 0.5, "employees": 1800, "specializations": ["Space", "Launch", "Satellites"]},
@@ -52,7 +52,7 @@ DEFENSE_COMPANIES = [
     {"name": "ThyssenKrupp Marine", "ticker": "TKA.DE", "country": "Germany", "market_cap": 3.2, "stock_price": 4.56, "change_percent": -0.45, "revenue": 2.1, "employees": 8000, "specializations": ["Naval", "Submarines"]},
     {"name": "MTU Aero Engines", "ticker": "MTX.DE", "country": "Germany", "market_cap": 14.5, "stock_price": 275.90, "change_percent": 0.67, "revenue": 6.3, "employees": 12000, "specializations": ["Engines", "MRO"]},
     {"name": "Renk Group", "ticker": "R3NK.DE", "country": "Germany", "market_cap": 2.8, "stock_price": 28.90, "change_percent": 2.34, "revenue": 0.9, "employees": 3400, "specializations": ["Transmissions", "Propulsion", "Components"]},
-    {"name": "Helsing", "ticker": "HELS-PRIV", "country": "Germany", "market_cap": 3.7, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 450, "specializations": ["AI", "Electronic Warfare", "Autonomous", "Software"]},
+    {"name": "Helsing", "ticker": "HELS-PRIV", "country": "Germany", "market_cap": 3.7, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 450, "specializations": ["AI", "Electronic Warfare", "Autonomous", "Software"], "founded_year": 2021, "headquarters": "Munich, Germany", "website": "helsing.ai", "funding_stage": "Series C — €700M+ (General Catalyst, Saab)", "is_public": False},
     # === Italy ===
     {"name": "Leonardo", "ticker": "LDO.MI", "country": "Italy", "market_cap": 14.8, "stock_price": 25.67, "change_percent": 1.56, "revenue": 15.3, "employees": 53000, "specializations": ["Helicopters", "Electronics", "Cyber", "Space"]},
     {"name": "Fincantieri", "ticker": "FCT.MI", "country": "Italy", "market_cap": 2.1, "stock_price": 1.23, "change_percent": 0.89, "revenue": 7.8, "employees": 21000, "specializations": ["Naval", "Shipbuilding", "Cruise Ships"]},
@@ -171,8 +171,8 @@ DEFENSE_COMPANIES = [
     {"name": "Theon Sensors", "ticker": "THSN-PRIV", "country": "Greece", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 280, "specializations": ["Optronics", "Night Vision", "Thermal Imaging"]},
     {"name": "PZL Mielec", "ticker": "PZL-PRIV", "country": "Poland", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2200, "specializations": ["Aircraft", "Helicopters", "MRO"]},
     # === France — Defense Tech Startups ===
-    {"name": "Shark Robotics", "ticker": "SHRK-PRIV", "country": "France", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 60, "specializations": ["UGV", "Robotics", "Counter-IED", "Autonomous"]},
-    {"name": "Preligens", "ticker": "PREL-PRIV", "country": "France", "market_cap": 0.17, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 130, "specializations": ["AI", "Satellite Imagery", "GEOINT", "ISR"]},
+    {"name": "Shark Robotics", "ticker": "SHRK-PRIV", "country": "France", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 60, "specializations": ["UGV", "Robotics", "Counter-IED", "Autonomous"], "founded_year": 2014, "headquarters": "La Rochelle, France", "website": "shark-robotics.com", "funding_stage": "Growth", "is_public": False},
+    {"name": "Preligens", "ticker": "PREL-PRIV", "country": "France", "market_cap": 0.17, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 130, "specializations": ["AI", "Satellite Imagery", "GEOINT", "ISR"], "founded_year": 2016, "headquarters": "Paris, France", "website": "preligens.com", "funding_stage": "Growth", "is_public": False},
     {
         "name": "Harmattan AI", "ticker": "HARM-PRIV", "country": "France",
         "market_cap": 1.0, "stock_price": 0, "change_percent": 0,
@@ -273,34 +273,918 @@ DEFENSE_COMPANIES = [
         "aliases": ["Eutelsat Communications", "Eutelsat S.A.", "ETL"],
     },
     # === Germany — Defense Tech Startups ===
-    {"name": "Quantum Systems", "ticker": "QSYS-PRIV", "country": "Germany", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 250, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"],
+    {"name": "Quantum Systems", "ticker": "QSYS-PRIV", "country": "Germany", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 400, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"], "founded_year": 2015, "headquarters": "Munich, Germany", "website": "quantum-systems.com", "funding_stage": "Growth — €100M+ (HV Capital, Project A)", "is_public": False,
      "aliases": ["Quantum Systems GmbH"]},
-    {"name": "Dedrone", "ticker": "DEDR-PRIV", "country": "Germany", "market_cap": 0.06, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 120, "specializations": ["Counter-UAS", "Drone Detection", "AI", "Security"]},
+    {"name": "Dedrone", "ticker": "DEDR-PRIV", "country": "Germany", "market_cap": 0.06, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 120, "specializations": ["Counter-UAS", "Drone Detection", "AI", "Security"], "founded_year": 2014, "headquarters": "San Francisco, CA, USA", "website": "dedrone.com", "funding_stage": "Growth", "is_public": False},
     # === UK — Defense Tech Startups ===
-    {"name": "Roke Manor Research", "ticker": "ROKE-PRIV", "country": "UK", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 700, "specializations": ["SIGINT", "Cyber", "Electronic Warfare", "Autonomous"]},
-    {"name": "Reaction Engines", "ticker": "RENG-PRIV", "country": "UK", "market_cap": 0.35, "stock_price": 0, "change_percent": 0, "revenue": 0.04, "employees": 200, "specializations": ["Hypersonics", "Propulsion", "Space", "Engines"]},
-    {"name": "Blue Bear Systems", "ticker": "BBSR-PRIV", "country": "UK", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.03, "employees": 80, "specializations": ["UAV", "Swarm", "Autonomous", "AI"]},
-    {"name": "Basecamp Research", "ticker": "BCMP-PRIV", "country": "UK", "market_cap": 0.12, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 90, "specializations": ["Biodefence", "AI", "Biosecurity", "R&D"]},
+    {"name": "Blue Bear Systems", "ticker": "BBSR-PRIV", "country": "UK", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.03, "employees": 80, "specializations": ["UAV", "Swarm", "Autonomous", "AI"], "founded_year": 2002, "headquarters": "Bedford, UK", "website": "bluebear.aero", "funding_stage": "Growth", "is_public": False},
+    {"name": "Basecamp Research", "ticker": "BCMP-PRIV", "country": "UK", "market_cap": 0.12, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 90, "specializations": ["Biodefence", "AI", "Biosecurity", "R&D"], "founded_year": 2021, "headquarters": "London, UK", "website": "basecampresearch.com", "funding_stage": "Series A", "is_public": False},
     # === Israel — Defense Tech Startups ===
-    {"name": "Orca AI", "ticker": "ORCA-PRIV", "country": "Israel", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 60, "specializations": ["Naval Autonomy", "AI", "Maritime Surveillance", "Navigation"]},
-    # === Ukraine — Defense Tech Startups ===
-    {"name": "Shark Robotics Ukraine JV", "ticker": "SHRK-UA-PRIV", "country": "Ukraine", "market_cap": 0.02, "stock_price": 0, "change_percent": 0, "revenue": 0.005, "employees": 20, "specializations": ["UGV", "Autonomous", "Robotics"]},
+    {"name": "Orca AI", "ticker": "ORCA-PRIV", "country": "Israel", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 60, "specializations": ["Naval Autonomy", "AI", "Maritime Surveillance", "Navigation"], "founded_year": 2018, "headquarters": "Tel Aviv, Israel", "website": "orca.ai", "funding_stage": "Series A", "is_public": False},
     # === Australia — Defense Tech Startups ===
-    {"name": "SYPAQ Systems", "ticker": "SYPA-PRIV", "country": "Australia", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 120, "specializations": ["UAV", "Autonomous", "Logistics", "ISTAR"]},
-    {"name": "Advanced Navigation", "ticker": "ADVN-PRIV", "country": "Australia", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.025, "employees": 150, "specializations": ["Navigation", "INS", "Autonomous", "Underwater"]},
+    {"name": "SYPAQ Systems", "ticker": "SYPA-PRIV", "country": "Australia", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 120, "specializations": ["UAV", "Autonomous", "Logistics", "ISTAR"], "founded_year": 2015, "headquarters": "Melbourne, Australia", "website": "sypaq.com.au", "funding_stage": "Growth", "is_public": False},
+    {"name": "Advanced Navigation", "ticker": "ADVN-PRIV", "country": "Australia", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.025, "employees": 150, "specializations": ["Navigation", "INS", "Autonomous", "Underwater"], "founded_year": 2012, "headquarters": "Sydney, Australia", "website": "advancednavigation.com", "funding_stage": "Growth", "is_public": False},
     # === India — Defense Tech Startups ===
-    {"name": "ideaForge Technology", "ticker": "IDEAFORGE.NS", "country": "India", "market_cap": 0.18, "stock_price": 580.0, "change_percent": 1.2, "revenue": 0.025, "employees": 350, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"]},
-    {"name": "Sagar Defence Engineering", "ticker": "SDAG-PRIV", "country": "India", "market_cap": 0.02, "stock_price": 0, "change_percent": 0, "revenue": 0.005, "employees": 80, "specializations": ["Naval", "USV", "AUV", "Autonomous"]},
+    {"name": "ideaForge Technology", "ticker": "IDEAFORGE.NS", "country": "India", "market_cap": 0.18, "stock_price": 580.0, "change_percent": 1.2, "revenue": 0.025, "employees": 350, "specializations": ["UAV", "VTOL", "ISR", "Autonomous"], "founded_year": 2012, "headquarters": "Mumbai, India", "website": "ideaforgetech.com"},
     # === UAE — Defense Scale-ups ===
-    {"name": "Calidus", "ticker": "CALD-PRIV", "country": "UAE", "market_cap": 0.25, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 200, "specializations": ["Aircraft", "Light Attack", "COIN", "Trainer"]},
+    {"name": "Calidus", "ticker": "CALD-PRIV", "country": "UAE", "market_cap": 0.25, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 200, "specializations": ["Aircraft", "Light Attack", "COIN", "Trainer"], "founded_year": 2018, "headquarters": "Abu Dhabi, UAE", "website": "calidus.ae", "funding_stage": "Growth", "is_public": False},
     # === South Korea — Defense Tech Startups ===
-    {"name": "Hancom InSpace", "ticker": "HICS-PRIV", "country": "South Korea", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 180, "specializations": ["Space", "SAR", "GEOINT", "Satellites"]},
+    {"name": "Hancom InSpace", "ticker": "HICS-PRIV", "country": "South Korea", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 180, "specializations": ["Space", "SAR", "GEOINT", "Satellites"], "founded_year": 2012, "headquarters": "Seoul, South Korea", "website": "hancom-inspace.com", "funding_stage": "Growth", "is_public": False},
     # === Canada — Defense Tech Startups ===
-    {"name": "Xona Space Systems", "ticker": "XONA-PRIV", "country": "Canada", "market_cap": 0.04, "stock_price": 0, "change_percent": 0, "revenue": 0.005, "employees": 45, "specializations": ["Space", "Navigation", "PNT", "GPS"]},
+    {
+        "name": "Xona Space Systems", "ticker": "XONA-PRIV", "country": "USA",
+        "market_cap": 0.16, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.01, "employees": 70,
+        "specializations": ["Space", "Navigation", "PNT", "GPS"],
+        "founded_year": 2019, "headquarters": "Burlingame, CA, USA", "website": "xonaspace.com",
+        "funding_stage": "Series B — $40M+ (Space Capital lead)",
+        "is_public": False,
+        "description": (
+            "Xona Space Systems is developing a commercial navigation satellite constellation "
+            "to provide a GPS-independent, high-precision positioning signal resilient in "
+            "contested environments. Its PULSAR constellation is designed for national security "
+            "applications where GPS jamming or spoofing is a threat."
+        ),
+        "programs": ["PULSAR LEO navigation constellation"],
+        "export_countries": ["US"],
+        "aliases": ["Xona Space", "Xona"],
+    },
     # === Estonia — Defense Tech Startups ===
-    {"name": "Frankenburg Technologies", "ticker": "FRTG-PRIV", "country": "Estonia", "market_cap": 0.005, "stock_price": 0, "change_percent": 0, "revenue": 0.001, "employees": 15, "specializations": ["Counter-UAS", "AI", "Detection", "Autonomous"]},
+    {"name": "Frankenburg Technologies", "ticker": "FRTG-PRIV", "country": "Estonia", "market_cap": 0.005, "stock_price": 0, "change_percent": 0, "revenue": 0.001, "employees": 15, "specializations": ["Counter-UAS", "AI", "Detection", "Autonomous"], "founded_year": 2020, "headquarters": "Tallinn, Estonia", "funding_stage": "Seed", "is_public": False},
     # === Turkey — Defense Tech Startups ===
     {"name": "STM Savunma", "ticker": "STMS-PRIV", "country": "Turkey", "market_cap": 0.6, "stock_price": 0, "change_percent": 0, "revenue": 0.12, "employees": 500, "specializations": ["Autonomous", "AI", "Naval", "Cyber"]},
+
+    # =========================================================
+    # === NEW STARTUPS BATCH — Added May 2026 ================
+    # =========================================================
+
+    # === USA — Autonomous / Maritime ===
+    {
+        "name": "Saronic Technologies", "ticker": "SARO-PRIV", "country": "USA",
+        "market_cap": 0.8, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.03, "employees": 250,
+        "specializations": ["Maritime", "Autonomous", "USV", "Naval ISR"],
+        "founded_year": 2022, "headquarters": "Austin, TX, USA", "website": "saronic.com",
+        "funding_stage": "Series B — $200M+ (Andreessen Horowitz lead)",
+        "is_public": False,
+        "description": (
+            "Saronic Technologies designs and manufactures autonomous surface vessels (ASVs) "
+            "for naval ISR and distributed fleet operations. Its platforms are designed to "
+            "operate in GPS-degraded and contested maritime environments. Backed by a16z, "
+            "Saronic is engaged in US Navy pilot programs targeting the Distributed Maritime "
+            "Operations (DMO) concept."
+        ),
+        "programs": ["US Navy autonomous fleet pilot"],
+        "export_countries": ["US"],
+        "aliases": ["Saronic"],
+    },
+    {
+        "name": "Epirus", "ticker": "EPIR-PRIV", "country": "USA",
+        "market_cap": 1.5, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.06, "employees": 300,
+        "specializations": ["Directed Energy", "Counter-UAS", "HPM", "Electronic Warfare"],
+        "founded_year": 2018, "headquarters": "Torrance, CA, USA", "website": "epirusinc.com",
+        "funding_stage": "Series D — $300M+ (DCVC, 8VC)",
+        "is_public": False,
+        "description": (
+            "Epirus develops high-power microwave (HPM) directed energy systems for counter-drone "
+            "and counter-swarm defense. Its Leonidas system uses software-defined power electronics "
+            "and AI-based target tracking to defeat multiple UAS threats simultaneously. The US Army "
+            "has tested Leonidas in operational scenarios."
+        ),
+        "programs": ["Leonidas HPM system (US Army testing)", "Leonidas Pod (mobile variant)"],
+        "export_countries": ["US"],
+        "aliases": ["Epirus Inc"],
+    },
+    {
+        "name": "Rebellion Defense", "ticker": "REBD-PRIV", "country": "USA",
+        "market_cap": 0.6, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.04, "employees": 250,
+        "specializations": ["AI", "C2", "Defense Software", "Analytics"],
+        "founded_year": 2019, "headquarters": "Washington, DC, USA", "website": "rebelliondefense.com",
+        "funding_stage": "Growth — $150M+ (Eclipse Ventures)",
+        "is_public": False,
+        "description": (
+            "Rebellion Defense builds AI-enabled operational software for military command and control. "
+            "Its platforms provide decision support, mission planning assistance, and autonomous "
+            "analysis for US and allied defense customers. Co-founded by former DoD and CIA officials, "
+            "it operates in the most sensitive areas of the US national security ecosystem."
+        ),
+        "programs": ["Ember (AI mission planning)", "Crypt (signals intelligence)"],
+        "export_countries": ["US"],
+        "aliases": ["Rebellion"],
+    },
+    {
+        "name": "Vannevar Labs", "ticker": "VANN-PRIV", "country": "USA",
+        "market_cap": 0.4, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.03, "employees": 200,
+        "specializations": ["AI", "ISR", "OSINT", "Intelligence Analysis"],
+        "founded_year": 2019, "headquarters": "Palo Alto, CA, USA", "website": "vannevarlabs.com",
+        "funding_stage": "Series B — $90M+ (Felicis, Andreessen Horowitz)",
+        "is_public": False,
+        "description": (
+            "Vannevar Labs builds AI-powered intelligence analysis platforms for national security "
+            "customers. Its flagship product aggregates open-source and classified data to generate "
+            "targeting and operational intelligence faster than traditional human analysts. Its "
+            "customers include US intelligence agencies and special operations commands."
+        ),
+        "programs": ["Beacon (OSINT/targeting platform)"],
+        "export_countries": ["US"],
+        "aliases": ["Vannevar"],
+    },
+    {
+        "name": "True Anomaly", "ticker": "TRAN-PRIV", "country": "USA",
+        "market_cap": 0.5, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.02, "employees": 150,
+        "specializations": ["Space", "Orbital Defense", "Space Domain Awareness", "Satellites"],
+        "founded_year": 2022, "headquarters": "Denver, CO, USA", "website": "trueanomaly.space",
+        "funding_stage": "Series B — $100M+ (Eclipse Ventures)",
+        "is_public": False,
+        "description": (
+            "True Anomaly develops space security systems for orbital defense and space domain "
+            "awareness. Its Jackal spacecraft is designed to rendezvous with and inspect adversary "
+            "satellites. The company is aligned with US Space Force priorities for in-space "
+            "deterrence and rapid response to on-orbit threats."
+        ),
+        "programs": ["Jackal (orbital inspection spacecraft)", "US Space Force ecosystem"],
+        "export_countries": ["US"],
+        "aliases": ["True Anomaly Inc"],
+    },
+    {
+        "name": "Allen Control Systems", "ticker": "ALCS-PRIV", "country": "USA",
+        "market_cap": 0.06, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.005, "employees": 50,
+        "specializations": ["Autonomous", "Weapons Systems", "Counter-UAS", "Base Defense"],
+        "founded_year": 2022, "headquarters": "Austin, TX, USA", "website": "allencontrolsystems.com",
+        "funding_stage": "Seed — $15M+ (Craft Ventures)",
+        "is_public": False,
+        "description": (
+            "Allen Control Systems builds autonomous gun systems for base defense and anti-drone "
+            "warfare. Its platforms integrate AI-powered fire control with existing kinetic weapons "
+            "to defeat small UAS threats at low cost per engagement. Engaged in US defense pilots."
+        ),
+        "programs": ["US defense pilot programs"],
+        "export_countries": ["US"],
+        "aliases": ["ACS"],
+    },
+    {
+        "name": "Darkhive", "ticker": "DKHV-PRIV", "country": "USA",
+        "market_cap": 0.04, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.003, "employees": 40,
+        "specializations": ["UAV", "Swarming", "Logistics", "Autonomous"],
+        "founded_year": 2021, "headquarters": "San Antonio, TX, USA", "website": "darkhive.ai",
+        "funding_stage": "Seed — $10M+",
+        "is_public": False,
+        "description": (
+            "Darkhive develops autonomous logistics drone swarms for battlefield resupply missions. "
+            "Its systems are designed to operate without GPS and deliver critical supplies to "
+            "forward-deployed forces in contested environments. Active in Pentagon innovation programs."
+        ),
+        "programs": ["Pentagon innovation programs"],
+        "export_countries": ["US"],
+        "aliases": ["Darkhive AI"],
+    },
+    {
+        "name": "HavocAI", "ticker": "HVAI-PRIV", "country": "USA",
+        "market_cap": 0.03, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.002, "employees": 20,
+        "specializations": ["Maritime", "AI", "Autonomous Naval", "USV"],
+        "founded_year": 2024, "headquarters": "Providence, RI, USA", "website": "havocai.com",
+        "funding_stage": "Seed (Shield Capital ecosystem)",
+        "is_public": False,
+        "description": (
+            "HavocAI develops AI-driven autonomous maritime systems for naval operations. "
+            "Its platforms target autonomous naval ISR and surface warfare in contested "
+            "environments. Early-stage engagement with US Navy."
+        ),
+        "programs": ["Early US Navy engagement"],
+        "export_countries": ["US"],
+        "aliases": ["Havoc AI"],
+    },
+    {
+        "name": "Neros Technologies", "ticker": "NROS-PRIV", "country": "USA",
+        "market_cap": 0.04, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.003, "employees": 30,
+        "specializations": ["UAV", "FPV Drones", "Autonomous", "Attritable"],
+        "founded_year": 2023, "headquarters": "Los Angeles, CA, USA", "website": "neros.tech",
+        "funding_stage": "Seed — $10M+",
+        "is_public": False,
+        "description": (
+            "Neros Technologies produces low-cost, attritable FPV combat drones inspired by "
+            "battlefield lessons from Ukraine. Its platforms are designed for mass production "
+            "and expendable use in swarm attack and reconnaissance roles."
+        ),
+        "programs": ["Ukraine-inspired combat drone systems"],
+        "export_countries": ["US"],
+        "aliases": ["Neros"],
+    },
+    {
+        "name": "Firehawk Aerospace", "ticker": "FHWK-PRIV", "country": "USA",
+        "market_cap": 0.25, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.015, "employees": 80,
+        "specializations": ["Missiles", "Space", "Propulsion", "Rockets"],
+        "founded_year": 2019, "headquarters": "Dallas, TX, USA", "website": "firehawkaerospace.com",
+        "funding_stage": "Series A — $60M+ (Victorum Capital)",
+        "is_public": False,
+        "description": (
+            "Firehawk Aerospace develops advanced hybrid and solid rocket propulsion systems "
+            "for missile and space launch applications. Its propulsion technology targets "
+            "hypersonic and tactical strike markets for US defense customers."
+        ),
+        "programs": ["US defense propulsion contracts"],
+        "export_countries": ["US"],
+        "aliases": ["Firehawk"],
+    },
+    {
+        "name": "AndrenaM", "ticker": "ANDR-PRIV", "country": "USA",
+        "market_cap": 0.06, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.005, "employees": 70,
+        "specializations": ["RF", "Communications", "Mesh Network", "Battlefield Connectivity"],
+        "founded_year": 2021, "headquarters": "New York, NY, USA", "website": "andrenam.com",
+        "funding_stage": "Series A — $15M+",
+        "is_public": False,
+        "description": (
+            "AndrenaM builds resilient mesh communication systems for military battlefield "
+            "connectivity. Its software-defined radio networks are designed to maintain "
+            "communications in GPS-denied and electronically contested environments."
+        ),
+        "programs": ["Military communications pilots"],
+        "export_countries": ["US"],
+        "aliases": ["Andrena"],
+    },
+    {
+        "name": "Rampart Communications", "ticker": "RAMP-PRIV", "country": "USA",
+        "market_cap": 0.03, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.002, "employees": 30,
+        "specializations": ["EW", "RF", "Tactical Communications", "Contested Environments"],
+        "founded_year": 2021, "headquarters": "Los Angeles, CA, USA", "website": "rampartcommunications.com",
+        "funding_stage": "Seed",
+        "is_public": False,
+        "description": (
+            "Rampart Communications develops tactical RF systems for military communications "
+            "in electronically contested environments. Its EW-resilient radios maintain "
+            "link integrity under jamming and interference. Active in Pentagon experimentation programs."
+        ),
+        "programs": ["Pentagon RF experimentation"],
+        "export_countries": ["US"],
+        "aliases": ["Rampart"],
+    },
+    {
+        "name": "OmniTeq", "ticker": "OMTQ-PRIV", "country": "USA",
+        "market_cap": 0.02, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.002, "employees": 20,
+        "specializations": ["Sensors", "AI", "ISR", "Persistent Surveillance"],
+        "founded_year": 2022, "headquarters": "Huntsville, AL, USA", "website": "omniteq.com",
+        "funding_stage": "Seed",
+        "is_public": False,
+        "description": (
+            "OmniTeq develops AI-enabled battlefield sensing systems for persistent ISR. "
+            "Its sensor fusion platforms are designed for tactical surveillance and "
+            "threat detection in complex terrain environments."
+        ),
+        "programs": ["Tactical sensor pilots"],
+        "export_countries": ["US"],
+        "aliases": [],
+    },
+    {
+        "name": "AIKIDO Technologies", "ticker": "AIKT-PRIV", "country": "USA",
+        "market_cap": 0.08, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.006, "employees": 40,
+        "specializations": ["AI", "C2", "Mission Software", "Multi-Domain Operations"],
+        "founded_year": 2020, "headquarters": "Austin, TX, USA", "website": "aikidotechnologies.com",
+        "funding_stage": "Series A — $20M+",
+        "is_public": False,
+        "description": (
+            "AIKIDO Technologies builds autonomous mission planning software for multi-domain "
+            "operational planning. Its AI systems help commanders optimize force deployment "
+            "across land, sea, air, space, and cyber domains. Active with US government customers."
+        ),
+        "programs": ["US government multi-domain C2"],
+        "export_countries": ["US"],
+        "aliases": ["AIKIDO"],
+    },
+    {
+        "name": "Parry Labs", "ticker": "PRLY-PRIV", "country": "USA",
+        "market_cap": 0.1, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.02, "employees": 200,
+        "specializations": ["C2", "Edge Computing", "Mission Systems", "Secure Computing"],
+        "founded_year": 2015, "headquarters": "Dallas, TX, USA", "website": "parrylabs.com",
+        "funding_stage": "Series A (Capitol Meridian Partners)",
+        "is_public": False,
+        "description": (
+            "Parry Labs develops edge mission computing solutions for secure battlefield applications. "
+            "Its hardened computing platforms process sensor data and run mission software at the "
+            "tactical edge without reliance on cloud connectivity. Active on USAF and DoD programs."
+        ),
+        "programs": ["USAF edge computing", "DoD mission systems"],
+        "export_countries": ["US"],
+        "aliases": [],
+    },
+    {
+        "name": "DEFCON AI", "ticker": "DFAI-PRIV", "country": "USA",
+        "market_cap": 0.04, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.003, "employees": 40,
+        "specializations": ["AI", "Logistics", "Military Logistics", "Optimization"],
+        "founded_year": 2023, "headquarters": "Washington, DC, USA", "website": "defconai.com",
+        "funding_stage": "Seed — $10M+ (Bessemer Venture Partners)",
+        "is_public": False,
+        "description": (
+            "DEFCON AI applies machine learning to optimize military logistics and operational "
+            "mobility. Its platform models complex supply chains and force movement under "
+            "degraded conditions, helping commanders anticipate logistical bottlenecks."
+        ),
+        "programs": ["Pentagon logistics pilot programs"],
+        "export_countries": ["US"],
+        "aliases": ["Defcon AI"],
+    },
+    {
+        "name": "Duality AI", "ticker": "DUAI-PRIV", "country": "USA",
+        "market_cap": 0.08, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.006, "employees": 60,
+        "specializations": ["Simulation", "AI", "Digital Twin", "Synthetic Training Data"],
+        "founded_year": 2019, "headquarters": "San Mateo, CA, USA", "website": "duality.ai",
+        "funding_stage": "Series A — $20M+ (Lux Capital)",
+        "is_public": False,
+        "description": (
+            "Duality AI builds a digital twin simulation platform for generating synthetic "
+            "training data for autonomous systems and AI models. Defense customers use it to "
+            "train perception and navigation algorithms without requiring live data collection "
+            "in sensitive environments."
+        ),
+        "programs": ["Defense AI training data generation"],
+        "export_countries": ["US"],
+        "aliases": ["Duality"],
+    },
+    {
+        "name": "Exlabs", "ticker": "EXLB-PRIV", "country": "USA",
+        "market_cap": 0.03, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.002, "employees": 30,
+        "specializations": ["Space", "Autonomous", "Deep Space", "Space Security"],
+        "founded_year": 2023, "headquarters": "Los Angeles, CA, USA", "website": "exlabs.com",
+        "funding_stage": "Seed",
+        "is_public": False,
+        "description": (
+            "Exlabs develops autonomous deep-space systems for space security and ISR applications. "
+            "Its spacecraft are designed to operate in cislunar space and beyond, supporting "
+            "US Space Force priorities for domain awareness in the emerging space security domain."
+        ),
+        "programs": ["Emerging US Space Force traction"],
+        "export_countries": ["US"],
+        "aliases": [],
+    },
+    {
+        "name": "Albedo Space", "ticker": "ALBD-PRIV", "country": "USA",
+        "market_cap": 0.4, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.01, "employees": 70,
+        "specializations": ["Space", "ISR", "VLEO", "Satellite Imagery"],
+        "founded_year": 2020, "headquarters": "Denver, CO, USA", "website": "albedo.com",
+        "funding_stage": "Series A — $100M+ (Standard Investments)",
+        "is_public": False,
+        "description": (
+            "Albedo Space operates a very low Earth orbit (VLEO) imaging satellite constellation "
+            "providing sub-10cm resolution commercial imagery. Its satellites fly at 300km altitude, "
+            "far lower than traditional EO satellites, enabling tactical-grade imagery for government "
+            "and intelligence community customers."
+        ),
+        "programs": ["US government VLEO imagery"],
+        "export_countries": ["US"],
+        "aliases": ["Albedo"],
+    },
+    {
+        "name": "Turion Space", "ticker": "TRSPC-PRIV", "country": "USA",
+        "market_cap": 0.12, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.005, "employees": 60,
+        "specializations": ["Space", "ISR", "Space Domain Awareness", "Orbital Surveillance"],
+        "founded_year": 2020, "headquarters": "Irvine, CA, USA", "website": "turionspace.com",
+        "funding_stage": "Series A — $30M+ (Forward Deployed VC)",
+        "is_public": False,
+        "description": (
+            "Turion Space builds space domain awareness systems for tracking and characterizing "
+            "adversary satellites. Its Droid spacecraft inspect, monitor, and collect intelligence "
+            "on objects in orbit, supporting US Space Force strategic awareness missions."
+        ),
+        "programs": ["Droid (orbital inspection spacecraft)", "US Space Force ecosystem"],
+        "export_countries": ["US"],
+        "aliases": ["Turion"],
+    },
+    {
+        "name": "Castelion", "ticker": "CSTL-PRIV", "country": "USA",
+        "market_cap": 0.5, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.01, "employees": 120,
+        "specializations": ["Missiles", "Hypersonics", "Precision Strike", "Long-Range Weapons"],
+        "founded_year": 2023, "headquarters": "El Segundo, CA, USA", "website": "castelion.com",
+        "funding_stage": "Seed — $100M+ (Andreessen Horowitz)",
+        "is_public": False,
+        "description": (
+            "Castelion is developing low-cost hypersonic strike systems for long-range precision "
+            "engagement. Its approach prioritizes affordability and mass production over "
+            "maximum performance, aligned with Pentagon requirements for attritable hypersonic "
+            "weapons at scale. Backed by a16z with a Pentagon-aligned development roadmap."
+        ),
+        "programs": ["Hypersonic strike demonstrator"],
+        "export_countries": ["US"],
+        "aliases": [],
+    },
+    {
+        "name": "Chaos Industries", "ticker": "CHOI-PRIV", "country": "USA",
+        "market_cap": 0.6, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.02, "employees": 90,
+        "specializations": ["Radar", "RF", "Air Defense", "Missile Detection"],
+        "founded_year": 2022, "headquarters": "Los Angeles, CA, USA", "website": "chaosinc.com",
+        "funding_stage": "Series A — $145M+ (Accel, 8VC)",
+        "is_public": False,
+        "description": (
+            "Chaos Industries develops advanced radar and RF detection systems for air and "
+            "missile defense. Its multi-function phased-array radar technology provides high-resolution "
+            "tracking of hypersonic, cruise missile, and UAS threats for US defense programs."
+        ),
+        "programs": ["US defense radar programs"],
+        "export_countries": ["US"],
+        "aliases": ["Chaos"],
+    },
+    {
+        "name": "Picogrid", "ticker": "PCGR-PRIV", "country": "USA",
+        "market_cap": 0.14, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.008, "employees": 100,
+        "specializations": ["Edge Computing", "AI", "C2", "Defense Operating System"],
+        "founded_year": 2020, "headquarters": "El Segundo, CA, USA", "website": "picogrid.com",
+        "funding_stage": "Series A — $35M+ (Initialized Capital)",
+        "is_public": False,
+        "description": (
+            "Picogrid develops a defense operating system that integrates hardware and software "
+            "at the tactical battlefield edge. Its middleware layer enables disparate sensors, "
+            "platforms, and AI models to interoperate across a multi-domain battlespace."
+        ),
+        "programs": ["US DoD middleware pilots"],
+        "export_countries": ["US"],
+        "aliases": [],
+    },
+
+    # === Finland — Space / ISR ===
+    {
+        "name": "ICEYE", "ticker": "ICEY-PRIV", "country": "Finland",
+        "market_cap": 2.0, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.1, "employees": 700,
+        "specializations": ["Space", "SAR", "ISR", "Satellite Constellation"],
+        "founded_year": 2014, "headquarters": "Espoo, Finland", "website": "iceye.com",
+        "funding_stage": "Growth — $500M+ (Seraphim Space, BlackRock)",
+        "is_public": False,
+        "description": (
+            "ICEYE operates the world's largest SAR (Synthetic Aperture Radar) microsatellite "
+            "constellation, providing persistent all-weather imaging for defense and government "
+            "customers. Its satellites have been used by NATO governments and Ukraine for "
+            "battlefield change detection and maritime surveillance."
+        ),
+        "programs": ["SAR constellation (NATO govts)", "Ukraine battlefield imagery"],
+        "export_countries": ["FI", "GB", "DE", "FR", "UA", "US"],
+        "aliases": [],
+    },
+    {
+        "name": "SensusQ", "ticker": "SENQ-PRIV", "country": "Finland",
+        "market_cap": 0.02, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.001, "employees": 40,
+        "specializations": ["AI", "ISR", "Intelligence Fusion", "Multi-Source Intelligence"],
+        "founded_year": 2021, "headquarters": "Helsinki, Finland", "website": "sensusq.com",
+        "funding_stage": "Seed — €4M+ (Lifeline Ventures)",
+        "is_public": False,
+        "description": (
+            "SensusQ develops intelligence fusion software that aggregates and correlates "
+            "multi-source intelligence feeds into a unified battlefield picture. Its platform "
+            "serves European government and defense customers seeking faster analytical cycles."
+        ),
+        "programs": ["European government pilots"],
+        "export_countries": ["FI"],
+        "aliases": [],
+    },
+
+    # === France — Space ISR / UAV ===
+    {
+        "name": "Unseenlabs", "ticker": "UNSL-PRIV", "country": "France",
+        "market_cap": 0.35, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.015, "employees": 170,
+        "specializations": ["RF", "ISR", "Space", "Maritime Intelligence", "SIGINT"],
+        "founded_year": 2015, "headquarters": "Rennes, France", "website": "unseenlabs.space",
+        "funding_stage": "Series B — €80M+ (Supernova Invest)",
+        "is_public": False,
+        "description": (
+            "Unseenlabs operates a nanosatellite constellation for RF geolocation and maritime "
+            "electronic intelligence. Its satellites detect and geolocate ship emissions to "
+            "provide dark vessel tracking and maritime domain awareness for navies and coast guards."
+        ),
+        "programs": ["Maritime RF geolocation constellation", "European naval clients"],
+        "export_countries": ["FR", "GB", "IT"],
+        "aliases": ["Unseenlabs Space"],
+    },
+    {
+        "name": "Delair", "ticker": "DLAIR-PRIV", "country": "France",
+        "market_cap": 0.3, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.02, "employees": 250,
+        "specializations": ["UAV", "ISR", "Fixed-Wing", "Reconnaissance"],
+        "founded_year": 2011, "headquarters": "Toulouse, France", "website": "delair.aero",
+        "funding_stage": "Growth — €70M+ (Bpifrance)",
+        "is_public": False,
+        "description": (
+            "Delair designs and manufactures fixed-wing ISR drones for tactical reconnaissance "
+            "and persistent surveillance. Its UX11 and DT26X platforms are used by French and "
+            "allied armed forces for long-endurance battlefield awareness missions."
+        ),
+        "programs": ["French defense ecosystem", "NATO ISR programs"],
+        "export_countries": ["FR", "DE", "GB"],
+        "aliases": ["Delair-Tech", "Delair Tech"],
+    },
+
+    # === Germany — Counter-UAS / Ground Robotics ===
+    {
+        "name": "Alpine Eagle", "ticker": "ALPE-PRIV", "country": "Germany",
+        "market_cap": 0.04, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.002, "employees": 40,
+        "specializations": ["Counter-UAS", "Sensors", "Airborne Interception", "Drone Defense"],
+        "founded_year": 2023, "headquarters": "Munich, Germany", "website": "alpineeagle.com",
+        "funding_stage": "Seed — €10M+ (IQ Capital, Expeditions Fund)",
+        "is_public": False,
+        "description": (
+            "Alpine Eagle develops airborne counter-drone interception systems that detect and "
+            "neutralize hostile UAVs. Its AI-powered interceptor platforms are designed to "
+            "operate as part of layered air defense systems for European military customers."
+        ),
+        "programs": ["European defense pilots"],
+        "export_countries": ["DE"],
+        "aliases": ["Alpine Eagle GmbH"],
+    },
+    {
+        "name": "ARX Robotics", "ticker": "ARXR-PRIV", "country": "Germany",
+        "market_cap": 0.12, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.005, "employees": 80,
+        "specializations": ["Robotics", "Autonomous", "UGV", "Land Systems"],
+        "founded_year": 2022, "headquarters": "Munich, Germany", "website": "arx-robotics.com",
+        "funding_stage": "Series A — €30M+ (NATO Innovation Fund)",
+        "is_public": False,
+        "description": (
+            "ARX Robotics builds autonomous unmanned ground vehicles (UGVs) for battlefield "
+            "logistics and combat support. Its Gereon UGV is designed to carry supplies, "
+            "support infantry, and operate in high-threat environments. Backed by the "
+            "NATO Innovation Fund and collaborating with the Bundeswehr."
+        ),
+        "programs": ["Gereon UGV (Bundeswehr collaboration)"],
+        "export_countries": ["DE"],
+        "aliases": ["ARX"],
+    },
+    {
+        "name": "Stark Defence", "ticker": "STRD-PRIV", "country": "Germany",
+        "market_cap": 0.02, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.001, "employees": 30,
+        "specializations": ["AI", "Autonomous", "Combat Systems", "Tactical Warfare"],
+        "founded_year": 2024, "headquarters": "Berlin, Germany", "website": "stark-defence.com",
+        "funding_stage": "Seed (European defense angels)",
+        "is_public": False,
+        "description": (
+            "Stark Defence develops AI-enabled autonomous combat systems for tactical warfare. "
+            "An early-stage stealth-mode company, it is building autonomous weapons platforms "
+            "for European defense customers."
+        ),
+        "programs": ["Stealth autonomous weapons programs"],
+        "export_countries": ["DE"],
+        "aliases": ["Stark Defense"],
+    },
+
+    # === Latvia ===
+    {
+        "name": "Origin Robotics", "ticker": "ORGR-PRIV", "country": "Latvia",
+        "market_cap": 0.02, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.001, "employees": 35,
+        "specializations": ["Counter-UAS", "UAV", "Autonomous Interceptor", "Drone-on-Drone"],
+        "founded_year": 2022, "headquarters": "Riga, Latvia", "website": "originrobotics.ai",
+        "funding_stage": "Seed — €5M+ (Baltic defense ecosystem)",
+        "is_public": False,
+        "description": (
+            "Origin Robotics develops autonomous interceptor drones for drone-on-drone "
+            "counter-UAS missions. Its AI-guided interceptors are designed to autonomously "
+            "engage and neutralize hostile drones, addressing NATO's growing counter-UAS gap."
+        ),
+        "programs": ["NATO interest programs"],
+        "export_countries": ["LV"],
+        "aliases": ["Origin"],
+    },
+
+    # === Estonia ===
+    {
+        "name": "Farsight Vision", "ticker": "FRSV-PRIV", "country": "Estonia",
+        "market_cap": 0.01, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.001, "employees": 25,
+        "specializations": ["AI", "Vision", "Computer Vision", "Automated Target Recognition"],
+        "founded_year": 2022, "headquarters": "Tallinn, Estonia", "website": "farsightvision.com",
+        "funding_stage": "Seed (Baltic investors)",
+        "is_public": False,
+        "description": (
+            "Farsight Vision builds computer vision and automated target recognition systems "
+            "for defense applications. Its AI models are deployed on UAV and surveillance "
+            "platforms in Ukraine-oriented defense stacks."
+        ),
+        "programs": ["Ukraine-oriented defense applications"],
+        "export_countries": ["EE", "UA"],
+        "aliases": [],
+    },
+    {
+        "name": "Defendec", "ticker": "DFDC-PRIV", "country": "Estonia",
+        "market_cap": 0.05, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.005, "employees": 70,
+        "specializations": ["ISR", "Sensors", "Border Surveillance", "Perimeter Defense"],
+        "founded_year": 2007, "headquarters": "Tallinn, Estonia", "website": "defendec.com",
+        "funding_stage": "Growth (European defense investors)",
+        "is_public": False,
+        "description": (
+            "Defendec designs autonomous sensor networks for border surveillance and perimeter "
+            "defense. Its wireless sensor systems provide persistent ISR along borders and "
+            "critical infrastructure perimeters, deployed across NATO's eastern flank."
+        ),
+        "programs": ["NATO border deployments"],
+        "export_countries": ["EE", "LT", "LV", "PL"],
+        "aliases": [],
+    },
+
+    # === Portugal ===
+    {
+        "name": "Tekever", "ticker": "TEKV-PRIV", "country": "Portugal",
+        "market_cap": 0.3, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.04, "employees": 500,
+        "specializations": ["UAV", "Maritime", "ISR", "Long-Range Surveillance"],
+        "founded_year": 2001, "headquarters": "Lisbon, Portugal", "website": "tekever.com",
+        "funding_stage": "Growth — €70M+ (Ventura Capital)",
+        "is_public": False,
+        "description": (
+            "Tekever develops long-range fixed-wing UAVs for maritime ISR and border security. "
+            "Its AR5 platform operates for the UK's Maritime and Coastguard Agency and the "
+            "European Maritime Safety Agency (EMSA), providing persistent ocean surveillance "
+            "and search and rescue support."
+        ),
+        "programs": ["UK MoD maritime surveillance", "EMSA border monitoring"],
+        "export_countries": ["PT", "GB"],
+        "aliases": [],
+    },
+
+    # === Spain ===
+    {
+        "name": "Sateliot", "ticker": "SLTW-PRIV", "country": "Spain",
+        "market_cap": 0.3, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.01, "employees": 90,
+        "specializations": ["Space", "Communications", "LEO", "IoT Connectivity"],
+        "founded_year": 2018, "headquarters": "Barcelona, Spain", "website": "sateliot.space",
+        "funding_stage": "Series B — €70M+ (Indra, Cellnex)",
+        "is_public": False,
+        "description": (
+            "Sateliot operates a LEO nanosatellite constellation providing global IoT "
+            "connectivity for resilient military communications. Its NB-IoT-compatible "
+            "network is designed to provide coverage in areas where terrestrial communications "
+            "are denied or degraded."
+        ),
+        "programs": ["European institutional IoT comms"],
+        "export_countries": ["ES", "FR", "DE"],
+        "aliases": [],
+    },
+
+    # === UK ===
+    {
+        "name": "Open Cosmos", "ticker": "OPCO-PRIV", "country": "UK",
+        "market_cap": 0.25, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.015, "employees": 180,
+        "specializations": ["Space", "ISR", "Sovereign Satellites", "Earth Observation"],
+        "founded_year": 2015, "headquarters": "Harwell, UK", "website": "open-cosmos.com",
+        "funding_stage": "Series B — €60M+ (ETF Partners)",
+        "is_public": False,
+        "description": (
+            "Open Cosmos provides end-to-end small satellite missions including design, build, "
+            "launch and operations for government and commercial customers. It helps European "
+            "governments establish sovereign ISR and Earth observation capabilities quickly "
+            "and at lower cost than traditional satellite programs."
+        ),
+        "programs": ["European sovereign satellite missions"],
+        "export_countries": ["GB", "ES", "FR"],
+        "aliases": [],
+    },
+
+    # === Israel — Counter-UAS / Tactical Drones ===
+    {
+        "name": "D-Fend Solutions", "ticker": "DFND-PRIV", "country": "Israel",
+        "market_cap": 0.5, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.025, "employees": 180,
+        "specializations": ["Counter-UAS", "Cyber", "RF Takeover", "Drone Neutralization"],
+        "founded_year": 2017, "headquarters": "Ra'anana, Israel", "website": "d-fendsolutions.com",
+        "funding_stage": "Series C — $100M+ (Vertex Ventures)",
+        "is_public": False,
+        "description": (
+            "D-Fend Solutions develops RF cyber-based counter-UAS systems that take control "
+            "of hostile drones rather than destroying them. Its EnforceAir platform hijacks "
+            "the communication link between a drone and its operator, enabling safe interception "
+            "without kinetic or jamming risks. Used at airports and defense installations globally."
+        ),
+        "programs": ["EnforceAir (RF cyber UAS takeover)", "Airport security deployments"],
+        "export_countries": ["IL", "US", "GB", "AE"],
+        "aliases": ["D-Fend"],
+    },
+    {
+        "name": "Xtend", "ticker": "XTND-PRIV", "country": "Israel",
+        "market_cap": 0.3, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.015, "employees": 150,
+        "specializations": ["UAV", "Robotics", "Tactical Drones", "Urban Warfare"],
+        "founded_year": 2018, "headquarters": "Tel Aviv, Israel", "website": "xtend.me",
+        "funding_stage": "Series B — $70M+ (Chartered Group)",
+        "is_public": False,
+        "description": (
+            "Xtend develops human-guided autonomous drones for urban warfare and tactical "
+            "operations. Its Skylord platform uses AR/VR interfaces and AI assistance to "
+            "enable operators to fly drones in confined spaces without prior piloting expertise. "
+            "Used by Israeli defense and special operations units."
+        ),
+        "programs": ["Skylord (urban warfare drone)", "Israeli defense programs"],
+        "export_countries": ["IL"],
+        "aliases": ["Xtend AI"],
+    },
+    {
+        "name": "SpearUAV", "ticker": "SPRU-PRIV", "country": "Israel",
+        "market_cap": 0.25, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.012, "employees": 120,
+        "specializations": ["UAV", "ISR", "Encapsulated Drones", "Infantry Support"],
+        "founded_year": 2017, "headquarters": "Tel Aviv, Israel", "website": "spearuav.com",
+        "funding_stage": "Series B — $60M+ (Deep Insight)",
+        "is_public": False,
+        "description": (
+            "SpearUAV develops encapsulated drone systems that can be launched from mortar "
+            "tubes or standard canisters for infantry ISR and room-clearing support. Its "
+            "Viper and Ninox platforms provide dismounted soldiers with organic aerial "
+            "surveillance capability without a dedicated drone operator."
+        ),
+        "programs": ["Ninox 40 (tube-launched ISR)", "Israeli military usage"],
+        "export_countries": ["IL"],
+        "aliases": ["Spear UAV"],
+    },
+
+    # === India — Drones / Optics ===
+    {
+        "name": "NewSpace Research and Technologies", "ticker": "NWSP-PRIV", "country": "India",
+        "market_cap": 0.1, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.005, "employees": 150,
+        "specializations": ["UAV", "Swarming", "Combat Drones", "Loitering Munitions"],
+        "founded_year": 2018, "headquarters": "Bengaluru, India", "website": "newspace.co.in",
+        "funding_stage": "Series A — $25M+ (Speciale Invest)",
+        "is_public": False,
+        "description": (
+            "NewSpace Research and Technologies develops swarm-enabled UAV systems and loitering "
+            "munitions for the Indian armed forces. Its platforms are designed for autonomous "
+            "swarm coordination, enabling mass deployment of low-cost strike and ISR drones."
+        ),
+        "programs": ["Indian armed forces UAV programs"],
+        "export_countries": ["IN"],
+        "aliases": ["NewSpace Research", "NRT"],
+    },
+    {
+        "name": "Raphe mPhibr", "ticker": "RAPH-PRIV", "country": "India",
+        "market_cap": 0.2, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.01, "employees": 200,
+        "specializations": ["UAV", "ISR", "Tactical Drones", "Indigenous Defense"],
+        "founded_year": 2017, "headquarters": "Noida, India", "website": "raphemphibr.com",
+        "funding_stage": "Series B — $50M+ (General Catalyst India)",
+        "is_public": False,
+        "description": (
+            "Raphe mPhibr designs indigenous military drones for ISR and logistics operations "
+            "for the Indian armed forces. Its multi-rotor and fixed-wing platforms are produced "
+            "domestically under India's Atmanirbhar Bharat defense self-reliance initiative."
+        ),
+        "programs": ["Indian military UAV contracts", "Atmanirbhar Bharat programs"],
+        "export_countries": ["IN"],
+        "aliases": ["Raphe"],
+    },
+    {
+        "name": "Tonbo Imaging", "ticker": "TNBO-PRIV", "country": "India",
+        "market_cap": 0.5, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.03, "employees": 350,
+        "specializations": ["Sensors", "ISR", "Thermal Imaging", "Electro-Optics", "Targeting"],
+        "founded_year": 2012, "headquarters": "Bengaluru, India", "website": "tonboimaging.com",
+        "funding_stage": "Growth — $100M+ (WRV Capital)",
+        "is_public": False,
+        "description": (
+            "Tonbo Imaging develops thermal, multispectral, and targeting sensor systems for "
+            "battlefield situational awareness. Its products are integrated into armored vehicles, "
+            "UAVs, and weapon systems for multiple armed forces. The company provides both Indian "
+            "domestic and international defense customers."
+        ),
+        "programs": ["Multi-armed forces sensor integration"],
+        "export_countries": ["IN", "SG"],
+        "aliases": ["Tonbo"],
+    },
+
+    # === Canada — Maritime Robotics ===
+    {
+        "name": "Kraken Robotics", "ticker": "PNG.V", "country": "Canada",
+        "market_cap": 0.3, "stock_price": 0.85, "change_percent": 1.2,
+        "revenue": 0.04, "employees": 300,
+        "specializations": ["Maritime", "Robotics", "Sonar", "UUV", "Mine Detection"],
+        "founded_year": 2012, "headquarters": "St. John's, Newfoundland, Canada", "website": "krakenrobotics.com",
+        "funding_stage": "Public — TSX Venture Exchange: PNG",
+        "is_public": True,
+        "description": (
+            "Kraken Robotics develops underwater robotics and synthetic aperture sonar systems "
+            "for naval mine detection and seabed ISR. Its AquaPix sonar and KATFISH towed "
+            "systems are used by NATO-aligned navies for mine countermeasure and seabed survey "
+            "missions."
+        ),
+        "programs": ["KATFISH (towed synthetic aperture sonar)", "NATO naval customers"],
+        "export_countries": ["CA", "US", "DE", "GB"],
+        "aliases": ["Kraken"],
+    },
+
+    # === UAE ===
+    {
+        "name": "Aerodrome Group", "ticker": "ARDR-PRIV", "country": "UAE",
+        "market_cap": 0.02, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.001, "employees": 50,
+        "specializations": ["AI", "UAV", "Autonomous Defense", "Drone Systems"],
+        "founded_year": 2023, "headquarters": "Abu Dhabi, UAE", "website": "aerodromegroup.com",
+        "funding_stage": "Seed (EDGE ecosystem)",
+        "is_public": False,
+        "description": (
+            "Aerodrome Group develops autonomous combat systems and drone ISR platforms "
+            "for UAE defense programs. Aligned with the EDGE Group ecosystem, it focuses "
+            "on AI-driven autonomy for Emirati defense applications."
+        ),
+        "programs": ["UAE defense programs"],
+        "export_countries": ["AE"],
+        "aliases": [],
+    },
+
+    # === South Korea ===
+    {
+        "name": "Nearthlab", "ticker": "NRTL-PRIV", "country": "South Korea",
+        "market_cap": 0.15, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.008, "employees": 120,
+        "specializations": ["UAV", "Autonomous", "AI", "ISR", "Infrastructure Monitoring"],
+        "founded_year": 2015, "headquarters": "Seoul, South Korea", "website": "nearthlab.com",
+        "funding_stage": "Series B — $40M+ (Korea Investment Partners)",
+        "is_public": False,
+        "description": (
+            "Nearthlab develops AI-powered autonomous UAV systems for industrial inspection "
+            "and defense ISR. Its drones use computer vision and AI navigation to operate "
+            "autonomously in GPS-denied environments, serving Korean industrial and defense customers."
+        ),
+        "programs": ["Korean defense and industrial UAV programs"],
+        "export_countries": ["KR"],
+        "aliases": [],
+    },
+
+    # === Singapore ===
+    {
+        "name": "ShieldWorks AI", "ticker": "SHWK-PRIV", "country": "Singapore",
+        "market_cap": 0.01, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.001, "employees": 20,
+        "specializations": ["Maritime", "AI", "Naval ISR", "Autonomous Surveillance"],
+        "founded_year": 2023, "headquarters": "Singapore", "website": "shieldworks.ai",
+        "funding_stage": "Seed (Singapore defense ecosystem)",
+        "is_public": False,
+        "description": (
+            "ShieldWorks AI develops maritime surveillance AI for autonomous naval ISR. "
+            "Its computer vision stack processes maritime sensor feeds to detect and "
+            "classify surface threats in littoral and open-ocean environments."
+        ),
+        "programs": ["Regional maritime pilots"],
+        "export_countries": ["SG"],
+        "aliases": ["ShieldWorks"],
+    },
+
+    # === Australia ===
+    {
+        "name": "Athena AI", "ticker": "ATAI-PRIV", "country": "Australia",
+        "market_cap": 0.01, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.001, "employees": 25,
+        "specializations": ["AI", "ISR", "Battlefield AI", "Operational Planning"],
+        "founded_year": 2023, "headquarters": "Melbourne, Australia", "website": "athena-ai.com",
+        "funding_stage": "Seed (Australian defense innovation programs)",
+        "is_public": False,
+        "description": (
+            "Athena AI develops tactical AI systems for operational planning and ISR for "
+            "the Australian defense ecosystem. Its early-stage platforms are designed to "
+            "support ADF decision-making in the Indo-Pacific strategic environment."
+        ),
+        "programs": ["Early ADF defense pilots"],
+        "export_countries": ["AU"],
+        "aliases": [],
+    },
+    {
+        "name": "High Earth Orbit Robotics", "ticker": "HEOR-PRIV", "country": "Australia",
+        "market_cap": 0.02, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.001, "employees": 30,
+        "specializations": ["Space", "Robotics", "Orbital Servicing", "Orbital Defense"],
+        "founded_year": 2021, "headquarters": "Adelaide, Australia", "website": "heorobotics.com",
+        "funding_stage": "Seed (Australian space ecosystem)",
+        "is_public": False,
+        "description": (
+            "High Earth Orbit Robotics (HEO Robotics) develops orbital robotic systems "
+            "for space servicing and domain awareness. Its dual-use platforms can inspect, "
+            "service, or surveil satellites in high Earth orbit, supporting both commercial "
+            "and defense space situational awareness missions."
+        ),
+        "programs": ["Emerging dual-use space traction"],
+        "export_countries": ["AU"],
+        "aliases": ["HEO Robotics"],
+    },
 ]
 
 # Extended Announcements from specialized sources
