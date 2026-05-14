@@ -4471,7 +4471,7 @@ COMPANY_ENRICHMENTS = {
     "Tencore": {
         "founded_year": 2020,
         "headquarters": "Kyiv, Ukraine",
-        "website": "https://tencore.tech",
+        "website": "https://tencore.com.ua/eng/home",
         "linkedin": "https://www.linkedin.com/company/tencore",
         "funding_stage": "Private",
         "is_public": False,
