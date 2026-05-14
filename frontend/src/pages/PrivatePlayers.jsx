@@ -223,10 +223,15 @@ function PlayerRow({ company, onClick }) {
         )}
       </div>
 
-      {/* Valuation */}
+      {/* Valuation / Revenue */}
       <div className="w-20 flex-shrink-0 text-right">
         {cap ? (
           <span className="text-xs font-mono font-semibold text-slate-700">{cap}</span>
+        ) : formatCap(company.revenue) ? (
+          <div>
+            <span className="text-xs font-mono font-semibold text-slate-500">{formatCap(company.revenue)}</span>
+            <p className="text-[9px] text-slate-400 leading-tight">revenue</p>
+          </div>
         ) : (
           <span className="text-xs text-slate-300">—</span>
         )}
@@ -535,7 +540,7 @@ export default function PrivatePlayers() {
                   <div className="w-40 flex-shrink-0 ml-[52px]">Company</div>
                   <div className="flex-1 hidden xl:block">Description</div>
                   <div className="w-48 flex-shrink-0">Specializations</div>
-                  <div className="w-20 flex-shrink-0 text-right">Valuation</div>
+                  <div className="w-20 flex-shrink-0 text-right">Val. / Rev.</div>
                   <div className="w-36 flex-shrink-0 text-right">Funding</div>
                   <div className="w-20 flex-shrink-0 text-right hidden lg:block">Employees</div>
                   <div className="w-4 flex-shrink-0" />

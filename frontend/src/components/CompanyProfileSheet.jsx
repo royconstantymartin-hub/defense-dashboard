@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
@@ -95,13 +95,21 @@ function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-function CompanyLogo({ name, size = "lg" }) {
-  const urls = getLogoUrls(name);
+function CompanyLogo({ name, domain, size = "lg" }) {
+  const urls = useMemo(() => {
+    const curated = getLogoUrls(name);
+    if (curated.length > 0) return curated;
+    if (domain) return [
+      `https://logo.clearbit.com/${domain}`,
+      `https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`,
+    ];
+    return [];
+  }, [name, domain]);
   const [idx, setIdx] = useState(0);
   const sizeClass = size === "lg" ? "w-16 h-16" : "w-10 h-10";
   const textClass = size === "lg" ? "text-xl" : "text-sm";
 
-  useEffect(() => { setIdx(0); }, [name]);
+  useEffect(() => { setIdx(0); }, [name, domain]);
 
   const imgClass = `${sizeClass} rounded-2xl object-contain bg-white border border-white/20 shadow-lg p-1.5`;
 
@@ -278,7 +286,13 @@ export default function CompanyProfileSheet({ name, onClose }) {
             <CompanyLogo
               name={name || ""}
               size="lg"
-              domain={(() => { try { return p?.website ? new URL(p.website).hostname : null; } catch { return null; } })()}
+              domain={(() => {
+                if (!p?.website) return null;
+                try {
+                  const url = p.website.startsWith("http") ? p.website : `https://${p.website}`;
+                  return new URL(url).hostname;
+                } catch { return p.website.split("/")[0].toLowerCase() || null; }
+              })()}
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
@@ -344,7 +358,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
             <div className="flex gap-3 mt-4">
               {p.website && (
                 <a
-                  href={p.website}
+                  href={p.website.startsWith("http") ? p.website : `https://${p.website}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white bg-white/10 hover:bg-white/20 transition-colors px-3 py-1.5 rounded-lg border border-white/10"
