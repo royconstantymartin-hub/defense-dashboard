@@ -1185,6 +1185,103 @@ DEFENSE_COMPANIES = [
         "export_countries": ["AU"],
         "aliases": ["HEO Robotics"],
     },
+
+    # =========================================================
+    # === FRANCE — Additional private defense players =========
+    # =========================================================
+
+    {
+        "name": "Turgis & Gaillard", "ticker": "TG-PRIV", "country": "France",
+        "market_cap": 0.05, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.02, "employees": 80,
+        "specializations": ["Defense Consulting", "Intelligence", "Strategy", "Export Advisory"],
+        "founded_year": 2007, "headquarters": "Paris, France", "website": "turgis-gaillard.com",
+        "funding_stage": "Private",
+        "is_public": False,
+        "description": (
+            "Turgis & Gaillard is a French defense and security consulting firm specialized in "
+            "competitive intelligence, export strategy, and economic influence for defense primes "
+            "and government entities. The firm advises major defense contractors and institutions "
+            "on market positioning, regulatory navigation, and export competitiveness in the global "
+            "defense sector."
+        ),
+        "programs": ["Defense export advisory", "Strategic intelligence for prime contractors"],
+        "export_countries": ["FR"],
+        "aliases": ["T&G", "Turgis Gaillard"],
+    },
+    {
+        "name": "Cerbair", "ticker": "CERB-PRIV", "country": "France",
+        "market_cap": 0.06, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.015, "employees": 70,
+        "specializations": ["Counter-UAS", "Detection", "AI", "Electronic Warfare"],
+        "founded_year": 2015, "headquarters": "Paris, France", "website": "cerbair.com",
+        "funding_stage": "Growth — €20M+ (Bpifrance, Ace Capital)",
+        "is_public": False,
+        "description": (
+            "Cerbair develops RF detection and neutralization systems for counter-drone operations. "
+            "Its HYDRA platform provides passive radar detection and classification of hostile UAVs "
+            "for military bases, critical infrastructure, and event protection. Deployed with the "
+            "French Ministry of Interior and military establishments."
+        ),
+        "programs": ["HYDRA counter-drone detection", "French Ministry of Interior deployments"],
+        "export_countries": ["FR", "AE"],
+        "aliases": ["Cerbair SAS"],
+    },
+    {
+        "name": "Lacroix Defense", "ticker": "LACD-PRIV", "country": "France",
+        "market_cap": 0.25, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.12, "employees": 650,
+        "specializations": ["Pyrotechnics", "Countermeasures", "Smoke Systems", "Decoys"],
+        "founded_year": 1936, "headquarters": "Muret, France", "website": "lacroix-defense.com",
+        "funding_stage": "Private (Lacroix Group subsidiary)",
+        "is_public": False,
+        "description": (
+            "Lacroix Defense is the defense division of the French Lacroix Group, specializing in "
+            "pyrotechnic countermeasures, smoke systems, and decoys for armored vehicles, aircraft, "
+            "and naval platforms. Its products protect military assets from IR-guided missiles and "
+            "provide tactical screening capabilities. Lacroix is a key supplier to French armed forces "
+            "and NATO allies, with systems integrated on Leclerc tanks, Rafale aircraft, and FREMM frigates."
+        ),
+        "programs": ["Vehicle countermeasures (Leclerc, Griffon, VBCI)", "Airborne flares (Rafale, NH90)", "Naval decoys (FREMM)"],
+        "export_countries": ["FR", "DE", "GB", "IT", "ES", "AE"],
+        "aliases": ["Lacroix", "Groupe Lacroix"],
+    },
+    {
+        "name": "Texelis", "ticker": "TEXE-PRIV", "country": "France",
+        "market_cap": 0.15, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.09, "employees": 500,
+        "specializations": ["Military Vehicles", "Axles", "Drive Systems", "Land Mobility"],
+        "founded_year": 2016, "headquarters": "Limoges, France", "website": "texelis.com",
+        "funding_stage": "Private (investment group)",
+        "is_public": False,
+        "description": (
+            "Texelis designs and manufactures axles, drive systems, and mobility solutions for "
+            "armored and military wheeled vehicles. Its products equip the French Griffon and "
+            "Jaguar armored vehicles under the Scorpion program, as well as export platforms. "
+            "A specialist in high-performance military land mobility systems."
+        ),
+        "programs": ["Scorpion program (Griffon, Jaguar axles)", "Export wheeled vehicle programs"],
+        "export_countries": ["FR", "BE", "IT"],
+        "aliases": [],
+    },
+    {
+        "name": "CS Group", "ticker": "CSG-PRIV", "country": "France",
+        "market_cap": 0.3, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.18, "employees": 2200,
+        "specializations": ["C2 Systems", "Defense Software", "SIGINT", "Cyber", "Space"],
+        "founded_year": 1968, "headquarters": "Toulouse, France", "website": "cs-group.com",
+        "funding_stage": "Private (Sopra Steria subsidiary since 2022)",
+        "is_public": False,
+        "description": (
+            "CS Group (Communication & Systèmes) is a French defense software and systems integrator "
+            "specialized in command and control, SIGINT processing, space ground systems, and "
+            "cybersecurity for French and NATO defense clients. Acquired by Sopra Steria in 2022, "
+            "it operates as an autonomous defense-focused entity within the group."
+        ),
+        "programs": ["French Army C2 systems", "CNES/ESA space ground segments", "DGA programs"],
+        "export_countries": ["FR", "DE", "IT"],
+        "aliases": ["Communication & Systèmes", "CS Defense"],
+    },
 ]
 
 # Extended Announcements from specialized sources
