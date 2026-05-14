@@ -17,7 +17,7 @@ import {
   Bell,
   Bookmark,
   FileCheck,
-  Rocket
+  Lock
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ const navItems = [
   { path: "/announcements", icon: Activity, label: "Announcements" },
   { path: "/ma-activity", icon: Handshake, label: "M&A Activity" },
   { path: "/market-data", icon: TrendingUp, label: "Market Data" },
-  { path: "/startups", icon: Rocket, label: "Startups" },
+  { path: "/private-players", icon: Lock, label: "Private Players" },
   { path: "/expenditures", icon: Globe, label: "Expenditures" },
   { path: "/regulations", icon: FileText, label: "Regulations" },
   { path: "/products", icon: Package, label: "Products" },

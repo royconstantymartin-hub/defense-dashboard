@@ -258,10 +258,74 @@ export const COMPANY_LOGOS = {
   "Parrot Defense": "parrot.com",
   "Delair": "delair.aero",
   "Cerbair": "cerbair.com",
-  "Unseenlabs": "unseenlabs.com",
+  "Unseenlabs": "unseenlabs.space",
   "Novadem": "novadem.com",
   "Texelis": "texelis.com",
   "Lynred": "lynred.com",
+  "Turgis & Gaillard": "turgis-gaillard.com",
+  "Shark Robotics": "shark-robotics.com",
+  // USA — New defense tech companies
+  "Saronic Technologies": "saronic.com",
+  "Allen Control Systems": "allencontrolsystems.com",
+  "Darkhive": "darkhive.ai",
+  "HavocAI": "havocai.com",
+  "Neros Technologies": "neros.tech",
+  "Firehawk Aerospace": "firehawkaerospace.com",
+  "AndrenaM": "andrenam.com",
+  "Rampart Communications": "rampartcommunications.com",
+  "OmniTeq": "omniteq.com",
+  "AIKIDO Technologies": "aikidotechnologies.com",
+  "Parry Labs": "parrylabs.com",
+  "DEFCON AI": "defconai.com",
+  "Duality AI": "duality.ai",
+  "Exlabs": "exlabs.com",
+  "Albedo Space": "albedo.space",
+  "Turion Space": "turionspace.com",
+  "Castelion": "castelion.com",
+  "Chaos Industries": "chaosinc.com",
+  "Picogrid": "picogrid.com",
+  "Xona Space Systems": "xonaspace.com",
+  // Finland / Northern Europe
+  "ICEYE": "iceye.com",
+  "SensusQ": "sensusq.com",
+  // Germany — new
+  "Alpine Eagle": "alpineeagle.com",
+  "ARX Robotics": "arx-robotics.com",
+  "Stark Defence": "stark-defence.com",
+  // Baltics
+  "Origin Robotics": "originrobotics.ai",
+  "Farsight Vision": "farsightvision.com",
+  "Defendec": "defendec.com",
+  "Frankenburg Technologies": "frankenburgtech.com",
+  // Southern Europe
+  "Tekever": "tekever.com",
+  "Sateliot": "sateliot.space",
+  // UK — new
+  "Open Cosmos": "open-cosmos.com",
+  // Israel — new
+  "D-Fend Solutions": "d-fendsolutions.com",
+  "Xtend": "xtend.me",
+  "SpearUAV": "spearuav.com",
+  "Orca AI": "orca.ai",
+  // India — new
+  "NewSpace Research and Technologies": "newspace.co.in",
+  "Raphe mPhibr": "raphemphibr.com",
+  "Tonbo Imaging": "tonboimaging.com",
+  // Canada
+  "Kraken Robotics": "krakenrobotics.com",
+  // UAE — new
+  "Aerodrome Group": "aerodromegroup.com",
+  "Calidus": "calidus.ae",
+  // South Korea — new
+  "Nearthlab": "nearthlab.com",
+  "Hancom InSpace": "hancom-inspace.com",
+  // Singapore
+  "ShieldWorks AI": "shieldworks.ai",
+  // Australia — new
+  "Athena AI": "athena-ai.com",
+  "High Earth Orbit Robotics": "heorobotics.com",
+  "SYPAQ Systems": "sypaq.com.au",
+  "Advanced Navigation": "advancednavigation.com",
 };
 
 // Direct Wikipedia Commons logo URLs — confirmed filenames, never blocked by ad-blockers.
