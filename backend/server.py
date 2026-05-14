@@ -1369,6 +1369,9 @@ async def _run_seed() -> dict:
         "Harmattan Layered Air Defense",
         "Harmattan EW Suite",
         "Harmattan C2 Platform",
+        "Gobi",                        # faux produit Harmattan AI (inventé)
+        "Sahara",                      # faux produit Harmattan AI (inventé)
+        "Sonora",                      # faux produit Harmattan AI (inventé)
         "Heron Systems AI Dogfighter",  # mis-attributed to Helsing
         "SSBN Le Terrible",            # bateau de la classe Le Triomphant, pas une classe
         "Barracuda-class Submarine",   # doublon de Suffren-class
