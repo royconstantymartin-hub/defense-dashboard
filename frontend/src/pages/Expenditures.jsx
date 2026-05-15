@@ -674,6 +674,277 @@ CAP_CATEGORIES.forEach(({ key }) => {
   CAP_RANKS[key] = sorted.map(([code]) => code);
 });
 
+// Equipment breakdown — pilot for top 10 spenders
+// Sources: IISS Military Balance 2024, Jane's, open military databases
+const CAPABILITY_DETAILS = {
+  US: {
+    combat_aircraft: [
+      { model: "F-16C/D Fighting Falcon", count: 944, manufacturer: "Lockheed Martin" },
+      { model: "F/A-18E/F/G Super Hornet / Growler", count: 635, manufacturer: "Boeing" },
+      { model: "A-10C Thunderbolt II", count: 281, manufacturer: "Fairchild-Republic / Boeing" },
+      { model: "F-35A/B/C Lightning II", count: 620, manufacturer: "Lockheed Martin" },
+      { model: "F-22A Raptor", count: 186, manufacturer: "Lockheed Martin" },
+      { model: "B-52H Stratofortress", count: 76, manufacturer: "Boeing" },
+      { model: "B-1B Lancer", count: 45, manufacturer: "Boeing" },
+      { model: "B-2A Spirit", count: 20, manufacturer: "Northrop Grumman" },
+    ],
+    surface_combatants: [
+      { model: "Arleigh Burke-class DDG", count: 73, manufacturer: "Huntington Ingalls / General Dynamics" },
+      { model: "Ticonderoga-class CG", count: 22, manufacturer: "Huntington Ingalls Industries" },
+      { model: "Freedom / Independence-class LCS", count: 12, manufacturer: "Lockheed Martin / Austal" },
+    ],
+    tanks: [
+      { model: "M1A2 SEP Abrams", count: 4400, manufacturer: "General Dynamics Land Systems" },
+      { model: "M1A1 Abrams", count: 1100, manufacturer: "General Dynamics Land Systems" },
+    ],
+    submarines: [
+      { model: "Ohio-class SSBN / SSGN", count: 18, manufacturer: "General Dynamics Electric Boat" },
+      { model: "Virginia-class SSN", count: 22, manufacturer: "General Dynamics / Huntington Ingalls" },
+      { model: "Los Angeles-class SSN", count: 28, manufacturer: "General Dynamics / Newport News" },
+    ],
+  },
+  CN: {
+    combat_aircraft: [
+      { model: "J-11/J-11B Flanker-L", count: 370, manufacturer: "Shenyang Aircraft Corporation" },
+      { model: "J-16 Flanker-D variant", count: 300, manufacturer: "Shenyang Aircraft Corporation" },
+      { model: "J-10C Firebird", count: 290, manufacturer: "Chengdu Aircraft Industry Group" },
+      { model: "J-20 Mighty Dragon", count: 200, manufacturer: "Chengdu Aircraft Industry Group" },
+      { model: "J-7 / J-7A (legacy)", count: 234, manufacturer: "Chengdu Aircraft Industry Group" },
+      { model: "H-6 Badger (bomber)", count: 80, manufacturer: "Xi'an Aircraft Industrial Corporation" },
+      { model: "Su-27 / Su-30MKK", count: 97, manufacturer: "Sukhoi (Russia)" },
+    ],
+    surface_combatants: [
+      { model: "Type 055 Renhai-class CG", count: 8, manufacturer: "Jiangnan / Dalian Shipyard" },
+      { model: "Type 052D Luyang III DDG", count: 25, manufacturer: "Jiangnan / Dalian Shipyard" },
+      { model: "Type 054A Jiangkai II FFG", count: 30, manufacturer: "Hudong-Zhonghua / Guangzhou" },
+      { model: "Type 056/056A Jiangdao corvette", count: 20, manufacturer: "Various CSSC yards" },
+    ],
+    tanks: [
+      { model: "Type 99A MBT", count: 1200, manufacturer: "Inner Mongolia First Machinery Group" },
+      { model: "Type 96A/B MBT", count: 2400, manufacturer: "Inner Mongolia First Machinery Group" },
+      { model: "Type 88 MBT", count: 800, manufacturer: "Inner Mongolia First Machinery Group" },
+      { model: "Type 59 (reserve)", count: 1400, manufacturer: "Inner Mongolia First Machinery Group" },
+    ],
+    submarines: [
+      { model: "Type 094 Jin-class SSBN", count: 6, manufacturer: "Huludao Shipyard" },
+      { model: "Type 093 Shang-class SSN", count: 6, manufacturer: "Huludao Shipyard" },
+      { model: "Type 039/A/B Yuan-class SSK", count: 20, manufacturer: "Wuhan / Jiangnan Shipyard" },
+      { model: "Type 041 Yuan-class SSK", count: 12, manufacturer: "Jiangnan Shipyard" },
+      { model: "Type 035 Ming-class SSK", count: 14, manufacturer: "Wuchang Shipyard" },
+      { model: "Type 091 Han-class SSN", count: 2, manufacturer: "Huludao Shipyard" },
+    ],
+  },
+  RU: {
+    combat_aircraft: [
+      { model: "Su-27 Flanker / Su-30SM", count: 190, manufacturer: "Sukhoi (UAC)" },
+      { model: "MiG-31 Foxhound", count: 134, manufacturer: "Mikoyan (UAC)" },
+      { model: "Su-25 Frogfoot", count: 134, manufacturer: "Sukhoi (UAC)" },
+      { model: "Su-34 Fullback", count: 130, manufacturer: "Sukhoi (UAC)" },
+      { model: "Su-35S Flanker-E", count: 110, manufacturer: "Sukhoi (UAC)" },
+      { model: "MiG-29 Fulcrum", count: 120, manufacturer: "Mikoyan (UAC)" },
+      { model: "Tu-95 Bear / Tu-160 Blackjack", count: 80, manufacturer: "Tupolev (UAC)" },
+      { model: "Su-57 Felon", count: 22, manufacturer: "Sukhoi (UAC)" },
+    ],
+    surface_combatants: [
+      { model: "Buyan-M corvette (Pr.21631)", count: 10, manufacturer: "Zelenodolsk Shipyard" },
+      { model: "Karakurt corvette (Pr.22800)", count: 9, manufacturer: "Various Russian yards" },
+      { model: "Steregushchy corvette (Pr.20380)", count: 8, manufacturer: "Severnaya Verf" },
+      { model: "Udaloy DDG (Pr.1155)", count: 8, manufacturer: "Yantar Shipyard" },
+      { model: "Sovremennyy DDG (Pr.956)", count: 6, manufacturer: "Severnaya Verf" },
+      { model: "Grigorovich FFG (Pr.11356)", count: 6, manufacturer: "Yantar Shipyard" },
+      { model: "Slava-class CG", count: 3, manufacturer: "Nikolayev Shipyard" },
+      { model: "Admiral Gorshkov FFG (Pr.22350)", count: 4, manufacturer: "Severnaya Verf" },
+    ],
+    tanks: [
+      { model: "T-72B3 / T-72B3M", count: 2800, manufacturer: "Uralvagonzavod" },
+      { model: "T-80BV / T-80U", count: 3000, manufacturer: "Omsk Transmash / Kirovets" },
+      { model: "T-90A / T-90M Proryv", count: 620, manufacturer: "Uralvagonzavod" },
+      { model: "T-14 Armata (limited)", count: 20, manufacturer: "Uralvagonzavod" },
+    ],
+    submarines: [
+      { model: "Kilo / Improved Kilo SSK", count: 17, manufacturer: "Admiralty Shipyard" },
+      { model: "Delta IV SSBN (Pr.667BDRM)", count: 6, manufacturer: "Sevmash" },
+      { model: "Akula SSN (Pr.971)", count: 7, manufacturer: "Amur / Sevmash" },
+      { model: "Borei-class SSBN (Pr.955)", count: 5, manufacturer: "Sevmash" },
+      { model: "Varshavyanka SSK (Pr.636.3)", count: 12, manufacturer: "Admiralty Shipyard" },
+      { model: "Yasen SSN (Pr.885/885M)", count: 4, manufacturer: "Sevmash" },
+      { model: "Oscar II SSGN (Pr.949A)", count: 4, manufacturer: "Sevmash" },
+      { model: "Borei-A SSBN (Pr.955A)", count: 3, manufacturer: "Sevmash" },
+    ],
+  },
+  IN: {
+    combat_aircraft: [
+      { model: "Su-30MKI Flanker-H", count: 262, manufacturer: "HAL / Sukhoi" },
+      { model: "SEPECAT Jaguar IS/IB", count: 120, manufacturer: "BAE Systems / HAL" },
+      { model: "MiG-29 / MiG-29UPG", count: 66, manufacturer: "Mikoyan / HAL" },
+      { model: "Mirage 2000H/TH", count: 51, manufacturer: "Dassault Aviation" },
+      { model: "Tejas Mk.1A LCA", count: 83, manufacturer: "Hindustan Aeronautics Limited" },
+      { model: "Rafale", count: 36, manufacturer: "Dassault Aviation" },
+      { model: "MiG-21 Bison (phasing out)", count: 56, manufacturer: "Mikoyan / HAL" },
+    ],
+    surface_combatants: [
+      { model: "Talwar-class FFG", count: 6, manufacturer: "Yantar Shipyard (Russia)" },
+      { model: "Shivalik-class FFG", count: 3, manufacturer: "Mazagon Dock / GRSE" },
+      { model: "Kolkata-class DDG", count: 3, manufacturer: "Mazagon Dock Shipbuilders" },
+      { model: "Visakhapatnam-class DDG", count: 2, manufacturer: "Mazagon Dock Shipbuilders" },
+      { model: "Delhi-class DDG", count: 3, manufacturer: "Mazagon Dock Shipbuilders" },
+      { model: "Kamorta-class corvette (ASW)", count: 4, manufacturer: "Garden Reach Shipbuilders" },
+      { model: "Brahmaputra-class FFG", count: 3, manufacturer: "Garden Reach Shipbuilders" },
+      { model: "Veer-class missile boat", count: 6, manufacturer: "Goa Shipyard Limited" },
+    ],
+    tanks: [
+      { model: "T-90S Bhishma", count: 1657, manufacturer: "Heavy Vehicles Factory / Uralvagonzavod" },
+      { model: "T-72M1 Ajeya", count: 1657, manufacturer: "Heavy Vehicles Factory / UVZ" },
+      { model: "Arjun Mk.1A MBT", count: 220, manufacturer: "DRDO / Heavy Vehicles Factory" },
+      { model: "PT-76 (reserve)", count: 80, manufacturer: "Kirovets-Leningrad" },
+    ],
+    submarines: [
+      { model: "Kalvari-class SSK (Scorpène)", count: 6, manufacturer: "DCNS / Mazagon Dock" },
+      { model: "Sindhughosh-class SSK (Kilo)", count: 7, manufacturer: "Admiralty Shipyard / HSL" },
+      { model: "Arihant-class SSBN", count: 2, manufacturer: "Ship Building Centre Visakhapatnam" },
+      { model: "Shishumar-class SSK (Type 209)", count: 2, manufacturer: "HDW / Mazagon Dock" },
+    ],
+  },
+  SA: {
+    combat_aircraft: [
+      { model: "Tornado IDS/ADV", count: 80, manufacturer: "Panavia / BAE Systems" },
+      { model: "F-15SA Strike Eagle", count: 84, manufacturer: "Boeing" },
+      { model: "F-15C/D Eagle", count: 70, manufacturer: "Boeing" },
+      { model: "Typhoon", count: 72, manufacturer: "BAE Systems / Eurofighter" },
+      { model: "F-5 Tiger II (reserve)", count: 50, manufacturer: "Northrop" },
+    ],
+    surface_combatants: [
+      { model: "Madinah FFG (F2000)", count: 4, manufacturer: "Thomson-CSF / France" },
+      { model: "Al Riyadh FFG (La Fayette)", count: 3, manufacturer: "DCNS / France" },
+      { model: "Al Jubail corvette (Avante 2200)", count: 4, manufacturer: "Navantia" },
+      { model: "Badr-class corvette", count: 4, manufacturer: "Tacoma Boatbuilding" },
+    ],
+    tanks: [
+      { model: "M1A2S Abrams", count: 373, manufacturer: "General Dynamics Land Systems" },
+      { model: "M60A3 (reserve)", count: 450, manufacturer: "General Dynamics" },
+      { model: "AMX-30 (reserve)", count: 290, manufacturer: "GIAT Industries" },
+    ],
+    submarines: [],
+  },
+  GB: {
+    combat_aircraft: [
+      { model: "Typhoon FGR4 / F2", count: 137, manufacturer: "BAE Systems / Eurofighter" },
+      { model: "F-35B Lightning II", count: 74, manufacturer: "Lockheed Martin / BAE Systems" },
+    ],
+    surface_combatants: [
+      { model: "Type 23 Duke-class FFG", count: 13, manufacturer: "Yarrow / Swan Hunter" },
+      { model: "Type 45 Daring-class DDG", count: 6, manufacturer: "BAE Systems Surface Ships" },
+      { model: "Queen Elizabeth-class CVF", count: 2, manufacturer: "BAE Systems / Aircraft Carrier Alliance" },
+      { model: "River-class OPV Batch 2", count: 3, manufacturer: "BAE Systems Govan" },
+    ],
+    tanks: [
+      { model: "Challenger 2 MBT", count: 213, manufacturer: "BAE Systems" },
+    ],
+    submarines: [
+      { model: "Vanguard-class SSBN", count: 4, manufacturer: "BAE Systems Barrow" },
+      { model: "Astute-class SSN", count: 3, manufacturer: "BAE Systems Barrow" },
+      { model: "Trafalgar-class SSN", count: 3, manufacturer: "VSEL / BAE Systems" },
+    ],
+  },
+  DE: {
+    combat_aircraft: [
+      { model: "Typhoon", count: 140, manufacturer: "Eurofighter / Airbus Defence" },
+      { model: "Tornado IDS (retiring)", count: 85, manufacturer: "Panavia Aircraft" },
+      { model: "F/A-18F Super Hornet (nuclear)", count: 15, manufacturer: "Boeing" },
+      { model: "Eurofighter ECR (SEAD)", count: 20, manufacturer: "Eurofighter / Airbus" },
+    ],
+    surface_combatants: [
+      { model: "Brandenburg-class F123 FFG", count: 4, manufacturer: "Blohm+Voss / HDW" },
+      { model: "Sachsen-class F124 FFG", count: 3, manufacturer: "ARGE F124 / Blohm+Voss" },
+      { model: "Braunschweig-class K130 corvette", count: 5, manufacturer: "ARGE K130 consortium" },
+    ],
+    tanks: [
+      { model: "Leopard 2A6 / 2A7 MBT", count: 321, manufacturer: "Krauss-Maffei Wegmann" },
+    ],
+    submarines: [
+      { model: "Type 212A SSK", count: 6, manufacturer: "TKMS / Howaldtswerke-Deutsche Werft" },
+    ],
+  },
+  FR: {
+    combat_aircraft: [
+      { model: "Rafale F3-R (Air Force)", count: 102, manufacturer: "Dassault Aviation" },
+      { model: "Rafale M (Navy carrier)", count: 83, manufacturer: "Dassault Aviation" },
+      { model: "Mirage 2000-5F / 2000D", count: 43, manufacturer: "Dassault Aviation" },
+    ],
+    surface_combatants: [
+      { model: "FREMM Aquitaine-class FFG", count: 8, manufacturer: "Naval Group" },
+      { model: "La Fayette-class FLF corvette", count: 5, manufacturer: "DCNS" },
+      { model: "D'Estienne d'Orves corvette (A69)", count: 8, manufacturer: "DCNS" },
+      { model: "Forbin-class Horizon DDG", count: 2, manufacturer: "DCNS / Orizzonte" },
+      { model: "Charles de Gaulle CVN", count: 1, manufacturer: "DCNS / Cherbourg Arsenal" },
+    ],
+    tanks: [
+      { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems" },
+    ],
+    submarines: [
+      { model: "Triomphant-class SSBN", count: 4, manufacturer: "DCNS / Cherbourg" },
+      { model: "Barracuda-class SSN (Suffren)", count: 3, manufacturer: "Naval Group" },
+      { model: "Rubis-class SSN", count: 3, manufacturer: "DCNS" },
+    ],
+  },
+  JP: {
+    combat_aircraft: [
+      { model: "F-15J/DJ Eagle", count: 166, manufacturer: "McDonnell Douglas / Mitsubishi HI" },
+      { model: "F-2 Viper Zero", count: 92, manufacturer: "Mitsubishi HI / Lockheed Martin" },
+      { model: "F-35A Lightning II", count: 42, manufacturer: "Lockheed Martin / Mitsubishi HI" },
+      { model: "F-35B (STOVL, on order)", count: 20, manufacturer: "Lockheed Martin / Mitsubishi HI" },
+      { model: "T-4 (OCU / trainer)", count: 34, manufacturer: "Kawasaki Heavy Industries" },
+    ],
+    surface_combatants: [
+      { model: "Murasame-class DD", count: 9, manufacturer: "IHI / Mitsubishi HI" },
+      { model: "Akizuki / Asahi-class DD", count: 8, manufacturer: "Mitsubishi HI / Japan Marine United" },
+      { model: "Takanami-class DD", count: 5, manufacturer: "IHI Corporation" },
+      { model: "Kongō-class DDG (Aegis)", count: 4, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Atago-class DDG (Aegis)", count: 2, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Maya-class DDG (Aegis)", count: 2, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Izumo-class DDH / CVL", count: 2, manufacturer: "IHI Marine United" },
+      { model: "Hyuga-class DDH", count: 2, manufacturer: "IHI Corporation" },
+    ],
+    tanks: [
+      { model: "Type 74 MBT (reserve)", count: 450, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Type 90 MBT", count: 340, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Type 10 MBT", count: 130, manufacturer: "Mitsubishi Heavy Industries" },
+    ],
+    submarines: [
+      { model: "Oyashio-class SSK", count: 8, manufacturer: "Mitsubishi HI / Kawasaki" },
+      { model: "Sōryū-class SSK", count: 11, manufacturer: "Mitsubishi HI / Kawasaki" },
+      { model: "Taigei-class SSK", count: 3, manufacturer: "Mitsubishi HI / Kawasaki" },
+    ],
+  },
+  KR: {
+    combat_aircraft: [
+      { model: "F-16C/D Fighting Falcon (KF-16)", count: 170, manufacturer: "Lockheed Martin / KAI" },
+      { model: "T-50 Golden Eagle / FA-50", count: 128, manufacturer: "Korea Aerospace Industries" },
+      { model: "F-15K Slam Eagle", count: 60, manufacturer: "Boeing / Samsung Techwin" },
+      { model: "F-35A Lightning II", count: 40, manufacturer: "Lockheed Martin" },
+      { model: "KF-21 Boramae (initial batch)", count: 8, manufacturer: "Korea Aerospace Industries" },
+    ],
+    surface_combatants: [
+      { model: "FFX Incheon-class FFG", count: 8, manufacturer: "Hyundai Heavy Industries / Daewoo" },
+      { model: "KDX-II Chungmugong Yi Sun-sin DDG", count: 6, manufacturer: "Daewoo / Hyundai" },
+      { model: "KDX-III Sejong the Great DDG (Aegis)", count: 3, manufacturer: "Hyundai Heavy Industries" },
+      { model: "KDX-I Gwanggaeto the Great DDG", count: 3, manufacturer: "Daewoo Shipbuilding" },
+      { model: "Pohang-class corvette", count: 8, manufacturer: "Korea Tacoma Marine" },
+    ],
+    tanks: [
+      { model: "K1E1 / K1A2 MBT", count: 1000, manufacturer: "Hyundai Rotem" },
+      { model: "K1E2 MBT", count: 900, manufacturer: "Hyundai Rotem" },
+      { model: "K2 Black Panther MBT", count: 260, manufacturer: "Hyundai Rotem" },
+      { model: "T-80U (reserve)", count: 42, manufacturer: "Uralvagonzavod (Russia)" },
+    ],
+    submarines: [
+      { model: "Jangbogo-I (Type 209/1200) SSK", count: 10, manufacturer: "HDW / Daewoo" },
+      { model: "Jangbogo-II (Type 214) SSK", count: 9, manufacturer: "HDW / DSME" },
+      { model: "Jangbogo-III (KSS-III) SSK", count: 3, manufacturer: "Daewoo Shipbuilding (DSME)" },
+    ],
+  },
+};
+
 function useCountUp(target, duration = 900) {
   const [value, setValue] = useState(0);
   useEffect(() => {
@@ -694,13 +965,19 @@ function useCountUp(target, duration = 900) {
   return value;
 }
 
-function CapabilityTile({ cat, count, rank, maxCount }) {
+function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isClickable }) {
   const animated = useCountUp(count);
   const iconCount = count === 0 ? 0 : Math.max(1, Math.min(Math.floor(count / cat.scale), 20));
   const pct = maxCount > 0 && count > 0 ? Math.min((count / maxCount) * 100, 100) : 0;
 
   return (
-    <div className={`rounded-xl overflow-hidden border ${cat.border} shadow-sm`}>
+    <div
+      className={`rounded-xl overflow-hidden border shadow-sm transition-all ${
+        isClickable ? "cursor-pointer hover:shadow-md" : ""
+      } ${isSelected ? `${cat.border} ring-2 ring-offset-1` : cat.border}`}
+      style={isSelected ? { ringColor: 'var(--tw-ring-color)' } : {}}
+      onClick={isClickable ? onClick : undefined}
+    >
       {/* Dark intelligence-style header */}
       <div className="bg-slate-800 px-3 py-2.5 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
@@ -759,6 +1036,93 @@ function CapabilityTile({ cat, count, rank, maxCount }) {
             1 icon ≈ {cat.scaleLabel}
           </p>
         )}
+        {isClickable && count > 0 && !isSelected && (
+          <p className={`text-[9px] ${cat.labelColor} opacity-40 mt-0.5`}>
+            ↗ click to explore
+          </p>
+        )}
+        {isSelected && (
+          <p className={`text-[9px] ${cat.labelColor} opacity-60 mt-0.5 font-semibold`}>
+            ▾ showing details below
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CapabilityDetailPanel({ cat, countryCode, onClose }) {
+  const details = CAPABILITY_DETAILS[countryCode]?.[cat.key] || [];
+  const total = details.reduce((s, d) => s + d.count, 0);
+
+  if (!details.length) return null;
+
+  return (
+    <div className={`rounded-xl border ${cat.border} bg-white shadow-sm overflow-hidden`}>
+      {/* Header */}
+      <div className="bg-slate-800 px-4 py-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <span className={`shrink-0 p-1.5 rounded-md ${cat.iconBadgeBg}`}>
+            <cat.Icon className={`w-4 h-4 ${cat.iconColor}`} />
+          </span>
+          <div>
+            <p className="text-sm font-bold text-white">{cat.label} — Equipment Breakdown</p>
+            <p className={`text-[10px] ${cat.iconColor} opacity-70`}>{cat.sublabel} · {total.toLocaleString()} total · IISS est. 2024</p>
+          </div>
+        </div>
+        <button
+          onClick={onClose}
+          className="text-slate-400 hover:text-white transition-colors text-lg leading-none px-1"
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-100">
+              <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-400 px-4 py-2.5">Platform / Model</th>
+              <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-400 px-4 py-2.5">Units</th>
+              <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-400 px-4 py-2.5 hidden sm:table-cell">Manufacturer</th>
+              <th className="text-center text-xs font-semibold uppercase tracking-wider text-slate-400 px-4 py-2.5">Products</th>
+            </tr>
+          </thead>
+          <tbody>
+            {details.map((item, i) => (
+              <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors">
+                <td className="px-4 py-2.5">
+                  <p className="font-medium text-slate-800 text-sm">{item.model}</p>
+                </td>
+                <td className="px-4 py-2.5 text-right">
+                  <span className={`font-mono font-bold text-sm ${cat.countColor}`}>
+                    {item.count.toLocaleString()}
+                  </span>
+                  <div className="h-0.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${cat.progressColor}`}
+                      style={{ width: `${Math.round((item.count / Math.max(...details.map(d => d.count))) * 100)}%` }}
+                    />
+                  </div>
+                </td>
+                <td className="px-4 py-2.5 hidden sm:table-cell">
+                  <span className="text-xs text-slate-500">{item.manufacturer}</span>
+                </td>
+                <td className="px-4 py-2.5 text-center">
+                  <a
+                    href={`/products?search=${encodeURIComponent(item.manufacturer.split(' / ')[0].split(' (')[0])}`}
+                    className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border transition-colors ${cat.labelColor} bg-white hover:bg-purple-50 border-current opacity-70 hover:opacity-100`}
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    Browse
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -766,6 +1130,9 @@ function CapabilityTile({ cat, count, rank, maxCount }) {
 
 function DefenseCapabilitiesCard({ countryCode }) {
   const cap = DEFENSE_CAPABILITIES[countryCode];
+  const [openCat, setOpenCat] = useState(null);
+
+  const hasDetails = !!CAPABILITY_DETAILS[countryCode];
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm">
@@ -780,27 +1147,41 @@ function DefenseCapabilitiesCard({ countryCode }) {
           </span>
         </div>
       </CardHeader>
-      <CardContent className="p-4">
+      <CardContent className="p-4 space-y-4">
         {!cap ? (
           <div className="flex items-center justify-center py-8 text-slate-400 text-sm gap-2">
             <Target className="w-4 h-4" />
             No capability data available for this country.
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {CAP_CATEGORIES.map((cat) => {
-              const rank = CAP_RANKS[cat.key].indexOf(countryCode) + 1;
-              return (
-                <CapabilityTile
-                  key={cat.key}
-                  cat={cat}
-                  count={cap[cat.key] ?? 0}
-                  rank={rank > 0 ? rank : null}
-                  maxCount={CAP_MAX[cat.key]}
-                />
-              );
-            })}
-          </div>
+          <>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {CAP_CATEGORIES.map((cat) => {
+                const rank = CAP_RANKS[cat.key].indexOf(countryCode) + 1;
+                const isClickable = hasDetails && (cap[cat.key] ?? 0) > 0;
+                return (
+                  <CapabilityTile
+                    key={cat.key}
+                    cat={cat}
+                    count={cap[cat.key] ?? 0}
+                    rank={rank > 0 ? rank : null}
+                    maxCount={CAP_MAX[cat.key]}
+                    isClickable={isClickable}
+                    isSelected={openCat === cat.key}
+                    onClick={() => setOpenCat(prev => prev === cat.key ? null : cat.key)}
+                  />
+                );
+              })}
+            </div>
+
+            {openCat && hasDetails && (
+              <CapabilityDetailPanel
+                cat={CAP_CATEGORIES.find(c => c.key === openCat)}
+                countryCode={countryCode}
+                onClose={() => setOpenCat(null)}
+              />
+            )}
+          </>
         )}
       </CardContent>
     </Card>
@@ -960,8 +1341,8 @@ function FlagOverlay({ peers, chartMarginTop = 12, chartMarginBottom = 4 }) {
             <img
               src={`https://flagcdn.com/w40/${code}.png`}
               alt={entry.country}
-              width={26}
-              height={18}
+              width={20}
+              height={13}
               className="rounded-sm object-cover"
               onError={e => { e.currentTarget.style.opacity = '0'; }}
             />
@@ -1476,9 +1857,9 @@ export default function Expenditures() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
-            Defense Expenditures
+            Countries & Defense Spending
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Global Military Spending by Country</p>
+          <p className="text-slate-500 text-sm mt-1">Military budgets, capabilities & defense profiles by country</p>
         </div>
         <div className="flex flex-col items-end gap-1">
           <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
@@ -1753,7 +2134,7 @@ export default function Expenditures() {
                     data-testid={`expenditure-row-${exp.id}`}
                   >
                     <td className="p-4">
-                      <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-3">
                         <div className="flex items-center gap-3">
                           <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium shrink-0">
                             {idx + 1}
@@ -1769,12 +2150,6 @@ export default function Expenditures() {
                             <p className="text-xs text-slate-500 font-mono">{exp.country_code}</p>
                           </div>
                         </div>
-                        <img
-                          src={getFlag(exp.country_code)}
-                          alt=""
-                          className="w-10 h-7 object-cover rounded-md shadow-sm border border-slate-100 opacity-40 shrink-0 hidden sm:block"
-                          aria-hidden="true"
-                        />
                       </div>
                     </td>
                     <td className="p-4">
