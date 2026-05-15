@@ -263,8 +263,7 @@ export const COMPANY_LOGOS = {
   "Texelis": "texelis.com",
   "Lynred": "lynred.com",
   "Turgis & Gaillard": "turgisgaillard.com",
-  "Alta": "alta.fr",
-  "ARES": "ares-ar.com",
+  "Alta Ares": "altaares.com",
   "Shark Robotics": "shark-robotics.com",
   // USA — New defense tech companies
   "Saronic Technologies": "saronic.com",

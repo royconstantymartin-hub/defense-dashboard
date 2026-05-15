@@ -1284,42 +1284,22 @@ DEFENSE_COMPANIES = [
         "aliases": ["Communication & Systèmes", "CS Defense"],
     },
     {
-        "name": "Alta", "ticker": "ALTA-PRIV", "country": "France",
-        "market_cap": 0.08, "stock_price": 0, "change_percent": 0,
-        "revenue": 0.03, "employees": 150,
-        "specializations": ["Advanced Materials", "Composite Structures", "Defense Manufacturing", "Aerospace"],
-        "founded_year": 2005, "headquarters": "France", "website": "alta.fr",
+        "name": "Alta Ares", "ticker": "ALTARES-PRIV", "country": "France",
+        "market_cap": 0.07, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.025, "employees": 60,
+        "specializations": ["Drones", "UAS", "Reconnaissance", "Autonomous Systems"],
+        "founded_year": 2018, "headquarters": "France", "website": "altaares.com",
         "funding_stage": "Private",
         "is_public": False,
         "description": (
-            "Alta is a French industrial company specialized in advanced composite materials and "
-            "structural manufacturing for defense and aerospace applications. The company supplies "
-            "structural components and lightweight assemblies for French defense programs, working "
-            "with prime contractors and the DGA on a range of platforms including armored vehicles, "
-            "aircraft structures, and missile systems."
+            "Alta Ares is a French drone company developing unmanned aerial systems for defense "
+            "and security applications. The company designs and manufactures UAS platforms focused "
+            "on reconnaissance, surveillance, and tactical missions for French armed forces and "
+            "security operators."
         ),
-        "programs": ["Defense composite manufacturing", "DGA structural programs"],
+        "programs": ["Defense UAS development", "Tactical drone programs"],
         "export_countries": ["FR"],
-        "aliases": [],
-    },
-    {
-        "name": "ARES", "ticker": "ARES-PRIV", "country": "France",
-        "market_cap": 0.06, "stock_price": 0, "change_percent": 0,
-        "revenue": 0.025, "employees": 90,
-        "specializations": ["Special Forces Weapons", "Firearms", "Armament", "Close Combat Systems"],
-        "founded_year": 2010, "headquarters": "France", "website": "ares-ar.com",
-        "funding_stage": "Private",
-        "is_public": False,
-        "description": (
-            "ARES is a French armament company designing and manufacturing military-grade firearms "
-            "and special operations weapons. Its product range includes modular assault rifles, "
-            "carbines, and light machine guns developed specifically for French special forces and "
-            "military export clients. ARES weapons are characterized by a modular architecture "
-            "enabling rapid caliber and configuration changes in the field."
-        ),
-        "programs": ["ARES SCR assault rifle family", "French special forces light weapons"],
-        "export_countries": ["FR", "AE", "SA"],
-        "aliases": ["ARES Armament"],
+        "aliases": ["Alta-Ares"],
     },
     {
         "name": "Comand AI", "ticker": "CMDAI-PRIV", "country": "France",
