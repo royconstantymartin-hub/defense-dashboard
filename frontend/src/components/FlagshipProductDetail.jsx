@@ -14,18 +14,18 @@ import ProductIllustration from "@/components/ProductIllustration";
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const STATUS_LABELS = {
-  in_production:    { label: "En production",    cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  in_service_only:  { label: "En service",        cls: "bg-blue-50 text-blue-700 border-blue-200" },
-  upgrade_program:  { label: "Programme upgrade", cls: "bg-amber-50 text-amber-700 border-amber-200" },
-  development:      { label: "Développement",     cls: "bg-purple-50 text-purple-700 border-purple-200" },
-  cancelled:        { label: "Annulé",            cls: "bg-slate-100 text-slate-500 border-slate-200" },
+  in_production:    { label: "In Production",   cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  in_service_only:  { label: "In Service",       cls: "bg-blue-50 text-blue-700 border-blue-200" },
+  upgrade_program:  { label: "Upgrade Program",  cls: "bg-amber-50 text-amber-700 border-amber-200" },
+  development:      { label: "Development",      cls: "bg-purple-50 text-purple-700 border-purple-200" },
+  cancelled:        { label: "Cancelled",        cls: "bg-slate-100 text-slate-500 border-slate-200" },
 };
 
 const CONTRACT_STATUS = {
-  delivered:   { label: "Livré",         icon: CheckCircle2, cls: "text-emerald-600" },
-  in_delivery: { label: "En livraison",  icon: Clock,        cls: "text-amber-600"   },
-  signed:      { label: "Signé",         icon: FileText,     cls: "text-blue-600"    },
-  cancelled:   { label: "Annulé",        icon: XCircle,      cls: "text-rose-500"    },
+  delivered:   { label: "Delivered",    icon: CheckCircle2, cls: "text-emerald-600" },
+  in_delivery: { label: "In Delivery",  icon: Clock,        cls: "text-amber-600"   },
+  signed:      { label: "Signed",       icon: FileText,     cls: "text-blue-600"    },
+  cancelled:   { label: "Cancelled",    icon: XCircle,      cls: "text-rose-500"    },
 };
 
 const CONFIDENCE_COLORS = {
@@ -34,9 +34,9 @@ const CONFIDENCE_COLORS = {
   low:    "bg-rose-400",
 };
 const CONFIDENCE_LABELS = {
-  high: "Données fiables (sources officielles)",
-  medium: "Données estimées (sources presse spécialisée)",
-  low: "Données incertaines ou non confirmées",
+  high:   "Reliable — official or primary source",
+  medium: "Estimated — specialist press or secondary source",
+  low:    "Uncertain — unconfirmed or conflicting sources",
 };
 
 function Flag({ code, size = 20 }) {
@@ -63,9 +63,7 @@ function ConfidenceDot({ level, note, sources = [] }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span
-          className={`inline-block w-2 h-2 rounded-full shrink-0 cursor-help ${CONFIDENCE_COLORS[level]}`}
-        />
+        <span className={`inline-block w-2 h-2 rounded-full shrink-0 cursor-help ${CONFIDENCE_COLORS[level]}`} />
       </TooltipTrigger>
       <TooltipContent className="max-w-xs text-xs space-y-1">
         {tipLines.map((l, i) => <p key={i}>{l}</p>)}
@@ -79,7 +77,7 @@ function SourcedStat({ label, data, prefix = "", suffix = "", formatFn }) {
   const raw = data.value;
   const display =
     raw === "N/A"        ? "N/A" :
-    raw === "Classified" ? "🔒 Classifié" :
+    raw === "Classified" ? "🔒 Classified" :
     formatFn             ? formatFn(raw) :
     `${prefix}${raw}${suffix}`;
 
@@ -106,9 +104,8 @@ function OverviewTab({ detail }) {
         </div>
       )}
 
-      {/* Variants */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Variantes</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Variants</p>
         <Accordion type="multiple" className="space-y-2">
           {detail.variants.map((v, i) => (
             <AccordionItem
@@ -134,7 +131,7 @@ function OverviewTab({ detail }) {
                 </ul>
                 <div className="flex flex-wrap items-center gap-3 pt-1">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs text-slate-400">Unités produites :</span>
+                    <span className="text-xs text-slate-400">Units produced:</span>
                     <span className="text-xs font-mono font-semibold text-slate-700">
                       {v.units_produced.value === "N/A" ? "N/A" : v.units_produced.value}
                     </span>
@@ -158,10 +155,9 @@ function OverviewTab({ detail }) {
 function SpecsTab({ detail }) {
   return (
     <div className="space-y-6 p-5">
-      {/* Tech specs grid */}
       <div>
         <div className="flex items-center gap-2 mb-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Spécifications techniques</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Technical Specifications</p>
           <ConfidenceDot level={detail.tech_specs_confidence} note={null} sources={[]} />
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -176,10 +172,9 @@ function SpecsTab({ detail }) {
         </div>
       </div>
 
-      {/* Armament */}
       {detail.compatible_weapons && (
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Armement compatible</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Compatible Weapons</p>
           <div className="flex flex-wrap gap-1.5">
             {detail.compatible_weapons.map((w, i) => (
               <span key={i} className="text-xs bg-rose-50 text-rose-700 border border-rose-100 px-2.5 py-1 rounded-full">
@@ -190,13 +185,13 @@ function SpecsTab({ detail }) {
           <div className="grid grid-cols-2 gap-2 mt-3">
             {detail.max_payload_kg && (
               <div className="bg-slate-50 border border-slate-100 rounded-lg px-3 py-2.5">
-                <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-0.5">Charge utile max</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-0.5">Max Payload</p>
                 <p className="font-mono text-sm text-slate-900">{detail.max_payload_kg}</p>
               </div>
             )}
             {detail.hardpoints_count && (
               <div className="bg-slate-50 border border-slate-100 rounded-lg px-3 py-2.5">
-                <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-0.5">Points d'emport</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-0.5">Hardpoints</p>
                 <p className="font-mono text-sm text-slate-900">{detail.hardpoints_count}</p>
               </div>
             )}
@@ -216,71 +211,64 @@ function ProductionTab({ detail }) {
 
   return (
     <div className="space-y-6 p-5">
-      {/* Summary stats */}
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Commandés</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Ordered</p>
           <div className="flex items-center justify-center gap-1.5">
             <span className="font-mono text-2xl font-bold text-slate-900">{totalOrdered}</span>
             <ConfidenceDot level={detail.total_ordered.confidence} note={detail.total_ordered.note} sources={detail.total_ordered.sources} />
           </div>
         </div>
         <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Livrés</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Delivered</p>
           <div className="flex items-center justify-center gap-1.5">
             <span className="font-mono text-2xl font-bold text-emerald-700">{totalDelivered}</span>
             <ConfidenceDot level={detail.total_delivered.confidence} note={detail.total_delivered.note} sources={detail.total_delivered.sources} />
           </div>
         </div>
         <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Carnet</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Backlog</p>
           <span className="font-mono text-2xl font-bold text-purple-700">
             {detail.backlog ?? "N/A"}
           </span>
         </div>
       </div>
 
-      {/* Global progress bar */}
       {pct !== null && (
         <div>
           <div className="flex justify-between text-xs text-slate-500 mb-1.5">
-            <span>Progression des livraisons</span>
+            <span>Delivery progress</span>
             <span>{pct}%</span>
           </div>
           <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-emerald-500 rounded-full transition-all"
-              style={{ width: `${pct}%` }}
-            />
+            <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
           </div>
         </div>
       )}
 
-      {/* Timeline info */}
-      <div className="flex gap-3 text-xs text-slate-600">
+      <div className="flex flex-wrap gap-3 text-xs text-slate-600">
         <div className="flex items-center gap-1.5">
           <Calendar className="w-3.5 h-3.5 text-slate-400" />
-          <span>Production débutée en <strong>{detail.production_start_year}</strong></span>
+          <span>Production started <strong>{detail.production_start_year}</strong></span>
         </div>
         {detail.production_end_year === null && (
           <div className="flex items-center gap-1.5">
             <Zap className="w-3.5 h-3.5 text-emerald-500" />
-            <span>En cours de production</span>
+            <span>Currently in production</span>
           </div>
         )}
       </div>
 
-      {/* Country breakdown table */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Livraisons par pays</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Deliveries by country</p>
         <div className="border border-slate-200 rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="text-left p-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Pays</th>
-                <th className="text-right p-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Commandés</th>
-                <th className="text-right p-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Livrés</th>
-                <th className="text-right p-3 text-xs font-semibold uppercase tracking-wider text-slate-400 hidden sm:table-cell">Calendrier</th>
+                <th className="text-left p-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Country</th>
+                <th className="text-right p-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Ordered</th>
+                <th className="text-right p-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Delivered</th>
+                <th className="text-right p-3 text-xs font-semibold uppercase tracking-wider text-slate-400 hidden sm:table-cell">Timeline</th>
               </tr>
             </thead>
             <tbody>
@@ -299,10 +287,7 @@ function ProductionTab({ detail }) {
                       <div className="flex items-center justify-end gap-2">
                         <span className="font-mono text-slate-700">{d.delivered}</span>
                         <div className="hidden sm:block w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-emerald-400 rounded-full"
-                            style={{ width: `${rowPct}%` }}
-                          />
+                          <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${rowPct}%` }} />
                         </div>
                       </div>
                     </td>
@@ -322,7 +307,7 @@ function ExportsTab({ contracts }) {
   return (
     <div className="p-5 space-y-3">
       <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-        Contrats export ({contracts.length})
+        Export Contracts ({contracts.length})
       </p>
       <div className="space-y-2">
         {contracts.map((c, i) => {
@@ -338,7 +323,7 @@ function ExportsTab({ contracts }) {
                   </div>
                   <span className="text-xs text-slate-400">{c.year}</span>
                 </div>
-                <div className={`flex items-center gap-1 text-xs font-medium ${st.cls}`}>
+                <div className={`flex items-center gap-1 text-xs font-medium shrink-0 ${st.cls}`}>
                   <Icon className="w-3.5 h-3.5" />
                   {st.label}
                 </div>
@@ -346,15 +331,13 @@ function ExportsTab({ contracts }) {
               <div className="flex flex-wrap gap-4 mt-3 text-xs text-slate-600">
                 <div className="flex items-center gap-1">
                   <Package className="w-3.5 h-3.5 text-slate-400" />
-                  <span><strong>{c.units}</strong> appareils</span>
+                  <span><strong>{c.units}</strong> aircraft</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <DollarSign className="w-3.5 h-3.5 text-slate-400" />
-                  <span>
-                    {c.contract_value_usd
-                      ? <strong>{c.contract_value_usd} Md$</strong>
-                      : <em className="text-slate-400">Valeur non divulguée</em>}
-                  </span>
+                  {c.contract_value_usd
+                    ? <span><strong>${c.contract_value_usd}B</strong></span>
+                    : <em className="text-slate-400">Value undisclosed</em>}
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
@@ -372,7 +355,7 @@ function ExportsTab({ contracts }) {
 function RivalsTab({ competitors, onSelectProduct }) {
   return (
     <div className="p-5 space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Concurrents directs</p>
+      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Direct Competitors</p>
       <div className="space-y-3">
         {competitors.map((c, i) => (
           <div key={i} className="border border-slate-200 rounded-xl p-4 space-y-2 hover:border-purple-200 transition-colors">
@@ -386,7 +369,7 @@ function RivalsTab({ competitors, onSelectProduct }) {
                   onClick={() => onSelectProduct && onSelectProduct(c.dashboard_product_id)}
                   className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 shrink-0 transition-colors"
                 >
-                  Voir fiche
+                  View profile
                   <ExternalLink className="w-3 h-3" />
                 </button>
               )}
@@ -434,40 +417,33 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-            {/* Status badge */}
-            <span className={`absolute top-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full border ${statusInfo.cls}`}>
+            {/* Status badge — bottom left to avoid overlap with SheetContent's close button */}
+            <span className={`absolute bottom-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full border ${statusInfo.cls}`}>
               {statusInfo.label}
             </span>
-
-            {/* Flagship badge */}
-            <span className="absolute top-3 right-10 text-xs font-medium px-2 py-1 rounded-full bg-purple-700 text-white border border-purple-600">
-              ★ Dossier complet
+            <span className="absolute bottom-3 right-3 text-xs font-medium px-2 py-1 rounded-full bg-purple-700 text-white">
+              ★ Full Profile
             </span>
           </div>
 
           {/* ── Identity strip ────────────────────────────────────────── */}
           <div className="px-5 pt-4 pb-3 border-b border-slate-100 shrink-0">
-            <h2 className="font-heading text-xl font-bold text-slate-900 leading-tight">
+            <h2 className="font-heading text-xl font-bold text-slate-900 leading-tight pr-6">
               {detail.official_designation}
             </h2>
             <p className="text-sm text-slate-500 mt-0.5">{detail.category_label}</p>
 
             <div className="flex flex-wrap items-center gap-3 mt-3">
-              {/* Countries */}
               <div className="flex items-center gap-1.5">
                 {detail.country_codes.map((code, i) => (
                   <Flag key={i} code={code} size={18} />
                 ))}
                 <span className="text-xs text-slate-600">{detail.countries_of_origin.join(", ")}</span>
               </div>
-
-              {/* Manufacturers */}
               <div className="flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5 text-slate-400" />
                 <span className="text-xs text-slate-600">{detail.manufacturers.join(", ")}</span>
               </div>
-
-              {/* IOC year */}
               {detail.year_ioc !== "N/A" && (
                 <div className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
@@ -476,35 +452,26 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
               )}
             </div>
 
-            {/* Partners */}
             {detail.partner_companies?.length > 0 && (
               <p className="text-xs text-slate-400 mt-2">
-                Partenaires : {detail.partner_companies.join(", ")}
+                Partners: {detail.partner_companies.join(", ")}
               </p>
             )}
           </div>
 
           {/* ── Key figures strip ─────────────────────────────────────── */}
           <div className="grid grid-cols-4 divide-x divide-slate-100 border-b border-slate-100 shrink-0">
-            <div className="p-4">
-              <SourcedStat
-                label="Unités produites"
-                data={detail.total_units_produced}
-              />
+            <div className="p-3">
+              <SourcedStat label="Units built" data={detail.total_units_produced} />
             </div>
-            <div className="p-4">
-              <SourcedStat
-                label="Coût unitaire"
-                data={detail.unit_cost_usd}
-                suffix=" M$"
-                formatFn={v => `${v}`}
-              />
+            <div className="p-3">
+              <SourcedStat label="Unit cost" data={detail.unit_cost_usd} suffix="M$" formatFn={v => `${v}`} />
               {detail.unit_cost_year && (
                 <p className="text-xs text-slate-400 mt-0.5">({detail.unit_cost_year})</p>
               )}
             </div>
-            <div className="p-4">
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Opérateurs</p>
+            <div className="p-3">
+              <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Operators</p>
               <div className="flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-slate-400" />
                 <span className="font-mono font-bold text-slate-900 text-lg leading-none">
@@ -512,16 +479,12 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
                 </span>
               </div>
             </div>
-            <div className="p-4">
+            <div className="p-3">
               {detail.production_rate_per_year ? (
-                <SourcedStat
-                  label="Cadence/an"
-                  data={detail.production_rate_per_year}
-                  suffix=" app."
-                />
+                <SourcedStat label="Rate/yr" data={detail.production_rate_per_year} suffix=" ac." />
               ) : (
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Cadence/an</p>
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Rate/yr</p>
                   <span className="font-mono font-bold text-slate-500 text-lg">N/A</span>
                 </div>
               )}
@@ -530,62 +493,44 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
 
           {/* ── Tabs ─────────────────────────────────────────────────── */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
-            <TabsList className="shrink-0 bg-slate-50 border-b border-slate-100 rounded-none justify-start px-5 gap-0 h-10">
-              {[
-                { value: "overview",    label: "Variantes",   Icon: Shield  },
-                { value: "specs",       label: "Specs",       Icon: Cpu     },
-                { value: "production",  label: "Production",  Icon: Truck   },
-                { value: "exports",     label: "Exports",     Icon: Globe   },
-                { value: "rivals",      label: "Concurrents", Icon: Target  },
-              ].map(({ value, label, Icon }) => (
-                <TabsTrigger
-                  key={value}
-                  value={value}
-                  className="flex items-center gap-1.5 text-xs rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-purple-700 data-[state=active]:bg-transparent px-4 h-full text-slate-500 hover:text-slate-700 transition-colors"
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  {label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            {/* Scrollable tab bar so all tabs are always reachable on narrow panels */}
+            <div className="shrink-0 bg-slate-50 border-b border-slate-100 overflow-x-auto">
+              <TabsList className="bg-transparent rounded-none justify-start px-3 gap-0 h-10 w-max min-w-full">
+                {[
+                  { value: "overview",   label: "Variants",    Icon: Shield  },
+                  { value: "specs",      label: "Specs",       Icon: Cpu     },
+                  { value: "production", label: "Production",  Icon: Truck   },
+                  { value: "exports",    label: "Exports",     Icon: Globe   },
+                  { value: "rivals",     label: "Rivals",      Icon: Target  },
+                ].map(({ value, label, Icon }) => (
+                  <TabsTrigger
+                    key={value}
+                    value={value}
+                    className="flex items-center gap-1.5 text-xs rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-purple-700 data-[state=active]:bg-transparent px-4 h-full text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap"
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    {label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
             <div className="flex-1 overflow-y-auto">
-              <TabsContent value="overview"   className="mt-0 focus-visible:ring-0">
-                <OverviewTab detail={detail} />
-              </TabsContent>
-              <TabsContent value="specs"      className="mt-0 focus-visible:ring-0">
-                <SpecsTab detail={detail} />
-              </TabsContent>
-              <TabsContent value="production" className="mt-0 focus-visible:ring-0">
-                <ProductionTab detail={detail} />
-              </TabsContent>
-              <TabsContent value="exports"    className="mt-0 focus-visible:ring-0">
-                <ExportsTab contracts={detail.export_contracts} />
-              </TabsContent>
-              <TabsContent value="rivals"     className="mt-0 focus-visible:ring-0">
-                <RivalsTab
-                  competitors={detail.competitors}
-                  onSelectProduct={onNavigateToProduct}
-                />
-              </TabsContent>
+              <TabsContent value="overview"   className="mt-0 focus-visible:ring-0"><OverviewTab detail={detail} /></TabsContent>
+              <TabsContent value="specs"      className="mt-0 focus-visible:ring-0"><SpecsTab detail={detail} /></TabsContent>
+              <TabsContent value="production" className="mt-0 focus-visible:ring-0"><ProductionTab detail={detail} /></TabsContent>
+              <TabsContent value="exports"    className="mt-0 focus-visible:ring-0"><ExportsTab contracts={detail.export_contracts} /></TabsContent>
+              <TabsContent value="rivals"     className="mt-0 focus-visible:ring-0"><RivalsTab competitors={detail.competitors} onSelectProduct={onNavigateToProduct} /></TabsContent>
             </div>
           </Tabs>
 
           {/* ── Footer ────────────────────────────────────────────────── */}
           <div className="px-5 py-2.5 border-t border-slate-100 shrink-0 flex items-center justify-between">
-            <p className="text-xs text-slate-400">
-              Mis à jour : {detail.last_updated}
-            </p>
+            <p className="text-xs text-slate-400">Updated: {detail.last_updated}</p>
             <div className="flex items-center gap-3 text-xs text-slate-400">
-              <span className="flex items-center gap-1">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" /> Fiable
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="inline-block w-2 h-2 rounded-full bg-amber-400" /> Estimé
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="inline-block w-2 h-2 rounded-full bg-rose-400" /> Incertain
-              </span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-emerald-400" /> Reliable</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-amber-400" /> Estimated</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-rose-400" /> Uncertain</span>
             </div>
           </div>
         </SheetContent>
