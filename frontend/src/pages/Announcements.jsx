@@ -249,24 +249,21 @@ function NewsPlaceholder({ source, category, url, sourceLogo, articleSeed }) {
       ) : (
         <div className={`w-full h-full bg-gradient-to-br ${gradient}`} />
       )}
-      <div className="absolute inset-0 bg-black/50" />
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-        <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-lg mb-2">
-          {logoUrl ? (
-            <img
-              src={logoUrl}
-              alt={source}
-              className="w-10 h-10 object-contain"
-              onError={() => setLogoErr(true)}
-            />
-          ) : (
-            <span className="text-white/80 text-2xl font-bold">{source?.charAt(0)?.toUpperCase() || "?"}</span>
-          )}
-        </div>
-        <span className="text-white/70 text-[11px] font-semibold tracking-wide uppercase mt-1">{source}</span>
-        {category && (
-          <span className="text-white/40 text-[9px] mt-0.5 tracking-widest uppercase">{category}</span>
+      {/* Source logo pill — top-left, covered by HIGH badge when applicable */}
+      <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-white/85 backdrop-blur-sm rounded-full pl-1 pr-2 py-0.5 shadow-sm">
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt={source}
+            className="w-4 h-4 object-contain flex-shrink-0"
+            onError={() => setLogoErr(true)}
+          />
+        ) : (
+          <span className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-600 flex-shrink-0">
+            {source?.charAt(0)?.toUpperCase() || "?"}
+          </span>
         )}
+        <span className="text-slate-700 text-[10px] font-semibold tracking-wide uppercase truncate max-w-[90px]">{source}</span>
       </div>
     </div>
   );

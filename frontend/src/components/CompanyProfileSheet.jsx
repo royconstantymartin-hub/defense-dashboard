@@ -85,6 +85,97 @@ const AVATAR_COLORS = [
   "from-orange-600 to-orange-800",
 ];
 
+const COMPANY_NEWS_STOCK_PHOTOS = {
+  CONTRACT: [
+    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80",
+  ],
+  TECHNOLOGY: [
+    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=400&q=80",
+  ],
+  CONFLICT: [
+    "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1708342421457-9c59f4843fe1?auto=format&fit=crop&w=400&q=80",
+  ],
+  POLICY: [
+    "https://images.unsplash.com/photo-1742252306330-453455bd7526?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=400&q=80",
+  ],
+  GEOPOLITICS: [
+    "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1531266752426-aad472b7bbf4?auto=format&fit=crop&w=400&q=80",
+  ],
+  "M&A": [
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=400&q=80",
+  ],
+  INDUSTRY: [
+    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1708342421457-9c59f4843fe1?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=400&q=80",
+  ],
+};
+
+function NewsArticleThumb({ article, wrapperClass, showLogo = true }) {
+  const [imgError, setImgError] = useState(false);
+  const [logoErr, setLogoErr] = useState(false);
+  const photos = COMPANY_NEWS_STOCK_PHOTOS[article.category] || COMPANY_NEWS_STOCK_PHOTOS.INDUSTRY;
+  const [photoIdx, setPhotoIdx] = useState(() => {
+    const seed = article.url || article.title || "";
+    const hash = [...seed].reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return hash % photos.length;
+  });
+  const [allPhotosFailed, setAllPhotosFailed] = useState(false);
+
+  const domain = (() => { try { return article.url ? new URL(article.url).hostname : ""; } catch { return ""; } })();
+  const isGoogleDomain = !domain || domain.includes("google.com");
+  const isGoogleLogo = article.sourceLogo?.includes("news.google.com");
+  const effectiveLogo = !isGoogleLogo ? article.sourceLogo : null;
+  const logoUrl = !logoErr
+    ? (effectiveLogo || (!isGoogleDomain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : null))
+    : null;
+
+  const displayImage = !imgError && article.image;
+
+  const handlePhotoError = () => {
+    if (photoIdx + 1 < photos.length) setPhotoIdx(photoIdx + 1);
+    else setAllPhotosFailed(true);
+  };
+
+  return (
+    <div className={`relative overflow-hidden ${wrapperClass}`}>
+      {displayImage ? (
+        <img
+          src={article.image}
+          alt=""
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={() => setImgError(true)}
+        />
+      ) : !allPhotosFailed ? (
+        <img
+          src={photos[photoIdx]}
+          alt=""
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={handlePhotoError}
+        />
+      ) : (
+        <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300" />
+      )}
+      {!displayImage && showLogo && logoUrl && (
+        <div className="absolute bottom-1 right-1 w-5 h-5 rounded bg-white/90 flex items-center justify-center shadow-sm">
+          <img
+            src={logoUrl}
+            alt=""
+            className="w-3.5 h-3.5 object-contain"
+            onError={() => setLogoErr(true)}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function avatarColor(name = "") {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
@@ -587,16 +678,9 @@ export default function CompanyProfileSheet({ name, onClose }) {
                         rel="noopener noreferrer"
                         className="block rounded-xl overflow-hidden border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all group"
                       >
-                        {article.image && (
-                          <div className="w-full h-40 bg-slate-100 overflow-hidden">
-                            <img
-                              src={article.image}
-                              alt=""
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              onError={e => { e.target.parentElement.style.display = "none"; }}
-                            />
-                          </div>
-                        )}
+                        <div className="w-full h-40 bg-slate-100 overflow-hidden">
+                          <NewsArticleThumb article={article} wrapperClass="w-full h-full" showLogo={true} />
+                        </div>
                         <div className="p-3">
                           <p className="text-sm font-semibold text-slate-800 group-hover:text-purple-700 transition-colors line-clamp-3 leading-snug">
                             {article.title}
@@ -617,16 +701,9 @@ export default function CompanyProfileSheet({ name, onClose }) {
                         rel="noopener noreferrer"
                         className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group border border-transparent hover:border-slate-100"
                       >
-                        {article.image && (
-                          <div className="w-16 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-slate-100">
-                            <img
-                              src={article.image}
-                              alt=""
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              onError={e => { e.target.parentElement.style.display = "none"; }}
-                            />
-                          </div>
-                        )}
+                        <div className="w-16 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-slate-100">
+                          <NewsArticleThumb article={article} wrapperClass="w-full h-full" showLogo={true} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-slate-800 group-hover:text-purple-700 transition-colors line-clamp-2 leading-snug">
                             {article.title}
