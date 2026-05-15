@@ -1413,7 +1413,7 @@ function BranchCard({ branch, typePhoto, emblemUrl }) {
       className="group flex flex-col rounded-xl border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all bg-white overflow-hidden"
     >
       {/* Photo header area */}
-      <div className="relative w-full h-24 overflow-hidden shrink-0">
+      <div className="relative w-full h-16 overflow-hidden shrink-0">
         {typePhoto && !photoError ? (
           <img
             src={typePhoto}
@@ -1535,20 +1535,19 @@ function NewsCard({ article }) {
 }
 
 // ── Flag tick for the regional comparison bar chart ───────────────────────────
+// SVG <image> is used (not foreignObject) for reliable rendering on all browsers including iOS Safari.
 function CustomizedFlagTick({ x, y, payload }) {
   const code = COUNTRY_FLAGS[payload?.value] || payload?.value?.toLowerCase();
   if (!code) return null;
   return (
-    <foreignObject x={x - 22} y={y - 8} width={20} height={16}>
-      <img
-        src={`https://flagcdn.com/w40/${code}.png`}
-        alt={payload?.value}
-        width={20}
-        height={13}
-        style={{ borderRadius: 2, objectFit: 'cover' }}
-        onError={e => { e.currentTarget.style.opacity = '0'; }}
-      />
-    </foreignObject>
+    <image
+      href={`https://flagcdn.com/w40/${code}.png`}
+      x={x - 22}
+      y={y - 7}
+      width={20}
+      height={14}
+      preserveAspectRatio="xMidYMid slice"
+    />
   );
 }
 
