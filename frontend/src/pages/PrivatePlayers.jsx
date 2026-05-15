@@ -5,15 +5,9 @@ import { getLogoUrls } from "@/lib/companyLogos";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Search, Lock, Globe, Users, Building2, ExternalLink,
-  DollarSign, Filter, ChevronRight, ChevronLeft, TrendingUp,
+  Search, Lock, Globe, Building2, ExternalLink,
+  DollarSign, TrendingUp, ChevronRight, ChevronLeft, ChevronDown,
+  Plane, Cpu, Anchor, Brain, Satellite, Zap, Wrench, Truck, Shield,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
@@ -51,7 +45,9 @@ function LogoWithFallback({ name, website, size = 40 }) {
         className={`bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}
         style={{ width: size, height: size }}
       >
-        <span className="text-xs font-bold text-white tracking-tight">{initials(name)}</span>
+        <span className="text-xs font-bold text-white tracking-tight" style={{ fontSize: size < 32 ? 9 : 12 }}>
+          {initials(name)}
+        </span>
       </div>
     );
   }
@@ -82,7 +78,7 @@ const COUNTRY_ISO = {
   "South Africa": "za", "EU": "eu",
 };
 
-// ── Valuation formatter ───────────────────────────────────────────────────────
+// ── Formatters ────────────────────────────────────────────────────────────────
 
 function formatCap(value) {
   if (!value || value <= 0) return null;
@@ -90,37 +86,6 @@ function formatCap(value) {
   const m = value * 1000;
   if (m >= 1) return `$${m < 10 ? m.toFixed(1) : Math.round(m)}M`;
   return null;
-}
-
-// ── Funding badge ─────────────────────────────────────────────────────────────
-
-function FundingBadge({ stage }) {
-  if (!stage) return null;
-  const s = stage.toLowerCase();
-  let cls = "bg-slate-50 text-slate-500 border-slate-200";
-  if (s.includes("series a"))      cls = "bg-emerald-50 text-emerald-700 border-emerald-200";
-  else if (s.includes("series b")) cls = "bg-blue-50 text-blue-700 border-blue-200";
-  else if (s.includes("series c")) cls = "bg-indigo-50 text-indigo-700 border-indigo-200";
-  else if (s.includes("series d") || s.includes("series e") || s.includes("series f"))
-                                    cls = "bg-violet-50 text-violet-700 border-violet-200";
-  else if (s.includes("seed"))      cls = "bg-amber-50 text-amber-700 border-amber-200";
-  else if (s.includes("acquired"))  cls = "bg-rose-50 text-rose-700 border-rose-200";
-
-  let short = stage;
-  const seriesMatch = stage.match(/(Series [A-F]|Seed)/i);
-  const moneyMatch  = stage.match(/\$[\d.]+[BMK]|€[\d.]+[BMK]/i);
-  if (seriesMatch) {
-    short = seriesMatch[0] + (moneyMatch ? ` · ${moneyMatch[0]}` : "");
-  } else if (stage.length > 28) {
-    short = stage.slice(0, 28) + "…";
-  }
-
-  return (
-    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border ${cls} whitespace-nowrap`}>
-      <DollarSign className="w-3 h-3 flex-shrink-0" />
-      {short}
-    </span>
-  );
 }
 
 // ── Business logic ────────────────────────────────────────────────────────────
@@ -132,51 +97,240 @@ function isPrivatePlayer(company) {
   );
 }
 
-function autoDescription(company) {
-  if (company.description) return company.description;
-  const specs = (company.specializations || []).slice(0, 3).join(", ");
-  const country = company.country || "";
-  if (specs && country) return `${country} defense company · ${specs}`;
-  if (specs) return specs;
-  return null;
+// ── Macro category taxonomy ───────────────────────────────────────────────────
+
+const MACRO_CATEGORIES = [
+  {
+    id: "autonomous",
+    name: "Autonomous Systems & UAV",
+    description: "Unmanned platforms, loitering munitions, counter-drone",
+    icon: Cpu,
+    color: "purple",
+    keywords: ["UAV", "Small UAV", "Loitering Munitions", "Autonomous", "Counter-UAS", "UAS", "Drones"],
+  },
+  {
+    id: "missiles",
+    name: "Missiles & Air Defense",
+    description: "Strike systems, interceptors, rockets, ammunition",
+    icon: Shield,
+    color: "rose",
+    keywords: ["Missiles", "Air Defense", "Iron Dome", "Trophy", "Rockets", "Ammunition", "Energetics", "S-400", "Remote Weapons"],
+  },
+  {
+    id: "aerospace",
+    name: "Aerospace & Aviation",
+    description: "Fixed-wing, rotorcraft, engines, launch systems",
+    icon: Plane,
+    color: "indigo",
+    keywords: ["Aircraft", "Helicopters", "Aerospace", "Rotorcraft", "Rafale", "MiG", "Sukhoi", "Business Jets", "Engines", "Propulsion", "Launch"],
+  },
+  {
+    id: "land",
+    name: "Land Systems",
+    description: "Armored vehicles, artillery, ground platforms",
+    icon: Truck,
+    color: "amber",
+    keywords: ["Land Systems", "Tanks", "Artillery", "Military Vehicles", "VAB", "Griffon", "K9", "Armored"],
+  },
+  {
+    id: "naval",
+    name: "Naval & Maritime",
+    description: "Ships, submarines, maritime systems",
+    icon: Anchor,
+    color: "blue",
+    keywords: ["Naval", "Submarines", "Surface Ships", "Shipbuilding", "Maritime", "Frigates", "Sonar"],
+  },
+  {
+    id: "space",
+    name: "Space & ISR",
+    description: "Satellites, imagery, geospatial intelligence",
+    icon: Satellite,
+    color: "sky",
+    keywords: ["Space", "Satellites", "Imagery", "Geospatial"],
+  },
+  {
+    id: "intel",
+    name: "Intelligence, Cyber & EW",
+    description: "C2, SIGINT, electronic warfare, AI & analytics",
+    icon: Brain,
+    color: "emerald",
+    keywords: ["Cyber", "AI", "Intelligence", "Analytics", "Software", "Electronic Warfare", "SIGINT", "ISR", "C4I", "Communications", "Radar", "Sensors", "Optronics"],
+  },
+  {
+    id: "nuclear",
+    name: "Nuclear & Advanced Tech",
+    description: "Nuclear, directed energy, advanced propulsion",
+    icon: Zap,
+    color: "orange",
+    keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"],
+  },
+  {
+    id: "industrial",
+    name: "Industrial & Tech Base",
+    description: "Components, electronics, R&D, simulation, IT",
+    icon: Wrench,
+    color: "slate",
+    keywords: ["Components", "Electronics", "Defense Electronics", "Transmissions", "R&D", "Testing", "Simulation", "Integration", "Engineering", "MRO", "IT", "Consulting", "Health", "Law Enforcement"],
+  },
+];
+
+const CAT_COLORS = {
+  purple: {
+    border: "border-purple-200", hoverBorder: "hover:border-purple-300",
+    activeBorder: "border-purple-500", activeBg: "bg-purple-50/60",
+    icon: "text-purple-700", iconBg: "bg-purple-50 border-purple-200",
+    badge: "bg-purple-100 text-purple-700",
+  },
+  rose: {
+    border: "border-rose-200", hoverBorder: "hover:border-rose-300",
+    activeBorder: "border-rose-500", activeBg: "bg-rose-50/60",
+    icon: "text-rose-600", iconBg: "bg-rose-50 border-rose-200",
+    badge: "bg-rose-100 text-rose-700",
+  },
+  indigo: {
+    border: "border-indigo-200", hoverBorder: "hover:border-indigo-300",
+    activeBorder: "border-indigo-500", activeBg: "bg-indigo-50/60",
+    icon: "text-indigo-600", iconBg: "bg-indigo-50 border-indigo-200",
+    badge: "bg-indigo-100 text-indigo-700",
+  },
+  amber: {
+    border: "border-amber-200", hoverBorder: "hover:border-amber-300",
+    activeBorder: "border-amber-500", activeBg: "bg-amber-50/60",
+    icon: "text-amber-600", iconBg: "bg-amber-50 border-amber-200",
+    badge: "bg-amber-100 text-amber-700",
+  },
+  blue: {
+    border: "border-blue-200", hoverBorder: "hover:border-blue-300",
+    activeBorder: "border-blue-500", activeBg: "bg-blue-50/60",
+    icon: "text-blue-600", iconBg: "bg-blue-50 border-blue-200",
+    badge: "bg-blue-100 text-blue-700",
+  },
+  sky: {
+    border: "border-sky-200", hoverBorder: "hover:border-sky-300",
+    activeBorder: "border-sky-500", activeBg: "bg-sky-50/60",
+    icon: "text-sky-600", iconBg: "bg-sky-50 border-sky-200",
+    badge: "bg-sky-100 text-sky-700",
+  },
+  emerald: {
+    border: "border-emerald-200", hoverBorder: "hover:border-emerald-300",
+    activeBorder: "border-emerald-500", activeBg: "bg-emerald-50/60",
+    icon: "text-emerald-600", iconBg: "bg-emerald-50 border-emerald-200",
+    badge: "bg-emerald-100 text-emerald-700",
+  },
+  orange: {
+    border: "border-orange-200", hoverBorder: "hover:border-orange-300",
+    activeBorder: "border-orange-500", activeBg: "bg-orange-50/60",
+    icon: "text-orange-600", iconBg: "bg-orange-50 border-orange-200",
+    badge: "bg-orange-100 text-orange-700",
+  },
+  slate: {
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-400", activeBg: "bg-slate-50",
+    icon: "text-slate-500", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-600",
+  },
+};
+
+function assignCategory(company) {
+  const specs = new Set((company.specializations || []).map((s) => s.toLowerCase()));
+  for (const cat of MACRO_CATEGORIES) {
+    if (cat.keywords.some((kw) => specs.has(kw.toLowerCase()))) return cat.id;
+  }
+  return "industrial";
 }
 
-const PAGE_SIZE = 25;
+// ── Category tile ─────────────────────────────────────────────────────────────
 
-// ── Row component ─────────────────────────────────────────────────────────────
+function CategoryTile({ category, companies, isSelected, onSelect }) {
+  const clr = CAT_COLORS[category.color];
+  const Icon = category.icon;
+  const topLogos = companies.slice(0, 7);
+  const isEmpty = companies.length === 0;
 
-function PlayerRow({ company, onClick }) {
-  const iso   = COUNTRY_ISO[(company.country || "").trim()];
-  const specs = company.specializations || [];
-  const desc  = autoDescription(company);
-  const cap   = formatCap(company.market_cap);
-  const url   = company.website
+  return (
+    <button
+      onClick={isEmpty ? undefined : onSelect}
+      disabled={isEmpty}
+      className={`w-full text-left p-4 rounded-xl border transition-all duration-150 bg-white shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] ${
+        isEmpty
+          ? "opacity-40 cursor-default border-slate-100"
+          : isSelected
+          ? `${clr.activeBorder} ${clr.activeBg} shadow-md`
+          : `${clr.border} ${clr.hoverBorder} hover:shadow-md`
+      }`}
+    >
+      {/* Header row */}
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center border flex-shrink-0 ${clr.iconBg}`}>
+            <Icon className={`w-4 h-4 ${clr.icon}`} />
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-semibold text-[13px] text-slate-800 leading-tight truncate">{category.name}</h3>
+            <p className="text-[11px] text-slate-400 leading-tight mt-0.5 truncate">{category.description}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+          <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ${clr.badge}`}>
+            {companies.length}
+          </span>
+          {!isEmpty && (
+            <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isSelected ? "rotate-180" : ""}`} />
+          )}
+        </div>
+      </div>
+
+      {/* Logo row */}
+      {topLogos.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mt-2">
+          {topLogos.map((c) => (
+            <LogoWithFallback key={c.id || c.name} name={c.name} website={c.website} size={26} />
+          ))}
+          {companies.length > 7 && (
+            <div
+              className="rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0"
+              style={{ width: 26, height: 26 }}
+            >
+              <span className="text-[9px] text-slate-500 font-medium">+{companies.length - 7}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </button>
+  );
+}
+
+// ── Compact company row ───────────────────────────────────────────────────────
+
+function CompactPlayerRow({ company, onClick }) {
+  const iso = COUNTRY_ISO[(company.country || "").trim()];
+  const cap = formatCap(company.market_cap) || formatCap(company.revenue);
+  const isRevenue = !formatCap(company.market_cap) && !!formatCap(company.revenue);
+  const url = company.website
     ? (company.website.startsWith("http") ? company.website : `https://${company.website}`)
     : null;
 
   return (
     <div
-      className="relative flex items-center gap-4 px-5 py-3 hover:bg-purple-50/40 transition-colors cursor-pointer group"
+      className="relative flex items-center gap-3 px-4 py-2.5 hover:bg-purple-50/40 transition-colors cursor-pointer group"
       onClick={onClick}
     >
       <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
 
-      {/* Logo */}
-      <LogoWithFallback name={company.name} website={company.website} size={40} />
+      <LogoWithFallback name={company.name} website={company.website} size={32} />
 
-      {/* Company name + meta */}
-      <div className="w-44 flex-shrink-0 min-w-0">
+      <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
-          <h3 className="font-semibold text-[14px] leading-snug text-slate-900 group-hover:text-purple-700 transition-colors truncate">
+          <span className="font-medium text-[13px] text-slate-800 group-hover:text-purple-700 transition-colors truncate">
             {company.name}
-          </h3>
+          </span>
           {url && (
             <a
               href={url}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-slate-300 hover:text-purple-500 transition-colors flex-shrink-0"
+              className="text-slate-200 hover:text-purple-400 flex-shrink-0 transition-colors"
             >
               <ExternalLink className="w-3 h-3" />
             </a>
@@ -187,114 +341,96 @@ function PlayerRow({ company, onClick }) {
             <img
               src={`https://flagcdn.com/w20/${iso}.png`}
               alt={company.country}
-              title={company.country}
-              className="w-4 h-auto rounded-sm flex-shrink-0"
+              className="w-3.5 h-auto rounded-sm flex-shrink-0"
               onError={(e) => { e.target.style.display = "none"; }}
             />
           )}
-          <span className="text-xs text-slate-400 truncate">
+          <span className="text-[11px] text-slate-400 truncate">
             {company.headquarters || company.country || "—"}
+            {company.founded_year && (
+              <span className="text-slate-300"> · {company.founded_year}</span>
+            )}
           </span>
-          {company.founded_year && (
-            <span className="text-xs text-slate-300 flex-shrink-0">· {company.founded_year}</span>
-          )}
         </div>
       </div>
 
-      {/* Description */}
-      <div className="flex-1 min-w-0 hidden xl:block">
-        {desc && (
-          <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">{desc}</p>
-        )}
-      </div>
-
-      {/* Specializations — uniform neutral style, max 3 */}
-      <div className="flex flex-wrap gap-1 w-48 flex-shrink-0">
-        {specs.slice(0, 3).map((s) => (
-          <span
-            key={s}
-            className="text-xs px-2 py-0.5 rounded border bg-slate-50 text-slate-600 border-slate-200 whitespace-nowrap"
-          >
-            {s}
-          </span>
-        ))}
-        {specs.length > 3 && (
-          <span className="text-xs text-slate-400 self-center">+{specs.length - 3}</span>
-        )}
-      </div>
-
-      {/* Valuation / Revenue */}
-      <div className="w-20 flex-shrink-0 text-right">
+      <div className="w-28 text-right flex-shrink-0">
         {cap ? (
-          <span className="text-xs font-mono font-semibold text-slate-700">{cap}</span>
-        ) : formatCap(company.revenue) ? (
           <div>
-            <span className="text-xs font-mono font-semibold text-slate-500">{formatCap(company.revenue)}</span>
-            <p className="text-[9px] text-slate-400 leading-tight">revenue</p>
+            <span className="text-xs font-mono font-semibold text-slate-700">{cap}</span>
+            {isRevenue && <p className="text-[9px] text-slate-400 leading-tight">revenue</p>}
           </div>
         ) : (
           <span className="text-xs text-slate-300">—</span>
         )}
       </div>
 
-      {/* Funding */}
-      <div className="w-36 flex-shrink-0 flex justify-end">
-        {company.funding_stage ? (
-          <FundingBadge stage={company.funding_stage} />
-        ) : (
-          <span className="text-xs text-slate-300">—</span>
-        )}
-      </div>
+      <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-purple-400 transition-colors flex-shrink-0" />
+    </div>
+  );
+}
 
-      {/* Employees */}
-      <div className="w-20 flex-shrink-0 text-right hidden lg:block">
-        {company.employees ? (
-          <span className="text-xs text-slate-500 flex items-center justify-end gap-1">
-            <Users className="w-3 h-3 text-slate-300" />
-            {company.employees >= 1000
-              ? `${(company.employees / 1000).toFixed(company.employees % 1000 === 0 ? 0 : 1)}k`
-              : company.employees}
-          </span>
-        ) : (
-          <span className="text-xs text-slate-300">—</span>
-        )}
-      </div>
+// ── Expanded category list ────────────────────────────────────────────────────
 
-      <ChevronRight className="w-4 h-4 text-slate-200 group-hover:text-purple-400 transition-colors flex-shrink-0" />
+function ExpandedList({ category, companies, onCompanyClick }) {
+  const clr = CAT_COLORS[category.color];
+  const Icon = category.icon;
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+      <div className={`flex items-center gap-2 px-4 py-3 border-b ${clr.activeBg} ${clr.activeBorder} border-b`}>
+        <Icon className={`w-4 h-4 ${clr.icon}`} />
+        <span className="text-sm font-semibold text-slate-700">{category.name}</span>
+        <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ml-auto ${clr.badge}`}>
+          {companies.length}
+        </span>
+      </div>
+      <div className="flex items-center gap-3 px-4 py-1.5 border-b border-slate-100 bg-slate-50/50">
+        <div className="w-8 flex-shrink-0" />
+        <div className="flex-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Company</div>
+        <div className="w-28 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
+          Valuation (est.)
+        </div>
+        <div className="w-3.5 flex-shrink-0" />
+      </div>
+      <div className="divide-y divide-slate-50">
+        {companies.map((c) => (
+          <CompactPlayerRow
+            key={c.id || c.name}
+            company={c}
+            onClick={() => onCompanyClick(c.name)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
 // ── Pagination controls ───────────────────────────────────────────────────────
 
-function Pagination({ page, totalPages, total, pageSize, onChange }) {
+const PAGE_SIZE = 25;
+
+function Pagination({ page, totalPages, total, onChange }) {
   if (totalPages <= 1) return null;
-  const from = (page - 1) * pageSize + 1;
-  const to   = Math.min(page * pageSize, total);
+  const from = (page - 1) * PAGE_SIZE + 1;
+  const to = Math.min(page * PAGE_SIZE, total);
   return (
     <div className="flex items-center justify-between mt-4 px-1">
-      <p className="text-xs text-slate-400">
-        {from}–{to} of {total} companies
-      </p>
+      <p className="text-xs text-slate-400">{from}–{to} of {total} companies</p>
       <div className="flex items-center gap-2">
         <button
           onClick={() => onChange(page - 1)}
           disabled={page === 1}
           className="flex items-center gap-1 px-3 h-8 text-sm rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
-          <ChevronLeft className="w-4 h-4" />
-          Prev
+          <ChevronLeft className="w-4 h-4" /> Prev
         </button>
-        <span className="text-xs font-mono text-slate-500 px-2">
-          {page} / {totalPages}
-        </span>
+        <span className="text-xs font-mono text-slate-500 px-2">{page} / {totalPages}</span>
         <button
           onClick={() => onChange(page + 1)}
           disabled={page === totalPages}
           className="flex items-center gap-1 px-3 h-8 text-sm rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
-          Next
-          <ChevronRight className="w-4 h-4" />
+          Next <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>
@@ -309,7 +445,7 @@ export default function PrivatePlayers() {
   const [error, setError]                 = useState(null);
   const [search, setSearch]               = useState("");
   const [filterCountry, setFilterCountry] = useState("all");
-  const [filterSpec, setFilterSpec]       = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [page, setPage]                   = useState(1);
   const [profileName, setProfileName]     = useState(null);
 
@@ -330,43 +466,43 @@ export default function PrivatePlayers() {
 
   const players = useMemo(() => companies.filter(isPrivatePlayer), [companies]);
 
-  const allSpecs = useMemo(() => {
-    const set = new Set();
-    players.forEach((c) => (c.specializations || []).forEach((s) => set.add(s)));
-    return Array.from(set).sort();
-  }, [players]);
-
   const countryCounts = useMemo(() => {
     const map = {};
-    players.forEach((c) => {
-      if (c.country) map[c.country] = (map[c.country] || 0) + 1;
-    });
+    players.forEach((c) => { if (c.country) map[c.country] = (map[c.country] || 0) + 1; });
     return Object.entries(map).sort((a, b) => b[1] - a[1]);
   }, [players]);
 
-  const filtered = useMemo(() => {
-    let list = players;
-    if (filterCountry !== "all") list = list.filter((c) => c.country === filterCountry);
-    if (filterSpec !== "all")    list = list.filter((c) => (c.specializations || []).includes(filterSpec));
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          (c.description || "").toLowerCase().includes(q) ||
-          (c.specializations || []).some((s) => s.toLowerCase().includes(q)) ||
-          (c.headquarters || "").toLowerCase().includes(q) ||
-          (c.country || "").toLowerCase().includes(q)
-      );
-    }
-    return list;
-  }, [players, filterCountry, filterSpec, search]);
+  const countryFiltered = useMemo(() => {
+    if (filterCountry === "all") return players;
+    return players.filter((c) => c.country === filterCountry);
+  }, [players, filterCountry]);
 
-  // Reset to page 1 whenever filters change
-  useEffect(() => { setPage(1); }, [search, filterCountry, filterSpec]);
+  const categorized = useMemo(() => {
+    const map = {};
+    MACRO_CATEGORIES.forEach((cat) => { map[cat.id] = []; });
+    countryFiltered.forEach((c) => { map[assignCategory(c)].push(c); });
+    return map;
+  }, [countryFiltered]);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const isSearchActive = search.trim().length > 0;
+
+  const searchResults = useMemo(() => {
+    if (!isSearchActive) return [];
+    const q = search.toLowerCase();
+    return countryFiltered.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        (c.description || "").toLowerCase().includes(q) ||
+        (c.specializations || []).some((s) => s.toLowerCase().includes(q)) ||
+        (c.headquarters || "").toLowerCase().includes(q) ||
+        (c.country || "").toLowerCase().includes(q)
+    );
+  }, [countryFiltered, search, isSearchActive]);
+
+  const totalSearchPages = Math.ceil(searchResults.length / PAGE_SIZE);
+  const paginatedSearch = searchResults.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  useEffect(() => { setPage(1); }, [search, filterCountry]);
 
   const totalValuation = useMemo(
     () => players.reduce((s, c) => s + (c.market_cap || 0), 0),
@@ -376,6 +512,14 @@ export default function PrivatePlayers() {
     () => players.filter((c) => c.funding_stage && !c.funding_stage.toLowerCase().includes("private — ")).length,
     [players]
   );
+
+  function handleCategorySelect(catId) {
+    setSelectedCategory((prev) => (prev === catId ? null : catId));
+  }
+
+  const activeCategoryData = selectedCategory
+    ? MACRO_CATEGORIES.find((c) => c.id === selectedCategory)
+    : null;
 
   return (
     <div className="p-6 max-w-screen-2xl mx-auto">
@@ -398,10 +542,10 @@ export default function PrivatePlayers() {
       {!loading && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Companies",       value: players.length,                          icon: Building2,  color: "text-purple-700" },
-            { label: "Countries",        value: countryCounts.length,                   icon: Globe,      color: "text-blue-600"   },
-            { label: "Total Valuation",  value: formatCap(totalValuation) || "—",       icon: TrendingUp, color: "text-emerald-600" },
-            { label: "With Funding",     value: totalFunded,                             icon: DollarSign, color: "text-amber-600"  },
+            { label: "Companies",      value: players.length,                    icon: Building2,  color: "text-purple-700" },
+            { label: "Countries",      value: countryCounts.length,              icon: Globe,      color: "text-blue-600"   },
+            { label: "Total Valuation",value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-emerald-600"},
+            { label: "With Funding",   value: totalFunded,                       icon: DollarSign, color: "text-amber-600"  },
           ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
@@ -418,7 +562,7 @@ export default function PrivatePlayers() {
         </div>
       )}
 
-      {/* Search + filters */}
+      {/* Search bar */}
       <div className="flex flex-wrap gap-3 mb-5">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -429,23 +573,9 @@ export default function PrivatePlayers() {
             className="pl-9 h-9 text-sm border-slate-200"
           />
         </div>
-
-        <Select value={filterSpec} onValueChange={setFilterSpec}>
-          <SelectTrigger className="w-52 h-9 text-sm border-slate-200">
-            <Filter className="w-4 h-4 mr-1.5 text-slate-400" />
-            <SelectValue placeholder="Specialization" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All specializations</SelectItem>
-            {allSpecs.map((s) => (
-              <SelectItem key={s} value={s}>{s}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {(search || filterCountry !== "all" || filterSpec !== "all") && (
+        {(search || filterCountry !== "all") && (
           <button
-            onClick={() => { setSearch(""); setFilterCountry("all"); setFilterSpec("all"); }}
+            onClick={() => { setSearch(""); setFilterCountry("all"); setSelectedCategory(null); }}
             className="text-sm text-slate-500 hover:text-slate-800 flex items-center gap-1.5 px-3 h-9 rounded-md border border-slate-200 hover:bg-slate-50 transition-colors"
           >
             Reset
@@ -490,7 +620,7 @@ export default function PrivatePlayers() {
               </button>
 
               {countryCounts.map(([country, count]) => {
-                const iso    = COUNTRY_ISO[country];
+                const iso = COUNTRY_ISO[country];
                 const active = filterCountry === country;
                 return (
                   <button
@@ -526,45 +656,70 @@ export default function PrivatePlayers() {
             </div>
           </div>
 
-          {/* ── Table ── */}
+          {/* ── Main content ── */}
           <div className="flex-1 min-w-0">
-            {filtered.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-24 gap-2">
-                <Lock className="w-10 h-10 text-slate-200" />
-                <p className="text-slate-400 text-sm">No companies match your search.</p>
-              </div>
-            ) : (
-              <>
-                {/* Column headers */}
-                <div className="flex items-center gap-4 px-5 mb-1 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                  <div className="w-40 flex-shrink-0 ml-[52px]">Company</div>
-                  <div className="flex-1 hidden xl:block">Description</div>
-                  <div className="w-48 flex-shrink-0">Specializations</div>
-                  <div className="w-20 flex-shrink-0 text-right">Val. / Rev.</div>
-                  <div className="w-36 flex-shrink-0 text-right">Funding</div>
-                  <div className="w-20 flex-shrink-0 text-right hidden lg:block">Employees</div>
-                  <div className="w-4 flex-shrink-0" />
+            {isSearchActive ? (
+              /* Search results: flat list */
+              searchResults.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-24 gap-2">
+                  <Lock className="w-10 h-10 text-slate-200" />
+                  <p className="text-slate-400 text-sm">No companies match your search.</p>
                 </div>
-
-                {/* Rows */}
-                <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
-                  {paginated.map((company) => (
-                    <PlayerRow
-                      key={company.id || company.name}
-                      company={company}
-                      onClick={() => setProfileName(company.name)}
+              ) : (
+                <>
+                  <p className="text-xs text-slate-400 mb-2 px-1">
+                    {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} for &ldquo;{search}&rdquo;
+                  </p>
+                  <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+                    <div className="flex items-center gap-3 px-4 py-1.5 border-b border-slate-100 bg-slate-50/50">
+                      <div className="w-8 flex-shrink-0" />
+                      <div className="flex-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Company</div>
+                      <div className="w-28 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
+                        Valuation (est.)
+                      </div>
+                      <div className="w-3.5 flex-shrink-0" />
+                    </div>
+                    <div className="divide-y divide-slate-50">
+                      {paginatedSearch.map((c) => (
+                        <CompactPlayerRow
+                          key={c.id || c.name}
+                          company={c}
+                          onClick={() => setProfileName(c.name)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <Pagination
+                    page={page}
+                    totalPages={totalSearchPages}
+                    total={searchResults.length}
+                    onChange={setPage}
+                  />
+                </>
+              )
+            ) : (
+              /* Category tile grid + expanded list */
+              <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {MACRO_CATEGORIES.map((cat) => (
+                    <CategoryTile
+                      key={cat.id}
+                      category={cat}
+                      companies={categorized[cat.id] || []}
+                      isSelected={selectedCategory === cat.id}
+                      onSelect={() => handleCategorySelect(cat.id)}
                     />
                   ))}
                 </div>
 
-                <Pagination
-                  page={page}
-                  totalPages={totalPages}
-                  total={filtered.length}
-                  pageSize={PAGE_SIZE}
-                  onChange={setPage}
-                />
-              </>
+                {selectedCategory && activeCategoryData && (categorized[selectedCategory] || []).length > 0 && (
+                  <ExpandedList
+                    category={activeCategoryData}
+                    companies={categorized[selectedCategory]}
+                    onCompanyClick={setProfileName}
+                  />
+                )}
+              </div>
             )}
           </div>
         </div>
