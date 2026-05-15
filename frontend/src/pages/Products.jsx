@@ -1060,7 +1060,7 @@ export default function Products() {
                 </span>
                 {FLAGSHIP_PRODUCTS[product.name] && !compareMode && (
                   <span className="absolute bottom-2 left-2 text-xs font-medium px-2 py-0.5 rounded-full bg-purple-700 text-white">
-                    ★ Dossier
+                    ★ Full Profile
                   </span>
                 )}
                 {compareMode && (
