@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
@@ -1156,6 +1156,263 @@ const CAPABILITY_DETAILS = {
   },
 };
 
+// Wikipedia article title overrides for capability breakdown platforms.
+// Keys match the "model" strings in CAPABILITY_DETAILS exactly.
+const PLATFORM_WIKI_TITLES = {
+  // ── Fighters / Bombers ───────────────────────────────────────────────────
+  "F-35A/B/C Lightning II":             "Lockheed Martin F-35 Lightning II",
+  "F-35A Lightning II":                 "Lockheed Martin F-35 Lightning II",
+  "F-35B Lightning II":                 "Lockheed Martin F-35 Lightning II",
+  "F-35B (STOVL)":                      "Lockheed Martin F-35 Lightning II",
+  "F-22A Raptor":                       "Lockheed Martin F-22 Raptor",
+  "F-15C/D/E Strike Eagle":             "McDonnell Douglas F-15 Eagle",
+  "F-15C/D Eagle":                      "McDonnell Douglas F-15 Eagle",
+  "F-15J/DJ Eagle":                     "McDonnell Douglas F-15 Eagle",
+  "F-15K Slam Eagle":                   "McDonnell Douglas F-15 Eagle",
+  "F-15SA Strike Eagle":                "McDonnell Douglas F-15 Eagle",
+  "F-16C/D Fighting Falcon":            "General Dynamics F-16 Fighting Falcon",
+  "F-16C/D Fighting Falcon (KF-16)":   "General Dynamics F-16 Fighting Falcon",
+  "F-2 Viper Zero":                     "Mitsubishi F-2",
+  "F/A-18E/F/G Super Hornet / Growler": "Boeing F/A-18E/F Super Hornet",
+  "F/A-18F Super Hornet (nuclear role)":"Boeing F/A-18E/F Super Hornet",
+  "Typhoon":                            "Eurofighter Typhoon",
+  "Typhoon FGR4 / F2":                  "Eurofighter Typhoon",
+  "Eurofighter ECR (SEAD)":             "Eurofighter Typhoon",
+  "Rafale":                             "Dassault Rafale",
+  "Rafale F3-R (Air Force)":            "Dassault Rafale",
+  "Rafale M (Navy carrier)":            "Dassault Rafale",
+  "Mirage 2000-5F / 2000D":            "Dassault Mirage 2000",
+  "Mirage 2000H/TH":                   "Dassault Mirage 2000",
+  "Su-27 Flanker / Su-30SM":           "Sukhoi Su-27",
+  "Su-27 / Su-30MKK":                  "Sukhoi Su-27",
+  "Su-30MKI Flanker-H":                "Sukhoi Su-30",
+  "Su-34 Fullback":                    "Sukhoi Su-34",
+  "Su-35S Flanker-E":                  "Sukhoi Su-35",
+  "Su-57 Felon (stealth)":             "Sukhoi Su-57",
+  "Su-25 Frogfoot":                    "Sukhoi Su-25",
+  "MiG-29 Fulcrum":                    "Mikoyan MiG-29",
+  "MiG-29 / MiG-29UPG":               "Mikoyan MiG-29",
+  "MiG-31 Foxhound":                   "Mikoyan MiG-31",
+  "MiG-21 Bison (phasing out)":        "Mikoyan-Gurevich MiG-21",
+  "J-20 Mighty Dragon (stealth)":      "Chengdu J-20",
+  "J-16 Flanker-D variant":            "Shenyang J-16",
+  "J-11/J-11B Flanker-L":              "Shenyang J-11",
+  "J-10C Firebird":                    "Chengdu J-10",
+  "J-7 / J-7A (legacy)":               "Chengdu J-7",
+  "H-6K/N Badger (bomber)":            "Xian H-6",
+  "KF-21 Boramae (initial batch)":     "KAI KF-21 Boramae",
+  "T-50 Golden Eagle / FA-50":         "KAI T-50 Golden Eagle",
+  "Tejas Mk.1A LCA":                   "HAL Tejas",
+  "SEPECAT Jaguar IS/IB":              "SEPECAT Jaguar",
+  "B-52H Stratofortress":              "Boeing B-52 Stratofortress",
+  "B-2A Spirit":                       "Northrop Grumman B-2 Spirit",
+  "B-1B Lancer":                       "Rockwell B-1 Lancer",
+  "A-10C Thunderbolt II":              "Fairchild Republic A-10 Thunderbolt II",
+  "Tornado IDS (retiring)":            "Panavia Tornado",
+  "Tornado IDS/ADV":                   "Panavia Tornado",
+  // ── Helicopters ─────────────────────────────────────────────────────────
+  "AH-64D/E Apache":                   "Boeing AH-64 Apache",
+  "AH-64D Apache":                     "Boeing AH-64 Apache",
+  "AH-64D Apache (JGSDF)":             "Boeing AH-64 Apache",
+  "AH-64E Apache Guardian":            "Boeing AH-64 Apache",
+  "AH-1Z Viper":                       "Bell AH-1Z Viper",
+  "AH-1S Cobra (reserve)":             "Bell AH-1 Cobra",
+  "UH-60 Black Hawk (all variants)":   "Sikorsky UH-60 Black Hawk",
+  "UH-60 Black Hawk":                  "Sikorsky UH-60 Black Hawk",
+  "UH-60JA Black Hawk":                "Sikorsky UH-60 Black Hawk",
+  "UH-60P Black Hawk":                 "Sikorsky UH-60 Black Hawk",
+  "MH-60R/S Seahawk":                  "Sikorsky SH-60 Seahawk",
+  "SH-60J/K Seahawk (naval ASW)":      "Sikorsky SH-60 Seahawk",
+  "CH-47F Chinook":                    "Boeing CH-47 Chinook",
+  "CH-47D Chinook":                    "Boeing CH-47 Chinook",
+  "CH-47JA Chinook":                   "Boeing CH-47 Chinook",
+  "Chinook HC6/6A":                    "Boeing CH-47 Chinook",
+  "CH-53E/K Super Stallion":           "Sikorsky CH-53 Sea Stallion",
+  "CH-53G/GS/GA Sea Stallion":         "Sikorsky CH-53 Sea Stallion",
+  "NH90 NFH (naval Caïman)":           "NHIndustries NH90",
+  "NH90 NTH (naval Sea Lion)":         "NHIndustries NH90",
+  "NH90 TTH (army transport)":         "NHIndustries NH90",
+  "Tiger HAD Attack":                  "Eurocopter Tiger",
+  "Tiger HAP / HCP Attack":            "Eurocopter Tiger",
+  "EC725 Caracal (CSAR/special ops)":  "Airbus Helicopters H225M",
+  "AS-532 Cougar":                     "Airbus Helicopters H215",
+  "SA 341/342 Gazelle (recon / anti-tank)": "Aérospatiale Gazelle",
+  "Mi-8/Mi-17 Hip (transport)":        "Mil Mi-8",
+  "Mi-17 / Mi-17V5 Hip":              "Mil Mi-8",
+  "Mi-17 / Mi-171 Hip":               "Mil Mi-8",
+  "Mi-24 Hind / Mi-35 Attack":         "Mil Mi-24",
+  "Mi-35 Hind Attack":                 "Mil Mi-24",
+  "Mi-28N Night Hunter Attack":        "Mil Mi-28",
+  "Ka-52 Alligator Attack":            "Kamov Ka-52",
+  "Ka-27 / Ka-29 Naval":               "Kamov Ka-27",
+  "Mi-26 Heavy Lift":                  "Mil Mi-26",
+  "Z-10 Attack":                       "CAIC Z-10",
+  "Z-19 Scout / Attack":               "Harbin Z-19",
+  "Z-20 (Black Hawk equivalent)":      "Harbin Z-20",
+  "Z-9 / Z-9W (Dauphin-derived)":     "Harbin Z-9",
+  "Z-8 / Z-18 Heavy Transport":        "Changhe Z-8",
+  "Dhruv ALH (all variants)":          "HAL Dhruv",
+  "Merlin HM2 / HC4 (naval & support)":"AgustaWestland AW101",
+  "MCH-101 Merlin (MCM/transport)":    "AgustaWestland AW101",
+  "Wildcat AH1 / HMA2":                "AgustaWestland AW159",
+  "Puma HC2":                          "Aérospatiale SA 330 Puma",
+  "Surion KUH-1 (utility)":            "KAI KUH-1 Surion",
+  "LAH (Light Armed Helicopter)":      "Korea Aerospace Industries LAH",
+  "UH-1Y Venom":                       "Bell UH-1Y Venom",
+  "OH-58D Kiowa Warrior":              "Bell OH-58 Kiowa",
+  "OH-1 Ninja (armed scout)":          "Kawasaki OH-1",
+  // ── Drones ──────────────────────────────────────────────────────────────
+  "MQ-9A/B Reaper":                    "General Atomics MQ-9 Reaper",
+  "MQ-9A Reaper":                      "General Atomics MQ-9 Reaper",
+  "MQ-9A Reaper MALE":                 "General Atomics MQ-9 Reaper",
+  "MQ-9B Reaper (on order)":           "General Atomics MQ-9 Reaper",
+  "MQ-9B Sea Guardian / Sky Guardian": "General Atomics MQ-9 Reaper",
+  "MQ-1C Gray Eagle":                  "General Atomics MQ-1C Gray Eagle",
+  "MQ-25 Stingray (carrier UAV)":      "Boeing MQ-25 Stingray",
+  "RQ-4 Global Hawk / Triton":         "Northrop Grumman RQ-4 Global Hawk",
+  "RQ-4 Global Hawk":                  "Northrop Grumman RQ-4 Global Hawk",
+  "RQ-4B Global Hawk":                 "Northrop Grumman RQ-4 Global Hawk",
+  "RQ-7B Shadow":                      "AAI RQ-7 Shadow",
+  "Wing Loong II MALE":                "CAIG Wing Loong II",
+  "Wing Loong I/II MALE":              "CAIG Wing Loong II",
+  "CH-4 / CH-5 Rainbow MALE":          "CASC CH-4 Rainbow",
+  "CH-4 Rainbow MALE":                 "CASC CH-4 Rainbow",
+  "Heron I / Heron TP MALE":           "IAI Heron",
+  "Heron 1 MALE (leased)":             "IAI Heron",
+  "Heron TP MALE":                     "IAI Heron TP",
+  "Watchkeeper WK450 tactical":        "Watchkeeper WK450",
+  "Protector RG Mk.1 (MQ-9B)":        "General Atomics MQ-9 Reaper",
+  "Patroller MALE (Safran)":           "Safran Patroller",
+  // ── Land – MBT ──────────────────────────────────────────────────────────
+  "M1A2 SEP v3 Abrams MBT":           "M1 Abrams",
+  "M1A1 Abrams MBT":                  "M1 Abrams",
+  "M1A2S Abrams MBT":                 "M1 Abrams",
+  "Leclerc MBT":                      "AMX-56 Leclerc",
+  "Leopard 2A6 / 2A7 MBT":            "Leopard 2",
+  "Challenger 2 MBT":                 "Challenger 2",
+  "Type 10 MBT":                      "Type 10 tank",
+  "Type 90 MBT":                      "Type 90 tank",
+  "Type 74 MBT (reserve)":            "Type 74 tank",
+  "K2 Black Panther MBT":             "K2 Black Panther",
+  "K1E1 / K1A2 MBT":                  "K1 88-Tank",
+  "K1E2 MBT":                         "K1 88-Tank",
+  "T-90S Bhishma MBT":                "T-90",
+  "T-72M1 Ajeya MBT":                 "T-72",
+  "T-72B3 / T-72B3M MBT":             "T-72",
+  "T-80BV / T-80U MBT":               "T-80",
+  "T-80U MBT (reserve)":              "T-80",
+  "T-90A / T-90M Proryv MBT":         "T-90",
+  "T-14 Armata MBT (limited)":        "T-14 Armata",
+  "T-59 MBT (reserve)":               "Type 59 tank",
+  "Type 59 MBT (reserve)":            "Type 59 tank",
+  "Type 88 MBT":                      "Type 88 tank (China)",
+  "Type 96A/B MBT":                   "Type 96 tank",
+  "Type 99A MBT":                     "Type 99 tank",
+  "Arjun Mk.1A MBT":                  "Arjun (tank)",
+  "M60A3 MBT (reserve)":              "M60 Patton",
+  "AMX-30 MBT (reserve)":             "AMX-30",
+  // ── Land – IFV / APC ────────────────────────────────────────────────────
+  "M2A3 Bradley IFV":                 "M2 Bradley",
+  "M2A2 Bradley IFV":                 "M2 Bradley",
+  "Puma IFV":                         "Puma (IFV)",
+  "Marder 1A3/1A5 IFV":               "Marder (IFV)",
+  "Boxer 8×8 MRAV":                   "Boxer (armoured fighting vehicle)",
+  "GTK Boxer troop carrier":          "Boxer (armoured fighting vehicle)",
+  "VBCI IFV 8×8":                     "VBCI",
+  "Griffon VBMR 6×6 APC":             "Griffon (vehicle)",
+  "Jaguar EBRC 6×6 (recon)":          "Jaguar EBRC",
+  "AMX-10RC (wheeled fire support)":  "AMX-10 RC",
+  "K21 IFV":                          "K21 infantry fighting vehicle",
+  "K200 KAAV APC":                    "K200 APC",
+  "AS21 Redback IFV (on order)":      "AS21 Redback",
+  "BMP-2 IFV":                        "BMP-2",
+  "BMP-2 Sarath IFV":                 "BMP-2",
+  "BMP-3 IFV":                        "BMP-3",
+  "ZBD-04A IFV":                      "ZBD-04",
+  "ZBL-09 Snow Leopard 8×8 APC":      "ZBL-09",
+  "Type 89 IFV":                      "Type 89 IFV",
+  "Type 73 APC":                      "Type 73 armored personnel carrier",
+  "M113 APC (variants)":              "M113 armored personnel carrier",
+  "M113A1/A3 APC":                    "M113 armored personnel carrier",
+  "BTR-80/82A APC":                   "BTR-80",
+  "Stryker 8×8 (variants)":           "Stryker",
+  "Warrior IFV":                      "Warrior IFV",
+  "Ajax IFV/scout (FRES)":            "Ajax (armoured fighting vehicle)",
+  "FV430 Bulldog APC":                "FV430",
+  "VAB APC (variants)":               "VAB armoured vehicle",
+  "JLTV (Joint Light Tactical)":      "Joint Light Tactical Vehicle",
+  "HMMWV (Humvee, variants)":         "Humvee",
+  // ── Naval – Surface ─────────────────────────────────────────────────────
+  "Arleigh Burke-class DDG":          "Arleigh Burke-class destroyer",
+  "Ticonderoga-class CG":             "Ticonderoga-class cruiser",
+  "Freedom / Independence-class LCS": "Littoral combat ship",
+  "Type 45 Daring-class DDG":         "Type 45 destroyer",
+  "Type 23 Duke-class FFG":           "Type 23 frigate",
+  "Queen Elizabeth-class CVF":        "Queen Elizabeth-class aircraft carrier",
+  "Charles de Gaulle CVN":            "French aircraft carrier Charles de Gaulle",
+  "FREMM Aquitaine-class FFG":        "FREMM multipurpose frigate",
+  "Forbin-class Horizon DDG":         "Horizon-class frigate",
+  "La Fayette-class FLF corvette":    "La Fayette-class frigate",
+  "D'Estienne d'Orves corvette (A69)":"D'Estienne d'Orves-class aviso",
+  "Type 052D Luyang III DDG":         "Type 052D destroyer",
+  "Type 055 Renhai-class CG":         "Type 055 destroyer",
+  "Type 054A Jiangkai II FFG":        "Type 054A frigate",
+  "Sachsen-class F124 FFG":           "Sachsen-class frigate",
+  "Brandenburg-class F123 FFG":       "Brandenburg-class frigate",
+  "Braunschweig-class K130 corvette": "Braunschweig-class corvette",
+  "Kongō-class DDG (Aegis)":          "Kongō-class destroyer",
+  "Atago-class DDG (Aegis)":          "Atago-class destroyer",
+  "Maya-class DDG (Aegis)":           "Maya-class destroyer",
+  "Akizuki / Asahi-class DD":         "Akizuki-class destroyer",
+  "Murasame-class DD":                "Murasame-class destroyer",
+  "Hyuga-class DDH":                  "Hyūga-class helicopter destroyer",
+  "Izumo-class DDH / CVL":            "Izumo-class helicopter destroyer",
+  "FFX Incheon-class FFG":            "Incheon-class frigate",
+  "KDX-III Sejong the Great DDG (Aegis)": "Sejong the Great-class destroyer",
+  "KDX-II Chungmugong Yi Sun-sin DDG": "Chungmugong Yi Sun-sin-class destroyer",
+  "KDX-I Gwanggaeto the Great DDG":   "Gwanggaeto the Great-class destroyer",
+  "Delhi-class DDG":                  "Delhi-class destroyer",
+  "Kolkata-class DDG":                "Kolkata-class destroyer",
+  "Shivalik-class FFG":               "Shivalik-class frigate",
+  "Brahmaputra-class FFG":            "Brahmaputra-class frigate",
+  "Kamorta-class corvette (ASW)":     "Kamorta-class corvette",
+  // ── Naval – Submarines ──────────────────────────────────────────────────
+  "Virginia-class SSN":               "Virginia-class submarine",
+  "Ohio-class SSBN / SSGN":           "Ohio-class submarine",
+  "Los Angeles-class SSN":            "Los Angeles-class submarine",
+  "Astute-class SSN":                 "Astute-class submarine",
+  "Vanguard-class SSBN":              "Vanguard-class submarine",
+  "Trafalgar-class SSN":              "Trafalgar-class submarine",
+  "Barracuda-class SSN (Suffren)":    "Suffren-class submarine",
+  "Triomphant-class SSBN":            "Le Triomphant-class submarine",
+  "Rubis-class SSN":                  "Rubis-class submarine",
+  "Borei-class SSBN (Pr.955)":        "Borei-class submarine",
+  "Borei-A SSBN (Pr.955A)":           "Borei-class submarine",
+  "Yasen SSN (Pr.885/885M)":          "Yasen-class submarine",
+  "Akula SSN (Pr.971)":               "Akula-class submarine",
+  "Kilo / Improved Kilo SSK":         "Kilo-class submarine",
+  "Varshavyanka SSK (Pr.636.3)":      "Kilo-class submarine",
+  "Oscar II SSGN (Pr.949A)":          "Oscar-class submarine",
+  "Delta IV SSBN (Pr.667BDRM)":       "Delta-class submarine",
+  "Type 094 Jin-class SSBN":          "Type 094 submarine",
+  "Type 093 Shang-class SSN":         "Type 093 submarine",
+  "Type 039/A/B Yuan-class SSK":      "Type 039 submarine",
+  "Type 041 Yuan-class SSK":          "Type 039 submarine",
+  "Type 035 Ming-class SSK":          "Type 035 submarine",
+  "Type 091 Han-class SSN":           "Type 091 submarine",
+  "Sōryū-class SSK":                  "Sōryū-class submarine",
+  "Taigei-class SSK":                 "Taigei-class submarine",
+  "Oyashio-class SSK":                "Oyashio-class submarine",
+  "Jangbogo-I (Type 209/1200) SSK":   "Type 209 submarine",
+  "Jangbogo-II (Type 214) SSK":       "Type 214 submarine",
+  "Jangbogo-III (KSS-III) SSK":       "KSS-III submarine",
+  "Kalvari-class SSK (Scorpène)":     "Scorpène-class submarine",
+  "Sindhughosh-class SSK (Kilo)":     "Kilo-class submarine",
+  "Shishumar-class SSK (Type 209)":   "Type 209 submarine",
+  "Arihant-class SSBN":               "Arihant-class submarine",
+  "Type 212A SSK":                    "Type 212 submarine",
+};
+
 function useCountUp(target, duration = 900) {
   const [value, setValue] = useState(0);
   useEffect(() => {
@@ -1178,33 +1435,31 @@ function useCountUp(target, duration = 900) {
 
 function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isClickable }) {
   const animated = useCountUp(count);
-  const iconCount = count === 0 ? 0 : Math.max(1, Math.min(Math.floor(count / cat.scale), 20));
   const pct = maxCount > 0 && count > 0 ? Math.min((count / maxCount) * 100, 100) : 0;
 
   return (
     <div
-      className={`rounded-xl overflow-hidden border shadow-sm transition-all ${
-        isClickable ? "cursor-pointer hover:shadow-md" : ""
-      } ${isSelected ? `${cat.border} ring-2 ring-offset-1` : cat.border}`}
-      style={isSelected ? { ringColor: 'var(--tw-ring-color)' } : {}}
+      className={`rounded-xl overflow-hidden border bg-white shadow-sm transition-all ${
+        isClickable ? "cursor-pointer hover:shadow-md hover:border-purple-300" : ""
+      } ${isSelected ? "border-purple-400 ring-2 ring-purple-200 ring-offset-1" : cat.border}`}
       onClick={isClickable ? onClick : undefined}
     >
-      {/* Dark intelligence-style header */}
-      <div className="bg-slate-800 px-3 py-2.5 flex items-center justify-between gap-2">
+      {/* Light header */}
+      <div className={`${cat.bg} border-b ${cat.border} px-3 py-2.5 flex items-center justify-between gap-2`}>
         <div className="flex items-center gap-2 min-w-0">
-          <span className={`shrink-0 p-1.5 rounded-md ${cat.iconBadgeBg}`}>
+          <span className={`shrink-0 p-1.5 rounded-lg ${cat.iconBadgeBg}`}>
             <cat.Icon className={`w-4 h-4 ${cat.iconColor}`} />
           </span>
           <div className="min-w-0">
-            <p className="text-xs font-bold text-white leading-tight truncate">{cat.label}</p>
+            <p className={`text-xs font-bold ${cat.labelColor} leading-tight truncate`}>{cat.label}</p>
             <p className="text-[10px] text-slate-400 leading-tight truncate">{cat.sublabel}</p>
           </div>
         </div>
         {rank > 0 && count > 0 && (
-          <span className={`shrink-0 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${
-            rank === 1 ? "bg-amber-500/25 text-amber-400 border-amber-500/40" :
-            rank <= 3 ? "bg-slate-500/30 text-slate-300 border-slate-500/40" :
-            "bg-slate-700/60 text-slate-400 border-slate-600/50"
+          <span className={`shrink-0 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md border ${
+            rank === 1 ? "bg-amber-50 text-amber-700 border-amber-200" :
+            rank <= 3 ? "bg-slate-100 text-slate-600 border-slate-200" :
+            "bg-white text-slate-400 border-slate-200"
           }`}>
             #{rank}
           </span>
@@ -1212,7 +1467,7 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
       </div>
 
       {/* Body */}
-      <div className={`${cat.bg} p-3 flex flex-col gap-2`}>
+      <div className="bg-white p-3 flex flex-col gap-2">
         <p className={`text-3xl font-mono font-bold ${cat.countColor} tabular-nums leading-none`}>
           {count === 0 ? "—" : animated.toLocaleString()}
         </p>
@@ -1223,38 +1478,28 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
 
         {/* Progress bar vs world leader */}
         {count > 0 && (
-          <div>
-            <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full ${cat.progressColor}`}
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* ISOTYPE pictogram row */}
-        {iconCount > 0 && (
-          <div className="flex flex-wrap gap-0.5">
-            {Array.from({ length: iconCount }).map((_, i) => (
-              <cat.Icon key={i} className={`w-3 h-3 ${cat.dotColor}`} />
-            ))}
+          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full ${cat.progressColor} transition-all duration-700`}
+              style={{ width: `${pct}%` }}
+            />
           </div>
         )}
 
         {count > 0 && (
-          <p className={`text-[10px] ${cat.labelColor} opacity-60`}>
-            1 icon ≈ {cat.scaleLabel}
+          <p className="text-[10px] text-slate-400">
+            vs world leader ({Math.round(pct)}%)
           </p>
         )}
+
         {isClickable && count > 0 && !isSelected && (
-          <p className={`text-[9px] ${cat.labelColor} opacity-40 mt-0.5`}>
-            ↗ click to explore
+          <p className={`text-[10px] ${cat.labelColor} font-medium mt-0.5 flex items-center gap-1`}>
+            <span>↗</span> View breakdown
           </p>
         )}
         {isSelected && (
-          <p className={`text-[9px] ${cat.labelColor} opacity-60 mt-0.5 font-semibold`}>
-            ▾ showing details below
+          <p className={`text-[10px] ${cat.labelColor} font-semibold mt-0.5`}>
+            ▾ Details shown below
           </p>
         )}
       </div>
@@ -1262,78 +1507,142 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
   );
 }
 
+function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
+  const barPct = maxCount > 0 ? Math.round((item.count / maxCount) * 100) : 0;
+  const primaryMfr = item.manufacturer.split(' / ')[0].split(' (')[0];
+
+  return (
+    <div className="bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-purple-200 hover:shadow-lg transition-all duration-200 group flex flex-col">
+      {/* Image */}
+      <div className={`h-32 ${cat.bg} relative overflow-hidden shrink-0`}>
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={item.model}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={onImgError}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <cat.Icon className={`w-14 h-14 ${cat.iconColor} opacity-15`} />
+          </div>
+        )}
+        {/* Count badge overlay */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-2">
+          <span className={`font-mono font-bold text-lg text-white tabular-nums`}>
+            {item.count.toLocaleString()}
+          </span>
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="p-3 flex flex-col gap-1.5 flex-1">
+        <p className="text-xs font-semibold text-slate-800 leading-snug line-clamp-2">{item.model}</p>
+
+        {/* Bar */}
+        <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full ${cat.progressColor} transition-all duration-700`}
+            style={{ width: `${barPct}%` }}
+          />
+        </div>
+
+        <p className="text-[10px] text-slate-400 truncate mt-0.5">{primaryMfr}</p>
+
+        <a
+          href={`/products?manufacturer=${encodeURIComponent(primaryMfr)}`}
+          className={`mt-auto inline-flex items-center gap-1 text-[10px] font-semibold ${cat.labelColor} hover:underline`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <ExternalLink className="w-2.5 h-2.5" />
+          Browse Products
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function CapabilityDetailPanel({ cat, countryCode, onClose }) {
-  const details = CAPABILITY_DETAILS[countryCode]?.[cat.key] || [];
+  const details = useMemo(
+    () => CAPABILITY_DETAILS[countryCode]?.[cat.key] || [],
+    [countryCode, cat.key]
+  );
   const total = details.reduce((s, d) => s + d.count, 0);
+  const maxCount = details.length > 0 ? Math.max(...details.map(d => d.count)) : 0;
+
+  const [platformImages, setPlatformImages] = useState({});
+  const [imgErrors, setImgErrors] = useState({});
+  const fetchedRef = useRef(new Set());
+
+  const fetchWikiImage = useCallback(async (model) => {
+    if (fetchedRef.current.has(model)) return;
+    fetchedRef.current.add(model);
+    const wikiTitle = PLATFORM_WIKI_TITLES[model] || model;
+    const title = wikiTitle.replace(/ /g, '_');
+    try {
+      const r = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=400&origin=*`
+      );
+      if (r.ok) {
+        const d = await r.json();
+        const pages = d.query?.pages;
+        const src = pages && Object.values(pages)[0]?.thumbnail?.source;
+        if (src) setPlatformImages(prev => ({ ...prev, [model]: src }));
+      }
+    } catch (_) {}
+  }, []);
+
+  useEffect(() => {
+    fetchedRef.current = new Set();
+    const BATCH = 6;
+    const DELAY = 200;
+    const timeouts = [];
+    details.forEach((item, i) => {
+      const delay = Math.floor(i / BATCH) * DELAY;
+      if (delay === 0) fetchWikiImage(item.model);
+      else timeouts.push(setTimeout(() => fetchWikiImage(item.model), delay));
+    });
+    return () => timeouts.forEach(clearTimeout);
+  }, [details, fetchWikiImage]);
 
   if (!details.length) return null;
 
   return (
-    <div className={`rounded-xl border ${cat.border} bg-white shadow-sm overflow-hidden`}>
-      {/* Header */}
-      <div className="bg-slate-800 px-4 py-3 flex items-center justify-between gap-3">
+    <div className={`rounded-xl border ${cat.border} bg-slate-50/50 shadow-sm overflow-hidden`}>
+      {/* Light header */}
+      <div className={`${cat.bg} border-b ${cat.border} px-4 py-3 flex items-center justify-between gap-3`}>
         <div className="flex items-center gap-2.5">
-          <span className={`shrink-0 p-1.5 rounded-md ${cat.iconBadgeBg}`}>
+          <span className={`shrink-0 p-1.5 rounded-lg ${cat.iconBadgeBg}`}>
             <cat.Icon className={`w-4 h-4 ${cat.iconColor}`} />
           </span>
           <div>
-            <p className="text-sm font-bold text-white">{cat.label} — Equipment Breakdown</p>
-            <p className={`text-[10px] ${cat.iconColor} opacity-70`}>{cat.sublabel} · {total.toLocaleString()} total · IISS est. 2024</p>
+            <p className={`text-sm font-bold ${cat.labelColor}`}>{cat.label} — Equipment Breakdown</p>
+            <p className="text-[10px] text-slate-500">
+              {cat.sublabel} · <span className="font-semibold">{total.toLocaleString()}</span> total · IISS Military Balance 2024
+            </p>
           </div>
         </div>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white transition-colors text-lg leading-none px-1"
+          className="text-slate-400 hover:text-slate-700 transition-colors w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/70"
           aria-label="Close"
         >
           ×
         </button>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-slate-50 border-b border-slate-100">
-              <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-400 px-4 py-2.5">Platform / Model</th>
-              <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-400 px-4 py-2.5">Units</th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-400 px-4 py-2.5 hidden sm:table-cell">Manufacturer</th>
-              <th className="text-center text-xs font-semibold uppercase tracking-wider text-slate-400 px-4 py-2.5">Products</th>
-            </tr>
-          </thead>
-          <tbody>
-            {details.map((item, i) => (
-              <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors">
-                <td className="px-4 py-2.5">
-                  <p className="font-medium text-slate-800 text-sm">{item.model}</p>
-                </td>
-                <td className="px-4 py-2.5 text-right">
-                  <span className={`font-mono font-bold text-sm ${cat.countColor}`}>
-                    {item.count.toLocaleString()}
-                  </span>
-                  <div className="h-0.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${cat.progressColor}`}
-                      style={{ width: `${Math.round((item.count / Math.max(...details.map(d => d.count))) * 100)}%` }}
-                    />
-                  </div>
-                </td>
-                <td className="px-4 py-2.5 hidden sm:table-cell">
-                  <span className="text-xs text-slate-500">{item.manufacturer}</span>
-                </td>
-                <td className="px-4 py-2.5 text-center">
-                  <a
-                    href={`/products?search=${encodeURIComponent(item.manufacturer.split(' / ')[0].split(' (')[0])}`}
-                    className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border transition-colors ${cat.labelColor} bg-white hover:bg-purple-50 border-current opacity-70 hover:opacity-100`}
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                    Browse
-                  </a>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Card grid */}
+      <div className="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        {details.map((item, i) => (
+          <PlatformCard
+            key={i}
+            item={item}
+            cat={cat}
+            maxCount={maxCount}
+            imgSrc={!imgErrors[item.model] ? platformImages[item.model] : undefined}
+            onImgError={() => setImgErrors(prev => ({ ...prev, [item.model]: true }))}
+          />
+        ))}
       </div>
     </div>
   );
