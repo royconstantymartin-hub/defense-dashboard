@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import {
   Search, Lock, Globe, Building2, ExternalLink,
   DollarSign, TrendingUp, ChevronRight, ChevronLeft, ChevronDown,
-  Plane, Cpu, Anchor, Brain, Satellite, Zap, Wrench, Truck, Shield,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
@@ -45,7 +44,7 @@ function LogoWithFallback({ name, website, size = 40 }) {
         className={`bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}
         style={{ width: size, height: size }}
       >
-        <span className="text-xs font-bold text-white tracking-tight" style={{ fontSize: size < 32 ? 9 : 12 }}>
+        <span className="font-bold text-white tracking-tight" style={{ fontSize: size < 32 ? 9 : 12 }}>
           {initials(name)}
         </span>
       </div>
@@ -104,7 +103,7 @@ const MACRO_CATEGORIES = [
     id: "autonomous",
     name: "Autonomous Systems & UAV",
     description: "Unmanned platforms, loitering munitions, counter-drone",
-    icon: Cpu,
+    emoji: "🤖",
     color: "purple",
     keywords: ["UAV", "Small UAV", "Loitering Munitions", "Autonomous", "Counter-UAS", "UAS", "Drones"],
   },
@@ -112,7 +111,7 @@ const MACRO_CATEGORIES = [
     id: "missiles",
     name: "Missiles & Air Defense",
     description: "Strike systems, interceptors, rockets, ammunition",
-    icon: Shield,
+    emoji: "🎯",
     color: "rose",
     keywords: ["Missiles", "Air Defense", "Iron Dome", "Trophy", "Rockets", "Ammunition", "Energetics", "S-400", "Remote Weapons"],
   },
@@ -120,7 +119,7 @@ const MACRO_CATEGORIES = [
     id: "aerospace",
     name: "Aerospace & Aviation",
     description: "Fixed-wing, rotorcraft, engines, launch systems",
-    icon: Plane,
+    emoji: "✈️",
     color: "indigo",
     keywords: ["Aircraft", "Helicopters", "Aerospace", "Rotorcraft", "Rafale", "MiG", "Sukhoi", "Business Jets", "Engines", "Propulsion", "Launch"],
   },
@@ -128,7 +127,7 @@ const MACRO_CATEGORIES = [
     id: "land",
     name: "Land Systems",
     description: "Armored vehicles, artillery, ground platforms",
-    icon: Truck,
+    emoji: "⚔️",
     color: "amber",
     keywords: ["Land Systems", "Tanks", "Artillery", "Military Vehicles", "VAB", "Griffon", "K9", "Armored"],
   },
@@ -136,7 +135,7 @@ const MACRO_CATEGORIES = [
     id: "naval",
     name: "Naval & Maritime",
     description: "Ships, submarines, maritime systems",
-    icon: Anchor,
+    emoji: "⚓",
     color: "blue",
     keywords: ["Naval", "Submarines", "Surface Ships", "Shipbuilding", "Maritime", "Frigates", "Sonar"],
   },
@@ -144,7 +143,7 @@ const MACRO_CATEGORIES = [
     id: "space",
     name: "Space & ISR",
     description: "Satellites, imagery, geospatial intelligence",
-    icon: Satellite,
+    emoji: "🛰️",
     color: "sky",
     keywords: ["Space", "Satellites", "Imagery", "Geospatial"],
   },
@@ -152,7 +151,7 @@ const MACRO_CATEGORIES = [
     id: "intel",
     name: "Intelligence, Cyber & EW",
     description: "C2, SIGINT, electronic warfare, AI & analytics",
-    icon: Brain,
+    emoji: "👁️",
     color: "emerald",
     keywords: ["Cyber", "AI", "Intelligence", "Analytics", "Software", "Electronic Warfare", "SIGINT", "ISR", "C4I", "Communications", "Radar", "Sensors", "Optronics"],
   },
@@ -160,7 +159,7 @@ const MACRO_CATEGORIES = [
     id: "nuclear",
     name: "Nuclear & Advanced Tech",
     description: "Nuclear, directed energy, advanced propulsion",
-    icon: Zap,
+    emoji: "⚡",
     color: "orange",
     keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"],
   },
@@ -168,7 +167,7 @@ const MACRO_CATEGORIES = [
     id: "industrial",
     name: "Industrial & Tech Base",
     description: "Components, electronics, R&D, simulation, IT",
-    icon: Wrench,
+    emoji: "⚙️",
     color: "slate",
     keywords: ["Components", "Electronics", "Defense Electronics", "Transmissions", "R&D", "Testing", "Simulation", "Integration", "Engineering", "MRO", "IT", "Consulting", "Health", "Law Enforcement"],
   },
@@ -178,56 +177,74 @@ const CAT_COLORS = {
   purple: {
     border: "border-purple-200", hoverBorder: "hover:border-purple-300",
     activeBorder: "border-purple-500", activeBg: "bg-purple-50/60",
-    icon: "text-purple-700", iconBg: "bg-purple-50 border-purple-200",
+    iconBg: "bg-purple-50 border-purple-100",
     badge: "bg-purple-100 text-purple-700",
+    headerBg: "bg-purple-50/80",
+    text: "text-purple-700",
   },
   rose: {
     border: "border-rose-200", hoverBorder: "hover:border-rose-300",
     activeBorder: "border-rose-500", activeBg: "bg-rose-50/60",
-    icon: "text-rose-600", iconBg: "bg-rose-50 border-rose-200",
+    iconBg: "bg-rose-50 border-rose-100",
     badge: "bg-rose-100 text-rose-700",
+    headerBg: "bg-rose-50/80",
+    text: "text-rose-700",
   },
   indigo: {
     border: "border-indigo-200", hoverBorder: "hover:border-indigo-300",
     activeBorder: "border-indigo-500", activeBg: "bg-indigo-50/60",
-    icon: "text-indigo-600", iconBg: "bg-indigo-50 border-indigo-200",
+    iconBg: "bg-indigo-50 border-indigo-100",
     badge: "bg-indigo-100 text-indigo-700",
+    headerBg: "bg-indigo-50/80",
+    text: "text-indigo-700",
   },
   amber: {
     border: "border-amber-200", hoverBorder: "hover:border-amber-300",
     activeBorder: "border-amber-500", activeBg: "bg-amber-50/60",
-    icon: "text-amber-600", iconBg: "bg-amber-50 border-amber-200",
+    iconBg: "bg-amber-50 border-amber-100",
     badge: "bg-amber-100 text-amber-700",
+    headerBg: "bg-amber-50/80",
+    text: "text-amber-700",
   },
   blue: {
     border: "border-blue-200", hoverBorder: "hover:border-blue-300",
     activeBorder: "border-blue-500", activeBg: "bg-blue-50/60",
-    icon: "text-blue-600", iconBg: "bg-blue-50 border-blue-200",
+    iconBg: "bg-blue-50 border-blue-100",
     badge: "bg-blue-100 text-blue-700",
+    headerBg: "bg-blue-50/80",
+    text: "text-blue-700",
   },
   sky: {
     border: "border-sky-200", hoverBorder: "hover:border-sky-300",
     activeBorder: "border-sky-500", activeBg: "bg-sky-50/60",
-    icon: "text-sky-600", iconBg: "bg-sky-50 border-sky-200",
+    iconBg: "bg-sky-50 border-sky-100",
     badge: "bg-sky-100 text-sky-700",
+    headerBg: "bg-sky-50/80",
+    text: "text-sky-700",
   },
   emerald: {
     border: "border-emerald-200", hoverBorder: "hover:border-emerald-300",
     activeBorder: "border-emerald-500", activeBg: "bg-emerald-50/60",
-    icon: "text-emerald-600", iconBg: "bg-emerald-50 border-emerald-200",
+    iconBg: "bg-emerald-50 border-emerald-100",
     badge: "bg-emerald-100 text-emerald-700",
+    headerBg: "bg-emerald-50/80",
+    text: "text-emerald-700",
   },
   orange: {
     border: "border-orange-200", hoverBorder: "hover:border-orange-300",
     activeBorder: "border-orange-500", activeBg: "bg-orange-50/60",
-    icon: "text-orange-600", iconBg: "bg-orange-50 border-orange-200",
+    iconBg: "bg-orange-50 border-orange-100",
     badge: "bg-orange-100 text-orange-700",
+    headerBg: "bg-orange-50/80",
+    text: "text-orange-700",
   },
   slate: {
     border: "border-slate-200", hoverBorder: "hover:border-slate-300",
     activeBorder: "border-slate-400", activeBg: "bg-slate-50",
-    icon: "text-slate-500", iconBg: "bg-slate-50 border-slate-200",
+    iconBg: "bg-slate-50 border-slate-100",
     badge: "bg-slate-100 text-slate-600",
+    headerBg: "bg-slate-50",
+    text: "text-slate-600",
   },
 };
 
@@ -243,15 +260,14 @@ function assignCategory(company) {
 
 function CategoryTile({ category, companies, isSelected, onSelect }) {
   const clr = CAT_COLORS[category.color];
-  const Icon = category.icon;
-  const topLogos = companies.slice(0, 7);
   const isEmpty = companies.length === 0;
+  const topLogos = companies.slice(0, 8);
 
   return (
     <button
       onClick={isEmpty ? undefined : onSelect}
       disabled={isEmpty}
-      className={`w-full text-left p-4 rounded-xl border transition-all duration-150 bg-white shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] ${
+      className={`w-full text-left p-4 rounded-xl border bg-white transition-all duration-150 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] ${
         isEmpty
           ? "opacity-40 cursor-default border-slate-100"
           : isSelected
@@ -259,39 +275,39 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
           : `${clr.border} ${clr.hoverBorder} hover:shadow-md`
       }`}
     >
-      {/* Header row */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center border flex-shrink-0 ${clr.iconBg}`}>
-            <Icon className={`w-4 h-4 ${clr.icon}`} />
-          </div>
-          <div className="min-w-0">
-            <h3 className="font-semibold text-[13px] text-slate-800 leading-tight truncate">{category.name}</h3>
-            <p className="text-[11px] text-slate-400 leading-tight mt-0.5 truncate">{category.description}</p>
-          </div>
+      {/* Header: emoji + name + count + chevron */}
+      <div className="flex items-center gap-3 mb-3">
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border flex-shrink-0 ${clr.iconBg}`}>
+          <span className="text-[22px] leading-none">{category.emoji}</span>
         </div>
-        <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-[13px] text-slate-800 leading-snug">{category.name}</h3>
+          <p className="text-[11px] text-slate-400 leading-tight mt-0.5 truncate">{category.description}</p>
+        </div>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
           <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ${clr.badge}`}>
             {companies.length}
           </span>
           {!isEmpty && (
-            <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isSelected ? "rotate-180" : ""}`} />
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isSelected ? "rotate-180" : ""}`}
+            />
           )}
         </div>
       </div>
 
-      {/* Logo row */}
+      {/* Logo strip */}
       {topLogos.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-2">
+        <div className="flex flex-wrap gap-1.5">
           {topLogos.map((c) => (
             <LogoWithFallback key={c.id || c.name} name={c.name} website={c.website} size={26} />
           ))}
-          {companies.length > 7 && (
+          {companies.length > 8 && (
             <div
               className="rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0"
               style={{ width: 26, height: 26 }}
             >
-              <span className="text-[9px] text-slate-500 font-medium">+{companies.length - 7}</span>
+              <span className="text-[9px] text-slate-500 font-medium">+{companies.length - 8}</span>
             </div>
           )}
         </div>
@@ -316,9 +332,7 @@ function CompactPlayerRow({ company, onClick }) {
       onClick={onClick}
     >
       <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-
       <LogoWithFallback name={company.name} website={company.website} size={32} />
-
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <span className="font-medium text-[13px] text-slate-800 group-hover:text-purple-700 transition-colors truncate">
@@ -353,7 +367,6 @@ function CompactPlayerRow({ company, onClick }) {
           </span>
         </div>
       </div>
-
       <div className="w-28 text-right flex-shrink-0">
         {cap ? (
           <div>
@@ -364,7 +377,6 @@ function CompactPlayerRow({ company, onClick }) {
           <span className="text-xs text-slate-300">—</span>
         )}
       </div>
-
       <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-purple-400 transition-colors flex-shrink-0" />
     </div>
   );
@@ -374,12 +386,11 @@ function CompactPlayerRow({ company, onClick }) {
 
 function ExpandedList({ category, companies, onCompanyClick }) {
   const clr = CAT_COLORS[category.color];
-  const Icon = category.icon;
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
-      <div className={`flex items-center gap-2 px-4 py-3 border-b ${clr.activeBg} ${clr.activeBorder} border-b`}>
-        <Icon className={`w-4 h-4 ${clr.icon}`} />
-        <span className="text-sm font-semibold text-slate-700">{category.name}</span>
+      <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${clr.headerBg} ${clr.activeBorder} border-b`}>
+        <span className="text-lg leading-none">{category.emoji}</span>
+        <span className={`text-sm font-semibold ${clr.text}`}>{category.name}</span>
         <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ml-auto ${clr.badge}`}>
           {companies.length}
         </span>
@@ -394,11 +405,7 @@ function ExpandedList({ category, companies, onCompanyClick }) {
       </div>
       <div className="divide-y divide-slate-50">
         {companies.map((c) => (
-          <CompactPlayerRow
-            key={c.id || c.name}
-            company={c}
-            onClick={() => onCompanyClick(c.name)}
-          />
+          <CompactPlayerRow key={c.id || c.name} company={c} onClick={() => onCompanyClick(c.name)} />
         ))}
       </div>
     </div>
@@ -542,10 +549,10 @@ export default function PrivatePlayers() {
       {!loading && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Companies",      value: players.length,                    icon: Building2,  color: "text-purple-700" },
-            { label: "Countries",      value: countryCounts.length,              icon: Globe,      color: "text-blue-600"   },
-            { label: "Total Valuation",value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-emerald-600"},
-            { label: "With Funding",   value: totalFunded,                       icon: DollarSign, color: "text-amber-600"  },
+            { label: "Companies",       value: players.length,                    icon: Building2,  color: "text-purple-700" },
+            { label: "Countries",       value: countryCounts.length,              icon: Globe,      color: "text-blue-600"   },
+            { label: "Total Valuation", value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-emerald-600" },
+            { label: "With Funding",    value: totalFunded,                       icon: DollarSign, color: "text-amber-600"  },
           ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
@@ -597,8 +604,8 @@ export default function PrivatePlayers() {
       ) : (
         <div className="flex gap-6 items-start">
 
-          {/* ── Country sidebar ── */}
-          <div className="w-44 flex-shrink-0 sticky top-6">
+          {/* ── Country sidebar (desktop only) ── */}
+          <div className="hidden md:block w-44 flex-shrink-0 sticky top-6">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">
               Countries
             </p>
@@ -618,7 +625,6 @@ export default function PrivatePlayers() {
                   {players.length}
                 </span>
               </button>
-
               {countryCounts.map(([country, count]) => {
                 const iso = COUNTRY_ISO[country];
                 const active = filterCountry === country;
@@ -658,6 +664,46 @@ export default function PrivatePlayers() {
 
           {/* ── Main content ── */}
           <div className="flex-1 min-w-0">
+
+            {/* Mobile country chips */}
+            <div className="flex md:hidden gap-2 overflow-x-auto pb-2 mb-4 -mx-1 px-1">
+              <button
+                onClick={() => setFilterCountry("all")}
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                  filterCountry === "all"
+                    ? "bg-purple-700 text-white border-purple-700"
+                    : "bg-white text-slate-600 border-slate-200"
+                }`}
+              >
+                All ({players.length})
+              </button>
+              {countryCounts.map(([country, count]) => {
+                const iso = COUNTRY_ISO[country];
+                const active = filterCountry === country;
+                return (
+                  <button
+                    key={country}
+                    onClick={() => setFilterCountry(country)}
+                    className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                      active
+                        ? "bg-purple-700 text-white border-purple-700"
+                        : "bg-white text-slate-600 border-slate-200"
+                    }`}
+                  >
+                    {iso && (
+                      <img
+                        src={`https://flagcdn.com/w20/${iso}.png`}
+                        alt={country}
+                        className="w-3.5 h-auto rounded-sm"
+                        onError={(e) => { e.target.style.display = "none"; }}
+                      />
+                    )}
+                    {country} ({count})
+                  </button>
+                );
+              })}
+            </div>
+
             {isSearchActive ? (
               /* Search results: flat list */
               searchResults.length === 0 ? (
@@ -700,7 +746,7 @@ export default function PrivatePlayers() {
             ) : (
               /* Category tile grid + expanded list */
               <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
                   {MACRO_CATEGORIES.map((cat) => (
                     <CategoryTile
                       key={cat.id}
