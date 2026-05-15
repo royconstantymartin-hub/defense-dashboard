@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/select";
 import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
+import FlagshipProductDetail from "@/components/FlagshipProductDetail";
+import { FLAGSHIP_PRODUCTS } from "@/data/flagship-products/index.js";
 import { getLogoUrls } from "@/lib/companyLogos";
 import ProductIllustration from "@/components/ProductIllustration";
 
@@ -606,6 +608,8 @@ export default function Products() {
     return params.get("manufacturer") || "all";
   });
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [flagshipOpen, setFlagshipOpen] = useState(false);
+  const [flagshipEntry, setFlagshipEntry] = useState(null); // { product, detail }
   const [playingVideo, setPlayingVideo] = useState(false);
   const [profileName, setProfileName] = useState(null);
   const [compareMode, setCompareMode] = useState(false);
@@ -1019,7 +1023,16 @@ export default function Products() {
               className={`bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer overflow-hidden ${
                 isSelectedForCompare ? 'ring-2 ring-purple-500 border-purple-500' : ''
               }`}
-              onClick={(e) => compareMode ? toggleProductForCompare(product) : setSelectedProduct(product)}
+              onClick={() => {
+                if (compareMode) { toggleProductForCompare(product); return; }
+                const detail = FLAGSHIP_PRODUCTS[product.name];
+                if (detail) {
+                  setFlagshipEntry({ product, detail });
+                  setFlagshipOpen(true);
+                } else {
+                  setSelectedProduct(product);
+                }
+              }}
               data-testid={`product-card-${product.id}`}
             >
               {/* Image or Placeholder */}
@@ -1045,6 +1058,11 @@ export default function Products() {
                 <span className={`absolute top-2 right-2 text-xs font-medium px-2 py-0.5 rounded-full border ${getStatusStyle(product.status)}`}>
                   {product.status.toUpperCase()}
                 </span>
+                {FLAGSHIP_PRODUCTS[product.name] && !compareMode && (
+                  <span className="absolute bottom-2 left-2 text-xs font-medium px-2 py-0.5 rounded-full bg-purple-700 text-white">
+                    ★ Dossier
+                  </span>
+                )}
                 {compareMode && (
                   <div className={`absolute top-2 left-2 w-6 h-6 rounded-lg flex items-center justify-center ${
                     isSelectedForCompare ? 'bg-purple-600' : 'bg-white border border-slate-200'
@@ -1456,6 +1474,28 @@ export default function Products() {
 
       {/* Company Profile Sheet */}
       <CompanyProfileSheet name={profileName} onClose={() => setProfileName(null)} />
+
+      {/* Flagship Product Detail Sheet */}
+      <FlagshipProductDetail
+        open={flagshipOpen}
+        product={flagshipEntry?.product}
+        detail={flagshipEntry?.detail}
+        imgSrc={flagshipEntry ? resolveImgSrc(flagshipEntry.product.id, flagshipEntry.product.image_url, flagshipEntry.product.name) : null}
+        onClose={() => setFlagshipOpen(false)}
+        onNavigateToProduct={(name) => {
+          const p = products.find(p => p.name === name);
+          if (p) {
+            setFlagshipOpen(false);
+            const detail = FLAGSHIP_PRODUCTS[p.name];
+            if (detail) {
+              setFlagshipEntry({ product: p, detail });
+              setFlagshipOpen(true);
+            } else {
+              setSelectedProduct(p);
+            }
+          }
+        }}
+      />
     </div>
   );
 }
