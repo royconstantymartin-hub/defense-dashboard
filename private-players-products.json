@@ -1,0 +1,2059 @@
+[
+  {
+    "company": "Anduril Industries",
+    "country": "US",
+    "website": "https://anduril.com",
+    "products": [
+      {
+        "name": "Lattice",
+        "category": "C2 software",
+        "description": "Autonomous software network that connects and powers thousands of heterogeneous systems, enabling command and control across all domains even in remote, low-bandwidth environments.",
+        "status": "deployed",
+        "source_url": "https://www.anduril.com/"
+      },
+      {
+        "name": "Ghost",
+        "category": "drone",
+        "description": "Autonomous helicopter-style UAV designed for reconnaissance and surveillance, capable of carrying a 10-lb payload for 55 minutes at ranges exceeding 7 miles with minimal acoustic signature.",
+        "status": "deployed",
+        "source_url": "https://www.anduril.com/ghost"
+      },
+      {
+        "name": "Ghost-X",
+        "category": "drone",
+        "description": "Enhanced variant of the Ghost UAV with 25-lb payload capacity and 80-minute endurance over a 15+ mile range, designed for advanced ISR missions.",
+        "status": "deployed",
+        "source_url": "https://www.anduril.com/ghost"
+      },
+      {
+        "name": "Altius",
+        "category": "drone",
+        "description": "Series of fixed-wing, tube-launched unmanned aerial vehicles (Agile Launched, Tactically-Integrated Unmanned System) derived from the Area-I acquisition, deployable from air, ground, or sea platforms.",
+        "status": "deployed",
+        "source_url": "https://www.anduril.com/"
+      },
+      {
+        "name": "Roadrunner",
+        "category": "loitering munition",
+        "description": "Twin turbojet-powered delta-wing craft capable of high subsonic speeds and extreme maneuverability, functioning as a reusable autonomous interceptor between a drone and a missile.",
+        "status": "in production",
+        "source_url": "https://www.anduril.com/roadrunner/"
+      },
+      {
+        "name": "Fury",
+        "category": "drone",
+        "description": "Unmanned fighter jet designed to fly semi-autonomously alongside manned aircraft as part of the USAF Collaborative Combat Aircraft program, completing its first flight in October 2025.",
+        "status": "in development",
+        "source_url": "https://www.anduril.com/"
+      },
+      {
+        "name": "Sentry Tower",
+        "category": "ISR",
+        "description": "33-foot solar-powered portable surveillance tower integrating cameras, radar, communications antennae, and thermal imaging that feeds autonomously into the Lattice platform.",
+        "status": "deployed",
+        "source_url": "https://www.anduril.com/"
+      },
+      {
+        "name": "Dive-LD",
+        "category": "autonomous vehicle",
+        "description": "Autonomous underwater vehicle for deep-water inspection and reconnaissance, capable of undersea ISR, mine countermeasures, anti-submarine warfare, and seafloor mapping missions.",
+        "status": "in production",
+        "source_url": "https://www.anduril.com/"
+      }
+    ]
+  },
+  {
+    "company": "Shield AI",
+    "country": "US",
+    "website": "https://shield.ai",
+    "products": [
+      {
+        "name": "Hivemind Enterprise",
+        "category": "AI software",
+        "description": "Comprehensive AI-powered developer platform for building, evaluating, testing, and deploying mission autonomy on military platforms.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/enterprise/"
+      },
+      {
+        "name": "EdgeOS",
+        "category": "AI software",
+        "description": "Run-time environment providing predictable, low-latency middleware for autonomous robotics with static configuration and local edge computation.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/edge-os/"
+      },
+      {
+        "name": "Pilot",
+        "category": "AI software",
+        "description": "Autonomy catalog giving access to pre-built autonomous capabilities for rapid integration on unmanned platforms.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/pilot/"
+      },
+      {
+        "name": "Forge",
+        "category": "AI software",
+        "description": "Autonomy factory platform for building and customizing autonomous behaviors and mission packages.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/forge/"
+      },
+      {
+        "name": "Commander",
+        "category": "C2 software",
+        "description": "Command and control toolkit for managing fleets of autonomous systems across complex missions.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/commander/"
+      },
+      {
+        "name": "ViDAR",
+        "category": "ISR",
+        "description": "Hardware and software package delivering wide-area surveillance across air, land, and sea with day/night capabilities.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/vidar/"
+      },
+      {
+        "name": "Tracker",
+        "category": "AI software",
+        "description": "AI-powered software for superior object detection and tracking in video streams for ISR and security applications.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/tracker/"
+      },
+      {
+        "name": "Tracker C-UAS",
+        "category": "counter-UAS",
+        "description": "Software package that transforms standard EO/IR cameras into drone detection and tracking systems.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/tracker-c-uas/"
+      },
+      {
+        "name": "Benchmark",
+        "category": "AI software",
+        "description": "Post-flight analysis software for evaluating, scoring, and visualizing mission-critical autonomous system data.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/benchmark/"
+      },
+      {
+        "name": "X-BAT",
+        "category": "drone",
+        "description": "World's first AI-piloted VTOL fighter jet designed for contested air environments.",
+        "status": "in development",
+        "source_url": "https://shield.ai/x-bat/"
+      },
+      {
+        "name": "V-BAT",
+        "category": "drone",
+        "description": "VTOL fixed-wing UAS designed for ISR and targeting in GPS-denied and electronic warfare environments.",
+        "status": "deployed",
+        "source_url": "https://shield.ai/v-bat/"
+      }
+    ]
+  },
+  {
+    "company": "Helsing",
+    "country": "DE",
+    "website": "https://helsing.ai",
+    "products": [
+      {
+        "name": "HX-2",
+        "category": "loitering munition",
+        "description": "Software-defined, mass-producible AI strike drone weighing 12 kg capable of engaging armored and artillery targets at up to 100 km range, with onboard AI for GPS-denied and EW-contested environments.",
+        "status": "deployed",
+        "source_url": "https://helsing.ai/hx-2"
+      },
+      {
+        "name": "Altra",
+        "category": "AI software",
+        "description": "AI-powered battlefield management system that fuses ISR drone data, spotter reports, and sensor feeds to generate real-time targeting information for indirect fire, weapon stations, and strike drones.",
+        "status": "deployed",
+        "source_url": "https://helsing.ai/altra"
+      }
+    ]
+  },
+  {
+    "company": "Shark Robotics",
+    "country": "FR",
+    "website": "https://www.shark-robotics.com",
+    "products": [
+      {
+        "name": "Colossus",
+        "category": "autonomous vehicle",
+        "description": "Heavy firefighting and military support robot delivering 3,800 L/min water flow with 8 mission modules and 12-hour battery runtime, used by defense and civil security forces.",
+        "status": "deployed",
+        "source_url": "https://www.shark-robotics.com/colossus-firefighting-robot/"
+      },
+      {
+        "name": "Rhyno Protect",
+        "category": "autonomous vehicle",
+        "description": "Medium ground robot with 2,000 L/min capacity and 5 mission modules in a compact design for urban, industrial, and military operations.",
+        "status": "deployed",
+        "source_url": "https://www.shark-robotics.com/rhyno-protect-firefighting-robot/"
+      },
+      {
+        "name": "Barakuda",
+        "category": "autonomous vehicle",
+        "description": "All-terrain mule robot with 500 kg payload capacity and 10-hour autonomy for logistics resupply and military support missions.",
+        "status": "deployed",
+        "source_url": "https://www.shark-robotics.com/barakuda-mule-robot/"
+      },
+      {
+        "name": "Shark Spike",
+        "category": "other",
+        "description": "Autonomous vehicle-stopping system capable of halting vehicles travelling at 130 km/h with 3-second deployment, for force protection and perimeter security.",
+        "status": "deployed",
+        "source_url": "https://www.shark-robotics.com/shark-spike-advanced-spike-strip/"
+      },
+      {
+        "name": "Atrax",
+        "category": "autonomous vehicle",
+        "description": "EOD and demining robot with a 5-axis manipulator arm, 20 kg lifting capacity, and ultra-compact frame for explosive ordnance disposal missions.",
+        "status": "deployed",
+        "source_url": "https://www.shark-robotics.com/atrax-demining-robot/"
+      }
+    ]
+  },
+  {
+    "company": "Preligens",
+    "country": "FR",
+    "website": "https://www.safran-group.com/companies/safran-ai",
+    "note": "Preligens was acquired by Safran Group and now operates as Safran AI. Original website redirects.",
+    "products": [
+      {
+        "name": "Geospatial Intelligence AI",
+        "category": "AI software",
+        "description": "Suite of pre-trained AI algorithms for automatic detection, classification, and identification of objects of military interest in satellite and aerial imagery.",
+        "status": "deployed",
+        "source_url": "https://www.safran-group.com/products-services/geospatial-intelligence-ai"
+      }
+    ]
+  },
+  {
+    "company": "Harmattan AI",
+    "country": "FR",
+    "website": "https://harmattan.ai",
+    "products": [
+      {
+        "name": "GOBI",
+        "category": "drone",
+        "description": "Affordable, modular, and field-repairable fixed-wing UAS designed for intelligence, surveillance, and reconnaissance missions.",
+        "status": "in production",
+        "source_url": "https://harmattan.ai/systems/?category=UAS"
+      },
+      {
+        "name": "SONORA",
+        "category": "ISR",
+        "description": "Synthetic aperture radar (SAR) imaging payload providing on-demand reliable intelligence data for situational awareness in contested environments.",
+        "status": "in development",
+        "source_url": "https://harmattan.ai/systems/?category=PAYLOAD"
+      },
+      {
+        "name": "SAHARA",
+        "category": "counter-UAS",
+        "description": "High-speed detection and interception system designed for the neutralization of hostile Group 1-2 UAVs.",
+        "status": "in development",
+        "source_url": "https://harmattan.ai/systems/?category=COUNTER-UAS"
+      }
+    ]
+  },
+  {
+    "company": "Exail Technologies",
+    "country": "FR",
+    "website": "https://exail.com",
+    "products": [
+      {
+        "name": "UMIS",
+        "category": "autonomous vehicle",
+        "description": "Unmanned Mine Countermeasure Integrated System combining USVs, AUVs, and ROVs into an end-to-end solution for naval mine clearance operations.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product-range/umis-unmanned-mcm-mine-countermeasure-integrated-system"
+      },
+      {
+        "name": "Inspector 90",
+        "category": "autonomous vehicle",
+        "description": "9-meter unmanned surface vehicle (USV) serving as a drone carrier for mine countermeasure operations.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product/inspector-90-unmanned-surface-vehicle"
+      },
+      {
+        "name": "Inspector 125",
+        "category": "autonomous vehicle",
+        "description": "12-meter unmanned surface vehicle for larger payload and extended-range mine countermeasure missions.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product/inspector-125-unmanned-surface-vehicle"
+      },
+      {
+        "name": "A18-M",
+        "category": "autonomous vehicle",
+        "description": "Mid-size autonomous underwater vehicle (AUV) designed for military mine countermeasure operations.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product/a18-m-autonomous-underwater-vehicle"
+      },
+      {
+        "name": "K-Ster C",
+        "category": "munition",
+        "description": "Expendable mine disposal ROV (remotely operated vehicle) for neutralizing moored and bottom mines at sea.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product/k-ster-c-expendable-mine-disposal-vehicle"
+      },
+      {
+        "name": "DriX H-8",
+        "category": "autonomous vehicle",
+        "description": "Medium-range uncrewed surface vessel (USV) for hydrographic survey and maritime autonomous operations.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product/drix-h8-medium-range-usv"
+      },
+      {
+        "name": "DriX O-16",
+        "category": "autonomous vehicle",
+        "description": "Transoceanic uncrewed surface vessel capable of long-endurance autonomous ocean survey and defense missions.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product/drix-o-16"
+      },
+      {
+        "name": "Marins Series",
+        "category": "navigation",
+        "description": "Military and strategic-grade inertial navigation systems for naval submarines and surface combatants.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product-range/inertial-navigation-solutions-for-navies"
+      },
+      {
+        "name": "Advans Series",
+        "category": "navigation",
+        "description": "FOG-based inertial navigation and pointing systems for land defense vehicles and artillery.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product-range/advans-series-inertial-navigation-pointing-land-forces"
+      },
+      {
+        "name": "Phins",
+        "category": "navigation",
+        "description": "High-performance fiber-optic gyroscope (FOG) inertial navigation system for surface and subsea marine platforms.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product/phins-inertial-navigation-system"
+      },
+      {
+        "name": "Stab Series",
+        "category": "optronics",
+        "description": "Gyro-stabilized platforms for weapon and sensor pointing applications on military vehicles and naval vessels.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product-range/stabs-series-stabilized-platforms"
+      },
+      {
+        "name": "WECDIS",
+        "category": "C2 software",
+        "description": "Warship Electronic Chart Display and Information System for naval navigation and situational awareness.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product-range/gecdis-w-warship-electronic-chart-display-information-system"
+      },
+      {
+        "name": "Seascan",
+        "category": "ISR",
+        "description": "Mine identification ROV providing high-resolution imagery for mine classification and threat assessment.",
+        "status": "deployed",
+        "source_url": "https://www.exail.com/product/seascan-mine-identification-system"
+      },
+      {
+        "name": "Quantum Gravimeters",
+        "category": "navigation",
+        "description": "Cold-atom quantum gravimeters for precision gravity measurement, enabling GNSS-independent navigation and geophysical survey.",
+        "status": "in production",
+        "source_url": "https://www.exail.com/product/quantum-gravimeters"
+      }
+    ]
+  },
+  {
+    "company": "Skydio",
+    "country": "US",
+    "website": "https://skydio.com",
+    "products": [
+      {
+        "name": "Skydio X10",
+        "category": "drone",
+        "description": "Multi-mission autonomous drone delivering high-resolution visual and thermal intelligence for inspection, security, and public safety applications.",
+        "status": "deployed",
+        "source_url": "https://www.skydio.com/x10"
+      },
+      {
+        "name": "Skydio X10D",
+        "category": "drone",
+        "description": "Defense-hardened variant of the X10 featuring EW resilience, GPS-denied navigation, Teledyne FLIR Boson+ thermal sensor, and layered survivability for tactical military operations.",
+        "status": "deployed",
+        "source_url": "https://www.skydio.com/x10d"
+      },
+      {
+        "name": "Skydio R10",
+        "category": "drone",
+        "description": "Compact indoor drone (10\"×10\", 1.7 lbs) designed for public safety and military indoor operations with onboard lighting and cloud integration.",
+        "status": "in production",
+        "source_url": "https://www.skydio.com/r10"
+      },
+      {
+        "name": "Skydio F10",
+        "category": "drone",
+        "description": "Fixed-wing drone built on a Robotic Takeoff and Landing (RTOL) architecture providing extended range and flight time for long-range ISR and linear infrastructure missions.",
+        "status": "in development",
+        "source_url": "https://www.skydio.com/f10"
+      },
+      {
+        "name": "Skydio Dock for X10",
+        "category": "drone",
+        "description": "Automated docking and charging station enabling continuous autonomous drone-in-a-box operations without human intervention.",
+        "status": "deployed",
+        "source_url": "https://www.skydio.com/dock"
+      }
+    ]
+  },
+  {
+    "company": "Hermeus",
+    "country": "US",
+    "website": "https://hermeus.com",
+    "products": [
+      {
+        "name": "Quarterhorse Mk 2",
+        "category": "drone",
+        "description": "Rapidly reusable high-speed unmanned aircraft designed to make testing in hypersonic flight regimes routine and affordable; completed first flight in March 2026.",
+        "status": "in development",
+        "source_url": "https://www.hermeus.com/quarterhorse"
+      },
+      {
+        "name": "Darkhorse",
+        "category": "drone",
+        "description": "Multi-mission reusable hypersonic UAS for defense and national security operations, designed for rapid, cost-effective strike and ISR at hypersonic speeds.",
+        "status": "in development",
+        "source_url": "https://www.hermeus.com/darkhorse"
+      },
+      {
+        "name": "Chimera",
+        "category": "propulsion",
+        "description": "Hybrid turbine-ramjet engine enabling aircraft to take off conventionally, break the sound barrier, and accelerate to hypersonic speeds within a single propulsion system.",
+        "status": "in development",
+        "source_url": "https://www.hermeus.com/chimera"
+      }
+    ]
+  },
+  {
+    "company": "Quantum Systems",
+    "country": "DE",
+    "website": "https://quantum-systems.com",
+    "products": [
+      {
+        "name": "Trinity F90+",
+        "category": "drone",
+        "description": "Fixed-wing VTOL UAS with 90+ minute endurance for mapping, surveying, and ISR missions covering large areas from field deployment.",
+        "status": "deployed",
+        "source_url": "https://quantum-systems.com/",
+        "source_type": "secondary"
+      },
+      {
+        "name": "Vector",
+        "category": "drone",
+        "description": "Defense-focused fixed-wing VTOL UAS designed for military ISR, tactical reconnaissance, and beyond-visual-line-of-sight operations.",
+        "status": "deployed",
+        "source_url": "https://quantum-systems.com/"
+      }
+    ]
+  },
+  {
+    "company": "Dedrone",
+    "country": "US",
+    "website": "https://dedrone.com",
+    "products": [
+      {
+        "name": "DedroneCity",
+        "category": "counter-UAS",
+        "description": "Zero-install airspace security solution providing city-wide drone detection and tracking coverage without ground infrastructure.",
+        "status": "deployed",
+        "source_url": "https://www.dedrone.com/solutions/city-wide-drone-detection"
+      },
+      {
+        "name": "DedroneFixedSite",
+        "category": "counter-UAS",
+        "description": "Multi-sensor on-site solution providing layered drone protection for fixed critical infrastructure and military installations.",
+        "status": "deployed",
+        "source_url": "https://www.dedrone.com/solutions/dedrone-fixed-site"
+      },
+      {
+        "name": "DedroneTrailer+",
+        "category": "counter-UAS",
+        "description": "Mobile deployable counter-drone detection unit with multiple sensor layers for tactical and expeditionary operations.",
+        "status": "deployed",
+        "source_url": "https://www.dedrone.com/solutions/dedrone-trailer"
+      },
+      {
+        "name": "DedronePortable",
+        "category": "counter-UAS",
+        "description": "Man-portable expeditionary kit enabling rapid drone detection deployment for forward military units.",
+        "status": "deployed",
+        "source_url": "https://www.dedrone.com/solutions/dedrone-portable"
+      },
+      {
+        "name": "DedroneDefender 2",
+        "category": "counter-UAS",
+        "description": "AI-powered smart jammer for precision drone mitigation and neutralization in urban and contested environments.",
+        "status": "deployed",
+        "source_url": "https://www.dedrone.com/solutions/dedrone-defender-2"
+      },
+      {
+        "name": "DedroneTracker.AI",
+        "category": "counter-UAS",
+        "description": "Plug-and-play AI/ML software platform for autonomous drone detection, tracking, and classification.",
+        "status": "deployed",
+        "source_url": "https://www.dedrone.com/products/drone-detection-software"
+      },
+      {
+        "name": "DedroneSensors",
+        "category": "counter-UAS",
+        "description": "Radio frequency drone detection sensors for continuous airspace monitoring and early warning.",
+        "status": "deployed",
+        "source_url": "https://www.dedrone.com/products/drone-detection/rf-sensors/overview"
+      }
+    ]
+  },
+  {
+    "company": "Blue Bear Systems",
+    "country": "GB",
+    "website": "https://bbsr.co.uk",
+    "note": "Acquired by Saab UK Ltd in August 2023, operates as BlueBear – A Saab Company.",
+    "products": [
+      {
+        "name": "SmartConnect",
+        "category": "AI software",
+        "description": "Avionics autonomy module providing GPS/GNSS-denied flight capability and specialist functions for integration into any UAS platform.",
+        "status": "deployed",
+        "source_url": "https://bbsr.co.uk/products"
+      },
+      {
+        "name": "Centurion",
+        "category": "C2 software",
+        "description": "Mission system for command and control of autonomous drone swarms with minimal operator burden, used by the RAF's 216 Squadron.",
+        "status": "deployed",
+        "source_url": "https://bbsr.co.uk/products"
+      },
+      {
+        "name": "Nexus Mission System",
+        "category": "C2 software",
+        "description": "Command and control platform enabling multi-platform autonomous mission management across air, land, and maritime domains.",
+        "status": "deployed",
+        "source_url": "https://bbsr.co.uk/products"
+      },
+      {
+        "name": "Configurable Autonomy Toolbox",
+        "category": "AI software",
+        "description": "Modular software toolbox providing bespoke autonomy solutions using proven AI modules for uncreating existing manned platforms.",
+        "status": "deployed",
+        "source_url": "https://bbsr.co.uk/products"
+      }
+    ]
+  },
+  {
+    "company": "Basecamp Research",
+    "country": "GB",
+    "website": "https://basecamp-research.com",
+    "note": "Biotech/genomics company building AI models on biological datasets; no defense products publicly listed.",
+    "products": []
+  },
+  {
+    "company": "Orca AI",
+    "country": "IL",
+    "website": "https://www.orca-ai.io",
+    "products": [
+      {
+        "name": "SeaPod",
+        "category": "AI software",
+        "description": "AI-based autonomous maritime navigation assistant acting as an automated watchkeeper, using machine vision to detect AIS and non-AIS targets including fishing vessels, buoys, and obstacles.",
+        "status": "deployed",
+        "source_url": "https://www.orca-ai.io/seapod/"
+      },
+      {
+        "name": "FleetView",
+        "category": "AI software",
+        "description": "Shore-based fleet management application providing real-time visibility into vessel performance, risk exposure, and operational trends across an entire maritime fleet.",
+        "status": "deployed",
+        "source_url": "https://www.orca-ai.io/"
+      }
+    ]
+  },
+  {
+    "company": "SYPAQ Systems",
+    "country": "AU",
+    "website": "https://sypaq.com.au",
+    "products": [
+      {
+        "name": "Corvo™ Autonomous Systems",
+        "category": "drone",
+        "description": "Cardboard-constructed, GPS-guided, fixed-wing unmanned aerial system designed for low-cost logistics and ISR missions; notably supplied to Ukraine for maritime and land operations.",
+        "status": "deployed",
+        "source_url": "https://www.sypaq.com.au/solution/corvo-unmanned-systems/"
+      }
+    ]
+  },
+  {
+    "company": "Advanced Navigation",
+    "country": "AU",
+    "website": "https://advancednavigation.com",
+    "products": [
+      {
+        "name": "Certus",
+        "category": "navigation",
+        "description": "Market-leading dual-antenna MEMS INS/GNSS system offering 0.1° roll/pitch and 0.1° heading accuracy for autonomous vehicles and defense platforms.",
+        "status": "deployed",
+        "source_url": "https://www.advancednavigation.com/inertial-navigation-systems/mems-gnss-ins/certus/"
+      },
+      {
+        "name": "Certus Evo",
+        "category": "navigation",
+        "description": "Ultra-high accuracy MEMS GNSS/INS delivering 0.03° roll/pitch and 0.05° heading accuracy with 0.2°/hr bias instability for demanding military applications.",
+        "status": "deployed",
+        "source_url": "https://www.advancednavigation.com/inertial-navigation-systems/mems-gnss-ins/certus-evo/"
+      },
+      {
+        "name": "Boreas D70",
+        "category": "navigation",
+        "description": "World's first digital FOG (fiber-optic gyroscope) INS providing 0.01° roll/pitch accuracy for defense and autonomous navigation in GPS-denied environments.",
+        "status": "deployed",
+        "source_url": "https://www.advancednavigation.com/inertial-navigation-systems/fog-gnss-ins/boreas/"
+      },
+      {
+        "name": "Boreas D90",
+        "category": "navigation",
+        "description": "High-end digital FOG GNSS/INS system achieving 0.005° roll/pitch accuracy for strategic defense and precision navigation applications.",
+        "status": "deployed",
+        "source_url": "https://www.advancednavigation.com/inertial-navigation-systems/fog-gnss-ins/boreas/"
+      },
+      {
+        "name": "Certus Mini N",
+        "category": "navigation",
+        "description": "Compact single-antenna GNSS/INS navigation system with 0.1° roll/pitch accuracy and RTK positioning for UAVs and small autonomous platforms.",
+        "status": "deployed",
+        "source_url": "https://www.advancednavigation.com/inertial-navigation-systems/mems-gnss-ins/certus-mini-n/"
+      }
+    ]
+  },
+  {
+    "company": "Calidus",
+    "country": "AE",
+    "website": "https://calidus.ae",
+    "products": [
+      {
+        "name": "B-250T",
+        "category": "other",
+        "description": "Advanced turboprop trainer aircraft combining carbon fiber structure and modern avionics for pilot instruction; UAE Air Force has ordered 40 units with deliveries starting 2026.",
+        "status": "in production",
+        "source_url": "https://en.wikipedia.org/wiki/Calidus_B-250",
+        "source_type": "secondary"
+      },
+      {
+        "name": "B-250LA",
+        "category": "other",
+        "description": "Light attack variant of the B-250 platform designed for counter-insurgency and close air support missions.",
+        "status": "in production",
+        "source_url": "https://www.calidus.ae/"
+      },
+      {
+        "name": "WX-80",
+        "category": "drone",
+        "description": "Fixed-wing aircraft platform designed for cloud seeding and weather research operations.",
+        "status": "deployed",
+        "source_url": "https://www.calidus.ae/"
+      },
+      {
+        "name": "BARQ Multi-Caliber Rocket Launcher",
+        "category": "munition",
+        "description": "Multi-caliber artillery rocket launcher vehicle unveiled at IDEX 2025, designed to provide flexible, multi-range fire support on wheeled platforms.",
+        "status": "in development",
+        "source_url": "https://www.calidus.ae/latest-news/idex-2025-uaes-calidus-revolutionizes-artillery-with-new-barq-multi-caliber-rocket-launcher-vehicle/"
+      }
+    ]
+  },
+  {
+    "company": "Hancom InSpace",
+    "country": "KR",
+    "website": "https://www.inspace.co.kr",
+    "products": [
+      {
+        "name": "Sejong-1",
+        "category": "satellite",
+        "description": "Korea's first private commercial Earth observation satellite launched in 2022, equipped with red-edge band sensor optimized for vegetation and environmental analysis.",
+        "status": "deployed",
+        "source_url": "https://www.inspace.co.kr/sejong"
+      },
+      {
+        "name": "Sejong-2",
+        "category": "satellite",
+        "description": "Second Earth observation satellite in the Sejong constellation providing expanded remote sensing coverage over the Korean peninsula and beyond.",
+        "status": "deployed",
+        "source_url": "https://www.inspace.co.kr/sejong"
+      },
+      {
+        "name": "Sejong-3",
+        "category": "satellite",
+        "description": "South Korea's first private hyperspectral satellite, launched March 2026 aboard a SpaceX Falcon 9, with 442-band sensor for material classification and advanced Earth observation.",
+        "status": "deployed",
+        "source_url": "https://en.sedaily.com/news/2026/03/19/hancom-inspace-to-launch-private-hyperspectral-satellite",
+        "source_type": "secondary"
+      },
+      {
+        "name": "Sejong-4",
+        "category": "satellite",
+        "description": "Self-developed Earth observation satellite launched on the Korean Nuri rocket; first Hancom InSpace satellite built with fully indigenous technology.",
+        "status": "deployed",
+        "source_url": "https://www.inspace.co.kr/sejong"
+      },
+      {
+        "name": "InStation",
+        "category": "AI software",
+        "description": "Multi-source intelligence fusion AI analysis platform integrating data from satellites, drones, and ground sensors for geospatial intelligence.",
+        "status": "deployed",
+        "source_url": "https://www.inspace.co.kr/"
+      }
+    ]
+  },
+  {
+    "company": "Xona Space Systems",
+    "country": "US",
+    "website": "https://xonaspace.com",
+    "products": [
+      {
+        "name": "Pulsar",
+        "category": "satellite",
+        "description": "LEO PNT (Positioning, Navigation, and Timing) satellite constellation of 258 spacecraft orbiting at 1,080 km, broadcasting signals for centimeter-level accuracy to any device via software update.",
+        "status": "in development",
+        "source_url": "https://xonaspace.com/pulsar"
+      }
+    ]
+  },
+  {
+    "company": "Saronic Technologies",
+    "country": "US",
+    "website": "https://saronic.com",
+    "products": [
+      {
+        "name": "Corsair",
+        "category": "autonomous vehicle",
+        "description": "24-foot autonomous surface vessel (ASV) capable of carrying up to 1,000 lbs payload over 1,000 nautical miles for multi-mission maritime operations.",
+        "status": "deployed",
+        "source_url": "https://www.saronic.com/vessels"
+      },
+      {
+        "name": "Mirage",
+        "category": "autonomous vehicle",
+        "description": "52-foot ASV offering 2,500 NM range and 3,500 lbs payload capacity for diverse maritime defense missions.",
+        "status": "deployed",
+        "source_url": "https://www.saronic.com/vessels"
+      },
+      {
+        "name": "Marauder",
+        "category": "autonomous vehicle",
+        "description": "180-foot autonomous surface vessel designed to host and deliver significant military capabilities across complex maritime environments, carrying up to 150 metric tons.",
+        "status": "in development",
+        "source_url": "https://www.saronic.com/vessels"
+      },
+      {
+        "name": "Echelon",
+        "category": "C2 software",
+        "description": "Advanced command-and-control software platform for commanding autonomous maritime fleets, integrating software and hardware for faster decisions and mission-specific control at scale.",
+        "status": "deployed",
+        "source_url": "https://www.saronic.com/echelon"
+      }
+    ]
+  },
+  {
+    "company": "Epirus",
+    "country": "US",
+    "website": "https://epirusinc.com",
+    "products": [
+      {
+        "name": "Leonidas",
+        "category": "EW",
+        "description": "Solid-state high-power microwave (HPM) system using Gallium Nitride semiconductors to defeat drone swarms and electronic systems through directed energy.",
+        "status": "deployed",
+        "source_url": "https://epirusinc.com/electronic-warfare"
+      },
+      {
+        "name": "Leonidas Mobile",
+        "category": "EW",
+        "description": "Vehicle-mounted HPM counter-UAS system integrating Leonidas directed energy on any military vehicle or hitch-mounted platform.",
+        "status": "deployed",
+        "source_url": "https://epirusinc.com/electronic-warfare"
+      },
+      {
+        "name": "Leonidas Pod",
+        "category": "EW",
+        "description": "Portable, airborne-integrable HPM module combining long-pulse technology with multiple mounting options for special operations and UAV-mounted counter-drone applications.",
+        "status": "deployed",
+        "source_url": "https://epirusinc.com/electronic-warfare"
+      },
+      {
+        "name": "Leonidas H₂O",
+        "category": "EW",
+        "description": "Maritime-variant HPM system designed for vessel interdiction and UAV protection in naval environments.",
+        "status": "in production",
+        "source_url": "https://epirusinc.com/press-releases/epirus-introduces-leonidas-h2o-energy-based-high-power-microwave-system-for-maritime-interdiction-and-uav-protection"
+      },
+      {
+        "name": "Leonidas Expeditionary",
+        "category": "EW",
+        "description": "Expeditionary HPM variant developed with ONR, JCO, and USMC for expanded counter-swarm applications in austere environments.",
+        "status": "in production",
+        "source_url": "https://epirusinc.com/electronic-warfare"
+      },
+      {
+        "name": "Air Domain Awareness Platform",
+        "category": "counter-UAS",
+        "description": "ML-powered system for continuous monitoring, tracking, identification, and threat mitigation recommendation for unmanned aerial threats.",
+        "status": "deployed",
+        "source_url": "https://epirusinc.com/air-domain-awareness"
+      }
+    ]
+  },
+  {
+    "company": "Rebellion Defense",
+    "country": "US",
+    "website": "https://rebelliondefense.com",
+    "products": [
+      {
+        "name": "Argus",
+        "category": "radar",
+        "description": "Modular, software-defined phased array radar designed to detect drone swarms, small UAVs, and hypersonic threats in a portable, cost-effective form factor.",
+        "status": "deployed",
+        "source_url": "https://rebelliondefense.com/products/"
+      },
+      {
+        "name": "Prism",
+        "category": "AI software",
+        "description": "AI-powered sensor knowledge graph that fuses real-time all-domain data, tracks thousands of objects simultaneously, and classifies threats with high accuracy.",
+        "status": "deployed",
+        "source_url": "https://rebelliondefense.com/products/"
+      },
+      {
+        "name": "Iris",
+        "category": "C2 software",
+        "description": "Digital console for complete situational awareness and threat detection, powered by the Prism knowledge graph to map, classify, and track objects across land, sea, and air.",
+        "status": "deployed",
+        "source_url": "https://rebelliondefense.com/products/iris/"
+      }
+    ]
+  },
+  {
+    "company": "Vannevar Labs",
+    "country": "US",
+    "website": "https://vannevarlabs.com",
+    "products": [
+      {
+        "name": "Decrypt",
+        "category": "AI software",
+        "description": "AI platform enabling military and foreign policy decision-makers to comprehend, target, and respond to foreign entities using adversarial data and agentic AI.",
+        "status": "deployed",
+        "source_url": "https://www.vannevarlabs.com/"
+      }
+    ]
+  },
+  {
+    "company": "True Anomaly",
+    "country": "US",
+    "website": "https://trueanomaly.space",
+    "products": [
+      {
+        "name": "Jackal",
+        "category": "satellite",
+        "description": "Multirole space superiority spacecraft with high-thrust architecture and modular design for operations in contested orbital environments across multiple orbit regimes.",
+        "status": "in development",
+        "source_url": "https://www.trueanomaly.space/jackal"
+      },
+      {
+        "name": "Mosaic",
+        "category": "AI software",
+        "description": "Autonomy software platform that converts commander objectives into autonomous spacecraft actions, enabling precise decision-making at speed in contested orbital environments.",
+        "status": "in development",
+        "source_url": "https://www.trueanomaly.space/mosaic"
+      }
+    ]
+  },
+  {
+    "company": "Allen Control Systems",
+    "country": "US",
+    "website": "https://allencontrolsystems.com",
+    "products": [
+      {
+        "name": "Bullfrog™ / M240C",
+        "category": "counter-UAS",
+        "description": "Individual counter-UAS platform with passive sensing providing all-purpose defense against Group 1-3 UAS, FPV drones, and swarms at 800m effective range.",
+        "status": "deployed",
+        "source_url": "https://allencontrolsystems.com/products/bullfrog-m240"
+      },
+      {
+        "name": "Bullfrog™ / M2",
+        "category": "counter-UAS",
+        "description": "Advanced counter-UAS and final protective fires platform for Group 3+ UAS with 1,500m effective range.",
+        "status": "deployed",
+        "source_url": "https://allencontrolsystems.com/products/bullfrog-m2"
+      },
+      {
+        "name": "Bullfrog™ / M230",
+        "category": "counter-UAS",
+        "description": "Convoy and tactical formation counter-UAS platform for Group 2-3 UAV defense at 800-1,500m effective range.",
+        "status": "in development",
+        "source_url": "https://allencontrolsystems.com/products/bullfrog-m230"
+      },
+      {
+        "name": "Bullfrog™ / M134",
+        "category": "counter-UAS",
+        "description": "Individual and convoy counter-UAS platform with sustained fire capability against Group 1-2 UAVs and FPV drones.",
+        "status": "in development",
+        "source_url": "https://allencontrolsystems.com/products/bullfrog-m134"
+      }
+    ]
+  },
+  {
+    "company": "Darkhive",
+    "country": "US",
+    "website": "https://www.darkhive.com",
+    "products": [
+      {
+        "name": "YellowJacket",
+        "category": "drone",
+        "description": "Compact rugged autonomous drone weighing under 1 lb with mission-specific variants including CQB for close-quarters combat and Tactical SA for perimeter reconnaissance.",
+        "status": "deployed",
+        "source_url": "https://www.darkhive.com/"
+      },
+      {
+        "name": "YELLOWJACKET MK1E",
+        "category": "drone",
+        "description": "Low-cost (<$10K) autonomous drone designed to carry an EMP payload and navigate in GNSS and communications-denied environments using onboard ML object detection.",
+        "status": "deployed",
+        "source_url": "https://www.darkhive.com/"
+      },
+      {
+        "name": "HI-DOS",
+        "category": "C2 software",
+        "description": "Hands-free Integration Digital Operations System providing voice command and control (VC2) framework for challenging military environments.",
+        "status": "deployed",
+        "source_url": "https://www.darkhive.com/"
+      },
+      {
+        "name": "FLEETFORGE",
+        "category": "AI software",
+        "description": "CI/CD DevSecOps software pipeline to build, test, secure, and deploy UAS autonomy capabilities and manage large drone swarms.",
+        "status": "deployed",
+        "source_url": "https://www.darkhive.com/"
+      }
+    ]
+  },
+  {
+    "company": "HavocAI",
+    "country": "US",
+    "website": "https://havocai.com",
+    "products": [
+      {
+        "name": "HAVOC CONTROL",
+        "category": "C2 software",
+        "description": "Intuitive interface for system-wide command and control of autonomous maritime and multi-domain assets.",
+        "status": "in development",
+        "source_url": "https://havocai.com/"
+      },
+      {
+        "name": "HAVOC CLOUD",
+        "category": "communications",
+        "description": "Scalable communications platform connecting autonomous assets and operators across sea, air, and land domains.",
+        "status": "in development",
+        "source_url": "https://havocai.com/"
+      },
+      {
+        "name": "HAVOC OS",
+        "category": "AI software",
+        "description": "Real-time decision-making and vessel control operating system enabling full collaborative autonomy across multi-domain platforms.",
+        "status": "in development",
+        "source_url": "https://havocai.com/"
+      }
+    ]
+  },
+  {
+    "company": "Neros Technologies",
+    "country": "US",
+    "website": "https://neros.tech",
+    "products": [
+      {
+        "name": "ARCHER",
+        "category": "drone",
+        "description": "FPV drone designed for modular payloads with resilient communications, mass-produced with a secure domestic supply chain and BlueUAS certification.",
+        "status": "deployed",
+        "source_url": "https://www.neros.tech/"
+      },
+      {
+        "name": "ARCHER STRIKE",
+        "category": "loitering munition",
+        "description": "Kinetic-enabled FPV system delivering lethal effects at range in contested and GPS-denied environments.",
+        "status": "deployed",
+        "source_url": "https://www.neros.tech/"
+      },
+      {
+        "name": "CROSSBOW",
+        "category": "communications",
+        "description": "Tactical ground control station providing electronic warfare-resistant communications at extended range for FPV operations.",
+        "status": "deployed",
+        "source_url": "https://www.neros.tech/"
+      },
+      {
+        "name": "LONGBOW",
+        "category": "communications",
+        "description": "Maximum-range ground control station optimized for stationary positions requiring long-range drone operations.",
+        "status": "deployed",
+        "source_url": "https://www.neros.tech/"
+      }
+    ]
+  },
+  {
+    "company": "Firehawk Aerospace",
+    "country": "US",
+    "website": "https://firehawkdefense.com",
+    "products": [
+      {
+        "name": "3D-Ultra",
+        "category": "propulsion",
+        "description": "Proprietary 3D-printed solid rocket fuel enabling rapid, cost-effective manufacturing of solid rocket motors with precise grain design and enhanced combustion performance.",
+        "status": "deployed",
+        "source_url": "https://firehawkdefense.com/"
+      },
+      {
+        "name": "3D-Printed Solid Rocket Motors",
+        "category": "propulsion",
+        "description": "Additively manufactured solid rocket motors for tactical missile systems including Javelin, Stinger, and GMLRS replacements, replacing legacy production methods.",
+        "status": "in production",
+        "source_url": "https://firehawkdefense.com/"
+      }
+    ]
+  },
+  {
+    "company": "AndrenaM",
+    "country": "US",
+    "website": "https://andrenam.com",
+    "note": "Early-stage maritime autonomy startup; no named products publicly listed.",
+    "products": []
+  },
+  {
+    "company": "Rampart Communications",
+    "country": "US",
+    "website": "https://rampartcommunications.com",
+    "products": [
+      {
+        "name": "TerraWave™ TDL Radio",
+        "category": "communications",
+        "description": "Secure tactical data link radio solution for ground-based wireless communications with cryptographic physical-layer security.",
+        "status": "deployed",
+        "source_url": "https://rampartcommunications.com/terrawave/"
+      },
+      {
+        "name": "StrataWave™ UAS Radio",
+        "category": "communications",
+        "description": "Secure wireless communications radio designed specifically for unmanned aerial systems and drone data links.",
+        "status": "deployed",
+        "source_url": "https://rampartcommunications.com/stratawave/"
+      },
+      {
+        "name": "UBDM™ Core",
+        "category": "communications",
+        "description": "Patented Unitary Braid Division Multiplexing modulation technology providing cryptographic security at the physical layer of wireless communications.",
+        "status": "deployed",
+        "source_url": "https://rampartcommunications.com/ubdm/"
+      }
+    ]
+  },
+  {
+    "company": "OmniTeq",
+    "country": "US",
+    "website": "https://omniteq.com",
+    "products": [
+      {
+        "name": "AThENA Platform",
+        "category": "AI software",
+        "description": "Proprietary customizable data platform ingesting structured and unstructured data types, combining predictive analytics and machine learning for defense decision support.",
+        "status": "deployed",
+        "source_url": "https://www.omniteq.com/"
+      },
+      {
+        "name": "OmniTeq Collect",
+        "category": "ISR",
+        "description": "Intelligent multi-source data collection platform integrating API, IoT, advanced sensors, and ground, air, and space feeds.",
+        "status": "deployed",
+        "source_url": "https://www.omniteq.com/"
+      },
+      {
+        "name": "OmniTeq Secure",
+        "category": "cyber",
+        "description": "Cybersecurity solution built on Zero Trust frameworks featuring VirnetX domain protection, end-to-end encryption, and AI-enhanced threat detection.",
+        "status": "deployed",
+        "source_url": "https://www.omniteq.com/"
+      }
+    ]
+  },
+  {
+    "company": "AIKIDO Technologies",
+    "country": "US",
+    "website": "https://aikidotechnologies.com",
+    "note": "Offshore floating datacenter company; no defense-specific products publicly listed.",
+    "products": []
+  },
+  {
+    "company": "Parry Labs",
+    "country": "US",
+    "website": "https://parrylabs.com",
+    "products": [
+      {
+        "name": "STRATIA® Software Stack",
+        "category": "C2 software",
+        "description": "Software infrastructure integrating data, platforms, and applications into a unified operational system for defense mission systems at the edge.",
+        "status": "deployed",
+        "source_url": "https://parrylabs.com/stratia-software-stack/"
+      },
+      {
+        "name": "VIW",
+        "category": "simulation",
+        "description": "Virtual Integration Workspace: cloud-based environment for integrating, testing, and validating software and hardware for mission systems development.",
+        "status": "deployed",
+        "source_url": "https://parrylabs.com/viw-virtual-integration-workspace/"
+      },
+      {
+        "name": "GEMMI",
+        "category": "C2 software",
+        "description": "Global Expeditionary Miniature Mission Interface: single deployable system consolidating control, communications, and mission support for managing multiple unmanned platforms.",
+        "status": "deployed",
+        "source_url": "https://parrylabs.com/resource/gemmi-datasheet/"
+      },
+      {
+        "name": "EC Autonomy 2.0",
+        "category": "other",
+        "description": "Edge computing hardware module delivering rugged AI processing and integration for mission systems in deployed environments.",
+        "status": "deployed",
+        "source_url": "https://parrylabs.com/edgecomputing/"
+      }
+    ]
+  },
+  {
+    "company": "DEFCON AI",
+    "country": "US",
+    "website": "https://defconai.com",
+    "products": [
+      {
+        "name": "ARTIV Air",
+        "category": "AI software",
+        "description": "AI platform enabling airlift planners to rapidly generate and evaluate multiple mission scenarios using cloud-native, time-dynamic optimization.",
+        "status": "deployed",
+        "source_url": "https://defconai.com/capabilities#artiv"
+      },
+      {
+        "name": "R-ALIGN",
+        "category": "AI software",
+        "description": "Logistics planning tool enabling rapid modeling and evaluation of global multimodal military operations using cloud-native, time-sensitive optimization.",
+        "status": "deployed",
+        "source_url": "https://defconai.com/capabilities#ralign"
+      },
+      {
+        "name": "FlightForge",
+        "category": "AI software",
+        "description": "AI scheduling engine delivering mission-ready flight schedules in seconds by intelligently balancing key factors under tight operational timelines.",
+        "status": "deployed",
+        "source_url": "https://defconai.com/capabilities#flightforge"
+      },
+      {
+        "name": "DockForge",
+        "category": "AI software",
+        "description": "Ship maintenance scheduling optimizer that assigns jobs across dry docks and shipyards to minimize delays and maximize throughput.",
+        "status": "deployed",
+        "source_url": "https://defconai.com/capabilities#dockforge"
+      }
+    ]
+  },
+  {
+    "company": "Duality AI",
+    "country": "US",
+    "website": "https://duality.ai",
+    "note": "Synthetic data and simulation platform for AI training; website could not be fetched.",
+    "products": []
+  },
+  {
+    "company": "Exlabs",
+    "country": "PL",
+    "website": "https://exlabs.com",
+    "note": "Technology consulting and software engineering firm; no defense-specific products publicly listed.",
+    "products": []
+  },
+  {
+    "company": "Albedo Space",
+    "country": "US",
+    "website": "https://albedo.com",
+    "products": [
+      {
+        "name": "Clarity-1",
+        "category": "satellite",
+        "description": "First VLEO (Very Low Earth Orbit) commercial imaging satellite launched March 2025, featuring atomic oxygen mitigation for persistent 10 cm-class optical imagery below 400 km.",
+        "status": "deployed",
+        "source_url": "https://albedo.com/post/clarity-1-what-worked-and-where-we-go-next"
+      },
+      {
+        "name": "Vicinity",
+        "category": "satellite",
+        "description": "Next-generation VLEO imaging satellite following Clarity-1, expanding the Albedo commercial high-resolution imagery constellation.",
+        "status": "in development",
+        "source_url": "https://albedo.com/post/albedos-next-vleo-mission-vicinity"
+      }
+    ]
+  },
+  {
+    "company": "Turion Space",
+    "country": "US",
+    "website": "https://turionspace.com",
+    "products": [
+      {
+        "name": "DROID Satellites",
+        "category": "satellite",
+        "description": "Configurable satellite platform designed to accelerate on-orbit capability deployment for ISR, space domain awareness, and in-space servicing missions.",
+        "status": "in production",
+        "source_url": "https://turionspace.com/satellites"
+      },
+      {
+        "name": "StarfireOS™",
+        "category": "C2 software",
+        "description": "Unified satellite fleet management software enabling Fleet Command, simulation, constellation deployment, and historical mission review.",
+        "status": "deployed",
+        "source_url": "https://turionspace.com/starfire"
+      },
+      {
+        "name": "Ion Propulsion Systems",
+        "category": "propulsion",
+        "description": "State-of-the-art gridded ion propulsion systems offering superior orbital maneuvering beyond traditional Hall-effect thrusters.",
+        "status": "deployed",
+        "source_url": "https://turionspace.com/propulsion"
+      }
+    ]
+  },
+  {
+    "company": "Castelion",
+    "country": "US",
+    "website": "https://castelion.com",
+    "products": [
+      {
+        "name": "Blackbeard",
+        "category": "munition",
+        "description": "Hypersonic strike weapon engineered for mass production and rapid fielding, leveraging vertically integrated propulsion and guidance to achieve performance at a fraction of legacy weapon costs.",
+        "status": "in development",
+        "source_url": "https://www.castelion.com/news/castelion-awarded-105m-us-navy-contract/"
+      }
+    ]
+  },
+  {
+    "company": "Chaos Industries",
+    "country": "US",
+    "website": "https://chaosinc.com",
+    "note": "Stealth-mode defense radar startup; no named products publicly listed on website.",
+    "products": [
+      {
+        "name": "Counter-Drone Radar",
+        "category": "radar",
+        "description": "Multi-target radar system capable of detecting aerial threats 10 minutes earlier than incumbents, tracking targets across 250 km range at $100/km² coverage cost.",
+        "status": "in development",
+        "source_url": "https://chaosinc.com/technologies"
+      }
+    ]
+  },
+  {
+    "company": "Picogrid",
+    "country": "US",
+    "website": "https://picogrid.com",
+    "products": [
+      {
+        "name": "Orion C2",
+        "category": "C2 software",
+        "description": "Command and control system designed to unify sensors, platforms, and operators across land, sea, air, and space domains for joint all-domain operations.",
+        "status": "deployed",
+        "source_url": "https://picogrid.com/orion"
+      },
+      {
+        "name": "Legion API",
+        "category": "AI software",
+        "description": "Integration API for rapidly connecting physical and digital assets, enabling fast deployment and seamless coordination across edge-to-cloud operations.",
+        "status": "deployed",
+        "source_url": "https://picogrid.com/legion"
+      },
+      {
+        "name": "Edge Nodes",
+        "category": "other",
+        "description": "Rugged hardware infrastructure for connecting field devices and enabling distributed multi-domain operations.",
+        "status": "deployed",
+        "source_url": "https://picogrid.com/edge-nodes"
+      }
+    ]
+  },
+  {
+    "company": "ICEYE",
+    "country": "FI",
+    "website": "https://iceye.com",
+    "products": [
+      {
+        "name": "SAR Satellite Constellation",
+        "category": "satellite",
+        "description": "Fleet of small SAR (Synthetic Aperture Radar) satellites providing persistent, all-weather, day-and-night Earth observation for defense, intelligence, and disaster response.",
+        "status": "deployed",
+        "source_url": "https://www.iceye.com/sar-data"
+      },
+      {
+        "name": "Gen 4 Mission System",
+        "category": "ISR",
+        "description": "Advanced satellite mission system for persistent monitoring with enhanced SAR imaging capabilities for intelligence customers.",
+        "status": "deployed",
+        "source_url": "https://www.iceye.com/missions-gen4"
+      },
+      {
+        "name": "ISR Cell",
+        "category": "ISR",
+        "description": "Dedicated Intelligence, Surveillance, and Reconnaissance satellite mission capability for government and defense customers.",
+        "status": "deployed",
+        "source_url": "https://www.iceye.com/missions-isr"
+      },
+      {
+        "name": "Tactical Access",
+        "category": "ISR",
+        "description": "On-demand SAR satellite time reservation enabling rapid tasking up to two hours before a satellite pass for urgent intelligence needs.",
+        "status": "deployed",
+        "source_url": "https://www.iceye.com/sar-data/tactical-access"
+      }
+    ]
+  },
+  {
+    "company": "SensusQ",
+    "country": "EE",
+    "website": "https://sensusq.com",
+    "products": [
+      {
+        "name": "SensusQ Intelligence Management Platform",
+        "category": "AI software",
+        "description": "Information management system for law enforcement and security agencies that processes multi-source intelligence data from collection through analysis and reporting.",
+        "status": "deployed",
+        "source_url": "https://sensusq.com/"
+      }
+    ]
+  },
+  {
+    "company": "Unseenlabs",
+    "country": "FR",
+    "website": "https://www.unseenlabs.com",
+    "products": [
+      {
+        "name": "RF Intelligence Data Collection Service",
+        "category": "satellite",
+        "description": "Space-based RF signal intelligence service using a LEO satellite constellation to detect, geolocate, and classify ships at sea including 'dark ships' that disable AIS transponders.",
+        "status": "deployed",
+        "source_url": "https://unseenlabs.com/en/solutions/"
+      }
+    ]
+  },
+  {
+    "company": "Delair",
+    "country": "FR",
+    "website": "https://delair.aero",
+    "products": [
+      {
+        "name": "DT61",
+        "category": "drone",
+        "description": "Multi-mission fixed-wing drone designed for inspection and surveillance of large land and sea areas in both civilian and military contexts.",
+        "status": "deployed",
+        "source_url": "https://delair.aero/"
+      },
+      {
+        "name": "DT46",
+        "category": "drone",
+        "description": "Electrically powered mini fixed-wing drone with convertible VTOL capability for versatile ISR and mapping missions.",
+        "status": "deployed",
+        "source_url": "https://delair.aero/delair-commercial-drones-2/dt46-long-range-made-easy-2-2-2/"
+      },
+      {
+        "name": "DT26E Surveillance",
+        "category": "drone",
+        "description": "Long-endurance UAV equipped with a gyro-stabilized dual EO/IR sensor payload for persistent surveillance missions.",
+        "status": "deployed",
+        "source_url": "https://delair.aero/delair-commercial-drones/dt26x-surveillance/"
+      },
+      {
+        "name": "DT26E Tactical",
+        "category": "drone",
+        "description": "Military-variant of the DT26 platform supporting tactical telecommunications relay and COMINT missions.",
+        "status": "deployed",
+        "source_url": "https://delair.aero/delair-commercial-drones/uav-dt26m/"
+      },
+      {
+        "name": "DRAKO",
+        "category": "C2 software",
+        "description": "Universal Ground Control Station enabling centralized management and coordination of multiple drone platforms from a single interface.",
+        "status": "deployed",
+        "source_url": "https://delair.aero/press-releases/universal-ground-control-station-drako/"
+      }
+    ]
+  },
+  {
+    "company": "Alpine Eagle",
+    "country": "IL",
+    "website": "https://alpineeagle.com",
+    "products": [
+      {
+        "name": "Sentinel",
+        "category": "counter-UAS",
+        "description": "Airborne counter-UAS system integrating multi-sensor detection, fire control, and strike capabilities on a networked platform to intercept hostile drones from the air.",
+        "status": "in production",
+        "source_url": "https://alpineeagle.com/sentinel/"
+      }
+    ]
+  },
+  {
+    "company": "ARX Robotics",
+    "country": "DE",
+    "website": "https://arx-robotics.com",
+    "products": [
+      {
+        "name": "Gereon RCS",
+        "category": "autonomous vehicle",
+        "description": "Camouflaged tracked autonomous ground robot for reconnaissance, firepower support, casualty evacuation, and surveillance in battlefield environments.",
+        "status": "deployed",
+        "source_url": "https://arx-robotics.com/gereon-rcs"
+      },
+      {
+        "name": "Mithra OS",
+        "category": "AI software",
+        "description": "Digitalization platform that modernizes legacy military vehicle fleets by integrating autonomous capabilities and networked connectivity into existing systems.",
+        "status": "deployed",
+        "source_url": "https://arx-robotics.com/mithra-os"
+      },
+      {
+        "name": "Hector",
+        "category": "autonomous vehicle",
+        "description": "All-terrain autonomous ground vehicle designed for scalable land operations across defense logistics and combat support environments.",
+        "status": "in development",
+        "source_url": "https://arx-robotics.com/hector"
+      }
+    ]
+  },
+  {
+    "company": "Stark Defence",
+    "country": "EE",
+    "website": "https://stark-defence.com",
+    "products": [
+      {
+        "name": "VIRTUS",
+        "category": "loitering munition",
+        "description": "One-way effector loitering munition system designed for precision kinetic strikes against high-value targets.",
+        "status": "in production",
+        "source_url": "https://stark-defence.com/en/systems/stark-owe-v-virtus"
+      },
+      {
+        "name": "VANTA",
+        "category": "autonomous vehicle",
+        "description": "Unmanned surface vessel (USV) designed as a maritime deterrent and patrol system for naval defense operations.",
+        "status": "in development",
+        "source_url": "https://stark-defence.com/en/systems/stark-usv-vanta"
+      },
+      {
+        "name": "MINERVA",
+        "category": "C2 software",
+        "description": "Command and control software platform enabling multi-domain military operations coordination across sea, air, and land assets.",
+        "status": "in development",
+        "source_url": "https://stark-defence.com/en/systems/stark-c2-minerva"
+      }
+    ]
+  },
+  {
+    "company": "Origin Robotics",
+    "country": "EE",
+    "website": "https://origin-robotics.com",
+    "products": [
+      {
+        "name": "BLAZE",
+        "category": "counter-UAS",
+        "description": "Man-portable autonomous drone interceptor combining radar-based detection with AI-powered computer vision to autonomously acquire and intercept hostile UAVs; deployed in Estonia, Latvia, Belgium, and Ukraine.",
+        "status": "deployed",
+        "source_url": "https://origin-robotics.com/blaze"
+      },
+      {
+        "name": "BEAK",
+        "category": "drone",
+        "description": "ISR drone equipped with a precision-guided weapon system for reconnaissance and target engagement, operational in Ukraine.",
+        "status": "deployed",
+        "source_url": "https://origin-robotics.com/"
+      }
+    ]
+  },
+  {
+    "company": "Farsight Vision",
+    "country": "IL",
+    "website": "https://farsightvision.com",
+    "products": [
+      {
+        "name": "FSV Platform",
+        "category": "AI software",
+        "description": "Situational awareness platform providing faster and clearer decision intelligence for military and security users.",
+        "status": "deployed",
+        "source_url": "https://farsightvision.com/en/fsv-platform"
+      },
+      {
+        "name": "FSV Mapper",
+        "category": "AI software",
+        "description": "Geospatial analysis tool that processes media from GNSS-denied environments to generate actionable maps and location data.",
+        "status": "deployed",
+        "source_url": "https://farsightvision.com/en/fsv-mapper"
+      },
+      {
+        "name": "FSV App",
+        "category": "C2 software",
+        "description": "3D situational awareness and tactical planning application for operational support and terrain analysis in the field.",
+        "status": "deployed",
+        "source_url": "https://farsightvision.com/en/fsv-app"
+      }
+    ]
+  },
+  {
+    "company": "Defendec",
+    "country": "EE",
+    "website": "https://defendec.com",
+    "products": [
+      {
+        "name": "Detector",
+        "category": "ISR",
+        "description": "Battery-powered wireless camera triggered by PIR or tamper sensors capturing Full HD images with 35-meter detection range and 1,800+ image internal storage for perimeter security.",
+        "status": "deployed",
+        "source_url": "https://www.defendec.com/"
+      },
+      {
+        "name": "The Bridge",
+        "category": "communications",
+        "description": "Multi-frequency radio transceiver gateway connecting field Detectors to the Command Centre via global mobile networks or long-range radio with end-to-end encrypted data transfer.",
+        "status": "deployed",
+        "source_url": "https://www.defendec.com/"
+      },
+      {
+        "name": "Cloud Command Centre",
+        "category": "C2 software",
+        "description": "Cloud-based management system handling alarm information, device configuration, and AI object detection, deployable on secure public or private servers.",
+        "status": "deployed",
+        "source_url": "https://www.defendec.com/"
+      }
+    ]
+  },
+  {
+    "company": "Tekever",
+    "country": "PT",
+    "website": "https://tekever.com",
+    "products": [
+      {
+        "name": "ARX",
+        "category": "drone",
+        "description": "Advanced fixed-wing UAS platform designed for mission-critical maritime surveillance and defense applications.",
+        "status": "deployed",
+        "source_url": "https://www.tekever.com/"
+      },
+      {
+        "name": "AR5",
+        "category": "drone",
+        "description": "Fixed-wing UAS for long-endurance maritime patrol and surveillance, deployed with the UK Border Force and European maritime agencies.",
+        "status": "deployed",
+        "source_url": "https://www.tekever.com/ar5/"
+      },
+      {
+        "name": "AR3",
+        "category": "drone",
+        "description": "Configurable multi-role fixed-wing UAS offering mission-specific payload options for ISR and special operations.",
+        "status": "deployed",
+        "source_url": "https://www.tekever.com/ar3-evo/"
+      },
+      {
+        "name": "ATLAS",
+        "category": "AI software",
+        "description": "Real-time intelligence-as-a-service platform providing AI-driven data analysis and intelligence integration for defense customers.",
+        "status": "deployed",
+        "source_url": "https://www.tekever.com/atlas/"
+      }
+    ]
+  },
+  {
+    "company": "Sateliot",
+    "country": "ES",
+    "website": "https://sateliot.space",
+    "products": [
+      {
+        "name": "5G NB-IoT Satellite Constellation",
+        "category": "satellite",
+        "description": "LEO satellite network delivering 5G NB-IoT connectivity to standard IoT devices globally, enabling tracking, monitoring, and communications in areas without terrestrial coverage.",
+        "status": "deployed",
+        "source_url": "https://sateliot.space/our-services/"
+      }
+    ]
+  },
+  {
+    "company": "Open Cosmos",
+    "country": "GB",
+    "website": "https://open-cosmos.com",
+    "products": [
+      {
+        "name": "Open Orbit",
+        "category": "satellite",
+        "description": "End-to-end satellite mission service including assembly, integration, launch campaign, in-orbit operations, data delivery, insurance, and licensing.",
+        "status": "deployed",
+        "source_url": "https://open-cosmos.com/satellite-missions"
+      },
+      {
+        "name": "OpenConstellation",
+        "category": "satellite",
+        "description": "Shared satellite infrastructure providing global access to Earth observation data for climate, energy, and natural resource monitoring.",
+        "status": "deployed",
+        "source_url": "https://open-cosmos.com/open-constellation"
+      },
+      {
+        "name": "Data Cosmos",
+        "category": "AI software",
+        "description": "Cloud-based platform for accessing, processing, and analyzing full-resolution satellite imagery with algorithmic analysis capabilities.",
+        "status": "deployed",
+        "source_url": "https://open-cosmos.com/data-and-services"
+      }
+    ]
+  },
+  {
+    "company": "D-Fend Solutions",
+    "country": "IL",
+    "website": "https://d-fendsolutions.com",
+    "products": [
+      {
+        "name": "EnforceAir2",
+        "category": "counter-UAS",
+        "description": "Next-generation cyber-takeover counter-UAS platform with tactical, vehicle, maritime, and stationary deployment variants for rogue drone mitigation.",
+        "status": "deployed",
+        "source_url": "https://d-fendsolutions.com/enforceair2-next-gen-c-uas/"
+      },
+      {
+        "name": "EnforceAir",
+        "category": "counter-UAS",
+        "description": "Cyber-driven counter-drone system that automatically detects and performs non-kinetic takeover of rogue drones, guiding them to a safe landing.",
+        "status": "deployed",
+        "source_url": "https://d-fendsolutions.com/enforceair/"
+      },
+      {
+        "name": "EnforceAir PLUS",
+        "category": "counter-UAS",
+        "description": "Multilayer counter-drone system combining cyber takeover with additional sensor and effector layers for enhanced tactical coverage.",
+        "status": "deployed",
+        "source_url": "https://d-fendsolutions.com/multilayer-counter-drone-system/"
+      },
+      {
+        "name": "MSC2",
+        "category": "C2 software",
+        "description": "Multi-Sensor Command and Control System coordinating multiple detection and mitigation sensors across a counter-UAS network.",
+        "status": "deployed",
+        "source_url": "https://d-fendsolutions.com/multi-sensor-command-control-system/"
+      },
+      {
+        "name": "EnforceAir Analytics",
+        "category": "AI software",
+        "description": "Data analysis tool for drone incident tracking, threat pattern assessment, and operational reporting.",
+        "status": "deployed",
+        "source_url": "https://d-fendsolutions.com/enforceair-analytics/"
+      }
+    ]
+  },
+  {
+    "company": "Xtend",
+    "country": "IL",
+    "website": "https://xtend.me",
+    "products": [
+      {
+        "name": "XTENDER",
+        "category": "drone",
+        "description": "AI-assisted military-grade tactical UAS designed for mission-critical operations with XOS autonomous operating system.",
+        "status": "deployed",
+        "source_url": "https://xtend.me/xtender"
+      },
+      {
+        "name": "SCORPIO 500",
+        "category": "autonomous vehicle",
+        "description": "Tactical unmanned ground system for autonomous mission execution in complex and contested environments.",
+        "status": "deployed",
+        "source_url": "https://xtend.me/scorpio-500"
+      },
+      {
+        "name": "SCORPIO 1000",
+        "category": "autonomous vehicle",
+        "description": "Advanced robotic ground platform enabling a single operator to supervise and direct multiple assets across multiple domains simultaneously.",
+        "status": "deployed",
+        "source_url": "https://xtend.me/scorpio-1000"
+      },
+      {
+        "name": "WOLVERINE",
+        "category": "autonomous vehicle",
+        "description": "Mission-capable ground robot integrated with the XOS operating system for tactical reconnaissance and support operations.",
+        "status": "deployed",
+        "source_url": "https://xtend.me/wolverine"
+      },
+      {
+        "name": "HONEY BADGER",
+        "category": "autonomous vehicle",
+        "description": "Autonomous ground system supporting rapid deployment and real-time adaptation to evolving operational requirements.",
+        "status": "deployed",
+        "source_url": "https://xtend.me/honey-badger"
+      }
+    ]
+  },
+  {
+    "company": "SpearUAV",
+    "country": "IL",
+    "website": "https://spearuav.com",
+    "note": "Acquired by Uvision Group to integrate HERO and Viper loitering munition families.",
+    "products": [
+      {
+        "name": "VIPER I",
+        "category": "loitering munition",
+        "description": "Micro-tactical loitering munition with 1.2 kg MTOW for precision strike against moving and stationary targets at line-of-sight and beyond-line-of-sight ranges up to 5 km.",
+        "status": "deployed",
+        "source_url": "https://spearuav.com/viper-family/viper-I/"
+      },
+      {
+        "name": "VIPER 40",
+        "category": "loitering munition",
+        "description": "Compact loitering munition in the Viper family designed for squad-level tactical precision strike.",
+        "status": "deployed",
+        "source_url": "https://spearuav.com/"
+      },
+      {
+        "name": "VIPER 300",
+        "category": "loitering munition",
+        "description": "AI-based loitering munition integrating reconnaissance, target acquisition, and precision strike; awarded $20M contract in December 2024 for infantry, tank, and platform integration.",
+        "status": "deployed",
+        "source_url": "https://www.edrmagazine.eu/spearuav-announces-20-million-contract-for-advanced-viper-300-ai-based-loitering-munition-systems",
+        "source_type": "secondary"
+      },
+      {
+        "name": "VIPER 750",
+        "category": "loitering munition",
+        "description": "Larger-payload variant in the Viper loitering munition family for extended range and heavier warhead missions.",
+        "status": "in production",
+        "source_url": "https://spearuav.com/"
+      }
+    ]
+  },
+  {
+    "company": "NewSpace Research and Technologies",
+    "country": "IN",
+    "website": "https://newspace.co.in",
+    "products": [
+      {
+        "name": "BELUGA",
+        "category": "drone",
+        "description": "Hybrid multi-rotor long-endurance UAV with mesh networking and swarm capabilities for extended ISR and logistics missions.",
+        "status": "in production",
+        "source_url": "https://newspace.co.in/"
+      },
+      {
+        "name": "NIMBUS",
+        "category": "drone",
+        "description": "Multi-purpose electric UAV for reconnaissance, surveillance, and logistics missions up to 50 km range.",
+        "status": "in production",
+        "source_url": "https://newspace.co.in/"
+      },
+      {
+        "name": "MACKEREL",
+        "category": "loitering munition",
+        "description": "Multi-rotor loitering munition UAV designed for precision kinetic strikes against ground targets.",
+        "status": "in development",
+        "source_url": "https://newspace.co.in/"
+      },
+      {
+        "name": "NIMBUS-SCOPE",
+        "category": "drone",
+        "description": "Tethered electric UAV providing persistent surveillance and communications relay at a fixed location.",
+        "status": "in production",
+        "source_url": "https://newspace.co.in/"
+      }
+    ]
+  },
+  {
+    "company": "Raphe mPhibr",
+    "country": "IN",
+    "website": "https://www.raphe.com",
+    "products": [
+      {
+        "name": "mR10",
+        "category": "drone",
+        "description": "Fixed-wing UAV credited as the world's first operational drone swarm platform, validated in over one million kilometers of Indian security operations.",
+        "status": "deployed",
+        "source_url": "https://www.raphe.com/"
+      },
+      {
+        "name": "mR20",
+        "category": "drone",
+        "description": "High-altitude logistics UAV engineered for operations in remote Himalayan terrain for defense resupply missions.",
+        "status": "deployed",
+        "source_url": "https://www.raphe.com/"
+      },
+      {
+        "name": "Bharat",
+        "category": "drone",
+        "description": "Compact surveillance UAV designed for mountainous terrain ISR and border patrol missions.",
+        "status": "deployed",
+        "source_url": "https://www.raphe.com/"
+      },
+      {
+        "name": "X8",
+        "category": "drone",
+        "description": "Maritime UAV designed for over-water patrol, coastal intelligence, and littoral surveillance missions.",
+        "status": "deployed",
+        "source_url": "https://www.raphe.com/"
+      }
+    ]
+  },
+  {
+    "company": "Tonbo Imaging",
+    "country": "IN",
+    "website": "https://tonboimaging.com",
+    "products": [
+      {
+        "name": "Tactical EO/IR Systems",
+        "category": "optronics",
+        "description": "Modular electro-optic and infrared systems for CQC and long-range military operations, interconnected with battlefield communication networks.",
+        "status": "deployed",
+        "source_url": "https://tonboimaging.com/defense/products/tactical/"
+      },
+      {
+        "name": "Land Vehicle Systems",
+        "category": "optronics",
+        "description": "EO/IR imaging systems for armored vehicle drivers, gunners, and crews providing enhanced situational awareness in all lighting conditions.",
+        "status": "deployed",
+        "source_url": "https://tonboimaging.com/defense/products/land/"
+      },
+      {
+        "name": "Naval EO/IR Systems",
+        "category": "optronics",
+        "description": "Maritime surveillance, search and track, fire control, and air defense EO/IR systems for naval vessels.",
+        "status": "deployed",
+        "source_url": "https://tonboimaging.com/defense/products/naval/"
+      },
+      {
+        "name": "Aerial Gimbal Payloads",
+        "category": "optronics",
+        "description": "Multi-axis gyro-stabilized EO/IR gimbal payloads for aerial reconnaissance, navigation, and targeting on fixed and rotary wing platforms.",
+        "status": "deployed",
+        "source_url": "https://tonboimaging.com/defense/products/aerial/"
+      },
+      {
+        "name": "Missile EO/IR Seeker",
+        "category": "optronics",
+        "description": "Autonomous EO/IR sensor packages with edge AI processing enabling autonomous terminal guidance for missile systems.",
+        "status": "in production",
+        "source_url": "https://tonboimaging.com/defense/products/missile/"
+      }
+    ]
+  },
+  {
+    "company": "Aerodrome Group",
+    "country": "US",
+    "website": "https://aerodromegroup.com",
+    "note": "Website could not be reached; no public product page accessible.",
+    "products": []
+  },
+  {
+    "company": "Nearthlab",
+    "country": "KR",
+    "website": "https://nearthlab.com",
+    "products": [
+      {
+        "name": "KAiDEN",
+        "category": "counter-UAS",
+        "description": "High-speed autonomous counter-UAS drone designed to intercept and neutralize hostile aerial threats.",
+        "status": "deployed",
+        "source_url": "https://nearthlab.com/en/solution/kaiden.php"
+      },
+      {
+        "name": "XAiDEN",
+        "category": "loitering munition",
+        "description": "Swarming loitering munition system designed for autonomous coordinated precision strikes.",
+        "status": "in development",
+        "source_url": "https://nearthlab.com/en/solution/xaiden.php"
+      }
+    ]
+  },
+  {
+    "company": "ShieldWorks AI",
+    "country": "US",
+    "website": "https://shieldworks.ai",
+    "note": "No public product page found; website appears to be a placeholder.",
+    "products": []
+  },
+  {
+    "company": "Athena AI",
+    "country": "US",
+    "website": "https://athena-ai.com",
+    "note": "No public product page found; website appears to be a placeholder.",
+    "products": []
+  },
+  {
+    "company": "High Earth Orbit Robotics",
+    "country": "AU",
+    "website": "https://www.heospace.com",
+    "products": [
+      {
+        "name": "HEO Inspect",
+        "category": "satellite",
+        "description": "Automated satellite-to-satellite imaging platform combining tasking, collection, and AI analytics for non-Earth imagery (NEI) and space domain awareness.",
+        "status": "deployed",
+        "source_url": "https://www.heospace.com/"
+      },
+      {
+        "name": "Holmes Mk2",
+        "category": "satellite",
+        "description": "Compact non-Earth imaging payload designed to be hosted on partner satellites for in-orbit inspection of other spacecraft.",
+        "status": "deployed",
+        "source_url": "https://www.heospace.com/technology/non-earth-imaging-cameras"
+      },
+      {
+        "name": "Adler Mk2",
+        "category": "satellite",
+        "description": "Larger-aperture non-Earth imaging payload providing higher-resolution imagery of satellites and space objects for space domain awareness.",
+        "status": "deployed",
+        "source_url": "https://www.heospace.com/technology/non-earth-imaging-cameras"
+      }
+    ]
+  },
+  {
+    "company": "Turgis & Gaillard",
+    "country": "FR",
+    "website": "https://www.turgisgaillard.com",
+    "products": [
+      {
+        "name": "AAROK",
+        "category": "drone",
+        "description": "Long-endurance fixed-wing MALE UAS developed by Gaillard Avions et Systèmes Avancés (TG subsidiary) in partnership with Thales, designed for ISR and tactical missions for French armed forces.",
+        "status": "in development",
+        "source_url": "https://www.thalesgroup.com/en/worldwide/defence-and-security/press_release/thales-and-turgis-gaillard-are-developing-100-french",
+        "source_type": "secondary"
+      }
+    ]
+  },
+  {
+    "company": "Cerbair",
+    "country": "FR",
+    "website": "https://cerbair.com",
+    "products": [
+      {
+        "name": "HYDRA 100",
+        "category": "counter-UAS",
+        "description": "Entry-level passive RF drone detection system for short-range perimeter security and event protection.",
+        "status": "deployed",
+        "source_url": "https://cerbair.com/models/hydra-100"
+      },
+      {
+        "name": "HYDRA 200",
+        "category": "counter-UAS",
+        "description": "Mid-range RF detection system providing broader airspace coverage for military installations and critical infrastructure.",
+        "status": "deployed",
+        "source_url": "https://cerbair.com/models/hydra-200"
+      },
+      {
+        "name": "HYDRA 300",
+        "category": "counter-UAS",
+        "description": "Advanced long-range RF passive radar detection and UAV classification system for high-security military and government deployments.",
+        "status": "deployed",
+        "source_url": "https://cerbair.com/models/hydra-300"
+      },
+      {
+        "name": "MEDUSA 150",
+        "category": "counter-UAS",
+        "description": "RF drone neutralization system for jamming and defeating hostile UAVs at tactical ranges.",
+        "status": "deployed",
+        "source_url": "https://cerbair.com/models/medusa-150"
+      },
+      {
+        "name": "CHIMERA 200",
+        "category": "counter-UAS",
+        "description": "Integrated detection and neutralization system combining HYDRA and MEDUSA capabilities in a single deployable unit.",
+        "status": "deployed",
+        "source_url": "https://cerbair.com/models/chimera-200"
+      }
+    ]
+  },
+  {
+    "company": "Lacroix Defense",
+    "country": "FR",
+    "website": "https://lacroix-defense.com",
+    "products": [
+      {
+        "name": "GALIX",
+        "category": "countermeasures",
+        "description": "Multi-purpose passive self-defense system for armored vehicles (tanks, IFVs, APCs) using mortar-like 80mm grenade launchers to deploy smoke, IR decoys, and anti-personnel rounds.",
+        "status": "deployed",
+        "source_url": "https://www.lacroix-defense.com/produit.php?langue=en&code=galix&pole=land"
+      },
+      {
+        "name": "SYLENA Launcher",
+        "category": "countermeasures",
+        "description": "Naval launcher system for deploying decoys and electronic countermeasures to protect surface combatants from anti-ship missiles.",
+        "status": "deployed",
+        "source_url": "https://defense.defsec-consulting.com/media/1453/lacroix-naval-countermeasures.pdf",
+        "source_type": "secondary"
+      },
+      {
+        "name": "SEACLAD",
+        "category": "countermeasures",
+        "description": "Naval decoy ammunition for ship self-protection against radar and infrared-guided anti-ship missiles.",
+        "status": "deployed",
+        "source_url": "https://www.lacroix-defense.com/produit.php?langue=en&code=seaclad&pole=naval"
+      },
+      {
+        "name": "Airborne Countermeasures",
+        "category": "countermeasures",
+        "description": "Pyrotechnic flares and IR decoys for aircraft self-protection against IR-guided surface-to-air and air-to-air missiles, integrated on Rafale, NH90, and transport aircraft.",
+        "status": "deployed",
+        "source_url": "https://www.lacroix-defense.com/produit.php?langue=en&code=transport&pole=airborne"
+      }
+    ]
+  },
+  {
+    "company": "Texelis",
+    "country": "FR",
+    "website": "https://texelis.com",
+    "products": [
+      {
+        "name": "T700™ Axle System",
+        "category": "other",
+        "description": "Modular military vehicle axle system using proven rigid axle sub-systems combined with Timoney independent suspension technology, adopted for the French Scorpion program vehicles.",
+        "status": "deployed",
+        "source_url": "https://sldinfo.com/2024/05/a-look-at-texelis-french-builder-of-mobility-packages-for-armored-vehicles/",
+        "source_type": "secondary"
+      },
+      {
+        "name": "T900™ Axle System",
+        "category": "other",
+        "description": "Modular independent suspension axle system licensed from Timoney, supporting up to 9,000 kg axle loads for 4×4, 6×6, and 8×8 military wheeled vehicles.",
+        "status": "deployed",
+        "source_url": "https://sldinfo.com/2024/05/a-look-at-texelis-french-builder-of-mobility-packages-for-armored-vehicles/",
+        "source_type": "secondary"
+      }
+    ]
+  },
+  {
+    "company": "CS Group",
+    "country": "FR",
+    "website": "https://www.cs-soprasteria.com",
+    "note": "Acquired by Sopra Steria in 2022; operates defense activities under CS GROUP brand and DIGINEXT sub-brand.",
+    "products": [
+      {
+        "name": "Crimson",
+        "category": "C2 software",
+        "description": "Command and control solution for information sharing and situational awareness, deployed since 2023 for the French Ministry of Interior and defense clients.",
+        "status": "deployed",
+        "source_url": "https://www.cs-soprasteria.com/en/strategic-sectors/defense-homeland-security/"
+      },
+      {
+        "name": "SEDUCS",
+        "category": "cyber",
+        "description": "Hardened operating system securing defense information systems against cyberattacks, used as the security foundation for CS Group C2 and C4ISR solutions.",
+        "status": "deployed",
+        "source_url": "https://www.cs-soprasteria.com/en/strategic-sectors/defense-homeland-security/"
+      },
+      {
+        "name": "DIGINEXT Tactical Data Links",
+        "category": "communications",
+        "description": "Suite of tactical data link products under the DIGINEXT brand for real-time battlefield communications, training systems, and navigation for defense customers.",
+        "status": "deployed",
+        "source_url": "https://www.cs-soprasteria.com/en/strategic-sectors/defense-homeland-security/"
+      }
+    ]
+  }
+]
