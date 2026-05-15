@@ -96,6 +96,138 @@ function isPrivatePlayer(company) {
   );
 }
 
+// ── Category SVG icons ────────────────────────────────────────────────────────
+// Each icon is a miniature silhouette of a real defense product.
+
+function CategoryIcon({ id, className }) {
+  const icons = {
+    // Quadcopter drone — top-down view
+    autonomous: (
+      <svg viewBox="0 0 40 40" className={className}>
+        <line x1="13" y1="13" x2="6" y2="6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <line x1="27" y1="13" x2="34" y2="6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <line x1="13" y1="27" x2="6" y2="34" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <line x1="27" y1="27" x2="34" y2="34" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <rect x="12" y="12" width="16" height="16" rx="3" fill="currentColor" />
+        <circle cx="5" cy="5" r="4.5" fill="currentColor" />
+        <circle cx="35" cy="5" r="4.5" fill="currentColor" />
+        <circle cx="5" cy="35" r="4.5" fill="currentColor" />
+        <circle cx="35" cy="35" r="4.5" fill="currentColor" />
+      </svg>
+    ),
+    // Ballistic missile — upright side profile
+    missiles: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        <polygon points="20,2 15,13 25,13" />
+        <rect x="15" y="13" width="10" height="18" rx="1.5" />
+        <polygon points="15,27 8,36 15,32" />
+        <polygon points="25,27 32,36 25,32" />
+        <ellipse cx="20" cy="33" rx="5" ry="2.5" opacity="0.45" />
+      </svg>
+    ),
+    // Fighter jet — top-down silhouette
+    aerospace: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* fuselage */}
+        <polygon points="20,2 17.5,25 20,30 22.5,25" />
+        {/* wings */}
+        <polygon points="17.5,19 2,31 17.5,25" />
+        <polygon points="22.5,19 38,31 22.5,25" />
+        {/* tail fins */}
+        <polygon points="17.5,26 13,37 19,32" />
+        <polygon points="22.5,26 27,37 21,32" />
+      </svg>
+    ),
+    // Battle tank — side profile
+    land: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* tracks */}
+        <rect x="4" y="25" width="32" height="10" rx="5" />
+        {/* hull */}
+        <rect x="7" y="18" width="24" height="9" rx="2" />
+        {/* turret */}
+        <rect x="11" y="11" width="14" height="9" rx="2" />
+        {/* barrel */}
+        <rect x="23" y="13" width="13" height="3.5" rx="1.75" />
+      </svg>
+    ),
+    // Submarine — side profile
+    naval: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* hull */}
+        <ellipse cx="20" cy="26" rx="17" ry="8" />
+        {/* conning tower */}
+        <rect x="13" y="16" width="11" height="11" rx="2" />
+        {/* periscope stem */}
+        <rect x="18.5" y="8" width="3" height="10" rx="1.5" />
+        {/* periscope head */}
+        <rect x="14" y="7" width="10" height="3.5" rx="1.75" />
+      </svg>
+    ),
+    // Reconnaissance satellite — classic box + solar arrays
+    space: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* solar panel left */}
+        <rect x="1" y="17" width="11" height="8" rx="1.5" />
+        {/* arm left */}
+        <rect x="12" y="19.5" width="3" height="3" />
+        {/* body */}
+        <rect x="13" y="14" width="14" height="14" rx="2" />
+        {/* arm right */}
+        <rect x="27" y="19.5" width="3" height="3" />
+        {/* solar panel right */}
+        <rect x="30" y="17" width="11" height="8" rx="1.5" />
+        {/* antenna */}
+        <rect x="18.5" y="5" width="3" height="9" rx="1.5" />
+        <circle cx="20" cy="4" r="3" />
+      </svg>
+    ),
+    // Radar screen — circular scope with sweep
+    intel: (
+      <svg viewBox="0 0 40 40" className={className} fill="none" stroke="currentColor">
+        <circle cx="20" cy="20" r="16" strokeWidth="2.5" />
+        <circle cx="20" cy="20" r="10" strokeWidth="1.5" opacity="0.5" />
+        <circle cx="20" cy="20" r="4" strokeWidth="1.5" opacity="0.5" />
+        <line x1="4" y1="20" x2="36" y2="20" strokeWidth="1.2" opacity="0.35" />
+        <line x1="20" y1="4" x2="20" y2="36" strokeWidth="1.2" opacity="0.35" />
+        {/* sweep arm */}
+        <line x1="20" y1="20" x2="34" y2="11" strokeWidth="2.5" strokeLinecap="round" />
+        {/* blip */}
+        <circle cx="31" cy="13" r="2.5" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+    // Atom — nucleus + 3 elliptical orbits
+    nuclear: (
+      <svg viewBox="0 0 40 40" className={className} fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="20" cy="20" r="4" fill="currentColor" stroke="none" />
+        <ellipse cx="20" cy="20" rx="17" ry="6" />
+        <ellipse cx="20" cy="20" rx="17" ry="6" transform="rotate(60 20 20)" />
+        <ellipse cx="20" cy="20" rx="17" ry="6" transform="rotate(120 20 20)" />
+      </svg>
+    ),
+    // Factory — building with chimneys
+    industrial: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* main building */}
+        <rect x="4" y="20" width="32" height="16" rx="1.5" />
+        {/* chimneys */}
+        <rect x="7" y="11" width="5" height="11" rx="1" />
+        <rect x="15" y="14" width="5" height="8" rx="1" />
+        <rect x="28" y="9" width="5" height="13" rx="1" />
+        {/* smoke puffs */}
+        <circle cx="9.5" cy="9.5" r="3.5" />
+        <circle cx="17.5" cy="12.5" r="2.5" />
+        <circle cx="30.5" cy="7.5" r="3" />
+        {/* windows */}
+        <rect x="9" y="24" width="5" height="5" rx="1" fill="white" opacity="0.35" />
+        <rect x="18" y="24" width="5" height="5" rx="1" fill="white" opacity="0.35" />
+        <rect x="27" y="24" width="5" height="5" rx="1" fill="white" opacity="0.35" />
+      </svg>
+    ),
+  };
+  return icons[id] || null;
+}
+
 // ── Macro category taxonomy ───────────────────────────────────────────────────
 
 const MACRO_CATEGORIES = [
@@ -103,7 +235,6 @@ const MACRO_CATEGORIES = [
     id: "autonomous",
     name: "Autonomous Systems & UAV",
     description: "Unmanned platforms, loitering munitions, counter-drone",
-    emoji: "🤖",
     color: "purple",
     keywords: ["UAV", "Small UAV", "Loitering Munitions", "Autonomous", "Counter-UAS", "UAS", "Drones"],
   },
@@ -111,7 +242,6 @@ const MACRO_CATEGORIES = [
     id: "missiles",
     name: "Missiles & Air Defense",
     description: "Strike systems, interceptors, rockets, ammunition",
-    emoji: "🎯",
     color: "rose",
     keywords: ["Missiles", "Air Defense", "Iron Dome", "Trophy", "Rockets", "Ammunition", "Energetics", "S-400", "Remote Weapons"],
   },
@@ -119,7 +249,6 @@ const MACRO_CATEGORIES = [
     id: "aerospace",
     name: "Aerospace & Aviation",
     description: "Fixed-wing, rotorcraft, engines, launch systems",
-    emoji: "✈️",
     color: "indigo",
     keywords: ["Aircraft", "Helicopters", "Aerospace", "Rotorcraft", "Rafale", "MiG", "Sukhoi", "Business Jets", "Engines", "Propulsion", "Launch"],
   },
@@ -127,7 +256,6 @@ const MACRO_CATEGORIES = [
     id: "land",
     name: "Land Systems",
     description: "Armored vehicles, artillery, ground platforms",
-    emoji: "⚔️",
     color: "amber",
     keywords: ["Land Systems", "Tanks", "Artillery", "Military Vehicles", "VAB", "Griffon", "K9", "Armored"],
   },
@@ -135,7 +263,6 @@ const MACRO_CATEGORIES = [
     id: "naval",
     name: "Naval & Maritime",
     description: "Ships, submarines, maritime systems",
-    emoji: "⚓",
     color: "blue",
     keywords: ["Naval", "Submarines", "Surface Ships", "Shipbuilding", "Maritime", "Frigates", "Sonar"],
   },
@@ -143,7 +270,6 @@ const MACRO_CATEGORIES = [
     id: "space",
     name: "Space & ISR",
     description: "Satellites, imagery, geospatial intelligence",
-    emoji: "🛰️",
     color: "sky",
     keywords: ["Space", "Satellites", "Imagery", "Geospatial"],
   },
@@ -151,7 +277,6 @@ const MACRO_CATEGORIES = [
     id: "intel",
     name: "Intelligence, Cyber & EW",
     description: "C2, SIGINT, electronic warfare, AI & analytics",
-    emoji: "👁️",
     color: "emerald",
     keywords: ["Cyber", "AI", "Intelligence", "Analytics", "Software", "Electronic Warfare", "SIGINT", "ISR", "C4I", "Communications", "Radar", "Sensors", "Optronics"],
   },
@@ -159,7 +284,6 @@ const MACRO_CATEGORIES = [
     id: "nuclear",
     name: "Nuclear & Advanced Tech",
     description: "Nuclear, directed energy, advanced propulsion",
-    emoji: "⚡",
     color: "orange",
     keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"],
   },
@@ -167,7 +291,6 @@ const MACRO_CATEGORIES = [
     id: "industrial",
     name: "Industrial & Tech Base",
     description: "Components, electronics, R&D, simulation, IT",
-    emoji: "⚙️",
     color: "slate",
     keywords: ["Components", "Electronics", "Defense Electronics", "Transmissions", "R&D", "Testing", "Simulation", "Integration", "Engineering", "MRO", "IT", "Consulting", "Health", "Law Enforcement"],
   },
@@ -177,74 +300,65 @@ const CAT_COLORS = {
   purple: {
     border: "border-purple-200", hoverBorder: "hover:border-purple-300",
     activeBorder: "border-purple-500", activeBg: "bg-purple-50/60",
-    iconBg: "bg-purple-50 border-purple-100",
+    iconBg: "bg-purple-50 border-purple-100", icon: "text-purple-700",
     badge: "bg-purple-100 text-purple-700",
-    headerBg: "bg-purple-50/80",
-    text: "text-purple-700",
+    headerBg: "bg-purple-50/80", text: "text-purple-700",
   },
   rose: {
     border: "border-rose-200", hoverBorder: "hover:border-rose-300",
     activeBorder: "border-rose-500", activeBg: "bg-rose-50/60",
-    iconBg: "bg-rose-50 border-rose-100",
+    iconBg: "bg-rose-50 border-rose-100", icon: "text-rose-600",
     badge: "bg-rose-100 text-rose-700",
-    headerBg: "bg-rose-50/80",
-    text: "text-rose-700",
+    headerBg: "bg-rose-50/80", text: "text-rose-700",
   },
   indigo: {
     border: "border-indigo-200", hoverBorder: "hover:border-indigo-300",
     activeBorder: "border-indigo-500", activeBg: "bg-indigo-50/60",
-    iconBg: "bg-indigo-50 border-indigo-100",
+    iconBg: "bg-indigo-50 border-indigo-100", icon: "text-indigo-600",
     badge: "bg-indigo-100 text-indigo-700",
-    headerBg: "bg-indigo-50/80",
-    text: "text-indigo-700",
+    headerBg: "bg-indigo-50/80", text: "text-indigo-700",
   },
   amber: {
     border: "border-amber-200", hoverBorder: "hover:border-amber-300",
     activeBorder: "border-amber-500", activeBg: "bg-amber-50/60",
-    iconBg: "bg-amber-50 border-amber-100",
+    iconBg: "bg-amber-50 border-amber-100", icon: "text-amber-600",
     badge: "bg-amber-100 text-amber-700",
-    headerBg: "bg-amber-50/80",
-    text: "text-amber-700",
+    headerBg: "bg-amber-50/80", text: "text-amber-700",
   },
   blue: {
     border: "border-blue-200", hoverBorder: "hover:border-blue-300",
     activeBorder: "border-blue-500", activeBg: "bg-blue-50/60",
-    iconBg: "bg-blue-50 border-blue-100",
+    iconBg: "bg-blue-50 border-blue-100", icon: "text-blue-600",
     badge: "bg-blue-100 text-blue-700",
-    headerBg: "bg-blue-50/80",
-    text: "text-blue-700",
+    headerBg: "bg-blue-50/80", text: "text-blue-700",
   },
   sky: {
     border: "border-sky-200", hoverBorder: "hover:border-sky-300",
     activeBorder: "border-sky-500", activeBg: "bg-sky-50/60",
-    iconBg: "bg-sky-50 border-sky-100",
+    iconBg: "bg-sky-50 border-sky-100", icon: "text-sky-600",
     badge: "bg-sky-100 text-sky-700",
-    headerBg: "bg-sky-50/80",
-    text: "text-sky-700",
+    headerBg: "bg-sky-50/80", text: "text-sky-700",
   },
   emerald: {
     border: "border-emerald-200", hoverBorder: "hover:border-emerald-300",
     activeBorder: "border-emerald-500", activeBg: "bg-emerald-50/60",
-    iconBg: "bg-emerald-50 border-emerald-100",
+    iconBg: "bg-emerald-50 border-emerald-100", icon: "text-emerald-600",
     badge: "bg-emerald-100 text-emerald-700",
-    headerBg: "bg-emerald-50/80",
-    text: "text-emerald-700",
+    headerBg: "bg-emerald-50/80", text: "text-emerald-700",
   },
   orange: {
     border: "border-orange-200", hoverBorder: "hover:border-orange-300",
     activeBorder: "border-orange-500", activeBg: "bg-orange-50/60",
-    iconBg: "bg-orange-50 border-orange-100",
+    iconBg: "bg-orange-50 border-orange-100", icon: "text-orange-600",
     badge: "bg-orange-100 text-orange-700",
-    headerBg: "bg-orange-50/80",
-    text: "text-orange-700",
+    headerBg: "bg-orange-50/80", text: "text-orange-700",
   },
   slate: {
     border: "border-slate-200", hoverBorder: "hover:border-slate-300",
     activeBorder: "border-slate-400", activeBg: "bg-slate-50",
-    iconBg: "bg-slate-50 border-slate-100",
+    iconBg: "bg-slate-50 border-slate-100", icon: "text-slate-500",
     badge: "bg-slate-100 text-slate-600",
-    headerBg: "bg-slate-50",
-    text: "text-slate-600",
+    headerBg: "bg-slate-50", text: "text-slate-600",
   },
 };
 
@@ -275,10 +389,10 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
           : `${clr.border} ${clr.hoverBorder} hover:shadow-md`
       }`}
     >
-      {/* Header: emoji + name + count + chevron */}
+      {/* Header: icon + name + count + chevron */}
       <div className="flex items-center gap-3 mb-3">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border flex-shrink-0 ${clr.iconBg}`}>
-          <span className="text-[22px] leading-none">{category.emoji}</span>
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border flex-shrink-0 p-2 ${clr.iconBg}`}>
+          <CategoryIcon id={category.id} className={`w-full h-full ${clr.icon}`} />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-[13px] text-slate-800 leading-snug">{category.name}</h3>
@@ -388,8 +502,10 @@ function ExpandedList({ category, companies, onCompanyClick }) {
   const clr = CAT_COLORS[category.color];
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
-      <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${clr.headerBg} ${clr.activeBorder} border-b`}>
-        <span className="text-lg leading-none">{category.emoji}</span>
+      <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${clr.headerBg}`} style={{ borderBottomColor: "inherit" }}>
+        <div className={`w-7 h-7 rounded-lg flex items-center justify-center border p-1.5 flex-shrink-0 ${clr.iconBg}`}>
+          <CategoryIcon id={category.id} className={`w-full h-full ${clr.icon}`} />
+        </div>
         <span className={`text-sm font-semibold ${clr.text}`}>{category.name}</span>
         <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ml-auto ${clr.badge}`}>
           {companies.length}
@@ -705,7 +821,6 @@ export default function PrivatePlayers() {
             </div>
 
             {isSearchActive ? (
-              /* Search results: flat list */
               searchResults.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 gap-2">
                   <Lock className="w-10 h-10 text-slate-200" />
@@ -744,7 +859,6 @@ export default function PrivatePlayers() {
                 </>
               )
             ) : (
-              /* Category tile grid + expanded list */
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
                   {MACRO_CATEGORIES.map((cat) => (
