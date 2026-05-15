@@ -562,13 +562,19 @@ export function getClearbitUrl(name) {
   return null;
 }
 
-// Returns ordered list of logo URLs to try: [wikipedia?, clearbit?]
-// Google Favicon is intentionally excluded: it returns a generic globe icon (200 OK)
-// for sites without a custom favicon, which is worse than showing colored initials.
+// Returns ordered list of logo URLs to try: [wikipedia?, clearbit?, google-favicon?]
+// Google Favicon is skipped for .cn and .ru domains — those return a generic globe
+// icon (HTTP 200) with no custom favicon, which fools the onerror handler.
+const FAVICON_SKIP_TLDS = [".cn", ".ru"];
+
 export function getLogoUrls(name) {
   const urls = [];
   if (COMPANY_WIKI_LOGOS[name]) urls.push(COMPANY_WIKI_LOGOS[name]);
   const domain = COMPANY_LOGOS[name];
-  if (domain) urls.push(`https://logo.clearbit.com/${domain}`);
+  if (domain) {
+    urls.push(`https://logo.clearbit.com/${domain}`);
+    const skipFavicon = FAVICON_SKIP_TLDS.some((tld) => domain.endsWith(tld));
+    if (!skipFavicon) urls.push(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
+  }
   return urls;
 }

@@ -99,7 +99,13 @@ function CompanyLogo({ name, domain, size = "lg" }) {
   const urls = useMemo(() => {
     const curated = getLogoUrls(name);
     if (curated.length > 0) return curated;
-    if (domain) return [`https://logo.clearbit.com/${domain}`];
+    if (domain) {
+      const skipFavicon = [".cn", ".ru"].some((tld) => domain.endsWith(tld));
+      return [
+        `https://logo.clearbit.com/${domain}`,
+        ...(!skipFavicon ? [`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`] : []),
+      ];
+    }
     return [];
   }, [name, domain]);
   const [idx, setIdx] = useState(0);
