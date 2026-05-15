@@ -99,10 +99,7 @@ function CompanyLogo({ name, domain, size = "lg" }) {
   const urls = useMemo(() => {
     const curated = getLogoUrls(name);
     if (curated.length > 0) return curated;
-    if (domain) return [
-      `https://logo.clearbit.com/${domain}`,
-      `https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`,
-    ];
+    if (domain) return [`https://logo.clearbit.com/${domain}`];
     return [];
   }, [name, domain]);
   const [idx, setIdx] = useState(0);
