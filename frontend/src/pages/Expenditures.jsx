@@ -534,73 +534,67 @@ function formatAmount(min, max) {
 
 // ── Defense Capabilities Data (IISS Military Balance 2024 / Global Firepower) ─
 const DEFENSE_CAPABILITIES = {
-  US: { combat_aircraft: 2085, surface_combatants: 107, submarines: 68, tanks: 5500 },
-  CN: { combat_aircraft: 1571, surface_combatants: 83,  submarines: 60, tanks: 5800 },
-  RU: { combat_aircraft: 769,  surface_combatants: 54,  submarines: 65, tanks: 12420 },
-  IN: { combat_aircraft: 628,  surface_combatants: 36,  submarines: 17, tanks: 4614 },
-  SA: { combat_aircraft: 356,  surface_combatants: 12,  submarines: 0,  tanks: 1062 },
-  GB: { combat_aircraft: 227,  surface_combatants: 24,  submarines: 10, tanks: 213 },
-  DE: { combat_aircraft: 146,  surface_combatants: 12,  submarines: 6,  tanks: 321 },
-  FR: { combat_aircraft: 228,  surface_combatants: 24,  submarines: 10, tanks: 222 },
-  JP: { combat_aircraft: 354,  surface_combatants: 36,  submarines: 22, tanks: 920 },
-  KR: { combat_aircraft: 406,  surface_combatants: 28,  submarines: 22, tanks: 2202 },
-  AU: { combat_aircraft: 100,  surface_combatants: 12,  submarines: 6,  tanks: 59 },
-  IT: { combat_aircraft: 190,  surface_combatants: 22,  submarines: 8,  tanks: 200 },
-  BR: { combat_aircraft: 122,  surface_combatants: 16,  submarines: 5,  tanks: 469 },
-  CA: { combat_aircraft: 87,   surface_combatants: 12,  submarines: 4,  tanks: 82 },
-  IL: { combat_aircraft: 354,  surface_combatants: 6,   submarines: 5,  tanks: 2200 },
-  TR: { combat_aircraft: 207,  surface_combatants: 24,  submarines: 12, tanks: 3022 },
-  ES: { combat_aircraft: 142,  surface_combatants: 17,  submarines: 4,  tanks: 327 },
-  PL: { combat_aircraft: 128,  surface_combatants: 4,   submarines: 4,  tanks: 1009 },
-  NL: { combat_aircraft: 61,   surface_combatants: 12,  submarines: 4,  tanks: 18 },
-  TW: { combat_aircraft: 422,  surface_combatants: 32,  submarines: 4,  tanks: 1110 },
-  SG: { combat_aircraft: 100,  surface_combatants: 8,   submarines: 4,  tanks: 156 },
-  GR: { combat_aircraft: 191,  surface_combatants: 21,  submarines: 11, tanks: 1350 },
-  NO: { combat_aircraft: 57,   surface_combatants: 6,   submarines: 6,  tanks: 52 },
-  SE: { combat_aircraft: 60,   surface_combatants: 7,   submarines: 5,  tanks: 120 },
-  FI: { combat_aircraft: 55,   surface_combatants: 4,   submarines: 0,  tanks: 200 },
-  AE: { combat_aircraft: 294,  surface_combatants: 8,   submarines: 0,  tanks: 735 },
-  PK: { combat_aircraft: 425,  surface_combatants: 14,  submarines: 8,  tanks: 2496 },
-  ID: { combat_aircraft: 93,   surface_combatants: 22,  submarines: 4,  tanks: 475 },
-  VN: { combat_aircraft: 189,  surface_combatants: 12,  submarines: 6,  tanks: 2575 },
-  EG: { combat_aircraft: 601,  surface_combatants: 28,  submarines: 8,  tanks: 4624 },
-  UA: { combat_aircraft: 98,   surface_combatants: 4,   submarines: 0,  tanks: 1082 },
-  IR: { combat_aircraft: 372,  surface_combatants: 21,  submarines: 29, tanks: 4071 },
-  QA: { combat_aircraft: 96,   surface_combatants: 4,   submarines: 0,  tanks: 62 },
-  KW: { combat_aircraft: 52,   surface_combatants: 5,   submarines: 0,  tanks: 433 },
-  DZ: { combat_aircraft: 237,  surface_combatants: 14,  submarines: 6,  tanks: 2540 },
-  MA: { combat_aircraft: 89,   surface_combatants: 14,  submarines: 3,  tanks: 1016 },
-  TH: { combat_aircraft: 162,  surface_combatants: 14,  submarines: 0,  tanks: 777 },
-  MY: { combat_aircraft: 65,   surface_combatants: 20,  submarines: 2,  tanks: 48 },
-  PH: { combat_aircraft: 49,   surface_combatants: 12,  submarines: 0,  tanks: 10 },
-  NZ: { combat_aircraft: 0,    surface_combatants: 6,   submarines: 0,  tanks: 0 },
-  ZA: { combat_aircraft: 49,   surface_combatants: 6,   submarines: 3,  tanks: 172 },
-  NG: { combat_aircraft: 78,   surface_combatants: 3,   submarines: 0,  tanks: 155 },
-  AR: { combat_aircraft: 99,   surface_combatants: 14,  submarines: 3,  tanks: 360 },
-  CO: { combat_aircraft: 91,   surface_combatants: 8,   submarines: 4,  tanks: 24 },
-  CL: { combat_aircraft: 66,   surface_combatants: 12,  submarines: 4,  tanks: 172 },
-  MX: { combat_aircraft: 64,   surface_combatants: 14,  submarines: 0,  tanks: 90 },
-  PT: { combat_aircraft: 30,   surface_combatants: 9,   submarines: 2,  tanks: 37 },
-  BE: { combat_aircraft: 54,   surface_combatants: 2,   submarines: 0,  tanks: 11 },
-  CH: { combat_aircraft: 53,   surface_combatants: 0,   submarines: 0,  tanks: 134 },
-  AT: { combat_aircraft: 15,   surface_combatants: 0,   submarines: 0,  tanks: 56 },
-  DK: { combat_aircraft: 44,   surface_combatants: 6,   submarines: 0,  tanks: 44 },
-  CZ: { combat_aircraft: 14,   surface_combatants: 0,   submarines: 0,  tanks: 123 },
-  RO: { combat_aircraft: 51,   surface_combatants: 7,   submarines: 1,  tanks: 740 },
-  HU: { combat_aircraft: 12,   surface_combatants: 0,   submarines: 0,  tanks: 44 },
-  JO: { combat_aircraft: 79,   surface_combatants: 0,   submarines: 0,  tanks: 1351 },
-  IQ: { combat_aircraft: 83,   surface_combatants: 0,   submarines: 0,  tanks: 490 },
-  AZ: { combat_aircraft: 64,   surface_combatants: 4,   submarines: 0,  tanks: 800 },
-  BD: { combat_aircraft: 109,  surface_combatants: 12,  submarines: 2,  tanks: 580 },
-  MM: { combat_aircraft: 146,  surface_combatants: 8,   submarines: 0,  tanks: 545 },
-  PE: { combat_aircraft: 76,   surface_combatants: 8,   submarines: 6,  tanks: 380 },
+  US: { fighters: 2085, helicopters: 5000, drones: 500, land_vehicles: 45000, surface_combatants: 107, submarines: 68 },
+  CN: { fighters: 1571, helicopters: 1400, drones: 400, land_vehicles: 14800, surface_combatants: 83,  submarines: 60 },
+  RU: { fighters: 769,  helicopters: 1400, drones: 60,  land_vehicles: 22000, surface_combatants: 54,  submarines: 65 },
+  IN: { fighters: 628,  helicopters: 720,  drones: 50,  land_vehicles: 9500,  surface_combatants: 36,  submarines: 17 },
+  SA: { fighters: 356,  helicopters: 250,  drones: 30,  land_vehicles: 5000,  surface_combatants: 12,  submarines: 0  },
+  GB: { fighters: 227,  helicopters: 320,  drones: 12,  land_vehicles: 3600,  surface_combatants: 24,  submarines: 10 },
+  DE: { fighters: 260,  helicopters: 290,  drones: 10,  land_vehicles: 4200,  surface_combatants: 12,  submarines: 6  },
+  FR: { fighters: 228,  helicopters: 310,  drones: 15,  land_vehicles: 6000,  surface_combatants: 24,  submarines: 10 },
+  JP: { fighters: 354,  helicopters: 530,  drones: 8,   land_vehicles: 3200,  surface_combatants: 36,  submarines: 22 },
+  KR: { fighters: 406,  helicopters: 620,  drones: 12,  land_vehicles: 7500,  surface_combatants: 28,  submarines: 22 },
+  AU: { fighters: 100,  helicopters: 175,  drones: 8,   land_vehicles: 2000,  surface_combatants: 12,  submarines: 6  },
+  IT: { fighters: 190,  helicopters: 250,  drones: 8,   land_vehicles: 2800,  surface_combatants: 22,  submarines: 8  },
+  BR: { fighters: 122,  helicopters: 280,  drones: 6,   land_vehicles: 2200,  surface_combatants: 16,  submarines: 5  },
+  CA: { fighters: 87,   helicopters: 180,  drones: 4,   land_vehicles: 1800,  surface_combatants: 12,  submarines: 4  },
+  IL: { fighters: 354,  helicopters: 190,  drones: 100, land_vehicles: 4800,  surface_combatants: 6,   submarines: 5  },
+  TR: { fighters: 207,  helicopters: 500,  drones: 120, land_vehicles: 8000,  surface_combatants: 24,  submarines: 12 },
+  ES: { fighters: 142,  helicopters: 190,  drones: 6,   land_vehicles: 2600,  surface_combatants: 17,  submarines: 4  },
+  PL: { fighters: 128,  helicopters: 230,  drones: 10,  land_vehicles: 3800,  surface_combatants: 4,   submarines: 4  },
+  NL: { fighters: 61,   helicopters: 50,   drones: 4,   land_vehicles: 600,   surface_combatants: 12,  submarines: 4  },
+  TW: { fighters: 422,  helicopters: 240,  drones: 20,  land_vehicles: 3200,  surface_combatants: 32,  submarines: 4  },
+  SG: { fighters: 100,  helicopters: 80,   drones: 10,  land_vehicles: 800,   surface_combatants: 8,   submarines: 4  },
+  GR: { fighters: 191,  helicopters: 225,  drones: 8,   land_vehicles: 3500,  surface_combatants: 21,  submarines: 11 },
+  NO: { fighters: 57,   helicopters: 70,   drones: 4,   land_vehicles: 600,   surface_combatants: 6,   submarines: 6  },
+  SE: { fighters: 60,   helicopters: 80,   drones: 6,   land_vehicles: 600,   surface_combatants: 7,   submarines: 5  },
+  FI: { fighters: 55,   helicopters: 70,   drones: 4,   land_vehicles: 1400,  surface_combatants: 4,   submarines: 0  },
+  AE: { fighters: 294,  helicopters: 150,  drones: 30,  land_vehicles: 3000,  surface_combatants: 8,   submarines: 0  },
+  PK: { fighters: 425,  helicopters: 340,  drones: 40,  land_vehicles: 5500,  surface_combatants: 14,  submarines: 8  },
+  ID: { fighters: 93,   helicopters: 165,  drones: 6,   land_vehicles: 2000,  surface_combatants: 22,  submarines: 4  },
+  VN: { fighters: 189,  helicopters: 180,  drones: 4,   land_vehicles: 3200,  surface_combatants: 12,  submarines: 6  },
+  EG: { fighters: 601,  helicopters: 300,  drones: 20,  land_vehicles: 10000, surface_combatants: 28,  submarines: 8  },
+  UA: { fighters: 98,   helicopters: 150,  drones: 50,  land_vehicles: 3000,  surface_combatants: 4,   submarines: 0  },
+  IR: { fighters: 372,  helicopters: 350,  drones: 80,  land_vehicles: 7000,  surface_combatants: 21,  submarines: 29 },
+  QA: { fighters: 96,   helicopters: 28,   drones: 4,   land_vehicles: 400,   surface_combatants: 4,   submarines: 0  },
+  KW: { fighters: 52,   helicopters: 40,   drones: 2,   land_vehicles: 800,   surface_combatants: 5,   submarines: 0  },
+  DZ: { fighters: 237,  helicopters: 200,  drones: 10,  land_vehicles: 4500,  surface_combatants: 14,  submarines: 6  },
+  MA: { fighters: 89,   helicopters: 90,   drones: 8,   land_vehicles: 2200,  surface_combatants: 14,  submarines: 3  },
+  TH: { fighters: 162,  helicopters: 180,  drones: 4,   land_vehicles: 1500,  surface_combatants: 14,  submarines: 0  },
+  MY: { fighters: 65,   helicopters: 70,   drones: 4,   land_vehicles: 700,   surface_combatants: 20,  submarines: 2  },
+  PH: { fighters: 49,   helicopters: 80,   drones: 4,   land_vehicles: 400,   surface_combatants: 12,  submarines: 0  },
+  NZ: { fighters: 0,    helicopters: 60,   drones: 4,   land_vehicles: 600,   surface_combatants: 6,   submarines: 0  },
+  ZA: { fighters: 49,   helicopters: 90,   drones: 6,   land_vehicles: 1400,  surface_combatants: 6,   submarines: 3  },
+  NG: { fighters: 78,   helicopters: 60,   drones: 4,   land_vehicles: 600,   surface_combatants: 3,   submarines: 0  },
+  AR: { fighters: 99,   helicopters: 100,  drones: 4,   land_vehicles: 1200,  surface_combatants: 14,  submarines: 3  },
+  CL: { fighters: 74,   helicopters: 80,   drones: 4,   land_vehicles: 700,   surface_combatants: 10,  submarines: 4  },
+  PT: { fighters: 30,   helicopters: 50,   drones: 4,   land_vehicles: 400,   surface_combatants: 8,   submarines: 2  },
+  RO: { fighters: 40,   helicopters: 90,   drones: 4,   land_vehicles: 2200,  surface_combatants: 6,   submarines: 1  },
+  CZ: { fighters: 24,   helicopters: 50,   drones: 4,   land_vehicles: 600,   surface_combatants: 0,   submarines: 0  },
+  HU: { fighters: 12,   helicopters: 30,   drones: 2,   land_vehicles: 300,   surface_combatants: 0,   submarines: 0  },
+  JO: { fighters: 79,   helicopters: 50,   drones: 4,   land_vehicles: 2000,  surface_combatants: 0,   submarines: 0  },
+  IQ: { fighters: 83,   helicopters: 80,   drones: 4,   land_vehicles: 1500,  surface_combatants: 0,   submarines: 0  },
+  AZ: { fighters: 64,   helicopters: 60,   drones: 30,  land_vehicles: 1800,  surface_combatants: 4,   submarines: 0  },
+  BD: { fighters: 109,  helicopters: 80,   drones: 4,   land_vehicles: 1200,  surface_combatants: 12,  submarines: 2  },
+  MM: { fighters: 146,  helicopters: 90,   drones: 4,   land_vehicles: 1000,  surface_combatants: 8,   submarines: 0  },
+  PE: { fighters: 76,   helicopters: 80,   drones: 4,   land_vehicles: 800,   surface_combatants: 8,   submarines: 6  },
 };
 
 const CAP_CATEGORIES = [
   {
-    key: "combat_aircraft",
+    key: "fighters",
     label: "Combat Aircraft",
-    sublabel: "Fighters & Bombers",
+    sublabel: "Fighters, Bombers & Stealth",
     Icon: FighterJetIcon,
     scale: 50,
     scaleLabel: "50 aircraft",
@@ -612,6 +606,65 @@ const CAP_CATEGORIES = [
     progressColor: "bg-sky-500",
     iconBadgeBg: "bg-sky-500/20",
     iconColor: "text-sky-400",
+  },
+  {
+    key: "helicopters",
+    label: "Rotary Wing",
+    sublabel: "Attack, Transport & Naval Helos",
+    Icon: ({ className }) => (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 10h18M12 10V6M8 6h8M6 14l-2 4h16l-2-4"/>
+        <circle cx="12" cy="10" r="1"/>
+      </svg>
+    ),
+    scale: 20,
+    scaleLabel: "20 helicopters",
+    bg: "bg-amber-50/60",
+    border: "border-amber-200",
+    labelColor: "text-amber-700",
+    countColor: "text-amber-900",
+    dotColor: "text-amber-400",
+    progressColor: "bg-amber-500",
+    iconBadgeBg: "bg-amber-500/20",
+    iconColor: "text-amber-400",
+  },
+  {
+    key: "drones",
+    label: "Drones & UAS",
+    sublabel: "MALE, HALE & Combat UAS",
+    Icon: ({ className }) => (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/>
+        <path d="M5 12H2M22 12h-3M12 5V2M12 22v-3M7.05 7.05L5 5M19 5l-2.05 2.05M7.05 16.95L5 19M19 19l-2.05-2.05"/>
+        <path d="M4 12h2a6 6 0 0 0 12 0h2"/>
+      </svg>
+    ),
+    scale: 5,
+    scaleLabel: "5 UAS",
+    bg: "bg-slate-50/80",
+    border: "border-slate-200",
+    labelColor: "text-slate-600",
+    countColor: "text-slate-800",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-500",
+    iconBadgeBg: "bg-slate-500/20",
+    iconColor: "text-slate-400",
+  },
+  {
+    key: "land_vehicles",
+    label: "Land Forces",
+    sublabel: "MBTs, IFVs, APCs & Armour",
+    Icon: TankIcon,
+    scale: 500,
+    scaleLabel: "500 vehicles",
+    bg: "bg-emerald-50/60",
+    border: "border-emerald-200",
+    labelColor: "text-emerald-700",
+    countColor: "text-emerald-900",
+    dotColor: "text-emerald-400",
+    progressColor: "bg-emerald-500",
+    iconBadgeBg: "bg-emerald-500/20",
+    iconColor: "text-emerald-400",
   },
   {
     key: "surface_combatants",
@@ -628,22 +681,6 @@ const CAP_CATEGORIES = [
     progressColor: "bg-blue-500",
     iconBadgeBg: "bg-blue-500/20",
     iconColor: "text-blue-400",
-  },
-  {
-    key: "tanks",
-    label: "Main Battle Tanks",
-    sublabel: "MBTs & Heavy Armour",
-    Icon: TankIcon,
-    scale: 300,
-    scaleLabel: "300 tanks",
-    bg: "bg-emerald-50/60",
-    border: "border-emerald-200",
-    labelColor: "text-emerald-700",
-    countColor: "text-emerald-900",
-    dotColor: "text-emerald-400",
-    progressColor: "bg-emerald-500",
-    iconBadgeBg: "bg-emerald-500/20",
-    iconColor: "text-emerald-400",
   },
   {
     key: "submarines",
@@ -678,24 +715,47 @@ CAP_CATEGORIES.forEach(({ key }) => {
 // Sources: IISS Military Balance 2024, Jane's, open military databases
 const CAPABILITY_DETAILS = {
   US: {
-    combat_aircraft: [
+    fighters: [
       { model: "F-16C/D Fighting Falcon", count: 944, manufacturer: "Lockheed Martin" },
       { model: "F/A-18E/F/G Super Hornet / Growler", count: 635, manufacturer: "Boeing" },
-      { model: "A-10C Thunderbolt II", count: 281, manufacturer: "Fairchild-Republic / Boeing" },
       { model: "F-35A/B/C Lightning II", count: 620, manufacturer: "Lockheed Martin" },
+      { model: "A-10C Thunderbolt II", count: 281, manufacturer: "Fairchild-Republic / Boeing" },
       { model: "F-22A Raptor", count: 186, manufacturer: "Lockheed Martin" },
       { model: "B-52H Stratofortress", count: 76, manufacturer: "Boeing" },
       { model: "B-1B Lancer", count: 45, manufacturer: "Boeing" },
       { model: "B-2A Spirit", count: 20, manufacturer: "Northrop Grumman" },
+      { model: "F-15C/D/E Strike Eagle", count: 265, manufacturer: "Boeing" },
+    ],
+    helicopters: [
+      { model: "UH-60 Black Hawk (all variants)", count: 2135, manufacturer: "Sikorsky / Lockheed Martin" },
+      { model: "AH-64D/E Apache", count: 870, manufacturer: "Boeing" },
+      { model: "CH-47F Chinook", count: 472, manufacturer: "Boeing" },
+      { model: "OH-58D Kiowa Warrior", count: 300, manufacturer: "Bell Helicopter" },
+      { model: "MH-60R/S Seahawk", count: 290, manufacturer: "Sikorsky" },
+      { model: "CH-53E/K Super Stallion", count: 135, manufacturer: "Sikorsky" },
+      { model: "AH-1Z Viper", count: 160, manufacturer: "Bell Helicopter" },
+      { model: "UH-1Y Venom", count: 160, manufacturer: "Bell Helicopter" },
+    ],
+    drones: [
+      { model: "MQ-9A/B Reaper", count: 300, manufacturer: "General Atomics" },
+      { model: "MQ-1C Gray Eagle", count: 150, manufacturer: "General Atomics" },
+      { model: "RQ-4 Global Hawk / Triton", count: 35, manufacturer: "Northrop Grumman" },
+      { model: "MQ-25 Stingray (carrier UAV)", count: 7, manufacturer: "Boeing" },
+      { model: "RQ-7B Shadow", count: 140, manufacturer: "Textron" },
+    ],
+    land_vehicles: [
+      { model: "M1A2 SEP v3 Abrams MBT", count: 4400, manufacturer: "General Dynamics Land Systems" },
+      { model: "M1A1 Abrams MBT", count: 1100, manufacturer: "General Dynamics Land Systems" },
+      { model: "M2A3 Bradley IFV", count: 4000, manufacturer: "BAE Systems" },
+      { model: "M113 APC (variants)", count: 3500, manufacturer: "BAE Systems" },
+      { model: "Stryker 8×8 (variants)", count: 4300, manufacturer: "General Dynamics Land Systems" },
+      { model: "HMMWV (Humvee, variants)", count: 80000, manufacturer: "AM General" },
+      { model: "JLTV (Joint Light Tactical)", count: 7000, manufacturer: "Oshkosh Defense" },
     ],
     surface_combatants: [
       { model: "Arleigh Burke-class DDG", count: 73, manufacturer: "Huntington Ingalls / General Dynamics" },
       { model: "Ticonderoga-class CG", count: 22, manufacturer: "Huntington Ingalls Industries" },
       { model: "Freedom / Independence-class LCS", count: 12, manufacturer: "Lockheed Martin / Austal" },
-    ],
-    tanks: [
-      { model: "M1A2 SEP Abrams", count: 4400, manufacturer: "General Dynamics Land Systems" },
-      { model: "M1A1 Abrams", count: 1100, manufacturer: "General Dynamics Land Systems" },
     ],
     submarines: [
       { model: "Ohio-class SSBN / SSGN", count: 18, manufacturer: "General Dynamics Electric Boat" },
@@ -704,26 +764,44 @@ const CAPABILITY_DETAILS = {
     ],
   },
   CN: {
-    combat_aircraft: [
+    fighters: [
       { model: "J-11/J-11B Flanker-L", count: 370, manufacturer: "Shenyang Aircraft Corporation" },
       { model: "J-16 Flanker-D variant", count: 300, manufacturer: "Shenyang Aircraft Corporation" },
       { model: "J-10C Firebird", count: 290, manufacturer: "Chengdu Aircraft Industry Group" },
-      { model: "J-20 Mighty Dragon", count: 200, manufacturer: "Chengdu Aircraft Industry Group" },
+      { model: "J-20 Mighty Dragon (stealth)", count: 200, manufacturer: "Chengdu Aircraft Industry Group" },
       { model: "J-7 / J-7A (legacy)", count: 234, manufacturer: "Chengdu Aircraft Industry Group" },
-      { model: "H-6 Badger (bomber)", count: 80, manufacturer: "Xi'an Aircraft Industrial Corporation" },
+      { model: "H-6K/N Badger (bomber)", count: 80, manufacturer: "Xi'an Aircraft Industrial Corporation" },
       { model: "Su-27 / Su-30MKK", count: 97, manufacturer: "Sukhoi (Russia)" },
+    ],
+    helicopters: [
+      { model: "Z-8 / Z-18 Heavy Transport", count: 120, manufacturer: "Changhe Aircraft Industries" },
+      { model: "Z-9 / Z-9W (Dauphin-derived)", count: 350, manufacturer: "Harbin Aircraft Industry Group" },
+      { model: "Z-10 Attack", count: 200, manufacturer: "Changhe Aircraft Industries" },
+      { model: "Z-19 Scout / Attack", count: 100, manufacturer: "Harbin Aircraft Industry Group" },
+      { model: "Mi-17 / Mi-171 Hip", count: 80, manufacturer: "Russian Helicopters (Russia)" },
+      { model: "Z-20 (Black Hawk equivalent)", count: 150, manufacturer: "Harbin Aircraft Industry Group" },
+    ],
+    drones: [
+      { model: "Wing Loong II MALE", count: 100, manufacturer: "CAIG / AVIC" },
+      { model: "CH-4 / CH-5 Rainbow MALE", count: 120, manufacturer: "CASC" },
+      { model: "TB-001 Twin-tailed Scorpion", count: 40, manufacturer: "Tengden Technology" },
+      { model: "WZ-7 Soaring Dragon HALE", count: 10, manufacturer: "Guizhou Aircraft Industry" },
+      { model: "GJ-11 Sharp Sword UCAV", count: 6, manufacturer: "Hongdu Aviation Industry" },
+    ],
+    land_vehicles: [
+      { model: "Type 99A MBT", count: 1200, manufacturer: "Inner Mongolia First Machinery Group" },
+      { model: "Type 96A/B MBT", count: 2400, manufacturer: "Inner Mongolia First Machinery Group" },
+      { model: "Type 88 MBT", count: 800, manufacturer: "Inner Mongolia First Machinery Group" },
+      { model: "Type 59 MBT (reserve)", count: 1400, manufacturer: "Inner Mongolia First Machinery Group" },
+      { model: "ZBD-04A IFV", count: 900, manufacturer: "NORINCO" },
+      { model: "ZBL-09 Snow Leopard 8×8 APC", count: 2000, manufacturer: "NORINCO" },
+      { model: "Type 63 / WZ-551 APC", count: 3000, manufacturer: "NORINCO" },
     ],
     surface_combatants: [
       { model: "Type 055 Renhai-class CG", count: 8, manufacturer: "Jiangnan / Dalian Shipyard" },
       { model: "Type 052D Luyang III DDG", count: 25, manufacturer: "Jiangnan / Dalian Shipyard" },
       { model: "Type 054A Jiangkai II FFG", count: 30, manufacturer: "Hudong-Zhonghua / Guangzhou" },
       { model: "Type 056/056A Jiangdao corvette", count: 20, manufacturer: "Various CSSC yards" },
-    ],
-    tanks: [
-      { model: "Type 99A MBT", count: 1200, manufacturer: "Inner Mongolia First Machinery Group" },
-      { model: "Type 96A/B MBT", count: 2400, manufacturer: "Inner Mongolia First Machinery Group" },
-      { model: "Type 88 MBT", count: 800, manufacturer: "Inner Mongolia First Machinery Group" },
-      { model: "Type 59 (reserve)", count: 1400, manufacturer: "Inner Mongolia First Machinery Group" },
     ],
     submarines: [
       { model: "Type 094 Jin-class SSBN", count: 6, manufacturer: "Huludao Shipyard" },
@@ -735,7 +813,7 @@ const CAPABILITY_DETAILS = {
     ],
   },
   RU: {
-    combat_aircraft: [
+    fighters: [
       { model: "Su-27 Flanker / Su-30SM", count: 190, manufacturer: "Sukhoi (UAC)" },
       { model: "MiG-31 Foxhound", count: 134, manufacturer: "Mikoyan (UAC)" },
       { model: "Su-25 Frogfoot", count: 134, manufacturer: "Sukhoi (UAC)" },
@@ -743,7 +821,30 @@ const CAPABILITY_DETAILS = {
       { model: "Su-35S Flanker-E", count: 110, manufacturer: "Sukhoi (UAC)" },
       { model: "MiG-29 Fulcrum", count: 120, manufacturer: "Mikoyan (UAC)" },
       { model: "Tu-95 Bear / Tu-160 Blackjack", count: 80, manufacturer: "Tupolev (UAC)" },
-      { model: "Su-57 Felon", count: 22, manufacturer: "Sukhoi (UAC)" },
+      { model: "Su-57 Felon (stealth)", count: 22, manufacturer: "Sukhoi (UAC)" },
+    ],
+    helicopters: [
+      { model: "Mi-8/Mi-17 Hip (transport)", count: 500, manufacturer: "Russian Helicopters / Kazan" },
+      { model: "Mi-24 Hind / Mi-35 Attack", count: 300, manufacturer: "Russian Helicopters / Mil" },
+      { model: "Ka-52 Alligator Attack", count: 130, manufacturer: "Russian Helicopters / Kamov" },
+      { model: "Mi-28N Night Hunter Attack", count: 110, manufacturer: "Russian Helicopters / Mil" },
+      { model: "Ka-27 / Ka-29 Naval", count: 100, manufacturer: "Russian Helicopters / Kamov" },
+      { model: "Mi-26 Heavy Lift", count: 50, manufacturer: "Russian Helicopters / Mil" },
+    ],
+    drones: [
+      { model: "Forpost-R MALE (Searcher derivative)", count: 40, manufacturer: "Ural Civil Aviation Plant" },
+      { model: "Orion MALE / UCAV", count: 12, manufacturer: "Kronshtadt Group" },
+      { model: "Eleron-3 / Orlan-10 tactical", count: 500, manufacturer: "Enics / Special Technology Center" },
+    ],
+    land_vehicles: [
+      { model: "T-72B3 / T-72B3M MBT", count: 2800, manufacturer: "Uralvagonzavod" },
+      { model: "T-80BV / T-80U MBT", count: 3000, manufacturer: "Omsk Transmash / Kirovets" },
+      { model: "T-90A / T-90M Proryv MBT", count: 620, manufacturer: "Uralvagonzavod" },
+      { model: "T-14 Armata MBT (limited)", count: 20, manufacturer: "Uralvagonzavod" },
+      { model: "BMP-2 IFV", count: 5000, manufacturer: "Kurganmashzavod" },
+      { model: "BMP-3 IFV", count: 600, manufacturer: "Kurganmashzavod" },
+      { model: "BTR-80/82A APC", count: 5000, manufacturer: "Arzamas Machine Building Plant" },
+      { model: "MT-LB Multi-purpose tractor", count: 4000, manufacturer: "Kharkov Tractor Plant" },
     ],
     surface_combatants: [
       { model: "Buyan-M corvette (Pr.21631)", count: 10, manufacturer: "Zelenodolsk Shipyard" },
@@ -754,12 +855,6 @@ const CAPABILITY_DETAILS = {
       { model: "Grigorovich FFG (Pr.11356)", count: 6, manufacturer: "Yantar Shipyard" },
       { model: "Slava-class CG", count: 3, manufacturer: "Nikolayev Shipyard" },
       { model: "Admiral Gorshkov FFG (Pr.22350)", count: 4, manufacturer: "Severnaya Verf" },
-    ],
-    tanks: [
-      { model: "T-72B3 / T-72B3M", count: 2800, manufacturer: "Uralvagonzavod" },
-      { model: "T-80BV / T-80U", count: 3000, manufacturer: "Omsk Transmash / Kirovets" },
-      { model: "T-90A / T-90M Proryv", count: 620, manufacturer: "Uralvagonzavod" },
-      { model: "T-14 Armata (limited)", count: 20, manufacturer: "Uralvagonzavod" },
     ],
     submarines: [
       { model: "Kilo / Improved Kilo SSK", count: 17, manufacturer: "Admiralty Shipyard" },
@@ -773,7 +868,7 @@ const CAPABILITY_DETAILS = {
     ],
   },
   IN: {
-    combat_aircraft: [
+    fighters: [
       { model: "Su-30MKI Flanker-H", count: 262, manufacturer: "HAL / Sukhoi" },
       { model: "SEPECAT Jaguar IS/IB", count: 120, manufacturer: "BAE Systems / HAL" },
       { model: "MiG-29 / MiG-29UPG", count: 66, manufacturer: "Mikoyan / HAL" },
@@ -781,6 +876,26 @@ const CAPABILITY_DETAILS = {
       { model: "Tejas Mk.1A LCA", count: 83, manufacturer: "Hindustan Aeronautics Limited" },
       { model: "Rafale", count: 36, manufacturer: "Dassault Aviation" },
       { model: "MiG-21 Bison (phasing out)", count: 56, manufacturer: "Mikoyan / HAL" },
+    ],
+    helicopters: [
+      { model: "Dhruv ALH (all variants)", count: 250, manufacturer: "Hindustan Aeronautics Limited" },
+      { model: "Mi-17 / Mi-17V5 Hip", count: 200, manufacturer: "Russian Helicopters" },
+      { model: "AH-64E Apache Guardian", count: 22, manufacturer: "Boeing" },
+      { model: "Mi-35 Hind Attack", count: 20, manufacturer: "Russian Helicopters" },
+      { model: "Chetak (Alouette III)", count: 120, manufacturer: "HAL / Airbus Helicopters" },
+      { model: "Sea King Mk.42B/C", count: 20, manufacturer: "Westland / HAL" },
+    ],
+    drones: [
+      { model: "MQ-9B Sea Guardian / Sky Guardian", count: 31, manufacturer: "General Atomics" },
+      { model: "Heron I / Heron TP MALE", count: 50, manufacturer: "IAI (Israel)" },
+      { model: "Rustom-2 MALE (TAPAS-BH-201)", count: 6, manufacturer: "DRDO / ADE" },
+    ],
+    land_vehicles: [
+      { model: "T-90S Bhishma MBT", count: 1657, manufacturer: "Heavy Vehicles Factory / Uralvagonzavod" },
+      { model: "T-72M1 Ajeya MBT", count: 1657, manufacturer: "Heavy Vehicles Factory / UVZ" },
+      { model: "Arjun Mk.1A MBT", count: 220, manufacturer: "DRDO / Heavy Vehicles Factory" },
+      { model: "BMP-2 Sarath IFV", count: 2600, manufacturer: "Ordnance Factory Board" },
+      { model: "PT-76 (amphibious, reserve)", count: 80, manufacturer: "Kirovets-Leningrad" },
     ],
     surface_combatants: [
       { model: "Talwar-class FFG", count: 6, manufacturer: "Yantar Shipyard (Russia)" },
@@ -792,53 +907,80 @@ const CAPABILITY_DETAILS = {
       { model: "Brahmaputra-class FFG", count: 3, manufacturer: "Garden Reach Shipbuilders" },
       { model: "Veer-class missile boat", count: 6, manufacturer: "Goa Shipyard Limited" },
     ],
-    tanks: [
-      { model: "T-90S Bhishma", count: 1657, manufacturer: "Heavy Vehicles Factory / Uralvagonzavod" },
-      { model: "T-72M1 Ajeya", count: 1657, manufacturer: "Heavy Vehicles Factory / UVZ" },
-      { model: "Arjun Mk.1A MBT", count: 220, manufacturer: "DRDO / Heavy Vehicles Factory" },
-      { model: "PT-76 (reserve)", count: 80, manufacturer: "Kirovets-Leningrad" },
-    ],
     submarines: [
-      { model: "Kalvari-class SSK (Scorpène)", count: 6, manufacturer: "DCNS / Mazagon Dock" },
+      { model: "Kalvari-class SSK (Scorpène)", count: 6, manufacturer: "Naval Group / Mazagon Dock" },
       { model: "Sindhughosh-class SSK (Kilo)", count: 7, manufacturer: "Admiralty Shipyard / HSL" },
       { model: "Arihant-class SSBN", count: 2, manufacturer: "Ship Building Centre Visakhapatnam" },
       { model: "Shishumar-class SSK (Type 209)", count: 2, manufacturer: "HDW / Mazagon Dock" },
     ],
   },
   SA: {
-    combat_aircraft: [
+    fighters: [
       { model: "Tornado IDS/ADV", count: 80, manufacturer: "Panavia / BAE Systems" },
       { model: "F-15SA Strike Eagle", count: 84, manufacturer: "Boeing" },
       { model: "F-15C/D Eagle", count: 70, manufacturer: "Boeing" },
       { model: "Typhoon", count: 72, manufacturer: "BAE Systems / Eurofighter" },
       { model: "F-5 Tiger II (reserve)", count: 50, manufacturer: "Northrop" },
     ],
+    helicopters: [
+      { model: "AH-64D Apache", count: 12, manufacturer: "Boeing" },
+      { model: "UH-60 Black Hawk", count: 72, manufacturer: "Sikorsky" },
+      { model: "AS-532 Cougar", count: 22, manufacturer: "Airbus Helicopters" },
+      { model: "MD 530F (light attack)", count: 36, manufacturer: "MD Helicopters" },
+      { model: "Bell 412 (utility)", count: 40, manufacturer: "Bell Helicopter" },
+      { model: "AB-205/206/212", count: 80, manufacturer: "AgustaWestland" },
+    ],
+    drones: [
+      { model: "Wing Loong I/II MALE", count: 20, manufacturer: "CAIG / AVIC (China)" },
+      { model: "CH-4 Rainbow MALE", count: 10, manufacturer: "CASC (China)" },
+    ],
+    land_vehicles: [
+      { model: "M1A2S Abrams MBT", count: 373, manufacturer: "General Dynamics Land Systems" },
+      { model: "M60A3 MBT (reserve)", count: 450, manufacturer: "General Dynamics" },
+      { model: "AMX-30 MBT (reserve)", count: 290, manufacturer: "GIAT Industries" },
+      { model: "M2A2 Bradley IFV", count: 400, manufacturer: "BAE Systems" },
+      { model: "LAV-25 / LAV-III APC", count: 600, manufacturer: "General Dynamics Canada" },
+      { model: "M113A1/A3 APC", count: 1800, manufacturer: "BAE Systems" },
+    ],
     surface_combatants: [
       { model: "Madinah FFG (F2000)", count: 4, manufacturer: "Thomson-CSF / France" },
-      { model: "Al Riyadh FFG (La Fayette)", count: 3, manufacturer: "DCNS / France" },
+      { model: "Al Riyadh FFG (La Fayette)", count: 3, manufacturer: "Naval Group / France" },
       { model: "Al Jubail corvette (Avante 2200)", count: 4, manufacturer: "Navantia" },
       { model: "Badr-class corvette", count: 4, manufacturer: "Tacoma Boatbuilding" },
-    ],
-    tanks: [
-      { model: "M1A2S Abrams", count: 373, manufacturer: "General Dynamics Land Systems" },
-      { model: "M60A3 (reserve)", count: 450, manufacturer: "General Dynamics" },
-      { model: "AMX-30 (reserve)", count: 290, manufacturer: "GIAT Industries" },
     ],
     submarines: [],
   },
   GB: {
-    combat_aircraft: [
+    fighters: [
       { model: "Typhoon FGR4 / F2", count: 137, manufacturer: "BAE Systems / Eurofighter" },
       { model: "F-35B Lightning II", count: 74, manufacturer: "Lockheed Martin / BAE Systems" },
+    ],
+    helicopters: [
+      { model: "AH-64E Apache Guardian", count: 50, manufacturer: "Boeing / AgustaWestland" },
+      { model: "Merlin HM2 / HC4 (naval & support)", count: 62, manufacturer: "Leonardo (AgustaWestland)" },
+      { model: "Wildcat AH1 / HMA2", count: 62, manufacturer: "Leonardo (AgustaWestland)" },
+      { model: "Puma HC2", count: 22, manufacturer: "Airbus Helicopters" },
+      { model: "Chinook HC6/6A", count: 60, manufacturer: "Boeing" },
+      { model: "Bell Griffin HT1 (training)", count: 24, manufacturer: "Bell Helicopter" },
+    ],
+    drones: [
+      { model: "MQ-9A Reaper", count: 10, manufacturer: "General Atomics" },
+      { model: "Protector RG Mk.1 (MQ-9B)", count: 16, manufacturer: "General Atomics" },
+      { model: "Watchkeeper WK450 tactical", count: 54, manufacturer: "Thales UK / Elbit" },
+    ],
+    land_vehicles: [
+      { model: "Challenger 2 MBT", count: 213, manufacturer: "BAE Systems" },
+      { model: "Warrior IFV", count: 380, manufacturer: "BAE Systems" },
+      { model: "Ajax IFV/scout (FRES)", count: 150, manufacturer: "General Dynamics UK" },
+      { model: "FV430 Bulldog APC", count: 600, manufacturer: "BAE Systems" },
+      { model: "Jackal 2 HMWMV", count: 300, manufacturer: "Coyote / Babcock" },
+      { model: "Mastiff / Ridgeback PPV", count: 250, manufacturer: "Force Protection Europe" },
     ],
     surface_combatants: [
       { model: "Type 23 Duke-class FFG", count: 13, manufacturer: "Yarrow / Swan Hunter" },
       { model: "Type 45 Daring-class DDG", count: 6, manufacturer: "BAE Systems Surface Ships" },
       { model: "Queen Elizabeth-class CVF", count: 2, manufacturer: "BAE Systems / Aircraft Carrier Alliance" },
       { model: "River-class OPV Batch 2", count: 3, manufacturer: "BAE Systems Govan" },
-    ],
-    tanks: [
-      { model: "Challenger 2 MBT", count: 213, manufacturer: "BAE Systems" },
     ],
     submarines: [
       { model: "Vanguard-class SSBN", count: 4, manufacturer: "BAE Systems Barrow" },
@@ -847,53 +989,111 @@ const CAPABILITY_DETAILS = {
     ],
   },
   DE: {
-    combat_aircraft: [
+    fighters: [
       { model: "Typhoon", count: 140, manufacturer: "Eurofighter / Airbus Defence" },
       { model: "Tornado IDS (retiring)", count: 85, manufacturer: "Panavia Aircraft" },
-      { model: "F/A-18F Super Hornet (nuclear)", count: 15, manufacturer: "Boeing" },
+      { model: "F/A-18F Super Hornet (nuclear role)", count: 15, manufacturer: "Boeing" },
       { model: "Eurofighter ECR (SEAD)", count: 20, manufacturer: "Eurofighter / Airbus" },
+    ],
+    helicopters: [
+      { model: "Tiger HAD Attack", count: 40, manufacturer: "Airbus Helicopters" },
+      { model: "NH90 TTH (army transport)", count: 82, manufacturer: "NHIndustries / Airbus" },
+      { model: "NH90 NTH (naval Sea Lion)", count: 18, manufacturer: "NHIndustries / Airbus" },
+      { model: "H145M (light utility)", count: 15, manufacturer: "Airbus Helicopters" },
+      { model: "CH-53G/GS/GA Sea Stallion", count: 65, manufacturer: "Sikorsky / VFW" },
+    ],
+    drones: [
+      { model: "Heron 1 MALE (leased)", count: 7, manufacturer: "IAI (Israel)" },
+      { model: "Luna NG tactical UAS", count: 36, manufacturer: "EMT Penzberg" },
+      { model: "KZO battlefield UAS", count: 40, manufacturer: "Rheinmetall / Diehl" },
+    ],
+    land_vehicles: [
+      { model: "Leopard 2A6 / 2A7 MBT", count: 321, manufacturer: "Krauss-Maffei Wegmann" },
+      { model: "Puma IFV", count: 350, manufacturer: "PSM (KMW / Rheinmetall)" },
+      { model: "Marder 1A3/1A5 IFV", count: 350, manufacturer: "Rheinmetall Landsysteme" },
+      { model: "Boxer 8×8 MRAV", count: 272, manufacturer: "ARTEC (KMW / Rheinmetall)" },
+      { model: "GTK Boxer troop carrier", count: 400, manufacturer: "ARTEC" },
+      { model: "Fuchs 1 / 2 APC", count: 1000, manufacturer: "Rheinmetall Landsysteme" },
     ],
     surface_combatants: [
       { model: "Brandenburg-class F123 FFG", count: 4, manufacturer: "Blohm+Voss / HDW" },
       { model: "Sachsen-class F124 FFG", count: 3, manufacturer: "ARGE F124 / Blohm+Voss" },
       { model: "Braunschweig-class K130 corvette", count: 5, manufacturer: "ARGE K130 consortium" },
     ],
-    tanks: [
-      { model: "Leopard 2A6 / 2A7 MBT", count: 321, manufacturer: "Krauss-Maffei Wegmann" },
-    ],
     submarines: [
       { model: "Type 212A SSK", count: 6, manufacturer: "TKMS / Howaldtswerke-Deutsche Werft" },
     ],
   },
   FR: {
-    combat_aircraft: [
+    fighters: [
       { model: "Rafale F3-R (Air Force)", count: 102, manufacturer: "Dassault Aviation" },
       { model: "Rafale M (Navy carrier)", count: 83, manufacturer: "Dassault Aviation" },
       { model: "Mirage 2000-5F / 2000D", count: 43, manufacturer: "Dassault Aviation" },
     ],
+    helicopters: [
+      { model: "Tiger HAP / HCP Attack", count: 67, manufacturer: "Airbus Helicopters" },
+      { model: "NH90 TTH (army transport)", count: 56, manufacturer: "NHIndustries / Airbus" },
+      { model: "AS 532 Cougar (army)", count: 26, manufacturer: "Airbus Helicopters" },
+      { model: "EC725 Caracal (CSAR/special ops)", count: 27, manufacturer: "Airbus Helicopters" },
+      { model: "SA 341/342 Gazelle (recon / anti-tank)", count: 130, manufacturer: "Airbus Helicopters" },
+      { model: "NH90 NFH (naval Caïman)", count: 27, manufacturer: "NHIndustries / Airbus" },
+      { model: "Lynx Mk.4 (naval, retiring)", count: 20, manufacturer: "Westland / Leonardo" },
+    ],
+    drones: [
+      { model: "MQ-9A Reaper MALE", count: 12, manufacturer: "General Atomics" },
+      { model: "Patroller MALE (Safran)", count: 6, manufacturer: "Safran Electronics & Defense" },
+      { model: "Sperwer / Harfang tactical", count: 12, manufacturer: "Sagem / EADS" },
+    ],
+    land_vehicles: [
+      { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems (KNDS)" },
+      { model: "VBCI IFV 8×8", count: 630, manufacturer: "Nexter Systems / Thales" },
+      { model: "Griffon VBMR 6×6 APC", count: 600, manufacturer: "Nexter / Thales / Arquus" },
+      { model: "Jaguar EBRC 6×6 (recon)", count: 54, manufacturer: "Nexter / Thales / Arquus" },
+      { model: "AMX-10RC (wheeled fire support)", count: 170, manufacturer: "Nexter Systems" },
+      { model: "VAB APC (variants)", count: 2000, manufacturer: "Arquus (Renault Trucks Defense)" },
+    ],
     surface_combatants: [
       { model: "FREMM Aquitaine-class FFG", count: 8, manufacturer: "Naval Group" },
-      { model: "La Fayette-class FLF corvette", count: 5, manufacturer: "DCNS" },
-      { model: "D'Estienne d'Orves corvette (A69)", count: 8, manufacturer: "DCNS" },
-      { model: "Forbin-class Horizon DDG", count: 2, manufacturer: "DCNS / Orizzonte" },
-      { model: "Charles de Gaulle CVN", count: 1, manufacturer: "DCNS / Cherbourg Arsenal" },
-    ],
-    tanks: [
-      { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems" },
+      { model: "La Fayette-class FLF corvette", count: 5, manufacturer: "Naval Group" },
+      { model: "D'Estienne d'Orves corvette (A69)", count: 8, manufacturer: "Naval Group" },
+      { model: "Forbin-class Horizon DDG", count: 2, manufacturer: "Naval Group / Orizzonte" },
+      { model: "Charles de Gaulle CVN", count: 1, manufacturer: "Naval Group / Cherbourg Arsenal" },
     ],
     submarines: [
-      { model: "Triomphant-class SSBN", count: 4, manufacturer: "DCNS / Cherbourg" },
+      { model: "Triomphant-class SSBN", count: 4, manufacturer: "Naval Group / Cherbourg" },
       { model: "Barracuda-class SSN (Suffren)", count: 3, manufacturer: "Naval Group" },
-      { model: "Rubis-class SSN", count: 3, manufacturer: "DCNS" },
+      { model: "Rubis-class SSN", count: 3, manufacturer: "Naval Group" },
     ],
   },
   JP: {
-    combat_aircraft: [
+    fighters: [
       { model: "F-15J/DJ Eagle", count: 166, manufacturer: "McDonnell Douglas / Mitsubishi HI" },
       { model: "F-2 Viper Zero", count: 92, manufacturer: "Mitsubishi HI / Lockheed Martin" },
       { model: "F-35A Lightning II", count: 42, manufacturer: "Lockheed Martin / Mitsubishi HI" },
-      { model: "F-35B (STOVL, on order)", count: 20, manufacturer: "Lockheed Martin / Mitsubishi HI" },
+      { model: "F-35B (STOVL)", count: 20, manufacturer: "Lockheed Martin / Mitsubishi HI" },
       { model: "T-4 (OCU / trainer)", count: 34, manufacturer: "Kawasaki Heavy Industries" },
+    ],
+    helicopters: [
+      { model: "AH-64D Apache (JGSDF)", count: 13, manufacturer: "Boeing / Fuji Heavy Industries" },
+      { model: "OH-1 Ninja (armed scout)", count: 38, manufacturer: "Kawasaki Heavy Industries" },
+      { model: "CH-47JA Chinook", count: 53, manufacturer: "Boeing / Kawasaki" },
+      { model: "UH-60JA Black Hawk", count: 40, manufacturer: "Sikorsky / Mitsubishi HI" },
+      { model: "SH-60J/K Seahawk (naval ASW)", count: 100, manufacturer: "Sikorsky / Mitsubishi HI" },
+      { model: "MCH-101 Merlin (MCM/transport)", count: 14, manufacturer: "Leonardo / Kawasaki" },
+      { model: "UH-1J Iroquois", count: 130, manufacturer: "Bell / Fuji Heavy Industries" },
+    ],
+    drones: [
+      { model: "RQ-4B Global Hawk", count: 3, manufacturer: "Northrop Grumman" },
+      { model: "MQ-9B Reaper (on order)", count: 3, manufacturer: "General Atomics" },
+      { model: "FFR-4 reconnaissance UAS (naval)", count: 10, manufacturer: "Mitsubishi HI / Fuji" },
+    ],
+    land_vehicles: [
+      { model: "Type 74 MBT (reserve)", count: 450, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Type 90 MBT", count: 340, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Type 10 MBT", count: 130, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Type 89 IFV", count: 68, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Type 96 APC", count: 340, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Type 73 APC", count: 340, manufacturer: "Mitsubishi Heavy Industries" },
     ],
     surface_combatants: [
       { model: "Murasame-class DD", count: 9, manufacturer: "IHI / Mitsubishi HI" },
@@ -905,11 +1105,6 @@ const CAPABILITY_DETAILS = {
       { model: "Izumo-class DDH / CVL", count: 2, manufacturer: "IHI Marine United" },
       { model: "Hyuga-class DDH", count: 2, manufacturer: "IHI Corporation" },
     ],
-    tanks: [
-      { model: "Type 74 MBT (reserve)", count: 450, manufacturer: "Mitsubishi Heavy Industries" },
-      { model: "Type 90 MBT", count: 340, manufacturer: "Mitsubishi Heavy Industries" },
-      { model: "Type 10 MBT", count: 130, manufacturer: "Mitsubishi Heavy Industries" },
-    ],
     submarines: [
       { model: "Oyashio-class SSK", count: 8, manufacturer: "Mitsubishi HI / Kawasaki" },
       { model: "Sōryū-class SSK", count: 11, manufacturer: "Mitsubishi HI / Kawasaki" },
@@ -917,12 +1112,34 @@ const CAPABILITY_DETAILS = {
     ],
   },
   KR: {
-    combat_aircraft: [
+    fighters: [
       { model: "F-16C/D Fighting Falcon (KF-16)", count: 170, manufacturer: "Lockheed Martin / KAI" },
       { model: "T-50 Golden Eagle / FA-50", count: 128, manufacturer: "Korea Aerospace Industries" },
       { model: "F-15K Slam Eagle", count: 60, manufacturer: "Boeing / Samsung Techwin" },
       { model: "F-35A Lightning II", count: 40, manufacturer: "Lockheed Martin" },
       { model: "KF-21 Boramae (initial batch)", count: 8, manufacturer: "Korea Aerospace Industries" },
+    ],
+    helicopters: [
+      { model: "AH-64E Apache Guardian", count: 36, manufacturer: "Boeing / Korean Air" },
+      { model: "UH-60P Black Hawk", count: 180, manufacturer: "Sikorsky / Korean Air" },
+      { model: "Surion KUH-1 (utility)", count: 220, manufacturer: "Korea Aerospace Industries" },
+      { model: "LAH (Light Armed Helicopter)", count: 40, manufacturer: "Korea Aerospace Industries" },
+      { model: "CH-47D Chinook", count: 30, manufacturer: "Boeing" },
+      { model: "AH-1S Cobra (reserve)", count: 70, manufacturer: "Bell Helicopter" },
+    ],
+    drones: [
+      { model: "RQ-4 Global Hawk", count: 4, manufacturer: "Northrop Grumman" },
+      { model: "Heron TP MALE", count: 4, manufacturer: "IAI (Israel)" },
+      { model: "KUS-FS MALE (domestic)", count: 4, manufacturer: "Korea Aerospace Industries" },
+    ],
+    land_vehicles: [
+      { model: "K1E1 / K1A2 MBT", count: 1000, manufacturer: "Hyundai Rotem" },
+      { model: "K1E2 MBT", count: 900, manufacturer: "Hyundai Rotem" },
+      { model: "K2 Black Panther MBT", count: 260, manufacturer: "Hyundai Rotem" },
+      { model: "T-80U MBT (reserve)", count: 42, manufacturer: "Uralvagonzavod (Russia)" },
+      { model: "K21 IFV", count: 900, manufacturer: "Hanwha Defense" },
+      { model: "AS21 Redback IFV (on order)", count: 100, manufacturer: "Hanwha Defense" },
+      { model: "K200 KAAV APC", count: 2400, manufacturer: "Hanwha Defense" },
     ],
     surface_combatants: [
       { model: "FFX Incheon-class FFG", count: 8, manufacturer: "Hyundai Heavy Industries / Daewoo" },
@@ -930,12 +1147,6 @@ const CAPABILITY_DETAILS = {
       { model: "KDX-III Sejong the Great DDG (Aegis)", count: 3, manufacturer: "Hyundai Heavy Industries" },
       { model: "KDX-I Gwanggaeto the Great DDG", count: 3, manufacturer: "Daewoo Shipbuilding" },
       { model: "Pohang-class corvette", count: 8, manufacturer: "Korea Tacoma Marine" },
-    ],
-    tanks: [
-      { model: "K1E1 / K1A2 MBT", count: 1000, manufacturer: "Hyundai Rotem" },
-      { model: "K1E2 MBT", count: 900, manufacturer: "Hyundai Rotem" },
-      { model: "K2 Black Panther MBT", count: 260, manufacturer: "Hyundai Rotem" },
-      { model: "T-80U (reserve)", count: 42, manufacturer: "Uralvagonzavod (Russia)" },
     ],
     submarines: [
       { model: "Jangbogo-I (Type 209/1200) SSK", count: 10, manufacturer: "HDW / Daewoo" },
@@ -1324,32 +1535,20 @@ function NewsCard({ article }) {
 }
 
 // ── Flag tick for the regional comparison bar chart ───────────────────────────
-// FlagOverlay renders flag <img> elements as a HTML overlay aligned with chart bars.
-// Plain HTML <img> tags are used instead of SVG <image> / foreignObject to avoid
-// cross-origin and iOS-Safari SVG image loading bugs.
-function FlagOverlay({ peers, chartMarginTop = 12, chartMarginBottom = 4 }) {
-  if (!peers?.length) return null;
+function CustomizedFlagTick({ x, y, payload }) {
+  const code = COUNTRY_FLAGS[payload?.value] || payload?.value?.toLowerCase();
+  if (!code) return null;
   return (
-    <div
-      className="absolute inset-y-0 left-0 w-10 flex flex-col pointer-events-none"
-      style={{ paddingTop: chartMarginTop, paddingBottom: chartMarginBottom }}
-    >
-      {peers.map(entry => {
-        const code = COUNTRY_FLAGS[entry.country_code] || entry.country_code.toLowerCase();
-        return (
-          <div key={entry.country_code} className="flex-1 flex items-center justify-center">
-            <img
-              src={`https://flagcdn.com/w40/${code}.png`}
-              alt={entry.country}
-              width={20}
-              height={13}
-              className="rounded-sm object-cover"
-              onError={e => { e.currentTarget.style.opacity = '0'; }}
-            />
-          </div>
-        );
-      })}
-    </div>
+    <foreignObject x={x - 22} y={y - 8} width={20} height={16}>
+      <img
+        src={`https://flagcdn.com/w40/${code}.png`}
+        alt={payload?.value}
+        width={20}
+        height={13}
+        style={{ borderRadius: 2, objectFit: 'cover' }}
+        onError={e => { e.currentTarget.style.opacity = '0'; }}
+      />
+    </foreignObject>
   );
 }
 
@@ -1495,10 +1694,9 @@ function CountryProfileSection({ country, allExpenditures }) {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="relative h-[260px]">
-              <FlagOverlay peers={regionalPeers} chartMarginTop={12} chartMarginBottom={4} />
+            <div className="h-[260px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={regionalPeers} layout="vertical" margin={{ top: 12, left: 0, right: 8, bottom: 4 }}>
+                <BarChart data={regionalPeers} layout="vertical" margin={{ top: 12, left: 8, right: 8, bottom: 4 }}>
                   <XAxis
                     type="number"
                     tick={{ fill: '#64748B', fontSize: 10 }}
@@ -1509,10 +1707,10 @@ function CountryProfileSection({ country, allExpenditures }) {
                   <YAxis
                     type="category"
                     dataKey="country_code"
-                    tick={false}
+                    tick={<CustomizedFlagTick />}
                     axisLine={false}
                     tickLine={false}
-                    width={40}
+                    width={28}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
