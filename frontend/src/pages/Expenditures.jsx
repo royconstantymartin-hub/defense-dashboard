@@ -960,8 +960,8 @@ function FlagOverlay({ peers, chartMarginTop = 12, chartMarginBottom = 4 }) {
             <img
               src={`https://flagcdn.com/w40/${code}.png`}
               alt={entry.country}
-              width={26}
-              height={18}
+              width={20}
+              height={13}
               className="rounded-sm object-cover"
               onError={e => { e.currentTarget.style.opacity = '0'; }}
             />
@@ -1476,9 +1476,9 @@ export default function Expenditures() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
-            Defense Expenditures
+            Countries & Defense Spending
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Global Military Spending by Country</p>
+          <p className="text-slate-500 text-sm mt-1">Military budgets, capabilities & defense profiles by country</p>
         </div>
         <div className="flex flex-col items-end gap-1">
           <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
@@ -1753,7 +1753,7 @@ export default function Expenditures() {
                     data-testid={`expenditure-row-${exp.id}`}
                   >
                     <td className="p-4">
-                      <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-3">
                         <div className="flex items-center gap-3">
                           <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium shrink-0">
                             {idx + 1}
@@ -1769,12 +1769,6 @@ export default function Expenditures() {
                             <p className="text-xs text-slate-500 font-mono">{exp.country_code}</p>
                           </div>
                         </div>
-                        <img
-                          src={getFlag(exp.country_code)}
-                          alt=""
-                          className="w-10 h-7 object-cover rounded-md shadow-sm border border-slate-100 opacity-40 shrink-0 hidden sm:block"
-                          aria-hidden="true"
-                        />
                       </div>
                     </td>
                     <td className="p-4">

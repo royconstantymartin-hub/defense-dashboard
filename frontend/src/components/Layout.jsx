@@ -34,7 +34,7 @@ const navItems = [
   { path: "/ma-activity", icon: Handshake, label: "M&A Activity" },
   { path: "/market-data", icon: TrendingUp, label: "Market Data" },
   { path: "/private-players", icon: Lock, label: "Private Players" },
-  { path: "/expenditures", icon: Globe, label: "Expenditures" },
+  { path: "/expenditures", icon: Globe, label: "Countries" },
   { path: "/regulations", icon: FileText, label: "Regulations" },
   { path: "/products", icon: Package, label: "Products" },
   { path: "/follow", icon: Rss, label: "Sources" },
