@@ -562,18 +562,13 @@ export function getClearbitUrl(name) {
   return null;
 }
 
-// Returns ordered list of logo URLs to try: [clearbit?, google-favicon?, wikipedia?]
-// Clearbit is designed for logos and loads fastest. Google favicon is the universal fallback.
-// Wikipedia SVGs are last because Special:FilePath redirects can fail silently.
+// Returns ordered list of logo URLs to try: [wikipedia?, clearbit?]
+// Google Favicon is intentionally excluded: it returns a generic globe icon (200 OK)
+// for sites without a custom favicon, which is worse than showing colored initials.
 export function getLogoUrls(name) {
   const urls = [];
-  // Wikipedia SVGs are served from a reliable CDN and never blocked by ad-blockers.
-  // Try them first; Clearbit is a useful fallback for companies without a Wiki entry.
   if (COMPANY_WIKI_LOGOS[name]) urls.push(COMPANY_WIKI_LOGOS[name]);
   const domain = COMPANY_LOGOS[name];
-  if (domain) {
-    urls.push(`https://logo.clearbit.com/${domain}`);
-    urls.push(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
-  }
+  if (domain) urls.push(`https://logo.clearbit.com/${domain}`);
   return urls;
 }
