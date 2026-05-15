@@ -1192,22 +1192,23 @@ DEFENSE_COMPANIES = [
 
     {
         "name": "Turgis & Gaillard", "ticker": "TG-PRIV", "country": "France",
-        "market_cap": 0.05, "stock_price": 0, "change_percent": 0,
-        "revenue": 0.02, "employees": 80,
-        "specializations": ["Defense Consulting", "Intelligence", "Strategy", "Export Advisory"],
-        "founded_year": 2007, "headquarters": "Paris, France", "website": "turgis-gaillard.com",
+        "market_cap": 0.12, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.04, "employees": 120,
+        "specializations": ["MALE UAS", "Drone Manufacturing", "Aerospace", "Defense Technology", "ISR"],
+        "founded_year": 2012, "headquarters": "Paris, France", "website": "turgisgaillard.com",
         "funding_stage": "Private",
         "is_public": False,
         "description": (
-            "Turgis & Gaillard is a French defense and security consulting firm specialized in "
-            "competitive intelligence, export strategy, and economic influence for defense primes "
-            "and government entities. The firm advises major defense contractors and institutions "
-            "on market positioning, regulatory navigation, and export competitiveness in the global "
-            "defense sector."
+            "Turgis & Gaillard is a French defense industrial company developing advanced unmanned "
+            "aerial systems for the French armed forces and export markets. Its subsidiary GASA "
+            "(Gaillard Avions et Systèmes Avancés) is developing the AAROK, a 100% French MALE "
+            "(Medium Altitude Long Endurance) drone designed for ISR and tactical missions, built "
+            "in partnership with Thales. AAROK is positioned as an alternative to foreign MALE UAS "
+            "to reinforce French strategic autonomy in the drone domain."
         ),
-        "programs": ["Defense export advisory", "Strategic intelligence for prime contractors"],
+        "programs": ["AAROK MALE UAS (with Thales)", "French Armed Forces drone programs"],
         "export_countries": ["FR"],
-        "aliases": ["T&G", "Turgis Gaillard"],
+        "aliases": ["T&G", "Turgis Gaillard", "GASA"],
     },
     {
         "name": "Cerbair", "ticker": "CERB-PRIV", "country": "France",
@@ -1281,6 +1282,63 @@ DEFENSE_COMPANIES = [
         "programs": ["French Army C2 systems", "CNES/ESA space ground segments", "DGA programs"],
         "export_countries": ["FR", "DE", "IT"],
         "aliases": ["Communication & Systèmes", "CS Defense"],
+    },
+    {
+        "name": "Alta", "ticker": "ALTA-PRIV", "country": "France",
+        "market_cap": 0.08, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.03, "employees": 150,
+        "specializations": ["Advanced Materials", "Composite Structures", "Defense Manufacturing", "Aerospace"],
+        "founded_year": 2005, "headquarters": "France", "website": "alta.fr",
+        "funding_stage": "Private",
+        "is_public": False,
+        "description": (
+            "Alta is a French industrial company specialized in advanced composite materials and "
+            "structural manufacturing for defense and aerospace applications. The company supplies "
+            "structural components and lightweight assemblies for French defense programs, working "
+            "with prime contractors and the DGA on a range of platforms including armored vehicles, "
+            "aircraft structures, and missile systems."
+        ),
+        "programs": ["Defense composite manufacturing", "DGA structural programs"],
+        "export_countries": ["FR"],
+        "aliases": [],
+    },
+    {
+        "name": "ARES", "ticker": "ARES-PRIV", "country": "France",
+        "market_cap": 0.06, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.025, "employees": 90,
+        "specializations": ["Special Forces Weapons", "Firearms", "Armament", "Close Combat Systems"],
+        "founded_year": 2010, "headquarters": "France", "website": "ares-ar.com",
+        "funding_stage": "Private",
+        "is_public": False,
+        "description": (
+            "ARES is a French armament company designing and manufacturing military-grade firearms "
+            "and special operations weapons. Its product range includes modular assault rifles, "
+            "carbines, and light machine guns developed specifically for French special forces and "
+            "military export clients. ARES weapons are characterized by a modular architecture "
+            "enabling rapid caliber and configuration changes in the field."
+        ),
+        "programs": ["ARES SCR assault rifle family", "French special forces light weapons"],
+        "export_countries": ["FR", "AE", "SA"],
+        "aliases": ["ARES Armament"],
+    },
+    {
+        "name": "Comand AI", "ticker": "CMDAI-PRIV", "country": "France",
+        "market_cap": 0.04, "stock_price": 0, "change_percent": 0,
+        "revenue": 0.008, "employees": 35,
+        "specializations": ["Artificial Intelligence", "Command & Control", "Decision Support", "Defense Software"],
+        "founded_year": 2020, "headquarters": "Paris, France", "website": "comand.ai",
+        "funding_stage": "Seed / Series A",
+        "is_public": False,
+        "description": (
+            "Comand AI is a French defense technology startup developing artificial intelligence "
+            "solutions for military command and control, tactical decision support, and battlefield "
+            "data fusion. Its platform integrates multi-source intelligence feeds and applies machine "
+            "learning to assist commanders in time-critical operational decisions, addressing the "
+            "growing demand for AI-augmented C2 capabilities within French and NATO armed forces."
+        ),
+        "programs": ["AI-assisted C2 platform", "Defense data fusion pilot programs"],
+        "export_countries": ["FR"],
+        "aliases": ["Comand"],
     },
 ]
 
