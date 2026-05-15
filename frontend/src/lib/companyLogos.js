@@ -451,7 +451,6 @@ export const COMPANY_WIKI_LOGOS = {
   "Hyundai Rotem":                 WP + "Hyundai_Rotem_Logo.svg",
   // India — additional
   "Cochin Shipyard":               WP + "Cochin_Shipyard_logo.svg",
-  "BEML":                          WP + "BEML_logo.png",
   // Scandinavia
   "Nammo":                         WP + "Nammo_logo.svg",
   "Patria":                        WP + "Patria_logo.svg",
@@ -481,7 +480,7 @@ export const COMPANY_WIKI_LOGOS = {
   "Oshkosh Defense":               WP + "Oshkosh_Corporation_logo.svg",
   "Ghost Robotics":                WP + "Ghost_Robotics_logo.svg",
   // Norinco (case variant used in Products)
-  "Norinco":                       WP + "Norinco_logo.svg",
+  "Norinco":                       "https://iconape.com/wp-content/png_logo_vector/norinco-logo.png",
   // Italy
   "Elettronica":                   WP + "Elettronica_spa_logo.svg",
   "Avio":                          WP + "Avio_logo.svg",
@@ -519,19 +518,21 @@ export const COMPANY_WIKI_LOGOS = {
   "Milrem Robotics":               WP + "Milrem_Robotics_logo.svg",
   // Denmark
   "Terma A/S":                     WP + "Terma_logo.svg",
-  // India
-  "Hindustan Aeronautics":         WP + "Hindustan_Aeronautics_Limited_Logo.svg",
-  "Bharat Electronics":            WP + "Bharat_Electronics_Limited_logo.svg",
-  "Bharat Dynamics":               WP + "Bharat_Dynamics_Limited_logo.svg",
-  "Mazagon Dock":                  WP + "Mazagon_Dock_Shipbuilders_Limited_logo.svg",
-  // China — state enterprises (Clearbit blocks .cn; Wikipedia is the only reliable source)
-  "AVIC":                          WP + "Aviation_Industry_Corporation_of_China_logo.svg",
-  "NORINCO":                       WP + "China_North_Industries_Corporation_logo.svg",
-  "CSSC":                          WP + "China_State_Shipbuilding_Corporation_logo.svg",
+  // India — direct CDN URLs (Wikipedia filenames incorrect; Indian govt sites return globe favicon)
+  "Hindustan Aeronautics":         "https://companieslogo.com/img/orig/HAL.NS_BIG-46cfe121.png",
+  "Bharat Electronics":            "https://companieslogo.com/img/orig/BEL.NS_BIG-b2d0690e.png",
+  "Bharat Dynamics":               "https://bdl-india.in/sites/default/files/bhar-d.png",
+  "Mazagon Dock":                  "https://mazagondock.in/Assets/images/logo.svg",
+  "BEML":                          "https://companieslogo.com/img/orig/BEML.NS_BIG-9e6d12c7.png",
+  // China — direct CDN URLs (Clearbit blocks .cn; Wikipedia filenames unreliable)
+  "AVIC":                          "https://cdn.worldvectorlogo.com/logos/aviation-industry-corporation-of-china-avic-.svg",
+  "NORINCO":                       "https://iconape.com/wp-content/png_logo_vector/norinco-logo.png",
+  "CSSC":                          "https://companieslogo.com/img/orig/600150.SS-2ef2328e.png",
   "CASIC":                         WP + "China_Aerospace_Science_and_Industry_Corporation_logo.svg",
   "CETC":                          WP + "China_Electronics_Technology_Group_Corporation_logo.svg",
   "CSGC":                          WP + "China_South_Industries_Group_Corporation_logo.svg",
-  // Russia
+  // Russia — direct URLs (Clearbit blocks .ru)
+  "Rostec":                        "https://www.rostec.ru/local/templates/rostec2/assets/img/logo.svg",
   "United Aircraft Corporation":   WP + "United_Aircraft_Corporation_logo.svg",
   "United Shipbuilding Corporation": WP + "United_Shipbuilding_Corporation_logo.svg",
   "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
@@ -565,7 +566,9 @@ export function getClearbitUrl(name) {
 // Returns ordered list of logo URLs to try: [wikipedia?, clearbit?, google-favicon?]
 // Google Favicon is skipped for .cn and .ru domains — those return a generic globe
 // icon (HTTP 200) with no custom favicon, which fools the onerror handler.
-const FAVICON_SKIP_TLDS = [".cn", ".ru"];
+// These TLDs return a generic globe favicon (HTTP 200) for sites without a custom icon,
+// which fools the onerror handler. Skip Google Favicon for these; fall back to initials.
+const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in"];
 
 export function getLogoUrls(name) {
   const urls = [];
