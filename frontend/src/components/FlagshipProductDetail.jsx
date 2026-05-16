@@ -85,7 +85,7 @@ function SourcedStat({ label, data, prefix = "", suffix = "", formatFn }) {
     <div className="flex flex-col gap-1">
       <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{label}</p>
       <div className="flex items-center gap-1.5">
-        <span className="font-mono font-bold text-slate-900 text-lg leading-none">{display}</span>
+        <span className="font-mono font-semibold text-slate-900 text-base leading-none">{display}</span>
         <ConfidenceDot level={data.confidence} note={data.note} sources={data.sources} />
       </div>
     </div>
@@ -461,31 +461,35 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
 
           {/* ── Key figures strip ─────────────────────────────────────── */}
           <div className="grid grid-cols-4 divide-x divide-slate-100 border-b border-slate-100 shrink-0">
-            <div className="p-3">
-              <SourcedStat label="Units built" data={detail.total_units_produced} />
+            <div className="px-4 py-3">
+              <SourcedStat label="Built" data={detail.total_units_produced} />
             </div>
-            <div className="p-3">
-              <SourcedStat label="Unit cost" data={detail.unit_cost_usd} suffix="M$" formatFn={v => `${v}`} />
+            <div className="px-4 py-3">
+              <SourcedStat
+                label="Unit cost"
+                data={detail.unit_cost_usd}
+                formatFn={v => `$${v}M`}
+              />
               {detail.unit_cost_year && (
-                <p className="text-xs text-slate-400 mt-0.5">({detail.unit_cost_year})</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">{detail.unit_cost_year}</p>
               )}
             </div>
-            <div className="p-3">
+            <div className="px-4 py-3">
               <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Operators</p>
               <div className="flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-slate-400" />
-                <span className="font-mono font-bold text-slate-900 text-lg leading-none">
+                <Users className="w-3.5 h-3.5 text-slate-400" />
+                <span className="font-mono font-semibold text-slate-900 text-base leading-none">
                   {detail.operator_countries_count}
                 </span>
               </div>
             </div>
-            <div className="p-3">
+            <div className="px-4 py-3">
               {detail.production_rate_per_year ? (
                 <SourcedStat label="Rate/yr" data={detail.production_rate_per_year} suffix=" ac." />
               ) : (
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Rate/yr</p>
-                  <span className="font-mono font-bold text-slate-500 text-lg">N/A</span>
+                  <span className="font-mono font-semibold text-slate-500 text-base">N/A</span>
                 </div>
               )}
             </div>
