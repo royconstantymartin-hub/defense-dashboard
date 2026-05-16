@@ -262,7 +262,8 @@ export const COMPANY_LOGOS = {
   "Novadem": "novadem.com",
   "Texelis": "texelis.com",
   "Lynred": "lynred.com",
-  "Turgis & Gaillard": "turgis-gaillard.com",
+  "Turgis & Gaillard": "turgisgaillard.com",
+  "Alta Ares": "altaares.com",
   "Shark Robotics": "shark-robotics.com",
   // USA — New defense tech companies
   "Saronic Technologies": "saronic.com",
