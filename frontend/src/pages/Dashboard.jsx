@@ -105,10 +105,10 @@ function hostFromUrl(url) {
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const tBannerTitle   = useT({ en: "Database not initialized",   fr: "Base de données non initialisée" });
-  const tBannerDesc    = useT({ en: "The dashboard is empty. An administrator must initialize the database to load reference data (companies, M&A, contracts, expenditures…).", fr: "Le dashboard est vide. Pour charger les données de référence (entreprises, M&A, contrats, dépenses…), un administrateur doit initialiser la base de données." });
-  const tBannerAdmin   = useT({ en: "Admin → Seed",               fr: "Admin → Seed" });
-  const tBannerContact = useT({ en: "Contact an admin",           fr: "Contacter un admin" });
+  const tBannerTitle   = useT({ en: "Database not initialized" });
+  const tBannerDesc    = useT({ en: "The dashboard is empty. An administrator must initialize the database to load reference data (companies, M&A, contracts, expenditures…)." });
+  const tBannerAdmin   = useT({ en: "Admin → Seed" });
+  const tBannerContact = useT({ en: "Contact an admin" });
   const [stats, setStats] = useState(null);
   const [players, setPlayers] = useState([]);
   const [recentNews, setRecentNews] = useState([]);

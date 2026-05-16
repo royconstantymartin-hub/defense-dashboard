@@ -9,20 +9,19 @@ import { fr, enUS } from "date-fns/locale";
 import { useLang } from "@/App";
 
 const T = {
-  title:      { en: "Saved Articles",              fr: "Articles sauvegardés" },
-  subtitle:   { en: "Bookmarks from the news feed", fr: "Articles mis de côté depuis la veille" },
-  count1:     { en: "article",                      fr: "article" },
-  countN:     { en: "articles",                     fr: "articles" },
-  recentFirst:{ en: "Most recently saved first",    fr: "Sauvegardés récemment en premier" },
-  empty:      { en: "No saved articles",            fr: "Aucun article sauvegardé" },
-  emptyDesc:  { en: "From the News Feed, click the bookmark icon on any article to save it here.",
-                fr: "Depuis la page Actualités, cliquez sur l'icône marque-page d'un article pour le retrouver ici." },
-  goNews:     { en: "Go to News Feed",              fr: "Aller aux actualités" },
-  loginMsg:   { en: "Log in to access your saved articles", fr: "Connectez-vous pour accéder à vos sauvegardes" },
-  loginBtn:   { en: "Log in",                       fr: "Se connecter" },
-  untitled:   { en: "Untitled article",             fr: "Article sans titre" },
-  remove:     { en: "Remove bookmark",              fr: "Retirer la sauvegarde" },
-  openArticle:{ en: "Open article",                 fr: "Ouvrir l'article" },
+  title:      { en: "Saved Articles" },
+  subtitle:   { en: "Bookmarks from the news feed" },
+  count1:     { en: "article" },
+  countN:     { en: "articles" },
+  recentFirst:{ en: "Most recently saved first" },
+  empty:      { en: "No saved articles" },
+  emptyDesc:  { en: "From the News Feed, click the bookmark icon on any article to save it here." },
+  goNews:     { en: "Go to News Feed" },
+  loginMsg:   { en: "Log in to access your saved articles" },
+  loginBtn:   { en: "Log in" },
+  untitled:   { en: "Untitled article" },
+  remove:     { en: "Remove bookmark" },
+  openArticle:{ en: "Open article" },
 };
 
 const CATEGORY_STYLES = {

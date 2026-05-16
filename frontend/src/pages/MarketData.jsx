@@ -1077,7 +1077,7 @@ export default function MarketData() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
               <p className="text-xs text-slate-500">
-                {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredPlayers.length)} sur {filteredPlayers.length} entreprises
+                {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredPlayers.length)} of {filteredPlayers.length} companies
               </p>
               <div className="flex items-center gap-1">
                 <button
