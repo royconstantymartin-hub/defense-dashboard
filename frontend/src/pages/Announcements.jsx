@@ -306,8 +306,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
   const [imgError, setImgError] = useState(false);
   const [localImage, setLocalImage] = useState(null);
 
-  // If the article has no image stored, try fetching the OG image on-demand.
-  // The backend caches the result in the DB so subsequent loads are instant.
   useEffect(() => {
     if (!article.image && !localImage && article.url) {
       axios
@@ -319,119 +317,97 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
 
   const displayImage = article.image || localImage;
 
-  const score     = article.relevanceScore ?? 0;
-  const isNew     = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
-  const srcCount  = article.source_count ?? 1;
+  const score    = article.relevanceScore ?? 0;
+  const isNew    = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
+  const srcCount = article.source_count ?? 1;
   const coveredBy = article.covered_by ?? [];
-  const lang      = resolveLanguage(article);
+  const lang     = resolveLanguage(article);
 
   const showSummary = summaryState && (summaryState.loading || summaryState.bullets);
 
   return (
-    <div className={`rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-200 ${
+    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 cursor-pointer ${
       isHot
-        ? "bg-white border-2 border-orange-300 shadow-md hover:shadow-xl hover:border-orange-400 hover:-translate-y-0.5"
-        : "bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-purple-200 hover:-translate-y-0.5"
+        ? "border-2 border-orange-300 shadow-sm hover:shadow-md hover:border-orange-400"
+        : "border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-200"
     }`}>
+      <div className="flex items-start gap-3 p-4">
 
-      {/* ── Cover image ── */}
-      <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative block flex-shrink-0 overflow-hidden" style={{ height: "220px" }}>
-        {!imgError && displayImage ? (
-          <img
-            src={displayImage}
-            alt={article.title}
-            loading="lazy"
-            onError={() => setImgError(true)}
-            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
-          />
-        ) : (
-          <NewsPlaceholder source={article.source} category={article.category} url={article.url} sourceLogo={article.sourceLogo} articleSeed={article.id || article.title} />
-        )}
+        {/* ── Left: text content ── */}
+        <div className="flex-1 min-w-0 flex flex-col gap-2">
 
-        {/* Bottom scrim for badge legibility */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
-
-        {/* Score badge — top left */}
-        {score >= 70 && (
-          <span className="absolute top-3 left-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow">
-            HIGH
-          </span>
-        )}
-
-        {/* NEW badge — top right */}
-        {isNew && (
-          <span className="absolute top-3 right-3 bg-purple-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow">
-            NEW
-          </span>
-        )}
-
-        {/* Bottom row: multi-source + lang flag */}
-        <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between">
-          {srcCount >= 2 ? (
-            <span
-              className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide flex items-center gap-1 shadow"
-              title={`Covered by: ${coveredBy.join(", ")}`}
-            >
-              🔥 {srcCount} sources
-            </span>
-          ) : <span />}
-          <span className="text-base leading-none drop-shadow" title={lang === "fr" ? "French" : "English"}>
-            {langFlag(lang)}
-          </span>
-        </div>
-      </a>
-
-      {/* ── Body ── */}
-      <div className="p-4 flex flex-col flex-1 gap-3">
-
-        {/* Source + category row */}
-        <div className="flex items-center justify-between gap-2">
-          <SourceFavicon
-            url={article.url}
-            source={article.realSource || article.source}
-            sourceLogo={article.sourceLogo}
-          />
-          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border flex-shrink-0 uppercase tracking-widest ${getCategoryStyle(article.category)}`}>
-            {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
-          </span>
-        </div>
-
-        {/* Title — larger, bolder, clickable */}
-        <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1 group/title">
-          <h3 className="text-slate-900 font-bold text-[15px] leading-snug line-clamp-3 group-hover/title:text-purple-700 transition-colors duration-150">
-            {article.title}
-          </h3>
-        </a>
-
-        {/* AI Summary panel */}
-        {showSummary && (
-          <div className="bg-purple-50 border border-purple-100 rounded-xl p-3">
-            {summaryState.loading ? (
-              <div className="flex items-center gap-2 text-purple-500 text-xs">
-                <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                Generating brief…
-              </div>
-            ) : summaryState.error ? (
-              <p className="text-red-500 text-xs">Failed to generate summary.</p>
-            ) : (
-              <ul className="space-y-1.5">
-                {(summaryState.bullets || []).map((b, i) => (
-                  <li key={i} className="flex gap-2 text-xs text-slate-700 leading-snug">
-                    <span className="text-purple-500 font-bold flex-shrink-0 mt-0.5">•</span>
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
+          {/* Source • time */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <SourceFavicon
+              url={article.url}
+              source={article.realSource || article.source}
+              sourceLogo={article.sourceLogo}
+            />
+            <span className="text-[11px] text-slate-300">•</span>
+            <span className="text-[11px] text-slate-400 font-medium">{relativeTime(article.publishedAt)}</span>
+            {isNew && (
+              <span className="bg-purple-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-wider">
+                NEW
+              </span>
             )}
           </div>
-        )}
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2 mt-auto">
-          <span className="text-[11px] text-slate-400 font-medium">{relativeTime(article.publishedAt)}</span>
+          {/* Title */}
+          <a href={article.url} target="_blank" rel="noopener noreferrer">
+            <h3 className="text-slate-900 font-bold text-[15px] leading-snug line-clamp-3 hover:text-purple-700 transition-colors duration-150">
+              {article.title}
+            </h3>
+          </a>
 
-          <div className="flex items-center gap-1">
-            {/* AI Brief */}
+          {/* Tags row — category + company + multi-source + lang */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-widest ${getCategoryStyle(article.category)}`}>
+              {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
+            </span>
+            {article.company && (
+              <span className="text-[11px] font-semibold text-purple-700">{article.company}</span>
+            )}
+            {srcCount >= 2 && (
+              <span
+                className="text-[10px] font-bold text-orange-600 flex items-center gap-1"
+                title={`Covered by: ${coveredBy.join(", ")}`}
+              >
+                🔥 {srcCount} sources
+              </span>
+            )}
+            {score >= 70 && (
+              <span className="text-[10px] font-bold text-emerald-600">HIGH</span>
+            )}
+            <span className="text-sm leading-none ml-1" title={lang === "fr" ? "French" : "English"}>
+              {langFlag(lang)}
+            </span>
+          </div>
+
+          {/* AI Summary panel */}
+          {showSummary && (
+            <div className="bg-purple-50 border border-purple-100 rounded-xl p-3 mt-1">
+              {summaryState.loading ? (
+                <div className="flex items-center gap-2 text-purple-500 text-xs">
+                  <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+                  Generating brief…
+                </div>
+              ) : summaryState.error ? (
+                <p className="text-red-500 text-xs">Failed to generate summary.</p>
+              ) : (
+                <ul className="space-y-1.5">
+                  {(summaryState.bullets || []).map((b, i) => (
+                    <li key={i} className="flex gap-2 text-xs text-slate-700 leading-snug">
+                      <span className="text-purple-500 font-bold flex-shrink-0 mt-0.5">•</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-1 mt-0.5">
             <button
               onClick={(e) => { e.stopPropagation(); onSummary(article); }}
               title="AI Brief"
@@ -444,8 +420,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
               <Sparkles className="w-3 h-3" />
               Brief
             </button>
-
-            {/* Bookmark */}
             <button
               onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
               title={isBookmarked ? "Remove bookmark" : "Save"}
@@ -457,8 +431,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
             >
               {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
             </button>
-
-            {/* Read CTA */}
             <a
               href={article.url}
               target="_blank"
@@ -469,6 +441,33 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
             </a>
           </div>
         </div>
+
+        {/* ── Right: square thumbnail ── */}
+        <a
+          href={article.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-shrink-0 relative w-[110px] h-[110px] rounded-xl overflow-hidden"
+        >
+          {!imgError && displayImage ? (
+            <img
+              src={displayImage}
+              alt={article.title}
+              loading="lazy"
+              onError={() => setImgError(true)}
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <NewsPlaceholder
+              source={article.source}
+              category={article.category}
+              url={article.url}
+              sourceLogo={article.sourceLogo}
+              articleSeed={article.id || article.title}
+            />
+          )}
+        </a>
+
       </div>
     </div>
   );
@@ -494,7 +493,7 @@ function SectionHeader({ emoji, label, sublabel, color = "slate" }) {
 
 function ArticleGrid({ articles, bookmarkedUrls, summaries, onBookmark, onSummary, isHot = false }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="flex flex-col gap-3">
       {articles.map((article, idx) => (
         <NewsCard
           key={article.url || `${isHot ? "hot" : "reg"}-${idx}`}
