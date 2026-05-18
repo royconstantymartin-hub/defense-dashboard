@@ -13,16 +13,14 @@ import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
 // ── Logo helpers ──────────────────────────────────────────────────────────────
 
-const AVATAR_COLORS = [
-  "bg-slate-700", "bg-slate-600",
-  "bg-slate-800", "bg-slate-700",
-  "bg-slate-600", "bg-slate-800",
-  "bg-slate-700", "bg-slate-600",
+const AVATAR_PALETTE = [
+  "bg-purple-600", "bg-blue-600", "bg-emerald-600", "bg-rose-600",
+  "bg-amber-600", "bg-indigo-600", "bg-sky-600", "bg-orange-600",
 ];
 function avatarColor(name = "") {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
-  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+  return AVATAR_PALETTE[h % AVATAR_PALETTE.length];
 }
 function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
@@ -42,10 +40,13 @@ function LogoWithFallback({ name, website, size = 40 }) {
   if (!urls.length || urlIndex >= urls.length) {
     return (
       <div
-        className={`${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}
+        className={`${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0 shadow-sm`}
         style={{ width: size, height: size }}
       >
-        <span className="text-xs font-bold text-white tracking-tight" style={{ fontSize: size < 32 ? 9 : 12 }}>
+        <span
+          className="font-bold text-white tracking-tight"
+          style={{ fontSize: size < 32 ? 9 : size < 40 ? 11 : 13 }}
+        >
           {initials(name)}
         </span>
       </div>
@@ -55,7 +56,7 @@ function LogoWithFallback({ name, website, size = 40 }) {
     <img
       src={urls[urlIndex]}
       alt={name}
-      className="rounded-lg object-contain bg-white border border-slate-100 shrink-0"
+      className="rounded-lg object-contain bg-white border border-slate-100 shrink-0 shadow-sm"
       style={{ width: size, height: size }}
       onError={() => setUrlIndex((i) => i + 1)}
     />
@@ -174,60 +175,106 @@ const MACRO_CATEGORIES = [
   },
 ];
 
+// Each color maps to real Tailwind classes — do not construct these dynamically.
 const CAT_COLORS = {
   purple: {
-    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
-    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-800",
+    icon: "text-purple-700",
+    iconBg: "bg-purple-50 border-purple-200",
+    badge: "bg-purple-100 text-purple-700 border border-purple-200",
+    accentBar: "bg-purple-600",
+    activeBg: "bg-purple-50/50",
+    activeBorder: "border-purple-300",
+    hoverBorder: "hover:border-purple-200",
+    headerBg: "bg-purple-50/60 border-purple-100",
+    rowAccent: "bg-purple-600",
   },
   rose: {
-    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
-    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-800",
+    icon: "text-rose-600",
+    iconBg: "bg-rose-50 border-rose-200",
+    badge: "bg-rose-100 text-rose-700 border border-rose-200",
+    accentBar: "bg-rose-500",
+    activeBg: "bg-rose-50/50",
+    activeBorder: "border-rose-300",
+    hoverBorder: "hover:border-rose-200",
+    headerBg: "bg-rose-50/60 border-rose-100",
+    rowAccent: "bg-rose-500",
   },
   indigo: {
-    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
-    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-800",
+    icon: "text-indigo-600",
+    iconBg: "bg-indigo-50 border-indigo-200",
+    badge: "bg-indigo-100 text-indigo-700 border border-indigo-200",
+    accentBar: "bg-indigo-500",
+    activeBg: "bg-indigo-50/50",
+    activeBorder: "border-indigo-300",
+    hoverBorder: "hover:border-indigo-200",
+    headerBg: "bg-indigo-50/60 border-indigo-100",
+    rowAccent: "bg-indigo-500",
   },
   amber: {
-    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
-    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-800",
+    icon: "text-amber-600",
+    iconBg: "bg-amber-50 border-amber-200",
+    badge: "bg-amber-100 text-amber-700 border border-amber-200",
+    accentBar: "bg-amber-500",
+    activeBg: "bg-amber-50/50",
+    activeBorder: "border-amber-300",
+    hoverBorder: "hover:border-amber-200",
+    headerBg: "bg-amber-50/60 border-amber-100",
+    rowAccent: "bg-amber-500",
   },
   blue: {
-    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
-    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-800",
+    icon: "text-blue-600",
+    iconBg: "bg-blue-50 border-blue-200",
+    badge: "bg-blue-100 text-blue-700 border border-blue-200",
+    accentBar: "bg-blue-500",
+    activeBg: "bg-blue-50/50",
+    activeBorder: "border-blue-300",
+    hoverBorder: "hover:border-blue-200",
+    headerBg: "bg-blue-50/60 border-blue-100",
+    rowAccent: "bg-blue-500",
   },
   sky: {
-    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
-    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-800",
+    icon: "text-sky-600",
+    iconBg: "bg-sky-50 border-sky-200",
+    badge: "bg-sky-100 text-sky-700 border border-sky-200",
+    accentBar: "bg-sky-500",
+    activeBg: "bg-sky-50/50",
+    activeBorder: "border-sky-300",
+    hoverBorder: "hover:border-sky-200",
+    headerBg: "bg-sky-50/60 border-sky-100",
+    rowAccent: "bg-sky-500",
   },
   emerald: {
-    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
-    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-800",
+    icon: "text-emerald-600",
+    iconBg: "bg-emerald-50 border-emerald-200",
+    badge: "bg-emerald-100 text-emerald-700 border border-emerald-200",
+    accentBar: "bg-emerald-500",
+    activeBg: "bg-emerald-50/50",
+    activeBorder: "border-emerald-300",
+    hoverBorder: "hover:border-emerald-200",
+    headerBg: "bg-emerald-50/60 border-emerald-100",
+    rowAccent: "bg-emerald-500",
   },
   orange: {
-    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
-    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-800",
+    icon: "text-orange-600",
+    iconBg: "bg-orange-50 border-orange-200",
+    badge: "bg-orange-100 text-orange-700 border border-orange-200",
+    accentBar: "bg-orange-500",
+    activeBg: "bg-orange-50/50",
+    activeBorder: "border-orange-300",
+    hoverBorder: "hover:border-orange-200",
+    headerBg: "bg-orange-50/60 border-orange-100",
+    rowAccent: "bg-orange-500",
   },
   slate: {
-    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
-    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-800",
+    icon: "text-slate-600",
+    iconBg: "bg-slate-100 border-slate-200",
+    badge: "bg-slate-100 text-slate-600 border border-slate-200",
+    accentBar: "bg-slate-500",
+    activeBg: "bg-slate-50",
+    activeBorder: "border-slate-400",
+    hoverBorder: "hover:border-slate-300",
+    headerBg: "bg-slate-50 border-slate-200",
+    rowAccent: "bg-slate-500",
   },
 };
 
@@ -244,23 +291,26 @@ function assignCategory(company) {
 function CategoryTile({ category, companies, isSelected, onSelect }) {
   const clr = CAT_COLORS[category.color];
   const Icon = category.icon;
-  const topLogos = companies.slice(0, 7);
+  const topLogos = companies.slice(0, 6);
   const isEmpty = companies.length === 0;
 
   return (
     <button
       onClick={isEmpty ? undefined : onSelect}
       disabled={isEmpty}
-      className={`w-full text-left p-4 rounded-xl border transition-all duration-150 bg-white shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] ${
+      className={`relative w-full text-left p-4 rounded-xl border transition-all duration-150 bg-white overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] ${
         isEmpty
           ? "opacity-40 cursor-default border-slate-100"
           : isSelected
           ? `${clr.activeBorder} ${clr.activeBg} shadow-md`
-          : `${clr.border} ${clr.hoverBorder} hover:shadow-md`
+          : `border-slate-200 ${clr.hoverBorder} hover:shadow-md`
       }`}
     >
+      {/* Colored left accent bar */}
+      <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${clr.accentBar} ${isEmpty ? "opacity-30" : ""}`} />
+
       {/* Header row */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-3 pl-1">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center border flex-shrink-0 ${clr.iconBg}`}>
             <Icon className={`w-4 h-4 ${clr.icon}`} />
@@ -271,7 +321,7 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
           </div>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-          <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ${clr.badge}`}>
+          <span className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full ${clr.badge}`}>
             {companies.length}
           </span>
           {!isEmpty && (
@@ -280,18 +330,18 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
         </div>
       </div>
 
-      {/* Logo row */}
+      {/* Logo strip */}
       {topLogos.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-2">
+        <div className="flex items-center gap-1.5 mt-2 pl-1">
           {topLogos.map((c) => (
-            <LogoWithFallback key={c.id || c.name} name={c.name} website={c.website} size={26} />
+            <LogoWithFallback key={c.id || c.name} name={c.name} website={c.website} size={30} />
           ))}
-          {companies.length > 7 && (
+          {companies.length > 6 && (
             <div
-              className="rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0"
-              style={{ width: 26, height: 26 }}
+              className={`rounded-lg flex items-center justify-center flex-shrink-0 border ${clr.iconBg}`}
+              style={{ width: 30, height: 30 }}
             >
-              <span className="text-[9px] text-slate-500 font-medium">+{companies.length - 7}</span>
+              <span className={`text-[9px] font-bold ${clr.icon}`}>+{companies.length - 6}</span>
             </div>
           )}
         </div>
@@ -302,26 +352,31 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
 
 // ── Compact company row ───────────────────────────────────────────────────────
 
-function CompactPlayerRow({ company, onClick }) {
+function CompactPlayerRow({ company, onClick, accentColor }) {
   const iso = COUNTRY_ISO[(company.country || "").trim()];
   const cap = formatCap(company.market_cap) || formatCap(company.revenue);
   const isRevenue = !formatCap(company.market_cap) && !!formatCap(company.revenue);
   const url = company.website
     ? (company.website.startsWith("http") ? company.website : `https://${company.website}`)
     : null;
+  const stage = company.funding_stage
+    ? company.funding_stage.replace(/^Private\s*[—–-]\s*/i, "").trim()
+    : null;
+  const stageIsNamed = stage && /series|seed|venture|growth|bootstrap/i.test(stage);
 
   return (
     <div
-      className="relative flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors cursor-pointer group"
+      className="relative flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer group"
       onClick={onClick}
     >
-      <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-slate-900 opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* Hover accent bar */}
+      <div className={`absolute left-0 top-2 bottom-2 w-[3px] rounded-r ${accentColor || "bg-purple-600"} opacity-0 group-hover:opacity-100 transition-opacity`} />
 
-      <LogoWithFallback name={company.name} website={company.website} size={32} />
+      <LogoWithFallback name={company.name} website={company.website} size={36} />
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <span className="font-medium text-[13px] text-slate-800 group-hover:text-slate-900 transition-colors truncate">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-[13px] text-slate-800 group-hover:text-slate-900 transition-colors truncate">
             {company.name}
           </span>
           {url && (
@@ -330,7 +385,7 @@ function CompactPlayerRow({ company, onClick }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-slate-200 hover:text-blue-500 flex-shrink-0 transition-colors"
+              className="text-slate-300 hover:text-blue-500 flex-shrink-0 transition-colors opacity-0 group-hover:opacity-100"
             >
               <ExternalLink className="w-3 h-3" />
             </a>
@@ -341,31 +396,37 @@ function CompactPlayerRow({ company, onClick }) {
             <img
               src={`https://flagcdn.com/w20/${iso}.png`}
               alt={company.country}
-              className="w-3.5 h-auto rounded-sm flex-shrink-0"
+              className="w-4 h-auto rounded-sm flex-shrink-0"
               onError={(e) => { e.target.style.display = "none"; }}
             />
           )}
           <span className="text-[11px] text-slate-400 truncate">
             {company.headquarters || company.country || "—"}
             {company.founded_year && (
-              <span className="text-slate-300"> · {company.founded_year}</span>
+              <span className="text-slate-300"> · est. {company.founded_year}</span>
             )}
           </span>
         </div>
       </div>
 
-      <div className="w-28 text-right flex-shrink-0">
+      {stageIsNamed && (
+        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0 hidden sm:block">
+          {stage}
+        </span>
+      )}
+
+      <div className="w-24 text-right flex-shrink-0">
         {cap ? (
           <div>
             <span className="text-xs font-mono font-semibold text-slate-700">{cap}</span>
             {isRevenue && <p className="text-[9px] text-slate-400 leading-tight">revenue</p>}
           </div>
         ) : (
-          <span className="text-xs text-slate-300">—</span>
+          <span className="text-xs text-slate-200">—</span>
         )}
       </div>
 
-      <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-slate-600 transition-colors flex-shrink-0" />
+      <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-slate-500 transition-colors flex-shrink-0" />
     </div>
   );
 }
@@ -377,18 +438,23 @@ function ExpandedList({ category, companies, onCompanyClick }) {
   const Icon = category.icon;
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
-      <div className={`flex items-center gap-2 px-4 py-3 border-b ${clr.activeBg} ${clr.activeBorder} border-b`}>
-        <Icon className={`w-4 h-4 ${clr.icon}`} />
+      {/* Colored header */}
+      <div className={`flex items-center gap-3 px-4 py-3 border-b ${clr.headerBg}`}>
+        <div className={`w-7 h-7 rounded-lg flex items-center justify-center border ${clr.iconBg}`}>
+          <Icon className={`w-3.5 h-3.5 ${clr.icon}`} />
+        </div>
         <span className="text-sm font-semibold text-slate-700">{category.name}</span>
-        <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ml-auto ${clr.badge}`}>
-          {companies.length}
+        <span className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full ml-auto ${clr.badge}`}>
+          {companies.length} companies
         </span>
       </div>
+      {/* Column headers */}
       <div className="flex items-center gap-3 px-4 py-1.5 border-b border-slate-100 bg-slate-50/50">
-        <div className="w-8 flex-shrink-0" />
+        <div className="w-9 flex-shrink-0" />
         <div className="flex-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Company</div>
-        <div className="w-28 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
-          Valuation (est.)
+        <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider hidden sm:block" style={{ width: 80 }}>Stage</div>
+        <div className="w-24 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
+          Valuation
         </div>
         <div className="w-3.5 flex-shrink-0" />
       </div>
@@ -397,6 +463,7 @@ function ExpandedList({ category, companies, onCompanyClick }) {
           <CompactPlayerRow
             key={c.id || c.name}
             company={c}
+            accentColor={clr.accentBar}
             onClick={() => onCompanyClick(c.name)}
           />
         ))}
@@ -472,6 +539,11 @@ export default function PrivatePlayers() {
     return Object.entries(map).sort((a, b) => b[1] - a[1]);
   }, [players]);
 
+  const maxCountryCount = useMemo(
+    () => countryCounts.reduce((m, [, n]) => Math.max(m, n), 0),
+    [countryCounts]
+  );
+
   const countryFiltered = useMemo(() => {
     if (filterCountry === "all") return players;
     return players.filter((c) => c.country === filterCountry);
@@ -523,10 +595,11 @@ export default function PrivatePlayers() {
 
   return (
     <div className="p-6 max-w-screen-2xl mx-auto">
+
       {/* Page header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-purple-700 flex items-center justify-center shadow-sm">
             <Lock className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -542,18 +615,18 @@ export default function PrivatePlayers() {
       {!loading && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Companies",      value: players.length,                    icon: Building2,  color: "text-slate-600" },
-            { label: "Countries",      value: countryCounts.length,              icon: Globe,      color: "text-slate-600" },
-            { label: "Total Valuation",value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-slate-600" },
-            { label: "With Funding",   value: totalFunded,                       icon: DollarSign, color: "text-slate-600" },
-          ].map(({ label, value, icon: Icon, color }) => (
+            { label: "Companies",       value: players.length,                    icon: Building2,  iconCls: "text-purple-700", bgCls: "bg-purple-50" },
+            { label: "Countries",       value: countryCounts.length,              icon: Globe,      iconCls: "text-blue-600",   bgCls: "bg-blue-50" },
+            { label: "Total Valuation", value: formatCap(totalValuation) || "—",  icon: TrendingUp, iconCls: "text-emerald-600", bgCls: "bg-emerald-50" },
+            { label: "With Funding",    value: totalFunded,                        icon: DollarSign, iconCls: "text-amber-600",  bgCls: "bg-amber-50" },
+          ].map(({ label, value, icon: Icon, iconCls, bgCls }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-lg bg-slate-50 flex items-center justify-center ${color}`}>
-                  <Icon className="w-4 h-4" />
+                <div className={`w-10 h-10 rounded-xl ${bgCls} flex items-center justify-center flex-shrink-0`}>
+                  <Icon className={`w-5 h-5 ${iconCls}`} />
                 </div>
                 <div>
-                  <p className="text-xl font-bold text-slate-900">{value}</p>
+                  <p className="text-xl font-bold text-slate-900 font-heading">{value}</p>
                   <p className="text-xs text-slate-500">{label}</p>
                 </div>
               </CardContent>
@@ -586,7 +659,7 @@ export default function PrivatePlayers() {
       {/* Body */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
-          <div className="w-10 h-10 rounded-full border-4 border-slate-200 border-t-slate-800 animate-spin" />
+          <div className="w-10 h-10 rounded-full border-4 border-slate-200 border-t-purple-700 animate-spin" />
           <p className="text-sm text-slate-500">Loading companies…</p>
         </div>
       ) : error ? (
@@ -598,41 +671,45 @@ export default function PrivatePlayers() {
         <div className="flex gap-6 items-start">
 
           {/* ── Country sidebar ── */}
-          <div className="w-44 flex-shrink-0 sticky top-6">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">
+          <div className="w-48 flex-shrink-0 sticky top-6">
+            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">
               Countries
             </p>
             <div className="flex flex-col gap-0.5">
+              {/* All countries row */}
               <button
                 onClick={() => setFilterCountry("all")}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                   filterCountry === "all"
-                    ? "bg-slate-100 text-slate-900 font-medium"
+                    ? "bg-purple-50 text-purple-900 font-semibold border border-purple-200"
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                 }`}
               >
                 <span>All countries</span>
-                <span className={`text-xs font-mono px-1.5 py-0.5 rounded-full ${
-                  filterCountry === "all" ? "bg-slate-200 text-slate-800" : "bg-slate-100 text-slate-400"
+                <span className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
+                  filterCountry === "all" ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-400"
                 }`}>
                   {players.length}
                 </span>
               </button>
 
+              <div className="my-1 border-t border-slate-100" />
+
               {countryCounts.map(([country, count]) => {
                 const iso = COUNTRY_ISO[country];
                 const active = filterCountry === country;
+                const barPct = maxCountryCount > 0 ? Math.round((count / maxCountryCount) * 100) : 0;
                 return (
                   <button
                     key={country}
                     onClick={() => setFilterCountry(country)}
-                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                       active
-                        ? "bg-slate-100 text-slate-900 font-medium"
+                        ? "bg-purple-50 text-purple-900 font-semibold border border-purple-200"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                     }`}
                   >
-                    <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
                       {iso ? (
                         <img
                           src={`https://flagcdn.com/w20/${iso}.png`}
@@ -643,13 +720,22 @@ export default function PrivatePlayers() {
                       ) : (
                         <Globe className="w-4 h-4 text-slate-300 flex-shrink-0" />
                       )}
-                      <span className="truncate">{country}</span>
+                      <span className="truncate text-[13px]">{country}</span>
                     </div>
-                    <span className={`text-xs font-mono px-1.5 py-0.5 rounded-full flex-shrink-0 ml-1 ${
-                      active ? "bg-slate-200 text-slate-800" : "bg-slate-100 text-slate-400"
-                    }`}>
-                      {count}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      {/* Mini proportional bar */}
+                      <div className="w-10 h-1 rounded-full bg-slate-100 overflow-hidden hidden sm:block">
+                        <div
+                          className={`h-full rounded-full transition-all ${active ? "bg-purple-400" : "bg-slate-300"}`}
+                          style={{ width: `${barPct}%` }}
+                        />
+                      </div>
+                      <span className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
+                        active ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-400"
+                      }`}>
+                        {count}
+                      </span>
+                    </div>
                   </button>
                 );
               })}
@@ -659,14 +745,13 @@ export default function PrivatePlayers() {
           {/* ── Main content ── */}
           <div className="flex-1 min-w-0">
             {isSearchActive ? (
-              /* Search results: flat list */
               searchResults.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 gap-2">
                   <Lock className="w-10 h-10 text-slate-200" />
                   <p className="text-slate-400 text-sm">No companies match your search.</p>
                   <button
                     onClick={() => { setSearch(""); setFilterCountry("all"); setSelectedCategory(null); }}
-                    className="mt-1 text-xs text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2"
+                    className="mt-1 text-xs text-purple-600 hover:text-purple-800 font-medium underline underline-offset-2"
                   >
                     Clear search
                   </button>
@@ -678,10 +763,11 @@ export default function PrivatePlayers() {
                   </p>
                   <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
                     <div className="flex items-center gap-3 px-4 py-1.5 border-b border-slate-100 bg-slate-50/50">
-                      <div className="w-8 flex-shrink-0" />
+                      <div className="w-9 flex-shrink-0" />
                       <div className="flex-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Company</div>
-                      <div className="w-28 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
-                        Valuation (est.)
+                      <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider hidden sm:block" style={{ width: 80 }}>Stage</div>
+                      <div className="w-24 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
+                        Valuation
                       </div>
                       <div className="w-3.5 flex-shrink-0" />
                     </div>
@@ -704,7 +790,6 @@ export default function PrivatePlayers() {
                 </>
               )
             ) : (
-              /* Category tile grid + expanded list */
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                   {MACRO_CATEGORIES.map((cat) => (
