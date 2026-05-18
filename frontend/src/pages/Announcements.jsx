@@ -815,7 +815,9 @@ export default function Announcements() {
               <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
               {highCount > 0 && <span className="text-emerald-700 font-semibold">{highCount} high priority</span>}
               {highCount > 0 && <span className="text-slate-300">·</span>}
-              <span className="text-slate-500">{articles.length} articles</span>
+              <span className="text-slate-500">
+                {filtered.length}{filtered.length < articles.length ? ` / ${articles.length}` : ""} articles
+              </span>
             </div>
           )}
           {lastUpdated && (
