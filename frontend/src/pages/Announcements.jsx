@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { API } from "@/App";
 import { Input } from "@/components/ui/input";
@@ -203,63 +203,46 @@ const CATEGORY_STOCK_PHOTOS = {
   ],
 };
 
-function NewsPlaceholder({ source, category, url, sourceLogo, articleSeed }) {
-  const [logoErr, setLogoErr] = useState(false);
-  const photos = CATEGORY_STOCK_PHOTOS[category] || CATEGORY_STOCK_PHOTOS.INDUSTRY;
-  const [photoIdx, setPhotoIdx] = useState(() => {
-    const seed = articleSeed || source || category || "";
-    const hash = [...seed].reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    return hash % photos.length;
+function detectCompaniesInArticles(articles) {
+  const counts = {};
+  const articleMap = {};
+  articles.forEach((article) => {
+    const text = (article.title + " " + (article.summary || "") + " " + (article.company || "")).toLowerCase();
+    DEFENSE_TICKERS.forEach(({ keywords, ticker }) => {
+      if (keywords.some((kw) => text.includes(kw))) {
+        counts[ticker] = (counts[ticker] || 0) + 1;
+        if (!articleMap[ticker]) articleMap[ticker] = article;
+      }
+    });
   });
-  const [allPhotosFailed, setAllPhotosFailed] = useState(false);
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([ticker]) => ({
+      ...DEFENSE_TICKERS.find((d) => d.ticker === ticker),
+      article: articleMap[ticker],
+    }));
+}
 
-  const domain = (() => { try { return url ? new URL(url).hostname : ""; } catch { return ""; } })();
-  const isGoogleDomain = !domain || domain.includes("google.com");
-  const isGoogleLogo = sourceLogo?.includes("news.google.com");
-  const effectiveLogo = !isGoogleLogo ? sourceLogo : null;
+// ── Placeholder ───────────────────────────────────────────────────────────────
 
-  const logoUrl = !logoErr
-    ? (effectiveLogo || (!isGoogleDomain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null))
-    : null;
+const PLACEHOLDER_CATEGORY_STYLE = {
+  CONTRACT:    { bg: "bg-emerald-50",  accent: "text-emerald-400" },
+  TECHNOLOGY:  { bg: "bg-purple-50",   accent: "text-purple-400" },
+  CONFLICT:    { bg: "bg-red-50",      accent: "text-red-400" },
+  POLICY:      { bg: "bg-amber-50",    accent: "text-amber-400" },
+  GEOPOLITICS: { bg: "bg-sky-50",      accent: "text-sky-400" },
+  "M&A":       { bg: "bg-blue-50",     accent: "text-blue-400" },
+  INDUSTRY:    { bg: "bg-slate-50",    accent: "text-slate-300" },
+  EARNINGS:    { bg: "bg-teal-50",     accent: "text-teal-400" },
+};
 
-  const gradient = PLACEHOLDER_GRADIENT[category] || "from-slate-900 via-slate-800 to-slate-700";
-
-  const handlePhotoError = () => {
-    if (photoIdx + 1 < photos.length) {
-      setPhotoIdx(photoIdx + 1);
-    } else {
-      setAllPhotosFailed(true);
-    }
-  };
-
+function NewsPlaceholder({ source, category }) {
+  const style = PLACEHOLDER_CATEGORY_STYLE[category] || PLACEHOLDER_CATEGORY_STYLE.INDUSTRY;
+  const initial = source?.charAt(0)?.toUpperCase() || "?";
   return (
-    <div className="w-full h-full relative overflow-hidden">
-      {!allPhotosFailed ? (
-        <img
-          src={photos[photoIdx]}
-          alt=""
-          className="w-full h-full object-cover"
-          onError={handlePhotoError}
-        />
-      ) : (
-        <div className={`w-full h-full bg-gradient-to-br ${gradient}`} />
-      )}
-      {/* Source logo pill — top-left, covered by HIGH badge when applicable */}
-      <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-white/85 backdrop-blur-sm rounded-full pl-1 pr-2 py-0.5 shadow-sm">
-        {logoUrl ? (
-          <img
-            src={logoUrl}
-            alt={source}
-            className="w-4 h-4 object-contain flex-shrink-0"
-            onError={() => setLogoErr(true)}
-          />
-        ) : (
-          <span className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-600 flex-shrink-0">
-            {source?.charAt(0)?.toUpperCase() || "?"}
-          </span>
-        )}
-        <span className="text-slate-700 text-[10px] font-semibold tracking-wide uppercase truncate max-w-[90px]">{source}</span>
-      </div>
+    <div className={`w-full h-full ${style.bg} flex items-center justify-center`}>
+      <span className={`text-3xl font-black ${style.accent} select-none`}>{initial}</span>
     </div>
   );
 }
@@ -297,6 +280,17 @@ function SourceFavicon({ url, source, sourceLogo }) {
 
 // ── NewsCard ──────────────────────────────────────────────────────────────────
 
+const CAT_LEFT_BORDER = {
+  CONTRACT:    "border-l-emerald-400",
+  TECHNOLOGY:  "border-l-purple-400",
+  CONFLICT:    "border-l-red-400",
+  POLICY:      "border-l-amber-400",
+  GEOPOLITICS: "border-l-sky-400",
+  "M&A":       "border-l-blue-400",
+  INDUSTRY:    "border-l-slate-300",
+  EARNINGS:    "border-l-teal-400",
+};
+
 function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
   const [imgError, setImgError] = useState(false);
   const [localImage, setLocalImage] = useState(null);
@@ -311,13 +305,15 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
   }, [article.url, article.image, localImage]);
 
   const displayImage = article.image || localImage;
+  const hasImage = !imgError && !!displayImage;
   const isNew    = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
   const srcCount = article.source_count ?? 1;
   const coveredBy = article.covered_by ?? [];
   const countryCode = article.country_code?.toLowerCase();
+  const accent = CAT_LEFT_BORDER[article.category] || CAT_LEFT_BORDER.INDUSTRY;
 
   return (
-    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 group ${
+    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 group border-l-2 ${accent} ${
       isHot
         ? "border border-orange-200 shadow-sm hover:shadow-md hover:border-orange-300"
         : "border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300"
@@ -398,15 +394,15 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
 
         </div>
 
-        {/* ── Right: image (full card height) ── */}
-        <a
-          href={article.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-shrink-0 w-[120px] self-stretch relative overflow-hidden"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {!imgError && displayImage ? (
+        {/* ── Right: image — only when a real image is available ── */}
+        {hasImage && (
+          <a
+            href={article.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 w-[140px] self-stretch relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <img
               src={displayImage}
               alt={article.title}
@@ -414,17 +410,159 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
               onError={() => setImgError(true)}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
-          ) : (
-            <NewsPlaceholder
-              source={article.source}
-              category={article.category}
-              url={article.url}
-              sourceLogo={article.sourceLogo}
-              articleSeed={article.id || article.title}
-            />
-          )}
-        </a>
+          </a>
+        )}
 
+      </div>
+    </div>
+  );
+}
+
+// ── StoryCard — editorial grid card (desktop Today top stories) ───────────────
+
+function StoryCard({ article, isBookmarked, onBookmark }) {
+  const [imgError, setImgError] = useState(false);
+  const style = PLACEHOLDER_CATEGORY_STYLE[article.category] || PLACEHOLDER_CATEGORY_STYLE.INDUSTRY;
+  const countryCode = article.country_code?.toLowerCase();
+  const srcCount = article.source_count ?? 1;
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-200 group flex flex-col">
+
+      {/* Image area — 160px tall */}
+      <a href={article.url} target="_blank" rel="noopener noreferrer"
+        className="block relative h-[160px] overflow-hidden flex-shrink-0">
+        {article.image && !imgError ? (
+          <img
+            src={article.image}
+            alt={article.title}
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className={`w-full h-full ${style.bg} flex items-center justify-center`}>
+            <span className={`text-6xl font-black ${style.accent} opacity-10 select-none`}>
+              {article.source?.charAt(0)?.toUpperCase() || "?"}
+            </span>
+          </div>
+        )}
+        {/* Overlays */}
+        <div className="absolute bottom-2 left-2 flex items-center gap-1.5">
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider backdrop-blur-sm bg-white/90 ${getCategoryStyle(article.category)}`}>
+            {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
+          </span>
+          {countryCode && (
+            <img src={`https://flagcdn.com/w20/${countryCode}.png`} alt=""
+              className="w-5 h-3.5 object-cover rounded-sm shadow-sm" />
+          )}
+        </div>
+        {srcCount >= 2 && (
+          <div className="absolute top-2 right-2">
+            <span className="bg-orange-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm">
+              🔥 {srcCount}
+            </span>
+          </div>
+        )}
+      </a>
+
+      {/* Text */}
+      <div className="p-3 flex flex-col gap-2 flex-1">
+        <div className="flex items-center gap-1.5">
+          <SourceFavicon url={article.url} source={article.realSource || article.source} sourceLogo={article.sourceLogo} />
+          <span className="text-[10px] text-slate-300">·</span>
+          <span className="text-[10px] text-slate-400">{relativeTime(article.publishedAt)}</span>
+        </div>
+        <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
+          <h3 className="text-slate-800 font-bold text-[13px] leading-snug line-clamp-3 group-hover:text-purple-700 transition-colors">
+            {article.title}
+          </h3>
+        </a>
+        <div className="flex items-center justify-end gap-1 pt-1">
+          <button onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
+            className={`p-1 rounded-lg transition-colors ${isBookmarked ? "text-amber-500 bg-amber-50" : "text-slate-300 hover:text-amber-500 hover:bg-amber-50"}`}
+          >
+            {isBookmarked ? <BookmarkCheck className="w-3 h-3" /> : <Bookmark className="w-3 h-3" />}
+          </button>
+          <a href={article.url} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-purple-700 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Read <ExternalLink className="w-2.5 h-2.5" />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+// ── MarketImpactWidget ────────────────────────────────────────────────────────
+
+function MarketImpactWidget({ articles }) {
+  const [stockData, setStockData] = useState({});
+  const detected = useMemo(() => detectCompaniesInArticles(articles), [articles]);
+
+  useEffect(() => {
+    if (detected.length === 0) return;
+    const tickers = detected.map((d) => d.ticker).join(",");
+    axios.get(`${API}/stocks/prices`, { params: { tickers } })
+      .then((r) => setStockData(r.data))
+      .catch(() => {});
+  }, [detected]);
+
+  if (detected.length === 0) return null;
+
+  return (
+    <div className="w-60 flex-shrink-0">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm sticky top-4">
+        <div className="flex items-center gap-2 mb-4">
+          <TrendingUp className="w-3.5 h-3.5 text-purple-600" />
+          <span className="text-[11px] font-bold text-slate-600 uppercase tracking-widest">Market Impact · 24h</span>
+        </div>
+        <div className="flex flex-col divide-y divide-slate-100">
+          {detected.map(({ ticker, name, country, article }) => {
+            const stock = stockData[ticker];
+            const change = stock?.change_percent ?? null;
+            const price = stock?.price ?? null;
+            const isPos = change > 0;
+            const isNeg = change < 0;
+            return (
+              <div key={ticker} className="py-3 first:pt-0 last:pb-0 flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    {country && (
+                      <img src={`https://flagcdn.com/w20/${country}.png`} alt="" className="w-4 h-3 object-cover rounded-sm opacity-75 flex-shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <div className="text-[12px] font-bold text-slate-800 truncate">{name}</div>
+                      <div className="text-[10px] text-slate-400 font-mono">{ticker}</div>
+                    </div>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    {price != null && (
+                      <div className="text-[11px] font-semibold text-slate-700 font-mono">{price.toFixed(2)}</div>
+                    )}
+                    {change != null ? (
+                      <div className={`text-[12px] font-bold ${isPos ? "text-emerald-600" : isNeg ? "text-rose-600" : "text-slate-400"}`}>
+                        {isPos ? "+" : ""}{change.toFixed(2)}%
+                      </div>
+                    ) : (
+                      <div className="text-[11px] text-slate-300">—</div>
+                    )}
+                  </div>
+                </div>
+                {article && (
+                  <a href={article.url} target="_blank" rel="noopener noreferrer"
+                    className="text-[11px] text-slate-500 leading-tight hover:text-purple-700 transition-colors line-clamp-2 border-l-2 border-slate-200 pl-2 hover:border-purple-400"
+                  >
+                    {article.title}
+                  </a>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -833,7 +971,33 @@ export default function Announcements() {
           {todayArticles.length > 0 && (
             <div>
               <SectionHeader label="Today" sublabel={`— last 24 hours · ${todayArticles.length} articles`} />
-              <ArticleGrid articles={todayArticles} {...cardProps} />
+              <div className="flex flex-col lg:flex-row gap-5 items-start">
+                <div className="flex-1 min-w-0 space-y-4">
+                  {/* Top 6 stories — editorial grid on md+ screens */}
+                  <div className="hidden md:grid grid-cols-3 gap-3">
+                    {todayArticles.slice(0, 6).map((a, i) => (
+                      <StoryCard
+                        key={a.url || `story-${i}`}
+                        article={a}
+                        isBookmarked={bookmarkedUrls.has(a.url)}
+                        onBookmark={toggleBookmark}
+                      />
+                    ))}
+                  </div>
+                  {/* Overflow articles (desktop) or all articles (mobile) */}
+                  {todayArticles.length > 6 && (
+                    <div className="hidden md:block">
+                      <ArticleGrid articles={todayArticles.slice(6)} {...cardProps} />
+                    </div>
+                  )}
+                  <div className="md:hidden">
+                    <ArticleGrid articles={todayArticles} {...cardProps} />
+                  </div>
+                </div>
+                <div className="hidden lg:block">
+                  <MarketImpactWidget articles={todayArticles} />
+                </div>
+              </div>
             </div>
           )}
 

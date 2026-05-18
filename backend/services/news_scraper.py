@@ -18,6 +18,31 @@ logger = logging.getLogger(__name__)
 
 REQUEST_TIMEOUT = 12  # seconds
 
+# Stock-photo hosting domains that produce off-topic thumbnails (e.g. pilates
+# images on a defence article).  Images whose URLs contain any of these
+# substrings are discarded so the frontend falls back to category placeholders.
+_STOCK_PHOTO_DOMAINS = (
+    "unsplash.com",
+    "gettyimages.com",
+    "istockphoto.com",
+    "shutterstock.com",
+    "depositphotos.com",
+    "pexels.com",
+    "dreamstime.com",
+    "123rf.com",
+    "alamy.com",
+    "stock.adobe.com",
+    "pixabay.com",
+    "stocksy.com",
+    "canstockphoto.com",
+)
+
+
+def _is_stock_photo(url: str) -> bool:
+    """Return True if *url* points to a generic stock-photo service."""
+    low = url.lower()
+    return any(domain in low for domain in _STOCK_PHOTO_DOMAINS)
+
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -125,6 +150,14 @@ _SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
     "Foreign Policy":   0.70,
     "Bellingcat":       0.80,
     "Stars and Stripes": 0.90,
+    # Military lifestyle / benefits — lower signal for industry analysis
+    "Sandboxx":         0.30,
+    "Task & Purpose":   0.50,
+    "Military.com":     0.55,
+    # Academic / legal — slow publishing, niche
+    "Just Security":    0.55,
+    "Lawfare":          0.55,
+    "Small Wars Journal": 0.50,
 }
 
 
@@ -457,11 +490,12 @@ def _extract_image_from_entry(entry) -> Optional[str]:
         mime   = m.get("type", "")
         # Accept: explicit image medium, image/* MIME, OR no typing at all
         if medium == "image" or mime.startswith("image") or (not medium and not mime):
-            return url
+            if not _is_stock_photo(url):
+                return url
 
     # media:thumbnail
     thumbs = getattr(entry, "media_thumbnail", [])
-    if thumbs and thumbs[0].get("url"):
+    if thumbs and thumbs[0].get("url") and not _is_stock_photo(thumbs[0]["url"]):
         return thumbs[0]["url"]
 
     # enclosures — accept image MIME or image URL extension
@@ -469,7 +503,7 @@ def _extract_image_from_entry(entry) -> Optional[str]:
     for enc in getattr(entry, "enclosures", []):
         url  = enc.get("url") or enc.get("href", "")
         mime = enc.get("type", "")
-        if url and (mime.startswith("image") or any(url.lower().endswith(e) for e in _IMG_EXTS)):
+        if url and not _is_stock_photo(url) and (mime.startswith("image") or any(url.lower().endswith(e) for e in _IMG_EXTS)):
             return url
 
     # Parse from full article HTML (WordPress content:encoded, Guardian, etc.)
@@ -486,13 +520,13 @@ def _extract_image_from_entry(entry) -> Optional[str]:
             if img:
                 src = (img.get("src") or img.get("data-src")
                        or img.get("data-lazy-src") or img.get("data-original", ""))
-                if src and src.startswith("http"):
+                if src and src.startswith("http") and not _is_stock_photo(src):
                     return src
         # Fall back to any <img> — skip tiny tracking pixels and GIFs
         for img in soup.find_all("img"):
             src = (img.get("src") or img.get("data-src")
                    or img.get("data-lazy-src") or img.get("data-original", ""))
-            if src and src.startswith("http") and not src.endswith(".gif"):
+            if src and src.startswith("http") and not src.endswith(".gif") and not _is_stock_photo(src):
                 return src
 
     return None
@@ -544,7 +578,7 @@ def _fetch_og_image(article_url: str, timeout: int = 6) -> Optional[str]:
             tag = soup.find("meta", attrs=selector)
             if tag:
                 content = tag.get("content", "")
-                if content and content.startswith("http"):
+                if content and content.startswith("http") and not _is_stock_photo(content):
                     return content
     except Exception:
         pass
@@ -860,8 +894,6 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Defense Aerospace",        "url": "https://www.defense-aerospace.com/rss.xml",                                 "language": "en", "region": "global",  "max_items": 30},
     # CSIS Defense360: strategic analysis, programs, acquisition policy
     {"name": "CSIS Defense",             "url": "https://defense360.csis.org/feed/",                                         "language": "en", "region": "global",  "max_items": 20},
-    # Scout Warrior (Warrior Maven sister site): ground systems, programs
-    {"name": "Scout Warrior",            "url": "https://www.scoutwarrior.com/feed/",                                        "language": "en", "region": "us",      "max_items": 30},
     # ── Defense specialty — French ──────────────────────────────────────────
     {"name": "Opex360",                   "url": "https://www.opex360.com/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
     {"name": "Meta-Défense",              "url": "https://meta-defense.fr/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
@@ -874,6 +906,8 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Secret Défense",            "url": "https://secretdefense.blogs.liberation.fr/rss.xml",                        "language": "fr", "region": "europe",  "max_items": 25},
     # Lignes de Défense — blog Philippe Chapleau (Ouest-France), OPEX & équipements
     {"name": "Lignes de Défense",         "url": "https://lignesdedefense.blogs.ouest-france.fr/rss.xml",                    "language": "fr", "region": "europe",  "max_items": 25},
+    # Zone Militaire — blog de référence sur l'industrie et les opérations de défense françaises
+    {"name": "Zone Militaire",            "url": "https://www.zoneMilitaire.com/feed/",                                       "language": "fr", "region": "europe",  "max_items": 40},
     # Ministère des Armées — communiqués officiels, contrats, nominations
     {"name": "Ministère des Armées",      "url": "https://www.defense.gouv.fr/actualites/rss.xml",                           "language": "fr", "region": "europe",  "max_items": 20},
     # Aerobuzz — actualité aéronautique et défense aérienne française
@@ -942,6 +976,19 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Kyiv Independent",         "url": "https://kyivindependent.com/feed/",                                         "language": "en", "region": "europe",  "max_items": 20},
     # Defence Connect (Australia) — Australian defence industry procurement
     {"name": "Defence Connect",          "url": "https://www.defenceconnect.com.au/feed",                                    "language": "en", "region": "asia-pacific", "max_items": 25},
+    # ── Premier tier additions ───────────────────────────────────────────────
+    # ISW (Institute for the Study of War) — daily Ukraine/Russia sitreps, gold standard
+    {"name": "ISW",                      "url": "https://www.understandingwar.org/feeds/all",                                "language": "en", "region": "europe",  "max_items": 30},
+    # The Diplomat — leading Asia-Pacific security & geopolitics publication
+    {"name": "The Diplomat",             "url": "https://thediplomat.com/feed/",                                             "language": "en", "region": "asia-pacific", "max_items": 30},
+    # EurActiv Defence — EU defence policy, European defence industry
+    {"name": "EurActiv Defence",         "url": "https://www.euractiv.com/section/defence-and-security/feed/",              "language": "en", "region": "europe",  "max_items": 30},
+    # Politico National Security — US defence policy, Congress, Pentagon coverage
+    {"name": "Politico Defense",         "url": "https://www.politico.com/rss/national-security.xml",                       "language": "en", "region": "us",      "max_items": 30},
+    # Air & Space Forces Magazine — USAF & Space Force official magazine
+    {"name": "Air & Space Forces",       "url": "https://www.airandspaceforces.com/feed/",                                  "language": "en", "region": "us",      "max_items": 30},
+    # Defense & Aerospace Report — international programs, FMS, industry
+    {"name": "Defense Aerospace Report", "url": "https://darreport.com/feed/",                                              "language": "en", "region": "global",  "max_items": 25},
 ]
 
 HTML_SCRAPERS = [_scrape_nato, _scrape_janes, _scrape_defensepost]
