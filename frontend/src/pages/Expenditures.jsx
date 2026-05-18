@@ -91,20 +91,6 @@ const SORT_OPTIONS = [
 
 const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899', '#84CC16'];
 
-const COUNTRY_FLAGS = {
-  "US": "us", "CN": "cn", "RU": "ru", "IN": "in", "SA": "sa",
-  "GB": "gb", "DE": "de", "FR": "fr", "JP": "jp", "KR": "kr",
-  "AU": "au", "IT": "it", "BR": "br", "CA": "ca", "IL": "il",
-  "TR": "tr", "ES": "es", "PL": "pl", "NL": "nl", "TW": "tw",
-  "SG": "sg", "GR": "gr", "NO": "no", "SE": "se", "FI": "fi",
-  "AE": "ae", "PK": "pk", "ID": "id", "VN": "vn", "EG": "eg",
-  "UA": "ua", "IR": "ir", "QA": "qa", "KW": "kw", "DZ": "dz",
-  "MA": "ma", "TH": "th", "MY": "my", "PH": "ph", "NZ": "nz",
-  "ZA": "za", "NG": "ng", "AR": "ar", "CO": "co", "CL": "cl",
-  "MX": "mx", "PT": "pt", "BE": "be", "CH": "ch", "AT": "at",
-  "DK": "dk", "CZ": "cz", "RO": "ro", "HU": "hu", "JO": "jo",
-  "IQ": "iq", "AZ": "az", "BD": "bd", "MM": "mm", "PE": "pe",
-};
 
 const BRANCH_ICON = {
   army:          <Shield className="w-4 h-4" />,
@@ -1075,7 +1061,7 @@ const CAPABILITY_DETAILS = {
       { model: "F-2 Viper Zero", count: 92, manufacturer: "Mitsubishi HI / Lockheed Martin" },
       { model: "F-35A Lightning II", count: 42, manufacturer: "Lockheed Martin / Mitsubishi HI" },
       { model: "F-35B (STOVL)", count: 20, manufacturer: "Lockheed Martin / Mitsubishi HI" },
-      { model: "T-4 (OCU / trainer)", count: 34, manufacturer: "Kawasaki Heavy Industries" },
+      { model: "T-4 (OCU / trainer)", count: 34, manufacturer: "Kawasaki Heavy Industries", is_trainer: true },
     ],
     helicopters: [
       { model: "AH-64D Apache (JGSDF)", count: 13, manufacturer: "Boeing / Fuji Heavy Industries" },
@@ -1159,6 +1145,24 @@ const CAPABILITY_DETAILS = {
     ],
   },
 };
+
+// Derives capability summary from CAPABILITY_DETAILS where available (authoritative),
+// falls back to DEFENSE_CAPABILITIES (estimated). This ensures summary tiles always
+// match the detail breakdown, eliminating dual-maintenance drift.
+function getCapabilitySummary(countryCode) {
+  const details = CAPABILITY_DETAILS[countryCode];
+  if (details) {
+    const result = { _sourced: true };
+    ['fighters', 'helicopters', 'drones', 'land_vehicles', 'surface_combatants', 'submarines'].forEach(key => {
+      result[key] = (details[key] || [])
+        .filter(item => !item.is_trainer)
+        .reduce((s, item) => s + (item.count ?? 0), 0);
+    });
+    return result;
+  }
+  const estimated = DEFENSE_CAPABILITIES[countryCode];
+  return estimated ? { ...estimated, _sourced: false } : null;
+}
 
 // Wikipedia article title overrides for capability breakdown platforms.
 // Keys match the "model" strings in CAPABILITY_DETAILS exactly.
@@ -1660,7 +1664,7 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
 }
 
 function DefenseCapabilitiesCard({ countryCode }) {
-  const cap = DEFENSE_CAPABILITIES[countryCode];
+  const cap = getCapabilitySummary(countryCode);
   const [openCat, setOpenCat] = useState(null);
 
   const hasDetails = !!CAPABILITY_DETAILS[countryCode];
@@ -1855,19 +1859,27 @@ function NewsCard({ article }) {
 }
 
 // ── Flag tick for the regional comparison bar chart ───────────────────────────
-// SVG <image> is used (not foreignObject) for reliable rendering on all browsers including iOS Safari.
 function CustomizedFlagTick({ x, y, payload }) {
-  const code = COUNTRY_FLAGS[payload?.value] || payload?.value?.toLowerCase();
+  const code = payload?.value?.toLowerCase();
   if (!code) return null;
   return (
-    <image
-      href={`https://flagcdn.com/w40/${code}.png`}
-      x={x - 22}
-      y={y - 7}
-      width={20}
-      height={14}
-      preserveAspectRatio="xMidYMid slice"
-    />
+    <foreignObject x={x - 24} y={y - 8} width={24} height={16}>
+      <img
+        src={`https://flagcdn.com/w40/${code}.png`}
+        width="20"
+        height="14"
+        style={{ objectFit: 'cover', borderRadius: '1px', display: 'block' }}
+        alt={payload.value}
+        onError={(e) => {
+          e.target.style.display = 'none';
+          const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          t.setAttribute('font-size', '8');
+          t.setAttribute('fill', '#94a3b8');
+          t.textContent = payload.value;
+          e.target.parentNode?.parentNode?.appendChild(t);
+        }}
+      />
+    </foreignObject>
   );
 }
 
@@ -1919,10 +1931,7 @@ function CountryProfileSection({ country, allExpenditures }) {
     .sort((a, b) => b.expenditure - a.expenditure)
     .slice(0, 10);
 
-  const getFlag = (code) => {
-    const c = COUNTRY_FLAGS[code] || code.toLowerCase();
-    return `https://flagcdn.com/w40/${c}.png`;
-  };
+  const getFlag = (code) => `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
 
   return (
     <div className="space-y-5">
@@ -2313,6 +2322,9 @@ export default function Expenditures() {
     setFilteredExpenditures(filtered);
   }, [searchTerm, selectedRegion, sortBy, expenditures]);
 
+  // Single source of truth — all derived computations must use this
+  const displayedExpenditures = filteredExpenditures;
+
   const focusCountry = pinnedCountry
     ?? (filteredExpenditures.length === 1 ? filteredExpenditures[0] : null);
 
@@ -2337,10 +2349,7 @@ export default function Expenditures() {
     return acc;
   }, []).sort((a, b) => b.value - a.value);
 
-  const getFlag = (countryCode) => {
-    const code = COUNTRY_FLAGS[countryCode] || countryCode.toLowerCase();
-    return `https://flagcdn.com/w40/${code}.png`;
-  };
+  const getFlag = (countryCode) => `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
 
   const getGdpColor = (gdpPercent) => {
     if (gdpPercent >= 4) return 'text-rose-600 bg-rose-50';
@@ -2397,9 +2406,9 @@ export default function Expenditures() {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL SPENDING</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalExpenditure.toFixed(0)}B</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalExpenditure.toFixed(1)}B</p>
             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> YoY change not computed
+              <Database className="w-3 h-3" /> SIPRI · IISS · 2024
             </p>
           </CardContent>
         </Card>
@@ -2407,7 +2416,11 @@ export default function Expenditures() {
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COUNTRIES</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{filteredExpenditures.length}</p>
-            <p className="text-xs text-slate-500 mt-1">of {expenditures.length} total</p>
+            <p className="text-xs text-slate-500 mt-1">
+              {filteredExpenditures.length < expenditures.length
+                ? `filtrés sur ${expenditures.length}`
+                : `${expenditures.length} pays couverts`}
+            </p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
@@ -2474,10 +2487,10 @@ export default function Expenditures() {
                   <YAxis
                     type="category"
                     dataKey="country_code"
-                    tick={{ fill: '#64748B', fontSize: 11 }}
+                    tick={<CustomizedFlagTick />}
                     axisLine={false}
                     tickLine={false}
-                    width={35}
+                    width={28}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
@@ -2706,13 +2719,13 @@ export default function Expenditures() {
           <div className="flex items-center justify-between">
             <CardTitle className="font-heading text-lg text-slate-900">Focus — Top 5 Global Defense Budgets</CardTitle>
             <span className="text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-200">
-              Source : SIPRI · {filteredExpenditures[0]?.year ?? 2024}
+              Source: SIPRI · {filteredExpenditures[0]?.year ?? 2024}
             </span>
           </div>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-            {[...expenditures]
+            {[...displayedExpenditures]
               .sort((a, b) => b.expenditure - a.expenditure)
               .slice(0, 5)
               .map((exp, i) => {
@@ -2724,7 +2737,13 @@ export default function Expenditures() {
                       src={getFlag(exp.country_code)}
                       alt={exp.country}
                       className="w-12 h-8 object-cover rounded shadow-md border-2 border-white"
-                      onError={e => { e.target.style.display = "none"; }}
+                      onError={e => {
+                        e.target.style.display = "none";
+                        const span = document.createElement('span');
+                        span.textContent = exp.country_code;
+                        span.className = 'text-xs font-mono text-slate-500 bg-slate-100 px-1 rounded';
+                        e.target.parentNode?.insertBefore(span, e.target.nextSibling);
+                      }}
                     />
                     <p className="text-xs font-semibold text-slate-700 leading-tight">{exp.country}</p>
                     <span className={`text-xs font-mono text-white px-2 py-0.5 rounded ${shade[i]}`}>
