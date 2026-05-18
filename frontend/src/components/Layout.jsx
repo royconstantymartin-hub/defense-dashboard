@@ -47,6 +47,18 @@ export default function Layout() {
   const location = useLocation();
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [systemStatus, setSystemStatus] = useState("checking");
+
+  useEffect(() => {
+    const check = () => {
+      axios.get(`${API}/`, { timeout: 5000 })
+        .then(() => setSystemStatus("ok"))
+        .catch(() => setSystemStatus("degraded"));
+    };
+    check();
+    const id = setInterval(check, 60000);
+    return () => clearInterval(id);
+  }, []);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notifLoading, setNotifLoading] = useState(false);
@@ -198,10 +210,24 @@ export default function Layout() {
 
             <div className="hidden lg:flex items-center gap-2">
               <span className="text-xs font-medium text-slate-500">SYSTEM STATUS:</span>
-              <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="text-xs font-medium">OPERATIONAL</span>
-              </span>
+              {systemStatus === "ok" && (
+                <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-medium">OPERATIONAL</span>
+                </span>
+              )}
+              {systemStatus === "degraded" && (
+                <span className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-medium">DEGRADED</span>
+                </span>
+              )}
+              {systemStatus === "checking" && (
+                <span className="flex items-center gap-1.5 bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-pulse" />
+                  <span className="text-xs font-medium">CHECKING</span>
+                </span>
+              )}
             </div>
           </div>
 

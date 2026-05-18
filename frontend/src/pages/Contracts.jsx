@@ -720,8 +720,9 @@ export default function Contracts() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-16">
+        <div className="flex flex-col items-center justify-center py-16 gap-3">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-700" />
+          <p className="text-sm text-slate-400">Loading contracts…</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-slate-400">
