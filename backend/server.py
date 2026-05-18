@@ -2023,6 +2023,30 @@ async def get_article_og_image(url: str):
     return {"image": None}
 
 
+@api_router.post("/admin/purge-stock-photo-images")
+async def purge_stock_photo_images(current_user: dict = Depends(get_current_user)):
+    """
+    Null-out image fields that point to known stock-photo hosting domains
+    (Unsplash, Getty, Shutterstock, iStock, Pexels, etc.) so the frontend
+    falls back to defence-themed category placeholders.
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+
+    STOCK_DOMAINS = [
+        "unsplash.com", "gettyimages.com", "istockphoto.com", "shutterstock.com",
+        "depositphotos.com", "pexels.com", "dreamstime.com", "123rf.com",
+        "alamy.com", "stock.adobe.com", "pixabay.com", "stocksy.com",
+        "canstockphoto.com",
+    ]
+    regex_pattern = "|".join(re.escape(d) for d in STOCK_DOMAINS)
+    result = await db.news_articles.update_many(
+        {"image": {"$regex": regex_pattern, "$options": "i"}},
+        {"$set": {"image": None}},
+    )
+    return {"purged": result.modified_count}
+
+
 @api_router.post("/admin/refresh-article-images")
 async def refresh_article_images(current_user: dict = Depends(get_current_user)):
     """
