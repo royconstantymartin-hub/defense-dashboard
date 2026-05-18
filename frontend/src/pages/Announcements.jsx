@@ -756,7 +756,7 @@ export default function Announcements() {
   const weekArticles      = regularArticles.filter((a) => timeBand(a.publishedAt) === "this_week");
   const earlierArticles   = regularArticles.filter((a) => timeBand(a.publishedAt) === "earlier");
 
-  const highCount = articles.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
+  const highCount = filtered.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
 
   const exportCSV = () => {
     const headers = ["Title", "Source", "Category", "Date", "URL"];
