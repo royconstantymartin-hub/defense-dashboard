@@ -105,7 +105,6 @@ const COMPANY_NEWS_STOCK_PHOTOS = {
   ],
   TECHNOLOGY: [
     "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=400&q=80",
-    "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=400&q=80",
   ],
   CONFLICT: [
     "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=400&q=80",
