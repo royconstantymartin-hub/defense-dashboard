@@ -99,10 +99,10 @@ const CATEGORY_COLORS = {
   aerospace: "bg-sky-50 text-sky-700 border-sky-200",
   naval:     "bg-blue-50 text-blue-700 border-blue-200",
   land:      "bg-amber-50 text-amber-700 border-amber-200",
-  cyber:     "bg-purple-50 text-purple-700 border-purple-200",
+  cyber:     "bg-slate-100 text-slate-700 border-slate-200",
   services:  "bg-slate-100 text-slate-600 border-slate-200",
-  logistics: "bg-orange-50 text-orange-700 border-orange-200",
-  space:     "bg-indigo-50 text-indigo-700 border-indigo-200",
+  logistics: "bg-slate-100 text-slate-700 border-slate-200",
+  space:     "bg-slate-100 text-slate-700 border-slate-200",
   missiles:  "bg-rose-50 text-rose-700 border-rose-200",
 };
 
@@ -211,7 +211,7 @@ function RecentStrip({ contracts }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-4">
       <div className="flex items-center gap-2 mb-3">
-        <History size={15} className="text-purple-700" />
+        <History size={15} className="text-slate-700" />
         <div>
           <p className="text-sm font-semibold text-slate-900">{tRecent}</p>
           <p className="text-xs text-slate-400">{tRecentS}</p>
@@ -219,7 +219,7 @@ function RecentStrip({ contracts }) {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
         {recent.map((c) => (
-          <div key={c.id} className="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-purple-200 transition-colors">
+          <div key={c.id} className="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-300 transition-colors">
             <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[c.status] || "bg-slate-400"}`} />
             <div className="min-w-0">
               <p className="text-xs font-medium text-slate-800 leading-snug line-clamp-2">{c.title}</p>
@@ -276,7 +276,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
   return (
     <Card
       onClick={() => onSelect(contract)}
-      className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer"
+      className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg hover:border-slate-300 transition-all duration-300 cursor-pointer"
     >
       <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
         <div className="flex items-start justify-between gap-3">
@@ -291,7 +291,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
                 <button
                   onClick={(e) => { e.stopPropagation(); onGoExpend(contract.authority_country); }}
                   title={tSeeExpendTip}
-                  className="ml-auto text-[10px] text-purple-600 hover:text-purple-800 hover:underline leading-none"
+                  className="ml-auto text-[10px] text-blue-600 hover:text-blue-800 hover:underline leading-none"
                 >
                   {tSeeExpend}
                 </button>
@@ -316,7 +316,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
             {tAuthority[contract.authority_type] || contract.authority_type}
           </span>
           {contract.program && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-mono">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-mono">
               {contract.program}
             </span>
           )}
@@ -351,7 +351,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
           {contract.source_url ? (
             <a href={contract.source_url} target="_blank" rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 text-xs text-purple-700 hover:text-purple-900 transition-colors">
+              className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors">
               <ExternalLink size={11} />
               {tOfficSrc}
             </a>
@@ -413,7 +413,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile, onGoExpend }) 
               {tStatus[contract.status] || contract.status}
             </span>
             {contract.program && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-mono">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-mono">
                 {contract.program}
               </span>
             )}
@@ -430,7 +430,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile, onGoExpend }) 
               <button
                 onClick={() => { onClose(); onGoExpend(contract.authority_country); }}
                 title={tSeeExpendTip}
-                className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 hover:border-purple-300 transition-colors whitespace-nowrap"
+                className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:border-slate-300 transition-colors whitespace-nowrap"
               >
                 {tSeeExpend}
               </button>
@@ -486,7 +486,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile, onGoExpend }) 
           {contract.source_url && (
             <div className="pt-1 border-t border-slate-100">
               <a href={contract.source_url} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 transition-colors">
+                className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 transition-colors">
                 <ExternalLink size={12} />
                 {tOfficSrc}
               </a>
@@ -636,7 +636,7 @@ export default function Contracts() {
         <button
           onClick={exportCSV}
           disabled={filtered.length === 0}
-          className="flex items-center gap-2 px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-40 self-start lg:self-auto"
+          className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-40 self-start lg:self-auto"
         >
           <Download size={14} />
           {tExport}
@@ -655,21 +655,21 @@ export default function Contracts() {
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
             <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tOpen}</p>
-            <p className="text-2xl font-bold text-blue-600 mt-1">{kpis.open}</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">{kpis.open}</p>
             <p className="text-xs text-slate-400 mt-0.5">{tActiveTend}</p>
           </CardContent>
         </Card>
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
             <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tAwarded}</p>
-            <p className="text-2xl font-bold text-emerald-600 mt-1">{kpis.awarded}</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">{kpis.awarded}</p>
             <p className="text-xs text-slate-400 mt-0.5">{tSigned}</p>
           </CardContent>
         </Card>
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
             <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tTotalVal}</p>
-            <p className="text-2xl font-bold text-purple-700 mt-1">${kpis.midB}B</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">${kpis.midB}B</p>
             <p className="text-xs text-slate-400 mt-0.5">{tMidpoint}</p>
           </CardContent>
         </Card>
@@ -721,7 +721,7 @@ export default function Contracts() {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-700" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-700" />
           <p className="text-sm text-slate-400">Loading contracts…</p>
         </div>
       ) : filtered.length === 0 ? (
@@ -730,7 +730,7 @@ export default function Contracts() {
           <p className="text-sm">{tNoMatch}</p>
           <button
             onClick={() => { setSearchTerm(""); setSelectedStatus("all"); setSelectedAuthority("all"); setSelectedCategory("all"); }}
-            className="mt-4 text-xs text-purple-700 hover:text-purple-900 font-medium underline underline-offset-2"
+            className="mt-4 text-xs text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2"
           >
             Clear all filters
           </button>

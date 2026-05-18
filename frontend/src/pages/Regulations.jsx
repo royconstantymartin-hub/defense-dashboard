@@ -121,7 +121,7 @@ export default function Regulations() {
   const getCategoryStyle = (category) => {
     switch (category) {
       case 'offset':
-        return 'bg-purple-50 text-purple-700 border-purple-200';
+        return 'bg-slate-100 text-slate-700 border-slate-200';
       case 'export_control':
         return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'procurement':
@@ -141,7 +141,7 @@ export default function Regulations() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-slate-200 border-t-slate-800 rounded-full" />
       </div>
     );
   }
@@ -150,7 +150,7 @@ export default function Regulations() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
         <p className="font-medium">Failed to load regulations.</p>
-        <button onClick={fetchRegulations} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">Retry</button>
+        <button onClick={fetchRegulations} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 transition-colors">Retry</button>
       </div>
     );
   }
@@ -185,7 +185,7 @@ export default function Regulations() {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">OFFSET POLICIES</p>
-            <p className="text-2xl font-mono font-bold text-purple-600 mt-2">
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
               {regulations.filter(r => r.category === 'offset').length}
             </p>
           </CardContent>
@@ -193,7 +193,7 @@ export default function Regulations() {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">EXPORT CONTROLS</p>
-            <p className="text-2xl font-mono font-bold text-blue-600 mt-2">
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
               {regulations.filter(r => r.category === 'export_control').length}
             </p>
           </CardContent>
@@ -227,7 +227,7 @@ export default function Regulations() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {CATEGORIES.map(c => (
-              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-purple-50">
+              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-slate-50">
                 {c.label}
               </SelectItem>
             ))}
@@ -240,7 +240,7 @@ export default function Regulations() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200 max-h-80">
             {COUNTRIES.map(c => (
-              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-purple-50">
+              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-slate-50">
                 {c.label}
               </SelectItem>
             ))}
@@ -253,9 +253,9 @@ export default function Regulations() {
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
-            <SelectItem value="date_desc" className="text-slate-700 focus:bg-purple-50">Date (newest first)</SelectItem>
-            <SelectItem value="date_asc" className="text-slate-700 focus:bg-purple-50">Date (oldest first)</SelectItem>
-            <SelectItem value="country_asc" className="text-slate-700 focus:bg-purple-50">Country (A → Z)</SelectItem>
+            <SelectItem value="date_desc" className="text-slate-700 focus:bg-slate-50">Date (newest first)</SelectItem>
+            <SelectItem value="date_asc" className="text-slate-700 focus:bg-slate-50">Date (oldest first)</SelectItem>
+            <SelectItem value="country_asc" className="text-slate-700 focus:bg-slate-50">Country (A → Z)</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -277,10 +277,10 @@ export default function Regulations() {
                   className="border-b border-slate-100 last:border-0"
                   data-testid={`regulation-item-${reg.id}`}
                 >
-                  <AccordionTrigger className="px-6 py-4 hover:bg-purple-50/30 hover:no-underline transition-colors">
+                  <AccordionTrigger className="px-6 py-4 hover:bg-slate-50 hover:no-underline transition-colors">
                     <div className="flex items-start gap-4 text-left">
-                      <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-5 h-5 text-purple-600" />
+                      <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-5 h-5 text-slate-600" />
                       </div>
                       <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -294,7 +294,7 @@ export default function Regulations() {
                               e.stopPropagation();
                               navigate(`/expenditures?country=${encodeURIComponent(reg.country)}`);
                             }}
-                            className="text-xs text-slate-500 flex items-center gap-1.5 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 px-2 py-0.5 rounded-full transition-colors"
+                            className="text-xs text-slate-500 flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 hover:text-slate-900 px-2 py-0.5 rounded-full transition-colors"
                             title={`View ${reg.country} expenditures`}
                           >
                             {flagUrl && (
