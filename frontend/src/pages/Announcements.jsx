@@ -802,7 +802,7 @@ export default function Announcements() {
               : "No articles match your filters"}
           </p>
           <p className="text-sm mt-1 text-slate-400">
-            The scraper runs automatically twice a day at 07:00 and 19:00 UTC.
+            The scraper runs automatically twice a day.
           </p>
         </div>
       ) : (
