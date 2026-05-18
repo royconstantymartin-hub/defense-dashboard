@@ -728,6 +728,12 @@ export default function Contracts() {
         <div className="text-center py-16 text-slate-400">
           <FileCheck size={40} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">{tNoMatch}</p>
+          <button
+            onClick={() => { setSearchTerm(""); setSelectedStatus("all"); setSelectedAuthority("all"); setSelectedCategory("all"); }}
+            className="mt-4 text-xs text-purple-700 hover:text-purple-900 font-medium underline underline-offset-2"
+          >
+            Clear all filters
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

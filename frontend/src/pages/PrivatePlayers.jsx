@@ -664,6 +664,12 @@ export default function PrivatePlayers() {
                 <div className="flex flex-col items-center justify-center py-24 gap-2">
                   <Lock className="w-10 h-10 text-slate-200" />
                   <p className="text-slate-400 text-sm">No companies match your search.</p>
+                  <button
+                    onClick={() => { setSearch(""); setFilterCountry("all"); setSelectedCategory(null); }}
+                    className="mt-1 text-xs text-purple-700 hover:text-purple-900 font-medium underline underline-offset-2"
+                  >
+                    Clear search
+                  </button>
                 </div>
               ) : (
                 <>

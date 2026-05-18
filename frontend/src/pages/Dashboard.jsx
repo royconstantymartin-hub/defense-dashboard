@@ -330,7 +330,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       {company.ticker && (
-                        <span className="font-mono text-xs text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded shrink-0">
+                        <span className="font-mono text-xs text-purple-700 bg-purple-50 border border-purple-200 px-1.5 py-0.5 rounded shrink-0">
                           {company.ticker}
                         </span>
                       )}

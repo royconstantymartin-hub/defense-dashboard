@@ -1001,7 +1001,7 @@ export default function MarketData() {
 
                       {/* Ticker */}
                       <td className="p-4">
-                        <span className="font-mono text-sm text-purple-700 font-medium bg-purple-50 px-2 py-0.5 rounded">
+                        <span className="font-mono text-sm text-purple-700 font-medium bg-purple-50 border border-purple-200 px-2 py-0.5 rounded">
                           {player.ticker}
                         </span>
                       </td>
