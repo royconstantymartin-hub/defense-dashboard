@@ -36,13 +36,13 @@ import {
   Cell
 } from "recharts";
 
-const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899'];
+const COLORS = ['#0F172A', '#475569', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899'];
 
 const AVATAR_COLORS = [
-  "bg-purple-700", "bg-blue-700",
-  "bg-emerald-700", "bg-amber-600",
-  "bg-rose-700", "bg-indigo-700",
-  "bg-teal-700", "bg-orange-600",
+  "bg-slate-700", "bg-slate-600",
+  "bg-slate-800", "bg-slate-700",
+  "bg-slate-600", "bg-slate-800",
+  "bg-slate-700", "bg-slate-600",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -251,7 +251,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3">
-        <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-slate-200 border-t-slate-800 rounded-full" />
         <p className="text-sm text-slate-400">Loading dashboard…</p>
       </div>
     );
@@ -261,7 +261,7 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
         <p className="font-medium">Failed to load dashboard data.</p>
-        <button onClick={fetchData} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">Retry</button>
+        <button onClick={fetchData} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 transition-colors">Retry</button>
       </div>
     );
   }

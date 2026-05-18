@@ -11,11 +11,11 @@
     --text-primary: #0F172A;
     --text-secondary: #475569;
     --text-tertiary: #94A3B8;
-    --accent-primary: #7E22CE;
-    --accent-secondary: #A855F7;
-    --accent-light: #F3E8FF;
+    --accent-primary: #0F172A;
+    --accent-secondary: #475569;
+    --accent-light: #F1F5F9;
     --border-default: #E2E8F0;
-    --border-focus: #7E22CE;
+    --border-focus: #2563EB;
     --success: #10B981;
     --danger: #EF4444;
     --warning: #F59E0B;
@@ -69,24 +69,24 @@ code {
         --card-foreground: 222 47% 11%;
         --popover: 0 0% 100%;
         --popover-foreground: 222 47% 11%;
-        --primary: 271 81% 47%;
+        --primary: 222 47% 11%;
         --primary-foreground: 0 0% 100%;
         --secondary: 210 40% 96%;
         --secondary-foreground: 222 47% 11%;
         --muted: 210 40% 96%;
         --muted-foreground: 215 16% 47%;
-        --accent: 271 81% 95%;
-        --accent-foreground: 271 81% 47%;
+        --accent: 210 40% 96%;
+        --accent-foreground: 222 47% 11%;
         --destructive: 0 84% 60%;
         --destructive-foreground: 0 0% 98%;
         --border: 214 32% 91%;
         --input: 214 32% 91%;
-        --ring: 271 81% 47%;
-        --chart-1: 271 81% 47%;
+        --ring: 217 91% 60%;
+        --chart-1: 222 47% 11%;
         --chart-2: 160 84% 39%;
         --chart-3: 38 92% 50%;
         --chart-4: 330 81% 60%;
-        --chart-5: 271 91% 65%;
+        --chart-5: 217 91% 60%;
         --radius: 0.5rem;
     }
 }
@@ -111,7 +111,7 @@ code {
 
 /* Card styling */
 .card-light {
-    @apply bg-white border border-slate-200 rounded-xl shadow-sm transition-all duration-300 hover:shadow-lg hover:border-purple-200;
+    @apply bg-white border border-slate-200 rounded-xl shadow-sm transition-all duration-300 hover:shadow-lg hover:border-slate-300;
 }
 
 /* Status badges */
@@ -132,7 +132,7 @@ code {
 }
 
 .badge-purple {
-    @apply bg-purple-50 text-purple-700 border border-purple-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
+    @apply bg-slate-100 text-slate-700 border border-slate-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
 /* Animations */
@@ -167,7 +167,7 @@ code {
 
 /* Interactive elements */
 .btn-primary {
-    @apply bg-purple-700 text-white hover:bg-purple-800 shadow-sm transition-all duration-200 font-medium px-6 py-2.5 rounded-lg active:scale-95;
+    @apply bg-slate-900 text-white hover:bg-slate-800 shadow-sm transition-all duration-200 font-medium px-6 py-2.5 rounded-lg active:scale-95;
 }
 
 .btn-secondary {
@@ -175,7 +175,7 @@ code {
 }
 
 .btn-ghost {
-    @apply text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors font-medium px-4 py-2 rounded-lg;
+    @apply text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium px-4 py-2 rounded-lg;
 }
 
 /* Table styling */
@@ -188,7 +188,7 @@ code {
 }
 
 .table-light tr {
-    @apply border-b border-slate-100 hover:bg-purple-50/30 transition-colors;
+    @apply border-b border-slate-100 hover:bg-slate-50 transition-colors;
 }
 
 @layer base {
