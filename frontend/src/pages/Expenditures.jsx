@@ -1046,6 +1046,7 @@ const CAPABILITY_DETAILS = {
       { model: "Spy'Ranger 330 SDT-L (tactique ISR)", count: null, manufacturer: "Thales" },
       { model: "DRAC / Black Hornet (nano ISR infanterie)", count: null, manufacturer: "Novadem / FLIR" },
       { model: "nEUROn UCAV (démonstrateur)", count: 1, manufacturer: "Dassault Aviation" },
+      { model: "Harmattan Combat Drone", count: null, manufacturer: "Harmattan AI" },
     ],
     land_vehicles: [
       { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems (KNDS)" },
@@ -1292,6 +1293,7 @@ const PLATFORM_WIKI_TITLES = {
   "Spy'Ranger 330 SDT-L (tactique ISR)":       "Thales Spy'Ranger",
   "DRAC / Black Hornet (nano ISR infanterie)": "Black Hornet Nano",
   "nEUROn UCAV (démonstrateur)":               "Dassault nEUROn",
+  "Harmattan Combat Drone":                    "Harmattan AI",
   // ── Land – MBT ──────────────────────────────────────────────────────────
   "M1A2 SEP v3 Abrams MBT":           "M1 Abrams",
   "M1A1 Abrams MBT":                  "M1 Abrams",
