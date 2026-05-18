@@ -164,7 +164,7 @@ const PLACEHOLDER_GRADIENT = {
 // Curated stock photos per category — all IDs verified on unsplash.com, fallback to gradient if all fail
 const CATEGORY_STOCK_PHOTOS = {
   TECHNOLOGY: [
-    "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80", // satellite dish
+    "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80", // military helicopter
     "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=800&q=80", // F16 jets formation
     "https://images.unsplash.com/photo-1712747153465-2637c38cc28e?auto=format&fit=crop&w=800&q=80", // fighter jet on runway
     "https://images.unsplash.com/photo-1612529784443-40a86b856d14?auto=format&fit=crop&w=800&q=80", // satellite dish close-up
@@ -244,24 +244,21 @@ function NewsPlaceholder({ source, category, url, sourceLogo, articleSeed }) {
       ) : (
         <div className={`w-full h-full bg-gradient-to-br ${gradient}`} />
       )}
-      <div className="absolute inset-0 bg-black/50" />
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-        <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-lg mb-2">
-          {logoUrl ? (
-            <img
-              src={logoUrl}
-              alt={source}
-              className="w-10 h-10 object-contain"
-              onError={() => setLogoErr(true)}
-            />
-          ) : (
-            <span className="text-white/80 text-2xl font-bold">{source?.charAt(0)?.toUpperCase() || "?"}</span>
-          )}
-        </div>
-        <span className="text-white/70 text-[11px] font-semibold tracking-wide uppercase mt-1">{source}</span>
-        {category && (
-          <span className="text-white/40 text-[9px] mt-0.5 tracking-widest uppercase">{category}</span>
+      {/* Source logo pill — top-left, covered by HIGH badge when applicable */}
+      <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-white/85 backdrop-blur-sm rounded-full pl-1 pr-2 py-0.5 shadow-sm">
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt={source}
+            className="w-4 h-4 object-contain flex-shrink-0"
+            onError={() => setLogoErr(true)}
+          />
+        ) : (
+          <span className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-600 flex-shrink-0">
+            {source?.charAt(0)?.toUpperCase() || "?"}
+          </span>
         )}
+        <span className="text-slate-700 text-[10px] font-semibold tracking-wide uppercase truncate max-w-[90px]">{source}</span>
       </div>
     </div>
   );
@@ -304,8 +301,6 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
   const [imgError, setImgError] = useState(false);
   const [localImage, setLocalImage] = useState(null);
 
-  // If the article has no image stored, try fetching the OG image on-demand.
-  // The backend caches the result in the DB so subsequent loads are instant.
   useEffect(() => {
     if (!article.image && !localImage && article.url) {
       axios
@@ -317,47 +312,36 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
 
   const displayImage = article.image || localImage;
 
-  const score     = article.relevanceScore ?? 0;
-  const isNew     = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
-  const srcCount  = article.source_count ?? 1;
+  const score    = article.relevanceScore ?? 0;
+  const isNew    = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
+  const srcCount = article.source_count ?? 1;
   const coveredBy = article.covered_by ?? [];
   return (
-    <div className={`rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-200 ${
+    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 cursor-pointer ${
       isHot
-        ? "bg-white border-2 border-orange-300 shadow-md hover:shadow-xl hover:border-orange-400 hover:-translate-y-0.5"
-        : "bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-purple-200 hover:-translate-y-0.5"
+        ? "border-2 border-orange-300 shadow-sm hover:shadow-md hover:border-orange-400"
+        : "border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-200"
     }`}>
+      <div className="flex items-start gap-3 p-4">
 
-      {/* ── Cover image ── */}
-      <a href={article.url} target="_blank" rel="noopener noreferrer" className="relative block flex-shrink-0 overflow-hidden" style={{ height: "220px" }}>
-        {!imgError && displayImage ? (
-          <img
-            src={displayImage}
-            alt={article.title}
-            loading="lazy"
-            onError={() => setImgError(true)}
-            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
-          />
-        ) : (
-          <NewsPlaceholder source={article.source} category={article.category} url={article.url} sourceLogo={article.sourceLogo} articleSeed={article.id || article.title} />
-        )}
+        {/* ── Left: text content ── */}
+        <div className="flex-1 min-w-0 flex flex-col gap-2">
 
-        {/* Bottom scrim for badge legibility */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
-
-        {/* Score badge — top left */}
-        {score >= 70 && (
-          <span className="absolute top-3 left-3 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow">
-            HIGH
-          </span>
-        )}
-
-        {/* NEW badge — top right */}
-        {isNew && (
-          <span className="absolute top-3 right-3 bg-purple-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider shadow">
-            NEW
-          </span>
-        )}
+          {/* Source • time */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <SourceFavicon
+              url={article.url}
+              source={article.realSource || article.source}
+              sourceLogo={article.sourceLogo}
+            />
+            <span className="text-[11px] text-slate-300">•</span>
+            <span className="text-[11px] text-slate-400 font-medium">{relativeTime(article.publishedAt)}</span>
+            {isNew && (
+              <span className="bg-purple-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-wider">
+                NEW
+              </span>
+            )}
+          </div>
 
         {/* Bottom row: multi-source badge */}
         {srcCount >= 2 && (
@@ -412,8 +396,6 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
             >
               {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
             </button>
-
-            {/* Read CTA */}
             <a
               href={article.url}
               target="_blank"
@@ -424,6 +406,33 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
             </a>
           </div>
         </div>
+
+        {/* ── Right: square thumbnail ── */}
+        <a
+          href={article.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-shrink-0 relative w-[110px] h-[110px] rounded-xl overflow-hidden"
+        >
+          {!imgError && displayImage ? (
+            <img
+              src={displayImage}
+              alt={article.title}
+              loading="lazy"
+              onError={() => setImgError(true)}
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <NewsPlaceholder
+              source={article.source}
+              category={article.category}
+              url={article.url}
+              sourceLogo={article.sourceLogo}
+              articleSeed={article.id || article.title}
+            />
+          )}
+        </a>
+
       </div>
     </div>
   );
@@ -449,7 +458,7 @@ function SectionHeader({ emoji, label, sublabel, color = "slate" }) {
 
 function ArticleGrid({ articles, bookmarkedUrls, onBookmark, isHot = false }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="flex flex-col gap-3">
       {articles.map((article, idx) => (
         <NewsCard
           key={article.url || `${isHot ? "hot" : "reg"}-${idx}`}
