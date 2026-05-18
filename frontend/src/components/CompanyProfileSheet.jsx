@@ -85,6 +85,19 @@ const AVATAR_COLORS = [
   "from-orange-600 to-orange-800",
 ];
 
+const STOCK_PHOTO_DOMAINS = [
+  "unsplash.com", "gettyimages.com", "istockphoto.com", "shutterstock.com",
+  "depositphotos.com", "pexels.com", "dreamstime.com", "123rf.com",
+  "alamy.com", "stock.adobe.com", "pixabay.com", "stocksy.com",
+  "canstockphoto.com",
+];
+
+function isStockPhoto(url) {
+  if (!url) return false;
+  const low = url.toLowerCase();
+  return STOCK_PHOTO_DOMAINS.some((d) => low.includes(d));
+}
+
 const COMPANY_NEWS_STOCK_PHOTOS = {
   CONTRACT: [
     "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=400&q=80",
@@ -92,7 +105,6 @@ const COMPANY_NEWS_STOCK_PHOTOS = {
   ],
   TECHNOLOGY: [
     "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=400&q=80",
-    "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=400&q=80",
   ],
   CONFLICT: [
     "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=400&q=80",
@@ -136,7 +148,7 @@ function NewsArticleThumb({ article, wrapperClass, showLogo = true }) {
     ? (effectiveLogo || (!isGoogleDomain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : null))
     : null;
 
-  const displayImage = !imgError && article.image;
+  const displayImage = !imgError && article.image && !isStockPhoto(article.image);
 
   const handlePhotoError = () => {
     if (photoIdx + 1 < photos.length) setPhotoIdx(photoIdx + 1);
