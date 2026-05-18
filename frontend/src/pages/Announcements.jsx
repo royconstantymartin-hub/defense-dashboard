@@ -311,108 +311,100 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
   }, [article.url, article.image, localImage]);
 
   const displayImage = article.image || localImage;
-
-  const score    = article.relevanceScore ?? 0;
   const isNew    = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
   const srcCount = article.source_count ?? 1;
   const coveredBy = article.covered_by ?? [];
+  const countryCode = article.country_code?.toLowerCase();
+
   return (
-    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 cursor-pointer ${
+    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 group ${
       isHot
-        ? "border-2 border-orange-300 shadow-sm hover:shadow-md hover:border-orange-400"
+        ? "border border-orange-200 shadow-sm hover:shadow-md hover:border-orange-300"
         : "border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-200"
     }`}>
-      <div className="flex items-start gap-3 p-4">
+      <div className="flex min-h-[88px]">
 
         {/* ── Left: text content ── */}
-        <div className="flex-1 min-w-0 flex flex-col gap-2">
+        <div className="flex-1 min-w-0 p-4 flex flex-col gap-2">
 
-          {/* Source • time */}
+          {/* Row 1: source + time + badges */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <SourceFavicon
               url={article.url}
               source={article.realSource || article.source}
               sourceLogo={article.sourceLogo}
             />
-            <span className="text-[11px] text-slate-300">•</span>
+            <span className="text-[11px] text-slate-300">·</span>
             <span className="text-[11px] text-slate-400 font-medium">{relativeTime(article.publishedAt)}</span>
             {isNew && (
               <span className="bg-purple-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-wider">
                 NEW
               </span>
             )}
+            {srcCount >= 2 && (
+              <span
+                className="bg-orange-100 text-orange-700 text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wide"
+                title={`Covered by: ${coveredBy.join(", ")}`}
+              >
+                🔥 {srcCount} sources
+              </span>
+            )}
           </div>
 
-        {/* Bottom row: multi-source badge */}
-        {srcCount >= 2 && (
-          <div className="absolute bottom-2.5 left-3">
-            <span
-              className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide flex items-center gap-1 shadow"
-              title={`Covered by: ${coveredBy.join(", ")}`}
-            >
-              🔥 {srcCount} sources
+          {/* Row 2: Title */}
+          <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
+            <h3 className={`font-bold leading-snug line-clamp-2 group-hover:text-purple-700 transition-colors duration-150 ${
+              isHot ? "text-[15px] text-slate-900" : "text-[14px] text-slate-800"
+            }`}>
+              {article.title}
+            </h3>
+          </a>
+
+          {/* Row 3: category + flag + actions */}
+          <div className="flex items-center gap-2 mt-auto">
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider flex-shrink-0 ${getCategoryStyle(article.category)}`}>
+              {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
             </span>
+            {countryCode && (
+              <img
+                src={`https://flagcdn.com/w20/${countryCode}.png`}
+                alt={countryCode.toUpperCase()}
+                className="w-5 h-3.5 object-cover rounded-sm opacity-75 flex-shrink-0"
+              />
+            )}
+            <div className="ml-auto flex items-center gap-1">
+              <button
+                onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
+                title={isBookmarked ? "Remove bookmark" : "Save"}
+                className={`p-1.5 rounded-lg transition-colors ${
+                  isBookmarked
+                    ? "text-amber-500 bg-amber-50"
+                    : "text-slate-300 hover:text-amber-500 hover:bg-amber-50"
+                }`}
+              >
+                {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+              </button>
+              <a
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-purple-700 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Read <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            </div>
           </div>
-        )}
-      </a>
 
-      {/* ── Body ── */}
-      <div className="p-4 flex flex-col flex-1 gap-3">
-
-        {/* Source + category row */}
-        <div className="flex items-center justify-between gap-2">
-          <SourceFavicon
-            url={article.url}
-            source={article.realSource || article.source}
-            sourceLogo={article.sourceLogo}
-          />
-          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border flex-shrink-0 uppercase tracking-widest ${getCategoryStyle(article.category)}`}>
-            {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
-          </span>
         </div>
 
-        {/* Title — larger, bolder, clickable */}
-        <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1 group/title">
-          <h3 className="text-slate-900 font-bold text-[15px] leading-snug line-clamp-3 group-hover/title:text-purple-700 transition-colors duration-150">
-            {article.title}
-          </h3>
-        </a>
-
-        {/* AI Summary panel */}
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2 mt-auto">
-          <span className="text-[11px] text-slate-400 font-medium">{relativeTime(article.publishedAt)}</span>
-
-          <div className="flex items-center gap-1">
-            {/* Bookmark */}
-            <button
-              onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
-              title={isBookmarked ? "Remove bookmark" : "Save"}
-              className={`p-1.5 rounded-lg transition-colors ${
-                isBookmarked
-                  ? "text-amber-500 bg-amber-50"
-                  : "text-slate-300 hover:text-amber-500 hover:bg-amber-50"
-              }`}
-            >
-              {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
-            </button>
-            <a
-              href={article.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-purple-700 transition-colors"
-            >
-              Read <ExternalLink className="w-2.5 h-2.5" />
-            </a>
-          </div>
-        </div>
-
-        {/* ── Right: square thumbnail ── */}
+        {/* ── Right: image (full card height) ── */}
         <a
           href={article.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-shrink-0 relative w-[110px] h-[110px] rounded-xl overflow-hidden"
+          className="flex-shrink-0 w-[120px] self-stretch relative overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
         >
           {!imgError && displayImage ? (
             <img
@@ -420,7 +412,7 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
               alt={article.title}
               loading="lazy"
               onError={() => setImgError(true)}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
             <NewsPlaceholder
