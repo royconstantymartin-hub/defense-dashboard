@@ -125,6 +125,14 @@ _SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
     "Foreign Policy":   0.70,
     "Bellingcat":       0.80,
     "Stars and Stripes": 0.90,
+    # Military lifestyle / benefits — lower signal for industry analysis
+    "Sandboxx":         0.30,
+    "Task & Purpose":   0.50,
+    "Military.com":     0.55,
+    # Academic / legal — slow publishing, niche
+    "Just Security":    0.55,
+    "Lawfare":          0.55,
+    "Small Wars Journal": 0.50,
 }
 
 
@@ -860,8 +868,6 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Defense Aerospace",        "url": "https://www.defense-aerospace.com/rss.xml",                                 "language": "en", "region": "global",  "max_items": 30},
     # CSIS Defense360: strategic analysis, programs, acquisition policy
     {"name": "CSIS Defense",             "url": "https://defense360.csis.org/feed/",                                         "language": "en", "region": "global",  "max_items": 20},
-    # Scout Warrior (Warrior Maven sister site): ground systems, programs
-    {"name": "Scout Warrior",            "url": "https://www.scoutwarrior.com/feed/",                                        "language": "en", "region": "us",      "max_items": 30},
     # ── Defense specialty — French ──────────────────────────────────────────
     {"name": "Opex360",                   "url": "https://www.opex360.com/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
     {"name": "Meta-Défense",              "url": "https://meta-defense.fr/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
@@ -874,6 +880,8 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Secret Défense",            "url": "https://secretdefense.blogs.liberation.fr/rss.xml",                        "language": "fr", "region": "europe",  "max_items": 25},
     # Lignes de Défense — blog Philippe Chapleau (Ouest-France), OPEX & équipements
     {"name": "Lignes de Défense",         "url": "https://lignesdedefense.blogs.ouest-france.fr/rss.xml",                    "language": "fr", "region": "europe",  "max_items": 25},
+    # Zone Militaire — blog de référence sur l'industrie et les opérations de défense françaises
+    {"name": "Zone Militaire",            "url": "https://www.zoneMilitaire.com/feed/",                                       "language": "fr", "region": "europe",  "max_items": 40},
     # Ministère des Armées — communiqués officiels, contrats, nominations
     {"name": "Ministère des Armées",      "url": "https://www.defense.gouv.fr/actualites/rss.xml",                           "language": "fr", "region": "europe",  "max_items": 20},
     # Aerobuzz — actualité aéronautique et défense aérienne française
@@ -942,6 +950,19 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Kyiv Independent",         "url": "https://kyivindependent.com/feed/",                                         "language": "en", "region": "europe",  "max_items": 20},
     # Defence Connect (Australia) — Australian defence industry procurement
     {"name": "Defence Connect",          "url": "https://www.defenceconnect.com.au/feed",                                    "language": "en", "region": "asia-pacific", "max_items": 25},
+    # ── Premier tier additions ───────────────────────────────────────────────
+    # ISW (Institute for the Study of War) — daily Ukraine/Russia sitreps, gold standard
+    {"name": "ISW",                      "url": "https://www.understandingwar.org/feeds/all",                                "language": "en", "region": "europe",  "max_items": 30},
+    # The Diplomat — leading Asia-Pacific security & geopolitics publication
+    {"name": "The Diplomat",             "url": "https://thediplomat.com/feed/",                                             "language": "en", "region": "asia-pacific", "max_items": 30},
+    # EurActiv Defence — EU defence policy, European defence industry
+    {"name": "EurActiv Defence",         "url": "https://www.euractiv.com/section/defence-and-security/feed/",              "language": "en", "region": "europe",  "max_items": 30},
+    # Politico National Security — US defence policy, Congress, Pentagon coverage
+    {"name": "Politico Defense",         "url": "https://www.politico.com/rss/national-security.xml",                       "language": "en", "region": "us",      "max_items": 30},
+    # Air & Space Forces Magazine — USAF & Space Force official magazine
+    {"name": "Air & Space Forces",       "url": "https://www.airandspaceforces.com/feed/",                                  "language": "en", "region": "us",      "max_items": 30},
+    # Defense & Aerospace Report — international programs, FMS, industry
+    {"name": "Defense Aerospace Report", "url": "https://darreport.com/feed/",                                              "language": "en", "region": "global",  "max_items": 25},
 ]
 
 HTML_SCRAPERS = [_scrape_nato, _scrape_janes, _scrape_defensepost]
