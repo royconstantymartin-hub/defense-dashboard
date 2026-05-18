@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { API } from "@/App";
 import { Input } from "@/components/ui/input";
@@ -148,6 +148,49 @@ const TIME_BAND_LABELS = {
   this_week: "This Week",
   earlier:   "Earlier",
 };
+
+// ── Defense company → ticker mapping (for Market Impact widget) ───────────────
+
+const DEFENSE_TICKERS = [
+  { keywords: ["lockheed", "f-35", "f35", "f-22", "f22"], ticker: "LMT", name: "Lockheed Martin", country: "us" },
+  { keywords: ["boeing", "b-52", "b52", "starliner"], ticker: "BA", name: "Boeing", country: "us" },
+  { keywords: ["raytheon", "rtx", "patriot missile", "tomahawk"], ticker: "RTX", name: "RTX Corp", country: "us" },
+  { keywords: ["northrop", "b-21", "b21", "grumman"], ticker: "NOC", name: "Northrop Grumman", country: "us" },
+  { keywords: ["general dynamics", "gdls", "gulfstream", "abrams"], ticker: "GD", name: "General Dynamics", country: "us" },
+  { keywords: ["bae systems", "bae"], ticker: "BAESY", name: "BAE Systems", country: "gb" },
+  { keywords: ["thales"], ticker: "HO.PA", name: "Thales", country: "fr" },
+  { keywords: ["palantir", "pltr"], ticker: "PLTR", name: "Palantir", country: "us" },
+  { keywords: ["l3harris", "lhx"], ticker: "LHX", name: "L3Harris", country: "us" },
+  { keywords: ["rheinmetall"], ticker: "RHM.DE", name: "Rheinmetall", country: "de" },
+  { keywords: ["airbus"], ticker: "AIR.PA", name: "Airbus", country: "fr" },
+  { keywords: ["leonardo"], ticker: "LDO.MI", name: "Leonardo", country: "it" },
+  { keywords: ["saab"], ticker: "SAAB-B.ST", name: "Saab", country: "se" },
+  { keywords: ["dassault", "rafale"], ticker: "AM.PA", name: "Dassault Aviation", country: "fr" },
+  { keywords: ["hanwha"], ticker: "012450.KS", name: "Hanwha", country: "kr" },
+  { keywords: ["textron", "bell helicopter", "v-22"], ticker: "TXT", name: "Textron", country: "us" },
+  { keywords: ["leidos", "ldos"], ticker: "LDOS", name: "Leidos", country: "us" },
+];
+
+function detectCompaniesInArticles(articles) {
+  const counts = {};
+  const articleMap = {};
+  articles.forEach((article) => {
+    const text = (article.title + " " + (article.summary || "") + " " + (article.company || "")).toLowerCase();
+    DEFENSE_TICKERS.forEach(({ keywords, ticker }) => {
+      if (keywords.some((kw) => text.includes(kw))) {
+        counts[ticker] = (counts[ticker] || 0) + 1;
+        if (!articleMap[ticker]) articleMap[ticker] = article;
+      }
+    });
+  });
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([ticker]) => ({
+      ...DEFENSE_TICKERS.find((d) => d.ticker === ticker),
+      article: articleMap[ticker],
+    }));
+}
 
 // ── Placeholder ───────────────────────────────────────────────────────────────
 
@@ -425,6 +468,206 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
           )}
         </a>
 
+      </div>
+    </div>
+  );
+}
+
+// ── FeaturedNewsCard ──────────────────────────────────────────────────────────
+
+function FeaturedNewsCard({ article, isBookmarked, onBookmark }) {
+  const [imgError, setImgError] = useState(false);
+  const [localImage, setLocalImage] = useState(null);
+
+  useEffect(() => {
+    if (!article.image && !localImage && article.url) {
+      axios.get(`${API}/news/og-image`, { params: { url: article.url } })
+        .then((r) => { if (r.data.image) setLocalImage(r.data.image); })
+        .catch(() => {});
+    }
+  }, [article.url, article.image, localImage]);
+
+  const displayImage = article.image || localImage;
+  const srcCount = article.source_count ?? 1;
+  const coveredBy = article.covered_by ?? [];
+  const countryCode = article.country_code?.toLowerCase();
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-200 group">
+      <a href={article.url} target="_blank" rel="noopener noreferrer" className="block relative h-[220px] overflow-hidden">
+        {!imgError && displayImage ? (
+          <img src={displayImage} alt={article.title} loading="lazy" onError={() => setImgError(true)}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <NewsPlaceholder source={article.source} category={article.category} url={article.url}
+            sourceLogo={article.sourceLogo} articleSeed={article.id || article.title}
+          />
+        )}
+        <div className="absolute bottom-3 left-3 flex items-center gap-2">
+          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border uppercase tracking-wider backdrop-blur-sm ${getCategoryStyle(article.category)}`}>
+            {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
+          </span>
+          {countryCode && (
+            <img src={`https://flagcdn.com/w20/${countryCode}.png`} alt={countryCode.toUpperCase()}
+              className="w-5 h-3.5 object-cover rounded-sm shadow-sm"
+            />
+          )}
+        </div>
+        {srcCount >= 2 && (
+          <div className="absolute top-3 right-3">
+            <span className="bg-orange-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm"
+              title={`Covered by: ${coveredBy.join(", ")}`}>
+              🔥 {srcCount} sources
+            </span>
+          </div>
+        )}
+      </a>
+      <div className="p-4 flex flex-col gap-2">
+        <a href={article.url} target="_blank" rel="noopener noreferrer">
+          <h2 className="text-slate-900 font-bold text-[17px] leading-snug group-hover:text-purple-700 transition-colors">
+            {article.title}
+          </h2>
+        </a>
+        <div className="flex items-center justify-between gap-2 mt-1">
+          <div className="flex items-center gap-1.5">
+            <SourceFavicon url={article.url} source={article.realSource || article.source} sourceLogo={article.sourceLogo} />
+            <span className="text-[11px] text-slate-300">·</span>
+            <span className="text-[11px] text-slate-400">{relativeTime(article.publishedAt)}</span>
+          </div>
+          <button onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
+            className={`p-1.5 rounded-lg transition-colors ${isBookmarked ? "text-amber-500 bg-amber-50" : "text-slate-300 hover:text-amber-500 hover:bg-amber-50"}`}
+          >
+            {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── GridNewsCard ──────────────────────────────────────────────────────────────
+
+function GridNewsCard({ article, isBookmarked, onBookmark }) {
+  const [imgError, setImgError] = useState(false);
+  const [localImage, setLocalImage] = useState(null);
+
+  useEffect(() => {
+    if (!article.image && !localImage && article.url) {
+      axios.get(`${API}/news/og-image`, { params: { url: article.url } })
+        .then((r) => { if (r.data.image) setLocalImage(r.data.image); })
+        .catch(() => {});
+    }
+  }, [article.url, article.image, localImage]);
+
+  const displayImage = article.image || localImage;
+  const countryCode = article.country_code?.toLowerCase();
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-200 group flex flex-col">
+      <a href={article.url} target="_blank" rel="noopener noreferrer" className="block relative h-[130px] overflow-hidden flex-shrink-0">
+        {!imgError && displayImage ? (
+          <img src={displayImage} alt={article.title} loading="lazy" onError={() => setImgError(true)}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <NewsPlaceholder source={article.source} category={article.category} url={article.url}
+            sourceLogo={article.sourceLogo} articleSeed={article.id || article.title}
+          />
+        )}
+      </a>
+      <div className="p-3 flex flex-col gap-1.5 flex-1">
+        <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
+          <h3 className="text-slate-800 font-bold text-[13px] leading-snug line-clamp-3 group-hover:text-purple-700 transition-colors">
+            {article.title}
+          </h3>
+        </a>
+        <div className="flex items-center justify-between gap-2 pt-1">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <SourceFavicon url={article.url} source={article.realSource || article.source} sourceLogo={article.sourceLogo} />
+            <span className="text-[10px] text-slate-300">·</span>
+            <span className="text-[10px] text-slate-400 flex-shrink-0">{relativeTime(article.publishedAt)}</span>
+            {countryCode && (
+              <img src={`https://flagcdn.com/w20/${countryCode}.png`} alt="" className="w-4 h-3 object-cover rounded-sm opacity-70 flex-shrink-0" />
+            )}
+          </div>
+          <button onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
+            className={`p-1 rounded-lg transition-colors flex-shrink-0 ${isBookmarked ? "text-amber-500" : "text-slate-300 hover:text-amber-500"}`}
+          >
+            {isBookmarked ? <BookmarkCheck className="w-3 h-3" /> : <Bookmark className="w-3 h-3" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── MarketImpactWidget ────────────────────────────────────────────────────────
+
+function MarketImpactWidget({ articles }) {
+  const [stockData, setStockData] = useState({});
+  const detected = useMemo(() => detectCompaniesInArticles(articles), [articles]);
+
+  useEffect(() => {
+    if (detected.length === 0) return;
+    const tickers = detected.map((d) => d.ticker).join(",");
+    axios.get(`${API}/stocks/prices`, { params: { tickers } })
+      .then((r) => setStockData(r.data))
+      .catch(() => {});
+  }, [detected]);
+
+  if (detected.length === 0) return null;
+
+  return (
+    <div className="w-60 flex-shrink-0">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm sticky top-4">
+        <div className="flex items-center gap-2 mb-4">
+          <TrendingUp className="w-3.5 h-3.5 text-purple-600" />
+          <span className="text-[11px] font-bold text-slate-600 uppercase tracking-widest">Market Impact · 24h</span>
+        </div>
+        <div className="flex flex-col divide-y divide-slate-100">
+          {detected.map(({ ticker, name, country, article }) => {
+            const stock = stockData[ticker];
+            const change = stock?.change_percent ?? null;
+            const price = stock?.price ?? null;
+            const isPos = change > 0;
+            const isNeg = change < 0;
+            return (
+              <div key={ticker} className="py-3 first:pt-0 last:pb-0 flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    {country && (
+                      <img src={`https://flagcdn.com/w20/${country}.png`} alt="" className="w-4 h-3 object-cover rounded-sm opacity-75 flex-shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <div className="text-[12px] font-bold text-slate-800 truncate">{name}</div>
+                      <div className="text-[10px] text-slate-400 font-mono">{ticker}</div>
+                    </div>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    {price != null && (
+                      <div className="text-[11px] font-semibold text-slate-700 font-mono">{price.toFixed(2)}</div>
+                    )}
+                    {change != null ? (
+                      <div className={`text-[12px] font-bold ${isPos ? "text-emerald-600" : isNeg ? "text-rose-600" : "text-slate-400"}`}>
+                        {isPos ? "+" : ""}{change.toFixed(2)}%
+                      </div>
+                    ) : (
+                      <div className="text-[11px] text-slate-300">—</div>
+                    )}
+                  </div>
+                </div>
+                {article && (
+                  <a href={article.url} target="_blank" rel="noopener noreferrer"
+                    className="text-[11px] text-slate-500 leading-tight hover:text-purple-700 transition-colors line-clamp-2 border-l-2 border-slate-200 pl-2 hover:border-purple-400"
+                  >
+                    {article.title}
+                  </a>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -833,7 +1076,41 @@ export default function Announcements() {
           {todayArticles.length > 0 && (
             <div>
               <SectionHeader label="Today" sublabel={`— last 24 hours · ${todayArticles.length} articles`} />
-              <ArticleGrid articles={todayArticles} {...cardProps} />
+              <div className="flex gap-5 items-start">
+
+                {/* Main column: featured + grid + list overflow */}
+                <div className="flex-1 min-w-0 flex flex-col gap-4">
+
+                  {/* Featured article */}
+                  <FeaturedNewsCard
+                    article={todayArticles[0]}
+                    isBookmarked={bookmarkedUrls.has(todayArticles[0].url)}
+                    onBookmark={toggleBookmark}
+                  />
+
+                  {/* 2×2 grid for next 4 articles */}
+                  {todayArticles.length > 1 && (
+                    <div className="grid grid-cols-2 gap-3">
+                      {todayArticles.slice(1, 5).map((a, i) => (
+                        <GridNewsCard
+                          key={a.url || `grid-${i}`}
+                          article={a}
+                          isBookmarked={bookmarkedUrls.has(a.url)}
+                          onBookmark={toggleBookmark}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Remaining as compact list */}
+                  {todayArticles.length > 5 && (
+                    <ArticleGrid articles={todayArticles.slice(5)} {...cardProps} />
+                  )}
+                </div>
+
+                {/* Market Impact sidebar */}
+                <MarketImpactWidget articles={todayArticles} />
+              </div>
             </div>
           )}
 
