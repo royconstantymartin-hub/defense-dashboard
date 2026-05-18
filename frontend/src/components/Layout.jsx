@@ -108,7 +108,7 @@ export default function Layout() {
               <img src="/favicon.png" alt="Defense Dashboard" className="w-10 h-10 object-contain" />
               <div>
                 <h1 className="font-heading font-bold text-slate-900 tracking-tight">DEFENSE</h1>
-                <p className="text-[10px] font-mono text-purple-600 tracking-widest">DASHBOARD</p>
+                <p className="text-[10px] font-mono text-slate-400 tracking-widest">DASHBOARD</p>
               </div>
             </Link>
           </div>
@@ -125,14 +125,14 @@ export default function Layout() {
                   onClick={() => setSidebarOpen(false)}
                   className={`
                     flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200
-                    ${isActive 
-                      ? 'bg-purple-50 text-purple-700 font-medium border-l-2 border-purple-600 -ml-[2px]' 
+                    ${isActive
+                      ? 'bg-slate-100 text-slate-900 font-medium border-l-2 border-slate-900 -ml-[2px]'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }
                   `}
                   data-testid={`nav-${item.path === '/' ? 'dashboard' : item.path.slice(1)}`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-purple-600' : ''}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-slate-900' : ''}`} />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -146,7 +146,7 @@ export default function Layout() {
                   className={`
                     flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200
                     ${location.pathname === '/admin'
-                      ? 'bg-purple-50 text-purple-700 font-medium border-l-2 border-purple-600 -ml-[2px]'
+                      ? 'bg-slate-100 text-slate-900 font-medium border-l-2 border-slate-900 -ml-[2px]'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }
                   `}
@@ -165,8 +165,8 @@ export default function Layout() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-purple-700" />
+                    <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-slate-700" />
                     </div>
                     <div className="flex-1 text-left">
                       <p className="text-slate-900 text-sm font-medium truncate">{user.name}</p>
@@ -238,7 +238,7 @@ export default function Layout() {
                 className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors relative"
               >
                 <Bell className="w-5 h-5" />
-                {hasNew && <span className="absolute top-1 right-1 w-2 h-2 bg-purple-600 rounded-full" />}
+                {hasNew && <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full" />}
               </button>
 
               {notifOpen && (
@@ -248,7 +248,7 @@ export default function Layout() {
                     <Link
                       to="/announcements"
                       onClick={() => setNotifOpen(false)}
-                      className="text-xs text-purple-700 hover:text-purple-900 font-medium"
+                      className="text-xs text-blue-600 hover:text-blue-800 font-medium"
                     >
                       View all →
                     </Link>
