@@ -194,115 +194,23 @@ function detectCompaniesInArticles(articles) {
 
 // ── Placeholder ───────────────────────────────────────────────────────────────
 
-const PLACEHOLDER_GRADIENT = {
-  CONTRACT:    "from-emerald-950 via-emerald-900 to-emerald-800",
-  TECHNOLOGY:  "from-purple-950 via-purple-900 to-purple-800",
-  CONFLICT:    "from-red-950 via-red-900 to-red-800",
-  POLICY:      "from-amber-950 via-amber-900 to-amber-800",
-  GEOPOLITICS: "from-sky-950 via-sky-900 to-sky-800",
-  "M&A":       "from-blue-950 via-blue-900 to-blue-800",
-  INDUSTRY:    "from-slate-900 via-slate-800 to-slate-700",
+const PLACEHOLDER_CATEGORY_STYLE = {
+  CONTRACT:    { bg: "bg-emerald-50",  accent: "text-emerald-400" },
+  TECHNOLOGY:  { bg: "bg-purple-50",   accent: "text-purple-400" },
+  CONFLICT:    { bg: "bg-red-50",      accent: "text-red-400" },
+  POLICY:      { bg: "bg-amber-50",    accent: "text-amber-400" },
+  GEOPOLITICS: { bg: "bg-sky-50",      accent: "text-sky-400" },
+  "M&A":       { bg: "bg-blue-50",     accent: "text-blue-400" },
+  INDUSTRY:    { bg: "bg-slate-50",    accent: "text-slate-300" },
+  EARNINGS:    { bg: "bg-teal-50",     accent: "text-teal-400" },
 };
 
-// Curated stock photos per category — all IDs verified on unsplash.com, fallback to gradient if all fail
-const CATEGORY_STOCK_PHOTOS = {
-  TECHNOLOGY: [
-    "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80", // military helicopter
-    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=800&q=80", // F16 jets formation
-    "https://images.unsplash.com/photo-1712747153465-2637c38cc28e?auto=format&fit=crop&w=800&q=80", // fighter jet on runway
-    "https://images.unsplash.com/photo-1612529784443-40a86b856d14?auto=format&fit=crop&w=800&q=80", // satellite dish close-up
-  ],
-  CONTRACT: [
-    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80", // man signing contract
-    "https://images.unsplash.com/photo-1521791055366-0d553872125f?auto=format&fit=crop&w=800&q=80", // person writing on paper
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80", // corporate buildings
-  ],
-  CONFLICT: [
-    "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=800&q=80", // group of soldiers
-    "https://images.unsplash.com/photo-1578241030078-01b38ededda4?auto=format&fit=crop&w=800&q=80", // soldier with rifle
-    "https://images.unsplash.com/photo-1708342421457-9c59f4843fe1?auto=format&fit=crop&w=800&q=80", // navy warship
-    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=800&q=80", // F16 jets
-  ],
-  POLICY: [
-    "https://images.unsplash.com/photo-1742252306330-453455bd7526?auto=format&fit=crop&w=800&q=80", // Big Ben & parliament at dusk
-    "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80", // military helicopter
-    "https://images.unsplash.com/photo-1755975856018-93951b519ed7?auto=format&fit=crop&w=800&q=80", // Big Ben clear sky
-  ],
-  GEOPOLITICS: [
-    "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80", // world map blue-green
-    "https://images.unsplash.com/photo-1650526087824-163941841b52?auto=format&fit=crop&w=800&q=80", // world map with pins
-    "https://images.unsplash.com/photo-1531266752426-aad472b7bbf4?auto=format&fit=crop&w=800&q=80", // terrestrial globe
-  ],
-  "M&A": [
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80", // corporate skyscrapers
-    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80", // signing documents
-    "https://images.unsplash.com/photo-1521791055366-0d553872125f?auto=format&fit=crop&w=800&q=80", // business paperwork
-  ],
-  INDUSTRY: [
-    "https://images.unsplash.com/photo-1720036236855-9a1a2e4d3f26?auto=format&fit=crop&w=800&q=80", // factory machinery
-    "https://images.unsplash.com/photo-1720036236697-018370867320?auto=format&fit=crop&w=800&q=80", // industrial plant lights
-    "https://images.unsplash.com/photo-1708342421457-9c59f4843fe1?auto=format&fit=crop&w=800&q=80", // navy warship
-    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=800&q=80", // F16 jets
-  ],
-};
-
-function NewsPlaceholder({ source, category, url, sourceLogo, articleSeed }) {
-  const [logoErr, setLogoErr] = useState(false);
-  const photos = CATEGORY_STOCK_PHOTOS[category] || CATEGORY_STOCK_PHOTOS.INDUSTRY;
-  const [photoIdx, setPhotoIdx] = useState(() => {
-    const seed = articleSeed || source || category || "";
-    const hash = [...seed].reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    return hash % photos.length;
-  });
-  const [allPhotosFailed, setAllPhotosFailed] = useState(false);
-
-  const domain = (() => { try { return url ? new URL(url).hostname : ""; } catch { return ""; } })();
-  const isGoogleDomain = !domain || domain.includes("google.com");
-  const isGoogleLogo = sourceLogo?.includes("news.google.com");
-  const effectiveLogo = !isGoogleLogo ? sourceLogo : null;
-
-  const logoUrl = !logoErr
-    ? (effectiveLogo || (!isGoogleDomain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null))
-    : null;
-
-  const gradient = PLACEHOLDER_GRADIENT[category] || "from-slate-900 via-slate-800 to-slate-700";
-
-  const handlePhotoError = () => {
-    if (photoIdx + 1 < photos.length) {
-      setPhotoIdx(photoIdx + 1);
-    } else {
-      setAllPhotosFailed(true);
-    }
-  };
-
+function NewsPlaceholder({ source, category }) {
+  const style = PLACEHOLDER_CATEGORY_STYLE[category] || PLACEHOLDER_CATEGORY_STYLE.INDUSTRY;
+  const initial = source?.charAt(0)?.toUpperCase() || "?";
   return (
-    <div className="w-full h-full relative overflow-hidden">
-      {!allPhotosFailed ? (
-        <img
-          src={photos[photoIdx]}
-          alt=""
-          className="w-full h-full object-cover"
-          onError={handlePhotoError}
-        />
-      ) : (
-        <div className={`w-full h-full bg-gradient-to-br ${gradient}`} />
-      )}
-      {/* Source logo pill — top-left, covered by HIGH badge when applicable */}
-      <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-white/85 backdrop-blur-sm rounded-full pl-1 pr-2 py-0.5 shadow-sm">
-        {logoUrl ? (
-          <img
-            src={logoUrl}
-            alt={source}
-            className="w-4 h-4 object-contain flex-shrink-0"
-            onError={() => setLogoErr(true)}
-          />
-        ) : (
-          <span className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-600 flex-shrink-0">
-            {source?.charAt(0)?.toUpperCase() || "?"}
-          </span>
-        )}
-        <span className="text-slate-700 text-[10px] font-semibold tracking-wide uppercase truncate max-w-[90px]">{source}</span>
-      </div>
+    <div className={`w-full h-full ${style.bg} flex items-center justify-center`}>
+      <span className={`text-3xl font-black ${style.accent} select-none`}>{initial}</span>
     </div>
   );
 }
@@ -340,6 +248,17 @@ function SourceFavicon({ url, source, sourceLogo }) {
 
 // ── NewsCard ──────────────────────────────────────────────────────────────────
 
+const CAT_LEFT_BORDER = {
+  CONTRACT:    "border-l-emerald-400",
+  TECHNOLOGY:  "border-l-purple-400",
+  CONFLICT:    "border-l-red-400",
+  POLICY:      "border-l-amber-400",
+  GEOPOLITICS: "border-l-sky-400",
+  "M&A":       "border-l-blue-400",
+  INDUSTRY:    "border-l-slate-300",
+  EARNINGS:    "border-l-teal-400",
+};
+
 function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
   const [imgError, setImgError] = useState(false);
   const [localImage, setLocalImage] = useState(null);
@@ -354,13 +273,15 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
   }, [article.url, article.image, localImage]);
 
   const displayImage = article.image || localImage;
+  const hasImage = !imgError && !!displayImage;
   const isNew    = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
   const srcCount = article.source_count ?? 1;
   const coveredBy = article.covered_by ?? [];
   const countryCode = article.country_code?.toLowerCase();
+  const accent = CAT_LEFT_BORDER[article.category] || CAT_LEFT_BORDER.INDUSTRY;
 
   return (
-    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 group ${
+    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 group border-l-2 ${accent} ${
       isHot
         ? "border border-orange-200 shadow-sm hover:shadow-md hover:border-orange-300"
         : "border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-200"
@@ -441,15 +362,15 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
 
         </div>
 
-        {/* ── Right: image (full card height) ── */}
-        <a
-          href={article.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-shrink-0 w-[120px] self-stretch relative overflow-hidden"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {!imgError && displayImage ? (
+        {/* ── Right: image — only when a real image is available ── */}
+        {hasImage && (
+          <a
+            href={article.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 w-[140px] self-stretch relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <img
               src={displayImage}
               alt={article.title}
@@ -457,17 +378,87 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
               onError={() => setImgError(true)}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
-          ) : (
-            <NewsPlaceholder
-              source={article.source}
-              category={article.category}
-              url={article.url}
-              sourceLogo={article.sourceLogo}
-              articleSeed={article.id || article.title}
-            />
-          )}
-        </a>
+          </a>
+        )}
 
+      </div>
+    </div>
+  );
+}
+
+// ── StoryCard — editorial grid card (desktop Today top stories) ───────────────
+
+function StoryCard({ article, isBookmarked, onBookmark }) {
+  const [imgError, setImgError] = useState(false);
+  const style = PLACEHOLDER_CATEGORY_STYLE[article.category] || PLACEHOLDER_CATEGORY_STYLE.INDUSTRY;
+  const countryCode = article.country_code?.toLowerCase();
+  const srcCount = article.source_count ?? 1;
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-200 group flex flex-col">
+
+      {/* Image area — 160px tall */}
+      <a href={article.url} target="_blank" rel="noopener noreferrer"
+        className="block relative h-[160px] overflow-hidden flex-shrink-0">
+        {article.image && !imgError ? (
+          <img
+            src={article.image}
+            alt={article.title}
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className={`w-full h-full ${style.bg} flex items-center justify-center`}>
+            <span className={`text-6xl font-black ${style.accent} opacity-10 select-none`}>
+              {article.source?.charAt(0)?.toUpperCase() || "?"}
+            </span>
+          </div>
+        )}
+        {/* Overlays */}
+        <div className="absolute bottom-2 left-2 flex items-center gap-1.5">
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider backdrop-blur-sm bg-white/90 ${getCategoryStyle(article.category)}`}>
+            {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
+          </span>
+          {countryCode && (
+            <img src={`https://flagcdn.com/w20/${countryCode}.png`} alt=""
+              className="w-5 h-3.5 object-cover rounded-sm shadow-sm" />
+          )}
+        </div>
+        {srcCount >= 2 && (
+          <div className="absolute top-2 right-2">
+            <span className="bg-orange-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full backdrop-blur-sm">
+              🔥 {srcCount}
+            </span>
+          </div>
+        )}
+      </a>
+
+      {/* Text */}
+      <div className="p-3 flex flex-col gap-2 flex-1">
+        <div className="flex items-center gap-1.5">
+          <SourceFavicon url={article.url} source={article.realSource || article.source} sourceLogo={article.sourceLogo} />
+          <span className="text-[10px] text-slate-300">·</span>
+          <span className="text-[10px] text-slate-400">{relativeTime(article.publishedAt)}</span>
+        </div>
+        <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
+          <h3 className="text-slate-800 font-bold text-[13px] leading-snug line-clamp-3 group-hover:text-purple-700 transition-colors">
+            {article.title}
+          </h3>
+        </a>
+        <div className="flex items-center justify-end gap-1 pt-1">
+          <button onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
+            className={`p-1 rounded-lg transition-colors ${isBookmarked ? "text-amber-500 bg-amber-50" : "text-slate-300 hover:text-amber-500 hover:bg-amber-50"}`}
+          >
+            {isBookmarked ? <BookmarkCheck className="w-3 h-3" /> : <Bookmark className="w-3 h-3" />}
+          </button>
+          <a href={article.url} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-purple-700 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Read <ExternalLink className="w-2.5 h-2.5" />
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -948,11 +939,32 @@ export default function Announcements() {
           {todayArticles.length > 0 && (
             <div>
               <SectionHeader label="Today" sublabel={`— last 24 hours · ${todayArticles.length} articles`} />
-              <div className="flex gap-5 items-start">
-                <div className="flex-1 min-w-0">
-                  <ArticleGrid articles={todayArticles} {...cardProps} />
+              <div className="flex flex-col lg:flex-row gap-5 items-start">
+                <div className="flex-1 min-w-0 space-y-4">
+                  {/* Top 6 stories — editorial grid on md+ screens */}
+                  <div className="hidden md:grid grid-cols-3 gap-3">
+                    {todayArticles.slice(0, 6).map((a, i) => (
+                      <StoryCard
+                        key={a.url || `story-${i}`}
+                        article={a}
+                        isBookmarked={bookmarkedUrls.has(a.url)}
+                        onBookmark={toggleBookmark}
+                      />
+                    ))}
+                  </div>
+                  {/* Overflow articles (desktop) or all articles (mobile) */}
+                  {todayArticles.length > 6 && (
+                    <div className="hidden md:block">
+                      <ArticleGrid articles={todayArticles.slice(6)} {...cardProps} />
+                    </div>
+                  )}
+                  <div className="md:hidden">
+                    <ArticleGrid articles={todayArticles} {...cardProps} />
+                  </div>
                 </div>
-                <MarketImpactWidget articles={todayArticles} />
+                <div className="hidden lg:block">
+                  <MarketImpactWidget articles={todayArticles} />
+                </div>
               </div>
             </div>
           )}
