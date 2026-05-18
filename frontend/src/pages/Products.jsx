@@ -1036,7 +1036,7 @@ export default function Products() {
               data-testid={`product-card-${product.id}`}
             >
               {/* Image or Placeholder */}
-              <div className="h-40 bg-gradient-to-br from-slate-100 to-slate-50 relative">
+              <div className="h-40 bg-slate-100 relative">
                 {(() => {
                   const imgSrc = resolveImgSrc(product.id, product.image_url, product.name);
                   return imgSrc ? (
@@ -1333,7 +1333,7 @@ export default function Products() {
             </button>
 
             {/* Header Image – fixed height, never collapses */}
-            <div className="h-52 bg-gradient-to-br from-slate-100 to-slate-50 flex-shrink-0 relative">
+            <div className="h-52 bg-slate-100 flex-shrink-0 relative">
               {(() => {
                 const modalImgSrc = resolveImgSrc(selectedProduct.id, selectedProduct.image_url, selectedProduct.name);
                 if (modalImgSrc) {

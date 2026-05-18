@@ -14,10 +14,10 @@ import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 // ── Logo helpers ──────────────────────────────────────────────────────────────
 
 const AVATAR_COLORS = [
-  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
-  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
-  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
-  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
+  "bg-purple-700", "bg-blue-700",
+  "bg-emerald-700", "bg-amber-600",
+  "bg-rose-700", "bg-indigo-700",
+  "bg-teal-700", "bg-orange-600",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -42,7 +42,7 @@ function LogoWithFallback({ name, website, size = 40 }) {
   if (!urls.length || urlIndex >= urls.length) {
     return (
       <div
-        className={`bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}
+        className={`${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}
         style={{ width: size, height: size }}
       >
         <span className="text-xs font-bold text-white tracking-tight" style={{ fontSize: size < 32 ? 9 : 12 }}>

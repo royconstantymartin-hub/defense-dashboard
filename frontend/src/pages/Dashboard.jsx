@@ -39,10 +39,10 @@ import {
 const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899'];
 
 const AVATAR_COLORS = [
-  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
-  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
-  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
-  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
+  "bg-purple-700", "bg-blue-700",
+  "bg-emerald-700", "bg-amber-600",
+  "bg-rose-700", "bg-indigo-700",
+  "bg-teal-700", "bg-orange-600",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -57,7 +57,7 @@ function CompanyLogoCell({ name }) {
   const [urlIndex, setUrlIndex] = useState(0);
   if (!urls.length || urlIndex >= urls.length) {
     return (
-      <div className={`w-8 h-8 bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
+      <div className={`w-8 h-8 ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
         <span className="text-[10px] font-bold text-white tracking-tight">{initials(name)}</span>
       </div>
     );
@@ -385,7 +385,7 @@ export default function Dashboard() {
       )}
 
       {/* This week summary strip */}
-      <div className="bg-gradient-to-r from-purple-50 to-slate-50 border border-purple-100 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center">
+      <div className="bg-purple-50 border border-purple-100 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-purple-600" />
           <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">This week</span>
