@@ -194,115 +194,23 @@ function detectCompaniesInArticles(articles) {
 
 // ── Placeholder ───────────────────────────────────────────────────────────────
 
-const PLACEHOLDER_GRADIENT = {
-  CONTRACT:    "from-emerald-950 via-emerald-900 to-emerald-800",
-  TECHNOLOGY:  "from-purple-950 via-purple-900 to-purple-800",
-  CONFLICT:    "from-red-950 via-red-900 to-red-800",
-  POLICY:      "from-amber-950 via-amber-900 to-amber-800",
-  GEOPOLITICS: "from-sky-950 via-sky-900 to-sky-800",
-  "M&A":       "from-blue-950 via-blue-900 to-blue-800",
-  INDUSTRY:    "from-slate-900 via-slate-800 to-slate-700",
+const PLACEHOLDER_CATEGORY_STYLE = {
+  CONTRACT:    { bg: "bg-emerald-50",  accent: "text-emerald-400" },
+  TECHNOLOGY:  { bg: "bg-purple-50",   accent: "text-purple-400" },
+  CONFLICT:    { bg: "bg-red-50",      accent: "text-red-400" },
+  POLICY:      { bg: "bg-amber-50",    accent: "text-amber-400" },
+  GEOPOLITICS: { bg: "bg-sky-50",      accent: "text-sky-400" },
+  "M&A":       { bg: "bg-blue-50",     accent: "text-blue-400" },
+  INDUSTRY:    { bg: "bg-slate-50",    accent: "text-slate-300" },
+  EARNINGS:    { bg: "bg-teal-50",     accent: "text-teal-400" },
 };
 
-// Curated stock photos per category — all IDs verified on unsplash.com, fallback to gradient if all fail
-const CATEGORY_STOCK_PHOTOS = {
-  TECHNOLOGY: [
-    "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80", // military helicopter
-    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=800&q=80", // F16 jets formation
-    "https://images.unsplash.com/photo-1712747153465-2637c38cc28e?auto=format&fit=crop&w=800&q=80", // fighter jet on runway
-    "https://images.unsplash.com/photo-1612529784443-40a86b856d14?auto=format&fit=crop&w=800&q=80", // satellite dish close-up
-  ],
-  CONTRACT: [
-    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80", // man signing contract
-    "https://images.unsplash.com/photo-1521791055366-0d553872125f?auto=format&fit=crop&w=800&q=80", // person writing on paper
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80", // corporate buildings
-  ],
-  CONFLICT: [
-    "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=800&q=80", // group of soldiers
-    "https://images.unsplash.com/photo-1578241030078-01b38ededda4?auto=format&fit=crop&w=800&q=80", // soldier with rifle
-    "https://images.unsplash.com/photo-1708342421457-9c59f4843fe1?auto=format&fit=crop&w=800&q=80", // navy warship
-    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=800&q=80", // F16 jets
-  ],
-  POLICY: [
-    "https://images.unsplash.com/photo-1742252306330-453455bd7526?auto=format&fit=crop&w=800&q=80", // Big Ben & parliament at dusk
-    "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80", // military helicopter
-    "https://images.unsplash.com/photo-1755975856018-93951b519ed7?auto=format&fit=crop&w=800&q=80", // Big Ben clear sky
-  ],
-  GEOPOLITICS: [
-    "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80", // world map blue-green
-    "https://images.unsplash.com/photo-1650526087824-163941841b52?auto=format&fit=crop&w=800&q=80", // world map with pins
-    "https://images.unsplash.com/photo-1531266752426-aad472b7bbf4?auto=format&fit=crop&w=800&q=80", // terrestrial globe
-  ],
-  "M&A": [
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80", // corporate skyscrapers
-    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80", // signing documents
-    "https://images.unsplash.com/photo-1521791055366-0d553872125f?auto=format&fit=crop&w=800&q=80", // business paperwork
-  ],
-  INDUSTRY: [
-    "https://images.unsplash.com/photo-1720036236855-9a1a2e4d3f26?auto=format&fit=crop&w=800&q=80", // factory machinery
-    "https://images.unsplash.com/photo-1720036236697-018370867320?auto=format&fit=crop&w=800&q=80", // industrial plant lights
-    "https://images.unsplash.com/photo-1708342421457-9c59f4843fe1?auto=format&fit=crop&w=800&q=80", // navy warship
-    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=800&q=80", // F16 jets
-  ],
-};
-
-function NewsPlaceholder({ source, category, url, sourceLogo, articleSeed }) {
-  const [logoErr, setLogoErr] = useState(false);
-  const photos = CATEGORY_STOCK_PHOTOS[category] || CATEGORY_STOCK_PHOTOS.INDUSTRY;
-  const [photoIdx, setPhotoIdx] = useState(() => {
-    const seed = articleSeed || source || category || "";
-    const hash = [...seed].reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    return hash % photos.length;
-  });
-  const [allPhotosFailed, setAllPhotosFailed] = useState(false);
-
-  const domain = (() => { try { return url ? new URL(url).hostname : ""; } catch { return ""; } })();
-  const isGoogleDomain = !domain || domain.includes("google.com");
-  const isGoogleLogo = sourceLogo?.includes("news.google.com");
-  const effectiveLogo = !isGoogleLogo ? sourceLogo : null;
-
-  const logoUrl = !logoErr
-    ? (effectiveLogo || (!isGoogleDomain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null))
-    : null;
-
-  const gradient = PLACEHOLDER_GRADIENT[category] || "from-slate-900 via-slate-800 to-slate-700";
-
-  const handlePhotoError = () => {
-    if (photoIdx + 1 < photos.length) {
-      setPhotoIdx(photoIdx + 1);
-    } else {
-      setAllPhotosFailed(true);
-    }
-  };
-
+function NewsPlaceholder({ source, category }) {
+  const style = PLACEHOLDER_CATEGORY_STYLE[category] || PLACEHOLDER_CATEGORY_STYLE.INDUSTRY;
+  const initial = source?.charAt(0)?.toUpperCase() || "?";
   return (
-    <div className="w-full h-full relative overflow-hidden">
-      {!allPhotosFailed ? (
-        <img
-          src={photos[photoIdx]}
-          alt=""
-          className="w-full h-full object-cover"
-          onError={handlePhotoError}
-        />
-      ) : (
-        <div className={`w-full h-full bg-gradient-to-br ${gradient}`} />
-      )}
-      {/* Source logo pill — top-left, covered by HIGH badge when applicable */}
-      <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-white/85 backdrop-blur-sm rounded-full pl-1 pr-2 py-0.5 shadow-sm">
-        {logoUrl ? (
-          <img
-            src={logoUrl}
-            alt={source}
-            className="w-4 h-4 object-contain flex-shrink-0"
-            onError={() => setLogoErr(true)}
-          />
-        ) : (
-          <span className="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-600 flex-shrink-0">
-            {source?.charAt(0)?.toUpperCase() || "?"}
-          </span>
-        )}
-        <span className="text-slate-700 text-[10px] font-semibold tracking-wide uppercase truncate max-w-[90px]">{source}</span>
-      </div>
+    <div className={`w-full h-full ${style.bg} flex items-center justify-center`}>
+      <span className={`text-3xl font-black ${style.accent} select-none`}>{initial}</span>
     </div>
   );
 }
@@ -461,9 +369,6 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
             <NewsPlaceholder
               source={article.source}
               category={article.category}
-              url={article.url}
-              sourceLogo={article.sourceLogo}
-              articleSeed={article.id || article.title}
             />
           )}
         </a>
@@ -948,11 +853,13 @@ export default function Announcements() {
           {todayArticles.length > 0 && (
             <div>
               <SectionHeader label="Today" sublabel={`— last 24 hours · ${todayArticles.length} articles`} />
-              <div className="flex gap-5 items-start">
+              <div className="flex flex-col lg:flex-row gap-5 items-start">
                 <div className="flex-1 min-w-0">
                   <ArticleGrid articles={todayArticles} {...cardProps} />
                 </div>
-                <MarketImpactWidget articles={todayArticles} />
+                <div className="hidden lg:block">
+                  <MarketImpactWidget articles={todayArticles} />
+                </div>
               </div>
             </div>
           )}
