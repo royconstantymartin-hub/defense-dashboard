@@ -55,7 +55,7 @@ const COUNTRY_CODES = {
 
 // ── ISO code → display name (for export markets) ────────────────────────────
 const COUNTRY_NAMES = {
-  us: "USA", gb: "UK", fr: "France", de: "Germany", it: "Italy",
+  us: "USA", gb: "UK", de: "Germany", it: "Italy",
   es: "Spain", il: "Israel", ru: "Russia", cn: "China", jp: "Japan",
   kr: "South Korea", in: "India", tr: "Turkey", se: "Sweden", no: "Norway",
   nl: "Netherlands", au: "Australia", ca: "Canada", pl: "Poland", ua: "Ukraine",

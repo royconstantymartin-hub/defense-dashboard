@@ -125,10 +125,10 @@ function relativeTime(isoStr) {
 }
 
 const AVATAR_COLORS = [
-  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
-  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
-  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
-  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
+  "bg-purple-700", "bg-blue-700",
+  "bg-emerald-700", "bg-amber-600",
+  "bg-rose-700", "bg-indigo-700",
+  "bg-teal-700", "bg-orange-600",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -147,7 +147,7 @@ function LogoWithFallback({ name, urls, clearbitUrl, sizeClass = "w-8 h-8", text
 
   if (!urlList.length || urlIndex >= urlList.length) {
     return (
-      <div className={`${sizeClass} bg-gradient-to-br ${avatarColor(name)} ${rounded} flex items-center justify-center shrink-0`}>
+      <div className={`${sizeClass} ${avatarColor(name)} ${rounded} flex items-center justify-center shrink-0`}>
         <span className={`${textClass} font-bold text-white tracking-tight`}>{initials(name)}</span>
       </div>
     );
@@ -1077,7 +1077,7 @@ export default function MarketData() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
               <p className="text-xs text-slate-500">
-                {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredPlayers.length)} sur {filteredPlayers.length} entreprises
+                {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredPlayers.length)} of {filteredPlayers.length} companies
               </p>
               <div className="flex items-center gap-1">
                 <button

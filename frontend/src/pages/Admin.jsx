@@ -133,18 +133,18 @@ export default function Admin() {
   const [refreshingImages, setRefreshingImages] = useState(false);
   const [imageRefreshResult, setImageRefreshResult] = useState(null);
 
-  const tDbTab      = useT({ en: "Database",                                    fr: "Base de données" });
-  const tDbTitle    = useT({ en: "Database Initialization",                     fr: "Initialisation de la base de données" });
-  const tDbDesc     = useT({ en: "Load reference data: companies, M&A, expenditures, regulations, contracts, products.", fr: "Charge les données de référence : entreprises, M&A, dépenses, réglementations, contrats, produits." });
-  const tNote1      = useT({ en: "• Idempotent — existing entries are not overwritten",       fr: "• Opération idempotente — les entrées existantes ne sont pas écrasées" });
-  const tNote2      = useT({ en: "• M&A records are upserted (existing data enriched)",       fr: "• Les M&A sont upsertés (enrichissement des données existantes)" });
-  const tNote3      = useT({ en: "• Admin role required",                                     fr: "• Rôle admin requis" });
-  const tSeedBtn    = useT({ en: "Initialize Database",                          fr: "Initialiser la base de données" });
-  const tSeeding    = useT({ en: "Initializing…",                                fr: "Initialisation en cours…" });
-  const tSeedOk     = useT({ en: "Success",                                      fr: "Succès" });
-  const tCompanies  = useT({ en: "companies",                                    fr: "entreprises" });
-  const tAnnoun     = useT({ en: "announcements",                                fr: "annonces" });
-  const tContracts  = useT({ en: "contracts",                                    fr: "contrats" });
+  const tDbTab      = useT({ en: "Database" });
+  const tDbTitle    = useT({ en: "Database Initialization" });
+  const tDbDesc     = useT({ en: "Load reference data: companies, M&A, expenditures, regulations, contracts, products." });
+  const tNote1      = useT({ en: "• Idempotent — existing entries are not overwritten" });
+  const tNote2      = useT({ en: "• M&A records are upserted (existing data enriched)" });
+  const tNote3      = useT({ en: "• Admin role required" });
+  const tSeedBtn    = useT({ en: "Initialize Database" });
+  const tSeeding    = useT({ en: "Initializing…" });
+  const tSeedOk     = useT({ en: "Success" });
+  const tCompanies  = useT({ en: "companies" });
+  const tAnnoun     = useT({ en: "announcements" });
+  const tContracts  = useT({ en: "contracts" });
 
   const authHeaders = {
     Authorization: `Bearer ${token}`
@@ -725,7 +725,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
         <button
           onClick={() => onModerate(article.url, "approve")}
           disabled={isApproved || !!actionLoading}
-          title="Valider l'article"
+          title="Approve article"
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
             isApproved
               ? "bg-emerald-100 text-emerald-700 border-emerald-200 cursor-default"
@@ -756,7 +756,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           <button
             onClick={() => onModerate(article.url, "reset")}
             disabled={!!actionLoading}
-            title="Annuler la modération"
+            title="Reset moderation"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-500 border border-slate-200 hover:bg-slate-50 transition-all disabled:opacity-40"
           >
             {busy("reset") ? <RefreshCw className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
@@ -1046,7 +1046,7 @@ function MAAdmin({ authHeaders }) {
 
   // ── Pilot seed ─────────────────────────────────────────────────────────────
   const handlePilotSeed = async () => {
-    if (!window.confirm("Supprimer tous les deals M&A et charger les 9 deals pilotes vérifiés ?")) return;
+    if (!window.confirm("Delete all M&A deals and load the 9 verified pilot deals?")) return;
     setPiloting(true); setPilotResult(null);
     try {
       const res = await axios.post(`${API}/ma-activities/seed-pilot`, {}, { headers: authHeaders });
@@ -1082,7 +1082,7 @@ function MAAdmin({ authHeaders }) {
       setForm(EMPTY_FORM);
       fetchItems();
     } catch (err) {
-      toast.error(err.response?.data?.detail || "Erreur création");
+      toast.error(err.response?.data?.detail || "Creation error");
     }
   };
 
@@ -1112,7 +1112,7 @@ function MAAdmin({ authHeaders }) {
             </div>
             <button onClick={handlePilotSeed} disabled={piloting}
               className="shrink-0 flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors">
-              {piloting ? <><RefreshCw className="w-4 h-4 animate-spin" /> Chargement…</> : <><Database className="w-4 h-4" /> Charger Pilot 9</>}
+              {piloting ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading…</> : <><Database className="w-4 h-4" /> Load Pilot 9</>}
             </button>
           </div>
         </CardContent>
@@ -1228,7 +1228,7 @@ function MAAdmin({ authHeaders }) {
         <Card className="bg-white border-slate-200">
           <CardHeader className="border-b border-slate-200">
             <CardTitle className="text-slate-900 flex items-center gap-2 text-base">
-              <Plus className="w-4 h-4" /> Ajouter un deal M&A
+              <Plus className="w-4 h-4" /> Add M&A Deal
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-5">
@@ -1350,7 +1350,7 @@ function MAAdmin({ authHeaders }) {
               </div>
 
               <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
-                <Plus className="w-4 h-4 mr-1" /> Créer le deal
+                <Plus className="w-4 h-4 mr-1" /> Create deal
               </Button>
             </form>
           </CardContent>

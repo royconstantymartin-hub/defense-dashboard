@@ -167,7 +167,7 @@ export default function Regulations() {
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
           <Clock className="w-3.5 h-3.5" />
-          <span>Updated: Q4 2024</span>
+          <span>Updated: {new Date().getFullYear()}</span>
           <span className="text-slate-300">|</span>
           <Database className="w-3.5 h-3.5" />
           <span>Official sources</span>
@@ -266,7 +266,7 @@ export default function Regulations() {
           <Accordion type="single" collapsible className="w-full">
             {filteredRegulations.map((reg) => {
               const flagUrl = getFlag(reg.country);
-              // "Récent" = effective_date within the last 12 months
+              // "Recent" = effective_date within the last 12 months
               const isRecent = reg.effective_date
                 && (new Date() - new Date(reg.effective_date)) < 365 * 24 * 3600 * 1000
                 && new Date(reg.effective_date) <= new Date();

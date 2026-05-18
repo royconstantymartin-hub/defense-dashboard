@@ -2598,13 +2598,13 @@ export default function Expenditures() {
           {pinnedCountry && (
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-slate-500">
-                Profil de <span className="font-semibold text-slate-700">{focusCountry.country}</span> — cliquez à nouveau sur la ligne pour fermer
+                Profile of <span className="font-semibold text-slate-700">{focusCountry.country}</span> — click the row again to close
               </p>
               <button
                 onClick={() => setPinnedCountry(null)}
                 className="text-xs text-slate-400 hover:text-slate-700 underline"
               >
-                Fermer
+                Close
               </button>
             </div>
           )}

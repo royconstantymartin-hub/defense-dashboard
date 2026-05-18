@@ -829,8 +829,9 @@ export default function Products() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex flex-col items-center justify-center h-64 gap-3">
         <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+        <p className="text-sm text-slate-400">Loading products…</p>
       </div>
     );
   }
@@ -1036,7 +1037,7 @@ export default function Products() {
               data-testid={`product-card-${product.id}`}
             >
               {/* Image or Placeholder */}
-              <div className="h-40 bg-gradient-to-br from-slate-100 to-slate-50 relative">
+              <div className="h-40 bg-slate-100 relative">
                 {(() => {
                   const imgSrc = resolveImgSrc(product.id, product.image_url, product.name);
                   return imgSrc ? (
@@ -1333,7 +1334,7 @@ export default function Products() {
             </button>
 
             {/* Header Image – fixed height, never collapses */}
-            <div className="h-52 bg-gradient-to-br from-slate-100 to-slate-50 flex-shrink-0 relative">
+            <div className="h-52 bg-slate-100 flex-shrink-0 relative">
               {(() => {
                 const modalImgSrc = resolveImgSrc(selectedProduct.id, selectedProduct.image_url, selectedProduct.name);
                 if (modalImgSrc) {

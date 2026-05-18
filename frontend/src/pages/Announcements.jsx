@@ -18,7 +18,6 @@ import {
   TrendingUp,
   Bookmark,
   BookmarkCheck,
-  Sparkles,
   Globe,
   MapPin,
   Download,
@@ -95,10 +94,6 @@ const FR_SOURCES = new Set([
 function resolveLanguage(article) {
   if (article.language === "fr" || article.language === "en") return article.language;
   return FR_SOURCES.has(article.source) ? "fr" : "en";
-}
-
-function langFlag(lang) {
-  return lang === "fr" ? "🇫🇷" : "🇬🇧";
 }
 
 /**
@@ -302,7 +297,7 @@ function SourceFavicon({ url, source, sourceLogo }) {
 
 // ── NewsCard ──────────────────────────────────────────────────────────────────
 
-function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, isHot }) {
+function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
   const [imgError, setImgError] = useState(false);
   const [localImage, setLocalImage] = useState(null);
 
@@ -321,10 +316,6 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
   const isNew    = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
   const srcCount = article.source_count ?? 1;
   const coveredBy = article.covered_by ?? [];
-  const lang     = resolveLanguage(article);
-
-  const showSummary = summaryState && (summaryState.loading || summaryState.bullets);
-
   return (
     <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 cursor-pointer ${
       isHot
@@ -352,74 +343,48 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
             )}
           </div>
 
-          {/* Title */}
-          <a href={article.url} target="_blank" rel="noopener noreferrer">
-            <h3 className="text-slate-900 font-bold text-[15px] leading-snug hover:text-purple-700 transition-colors duration-150">
-              {article.title}
-            </h3>
-          </a>
-
-          {/* Tags row — category + company + multi-source + lang */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-widest ${getCategoryStyle(article.category)}`}>
-              {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
-            </span>
-            {article.company && (
-              <span className="text-[11px] font-semibold text-purple-700">{article.company}</span>
-            )}
-            {srcCount >= 2 && (
-              <span
-                className="text-[10px] font-bold text-orange-600 flex items-center gap-1"
-                title={`Covered by: ${coveredBy.join(", ")}`}
-              >
-                🔥 {srcCount} sources
-              </span>
-            )}
-            {score >= 70 && (
-              <span className="text-[10px] font-bold text-emerald-600">HIGH</span>
-            )}
-            <span className="text-sm leading-none ml-1" title={lang === "fr" ? "French" : "English"}>
-              {langFlag(lang)}
+        {/* Bottom row: multi-source badge */}
+        {srcCount >= 2 && (
+          <div className="absolute bottom-2.5 left-3">
+            <span
+              className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide flex items-center gap-1 shadow"
+              title={`Covered by: ${coveredBy.join(", ")}`}
+            >
+              🔥 {srcCount} sources
             </span>
           </div>
+        )}
+      </a>
 
-          {/* AI Summary panel */}
-          {showSummary && (
-            <div className="bg-purple-50 border border-purple-100 rounded-xl p-3 mt-1">
-              {summaryState.loading ? (
-                <div className="flex items-center gap-2 text-purple-500 text-xs">
-                  <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                  Generating brief…
-                </div>
-              ) : summaryState.error ? (
-                <p className="text-red-500 text-xs">Failed to generate summary.</p>
-              ) : (
-                <ul className="space-y-1.5">
-                  {(summaryState.bullets || []).map((b, i) => (
-                    <li key={i} className="flex gap-2 text-xs text-slate-700 leading-snug">
-                      <span className="text-purple-500 font-bold flex-shrink-0 mt-0.5">•</span>
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
+      {/* ── Body ── */}
+      <div className="p-4 flex flex-col flex-1 gap-3">
 
-          {/* Action buttons */}
-          <div className="flex items-center gap-1 mt-0.5">
-            <button
-              onClick={(e) => { e.stopPropagation(); onSummary(article); }}
-              title="AI Brief"
-              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
-                showSummary
-                  ? "bg-purple-100 text-purple-700"
-                  : "text-slate-400 hover:bg-purple-50 hover:text-purple-600"
-              }`}
-            >
-              <Sparkles className="w-3 h-3" />
-              Brief
-            </button>
+        {/* Source + category row */}
+        <div className="flex items-center justify-between gap-2">
+          <SourceFavicon
+            url={article.url}
+            source={article.realSource || article.source}
+            sourceLogo={article.sourceLogo}
+          />
+          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border flex-shrink-0 uppercase tracking-widest ${getCategoryStyle(article.category)}`}>
+            {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
+          </span>
+        </div>
+
+        {/* Title — larger, bolder, clickable */}
+        <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1 group/title">
+          <h3 className="text-slate-900 font-bold text-[15px] leading-snug line-clamp-3 group-hover/title:text-purple-700 transition-colors duration-150">
+            {article.title}
+          </h3>
+        </a>
+
+        {/* AI Summary panel */}
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2 mt-auto">
+          <span className="text-[11px] text-slate-400 font-medium">{relativeTime(article.publishedAt)}</span>
+
+          <div className="flex items-center gap-1">
+            {/* Bookmark */}
             <button
               onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
               title={isBookmarked ? "Remove bookmark" : "Save"}
@@ -491,7 +456,7 @@ function SectionHeader({ emoji, label, sublabel, color = "slate" }) {
 
 // ── ArticleGrid ───────────────────────────────────────────────────────────────
 
-function ArticleGrid({ articles, bookmarkedUrls, summaries, onBookmark, onSummary, isHot = false }) {
+function ArticleGrid({ articles, bookmarkedUrls, onBookmark, isHot = false }) {
   return (
     <div className="flex flex-col gap-3">
       {articles.map((article, idx) => (
@@ -500,8 +465,6 @@ function ArticleGrid({ articles, bookmarkedUrls, summaries, onBookmark, onSummar
           article={article}
           isBookmarked={bookmarkedUrls.has(article.url)}
           onBookmark={onBookmark}
-          summaryState={summaries[article.url]}
-          onSummary={onSummary}
           isHot={isHot}
         />
       ))}
@@ -531,7 +494,6 @@ export default function Announcements() {
   const [hasMore,       setHasMore]       = useState(false);
 
   const [bookmarkedUrls, setBookmarkedUrls] = useState(new Set());
-  const [summaries,      setSummaries]      = useState({});
 
   // ── Fetch news — last 7 days (168 h) ──────────────────────────────────────
 
@@ -632,28 +594,6 @@ export default function Announcements() {
     }
   };
 
-  // ── AI Summary ────────────────────────────────────────────────────────────
-
-  const toggleSummary = async (article) => {
-    if (!token) { navigate("/login"); return; }
-    const url = article.url;
-    if (summaries[url]?.bullets) {
-      setSummaries((prev) => { const n = { ...prev }; delete n[url]; return n; });
-      return;
-    }
-    setSummaries((prev) => ({ ...prev, [url]: { loading: true } }));
-    try {
-      const resp = await axios.post(
-        `${API}/news/ai-summary`,
-        { url, title: article.title, summary: article.summary || "" },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      setSummaries((prev) => ({ ...prev, [url]: { loading: false, bullets: resp.data.bullets } }));
-    } catch {
-      setSummaries((prev) => ({ ...prev, [url]: { loading: false, error: true } }));
-    }
-  };
-
   // ── Client-side category + search filter ─────────────────────────────────
 
   const filtered = articles.filter((a) => {
@@ -711,9 +651,7 @@ export default function Announcements() {
 
   const cardProps = {
     bookmarkedUrls,
-    summaries,
     onBookmark: toggleBookmark,
-    onSummary: toggleSummary,
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -873,7 +811,7 @@ export default function Announcements() {
               : "No articles match your filters"}
           </p>
           <p className="text-sm mt-1 text-slate-400">
-            The scraper runs automatically twice a day at 07:00 and 19:00 UTC.
+            The scraper runs automatically twice a day.
           </p>
         </div>
       ) : (
