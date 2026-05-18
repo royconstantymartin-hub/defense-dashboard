@@ -541,7 +541,7 @@ const DEFENSE_CAPABILITIES = {
   SA: { fighters: 356,  helicopters: 250,  drones: 30,  land_vehicles: 5000,  surface_combatants: 12,  submarines: 0  },
   GB: { fighters: 227,  helicopters: 320,  drones: 12,  land_vehicles: 3600,  surface_combatants: 24,  submarines: 10 },
   DE: { fighters: 260,  helicopters: 290,  drones: 10,  land_vehicles: 4200,  surface_combatants: 12,  submarines: 6  },
-  FR: { fighters: 228,  helicopters: 310,  drones: 38,  land_vehicles: 6000,  surface_combatants: 24,  submarines: 10 },
+  FR: { fighters: 228,  helicopters: 310,  drones: 22,  land_vehicles: 6000,  surface_combatants: 24,  submarines: 10 },
   JP: { fighters: 354,  helicopters: 530,  drones: 8,   land_vehicles: 3200,  surface_combatants: 36,  submarines: 22 },
   KR: { fighters: 406,  helicopters: 620,  drones: 12,  land_vehicles: 7500,  surface_combatants: 28,  submarines: 22 },
   AU: { fighters: 100,  helicopters: 175,  drones: 8,   land_vehicles: 2000,  surface_combatants: 12,  submarines: 6  },
@@ -1040,10 +1040,12 @@ const CAPABILITY_DETAILS = {
       { model: "Lynx Mk.4 (naval, retiring)", count: 20, manufacturer: "Westland / Leonardo" },
     ],
     drones: [
-      { model: "MQ-9A Reaper MALE", count: 12, manufacturer: "General Atomics" },
-      { model: "Patroller MALE (Safran)", count: 6, manufacturer: "Safran Electronics & Defense" },
-      { model: "Sperwer / Harfang tactical", count: 12, manufacturer: "Sagem / EADS" },
-      { model: "Harmattan Combat UAS", count: 8, manufacturer: "Dassault / Safran" },
+      { model: "MQ-9A Reaper MALE (ISR / frappe)", count: 12, manufacturer: "General Atomics" },
+      { model: "Harfang SIDM MALE (retrait en cours)", count: 4, manufacturer: "EADS / Cassidian" },
+      { model: "Patroller MALE (armée de Terre)", count: null, manufacturer: "Safran Electronics & Defense" },
+      { model: "Spy'Ranger 330 SDT-L (tactique ISR)", count: null, manufacturer: "Thales" },
+      { model: "DRAC / Black Hornet (nano ISR infanterie)", count: null, manufacturer: "Novadem / FLIR" },
+      { model: "nEUROn UCAV (démonstrateur)", count: 1, manufacturer: "Dassault Aviation" },
     ],
     land_vehicles: [
       { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems (KNDS)" },
@@ -1283,8 +1285,13 @@ const PLATFORM_WIKI_TITLES = {
   "Heron TP MALE":                     "IAI Heron TP",
   "Watchkeeper WK450 tactical":        "Watchkeeper WK450",
   "Protector RG Mk.1 (MQ-9B)":        "General Atomics MQ-9 Reaper",
-  "Patroller MALE (Safran)":           "Safran Patroller",
-  "Harmattan Combat UAS":              "Dassault nEUROn",
+  "Patroller MALE (Safran)":                   "Safran Patroller",
+  "MQ-9A Reaper MALE (ISR / frappe)":          "General Atomics MQ-9 Reaper",
+  "Harfang SIDM MALE (retrait en cours)":      "EADS Harfang",
+  "Patroller MALE (armée de Terre)":           "Safran Patroller",
+  "Spy'Ranger 330 SDT-L (tactique ISR)":       "Thales Spy'Ranger",
+  "DRAC / Black Hornet (nano ISR infanterie)": "Black Hornet Nano",
+  "nEUROn UCAV (démonstrateur)":               "Dassault nEUROn",
   // ── Land – MBT ──────────────────────────────────────────────────────────
   "M1A2 SEP v3 Abrams MBT":           "M1 Abrams",
   "M1A1 Abrams MBT":                  "M1 Abrams",
@@ -1510,7 +1517,7 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
 }
 
 function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
-  const barPct = maxCount > 0 ? Math.round((item.count / maxCount) * 100) : 0;
+  const barPct = maxCount > 0 ? Math.round(((item.count ?? 0) / maxCount) * 100) : 0;
   const primaryMfr = item.manufacturer.split(' / ')[0].split(' (')[0];
 
   return (
@@ -1532,7 +1539,7 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
         {/* Count badge overlay */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-2">
           <span className={`font-mono font-bold text-lg text-white tabular-nums`}>
-            {item.count.toLocaleString()}
+            {item.count != null ? item.count.toLocaleString() : "—"}
           </span>
         </div>
       </div>
@@ -1569,8 +1576,8 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
     () => CAPABILITY_DETAILS[countryCode]?.[cat.key] || [],
     [countryCode, cat.key]
   );
-  const total = details.reduce((s, d) => s + d.count, 0);
-  const maxCount = details.length > 0 ? Math.max(...details.map(d => d.count)) : 0;
+  const total = details.reduce((s, d) => s + (d.count ?? 0), 0);
+  const maxCount = details.length > 0 ? Math.max(...details.map(d => d.count ?? 0)) : 0;
 
   const [platformImages, setPlatformImages] = useState({});
   const [imgErrors, setImgErrors] = useState({});
