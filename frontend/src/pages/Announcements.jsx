@@ -354,7 +354,7 @@ function NewsCard({ article, isBookmarked, onBookmark, summaryState, onSummary, 
 
           {/* Title */}
           <a href={article.url} target="_blank" rel="noopener noreferrer">
-            <h3 className="text-slate-900 font-bold text-[15px] leading-snug line-clamp-3 hover:text-purple-700 transition-colors duration-150">
+            <h3 className="text-slate-900 font-bold text-[15px] leading-snug hover:text-purple-700 transition-colors duration-150">
               {article.title}
             </h3>
           </a>
