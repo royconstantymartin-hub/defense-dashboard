@@ -30,15 +30,15 @@
       },
       "border": {
         "default": "border-slate-200",
-        "focus": "border-purple-500",
+        "focus": "border-blue-500",
         "subtle": "border-slate-100"
       },
       "accent": {
-        "primary": "bg-purple-700",
-        "primary_hover": "hover:bg-purple-800",
-        "secondary": "bg-purple-100",
-        "text": "text-purple-700",
-        "border": "border-purple-200"
+        "primary": "bg-slate-900",
+        "primary_hover": "hover:bg-slate-800",
+        "secondary": "bg-slate-100",
+        "text": "text-slate-900",
+        "border": "border-slate-300"
       },
       "status": {
         "success": "text-emerald-600 bg-emerald-50 border-emerald-200",
@@ -47,9 +47,9 @@
         "neutral": "text-slate-600 bg-slate-50 border-slate-200"
       },
       "charts": {
-        "primary": "#7E22CE",
-        "secondary": "#A855F7",
-        "accent": "#F3E8FF",
+        "primary": "#0F172A",
+        "secondary": "#475569",
+        "accent": "#F1F5F9",
         "success": "#10B981",
         "danger": "#EF4444",
         "grid": "#E2E8F0"
@@ -73,12 +73,12 @@
   },
   "components": {
     "buttons": {
-      "primary": "bg-purple-700 text-white hover:bg-purple-800 shadow-sm transition-all duration-200 font-medium px-6 py-2.5 rounded-lg active:scale-95",
+      "primary": "bg-slate-900 text-white hover:bg-slate-800 shadow-sm transition-all duration-200 font-medium px-6 py-2.5 rounded-lg active:scale-95",
       "secondary": "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 font-medium px-6 py-2.5 rounded-lg",
-      "ghost": "text-slate-600 hover:text-purple-700 hover:bg-purple-50 transition-colors font-medium px-4 py-2 rounded-lg"
+      "ghost": "text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium px-4 py-2 rounded-lg"
     },
     "cards": {
-      "base": "bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-purple-200",
+      "base": "bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-slate-300",
       "header": "px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50",
       "body": "p-6"
     },
@@ -86,7 +86,7 @@
       "container": "w-full overflow-hidden rounded-lg border border-slate-200 bg-white",
       "header_row": "bg-slate-50 border-b border-slate-200",
       "header_cell": "px-6 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 text-left",
-      "row": "border-b border-slate-100 hover:bg-purple-50/30 transition-colors last:border-0",
+      "row": "border-b border-slate-100 hover:bg-slate-100/30 transition-colors last:border-0",
       "cell": "px-6 py-4 text-sm text-slate-700 font-medium"
     },
     "badges": {
@@ -145,7 +145,7 @@
   "instructions_to_main_agent": {
     "general": [
       "Switch entire app to Light Mode. Remove all 'dark' class variants or hardcoded dark backgrounds.",
-      "Use 'Purple-700' (#7E22CE) as the primary accent color instead of blue or green.",
+      "Use 'Purple-700' (#0F172A) as the primary accent color instead of blue or green.",
       "Implement the Bento Grid layout for the main dashboard.",
       "Use Chivo font for headings and Inter for body text.",
       "Ensure all cards have a white background with a subtle border and shadow.",

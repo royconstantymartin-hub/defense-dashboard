@@ -125,10 +125,10 @@ function relativeTime(isoStr) {
 }
 
 const AVATAR_COLORS = [
-  "bg-purple-700", "bg-blue-700",
-  "bg-emerald-700", "bg-amber-600",
-  "bg-rose-700", "bg-indigo-700",
-  "bg-teal-700", "bg-orange-600",
+  "bg-slate-700", "bg-slate-600",
+  "bg-slate-800", "bg-slate-700",
+  "bg-slate-600", "bg-slate-800",
+  "bg-slate-700", "bg-slate-600",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -260,12 +260,12 @@ function StockChartModal({ player, liveData, onClose }) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-slate-600" />
             </div>
             <div>
               <p className="font-semibold text-slate-900 text-sm">{player.name}</p>
-              <p className="text-xs font-mono text-purple-700">{player.ticker}</p>
+              <p className="text-xs font-mono text-slate-700">{player.ticker}</p>
             </div>
           </div>
           <button
@@ -305,7 +305,7 @@ function StockChartModal({ player, liveData, onClose }) {
               onClick={() => setPeriod(p.value)}
               className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
                 period === p.value
-                  ? "bg-purple-700 text-white"
+                  ? "bg-slate-900 text-white"
                   : "text-slate-500 hover:bg-slate-100"
               }`}
             >
@@ -318,7 +318,7 @@ function StockChartModal({ player, liveData, onClose }) {
         <div className="px-2 pb-1">
           {loadingHistory ? (
             <div className="h-52 flex items-center justify-center">
-              <div className="animate-spin w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full" />
+              <div className="animate-spin w-6 h-6 border-2 border-slate-200 border-t-slate-800 rounded-full" />
             </div>
           ) : dataSource === "private" ? (
             <div className="h-52 flex flex-col items-center justify-center gap-2 text-slate-400 text-sm">
@@ -422,7 +422,7 @@ function StockChartModal({ player, liveData, onClose }) {
           </p>
           {loadingArticles ? (
             <div className="flex items-center gap-2 text-slate-400 text-sm py-4">
-              <div className="animate-spin w-4 h-4 border-2 border-slate-300 border-t-purple-500 rounded-full" />
+              <div className="animate-spin w-4 h-4 border-2 border-slate-300 border-t-slate-700 rounded-full" />
               Loading articles…
             </div>
           ) : articles.length === 0 ? (
@@ -438,7 +438,7 @@ function StockChartModal({ player, liveData, onClose }) {
                   className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors group"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-800 group-hover:text-purple-700 transition-colors line-clamp-2 leading-snug">
+                    <p className="text-sm font-medium text-slate-800 group-hover:text-slate-900 transition-colors line-clamp-2 leading-snug">
                       {article.title}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
@@ -665,7 +665,7 @@ export default function MarketData() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-slate-200 border-t-slate-800 rounded-full" />
       </div>
     );
   }
@@ -682,7 +682,7 @@ export default function MarketData() {
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
           {liveLoading ? (
-            <RefreshCw className="w-3.5 h-3.5 animate-spin text-purple-500" />
+            <RefreshCw className="w-3.5 h-3.5 animate-spin text-slate-500" />
           ) : (
             <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
           )}
@@ -728,7 +728,7 @@ export default function MarketData() {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COMPANIES</p>
-            <p className="text-2xl font-mono font-bold text-purple-700 mt-2">{filteredPlayers.length}</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{filteredPlayers.length}</p>
             <p className="text-xs text-slate-500 mt-1">of {players.length} total</p>
           </CardContent>
         </Card>
@@ -740,10 +740,10 @@ export default function MarketData() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="font-heading text-lg text-slate-900 flex items-center gap-2">
-                <Pin className="w-4 h-4 text-purple-600" />
+                <Pin className="w-4 h-4 text-slate-600" />
                 Pinned Companies
               </CardTitle>
-              <p className="text-xs text-slate-400 mt-0.5">Click the <Pin className="w-3 h-3 inline text-purple-500" /> icon in the table to pin up to 3 companies</p>
+              <p className="text-xs text-slate-400 mt-0.5">Click the <Pin className="w-3 h-3 inline text-slate-500" /> icon in the table to pin up to 3 companies</p>
             </div>
             <span className="text-xs font-mono text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-md">
               {pinnedCompanies.length} / 3
@@ -833,7 +833,7 @@ export default function MarketData() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {COUNTRIES.map(c => (
-              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-purple-50">
+              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-slate-50">
                 {c.label}
               </SelectItem>
             ))}
@@ -845,7 +845,7 @@ export default function MarketData() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {SEGMENTS.map(s => (
-              <SelectItem key={s.value} value={s.value} className="text-slate-700 focus:bg-purple-50">
+              <SelectItem key={s.value} value={s.value} className="text-slate-700 focus:bg-slate-50">
                 {s.label}
               </SelectItem>
             ))}
@@ -858,7 +858,7 @@ export default function MarketData() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {SORT_OPTIONS.map(opt => (
-              <SelectItem key={opt.value} value={opt.value} className="text-slate-700 focus:bg-purple-50">
+              <SelectItem key={opt.value} value={opt.value} className="text-slate-700 focus:bg-slate-50">
                 {opt.label}
               </SelectItem>
             ))}
@@ -883,9 +883,9 @@ export default function MarketData() {
           </button>
         )}
         {selectedSegment !== "all" && (
-          <span className="flex items-center gap-1 text-xs bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full font-medium">
+          <span className="flex items-center gap-1 text-xs bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
             {SEGMENTS.find(s => s.value === selectedSegment)?.label}
-            <button onClick={() => setSelectedSegment("all")} className="hover:text-purple-900 ml-0.5">
+            <button onClick={() => setSelectedSegment("all")} className="hover:text-slate-900 ml-0.5">
               <X className="w-3 h-3" />
             </button>
           </span>
@@ -915,7 +915,7 @@ export default function MarketData() {
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Revenue</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">
                     Change
-                    <span className="ml-1 text-purple-500 normal-case font-normal">(click for chart)</span>
+                    <span className="ml-1 text-slate-400 normal-case font-normal">(click for chart)</span>
                   </th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Specializations</th>
                 </tr>
@@ -932,7 +932,7 @@ export default function MarketData() {
                   return (
                     <tr
                       key={player.id}
-                      className="border-b border-slate-100 hover:bg-purple-50/50 transition-colors cursor-pointer"
+                      className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
                       onClick={() => setSelectedPlayer(player)}
                       data-testid={`player-row-${player.id}`}
                     >
@@ -951,13 +951,13 @@ export default function MarketData() {
                             disabled={!pinnedCompanies.includes(player.name) && pinnedCompanies.length >= 3}
                             className={`p-1 rounded transition-colors ${
                               pinnedCompanies.includes(player.name)
-                                ? "text-purple-600 hover:text-purple-800"
+                                ? "text-slate-800 hover:text-slate-900"
                                 : pinnedCompanies.length >= 3
                                 ? "text-slate-200 cursor-not-allowed"
-                                : "text-slate-300 hover:text-purple-500 hover:bg-purple-50"
+                                : "text-slate-300 hover:text-slate-700 hover:bg-slate-50"
                             }`}
                           >
-                            <Pin className={`w-3.5 h-3.5 ${pinnedCompanies.includes(player.name) ? "fill-purple-600" : ""}`} />
+                            <Pin className={`w-3.5 h-3.5 ${pinnedCompanies.includes(player.name) ? "fill-slate-800" : ""}`} />
                           </button>
                           {token && (
                             <button
@@ -987,7 +987,7 @@ export default function MarketData() {
                             urls={getLogoUrls(player.name)}
                           />
                             <div>
-                              <p className="text-slate-900 group-hover:text-purple-700 font-medium text-sm transition-colors">{player.name}</p>
+                              <p className="text-slate-900 group-hover:text-slate-700 font-medium text-sm transition-colors">{player.name}</p>
                               <div className="flex items-center gap-1.5 mt-0.5">
                                 {flagUrl && (
                                   <img src={flagUrl} alt={player.country} className="w-4 h-3 object-cover rounded-sm" />
@@ -1001,7 +1001,7 @@ export default function MarketData() {
 
                       {/* Ticker */}
                       <td className="p-4">
-                        <span className="font-mono text-sm text-purple-700 font-medium bg-purple-50 border border-purple-200 px-2 py-0.5 rounded">
+                        <span className="font-mono text-sm text-slate-700 font-medium bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
                           {player.ticker}
                         </span>
                       </td>
@@ -1011,10 +1011,10 @@ export default function MarketData() {
                         {isPrivate(player.ticker) ? (
                           <span className="font-mono text-sm text-slate-400">Private</span>
                         ) : (
-                          <span className={`font-mono text-sm font-medium ${priceChanged ? "text-purple-700" : "text-slate-900"}`}>
+                          <span className={`font-mono text-sm font-medium ${priceChanged ? "text-slate-900" : "text-slate-900"}`}>
                             {displayPrice > 0 ? `$${displayPrice.toFixed(2)}` : "—"}
                             {priceChanged && (
-                              <span className="ml-1 text-xs text-purple-400">live</span>
+                              <span className="ml-1 text-xs text-slate-500">live</span>
                             )}
                           </span>
                         )}
@@ -1083,7 +1083,7 @@ export default function MarketData() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:border-purple-300 hover:text-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:border-slate-400 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -1103,8 +1103,8 @@ export default function MarketData() {
                         onClick={() => setCurrentPage(item)}
                         className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${
                           item === currentPage
-                            ? "bg-purple-700 text-white"
-                            : "border border-slate-200 text-slate-600 hover:border-purple-300 hover:text-purple-700"
+                            ? "bg-slate-900 text-white"
+                            : "border border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900"
                         }`}
                       >
                         {item}
@@ -1114,7 +1114,7 @@ export default function MarketData() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:border-purple-300 hover:text-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:border-slate-400 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -1161,7 +1161,7 @@ export default function MarketData() {
                     )}
                     <span className="text-sm text-slate-500">{selectedPlayer.country}</span>
                     <span className="text-slate-300">•</span>
-                    <span className="font-mono text-sm text-purple-700 font-medium">{selectedPlayer.ticker}</span>
+                    <span className="font-mono text-sm text-slate-700 font-medium">{selectedPlayer.ticker}</span>
                   </div>
                 </div>
               </div>
@@ -1178,7 +1178,7 @@ export default function MarketData() {
                     })()}
                   </p>
                   {liveData[selectedPlayer.ticker] && (
-                    <p className="text-xs text-purple-500 mt-1 flex items-center gap-1">
+                    <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
                       <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse inline-block" />
                       Live price
                     </p>
@@ -1197,7 +1197,7 @@ export default function MarketData() {
                         </p>
                         {!isPrivate(selectedPlayer.ticker) && (
                           <button
-                            className="text-xs text-purple-600 underline mt-1 cursor-pointer"
+                            className="text-xs text-blue-600 underline mt-1 cursor-pointer"
                             onClick={() => {
                               setSelectedPlayer(null);
                               setChartPlayer(selectedPlayer);
@@ -1229,7 +1229,7 @@ export default function MarketData() {
                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500 mb-2">SPECIALIZATIONS</p>
                 <div className="flex flex-wrap gap-2">
                   {selectedPlayer.specializations.map((spec, idx) => (
-                    <span key={idx} className="text-sm bg-purple-50 text-purple-700 border border-purple-200 px-3 py-1 rounded-full font-medium">
+                    <span key={idx} className="text-sm bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-full font-medium">
                       {spec}
                     </span>
                   ))}
@@ -1238,7 +1238,7 @@ export default function MarketData() {
 
               <button
                 onClick={() => { setSelectedPlayer(null); setProfileName(selectedPlayer.name); }}
-                className="w-full flex items-center justify-center gap-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
               >
                 <UserCircle className="w-4 h-4" />
                 View Full Company Profile

@@ -14,10 +14,10 @@ import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 // ── Logo helpers ──────────────────────────────────────────────────────────────
 
 const AVATAR_COLORS = [
-  "bg-purple-700", "bg-blue-700",
-  "bg-emerald-700", "bg-amber-600",
-  "bg-rose-700", "bg-indigo-700",
-  "bg-teal-700", "bg-orange-600",
+  "bg-slate-700", "bg-slate-600",
+  "bg-slate-800", "bg-slate-700",
+  "bg-slate-600", "bg-slate-800",
+  "bg-slate-700", "bg-slate-600",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -176,58 +176,58 @@ const MACRO_CATEGORIES = [
 
 const CAT_COLORS = {
   purple: {
-    border: "border-purple-200", hoverBorder: "hover:border-purple-300",
-    activeBorder: "border-purple-500", activeBg: "bg-purple-50/60",
-    icon: "text-purple-700", iconBg: "bg-purple-50 border-purple-200",
-    badge: "bg-purple-100 text-purple-700",
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
+    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-800",
   },
   rose: {
-    border: "border-rose-200", hoverBorder: "hover:border-rose-300",
-    activeBorder: "border-rose-500", activeBg: "bg-rose-50/60",
-    icon: "text-rose-600", iconBg: "bg-rose-50 border-rose-200",
-    badge: "bg-rose-100 text-rose-700",
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
+    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-800",
   },
   indigo: {
-    border: "border-indigo-200", hoverBorder: "hover:border-indigo-300",
-    activeBorder: "border-indigo-500", activeBg: "bg-indigo-50/60",
-    icon: "text-indigo-600", iconBg: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
+    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-800",
   },
   amber: {
-    border: "border-amber-200", hoverBorder: "hover:border-amber-300",
-    activeBorder: "border-amber-500", activeBg: "bg-amber-50/60",
-    icon: "text-amber-600", iconBg: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
+    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-800",
   },
   blue: {
-    border: "border-blue-200", hoverBorder: "hover:border-blue-300",
-    activeBorder: "border-blue-500", activeBg: "bg-blue-50/60",
-    icon: "text-blue-600", iconBg: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
+    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-800",
   },
   sky: {
-    border: "border-sky-200", hoverBorder: "hover:border-sky-300",
-    activeBorder: "border-sky-500", activeBg: "bg-sky-50/60",
-    icon: "text-sky-600", iconBg: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700",
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
+    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-800",
   },
   emerald: {
-    border: "border-emerald-200", hoverBorder: "hover:border-emerald-300",
-    activeBorder: "border-emerald-500", activeBg: "bg-emerald-50/60",
-    icon: "text-emerald-600", iconBg: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
+    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-800",
   },
   orange: {
-    border: "border-orange-200", hoverBorder: "hover:border-orange-300",
-    activeBorder: "border-orange-500", activeBg: "bg-orange-50/60",
-    icon: "text-orange-600", iconBg: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
+    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-800",
   },
   slate: {
     border: "border-slate-200", hoverBorder: "hover:border-slate-300",
-    activeBorder: "border-slate-400", activeBg: "bg-slate-50",
-    icon: "text-slate-500", iconBg: "bg-slate-50 border-slate-200",
-    badge: "bg-slate-100 text-slate-600",
+    activeBorder: "border-slate-900", activeBg: "bg-slate-50",
+    icon: "text-slate-700", iconBg: "bg-slate-50 border-slate-200",
+    badge: "bg-slate-100 text-slate-800",
   },
 };
 
@@ -312,16 +312,16 @@ function CompactPlayerRow({ company, onClick }) {
 
   return (
     <div
-      className="relative flex items-center gap-3 px-4 py-2.5 hover:bg-purple-50/40 transition-colors cursor-pointer group"
+      className="relative flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors cursor-pointer group"
       onClick={onClick}
     >
-      <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-slate-900 opacity-0 group-hover:opacity-100 transition-opacity" />
 
       <LogoWithFallback name={company.name} website={company.website} size={32} />
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
-          <span className="font-medium text-[13px] text-slate-800 group-hover:text-purple-700 transition-colors truncate">
+          <span className="font-medium text-[13px] text-slate-800 group-hover:text-slate-900 transition-colors truncate">
             {company.name}
           </span>
           {url && (
@@ -330,7 +330,7 @@ function CompactPlayerRow({ company, onClick }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-slate-200 hover:text-purple-400 flex-shrink-0 transition-colors"
+              className="text-slate-200 hover:text-blue-500 flex-shrink-0 transition-colors"
             >
               <ExternalLink className="w-3 h-3" />
             </a>
@@ -365,7 +365,7 @@ function CompactPlayerRow({ company, onClick }) {
         )}
       </div>
 
-      <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-purple-400 transition-colors flex-shrink-0" />
+      <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-slate-600 transition-colors flex-shrink-0" />
     </div>
   );
 }
@@ -526,7 +526,7 @@ export default function PrivatePlayers() {
       {/* Page header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-purple-700 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center">
             <Lock className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -542,10 +542,10 @@ export default function PrivatePlayers() {
       {!loading && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Companies",      value: players.length,                    icon: Building2,  color: "text-purple-700" },
-            { label: "Countries",      value: countryCounts.length,              icon: Globe,      color: "text-blue-600"   },
-            { label: "Total Valuation",value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-emerald-600"},
-            { label: "With Funding",   value: totalFunded,                       icon: DollarSign, color: "text-amber-600"  },
+            { label: "Companies",      value: players.length,                    icon: Building2,  color: "text-slate-600" },
+            { label: "Countries",      value: countryCounts.length,              icon: Globe,      color: "text-slate-600" },
+            { label: "Total Valuation",value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-slate-600" },
+            { label: "With Funding",   value: totalFunded,                       icon: DollarSign, color: "text-slate-600" },
           ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
@@ -586,7 +586,7 @@ export default function PrivatePlayers() {
       {/* Body */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
-          <div className="w-10 h-10 rounded-full border-4 border-purple-200 border-t-purple-700 animate-spin" />
+          <div className="w-10 h-10 rounded-full border-4 border-slate-200 border-t-slate-800 animate-spin" />
           <p className="text-sm text-slate-500">Loading companies…</p>
         </div>
       ) : error ? (
@@ -607,13 +607,13 @@ export default function PrivatePlayers() {
                 onClick={() => setFilterCountry("all")}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                   filterCountry === "all"
-                    ? "bg-purple-50 text-purple-700 font-medium"
+                    ? "bg-slate-100 text-slate-900 font-medium"
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                 }`}
               >
                 <span>All countries</span>
                 <span className={`text-xs font-mono px-1.5 py-0.5 rounded-full ${
-                  filterCountry === "all" ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-400"
+                  filterCountry === "all" ? "bg-slate-200 text-slate-800" : "bg-slate-100 text-slate-400"
                 }`}>
                   {players.length}
                 </span>
@@ -628,7 +628,7 @@ export default function PrivatePlayers() {
                     onClick={() => setFilterCountry(country)}
                     className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                       active
-                        ? "bg-purple-50 text-purple-700 font-medium"
+                        ? "bg-slate-100 text-slate-900 font-medium"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                     }`}
                   >
@@ -646,7 +646,7 @@ export default function PrivatePlayers() {
                       <span className="truncate">{country}</span>
                     </div>
                     <span className={`text-xs font-mono px-1.5 py-0.5 rounded-full flex-shrink-0 ml-1 ${
-                      active ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-400"
+                      active ? "bg-slate-200 text-slate-800" : "bg-slate-100 text-slate-400"
                     }`}>
                       {count}
                     </span>
@@ -666,7 +666,7 @@ export default function PrivatePlayers() {
                   <p className="text-slate-400 text-sm">No companies match your search.</p>
                   <button
                     onClick={() => { setSearch(""); setFilterCountry("all"); setSelectedCategory(null); }}
-                    className="mt-1 text-xs text-purple-700 hover:text-purple-900 font-medium underline underline-offset-2"
+                    className="mt-1 text-xs text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2"
                   >
                     Clear search
                   </button>

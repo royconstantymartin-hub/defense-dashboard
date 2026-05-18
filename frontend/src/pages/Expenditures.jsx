@@ -484,7 +484,7 @@ const CATEGORY_LABEL = {
 
 // ── Logo helpers (mirrors MarketData.jsx) ────────────────────────────────────
 const AVATAR_COLORS = [
-  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
+  "from-slate-700 to-slate-900", "from-blue-600 to-blue-800",
   "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
   "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
   "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
@@ -601,11 +601,11 @@ const CAP_CATEGORIES = [
     bg: "bg-white",
     border: "border-slate-200",
     labelColor: "text-slate-500",
-    countColor: "text-purple-700",
-    dotColor: "text-purple-400",
-    progressColor: "bg-purple-600",
-    iconBadgeBg: "bg-purple-50",
-    iconColor: "text-purple-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
   },
   {
     key: "helicopters",
@@ -622,11 +622,11 @@ const CAP_CATEGORIES = [
     bg: "bg-white",
     border: "border-slate-200",
     labelColor: "text-slate-500",
-    countColor: "text-purple-700",
-    dotColor: "text-purple-400",
-    progressColor: "bg-purple-600",
-    iconBadgeBg: "bg-purple-50",
-    iconColor: "text-purple-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
   },
   {
     key: "drones",
@@ -644,11 +644,11 @@ const CAP_CATEGORIES = [
     bg: "bg-white",
     border: "border-slate-200",
     labelColor: "text-slate-500",
-    countColor: "text-purple-700",
-    dotColor: "text-purple-400",
-    progressColor: "bg-purple-600",
-    iconBadgeBg: "bg-purple-50",
-    iconColor: "text-purple-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
   },
   {
     key: "land_vehicles",
@@ -660,11 +660,11 @@ const CAP_CATEGORIES = [
     bg: "bg-white",
     border: "border-slate-200",
     labelColor: "text-slate-500",
-    countColor: "text-purple-700",
-    dotColor: "text-purple-400",
-    progressColor: "bg-purple-600",
-    iconBadgeBg: "bg-purple-50",
-    iconColor: "text-purple-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
   },
   {
     key: "surface_combatants",
@@ -676,11 +676,11 @@ const CAP_CATEGORIES = [
     bg: "bg-white",
     border: "border-slate-200",
     labelColor: "text-slate-500",
-    countColor: "text-purple-700",
-    dotColor: "text-purple-400",
-    progressColor: "bg-purple-600",
-    iconBadgeBg: "bg-purple-50",
-    iconColor: "text-purple-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
   },
   {
     key: "submarines",
@@ -692,11 +692,11 @@ const CAP_CATEGORIES = [
     bg: "bg-white",
     border: "border-slate-200",
     labelColor: "text-slate-500",
-    countColor: "text-purple-700",
-    dotColor: "text-purple-400",
-    progressColor: "bg-purple-600",
-    iconBadgeBg: "bg-purple-50",
-    iconColor: "text-purple-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
   },
 ];
 
@@ -1442,8 +1442,8 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
   return (
     <div
       className={`rounded-xl overflow-hidden border bg-white shadow-sm transition-all ${
-        isClickable ? "cursor-pointer hover:shadow-md hover:border-purple-300" : ""
-      } ${isSelected ? "border-purple-400 ring-2 ring-purple-200 ring-offset-1" : cat.border}`}
+        isClickable ? "cursor-pointer hover:shadow-md hover:border-slate-300" : ""
+      } ${isSelected ? "border-slate-400 ring-2 ring-slate-200 ring-offset-1" : cat.border}`}
       onClick={isClickable ? onClick : undefined}
     >
       {/* Light header */}
@@ -1514,7 +1514,7 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
   const primaryMfr = item.manufacturer.split(' / ')[0].split(' (')[0];
 
   return (
-    <div className="bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-purple-200 hover:shadow-lg transition-all duration-200 group flex flex-col">
+    <div className="bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-slate-300 hover:shadow-lg transition-all duration-200 group flex flex-col">
       {/* Image */}
       <div className={`h-32 ${cat.bg} relative overflow-hidden shrink-0`}>
         {imgSrc ? (
@@ -1661,7 +1661,7 @@ function DefenseCapabilitiesCard({ countryCode }) {
       <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Gauge className="w-4 h-4 text-purple-600" />
+            <Gauge className="w-4 h-4 text-slate-600" />
             <CardTitle className="font-heading text-base text-slate-900">Military Capabilities</CardTitle>
           </div>
           <span className="text-[10px] text-slate-400 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
@@ -1721,7 +1721,7 @@ function BranchCard({ branch, typePhoto, emblemUrl }) {
       href={branch.website}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col rounded-xl border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all bg-white overflow-hidden"
+      className="group flex flex-col rounded-xl border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all bg-white overflow-hidden"
     >
       {/* Photo header area */}
       <div className="relative w-full h-16 overflow-hidden shrink-0">
@@ -1761,7 +1761,7 @@ function BranchCard({ branch, typePhoto, emblemUrl }) {
       {/* Text area */}
       <div className="p-3 flex flex-col gap-1.5">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-slate-800 group-hover:text-purple-700 leading-tight transition-colors line-clamp-2">
+          <p className="text-sm font-bold text-slate-800 group-hover:text-slate-900 leading-tight transition-colors line-clamp-2">
             {branch.name}
           </p>
           <p className="text-[11px] text-slate-500 mt-0.5">{branch.role}</p>
@@ -1798,7 +1798,7 @@ function NewsCard({ article }) {
       href={article.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col rounded-lg border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all overflow-hidden bg-white"
+      className="group flex flex-col rounded-lg border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all overflow-hidden bg-white"
     >
       {/* Fixed-height image zone — always h-36, always the same visual weight */}
       <div className="w-full h-36 overflow-hidden shrink-0 relative">
@@ -1821,7 +1821,7 @@ function NewsCard({ article }) {
 
       {/* Text content */}
       <div className="p-3 flex flex-col flex-1">
-        <p className="text-sm font-semibold text-slate-800 group-hover:text-purple-700 line-clamp-2 leading-snug transition-colors">
+        <p className="text-sm font-semibold text-slate-800 group-hover:text-slate-900 line-clamp-2 leading-snug transition-colors">
           {article.title}
         </p>
         {article.description && (
@@ -1838,7 +1838,7 @@ function NewsCard({ article }) {
               <span className="text-[10px] text-slate-300 shrink-0">· {fmtDate(article.publishedAt)}</span>
             )}
           </div>
-          <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-400 transition-colors shrink-0 ml-1" />
+          <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-colors shrink-0 ml-1" />
         </div>
       </div>
     </a>
@@ -1970,7 +1970,7 @@ function CountryProfileSection({ country, allExpenditures }) {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
             <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-purple-600" />
+              <Shield className="w-4 h-4 text-slate-600" />
               <CardTitle className="font-heading text-base text-slate-900">Military Branches</CardTitle>
             </div>
           </CardHeader>
@@ -1997,7 +1997,7 @@ function CountryProfileSection({ country, allExpenditures }) {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
             <div className="flex items-center gap-2">
-              <BarChart2 className="w-4 h-4 text-purple-600" />
+              <BarChart2 className="w-4 h-4 text-slate-600" />
               <CardTitle className="font-heading text-base text-slate-900">
                 {country.region} — Comparison
               </CardTitle>
@@ -2029,7 +2029,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                         return (
                           <div className="bg-white border border-slate-200 p-2.5 rounded-lg shadow-lg text-sm">
                             <p className="font-semibold text-slate-800">{d.country}</p>
-                            <p className="font-mono text-purple-700">${d.expenditure}B</p>
+                            <p className="font-mono text-slate-900">${d.expenditure}B</p>
                             <p className="text-slate-400 text-xs">{d.gdp_percent}% of GDP</p>
                           </div>
                         );
@@ -2049,7 +2049,7 @@ function CountryProfileSection({ country, allExpenditures }) {
               </ResponsiveContainer>
             </div>
             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-purple-700 inline-block" />
+              <span className="w-2 h-2 rounded-full bg-slate-700 inline-block" />
               {country.country} highlighted
               <span className="w-2 h-2 rounded-full bg-violet-200 inline-block ml-2" />
               Regional peers
@@ -2064,7 +2064,7 @@ function CountryProfileSection({ country, allExpenditures }) {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-purple-600" />
+              <FileText className="w-4 h-4 text-slate-600" />
               <CardTitle className="font-heading text-base text-slate-900">Key Contracts & Programs</CardTitle>
             </div>
           </CardHeader>
@@ -2078,7 +2078,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                 {profile.contracts.map((c, i) => (
                   <div
                     key={c.id || i}
-                    className={`pl-3 pr-3 py-3 rounded-lg border border-slate-100 border-l-4 hover:border-purple-100 hover:bg-slate-50/60 transition-colors ${CONTRACT_CATEGORY_COLOR[c.category] || "border-l-slate-300"}`}
+                    className={`pl-3 pr-3 py-3 rounded-lg border border-slate-100 border-l-4 hover:border-slate-200 hover:bg-slate-50/60 transition-colors ${CONTRACT_CATEGORY_COLOR[c.category] || "border-l-slate-300"}`}
                   >
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <p className="text-sm font-medium text-slate-800 leading-snug line-clamp-2">{c.title}</p>
@@ -2093,7 +2093,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                         </span>
                       )}
                       {c.program && (
-                        <span className="text-xs text-purple-600 font-semibold">{c.program}</span>
+                        <span className="text-xs text-slate-700 font-semibold">{c.program}</span>
                       )}
                       {formatAmount(c.amount_min, c.amount_max) && (
                         <span className="text-xs font-mono text-slate-700 font-semibold ml-auto">
@@ -2118,7 +2118,7 @@ function CountryProfileSection({ country, allExpenditures }) {
           <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-purple-600" />
+                <Building2 className="w-4 h-4 text-slate-600" />
                 <CardTitle className="font-heading text-base text-slate-900">Defense Industry</CardTitle>
               </div>
               {/* National / Multinational tabs */}
@@ -2126,7 +2126,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                 <button
                   onClick={() => { setIndustryTab("national"); setShowAllCompanies(false); }}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                    industryTab === "national" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                    industryTab === "national" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   <Flag className="w-3 h-3" /> National
@@ -2134,7 +2134,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                 <button
                   onClick={() => { setIndustryTab("multinational"); setShowAllCompanies(false); }}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
-                    industryTab === "multinational" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                    industryTab === "multinational" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   <Globe className="w-3 h-3" /> Multinational
@@ -2164,7 +2164,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                         className={`flex items-center justify-between p-3 rounded-lg border border-slate-100 transition-colors gap-3 ${
                           isCluster
                             ? "bg-slate-50/80"
-                            : "hover:border-purple-100 hover:bg-slate-50/60 cursor-pointer"
+                            : "hover:border-slate-200 hover:bg-slate-50/60 cursor-pointer"
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
@@ -2180,7 +2180,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                             </div>
                             <div className="flex gap-1 flex-wrap mt-0.5">
                               {c.specializations.slice(0, 2).map((s, si) => (
-                                <span key={si} className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded">
+                                <span key={si} className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
                                   {s}
                                 </span>
                               ))}
@@ -2199,7 +2199,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                   {all.length > PREVIEW && (
                     <button
                       onClick={() => setShowAllCompanies(v => !v)}
-                      className="w-full text-xs text-purple-600 hover:text-purple-800 font-medium py-2 border border-dashed border-purple-200 rounded-lg hover:bg-purple-50/40 transition-colors"
+                      className="w-full text-xs text-blue-600 hover:text-blue-800 font-medium py-2 border border-dashed border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                     >
                       {showAllCompanies ? `Show less` : `See all ${all.length} companies`}
                     </button>
@@ -2219,7 +2219,7 @@ function CountryProfileSection({ country, allExpenditures }) {
       <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
           <div className="flex items-center gap-2">
-            <Newspaper className="w-4 h-4 text-purple-600" />
+            <Newspaper className="w-4 h-4 text-slate-600" />
             <CardTitle className="font-heading text-base text-slate-900">
               Recent Defense News — {country.country}
             </CardTitle>
@@ -2343,7 +2343,7 @@ export default function Expenditures() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-slate-200 border-t-slate-800 rounded-full" />
       </div>
     );
   }
@@ -2352,7 +2352,7 @@ export default function Expenditures() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
         <p className="font-medium">Failed to load expenditure data.</p>
-        <button onClick={fetchExpenditures} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">
+        <button onClick={fetchExpenditures} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 transition-colors">
           Retry
         </button>
       </div>
@@ -2404,7 +2404,7 @@ export default function Expenditures() {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">AVG % OF GDP</p>
-            <p className="text-2xl font-mono font-bold text-purple-700 mt-2">{avgGdpPercent}%</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{avgGdpPercent}%</p>
             <p className="text-xs text-slate-500 mt-1">NATO target: 2%</p>
           </CardContent>
         </Card>
@@ -2430,7 +2430,7 @@ export default function Expenditures() {
                 <button
                   onClick={() => setChartMode("absolute")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                    chartMode === "absolute" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                    chartMode === "absolute" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   <BarChart2 className="w-3.5 h-3.5" /> $B
@@ -2438,7 +2438,7 @@ export default function Expenditures() {
                 <button
                   onClick={() => setChartMode("gdp")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                    chartMode === "gdp" ? "bg-white text-purple-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                    chartMode === "gdp" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   <Percent className="w-3.5 h-3.5" /> GDP
@@ -2480,7 +2480,7 @@ export default function Expenditures() {
                               <img src={getFlag(data.country_code)} alt={data.country} className="w-5 h-4 object-cover rounded-sm" />
                               <span className="text-slate-900 font-medium text-sm">{data.country}</span>
                             </div>
-                            <p className="text-purple-700 font-mono font-semibold">${data.expenditure}B</p>
+                            <p className="text-slate-900 font-mono font-semibold">${data.expenditure}B</p>
                             <p className="text-slate-500 text-xs">{data.gdp_percent}% of GDP</p>
                           </div>
                         );
@@ -2494,7 +2494,7 @@ export default function Expenditures() {
             </div>
             {chartMode === "gdp" && (
               <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-purple-400 inline-block" />
+                <span className="w-2 h-2 rounded-full bg-slate-400 inline-block" />
                 NATO 2% target — countries above this threshold are highlighted in the table
               </p>
             )}
@@ -2529,7 +2529,7 @@ export default function Expenditures() {
                         return (
                           <div className="bg-white border border-slate-200 p-3 rounded-lg shadow-lg">
                             <p className="text-slate-900 font-medium text-sm">{payload[0].name}</p>
-                            <p className="font-mono text-purple-700 font-semibold">${payload[0].value.toFixed(1)}B</p>
+                            <p className="font-mono text-slate-900 font-semibold">${payload[0].value.toFixed(1)}B</p>
                           </div>
                         );
                       }
@@ -2573,7 +2573,7 @@ export default function Expenditures() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {REGIONS.map(r => (
-              <SelectItem key={r.value} value={r.value} className="text-slate-700 focus:bg-purple-50">
+              <SelectItem key={r.value} value={r.value} className="text-slate-700 focus:bg-slate-50">
                 {r.label}
               </SelectItem>
             ))}
@@ -2586,7 +2586,7 @@ export default function Expenditures() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {SORT_OPTIONS.map(opt => (
-              <SelectItem key={opt.value} value={opt.value} className="text-slate-700 focus:bg-purple-50">
+              <SelectItem key={opt.value} value={opt.value} className="text-slate-700 focus:bg-slate-50">
                 {opt.label}
               </SelectItem>
             ))}
@@ -2636,8 +2636,8 @@ export default function Expenditures() {
                     onClick={() => handleRowClick(exp)}
                     className={`border-b border-slate-100 cursor-pointer transition-colors ${
                       pinnedCountry?.id === exp.id
-                        ? "bg-purple-50 border-l-2 border-l-purple-600"
-                        : "hover:bg-purple-50/30"
+                        ? "bg-slate-100 border-l-2 border-l-slate-900"
+                        : "hover:bg-slate-50"
                     }`}
                     data-testid={`expenditure-row-${exp.id}`}
                   >
@@ -2676,7 +2676,7 @@ export default function Expenditures() {
                     </td>
                     <td className="p-4 text-right">
                       {exp.source ? (
-                        <span className="inline-flex items-center text-xs font-medium text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-full">
+                        <span className="inline-flex items-center text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
                           {exp.source}
                         </span>
                       ) : (
@@ -2707,7 +2707,7 @@ export default function Expenditures() {
               .sort((a, b) => b.expenditure - a.expenditure)
               .slice(0, 5)
               .map((exp, i) => {
-                const shade = ["bg-purple-700", "bg-purple-600", "bg-purple-500", "bg-purple-400", "bg-purple-300"];
+                const shade = ["bg-slate-900", "bg-slate-700", "bg-slate-600", "bg-slate-500", "bg-slate-400"];
                 return (
                   <div key={exp.id} className="flex flex-col items-center gap-2 text-center">
                     <span className="text-xs font-mono text-slate-400 font-bold">#{i + 1}</span>

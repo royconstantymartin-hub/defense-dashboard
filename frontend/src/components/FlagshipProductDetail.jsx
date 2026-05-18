@@ -17,7 +17,7 @@ const STATUS_LABELS = {
   in_production:    { label: "In Production",   cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
   in_service_only:  { label: "In Service",       cls: "bg-blue-50 text-blue-700 border-blue-200" },
   upgrade_program:  { label: "Upgrade Program",  cls: "bg-amber-50 text-amber-700 border-amber-200" },
-  development:      { label: "Development",      cls: "bg-purple-50 text-purple-700 border-purple-200" },
+  development:      { label: "Development",      cls: "bg-slate-100 text-slate-700 border-slate-200" },
   cancelled:        { label: "Cancelled",        cls: "bg-slate-100 text-slate-500 border-slate-200" },
 };
 
@@ -124,7 +124,7 @@ function OverviewTab({ detail }) {
                 <ul className="space-y-1">
                   {v.key_differences.map((d, j) => (
                     <li key={j} className="flex items-start gap-2 text-sm text-slate-700">
-                      <span className="text-purple-500 mt-0.5 shrink-0">•</span>
+                      <span className="text-slate-500 mt-0.5 shrink-0">•</span>
                       {d}
                     </li>
                   ))}
@@ -228,7 +228,7 @@ function ProductionTab({ detail }) {
         </div>
         <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Backlog</p>
-          <span className="font-mono text-2xl font-bold text-purple-700">
+          <span className="font-mono text-2xl font-bold text-slate-900">
             {detail.backlog ?? "N/A"}
           </span>
         </div>
@@ -314,7 +314,7 @@ function ExportsTab({ contracts }) {
           const st = CONTRACT_STATUS[c.status] ?? CONTRACT_STATUS.signed;
           const Icon = st.icon;
           return (
-            <div key={i} className="border border-slate-200 rounded-xl p-4 hover:border-purple-200 hover:bg-slate-50/50 transition-colors">
+            <div key={i} className="border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:bg-slate-50/50 transition-colors">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5">
@@ -358,7 +358,7 @@ function RivalsTab({ competitors, onSelectProduct }) {
       <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Direct Competitors</p>
       <div className="space-y-3">
         {competitors.map((c, i) => (
-          <div key={i} className="border border-slate-200 rounded-xl p-4 space-y-2 hover:border-purple-200 transition-colors">
+          <div key={i} className="border border-slate-200 rounded-xl p-4 space-y-2 hover:border-slate-300 transition-colors">
             <div className="flex items-start justify-between gap-2">
               <div>
                 <p className="font-medium text-slate-900 text-sm">{c.name}</p>
@@ -367,7 +367,7 @@ function RivalsTab({ competitors, onSelectProduct }) {
               {c.dashboard_product_id && (
                 <button
                   onClick={() => onSelectProduct && onSelectProduct(c.dashboard_product_id)}
-                  className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 shrink-0 transition-colors"
+                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 shrink-0 transition-colors"
                 >
                   View profile
                   <ExternalLink className="w-3 h-3" />
@@ -421,7 +421,7 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
             <span className={`absolute bottom-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full border ${statusInfo.cls}`}>
               {statusInfo.label}
             </span>
-            <span className="absolute bottom-3 right-3 text-xs font-medium px-2 py-1 rounded-full bg-purple-700 text-white">
+            <span className="absolute bottom-3 right-3 text-xs font-medium px-2 py-1 rounded-full bg-slate-800 text-white">
               ★ Full Profile
             </span>
           </div>
@@ -510,7 +510,7 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
                   <TabsTrigger
                     key={value}
                     value={value}
-                    className="flex items-center gap-1.5 text-xs rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-purple-700 data-[state=active]:bg-transparent px-4 h-full text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap"
+                    className="flex items-center gap-1.5 text-xs rounded-none border-b-2 border-transparent data-[state=active]:border-slate-900 data-[state=active]:text-slate-900 data-[state=active]:bg-transparent px-4 h-full text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap"
                   >
                     <Icon className="w-3.5 h-3.5" />
                     {label}

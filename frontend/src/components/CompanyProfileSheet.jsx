@@ -75,7 +75,7 @@ const COUNTRY_NAMES = {
 // ── helpers ────────────────────────────────────────────────────────────────
 
 const AVATAR_COLORS = [
-  "from-purple-600 to-purple-800",
+  "from-slate-700 to-slate-900",
   "from-blue-600 to-blue-800",
   "from-emerald-600 to-emerald-800",
   "from-amber-600 to-amber-800",
@@ -229,7 +229,7 @@ function getStatusStyle(status) {
     case "announced":    return "bg-blue-50 text-blue-700 border-blue-200";
     case "cancelled":    return "bg-rose-50 text-rose-700 border-rose-200";
     case "dissolved":    return "bg-slate-100 text-slate-500 border-slate-200";
-    case "exited":       return "bg-purple-50 text-purple-700 border-purple-200";
+    case "exited":       return "bg-slate-100 text-slate-600 border-slate-200";
     default:             return "bg-slate-100 text-slate-600 border-slate-200";
   }
 }
@@ -367,7 +367,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
       <SheetContent className="w-full sm:max-w-xl overflow-y-auto p-0 gap-0">
 
         {/* ── Hero Header ── */}
-        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-purple-900 px-6 pt-8 pb-6">
+        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 px-6 pt-8 pb-6">
           {/* Close button */}
           <button
             onClick={onClose}
@@ -479,14 +479,14 @@ export default function CompanyProfileSheet({ name, onClose }) {
         {/* ── Loading ── */}
         {loading && (
           <div className="flex justify-center py-16">
-            <div className="animate-spin w-7 h-7 border-2 border-purple-600 border-t-transparent rounded-full" />
+            <div className="animate-spin w-7 h-7 border-2 border-slate-200 border-t-slate-800 rounded-full" />
           </div>
         )}
 
         {!loading && (notFound || (!p && name)) && (
           <div className="mt-10 mx-6 rounded-xl border border-amber-200 bg-amber-50 p-6 text-center space-y-4">
             {/* Icon */}
-            <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto">
               <Building2 className="w-6 h-6 text-amber-500" />
             </div>
 
@@ -509,7 +509,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
               href={`https://github.com/royconstantymartin-hub/defense-dashboard/issues/new?title=${encodeURIComponent(`Profile request: ${name}`)}&labels=profile-request&body=${encodeURIComponent(`## Profile request\n\n**Company:** ${name}\n\n**Context:** This company appears in M&A activity but has no profile.\n\nPlease add a full company profile including: headquarters, founding year, specializations, key programmes, and description.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-white bg-purple-600 hover:bg-purple-700 border border-purple-700 rounded-lg px-4 py-2.5 transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg px-4 py-2.5 transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               Request this profile
@@ -524,29 +524,29 @@ export default function CompanyProfileSheet({ name, onClose }) {
             <div className="px-6 py-5">
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Key Figures</p>
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-gradient-to-br from-purple-50 to-purple-50/50 border border-purple-100 rounded-xl p-3 text-center">
-                  <div className="w-7 h-7 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                    <TrendingUp className="w-3.5 h-3.5 text-purple-600" />
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+                  <div className="w-7 h-7 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <TrendingUp className="w-3.5 h-3.5 text-slate-600" />
                   </div>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-purple-500">Market Cap</p>
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Market Cap</p>
                   <p className="text-base font-bold text-slate-900 mt-0.5 font-mono">
                     {p.market_cap ? `$${p.market_cap}B` : "—"}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-50/50 border border-emerald-100 rounded-xl p-3 text-center">
-                  <div className="w-7 h-7 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                    <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+                  <div className="w-7 h-7 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <DollarSign className="w-3.5 h-3.5 text-slate-600" />
                   </div>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-emerald-500">Revenue</p>
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Revenue</p>
                   <p className="text-base font-bold text-slate-900 mt-0.5 font-mono">
                     {p.revenue ? `$${p.revenue}B` : "—"}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-50/50 border border-blue-100 rounded-xl p-3 text-center">
-                  <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                    <Users className="w-3.5 h-3.5 text-blue-600" />
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+                  <div className="w-7 h-7 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <Users className="w-3.5 h-3.5 text-slate-600" />
                   </div>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-blue-500">Employees</p>
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Employees</p>
                   <p className="text-base font-bold text-slate-900 mt-0.5 font-mono">
                     {p.employees ? (p.employees >= 1000 ? `${(p.employees / 1000).toFixed(0)}K` : p.employees) : "—"}
                   </p>
@@ -572,7 +572,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
                   {p.specializations.map((s) => (
                     <span
                       key={s}
-                      className="text-xs bg-purple-50 text-purple-700 border border-purple-100 px-2.5 py-1 rounded-full font-medium"
+                      className="text-xs bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-full font-medium"
                     >
                       {s}
                     </span>
@@ -640,20 +640,20 @@ export default function CompanyProfileSheet({ name, onClose }) {
                     onClose();
                     navigate(`/products?manufacturer=${encodeURIComponent(name)}`);
                   }}
-                  className="flex items-center justify-between w-full bg-purple-50 hover:bg-purple-100 border border-purple-100 hover:border-purple-200 rounded-xl px-4 py-3 transition-colors group"
+                  className="flex items-center justify-between w-full bg-slate-100 hover:bg-slate-200 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-3 transition-colors group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-purple-100 group-hover:bg-purple-200 rounded-lg flex items-center justify-center transition-colors">
-                      <Package className="w-4 h-4 text-purple-600" />
+                    <div className="w-8 h-8 bg-slate-200 group-hover:bg-slate-300 rounded-lg flex items-center justify-center transition-colors">
+                      <Package className="w-4 h-4 text-slate-600" />
                     </div>
                     <div className="text-left">
-                      <p className="text-sm font-semibold text-purple-800">
+                      <p className="text-sm font-semibold text-slate-800">
                         {productCount} product{productCount !== 1 ? "s" : ""} in catalog
                       </p>
-                      <p className="text-xs text-purple-500">View in Products page</p>
+                      <p className="text-xs text-slate-500">View in Products page</p>
                     </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-purple-400 group-hover:text-purple-600 transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
                 </button>
               </div>
             )}
@@ -676,19 +676,19 @@ export default function CompanyProfileSheet({ name, onClose }) {
                         href={article.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block rounded-xl overflow-hidden border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all group"
+                        className="block rounded-xl overflow-hidden border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all group"
                       >
                         <div className="w-full h-40 bg-slate-100 overflow-hidden">
                           <NewsArticleThumb article={article} wrapperClass="w-full h-full" showLogo={true} />
                         </div>
                         <div className="p-3">
-                          <p className="text-sm font-semibold text-slate-800 group-hover:text-purple-700 transition-colors line-clamp-3 leading-snug">
+                          <p className="text-sm font-semibold text-slate-800 group-hover:text-slate-900 transition-colors line-clamp-3 leading-snug">
                             {article.title}
                           </p>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="text-xs font-semibold text-purple-600 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-full">{article.source}</span>
+                            <span className="text-xs font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">{article.source}</span>
                             <span className="text-xs text-slate-400">{relativeTime(article.publishedAt)}</span>
-                            <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-purple-400 ml-auto transition-colors" />
+                            <ExternalLink className="w-3 h-3 text-slate-300 group-hover:text-slate-500 ml-auto transition-colors" />
                           </div>
                         </div>
                       </a>
@@ -705,7 +705,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
                           <NewsArticleThumb article={article} wrapperClass="w-full h-full" showLogo={true} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-800 group-hover:text-purple-700 transition-colors line-clamp-2 leading-snug">
+                          <p className="text-sm font-medium text-slate-800 group-hover:text-slate-900 transition-colors line-clamp-2 leading-snug">
                             {article.title}
                           </p>
                           <div className="flex items-center gap-2 mt-1">
@@ -756,7 +756,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
                     )}
                     {a.source_url && (
                       <a href={a.source_url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-[10px] text-purple-600 hover:text-purple-800 font-medium ml-auto">
+                        className="flex items-center gap-1 text-[10px] text-blue-600 hover:text-blue-800 font-medium ml-auto">
                         <ExternalLink className="w-3 h-3" /> Source
                       </a>
                     )}
@@ -809,12 +809,12 @@ export default function CompanyProfileSheet({ name, onClose }) {
                       onChange={(e) => setNoteText(e.target.value)}
                       onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submitNote(); }}
                       placeholder="Add an analyst note… (Ctrl+Enter to submit)"
-                      className="flex-1 text-sm text-slate-800 border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-purple-300 placeholder:text-slate-400"
+                      className="flex-1 text-sm text-slate-800 border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-slate-400"
                     />
                     <button
                       onClick={submitNote}
                       disabled={!noteText.trim() || submitting}
-                      className="self-end p-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white rounded-lg transition-colors"
+                      className="self-end p-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white rounded-lg transition-colors"
                       title="Submit note"
                     >
                       <Send className="w-4 h-4" />
@@ -824,7 +824,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
                   {/* Notes list */}
                   {notesLoading ? (
                     <div className="flex justify-center py-4">
-                      <div className="animate-spin w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full" />
+                      <div className="animate-spin w-5 h-5 border-2 border-slate-300 border-t-slate-700 rounded-full" />
                     </div>
                   ) : notes.length === 0 ? (
                     <p className="text-xs text-slate-400 py-1">No notes yet for this company.</p>

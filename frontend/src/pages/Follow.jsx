@@ -816,7 +816,7 @@ export default function Follow() {
                 onClick={() => setActiveCategory(cat.id)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                   activeCategory === cat.id
-                    ? "bg-purple-700 text-white"
+                    ? "bg-slate-900 text-white"
                     : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
                 }`}
               >
@@ -843,7 +843,7 @@ export default function Follow() {
             rel="noopener noreferrer"
             className="group block"
           >
-            <Card className="bg-white border-slate-200 shadow-sm h-full hover:border-purple-300 hover:shadow-md transition-all duration-200">
+            <Card className="bg-white border-slate-200 shadow-sm h-full hover:border-slate-300 hover:shadow-md transition-all duration-200">
               <CardContent className="p-4 flex flex-col gap-3 h-full">
                 {/* Top row */}
                 <div className="flex items-start justify-between gap-2">
@@ -852,13 +852,13 @@ export default function Follow() {
                       <SourceLogo url={source.url} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-slate-900 group-hover:text-purple-700 transition-colors leading-tight">
+                      <p className="font-semibold text-sm text-slate-900 group-hover:text-slate-700 transition-colors leading-tight">
                         {source.name}
                       </p>
                       <p className="text-xs text-slate-400 mt-0.5 font-mono truncate">{source.url.replace("https://", "")}</p>
                     </div>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-slate-300 group-hover:text-purple-500 flex-shrink-0 mt-0.5 transition-colors" />
+                  <ExternalLink className="w-4 h-4 text-slate-300 group-hover:text-slate-500 flex-shrink-0 mt-0.5 transition-colors" />
                 </div>
 
                 {/* Description */}

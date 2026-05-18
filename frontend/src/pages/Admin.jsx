@@ -111,7 +111,7 @@ function AdminSetup({ token }) {
           <Button
             type="submit"
             disabled={loading || !setupKey}
-            className="w-full bg-purple-700 hover:bg-purple-800 disabled:opacity-50"
+            className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50"
           >
             {loading ? "Activating…" : "Activate Admin Access"}
           </Button>
@@ -191,7 +191,7 @@ export default function Admin() {
           Please login to access the admin panel and manage defense industry data.
         </p>
         <Link to="/login">
-          <Button className="bg-purple-700 hover:bg-purple-800">
+          <Button className="bg-slate-900 hover:bg-slate-800">
             Login to Continue
           </Button>
         </Link>
@@ -255,8 +255,8 @@ export default function Admin() {
           <div className="space-y-6 max-w-2xl">
             <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-50 rounded-lg">
-                  <Database className="w-5 h-5 text-purple-700" />
+                <div className="p-2 bg-slate-100 rounded-lg">
+                  <Database className="w-5 h-5 text-slate-700" />
                 </div>
                 <div>
                   <h3 className="text-slate-900 font-semibold">{tDbTitle}</h3>
@@ -271,7 +271,7 @@ export default function Admin() {
               <button
                 onClick={handleSeed}
                 disabled={seeding}
-                className="flex items-center gap-2 px-4 py-2.5 bg-purple-700 hover:bg-purple-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
               >
                 {seeding
                   ? <><RefreshCw className="w-4 h-4 animate-spin" /> {tSeeding}</>
@@ -390,7 +390,7 @@ function getCatStyle(cat) {
     case "CONTRACT":    return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case "POLICY":      return "bg-amber-50   text-amber-700   border-amber-200";
     case "M&A":         return "bg-blue-50    text-blue-700    border-blue-200";
-    case "TECHNOLOGY":  return "bg-purple-50  text-purple-700  border-purple-200";
+    case "TECHNOLOGY":  return "bg-slate-100   text-slate-700   border-slate-200";
     case "CONFLICT":    return "bg-red-50     text-red-700     border-red-200";
     case "GEOPOLITICS": return "bg-sky-50     text-sky-700     border-sky-200";
     default:            return "bg-slate-100  text-slate-600   border-slate-200";
@@ -571,8 +571,8 @@ function NewsFeedAdmin({ authHeaders }) {
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-purple-50 rounded-lg">
-            <Rss className="w-5 h-5 text-purple-700" />
+          <div className="p-2 bg-slate-100 rounded-lg">
+            <Rss className="w-5 h-5 text-slate-700" />
           </div>
           <div>
             <h3 className="text-slate-900 font-semibold">News Feed Moderation</h3>
@@ -609,7 +609,7 @@ function NewsFeedAdmin({ authHeaders }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by title or source…"
-            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-900 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-300"
+            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-900 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -680,7 +680,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           )}
         </div>
         <a href={article.url} target="_blank" rel="noopener noreferrer"
-           className="text-slate-900 font-semibold text-sm leading-snug line-clamp-2 hover:text-purple-700 transition-colors">
+           className="text-slate-900 font-semibold text-sm leading-snug line-clamp-2 hover:text-slate-700 transition-colors">
           {article.title}
         </a>
         {article.summary && (
@@ -770,7 +770,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
             onClick={() => setCatOpen((o) => !o)}
             disabled={!!actionLoading}
             title="Changer la catégorie"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-purple-700 border border-purple-200 hover:bg-purple-50 transition-all disabled:opacity-40"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition-all disabled:opacity-40"
           >
             <Tag className="w-3 h-3" />
             <span className="hidden sm:inline">Category</span>
@@ -781,8 +781,8 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
                 <button
                   key={cat}
                   onClick={() => { onModerate(article.url, "recategorize", cat); setCatOpen(false); }}
-                  className={`w-full text-left px-3 py-1.5 text-xs font-semibold hover:bg-purple-50 transition-colors ${
-                    article.category === cat ? "text-purple-700 bg-purple-50" : "text-slate-700"
+                  className={`w-full text-left px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 transition-colors ${
+                    article.category === cat ? "text-slate-900 bg-slate-100" : "text-slate-700"
                   }`}
                 >
                   {cat}
@@ -905,7 +905,7 @@ function AnnouncementsAdmin({ authHeaders }) {
                 className="bg-white border-slate-200 text-slate-900"
               />
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Announcement
             </Button>
           </form>
@@ -1119,10 +1119,10 @@ function MAAdmin({ authHeaders }) {
       </Card>
 
       {/* ── AI Extraction ── */}
-      <Card className="bg-white border-purple-200">
+      <Card className="bg-white border-slate-300">
         <CardHeader className="border-b border-slate-100 pb-3">
           <CardTitle className="text-slate-900 flex items-center gap-2 text-base">
-            <Sparkles className="w-4 h-4 text-purple-600" /> Extraction IA — URL ou capture d'écran
+            <Sparkles className="w-4 h-4 text-slate-600" /> Extraction IA — URL ou capture d'écran
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
@@ -1130,7 +1130,7 @@ function MAAdmin({ authHeaders }) {
           <div className="flex gap-2">
             {[{ k: "url", icon: Link2, label: "URL article" }, { k: "image", icon: ImageIcon, label: "Capture d'écran" }].map(({ k, icon: Icon, label }) => (
               <button key={k} onClick={() => { setExtractMode(k); setExtractError(null); setExtractPreview(null); }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${extractMode === k ? "bg-purple-50 border-purple-300 text-purple-700" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${extractMode === k ? "bg-slate-100 border-slate-400 text-slate-900" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"}`}>
                 <Icon className="w-3.5 h-3.5" />{label}
               </button>
             ))}
@@ -1145,7 +1145,7 @@ function MAAdmin({ authHeaders }) {
                 className="bg-white border-slate-200 text-slate-900 flex-1"
               />
               <Button onClick={handleExtract} disabled={extracting || !extractUrl.trim()}
-                className="bg-purple-700 hover:bg-purple-800 shrink-0">
+                className="bg-slate-900 hover:bg-slate-800 shrink-0">
                 {extracting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                 {extracting ? "Extraction…" : "Extraire"}
               </Button>
@@ -1154,7 +1154,7 @@ function MAAdmin({ authHeaders }) {
             <div className="space-y-2">
               <div
                 onPaste={handlePaste}
-                className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center cursor-default hover:border-purple-300 transition-colors"
+                className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center cursor-default hover:border-slate-400 transition-colors"
               >
                 {pastedImage ? (
                   <div className="space-y-2">
@@ -1177,7 +1177,7 @@ function MAAdmin({ authHeaders }) {
                   </div>
                 </label>
                 <Button onClick={handleExtract} disabled={extracting || !pastedImage}
-                  className="bg-purple-700 hover:bg-purple-800 shrink-0">
+                  className="bg-slate-900 hover:bg-slate-800 shrink-0">
                   {extracting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                   {extracting ? "Extraction…" : "Extraire"}
                 </Button>
@@ -1190,8 +1190,8 @@ function MAAdmin({ authHeaders }) {
           )}
 
           {extractPreview && (
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-purple-600">Résultat extrait — vérifiez avant d'appliquer</p>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Résultat extrait — vérifiez avant d'appliquer</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 {[
                   ["Acquéreur", extractPreview.acquirer],
@@ -1212,9 +1212,9 @@ function MAAdmin({ authHeaders }) {
                 ))}
               </div>
               {extractPreview.description && (
-                <p className="text-xs text-slate-600 italic border-t border-purple-100 pt-2">{extractPreview.description}</p>
+                <p className="text-xs text-slate-600 italic border-t border-slate-200 pt-2">{extractPreview.description}</p>
               )}
-              <Button onClick={applyExtracted} className="w-full bg-purple-700 hover:bg-purple-800 text-sm">
+              <Button onClick={applyExtracted} className="w-full bg-slate-900 hover:bg-slate-800 text-sm">
                 Charger dans le formulaire
               </Button>
             </div>
@@ -1312,7 +1312,7 @@ function MAAdmin({ authHeaders }) {
                   <label className="flex items-center gap-2 cursor-pointer mb-1">
                     <input type="checkbox" checked={form.is_disclosed}
                       onChange={e => f("is_disclosed", e.target.checked)}
-                      className="accent-purple-600" />
+                      className="accent-slate-600" />
                     <span className="text-xs text-slate-600">Valeur divulguée</span>
                   </label>
                 </div>
@@ -1349,7 +1349,7 @@ function MAAdmin({ authHeaders }) {
                   className="bg-white border-slate-200 text-slate-900 text-sm" rows={2} />
               </div>
 
-              <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+              <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
                 <Plus className="w-4 h-4 mr-1" /> Create deal
               </Button>
             </form>
@@ -1548,7 +1548,7 @@ function PlayersAdmin({ authHeaders }) {
                 ))}
               </div>
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Player
             </Button>
           </form>
@@ -1702,7 +1702,7 @@ function ExpendituresAdmin({ authHeaders }) {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Expenditure
             </Button>
           </form>
@@ -1864,7 +1864,7 @@ function RegulationsAdmin({ authHeaders }) {
                 ))}
               </div>
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Regulation
             </Button>
           </form>
@@ -2077,7 +2077,7 @@ function ProductsAdmin({ authHeaders }) {
                 ))}
               </div>
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Product
             </Button>
           </form>

@@ -293,7 +293,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3 flex-wrap">
           {/* Search bar */}
           <div className="relative" ref={searchRef}>
-            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-100 transition-all w-64">
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all w-64">
               <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               <input
                 type="text"
@@ -318,7 +318,7 @@ export default function Dashboard() {
                   return (
                     <button
                       key={company.id}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-purple-50 transition-colors text-left"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 transition-colors text-left"
                       onClick={() => { setSelectedCompany(company.name); setShowSearch(false); setSearchQuery(""); }}
                     >
                       <CompanyLogoCell name={company.name} />
@@ -330,7 +330,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       {company.ticker && (
-                        <span className="font-mono text-xs text-purple-700 bg-purple-50 border border-purple-200 px-1.5 py-0.5 rounded shrink-0">
+                        <span className="font-mono text-xs text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded shrink-0">
                           {company.ticker}
                         </span>
                       )}
@@ -386,19 +386,19 @@ export default function Dashboard() {
       )}
 
       {/* This week summary strip */}
-      <div className="bg-purple-50 border border-purple-100 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center">
+      <div className="bg-slate-100 border border-slate-200 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center">
         <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-purple-600" />
-          <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">This week</span>
+          <Zap className="w-4 h-4 text-slate-600" />
+          <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider">This week</span>
         </div>
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-1.5">
-            <span className={`text-sm font-mono font-bold ${weeklyMA.length > 0 ? "text-purple-700" : "text-slate-400"}`}>
+            <span className={`text-sm font-mono font-bold ${weeklyMA.length > 0 ? "text-slate-900" : "text-slate-400"}`}>
               {weeklyMA.length}
             </span>
             <span className="text-xs text-slate-500">M&amp;A deal{weeklyMA.length !== 1 ? "s" : ""}</span>
             {weeklyMA.length > 0 && (
-              <Link to="/ma-activity" className="text-[10px] text-purple-500 hover:text-purple-700 font-medium ml-1">→</Link>
+              <Link to="/ma-activity" className="text-[10px] text-blue-600 hover:text-blue-500 font-medium ml-1">→</Link>
             )}
           </div>
           <div className="w-px h-4 bg-slate-200 self-center" />
@@ -488,7 +488,7 @@ export default function Dashboard() {
               </div>
               <Link
                 to="/market-data"
-                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
+                className="text-xs text-blue-600 hover:text-blue-500 flex items-center gap-1 font-medium"
                 data-testid="view-all-market"
               >
                 View All <ArrowRight className="w-3 h-3" />
@@ -514,7 +514,7 @@ export default function Dashboard() {
                     const change = live?.change_since_open ?? live?.change_percent ?? player.change_percent;
                     const isLive = !!live;
                     return (
-                      <tr key={player.id} className="border-b border-slate-100 hover:bg-purple-50/30 transition-colors cursor-pointer" onClick={() => setSelectedCompany(player.name)}>
+                      <tr key={player.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => setSelectedCompany(player.name)}>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
@@ -533,7 +533,7 @@ export default function Dashboard() {
                           </div>
                         </td>
                         <td className="p-4 text-right">
-                          <span className="font-mono text-sm text-purple-700 font-medium bg-purple-50 px-2 py-0.5 rounded">
+                          <span className="font-mono text-sm text-slate-700 font-medium bg-slate-100 px-2 py-0.5 rounded">
                             {player.ticker}
                           </span>
                         </td>
@@ -596,7 +596,7 @@ export default function Dashboard() {
                         return (
                           <div className="bg-white border border-slate-200 p-3 rounded-lg shadow-lg">
                             <p className="text-slate-900 text-sm font-medium">{payload[0].name}</p>
-                            <p className="font-mono text-purple-700 font-semibold">${payload[0].value.toFixed(1)}B</p>
+                            <p className="font-mono text-slate-900 font-semibold">${payload[0].value.toFixed(1)}B</p>
                           </div>
                         );
                       }
@@ -633,7 +633,7 @@ export default function Dashboard() {
               <CardTitle className="font-heading text-lg text-slate-900">Top Defense Budgets</CardTitle>
               <Link 
                 to="/expenditures" 
-                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
+                className="text-xs text-blue-600 hover:text-blue-500 flex items-center gap-1 font-medium"
               >
                 View All <ArrowRight className="w-3 h-3" />
               </Link>
@@ -664,7 +664,7 @@ export default function Dashboard() {
                         return (
                           <div className="bg-white border border-slate-200 p-3 rounded-lg shadow-lg">
                             <p className="text-slate-900 text-sm font-medium">{payload[0].payload.country}</p>
-                            <p className="font-mono text-purple-700 font-semibold">${payload[0].value}B</p>
+                            <p className="font-mono text-slate-900 font-semibold">${payload[0].value}B</p>
                             <p className="text-xs text-slate-500">{payload[0].payload.gdp_percent}% of GDP</p>
                           </div>
                         );
@@ -672,7 +672,7 @@ export default function Dashboard() {
                       return null;
                     }}
                   />
-                  <Bar dataKey="expenditure" fill="#7E22CE" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey="expenditure" fill="#0F172A" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -686,7 +686,7 @@ export default function Dashboard() {
               <CardTitle className="font-heading text-lg text-slate-900">Recent Intel</CardTitle>
               <Link
                 to="/announcements"
-                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
+                className="text-xs text-blue-600 hover:text-blue-500 flex items-center gap-1 font-medium"
               >
                 View All <ArrowRight className="w-3 h-3" />
               </Link>
@@ -721,7 +721,7 @@ export default function Dashboard() {
                         ) : (
                           <div className={`w-full h-full flex items-center justify-center ${
                             item.category === 'CONTRACT'    ? 'bg-emerald-900' :
-                            item.category === 'TECHNOLOGY'  ? 'bg-purple-900'  :
+                            item.category === 'TECHNOLOGY'  ? 'bg-slate-800'   :
                             item.category === 'CONFLICT'    ? 'bg-rose-900'    :
                             item.category === 'POLICY'      ? 'bg-amber-900'   :
                             item.category === 'GEOPOLITICS' ? 'bg-sky-900'     :
@@ -746,7 +746,7 @@ export default function Dashboard() {
                         )}
                         {/* Title overlay */}
                         <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <p className="text-white font-semibold text-sm leading-snug line-clamp-3 group-hover:text-purple-200 transition-colors">
+                          <p className="text-white font-semibold text-sm leading-snug line-clamp-3 group-hover:text-slate-200 transition-colors">
                             {item.title}
                           </p>
                           <div className="flex items-center gap-2 mt-2">
@@ -779,7 +779,7 @@ export default function Dashboard() {
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-start gap-3 p-3 hover:bg-purple-50/40 transition-colors group"
+                        className="flex items-start gap-3 p-3 hover:bg-slate-50 transition-colors group"
                       >
                         {/* Thumbnail or colored placeholder */}
                         <div className="w-16 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-100 relative">
@@ -793,7 +793,7 @@ export default function Dashboard() {
                           ) : (
                             <div className={`w-full h-full flex items-center justify-center ${
                               item.category === 'CONTRACT'    ? 'bg-emerald-50' :
-                              item.category === 'TECHNOLOGY'  ? 'bg-purple-50'  :
+                              item.category === 'TECHNOLOGY'  ? 'bg-slate-50'   :
                               item.category === 'CONFLICT'    ? 'bg-rose-50'    :
                               item.category === 'POLICY'      ? 'bg-amber-50'   :
                               item.category === 'GEOPOLITICS' ? 'bg-sky-50'     :
@@ -802,7 +802,7 @@ export default function Dashboard() {
                             }`}>
                               <Newspaper className={`w-5 h-5 ${
                                 item.category === 'CONTRACT'    ? 'text-emerald-400' :
-                                item.category === 'TECHNOLOGY'  ? 'text-purple-400'  :
+                                item.category === 'TECHNOLOGY'  ? 'text-slate-400'   :
                                 item.category === 'CONFLICT'    ? 'text-rose-400'    :
                                 item.category === 'POLICY'      ? 'text-amber-400'   :
                                 item.category === 'GEOPOLITICS' ? 'text-sky-400'     :
@@ -815,7 +815,7 @@ export default function Dashboard() {
 
                         {/* Text content */}
                         <div className="flex-1 min-w-0">
-                          <p className="text-slate-800 text-xs font-medium leading-snug line-clamp-2 group-hover:text-purple-700 transition-colors">
+                          <p className="text-slate-800 text-xs font-medium leading-snug line-clamp-2 group-hover:text-slate-900 transition-colors">
                             {item.title}
                           </p>
                           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -861,7 +861,7 @@ export default function Dashboard() {
 function IntelCategoryBadge({ category, small = false }) {
   const styles = {
     CONTRACT:    "bg-emerald-50 text-emerald-700 border-emerald-200",
-    TECHNOLOGY:  "bg-purple-50  text-purple-700  border-purple-200",
+    TECHNOLOGY:  "bg-slate-100  text-slate-700   border-slate-200",
     CONFLICT:    "bg-red-50     text-red-700     border-red-200",
     POLICY:      "bg-amber-50   text-amber-700   border-amber-200",
     GEOPOLITICS: "bg-sky-50     text-sky-700     border-sky-200",
@@ -878,7 +878,7 @@ function IntelCategoryBadge({ category, small = false }) {
 function MetricCard({ label, value, subtext, icon: Icon, testId }) {
   return (
     <Card
-      className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer"
+      className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 cursor-pointer"
       data-testid={testId}
     >
       <CardContent className="p-5">
@@ -888,8 +888,8 @@ function MetricCard({ label, value, subtext, icon: Icon, testId }) {
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{value}</p>
             {subtext && <p className="text-xs text-slate-500 mt-1">{subtext}</p>}
           </div>
-          <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-            <Icon className="w-5 h-5 text-purple-600" />
+          <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+            <Icon className="w-5 h-5 text-slate-600" />
           </div>
         </div>
       </CardContent>

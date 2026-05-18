@@ -63,7 +63,7 @@ function getCategoryStyle(category) {
     case "CONTRACT":    return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case "POLICY":      return "bg-amber-50   text-amber-700   border-amber-200";
     case "M&A":         return "bg-blue-50    text-blue-700    border-blue-200";
-    case "TECHNOLOGY":  return "bg-purple-50  text-purple-700  border-purple-200";
+    case "TECHNOLOGY":  return "bg-slate-100   text-slate-700   border-slate-200";
     case "CONFLICT":    return "bg-red-50     text-red-700     border-red-200";
     case "GEOPOLITICS": return "bg-sky-50     text-sky-700     border-sky-200";
     default:            return "bg-slate-100  text-slate-600   border-slate-200";
@@ -153,7 +153,7 @@ const TIME_BAND_LABELS = {
 
 const PLACEHOLDER_GRADIENT = {
   CONTRACT:    "from-emerald-950 via-emerald-900 to-emerald-800",
-  TECHNOLOGY:  "from-purple-950 via-purple-900 to-purple-800",
+  TECHNOLOGY:  "from-slate-900 via-slate-800 to-slate-700",
   CONFLICT:    "from-red-950 via-red-900 to-red-800",
   POLICY:      "from-amber-950 via-amber-900 to-amber-800",
   GEOPOLITICS: "from-sky-950 via-sky-900 to-sky-800",
@@ -320,7 +320,7 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
     <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 group ${
       isHot
         ? "border border-orange-200 shadow-sm hover:shadow-md hover:border-orange-300"
-        : "border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-200"
+        : "border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300"
     }`}>
       <div className="flex min-h-[88px]">
 
@@ -337,7 +337,7 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
             <span className="text-[11px] text-slate-300">·</span>
             <span className="text-[11px] text-slate-400 font-medium">{relativeTime(article.publishedAt)}</span>
             {isNew && (
-              <span className="bg-purple-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-wider">
+              <span className="bg-slate-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-wider">
                 NEW
               </span>
             )}
@@ -353,7 +353,7 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
 
           {/* Row 2: Title */}
           <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
-            <h3 className={`font-bold leading-snug line-clamp-2 group-hover:text-purple-700 transition-colors duration-150 ${
+            <h3 className={`font-bold leading-snug line-clamp-2 group-hover:text-slate-900 transition-colors duration-150 ${
               isHot ? "text-[15px] text-slate-900" : "text-[14px] text-slate-800"
             }`}>
               {article.title}
@@ -388,7 +388,7 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-purple-700 transition-colors"
+                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-slate-800 transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 Read <ExternalLink className="w-2.5 h-2.5" />
@@ -693,7 +693,7 @@ export default function Announcements() {
                   .finally(() => setScraping(false));
               }}
               disabled={scraping}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${scraping ? "animate-spin" : ""}`} />
               {scraping ? "Scraping…" : "Refresh now"}
@@ -734,7 +734,7 @@ export default function Announcements() {
             </SelectTrigger>
             <SelectContent className="bg-white border-slate-200">
               {NEWS_CATEGORIES.map((cat) => (
-                <SelectItem key={cat.value} value={cat.value} className="text-slate-700 focus:bg-purple-50">
+                <SelectItem key={cat.value} value={cat.value} className="text-slate-700 focus:bg-slate-50">
                   {cat.label}
                 </SelectItem>
               ))}
@@ -749,7 +749,7 @@ export default function Announcements() {
             </SelectTrigger>
             <SelectContent className="bg-white border-slate-200">
               {REGION_OPTIONS.map((r) => (
-                <SelectItem key={r.value} value={r.value} className="text-slate-700 focus:bg-purple-50">
+                <SelectItem key={r.value} value={r.value} className="text-slate-700 focus:bg-slate-50">
                   <span className="mr-1.5">{r.flag}</span>{r.label}
                 </SelectItem>
               ))}
@@ -768,7 +768,7 @@ export default function Announcements() {
                 onClick={() => handleLangChange(opt.value)}
                 className={`px-4 py-1.5 text-xs font-semibold transition-colors ${
                   selectedLang === opt.value
-                    ? "bg-purple-600 text-white"
+                    ? "bg-slate-900 text-white"
                     : "text-slate-600 hover:bg-slate-50"
                 }`}
               >
@@ -792,7 +792,7 @@ export default function Announcements() {
       {/* ── Grid ── */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+          <div className="animate-spin w-8 h-8 border-2 border-slate-200 border-t-slate-800 rounded-full" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-500 bg-white rounded-xl border border-slate-200">
@@ -867,7 +867,7 @@ export default function Announcements() {
               <button
                 onClick={loadOlderArticles}
                 disabled={loadingMore}
-                className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-purple-200 hover:text-purple-700 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-colors disabled:opacity-50"
               >
                 {loadingMore ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
