@@ -257,6 +257,15 @@ function formatStatus(s) {
   return map[s] ?? (s ? s.charAt(0).toUpperCase() + s.slice(1) : "");
 }
 
+function formatMoney(valueInBillions) {
+  if (!valueInBillions || valueInBillions <= 0) return "—";
+  if (valueInBillions >= 1) {
+    return `$${valueInBillions % 1 === 0 ? valueInBillions : valueInBillions.toFixed(1)}B`;
+  }
+  const m = Math.round(valueInBillions * 1000);
+  return m > 0 ? `$${m}M` : "—";
+}
+
 function relativeTime(isoStr) {
   try {
     return formatDistanceToNow(new Date(isoStr), { addSuffix: true });
@@ -413,7 +422,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
                 )}
               </div>
               <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                {p?.ticker && (
+                {p?.ticker && !p.ticker.includes("-PRIV") && p.ticker !== "PRIVATE" && (
                   <span className="font-mono text-xs bg-white/15 text-white px-2 py-0.5 rounded-md border border-white/20">
                     {p.ticker}
                   </span>
@@ -540,9 +549,11 @@ export default function CompanyProfileSheet({ name, onClose }) {
                   <div className="w-7 h-7 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-2">
                     <TrendingUp className="w-3.5 h-3.5 text-slate-600" />
                   </div>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Market Cap</p>
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+                    {p.is_public ? "Market Cap" : "Valuation"}
+                  </p>
                   <p className="text-base font-bold text-slate-900 mt-0.5 font-mono">
-                    {p.market_cap ? `$${p.market_cap}B` : "—"}
+                    {formatMoney(p.market_cap)}
                   </p>
                 </div>
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
@@ -551,7 +562,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
                   </div>
                   <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Revenue</p>
                   <p className="text-base font-bold text-slate-900 mt-0.5 font-mono">
-                    {p.revenue ? `$${p.revenue}B` : "—"}
+                    {formatMoney(p.revenue)}
                   </p>
                 </div>
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
@@ -604,7 +615,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
                   {p.programs.map((prog) => (
                     <span
                       key={prog}
-                      className="text-xs bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-full font-medium"
+                      className="text-xs bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-full font-medium"
                     >
                       {prog}
                     </span>
@@ -614,31 +625,38 @@ export default function CompanyProfileSheet({ name, onClose }) {
             )}
 
             {/* ── Export Markets ── */}
-            {p.export_countries?.length > 0 && (
-              <div className="px-6 py-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <Globe2 className="w-3.5 h-3.5 text-slate-400" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Export Markets</p>
-                  <span className="ml-auto text-[10px] text-slate-400 font-mono">{p.export_countries.length} countries</span>
+            {(() => {
+              const homeIso = COUNTRY_CODES[p.country];
+              const exportList = (p.export_countries || []).filter((code) => code !== homeIso);
+              if (exportList.length === 0) return null;
+              return (
+                <div className="px-6 py-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Globe2 className="w-3.5 h-3.5 text-slate-400" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Export Markets</p>
+                    <span className="ml-auto text-[10px] text-slate-400 font-mono">
+                      {exportList.length} {exportList.length === 1 ? "country" : "countries"}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {exportList.map((code) => (
+                      <div key={code} className="flex flex-col items-center gap-1">
+                        <img
+                          src={`https://flagcdn.com/w40/${code}.png`}
+                          alt={COUNTRY_NAMES[code] || code.toUpperCase()}
+                          title={COUNTRY_NAMES[code] || code.toUpperCase()}
+                          className="w-8 h-5 object-cover rounded shadow-sm border border-slate-100"
+                          onError={(e) => { e.target.style.display = "none"; }}
+                        />
+                        <span className="text-[9px] text-slate-400 font-medium leading-none">
+                          {COUNTRY_NAMES[code] || code.toUpperCase()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  {p.export_countries.map((code) => (
-                    <div key={code} className="flex flex-col items-center gap-1">
-                      <img
-                        src={`https://flagcdn.com/w40/${code}.png`}
-                        alt={COUNTRY_NAMES[code] || code.toUpperCase()}
-                        title={COUNTRY_NAMES[code] || code.toUpperCase()}
-                        className="w-8 h-5 object-cover rounded shadow-sm border border-slate-100"
-                        onError={(e) => { e.target.style.display = "none"; }}
-                      />
-                      <span className="text-[9px] text-slate-400 font-medium leading-none">
-                        {COUNTRY_NAMES[code] || code.toUpperCase()}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* ── Associated Products ── */}
             {productCount !== null && productCount > 0 && (

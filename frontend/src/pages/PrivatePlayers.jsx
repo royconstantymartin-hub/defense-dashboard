@@ -118,6 +118,14 @@ const MACRO_CATEGORIES = [
     keywords: ["Missiles", "Air Defense", "Iron Dome", "Trophy", "Rockets", "Ammunition", "Energetics", "S-400", "Remote Weapons"],
   },
   {
+    id: "nuclear",
+    name: "Nuclear & Advanced Tech",
+    description: "Nuclear, directed energy, advanced propulsion",
+    icon: Zap,
+    color: "orange",
+    keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"],
+  },
+  {
     id: "aerospace",
     name: "Aerospace & Aviation",
     description: "Fixed-wing, rotorcraft, engines, launch systems",
@@ -156,14 +164,6 @@ const MACRO_CATEGORIES = [
     icon: Brain,
     color: "emerald",
     keywords: ["Cyber", "AI", "Intelligence", "Analytics", "Software", "Electronic Warfare", "SIGINT", "ISR", "C4I", "Communications", "Radar", "Sensors", "Optronics"],
-  },
-  {
-    id: "nuclear",
-    name: "Nuclear & Advanced Tech",
-    description: "Nuclear, directed energy, advanced propulsion",
-    icon: Zap,
-    color: "orange",
-    keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"],
   },
   {
     id: "industrial",
@@ -316,8 +316,8 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
             <Icon className={`w-4 h-4 ${clr.icon}`} />
           </div>
           <div className="min-w-0">
-            <h3 className="font-semibold text-[13px] text-slate-800 leading-tight truncate">{category.name}</h3>
-            <p className="text-[11px] text-slate-400 leading-tight mt-0.5 truncate">{category.description}</p>
+            <h3 className="font-semibold text-[13px] text-slate-800 leading-tight">{category.name}</h3>
+            <p className="text-[11px] text-slate-400 leading-tight mt-0.5 line-clamp-1">{category.description}</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
@@ -616,7 +616,7 @@ export default function PrivatePlayers() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
             { label: "Companies",       value: players.length,                    icon: Building2,  iconCls: "text-purple-700", bgCls: "bg-purple-50" },
-            { label: "Countries",       value: countryCounts.length,              icon: Globe,      iconCls: "text-blue-600",   bgCls: "bg-blue-50" },
+            { label: countryCounts.length === 1 ? "Country" : "Countries", value: countryCounts.length, icon: Globe, iconCls: "text-blue-600", bgCls: "bg-blue-50" },
             { label: "Total Valuation", value: formatCap(totalValuation) || "—",  icon: TrendingUp, iconCls: "text-emerald-600", bgCls: "bg-emerald-50" },
             { label: "With Funding",    value: totalFunded,                        icon: DollarSign, iconCls: "text-amber-600",  bgCls: "bg-amber-50" },
           ].map(({ label, value, icon: Icon, iconCls, bgCls }) => (
@@ -792,7 +792,7 @@ export default function PrivatePlayers() {
             ) : (
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {MACRO_CATEGORIES.map((cat) => (
+                  {MACRO_CATEGORIES.filter((cat) => (categorized[cat.id] || []).length > 0).map((cat) => (
                     <CategoryTile
                       key={cat.id}
                       category={cat}
