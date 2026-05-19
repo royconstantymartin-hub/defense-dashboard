@@ -605,7 +605,7 @@ export default function PrivatePlayers() {
           <div>
             <h1 className="text-2xl font-bold text-slate-900 font-heading">Private Players</h1>
             <p className="text-sm text-slate-500">
-              Non-publicly-listed defense companies · {players.length} tracked
+              Non-publicly-listed defense companies
             </p>
           </div>
         </div>
