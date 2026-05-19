@@ -1667,7 +1667,7 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
               </>
             )}
           </div>
-          <p className="text-[9px] text-slate-300 mt-1.5 text-center">Cliquer pour ouvrir le profil</p>
+          <p className="text-[9px] text-slate-300 mt-1.5 text-center">Click to open profile</p>
         </div>
       )}
 
@@ -1693,7 +1693,7 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
       {/* Hint — bottom right */}
       <div className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm rounded-lg px-2 py-1 border border-slate-100">
         <p className="text-[9px] text-slate-400">
-          <span className="font-medium text-slate-500">{expenditures.length} pays</span> · survol = aperçu · clic = profil
+          <span className="font-medium text-slate-500">{expenditures.length} tracked</span> · hover = preview · click = profile
         </p>
       </div>
     </div>
@@ -2632,7 +2632,7 @@ export default function Expenditures() {
             <p className="text-xs text-slate-500 mt-1">
               {filteredExpenditures.length < expenditures.length
                 ? `filtrés sur ${expenditures.length}`
-                : `${expenditures.length} pays couverts`}
+                : `${expenditures.length} countries tracked`}
             </p>
           </CardContent>
         </Card>
@@ -2801,7 +2801,7 @@ export default function Expenditures() {
               <div>
                 <CardTitle className="font-heading text-lg text-slate-900">Defense Spending — World Map</CardTitle>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  {displayedExpenditures.length} pays · couleur = intensité des dépenses · survoler = aperçu · cliquer = profil détaillé
+                  {displayedExpenditures.length} countries · color = spending intensity · hover = preview · click = full profile
                 </p>
               </div>
               <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
@@ -3192,12 +3192,12 @@ export default function Expenditures() {
 
       {/* GDP% color legend */}
       <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-slate-500 px-1">
-        <span className="font-medium text-slate-400 uppercase tracking-wide text-[10px]">% PIB :</span>
+        <span className="font-medium text-slate-400 uppercase tracking-wide text-[10px]">% GDP:</span>
         {[
-          { color: 'bg-rose-50 text-rose-600', label: '≥ 4%', desc: 'Effort de guerre / surarmement' },
-          { color: 'bg-amber-50 text-amber-600', label: '2.5 – 4%', desc: 'Au-dessus objectif OTAN' },
-          { color: 'bg-emerald-50 text-emerald-600', label: '2 – 2.5%', desc: 'Objectif OTAN atteint' },
-          { color: 'bg-slate-50 text-slate-600', label: '< 2%', desc: 'Sous objectif OTAN' },
+          { color: 'bg-rose-50 text-rose-600', label: '≥ 4%', desc: 'War footing / over-armed' },
+          { color: 'bg-amber-50 text-amber-600', label: '2.5 – 4%', desc: 'Above NATO target' },
+          { color: 'bg-emerald-50 text-emerald-600', label: '2 – 2.5%', desc: 'NATO target met' },
+          { color: 'bg-slate-50 text-slate-600', label: '< 2%', desc: 'Below NATO target' },
         ].map(item => (
           <div key={item.label} className="flex items-center gap-1.5">
             <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium ${item.color}`}>{item.label}</span>
