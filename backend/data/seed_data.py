@@ -1320,6 +1320,107 @@ DEFENSE_COMPANIES = [
         "export_countries": ["FR"],
         "aliases": ["Comand"],
     },
+
+    # =========================================================
+    # === EXPANSION BATCH — Global Coverage to 250 ===========
+    # =========================================================
+
+    # === USA — Mid-tier primes & propulsion ===
+    {"name": "Viasat", "ticker": "VSAT", "country": "USA", "market_cap": 3.1, "stock_price": 24.50, "change_percent": 1.2, "revenue": 2.8, "employees": 9000, "specializations": ["Satellite Comms", "Cyber", "Military Networking"]},
+    {"name": "Aerojet Rocketdyne", "ticker": "AJRD", "country": "USA", "market_cap": 6.4, "stock_price": 52.10, "change_percent": 0.8, "revenue": 2.4, "employees": 10000, "specializations": ["Propulsion", "Missile Motors", "Space Launch"]},
+    {"name": "Leonardo DRS", "ticker": "DRS", "country": "USA", "market_cap": 5.7, "stock_price": 26.80, "change_percent": 1.5, "revenue": 2.8, "employees": 9700, "specializations": ["Defense Electronics", "Land Systems", "Naval", "Sensor Systems"]},
+    {"name": "Cubic Corporation", "ticker": "CUBI-PRIV", "country": "USA", "market_cap": 2.8, "stock_price": 0, "change_percent": 0, "revenue": 1.4, "employees": 5000, "specializations": ["Training Systems", "C4ISR", "JTAC", "Transportation Tech"]},
+
+    # === Japan — Defense-focused divisions ===
+    {"name": "NEC Defense Systems", "ticker": "6701.T", "country": "Japan", "market_cap": 18.5, "stock_price": 14.20, "change_percent": 0.7, "revenue": 2.1, "employees": 8000, "specializations": ["Radar", "C4I", "AEGIS Integration", "Defense Electronics"]},
+    {"name": "Japan Marine United", "ticker": "JMU-PRIV", "country": "Japan", "market_cap": 1.2, "stock_price": 0, "change_percent": 0, "revenue": 1.8, "employees": 4200, "specializations": ["Naval", "Destroyer Construction", "Submarine Maintenance"]},
+    {"name": "Mitsubishi Electric Defense", "ticker": "6503.T", "country": "Japan", "market_cap": 42.0, "stock_price": 27.50, "change_percent": 0.4, "revenue": 3.2, "employees": 9000, "specializations": ["Airborne Radar", "Defense Electronics", "Missile Guidance"]},
+
+    # === Sweden ===
+    {"name": "Aimpoint AB", "ticker": "AIM-PRIV", "country": "Sweden", "market_cap": 0.6, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 500, "specializations": ["Optics", "Rifle Sights", "Red Dot", "Fire Control"]},
+    {"name": "BAE Systems Hägglunds", "ticker": "HGGL-PRIV", "country": "Sweden", "market_cap": 0.0, "stock_price": 0, "change_percent": 0, "revenue": 0.9, "employees": 2100, "specializations": ["IFV", "CV90", "Tracked Vehicles", "Land Systems"]},
+
+    # === Denmark ===
+    {"name": "Weibel Scientific", "ticker": "WBL-PRIV", "country": "Denmark", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 200, "specializations": ["Radar", "Ballistic Tracking", "Counter-UAS", "Doppler Radar"]},
+
+    # === Netherlands ===
+    {"name": "Thales Netherlands", "ticker": "THNL-PRIV", "country": "Netherlands", "market_cap": 0.0, "stock_price": 0, "change_percent": 0, "revenue": 1.3, "employees": 2200, "specializations": ["Naval Radar", "SMART-L", "APAR", "Combat Management"]},
+    {"name": "GKN Fokker", "ticker": "GKNF-PRIV", "country": "Netherlands", "market_cap": 0.0, "stock_price": 0, "change_percent": 0, "revenue": 1.1, "employees": 3500, "specializations": ["Aerostructures", "F-35 Components", "MRO", "Composite Structures"]},
+
+    # === Greece ===
+    {"name": "Hellenic Aerospace Industry", "ticker": "HAI-PRIV", "country": "Greece", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 2000, "specializations": ["MRO", "F-16 Viper Upgrade", "Avionics", "Aerostructures"]},
+
+    # === Czech Republic ===
+    {"name": "Tatra Defence Vehicle", "ticker": "TATRA-PRIV", "country": "Czech Republic", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 1100, "specializations": ["Military Trucks", "8x8 Platforms", "TATRA 815", "Land Systems"]},
+
+    # === Belgium ===
+    {"name": "Sabca", "ticker": "SABC.BR", "country": "Belgium", "market_cap": 0.4, "stock_price": 195.0, "change_percent": 0.3, "revenue": 0.3, "employees": 1400, "specializations": ["Aerostructures", "Eurofighter", "F-35 Components", "Avionics"]},
+
+    # === Portugal ===
+    {"name": "OGMA", "ticker": "OGMA-PRIV", "country": "Portugal", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 1600, "specializations": ["MRO", "Aircraft Maintenance", "Aerostructures", "NATO Certified"]},
+
+    # === Brazil ===
+    {"name": "Taurus Armas", "ticker": "TASA4.SA", "country": "Brazil", "market_cap": 1.8, "stock_price": 22.50, "change_percent": -0.5, "revenue": 0.8, "employees": 4500, "specializations": ["Firearms", "Pistols", "Revolvers", "Law Enforcement"]},
+    {"name": "AEL Sistemas", "ticker": "AELS-PRIV", "country": "Brazil", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 600, "specializations": ["Avionics", "Targeting Systems", "EO/IR", "HMD"]},
+
+    # === Saudi Arabia ===
+    {"name": "Advanced Electronics Company", "ticker": "AEC-PRIV", "country": "Saudi Arabia", "market_cap": 2.5, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 5000, "specializations": ["Radar", "Electronic Warfare", "Comms", "Vision 2030 Defense"]},
+
+    # === South Korea ===
+    {"name": "Hanwha Systems", "ticker": "009450.KS", "country": "South Korea", "market_cap": 3.4, "stock_price": 30200, "change_percent": 1.2, "revenue": 1.8, "employees": 4500, "specializations": ["C4I", "Phased Array Radar", "Electronic Warfare", "Combat Systems"]},
+
+    # === Italy ===
+    {"name": "Beretta Group", "ticker": "BERE-PRIV", "country": "Italy", "market_cap": 1.2, "stock_price": 0, "change_percent": 0, "revenue": 0.6, "employees": 3800, "specializations": ["Firearms", "Pistols", "Assault Rifles", "Law Enforcement"]},
+
+    # === India ===
+    {"name": "Tata Advanced Systems", "ticker": "TASL-PRIV", "country": "India", "market_cap": 1.5, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 5000, "specializations": ["Aerospace Manufacturing", "C4ISR", "Land Systems", "Make-in-India"]},
+    {"name": "Bharat Forge", "ticker": "BF.NS", "country": "India", "market_cap": 6.8, "stock_price": 1450.0, "change_percent": 0.9, "revenue": 1.5, "employees": 14000, "specializations": ["Artillery Systems", "ATAGS Howitzer", "Armored Vehicles", "Forgings"]},
+
+    # === Romania ===
+    {"name": "Romarm", "ticker": "ROMRM-PRIV", "country": "Romania", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 6000, "specializations": ["Small Arms", "Ammunition", "LAROM MRL", "State Defense"]},
+
+    # === Egypt ===
+    {"name": "Arab Organization for Industrialization", "ticker": "AOI-PRIV", "country": "Egypt", "market_cap": 3.0, "stock_price": 0, "change_percent": 0, "revenue": 1.2, "employees": 22000, "specializations": ["Aircraft MRO", "Land Systems", "Electronics", "Ammunition"]},
+
+    # === Serbia ===
+    {"name": "Yugoimport SDPR", "ticker": "YUGI-PRIV", "country": "Serbia", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2000, "specializations": ["Artillery", "NORA B-52", "Small Arms", "Defense Export"]},
+
+    # === Spain ===
+    {"name": "Expal Systems", "ticker": "EXPAL-PRIV", "country": "Spain", "market_cap": 1.0, "stock_price": 0, "change_percent": 0, "revenue": 0.5, "employees": 2500, "specializations": ["Ammunition", "Explosives", "Mortars", "Shoulder-Launched"]},
+
+    # === Poland ===
+    {"name": "Mesko", "ticker": "MESK-PRIV", "country": "Poland", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.25, "employees": 3200, "specializations": ["Guided Weapons", "SHORAD", "Rockets", "Piorun MANPADS"]},
+
+    # === UK ===
+    {"name": "Cobham", "ticker": "CBHM-PRIV", "country": "UK", "market_cap": 4.0, "stock_price": 0, "change_percent": 0, "revenue": 2.8, "employees": 11000, "specializations": ["Avionics", "Communications", "Defense Electronics", "Air-to-Air Refueling"]},
+    {"name": "Serco Group", "ticker": "SRP.L", "country": "UK", "market_cap": 2.1, "stock_price": 1.78, "change_percent": 0.4, "revenue": 4.9, "employees": 50000, "specializations": ["Defense Services", "Nuclear", "Government Services", "Training"]},
+
+    # === Germany ===
+    {"name": "Krauss-Maffei Wegmann", "ticker": "KMW-PRIV", "country": "Germany", "market_cap": 4.5, "stock_price": 0, "change_percent": 0, "revenue": 2.8, "employees": 5400, "specializations": ["Leopard 2", "PUMA IFV", "PzH 2000", "Armored Vehicles"]},
+
+    # === Pakistan ===
+    {"name": "Pakistan Ordnance Factories", "ticker": "POF-PRIV", "country": "Pakistan", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 25000, "specializations": ["Small Arms", "Ammunition", "Explosives", "Ordnance"]},
+
+    # === Argentina ===
+    {"name": "INVAP", "ticker": "INVAP-PRIV", "country": "Argentina", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2000, "specializations": ["Radar", "Nuclear Technology", "Satellites", "Defense R&D"]},
+
+    # === Switzerland ===
+    {"name": "MOWAG", "ticker": "MOWG-PRIV", "country": "Switzerland", "market_cap": 0.0, "stock_price": 0, "change_percent": 0, "revenue": 0.35, "employees": 800, "specializations": ["Armored Vehicles", "Eagle IV", "Duro", "Protected Mobility"]},
+
+    # === Singapore ===
+    {"name": "ST Aerospace", "ticker": "STAE-PRIV", "country": "Singapore", "market_cap": 0.0, "stock_price": 0, "change_percent": 0, "revenue": 1.5, "employees": 6000, "specializations": ["MRO", "Aerostructures", "Defense Systems", "UAV Maintenance"]},
+
+    # === Norway ===
+    {"name": "Thales Norway", "ticker": "THNO-PRIV", "country": "Norway", "market_cap": 0.0, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 500, "specializations": ["Underwater Systems", "Naval Comms", "Defense Electronics"]},
+
+    # === Finland ===
+    {"name": "Insta DefSec", "ticker": "INST-PRIV", "country": "Finland", "market_cap": 0.15, "stock_price": 0, "change_percent": 0, "revenue": 0.08, "employees": 300, "specializations": ["Defense Electronics", "Naval Systems", "Tactical Communications"]},
+
+    # === Jordan ===
+    {"name": "KADDB", "ticker": "KADDB-PRIV", "country": "Jordan", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 2500, "specializations": ["Vehicle Integration", "Maintenance", "Systems Upgrade"]},
+
+    # === Bulgaria ===
+    {"name": "Kintex JSC", "ticker": "KNTX-PRIV", "country": "Bulgaria", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.08, "employees": 500, "specializations": ["Ammunition Export", "Ordnance", "Small Arms"]},
 ]
 
 # Extended Announcements from specialized sources

@@ -221,6 +221,7 @@ COMPANY_ALIASES: Dict[str, List[str]] = {
     # Spain
     "Indra Sistemas":          ["indra "],
     "Navantia":                ["navantia"],
+    "Expal Systems":           ["expal "],
     # Israel
     "Elbit Systems":           ["elbit"],
     "Israel Aerospace Industries": ["iai ", "israel aerospace"],
@@ -229,22 +230,45 @@ COMPANY_ALIASES: Dict[str, List[str]] = {
     "Baykar":                  ["baykar", "bayraktar"],
     "Aselsan":                 ["aselsan"],
     # South Korea
-    "Hanwha Aerospace":        ["hanwha"],
+    "Hanwha Aerospace":        ["hanwha aerospace"],
+    "Hanwha Systems":          ["hanwha systems"],
     "Korea Aerospace Industries": [" kai ", "korea aerospace"],
+    "LIG Nex1":                ["lig nex1", "lignex"],
     # Japan
     "Mitsubishi Heavy Industries": ["mitsubishi heavy"],
+    "NEC Defense Systems":     ["nec defense", "nec corporation defense"],
+    "Japan Marine United":     ["japan marine united", " jmu "],
+    "Mitsubishi Electric Defense": ["mitsubishi electric"],
     # Australia
     "Austal":                  ["austal"],
+    "CEA Technologies":        ["cea technologies", " cea radar"],
     # India
     "Hindustan Aeronautics":   [" hal ", "hindustan aeronautics"],
+    "Tata Advanced Systems":   ["tata advanced systems", " tasl "],
+    "Bharat Forge":            ["bharat forge"],
     # Brazil
     "Embraer Defense":         ["embraer"],
+    "Taurus Armas":            ["taurus armas", "taurus firearms"],
     # Canada
     "CAE Inc":                 [" cae "],
     # Ukraine
     "Ukroboronprom":           ["ukroboronprom"],
     # Singapore
     "ST Engineering":          ["st engineering"],
+    # Germany
+    "Krauss-Maffei Wegmann":   ["krauss-maffei wegmann", " kmw ", "leopard 2 maker"],
+    "Helsing":                 ["helsing "],
+    # Netherlands
+    "Thales Netherlands":      ["thales netherlands", "thales nl"],
+    # Poland
+    "Mesko":                   ["mesko "],
+    # Saudi Arabia
+    "Advanced Electronics Company": [" aec ", "advanced electronics company"],
+    # UK
+    "Cobham":                  ["cobham "],
+    "Serco Group":             ["serco "],
+    # Egypt
+    "Arab Organization for Industrialization": ["arab organization for industrialization", " aoi "],
 }
 
 
