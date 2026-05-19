@@ -104,7 +104,7 @@ const MACRO_CATEGORIES = [
   {
     id: "autonomous",
     name: "Autonomous Systems & UAV",
-    description: "Unmanned platforms, loitering munitions, counter-drone",
+    description: "UAVs, loitering munitions, counter-drone",
     icon: Cpu,
     color: "purple",
     keywords: ["UAV", "Small UAV", "Loitering Munitions", "Autonomous", "Counter-UAS", "UAS", "Drones"],
@@ -160,7 +160,7 @@ const MACRO_CATEGORIES = [
   {
     id: "intel",
     name: "Intelligence, Cyber & EW",
-    description: "C2, SIGINT, electronic warfare, AI & analytics",
+    description: "C2, SIGINT, cyber & electronic warfare",
     icon: Brain,
     color: "emerald",
     keywords: ["Cyber", "AI", "Intelligence", "Analytics", "Software", "Electronic Warfare", "SIGINT", "ISR", "C4I", "Communications", "Radar", "Sensors", "Optronics"],
@@ -581,7 +581,7 @@ export default function PrivatePlayers() {
     [players]
   );
   const totalFunded = useMemo(
-    () => players.filter((c) => c.funding_stage && !c.funding_stage.toLowerCase().includes("private — ")).length,
+    () => players.filter((c) => /series|seed|venture|growth|bootstrap|late stage/i.test(c.funding_stage || "")).length,
     [players]
   );
 
@@ -617,8 +617,8 @@ export default function PrivatePlayers() {
           {[
             { label: "Companies",       value: players.length,                    icon: Building2,  iconCls: "text-purple-700", bgCls: "bg-purple-50" },
             { label: countryCounts.length === 1 ? "Country" : "Countries", value: countryCounts.length, icon: Globe, iconCls: "text-blue-600", bgCls: "bg-blue-50" },
-            { label: "Total Valuation", value: formatCap(totalValuation) || "—",  icon: TrendingUp, iconCls: "text-emerald-600", bgCls: "bg-emerald-50" },
-            { label: "With Funding",    value: totalFunded,                        icon: DollarSign, iconCls: "text-amber-600",  bgCls: "bg-amber-50" },
+            { label: "Agg. Valuation*", value: formatCap(totalValuation) || "—",  icon: TrendingUp, iconCls: "text-emerald-600", bgCls: "bg-emerald-50" },
+            { label: "VC / PE Backed",  value: totalFunded,                        icon: DollarSign, iconCls: "text-amber-600",  bgCls: "bg-amber-50" },
           ].map(({ label, value, icon: Icon, iconCls, bgCls }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
@@ -671,7 +671,7 @@ export default function PrivatePlayers() {
         <div className="flex gap-6 items-start">
 
           {/* ── Country sidebar ── */}
-          <div className="w-48 flex-shrink-0 sticky top-6">
+          <div className="w-56 flex-shrink-0 sticky top-6">
             <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">
               Countries
             </p>
@@ -720,7 +720,7 @@ export default function PrivatePlayers() {
                       ) : (
                         <Globe className="w-4 h-4 text-slate-300 flex-shrink-0" />
                       )}
-                      <span className="truncate text-[13px]">{country}</span>
+                      <span className="text-[13px] leading-tight">{country}</span>
                     </div>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       {/* Mini proportional bar */}
