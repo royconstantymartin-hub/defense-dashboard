@@ -68,7 +68,6 @@ export const COMPANY_LOGOS = {
   "Cohort": "cohortplc.com",
   // France
   "Thales": "thalesgroup.com",
-  "Thales Nederland": "thalesgroup.com",
   "Airbus Defence & Space": "airbus.com",
   "Airbus Defence Spain": "airbus.com",
   "Leonardo": "leonardo.com",
@@ -197,6 +196,11 @@ export const COMPANY_LOGOS = {
   "Dynamit Nobel Defence": "dynamit-nobel-defence.de",
   "Theon Sensors": "theonsensors.com",
   "PZL Mielec": "pzl.mielec.pl",
+  // Private players — previously missing
+  "Helsing": "helsing.ai",
+  "STM Savunma": "stm.com.tr",
+  "Blue Bear Systems": "bluebear.aero",
+  "Basecamp Research": "basecampresearch.com",
   // France — additional entries
   "Exail Technologies": "exail.com",
   "Eutelsat": "eutelsat.com",
@@ -342,7 +346,7 @@ export const COMPANY_WIKI_LOGOS = {
   "L3Harris Technologies":         WP + "L3Harris_Technologies_logo.svg",
   "Leidos Holdings":               WP + "Leidos_logo_2013.svg",
   "Booz Allen Hamilton":           WP + "Booz_Allen_Hamilton_logo.svg",
-  "Textron":                       WP + "Textron_logo.svg",
+  // Textron — no confirmed Wikipedia logo, falls through to Clearbit (textron.com)
   "Palantir Technologies":         WP + "Palantir_Technologies_logo.svg",
   "Honeywell Aerospace":           WP + "Honeywell_logo.svg",
   "General Electric Aviation":     WP + "General_Electric_logo.svg",
@@ -360,7 +364,6 @@ export const COMPANY_WIKI_LOGOS = {
   "Airbus Helicopters":            WP + "Airbus_Logo_2017.svg",
   "Indra":                         WP + "Indra_Sistemas_logo.svg",
   "Thales":                        WP + "Thales_Logo.svg",
-  "Thales Nederland":              WP + "Thales_Logo.svg",
   "Safran":                        WP + "Logo_Safran.svg",
   "Dassault Aviation":             WP + "Dassault_Aviation_Logo.jpg",
   "MBDA":                          WP + "MBDA-Logo.svg",
@@ -382,8 +385,8 @@ export const COMPANY_WIKI_LOGOS = {
   "Saab Kockums":                  WP + "Saab_wordmark_blue.svg",
   "Kongsberg Defence":             WP + "Kongsberg_logo.svg",
   // Spain
-  "Indra Sistemas":                WP + "Indra_Sistemas_logo.svg",
-  "Navantia":                      WP + "Navantia.svg",
+  "Indra Sistemas":                WP + "Indra-Sistemas-Logo.svg",
+  "Navantia":                      WP + "Navantia logo 2019.svg",
   // Benelux
   "FN Herstal":                    WP + "FN-Herstal-logo.svg",
   // Switzerland
@@ -419,18 +422,18 @@ export const COMPANY_WIKI_LOGOS = {
   "Huntington Ingalls":            WP + "Huntington_Ingalls_Industries_logo.svg",
   "Axon Enterprise":               WP + "Axon_Enterprise_logo.svg",
   "Triumph Group":                 WP + "Triumph_Group_logo.svg",
-  "ManTech International":         WP + "ManTech_International_logo.svg",
+  "ManTech International":         WP + "ManTech International logo.png",
   "Hexcel":                        WP + "Hexcel_logo.svg",
-  "V2X Inc":                       WP + "V2X_Inc_logo.svg",
-  "Redwire Corporation":           WP + "Redwire_Space_logo.svg",
+  // V2X Inc has no Wikipedia Commons logo — falls through to Clearbit (v2x.com)
+  "Redwire Corporation":           WP + "Redwire logo.svg",
   "HEICO Corporation":             WP + "HEICO_logo.png",
-  "Parsons Corporation":           WP + "Parsons_Corporation_logo.svg",
+  // Parsons Corporation — falls through to Clearbit (parsons.com)
   "SAIC":                          WP + "SAIC_logo.svg",
   "Leidos Holdings":               WP + "Leidos_logo_2013.svg",
   "Mercury Systems":               WP + "Mercury_Systems_logo.svg",
-  "AeroVironment":                 WP + "AeroVironment_logo.svg",
+  "AeroVironment":                 WP + "AeroVironment Logo.png",
   "Curtiss-Wright":                WP + "Curtiss-Wright_logo.svg",
-  "Moog Inc":                      WP + "Moog_Inc_logo.svg",
+  "Moog Inc":                      WP + "MOOG Logo.png",
   "CACI International":            WP + "CACI_logo.svg",
   "Peraton":                       WP + "Peraton_logo.svg",
   "Collins Aerospace":             WP + "Collins_Aerospace_logo.svg",
@@ -438,8 +441,8 @@ export const COMPANY_WIKI_LOGOS = {
   "General Electric Aviation":     WP + "General_Electric_logo.svg",
   "Kaman Aerospace":               WP + "Kaman_Corporation_logo.svg",
   "Maxar Technologies":            WP + "Maxar_Technologies_logo.svg",
-  "Sierra Nevada Corporation":     WP + "Sierra_Nevada_Corporation_logo.svg",
-  "Shield AI":                     WP + "Shield_AI_logo.svg",
+  // Sierra Nevada Corporation — no confirmed Wikipedia logo, falls through to Clearbit (sncorp.com)
+  // Shield AI has no Wikipedia Commons logo — falls through to Clearbit (shield.ai)
   "General Atomics":               WP + "General_Atomics_logo.svg",
   "Spirit AeroSystems":            WP + "Spirit_AeroSystems_logo.svg",
   "BWX Technologies":              WP + "BWX_Technologies_logo.svg",
@@ -449,25 +452,21 @@ export const COMPANY_WIKI_LOGOS = {
   "NEC Corporation":               WP + "NEC_logo.svg",
   "Fujitsu Defense":               WP + "Fujitsu_logo.svg",
   // South Korea — additional
-  "Hyundai Rotem":                 WP + "Hyundai_Rotem_Logo.svg",
+  "Hyundai Rotem":                 WP + "Hyundai Rotem logo.svg",
   // India — additional
   "Cochin Shipyard":               WP + "Cochin_Shipyard_logo.svg",
   // Scandinavia
   "Nammo":                         WP + "Nammo_logo.svg",
-  "Patria":                        WP + "Patria_logo.svg",
+  // Patria has no Wikipedia Commons logo — falls through to Clearbit (patriagroup.com)
   // Germany — additional
   "MTU Aero Engines":              WP + "MTU_Aero_Engines_Logo.svg",
   "Renk Group":                    WP + "RENK_AG_logo.svg",
   "ThyssenKrupp Marine":           WP + "Thyssenkrupp_AG_logo.svg",
-  // Middle East
-  "SAMI":                          WP + "SAMI_logo.svg",
-  "Paramount Group":               WP + "Paramount_Group_logo.svg",
-  // Ukraine
+  // Middle East — falls through to Clearbit for SAMI/Paramount (no confirmed Wikipedia logos)
+  // Ukraine — falls through to Clearbit for smaller entities
   "Ukroboronprom":                 WP + "Ukroboronprom_logo.svg",
-  "Antonov":                       WP + "Antonov_logo.svg",
+  "Antonov":                       WP + "Antonov Design Bureau Logo.png",
   "Motor Sich":                    WP + "Motor_Sich_logo.svg",
-  "LUCH Design Bureau":            WP + "Luch_Design_Bureau_logo.png",
-  "UkrSpecSystems":                WP + "UkrSpecSystems_logo.png",
   // Russia — additional
   "Rostec":                        WP + "Rostec_logo.svg",
   "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
@@ -483,18 +482,18 @@ export const COMPANY_WIKI_LOGOS = {
   // Norinco (case variant used in Products)
   "Norinco":                       "https://iconape.com/wp-content/png_logo_vector/norinco-logo.png",
   // Italy
-  "Elettronica":                   WP + "Elettronica_spa_logo.svg",
+  // Elettronica has no Wikipedia Commons logo — falls through to Clearbit (elt.it)
   "Avio":                          WP + "Avio_logo.svg",
   // UK — additional
   "Cohort":                        WP + "Cohort_plc_logo.svg",
   "Chemring Group":                WP + "Chemring_logo.svg",
   // Switzerland
-  "RUAG":                          WP + "RUAG_logo.svg",
+  "RUAG":                          WP + "RUAG AG logo.svg",
   // Poland
-  "Polska Grupa Zbrojeniowa":      WP + "PGZ_logo.svg",
+  // PGZ has no confirmed Wikipedia Commons logo — falls through to Clearbit (pgzsa.pl)
   // Benelux
-  "Damen Shipyards":               WP + "Damen_Group_logo.svg",
-  "CMI Defence":                   WP + "CMI_Defence_logo.svg",
+  "Damen Shipyards":               WP + "Damen logo.svg",
+  // CMI Defence has no Wikipedia Commons logo — falls through to Clearbit (cmigroupe.com)
   // UAE
   "Emirates Defence Industries":   WP + "Emirates_Defence_Industries_logo.svg",
   // Canada — additional
@@ -502,23 +501,23 @@ export const COMPANY_WIKI_LOGOS = {
   // Australia — additional
   "Austal":                        WP + "Austal_logo.svg",
   // Latin America
-  "Taurus Armas":                  WP + "Taurus_Armas_logo.svg",
+  "Taurus Armas":                  WP + "Taurus Logo.svg",
   // USA — additional
   "Anduril Industries":            WP + "Anduril_Industries_Logo.svg",
-  "Kratos Defense":                WP + "Kratos_Defense_%26_Security_Solutions_logo.svg",
-  "Teledyne Technologies":         WP + "Teledyne_Technologies_logo.svg",
+  // Kratos Defense — no confirmed Wikipedia logo, falls through to Clearbit (kratosdefense.com)
+  "Teledyne Technologies":         WP + "Teledyne logo.svg",
   "SERCO Group":                   WP + "Serco_logo.svg",
   // Turkey
   "Roketsan":                      WP + "Roketsan_logo.svg",
-  "Baykar":                        WP + "Baykar_logo.png",
+  "Baykar":                        WP + "BaykarLogo.png",
   "Havelsan":                      WP + "Havelsan_logo.svg",
   // South Korea
-  "LIG Nex1":                      WP + "LIG_Nex1_logo.svg",
-  "Hyundai Rotem":                 WP + "Hyundai_Rotem_Logo.svg",
+  "LIG Nex1":                      WP + "LIG Nex1 CI Logo.svg",
+  "Hyundai Rotem":                 WP + "Hyundai Rotem logo.svg",
   // Estonia
-  "Milrem Robotics":               WP + "Milrem_Robotics_logo.svg",
+  // Milrem Robotics has no Wikipedia Commons logo — falls through to Clearbit
   // Denmark
-  "Terma A/S":                     WP + "Terma_logo.svg",
+  "Terma A/S":                     WP + "Terma logo.jpeg",
   // India — direct CDN URLs (Wikipedia filenames incorrect; Indian govt sites return globe favicon)
   "Hindustan Aeronautics":         "https://companieslogo.com/img/orig/HAL.NS_BIG-46cfe121.png",
   "Bharat Electronics":            "https://companieslogo.com/img/orig/BEL.NS_BIG-b2d0690e.png",
@@ -537,10 +536,8 @@ export const COMPANY_WIKI_LOGOS = {
   "United Aircraft Corporation":   WP + "United_Aircraft_Corporation_logo.svg",
   "United Shipbuilding Corporation": WP + "United_Shipbuilding_Corporation_logo.svg",
   "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
-  // South Africa
-  "Denel":                         WP + "Denel_logo.svg",
-  // UAE
-  "EDGE Group":                    WP + "EDGE_Group_logo.svg",
+  // South Africa — Denel/Paramount fall through to Clearbit (no confirmed Wikipedia logos)
+  // UAE — EDGE Group falls through to Clearbit (edgegroup.ae)
 };
 
 export function getLogoDomain(name) {
