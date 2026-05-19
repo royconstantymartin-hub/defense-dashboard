@@ -149,6 +149,30 @@ const TIME_BAND_LABELS = {
   earlier:   "Earlier",
 };
 
+// ── Defense company tickers for the Market Impact widget ─────────────────────
+
+const DEFENSE_TICKERS = [
+  { ticker: "LMT",   name: "Lockheed Martin",   country: "us", keywords: ["lockheed", "f-35", "f-22", "sikorsky"] },
+  { ticker: "RTX",   name: "Raytheon",           country: "us", keywords: ["raytheon", "patriot", "javelin", "collins"] },
+  { ticker: "NOC",   name: "Northrop Grumman",   country: "us", keywords: ["northrop", "grumman", "b-21", "global hawk"] },
+  { ticker: "GD",    name: "General Dynamics",   country: "us", keywords: ["general dynamics", "gulfstream", "abrams", "stryker"] },
+  { ticker: "BA",    name: "Boeing Defense",     country: "us", keywords: ["boeing", "f/a-18", "f-15", "apache", "chinook"] },
+  { ticker: "LHX",   name: "L3Harris",           country: "us", keywords: ["l3harris", "harris", "l3 technologies"] },
+  { ticker: "HII",   name: "Huntington Ingalls", country: "us", keywords: ["huntington ingalls", "hii", "newport news", "ingalls shipbuilding"] },
+  { ticker: "LDOS",  name: "Leidos",             country: "us", keywords: ["leidos"] },
+  { ticker: "BAH",   name: "Booz Allen",         country: "us", keywords: ["booz allen"] },
+  { ticker: "RHM.DE",name: "Rheinmetall",        country: "de", keywords: ["rheinmetall", "lynx ifv", "panther"] },
+  { ticker: "AIR.PA",name: "Airbus",             country: "fr", keywords: ["airbus", "eurofighter", "a400m", "nh90"] },
+  { ticker: "HO.PA", name: "Thales",             country: "fr", keywords: ["thales"] },
+  { ticker: "AM.PA", name: "Dassault",           country: "fr", keywords: ["dassault", "rafale", "falcon"] },
+  { ticker: "SAF.PA",name: "Safran",             country: "fr", keywords: ["safran"] },
+  { ticker: "LDO.MI",name: "Leonardo",           country: "it", keywords: ["leonardo", "finmeccanica", "aw101", "aw139"] },
+  { ticker: "BA.L",  name: "BAE Systems",        country: "gb", keywords: ["bae systems", "bae", "challenger", "typhoon"] },
+  { ticker: "RR.L",  name: "Rolls-Royce",        country: "gb", keywords: ["rolls-royce", "rolls royce"] },
+  { ticker: "IDR.MC",name: "Indra",              country: "es", keywords: ["indra sistemas", "indra"] },
+  { ticker: "HAG.DE",name: "Hensoldt",           country: "de", keywords: ["hensoldt"] },
+];
+
 // ── Placeholder ───────────────────────────────────────────────────────────────
 
 const PLACEHOLDER_GRADIENT = {
