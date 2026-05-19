@@ -24,8 +24,8 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
-  Flame,
-  Building2,
+  BarChart2,
+  Tag,
 } from "lucide-react";
 import { format, differenceInHours } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -311,7 +311,7 @@ function HeroCard({ article, isBookmarked, onBookmark }) {
         {srcCount >= 2 && (
           <div className="absolute top-3 right-3">
             <span className="bg-orange-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
-              🔥 {srcCount} sources
+              {srcCount} sources
             </span>
           </div>
         )}
@@ -395,7 +395,7 @@ function MediumCard({ article, isBookmarked, onBookmark, isBreaking = false }) {
         {srcCount >= 2 && (
           <div className="absolute top-2 right-2">
             <span className="bg-orange-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-              🔥 {srcCount}
+              {srcCount} src
             </span>
           </div>
         )}
@@ -502,7 +502,7 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
                 className="bg-orange-100 text-orange-700 text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wide"
                 title={`Covered by: ${coveredBy.join(", ")}`}
               >
-                🔥 {srcCount} sources
+                {srcCount} sources
               </span>
             )}
           </div>
@@ -602,9 +602,9 @@ function CompanyHeatWidget({ articles, selectedCompany, onSelectCompany }) {
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
-            <Flame className="w-3.5 h-3.5 text-orange-500" />
+            <BarChart2 className="w-3.5 h-3.5 text-slate-500" />
             <span className="text-[11px] font-bold text-slate-700 uppercase tracking-widest">
-              Company Heat
+              Market Pulse
             </span>
           </div>
           <div className="flex rounded-lg border border-slate-200 overflow-hidden bg-white">
@@ -674,7 +674,7 @@ function CompanyHeatWidget({ articles, selectedCompany, onSelectCompany }) {
 
                 {/* Article count */}
                 <div className="flex items-center gap-1 mb-1.5">
-                  <Building2 className="w-3 h-3 text-slate-300" />
+                  <Tag className="w-3 h-3 text-slate-300" />
                   <span className="text-[10px] text-slate-400">
                     {count} article{count > 1 ? "s" : ""} · {heatWindow}h
                   </span>
@@ -708,11 +708,10 @@ function CompanyHeatWidget({ articles, selectedCompany, onSelectCompany }) {
 
 // ── SectionHeader ──────────────────────────────────────────────────────────────
 
-function SectionHeader({ emoji, label, sublabel, color = "slate" }) {
+function SectionHeader({ label, sublabel, color = "slate" }) {
   const divider = color === "orange" ? "bg-orange-200" : "bg-slate-200";
   return (
     <div className="flex items-center gap-2 mb-4">
-      {emoji && <span className="text-base">{emoji}</span>}
       <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">{label}</h2>
       {sublabel && (
         <span className="text-xs text-slate-400 font-normal normal-case tracking-normal">{sublabel}</span>
@@ -1129,7 +1128,7 @@ export default function Announcements() {
           {breakingArticles.length > 0 && (
             <div>
               <SectionHeader
-                emoji="🔥"
+
                 label="Breaking Intel"
                 sublabel={`— ${pinnedArticles.length}/3 slots curated · refreshes at 07:05 & 19:05 UTC`}
                 color="orange"
