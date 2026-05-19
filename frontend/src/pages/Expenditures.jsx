@@ -522,7 +522,7 @@ function formatAmount(min, max) {
 const DEFENSE_CAPABILITIES = {
   US: { fighters: 2085, helicopters: 5000, drones: 500, land_vehicles: 45000, surface_combatants: 107, submarines: 68 },
   CN: { fighters: 1571, helicopters: 1400, drones: 400, land_vehicles: 14800, surface_combatants: 83,  submarines: 60 },
-  RU: { fighters: 769,  helicopters: 1400, drones: 60,  land_vehicles: 22000, surface_combatants: 54,  submarines: 65 },
+  RU: { fighters: 769,  helicopters: 1400, drones: 500, land_vehicles: 22000, surface_combatants: 54,  submarines: 65 },
   IN: { fighters: 628,  helicopters: 720,  drones: 50,  land_vehicles: 9500,  surface_combatants: 36,  submarines: 17 },
   SA: { fighters: 356,  helicopters: 250,  drones: 30,  land_vehicles: 5000,  surface_combatants: 12,  submarines: 0  },
   GB: { fighters: 227,  helicopters: 320,  drones: 12,  land_vehicles: 3600,  surface_combatants: 24,  submarines: 10 },
@@ -544,36 +544,36 @@ const DEFENSE_CAPABILITIES = {
   GR: { fighters: 191,  helicopters: 225,  drones: 8,   land_vehicles: 3500,  surface_combatants: 21,  submarines: 11 },
   NO: { fighters: 57,   helicopters: 70,   drones: 4,   land_vehicles: 600,   surface_combatants: 6,   submarines: 6  },
   SE: { fighters: 60,   helicopters: 80,   drones: 6,   land_vehicles: 600,   surface_combatants: 7,   submarines: 5  },
-  FI: { fighters: 55,   helicopters: 70,   drones: 4,   land_vehicles: 1400,  surface_combatants: 4,   submarines: 0  },
+  FI: { fighters: 55,   helicopters: 70,   drones: null,land_vehicles: 1400,  surface_combatants: 4,   submarines: 0  },
   AE: { fighters: 294,  helicopters: 150,  drones: 30,  land_vehicles: 3000,  surface_combatants: 8,   submarines: 0  },
   PK: { fighters: 425,  helicopters: 340,  drones: 40,  land_vehicles: 5500,  surface_combatants: 14,  submarines: 8  },
   ID: { fighters: 93,   helicopters: 165,  drones: 6,   land_vehicles: 2000,  surface_combatants: 22,  submarines: 4  },
   VN: { fighters: 189,  helicopters: 180,  drones: 4,   land_vehicles: 3200,  surface_combatants: 12,  submarines: 6  },
-  EG: { fighters: 601,  helicopters: 300,  drones: 20,  land_vehicles: 10000, surface_combatants: 28,  submarines: 8  },
-  UA: { fighters: 98,   helicopters: 150,  drones: 50,  land_vehicles: 3000,  surface_combatants: 4,   submarines: 0  },
-  IR: { fighters: 372,  helicopters: 350,  drones: 80,  land_vehicles: 7000,  surface_combatants: 21,  submarines: 29 },
+  EG: { fighters: 380,  helicopters: 300,  drones: 20,  land_vehicles: 10000, surface_combatants: 28,  submarines: 8  },
+  UA: { fighters: 98,   helicopters: 150,  drones: 120, land_vehicles: 3000,  surface_combatants: 4,   submarines: 0  },
+  IR: { fighters: 372,  helicopters: 350,  drones: 350, land_vehicles: 7000,  surface_combatants: 21,  submarines: 29 },
   QA: { fighters: 96,   helicopters: 28,   drones: 4,   land_vehicles: 400,   surface_combatants: 4,   submarines: 0  },
   KW: { fighters: 52,   helicopters: 40,   drones: 2,   land_vehicles: 800,   surface_combatants: 5,   submarines: 0  },
   DZ: { fighters: 237,  helicopters: 200,  drones: 10,  land_vehicles: 4500,  surface_combatants: 14,  submarines: 6  },
   MA: { fighters: 89,   helicopters: 90,   drones: 8,   land_vehicles: 2200,  surface_combatants: 14,  submarines: 3  },
-  TH: { fighters: 162,  helicopters: 180,  drones: 4,   land_vehicles: 1500,  surface_combatants: 14,  submarines: 0  },
-  MY: { fighters: 65,   helicopters: 70,   drones: 4,   land_vehicles: 700,   surface_combatants: 20,  submarines: 2  },
-  PH: { fighters: 49,   helicopters: 80,   drones: 4,   land_vehicles: 400,   surface_combatants: 12,  submarines: 0  },
-  NZ: { fighters: 0,    helicopters: 60,   drones: 4,   land_vehicles: 600,   surface_combatants: 6,   submarines: 0  },
+  TH: { fighters: 162,  helicopters: 180,  drones: null,land_vehicles: 1500,  surface_combatants: 14,  submarines: 0  },
+  MY: { fighters: 65,   helicopters: 70,   drones: null,land_vehicles: 700,   surface_combatants: 20,  submarines: 2  },
+  PH: { fighters: 49,   helicopters: 80,   drones: null,land_vehicles: 400,   surface_combatants: 12,  submarines: 0  },
+  NZ: { fighters: 0,    helicopters: 60,   drones: null,land_vehicles: 600,   surface_combatants: 6,   submarines: 0  },
   ZA: { fighters: 49,   helicopters: 90,   drones: 6,   land_vehicles: 1400,  surface_combatants: 6,   submarines: 3  },
-  NG: { fighters: 78,   helicopters: 60,   drones: 4,   land_vehicles: 600,   surface_combatants: 3,   submarines: 0  },
-  AR: { fighters: 99,   helicopters: 100,  drones: 4,   land_vehicles: 1200,  surface_combatants: 14,  submarines: 3  },
-  CL: { fighters: 74,   helicopters: 80,   drones: 4,   land_vehicles: 700,   surface_combatants: 10,  submarines: 4  },
-  PT: { fighters: 30,   helicopters: 50,   drones: 4,   land_vehicles: 400,   surface_combatants: 8,   submarines: 2  },
-  RO: { fighters: 40,   helicopters: 90,   drones: 4,   land_vehicles: 2200,  surface_combatants: 6,   submarines: 1  },
-  CZ: { fighters: 24,   helicopters: 50,   drones: 4,   land_vehicles: 600,   surface_combatants: 0,   submarines: 0  },
+  NG: { fighters: 78,   helicopters: 60,   drones: null,land_vehicles: 600,   surface_combatants: 3,   submarines: 0  },
+  AR: { fighters: 99,   helicopters: 100,  drones: null,land_vehicles: 1200,  surface_combatants: 14,  submarines: 3  },
+  CL: { fighters: 74,   helicopters: 80,   drones: null,land_vehicles: 700,   surface_combatants: 10,  submarines: 4  },
+  PT: { fighters: 30,   helicopters: 50,   drones: null,land_vehicles: 400,   surface_combatants: 8,   submarines: 2  },
+  RO: { fighters: 40,   helicopters: 90,   drones: null,land_vehicles: 2200,  surface_combatants: 6,   submarines: 1  },
+  CZ: { fighters: 24,   helicopters: 50,   drones: null,land_vehicles: 600,   surface_combatants: 0,   submarines: 0  },
   HU: { fighters: 12,   helicopters: 30,   drones: 2,   land_vehicles: 300,   surface_combatants: 0,   submarines: 0  },
-  JO: { fighters: 79,   helicopters: 50,   drones: 4,   land_vehicles: 2000,  surface_combatants: 0,   submarines: 0  },
-  IQ: { fighters: 83,   helicopters: 80,   drones: 4,   land_vehicles: 1500,  surface_combatants: 0,   submarines: 0  },
+  JO: { fighters: 79,   helicopters: 50,   drones: null,land_vehicles: 2000,  surface_combatants: 0,   submarines: 0  },
+  IQ: { fighters: 83,   helicopters: 80,   drones: null,land_vehicles: 1500,  surface_combatants: 0,   submarines: 0  },
   AZ: { fighters: 64,   helicopters: 60,   drones: 30,  land_vehicles: 1800,  surface_combatants: 4,   submarines: 0  },
-  BD: { fighters: 109,  helicopters: 80,   drones: 4,   land_vehicles: 1200,  surface_combatants: 12,  submarines: 2  },
-  MM: { fighters: 146,  helicopters: 90,   drones: 4,   land_vehicles: 1000,  surface_combatants: 8,   submarines: 0  },
-  PE: { fighters: 76,   helicopters: 80,   drones: 4,   land_vehicles: 800,   surface_combatants: 8,   submarines: 6  },
+  BD: { fighters: 109,  helicopters: 80,   drones: null,land_vehicles: 1200,  surface_combatants: 12,  submarines: 2  },
+  MM: { fighters: 146,  helicopters: 90,   drones: null,land_vehicles: 1000,  surface_combatants: 8,   submarines: 0  },
+  PE: { fighters: 76,   helicopters: 80,   drones: null,land_vehicles: 800,   surface_combatants: 8,   submarines: 6  },
 };
 
 const CAP_CATEGORIES = [
@@ -1449,7 +1449,7 @@ function useCountUp(target, duration = 900) {
 }
 
 function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isClickable }) {
-  const animated = useCountUp(count);
+  const animated = useCountUp(count ?? 0);
   const pct = maxCount > 0 && count > 0 ? Math.min((count / maxCount) * 100, 100) : 0;
 
   return (
@@ -1470,7 +1470,7 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
             <p className="text-[10px] text-slate-400 leading-tight truncate">{cat.sublabel}</p>
           </div>
         </div>
-        {rank > 0 && count > 0 && (
+        {rank > 0 && count != null && count > 0 && (
           <span className={`shrink-0 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md border ${
             rank === 1 ? "bg-amber-50 text-amber-700 border-amber-200" :
             rank <= 3 ? "bg-slate-100 text-slate-600 border-slate-200" :
@@ -1484,8 +1484,15 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
       {/* Body */}
       <div className="bg-white p-3 flex flex-col gap-2">
         <p className={`text-3xl font-mono font-bold ${cat.countColor} tabular-nums leading-none`}>
-          {count === 0 ? "—" : animated.toLocaleString()}
+          {count === null
+            ? <span className="text-xl text-slate-300 font-mono">N/D</span>
+            : count === 0 ? "—"
+            : animated.toLocaleString()}
         </p>
+
+        {count === null && (
+          <p className="text-[10px] text-slate-400">Non documenté</p>
+        )}
 
         {count === 0 && (
           <p className="text-[10px] text-slate-400">No data / not applicable</p>
@@ -1698,7 +1705,7 @@ function DefenseCapabilitiesCard({ countryCode }) {
                   <CapabilityTile
                     key={cat.key}
                     cat={cat}
-                    count={cap[cat.key] ?? 0}
+                    count={cap[cat.key] ?? null}
                     rank={rank > 0 ? rank : null}
                     maxCount={CAP_MAX[cat.key]}
                     isClickable={isClickable}
@@ -2712,6 +2719,22 @@ export default function Expenditures() {
           </div>
         </CardContent>
       </Card>
+
+      {/* GDP% color legend */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-slate-500 px-1">
+        <span className="font-medium text-slate-400 uppercase tracking-wide text-[10px]">% PIB :</span>
+        {[
+          { color: 'bg-rose-50 text-rose-600', label: '≥ 4%', desc: 'Effort de guerre / surarmement' },
+          { color: 'bg-amber-50 text-amber-600', label: '2.5 – 4%', desc: 'Au-dessus objectif OTAN' },
+          { color: 'bg-emerald-50 text-emerald-600', label: '2 – 2.5%', desc: 'Objectif OTAN atteint' },
+          { color: 'bg-slate-50 text-slate-600', label: '< 2%', desc: 'Sous objectif OTAN' },
+        ].map(item => (
+          <div key={item.label} className="flex items-center gap-1.5">
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium ${item.color}`}>{item.label}</span>
+            <span className="text-slate-400">{item.desc}</span>
+          </div>
+        ))}
+      </div>
 
       {/* Top 5 focus cards */}
       <Card className="bg-white border-slate-200 shadow-sm">
