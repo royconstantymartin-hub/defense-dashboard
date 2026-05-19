@@ -17,8 +17,9 @@ import {
   ArrowUpDown, Globe2, BarChart2, Percent, Shield,
   Anchor, Plane, Satellite, Zap, Lock, Flag, ExternalLink,
   FileText, Building2, Newspaper, Users, Globe, Crosshair,
-  Target, Gauge,
+  Target, Gauge, Download,
 } from "lucide-react";
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 
 // ── Custom military SVG icons ─────────────────────────────────────────────────
 function FighterJetIcon({ className }) {
@@ -86,8 +87,30 @@ const SORT_OPTIONS = [
   { value: "expenditure_asc", label: "Expenditure (Low to High)" },
   { value: "gdp_desc", label: "% GDP (High to Low)" },
   { value: "gdp_asc", label: "% GDP (Low to High)" },
+  { value: "per_capita_desc", label: "Per capita (High to Low)" },
+  { value: "per_capita_asc", label: "Per capita (Low to High)" },
   { value: "name_asc", label: "Country (A-Z)" },
 ];
+
+// Population 2024 estimates (millions) — used for per-capita calculation
+const POPULATION_M = {
+  US: 340, CN: 1410, RU: 144, IN: 1425, SA: 37,
+  GB: 68,  UA: 37,  DE: 84,  FR: 68,  JP: 125,
+  KR: 52,  AU: 26,  IT: 59,  PL: 38,  CA: 40,
+  IL: 10,  AE: 10,  TR: 86,  BR: 216, TW: 23,
+  ES: 48,  NL: 18,  SG: 6,   PK: 235, DK: 6,
+  NO: 5,   ID: 279, DZ: 46,  SE: 11,  MX: 129,
+};
+
+// ISO 3166-1 numeric → alpha-2 — used by world-atlas GeoJSON features
+const ISO_NUM_TO_CODE = {
+  '840': 'US', '156': 'CN', '643': 'RU', '356': 'IN', '682': 'SA',
+  '826': 'GB', '804': 'UA', '276': 'DE', '250': 'FR', '392': 'JP',
+  '410': 'KR', '036': 'AU', '380': 'IT', '616': 'PL', '124': 'CA',
+  '376': 'IL', '784': 'AE', '792': 'TR', '076': 'BR', '158': 'TW',
+  '724': 'ES', '528': 'NL', '702': 'SG', '586': 'PK', '208': 'DK',
+  '578': 'NO', '360': 'ID', '012': 'DZ', '752': 'SE', '484': 'MX',
+};
 
 const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899', '#84CC16'];
 
@@ -1529,6 +1552,97 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
   );
 }
 
+const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+
+function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }) {
+  const [tooltip, setTooltip] = useState(null);
+
+  const spendingByCode = useMemo(() => {
+    const m = {};
+    expenditures.forEach(e => { m[e.country_code] = e; });
+    return m;
+  }, [expenditures]);
+
+  const maxVal = expenditures.length
+    ? Math.max(...expenditures.map(e => mode === 'gdp' ? e.gdp_percent : e.expenditure))
+    : 1;
+
+  const getColor = (value) => {
+    if (!value) return '#F1F5F9';
+    const t = Math.min(value / maxVal, 1);
+    if (t < 0.3) {
+      const s = t / 0.3;
+      return `rgb(${Math.round(241 + (233 - 241) * s)},${Math.round(245 + (213 - 245) * s)},${Math.round(249 + (255 - 249) * s)})`;
+    }
+    const s = (t - 0.3) / 0.7;
+    return `rgb(${Math.round(233 + (107 - 233) * s)},${Math.round(213 + (33 - 213) * s)},${Math.round(255 + (168 - 255) * s)})`;
+  };
+
+  return (
+    <div className="relative">
+      <ComposableMap
+        projection="geoMercator"
+        projectionConfig={{ scale: 118, center: [15, 15] }}
+        style={{ width: '100%', height: '340px' }}
+      >
+        <Geographies geography={GEO_URL}>
+          {({ geographies }) =>
+            geographies.map((geo) => {
+              const code = ISO_NUM_TO_CODE[String(geo.id).padStart(3, '0')];
+              const entry = code ? spendingByCode[code] : null;
+              const value = entry ? (mode === 'gdp' ? entry.gdp_percent : entry.expenditure) : 0;
+              const isSelected = code && selectedCode === code;
+              return (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  fill={isSelected ? '#7E22CE' : getColor(value)}
+                  stroke="#E2E8F0"
+                  strokeWidth={0.5}
+                  style={{
+                    default: { outline: 'none', cursor: entry ? 'pointer' : 'default' },
+                    hover:   { fill: entry ? '#9333EA' : '#E2E8F0', outline: 'none' },
+                    pressed: { outline: 'none' },
+                  }}
+                  onClick={() => entry && onCountryClick(entry)}
+                  onMouseEnter={(evt) => entry && setTooltip({ entry, x: evt.clientX, y: evt.clientY })}
+                  onMouseLeave={() => setTooltip(null)}
+                />
+              );
+            })
+          }
+        </Geographies>
+      </ComposableMap>
+
+      {tooltip && (
+        <div
+          className="fixed z-50 bg-white border border-slate-200 rounded-lg shadow-lg px-3 py-2 pointer-events-none min-w-[130px]"
+          style={{ left: tooltip.x + 14, top: tooltip.y - 56 }}
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <img src={getFlag(tooltip.entry.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
+            <span className="font-medium text-slate-900 text-xs">{tooltip.entry.country}</span>
+          </div>
+          <p className="font-mono text-slate-900 font-semibold text-sm">${tooltip.entry.expenditure}B</p>
+          <p className="text-slate-500 text-xs">{tooltip.entry.gdp_percent}% of GDP</p>
+        </div>
+      )}
+
+      <div className="absolute bottom-3 right-4 flex flex-col items-end gap-1">
+        <p className="text-[10px] text-slate-400">{mode === 'gdp' ? '% of GDP' : 'Budget ($B)'}</p>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[9px] text-slate-400 font-mono">0</span>
+          <div className="w-20 h-2 rounded-full" style={{ background: 'linear-gradient(to right, #F1F5F9, #E9D5FF, #6B21A8)' }} />
+          <span className="text-[9px] text-slate-400 font-mono">
+            {mode === 'gdp' ? `${maxVal.toFixed(0)}%` : `$${maxVal.toFixed(0)}B`}
+          </span>
+        </div>
+        <p className="text-[9px] text-slate-300">click to explore</p>
+      </div>
+    </div>
+  );
+}
+
 function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
   const barPct = maxCount > 0 ? Math.round(((item.count ?? 0) / maxCount) * 100) : 0;
   const primaryMfr = item.manufacturer.split(' / ')[0].split(' (')[0];
@@ -2316,12 +2430,17 @@ export default function Expenditures() {
         e.country_code.toLowerCase().includes(term)
       );
     }
+    const perCapita = (e) => POPULATION_M[e.country_code]
+      ? (e.expenditure * 1000) / POPULATION_M[e.country_code]
+      : 0;
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "expenditure_desc": return b.expenditure - a.expenditure;
         case "expenditure_asc": return a.expenditure - b.expenditure;
         case "gdp_desc": return b.gdp_percent - a.gdp_percent;
         case "gdp_asc": return a.gdp_percent - b.gdp_percent;
+        case "per_capita_desc": return perCapita(b) - perCapita(a);
+        case "per_capita_asc": return perCapita(a) - perCapita(b);
         case "name_asc": return a.country.localeCompare(b.country);
         default: return 0;
       }
@@ -2583,6 +2702,46 @@ export default function Expenditures() {
         </Card>
       </div>}
 
+      {/* World Map */}
+      {!focusCountry && (
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
+            <div className="flex items-center justify-between">
+              <CardTitle className="font-heading text-lg text-slate-900">Defense Spending — World Map</CardTitle>
+              <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+                <button
+                  onClick={() => setChartMode("absolute")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    chartMode === "absolute" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <BarChart2 className="w-3.5 h-3.5" /> $B
+                </button>
+                <button
+                  onClick={() => setChartMode("gdp")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    chartMode === "gdp" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <Percent className="w-3.5 h-3.5" /> GDP
+                </button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4">
+            <WorldChoroplethMap
+              expenditures={displayedExpenditures}
+              mode={chartMode}
+              selectedCode={pinnedCountry?.country_code}
+              onCountryClick={(entry) => {
+                setPinnedCountry(prev => prev?.id === entry.id ? null : entry);
+                setTimeout(() => profileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+              }}
+            />
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
@@ -2645,6 +2804,31 @@ export default function Expenditures() {
 
       {/* Data Table */}
       <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
+        <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50 pt-3 px-4">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              {filteredExpenditures.length} {filteredExpenditures.length === 1 ? 'country' : 'countries'}
+            </p>
+            <button
+              onClick={() => {
+                const headers = ['Country', 'Code', 'Region', 'Expenditure ($B)', '% GDP', 'Per Capita ($)', 'Year', 'Source'];
+                const rows = filteredExpenditures.map(e => {
+                  const pop = POPULATION_M[e.country_code];
+                  const pc = pop ? Math.round((e.expenditure * 1000) / pop) : '';
+                  return [e.country, e.country_code, e.region, e.expenditure, e.gdp_percent, pc, e.year, e.source || ''].join(',');
+                });
+                const csv = [headers.join(','), ...rows].join('\n');
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+                a.download = `defense-expenditures-${filteredExpenditures[0]?.year ?? 2024}.csv`;
+                a.click();
+              }}
+              className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:border-slate-300"
+            >
+              <Download className="w-3.5 h-3.5" /> Export CSV
+            </button>
+          </div>
+        </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto" data-testid="expenditures-table">
             <table className="w-full">
@@ -2653,6 +2837,7 @@ export default function Expenditures() {
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Country</th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Region</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Expenditure</th>
+                  <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Per Capita</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">% of GDP</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Year</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Source</th>
@@ -2694,6 +2879,15 @@ export default function Expenditures() {
                     </td>
                     <td className="p-4 text-right">
                       <span className="font-mono text-sm text-slate-900 font-semibold">${exp.expenditure}B</span>
+                    </td>
+                    <td className="p-4 text-right">
+                      {POPULATION_M[exp.country_code] ? (
+                        <span className="font-mono text-sm text-slate-700">
+                          ${Math.round((exp.expenditure * 1000) / POPULATION_M[exp.country_code]).toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-slate-300">—</span>
+                      )}
                     </td>
                     <td className="p-4 text-right">
                       <span className={`inline-flex font-mono text-sm px-2.5 py-1 rounded-full font-medium ${getGdpColor(exp.gdp_percent)}`}>
