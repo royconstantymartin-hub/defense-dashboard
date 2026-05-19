@@ -104,7 +104,9 @@ const COMPANY_NEWS_STOCK_PHOTOS = {
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80",
   ],
   TECHNOLOGY: [
-    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1461749280684-ddd244f54fcd?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
   ],
   CONFLICT: [
     "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=400&q=80",
@@ -123,9 +125,9 @@ const COMPANY_NEWS_STOCK_PHOTOS = {
     "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=400&q=80",
   ],
   INDUSTRY: [
-    "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=400&q=80",
-    "https://images.unsplash.com/photo-1708342421457-9c59f4843fe1?auto=format&fit=crop&w=400&q=80",
-    "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80",
   ],
 };
 
