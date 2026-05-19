@@ -1569,6 +1569,23 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
+// Color tiers for the choropleth — both modes share the same 5-step palette
+// so the legend is easy to read at a glance.
+const CHORO_TIERS_ABS = [
+  { min: 0,   max: 10,  color: '#EDE9FE', label: '< $10B' },
+  { min: 10,  max: 50,  color: '#C4B5FD', label: '$10–50B' },
+  { min: 50,  max: 150, color: '#A855F7', label: '$50–150B' },
+  { min: 150, max: 400, color: '#7E22CE', label: '$150–400B' },
+  { min: 400, max: Infinity, color: '#3B0764', label: '> $400B' },
+];
+const CHORO_TIERS_GDP = [
+  { min: 0,   max: 1,   color: '#EDE9FE', label: '< 1%' },
+  { min: 1,   max: 2,   color: '#C4B5FD', label: '1–2%' },
+  { min: 2,   max: 3,   color: '#A855F7', label: '2–3%' },
+  { min: 3,   max: 5,   color: '#7E22CE', label: '3–5%' },
+  { min: 5,   max: Infinity, color: '#3B0764', label: '> 5%' },
+];
+
 function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }) {
   const [tooltip, setTooltip] = useState(null);
 
@@ -1578,23 +1595,18 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
     return m;
   }, [expenditures]);
 
-  const maxVal = expenditures.length
-    ? Math.max(...expenditures.map(e => mode === 'gdp' ? e.gdp_percent : e.expenditure))
-    : 1;
+  const tiers = mode === 'gdp' ? CHORO_TIERS_GDP : CHORO_TIERS_ABS;
 
-  const getColor = (value) => {
-    if (!value) return '#F1F5F9';
-    const t = Math.min(value / maxVal, 1);
-    if (t < 0.3) {
-      const s = t / 0.3;
-      return `rgb(${Math.round(241 + (233 - 241) * s)},${Math.round(245 + (213 - 245) * s)},${Math.round(249 + (255 - 249) * s)})`;
-    }
-    const s = (t - 0.3) / 0.7;
-    return `rgb(${Math.round(233 + (107 - 233) * s)},${Math.round(213 + (33 - 213) * s)},${Math.round(255 + (168 - 255) * s)})`;
+  const getColor = (entry) => {
+    if (!entry) return '#E2E8F0';   // no data — neutral mid-gray
+    const val = mode === 'gdp' ? entry.gdp_percent : entry.expenditure;
+    const tier = tiers.find(t => val >= t.min && val < t.max);
+    return tier ? tier.color : tiers[tiers.length - 1].color;
   };
 
   return (
     <div className="relative">
+      {/* Map */}
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{ scale: 118, center: [15, 15] }}
@@ -1605,18 +1617,17 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
             geographies.map((geo) => {
               const code = ISO_NUM_TO_CODE[String(geo.id).padStart(3, '0')];
               const entry = code ? spendingByCode[code] : null;
-              const value = entry ? (mode === 'gdp' ? entry.gdp_percent : entry.expenditure) : 0;
               const isSelected = code && selectedCode === code;
               return (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill={isSelected ? '#7E22CE' : getColor(value)}
-                  stroke="#E2E8F0"
-                  strokeWidth={0.5}
+                  fill={isSelected ? '#7E22CE' : getColor(entry)}
+                  stroke="#FFFFFF"
+                  strokeWidth={0.6}
                   style={{
                     default: { outline: 'none', cursor: entry ? 'pointer' : 'default' },
-                    hover:   { fill: entry ? '#9333EA' : '#E2E8F0', outline: 'none' },
+                    hover:   { fill: entry ? '#9333EA' : '#CBD5E1', outline: 'none' },
                     pressed: { outline: 'none' },
                   }}
                   onClick={() => entry && onCountryClick(entry)}
@@ -1629,30 +1640,61 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
         </Geographies>
       </ComposableMap>
 
+      {/* Hover tooltip */}
       {tooltip && (
         <div
-          className="fixed z-50 bg-white border border-slate-200 rounded-lg shadow-lg px-3 py-2 pointer-events-none min-w-[130px]"
-          style={{ left: tooltip.x + 14, top: tooltip.y - 56 }}
+          className="fixed z-50 bg-white border border-slate-200 rounded-lg shadow-xl px-3 py-2 pointer-events-none min-w-[150px]"
+          style={{ left: tooltip.x + 14, top: tooltip.y - 70 }}
         >
-          <div className="flex items-center gap-2 mb-1">
-            <img src={getFlag(tooltip.entry.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
-            <span className="font-medium text-slate-900 text-xs">{tooltip.entry.country}</span>
+          <div className="flex items-center gap-2 mb-1.5">
+            <img src={getFlag(tooltip.entry.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm border border-slate-100" />
+            <span className="font-semibold text-slate-900 text-xs">{tooltip.entry.country}</span>
+            {NATO_MEMBERS.has(tooltip.entry.country_code) && (
+              <span className="text-[8px] font-bold px-1 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200 uppercase">NATO</span>
+            )}
           </div>
-          <p className="font-mono text-slate-900 font-semibold text-sm">${tooltip.entry.expenditure}B</p>
-          <p className="text-slate-500 text-xs">{tooltip.entry.gdp_percent}% of GDP</p>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+            <span className="text-[10px] text-slate-400">Budget</span>
+            <span className="font-mono text-xs font-semibold text-purple-700">${tooltip.entry.expenditure}B</span>
+            <span className="text-[10px] text-slate-400">% of GDP</span>
+            <span className="font-mono text-xs text-slate-700">{tooltip.entry.gdp_percent}%</span>
+            {YOY_DELTA[tooltip.entry.country_code] != null && (
+              <>
+                <span className="text-[10px] text-slate-400">YoY</span>
+                <span className={`font-mono text-xs font-semibold ${YOY_DELTA[tooltip.entry.country_code] >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  {YOY_DELTA[tooltip.entry.country_code] >= 0 ? '▲' : '▼'}{Math.abs(YOY_DELTA[tooltip.entry.country_code]).toFixed(1)}%
+                </span>
+              </>
+            )}
+          </div>
+          <p className="text-[9px] text-slate-300 mt-1.5 text-center">Cliquer pour ouvrir le profil</p>
         </div>
       )}
 
-      <div className="absolute bottom-3 right-4 flex flex-col items-end gap-1">
-        <p className="text-[10px] text-slate-400">{mode === 'gdp' ? '% of GDP' : 'Budget ($B)'}</p>
-        <div className="flex items-center gap-1.5">
-          <span className="text-[9px] text-slate-400 font-mono">0</span>
-          <div className="w-20 h-2 rounded-full" style={{ background: 'linear-gradient(to right, #F1F5F9, #E9D5FF, #6B21A8)' }} />
-          <span className="text-[9px] text-slate-400 font-mono">
-            {mode === 'gdp' ? `${maxVal.toFixed(0)}%` : `$${maxVal.toFixed(0)}B`}
-          </span>
+      {/* Legend — bottom left, horizontal tiers */}
+      <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-lg px-3 py-2 shadow-sm">
+        <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+          {mode === 'gdp' ? '% of GDP' : 'Defense Budget'}
+        </p>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {tiers.map(t => (
+            <div key={t.label} className="flex items-center gap-1">
+              <span className="w-4 h-3 rounded-sm border border-slate-200/50 inline-block" style={{ backgroundColor: t.color }} />
+              <span className="text-[9px] text-slate-500 font-mono">{t.label}</span>
+            </div>
+          ))}
+          <div className="flex items-center gap-1">
+            <span className="w-4 h-3 rounded-sm border border-slate-200 inline-block bg-slate-200" />
+            <span className="text-[9px] text-slate-400 font-mono">N/A</span>
+          </div>
         </div>
-        <p className="text-[9px] text-slate-300">click to explore</p>
+      </div>
+
+      {/* Hint — bottom right */}
+      <div className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm rounded-lg px-2 py-1 border border-slate-100">
+        <p className="text-[9px] text-slate-400">
+          <span className="font-medium text-slate-500">{expenditures.length} pays</span> · survol = aperçu · clic = profil
+        </p>
       </div>
     </div>
   );
@@ -2755,8 +2797,13 @@ export default function Expenditures() {
       {!focusCountry && (
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
-            <div className="flex items-center justify-between">
-              <CardTitle className="font-heading text-lg text-slate-900">Defense Spending — World Map</CardTitle>
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <CardTitle className="font-heading text-lg text-slate-900">Defense Spending — World Map</CardTitle>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {displayedExpenditures.length} pays · couleur = intensité des dépenses · survoler = aperçu · cliquer = profil détaillé
+                </p>
+              </div>
               <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
                 <button
                   onClick={() => setChartMode("absolute")}
@@ -2977,7 +3024,7 @@ export default function Expenditures() {
 
       {/* ── Country Profile ── */}
       {focusCountry && (
-        <div ref={profileRef}>
+        <div ref={profileRef} style={{ minHeight: '520px' }}>
           {pinnedCountry && (
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-slate-500">
