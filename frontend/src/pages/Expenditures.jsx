@@ -89,6 +89,8 @@ const SORT_OPTIONS = [
   { value: "gdp_asc", label: "% GDP (Low to High)" },
   { value: "per_capita_desc", label: "Per capita (High to Low)" },
   { value: "per_capita_asc", label: "Per capita (Low to High)" },
+  { value: "yoy_desc", label: "YoY Change (Highest)" },
+  { value: "yoy_asc", label: "YoY Change (Lowest)" },
   { value: "name_asc", label: "Country (A-Z)" },
 ];
 
@@ -110,6 +112,19 @@ const ISO_NUM_TO_CODE = {
   '376': 'IL', '784': 'AE', '792': 'TR', '076': 'BR', '158': 'TW',
   '724': 'ES', '528': 'NL', '702': 'SG', '586': 'PK', '208': 'DK',
   '578': 'NO', '360': 'ID', '012': 'DZ', '752': 'SE', '484': 'MX',
+};
+
+// NATO members (as of 2024, 32 members) — subset of tracked countries
+const NATO_MEMBERS = new Set(['US', 'GB', 'DE', 'FR', 'IT', 'PL', 'CA', 'TR', 'ES', 'NL', 'DK', 'NO', 'SE']);
+
+// YoY spending change 2023 → 2024 (SIPRI 2025 report, % change rounded to 1dp)
+const YOY_DELTA = {
+  US: +5.7, CN: +7.0,  RU: +38.0, IN: +5.0,  SA: -1.1,
+  GB: +2.2, UA: +50.5, DE: +28.0, FR: +7.4,  JP: +14.8,
+  KR: +4.1, AU: +6.2,  IT: +4.9,  PL: +21.9, CA: +8.1,
+  IL: +79.8,AE: +2.3,  TR: +6.1,  BR: +4.2,  TW: +10.0,
+  ES: +15.2,NL: +25.0, SG: +3.1,  PK: +6.0,  DK: +18.3,
+  NO: +12.4,ID: +4.0,  DZ: +5.8,  SE: +34.9, MX: +3.2,
 };
 
 const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899', '#84CC16'];
@@ -2082,20 +2097,33 @@ function CountryProfileSection({ country, allExpenditures }) {
               <h2 className="font-heading text-2xl font-bold text-white tracking-tight drop-shadow">
                 {country.country}
               </h2>
-              <p className="text-sm text-white/70">{country.region} · Defense Profile</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-sm text-white/70">{country.region} · Defense Profile</p>
+                {NATO_MEMBERS.has(country.country_code) && (
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-700/60 text-blue-100 border border-blue-500/40 uppercase tracking-wide">NATO</span>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4 text-right">
-            <div>
+            <div className="text-right">
               <p className="text-xl font-mono font-bold text-white">${country.expenditure}B</p>
-              <p className="text-xs text-white/60">Defense budget</p>
+              <p className="text-xs text-white/60">Budget {country.year}</p>
             </div>
-            <div>
-              <p className={`text-xl font-mono font-bold ${country.gdp_percent >= 2 ? "text-emerald-300" : "text-amber-300"}`}>
+            <div className="text-right">
+              <p className={`text-xl font-mono font-bold ${country.gdp_percent >= 4 ? "text-rose-300" : country.gdp_percent >= 2 ? "text-emerald-300" : "text-amber-300"}`}>
                 {country.gdp_percent}%
               </p>
               <p className="text-xs text-white/60">of GDP</p>
             </div>
+            {YOY_DELTA[country.country_code] != null && (
+              <div className="text-right border-l border-white/20 pl-4">
+                <p className={`text-base font-mono font-bold ${YOY_DELTA[country.country_code] >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                  {YOY_DELTA[country.country_code] >= 0 ? '▲' : '▼'} {Math.abs(YOY_DELTA[country.country_code]).toFixed(1)}%
+                </p>
+                <p className="text-xs text-white/60">vs 2023</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -2441,6 +2469,8 @@ export default function Expenditures() {
         case "gdp_asc": return a.gdp_percent - b.gdp_percent;
         case "per_capita_desc": return perCapita(b) - perCapita(a);
         case "per_capita_asc": return perCapita(a) - perCapita(b);
+        case "yoy_desc": return (YOY_DELTA[b.country_code] ?? -999) - (YOY_DELTA[a.country_code] ?? -999);
+        case "yoy_asc": return (YOY_DELTA[a.country_code] ?? 999) - (YOY_DELTA[b.country_code] ?? 999);
         case "name_asc": return a.country.localeCompare(b.country);
         default: return 0;
       }
@@ -2462,7 +2492,7 @@ export default function Expenditures() {
   const totalExpenditure = filteredExpenditures.reduce((sum, e) => sum + e.expenditure, 0);
   const avgGdpPercent = filteredExpenditures.length
     ? (filteredExpenditures.reduce((sum, e) => sum + e.gdp_percent, 0) / filteredExpenditures.length).toFixed(1)
-    : 0;
+    : null;
 
   const topCountries = [...filteredExpenditures]
     .sort((a, b) => b.expenditure - a.expenditure)
@@ -2552,15 +2582,19 @@ export default function Expenditures() {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">AVG % OF GDP</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{avgGdpPercent}%</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
+              {avgGdpPercent != null ? `${avgGdpPercent}%` : '—'}
+            </p>
             <p className="text-xs text-slate-500 mt-1">NATO target: 2%</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">FISCAL YEAR</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">2024</p>
-            <p className="text-xs text-slate-500 mt-1">Latest data</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
+              {filteredExpenditures[0]?.year ?? expenditures[0]?.year ?? '—'}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">SIPRI · Latest</p>
           </CardContent>
         </Card>
       </div>
@@ -2811,11 +2845,13 @@ export default function Expenditures() {
             </p>
             <button
               onClick={() => {
-                const headers = ['Country', 'Code', 'Region', 'Expenditure ($B)', '% GDP', 'Per Capita ($)', 'Year', 'Source'];
+                const headers = ['Country', 'Code', 'NATO', 'Region', 'Expenditure ($B)', 'YoY vs 2023 (%)', 'Per Capita ($)', '% GDP', 'Year', 'Source'];
                 const rows = filteredExpenditures.map(e => {
                   const pop = POPULATION_M[e.country_code];
                   const pc = pop ? Math.round((e.expenditure * 1000) / pop) : '';
-                  return [e.country, e.country_code, e.region, e.expenditure, e.gdp_percent, pc, e.year, e.source || ''].join(',');
+                  const yoy = YOY_DELTA[e.country_code] != null ? YOY_DELTA[e.country_code].toFixed(1) : '';
+                  const nato = NATO_MEMBERS.has(e.country_code) ? 'Yes' : 'No';
+                  return [e.country, e.country_code, nato, e.region, e.expenditure, yoy, pc, e.gdp_percent, e.year, e.source || ''].join(',');
                 });
                 const csv = [headers.join(','), ...rows].join('\n');
                 const a = document.createElement('a');
@@ -2837,9 +2873,9 @@ export default function Expenditures() {
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Country</th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Region</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Expenditure</th>
+                  <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">YoY</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Per Capita</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">% of GDP</th>
-                  <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Year</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Source</th>
                 </tr>
               </thead>
@@ -2868,7 +2904,12 @@ export default function Expenditures() {
                             onError={(e) => { e.target.src = `https://flagcdn.com/w40/${exp.country_code.toLowerCase()}.png`; }}
                           />
                           <div>
-                            <p className="text-slate-900 font-medium text-sm">{exp.country}</p>
+                            <div className="flex items-center gap-1.5">
+                              <p className="text-slate-900 font-medium text-sm">{exp.country}</p>
+                              {NATO_MEMBERS.has(exp.country_code) && (
+                                <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200 uppercase tracking-wide leading-none">NATO</span>
+                              )}
+                            </div>
                             <p className="text-xs text-slate-500 font-mono">{exp.country_code}</p>
                           </div>
                         </div>
@@ -2879,6 +2920,20 @@ export default function Expenditures() {
                     </td>
                     <td className="p-4 text-right">
                       <span className="font-mono text-sm text-slate-900 font-semibold">${exp.expenditure}B</span>
+                    </td>
+                    <td className="p-4 text-right">
+                      {YOY_DELTA[exp.country_code] != null ? (
+                        <span className={`inline-flex items-center gap-0.5 font-mono text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          YOY_DELTA[exp.country_code] >= 0
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-rose-50 text-rose-700'
+                        }`}>
+                          {YOY_DELTA[exp.country_code] >= 0 ? '▲' : '▼'}
+                          {Math.abs(YOY_DELTA[exp.country_code]).toFixed(1)}%
+                        </span>
+                      ) : (
+                        <span className="text-xs text-slate-300">—</span>
+                      )}
                     </td>
                     <td className="p-4 text-right">
                       {POPULATION_M[exp.country_code] ? (
