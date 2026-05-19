@@ -571,26 +571,26 @@ const DEFENSE_CAPABILITIES = {
   AU: { fighters: 100,  helicopters: 175,  drones: 8,   land_vehicles: 2000,  surface_combatants: 12,  submarines: 6  },
   IT: { fighters: 190,  helicopters: 250,  drones: 8,   land_vehicles: 2800,  surface_combatants: 22,  submarines: 8  },
   BR: { fighters: 122,  helicopters: 280,  drones: 6,   land_vehicles: 2200,  surface_combatants: 16,  submarines: 5  },
-  CA: { fighters: 87,   helicopters: 180,  drones: 4,   land_vehicles: 1800,  surface_combatants: 12,  submarines: 4  },
+  CA: { fighters: 87,   helicopters: 180,  drones: 18,  land_vehicles: 1800,  surface_combatants: 12,  submarines: 4  },
   IL: { fighters: 354,  helicopters: 190,  drones: 100, land_vehicles: 4800,  surface_combatants: 6,   submarines: 5  },
   TR: { fighters: 207,  helicopters: 500,  drones: 120, land_vehicles: 8000,  surface_combatants: 24,  submarines: 12 },
   ES: { fighters: 142,  helicopters: 190,  drones: 6,   land_vehicles: 2600,  surface_combatants: 17,  submarines: 4  },
   PL: { fighters: 128,  helicopters: 230,  drones: 10,  land_vehicles: 3800,  surface_combatants: 4,   submarines: 4  },
-  NL: { fighters: 61,   helicopters: 50,   drones: 4,   land_vehicles: 600,   surface_combatants: 12,  submarines: 4  },
+  NL: { fighters: 61,   helicopters: 50,   drones: 8,   land_vehicles: 600,   surface_combatants: 12,  submarines: 4  },
   TW: { fighters: 422,  helicopters: 240,  drones: 20,  land_vehicles: 3200,  surface_combatants: 32,  submarines: 4  },
   SG: { fighters: 100,  helicopters: 80,   drones: 10,  land_vehicles: 800,   surface_combatants: 8,   submarines: 4  },
   GR: { fighters: 191,  helicopters: 225,  drones: 8,   land_vehicles: 3500,  surface_combatants: 21,  submarines: 11 },
-  NO: { fighters: 57,   helicopters: 70,   drones: 4,   land_vehicles: 600,   surface_combatants: 6,   submarines: 6  },
+  NO: { fighters: 57,   helicopters: 70,   drones: 6,   land_vehicles: 600,   surface_combatants: 6,   submarines: 6  },
   SE: { fighters: 60,   helicopters: 80,   drones: 6,   land_vehicles: 600,   surface_combatants: 7,   submarines: 5  },
   FI: { fighters: 55,   helicopters: 70,   drones: null,land_vehicles: 1400,  surface_combatants: 4,   submarines: 0  },
   AE: { fighters: 294,  helicopters: 150,  drones: 30,  land_vehicles: 3000,  surface_combatants: 8,   submarines: 0  },
   PK: { fighters: 425,  helicopters: 340,  drones: 40,  land_vehicles: 5500,  surface_combatants: 14,  submarines: 8  },
   ID: { fighters: 93,   helicopters: 165,  drones: 6,   land_vehicles: 2000,  surface_combatants: 22,  submarines: 4  },
-  VN: { fighters: 189,  helicopters: 180,  drones: 4,   land_vehicles: 3200,  surface_combatants: 12,  submarines: 6  },
+  VN: { fighters: 189,  helicopters: 180,  drones: null,land_vehicles: 3200,  surface_combatants: 12,  submarines: 6  },
   EG: { fighters: 380,  helicopters: 300,  drones: 20,  land_vehicles: 10000, surface_combatants: 28,  submarines: 8  },
   UA: { fighters: 98,   helicopters: 150,  drones: 120, land_vehicles: 3000,  surface_combatants: 4,   submarines: 0  },
   IR: { fighters: 372,  helicopters: 350,  drones: 350, land_vehicles: 7000,  surface_combatants: 21,  submarines: 29 },
-  QA: { fighters: 96,   helicopters: 28,   drones: 4,   land_vehicles: 400,   surface_combatants: 4,   submarines: 0  },
+  QA: { fighters: 96,   helicopters: 28,   drones: 8,   land_vehicles: 400,   surface_combatants: 4,   submarines: 0  },
   KW: { fighters: 52,   helicopters: 40,   drones: 2,   land_vehicles: 800,   surface_combatants: 5,   submarines: 0  },
   DZ: { fighters: 237,  helicopters: 200,  drones: 10,  land_vehicles: 4500,  surface_combatants: 14,  submarines: 6  },
   MA: { fighters: 89,   helicopters: 90,   drones: 8,   land_vehicles: 2200,  surface_combatants: 14,  submarines: 3  },
@@ -1066,11 +1066,11 @@ const CAPABILITY_DETAILS = {
     drones: [
       { model: "MQ-9A Reaper MALE (ISR / frappe)", count: 12, manufacturer: "General Atomics" },
       { model: "Harfang SIDM MALE (retrait en cours)", count: 4, manufacturer: "EADS / Cassidian" },
-      { model: "Patroller MALE (armée de Terre)", count: null, manufacturer: "Safran Electronics & Defense" },
-      { model: "Spy'Ranger 330 SDT-L (tactique ISR)", count: null, manufacturer: "Thales" },
-      { model: "DRAC / Black Hornet (nano ISR infanterie)", count: null, manufacturer: "Novadem / FLIR" },
+      { model: "Patroller MALE (armée de Terre)", count: 5, manufacturer: "Safran Electronics & Defense" },
+      { model: "Spy'Ranger 330 SDT-L (tactique ISR)", count: 24, manufacturer: "Thales" },
+      { model: "DRAC / Black Hornet (nano ISR infanterie)", count: 600, manufacturer: "Novadem / FLIR" },
       { model: "nEUROn UCAV (démonstrateur)", count: 1, manufacturer: "Dassault Aviation" },
-      { model: "Harmattan Combat Drone", count: null, manufacturer: "Harmattan AI" },
+      { model: "Harfang MALE (retraité)", count: 4, manufacturer: "EADS / Airbus" },
     ],
     land_vehicles: [
       { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems (KNDS)" },
@@ -2111,7 +2111,12 @@ function CountryProfileSection({ country, allExpenditures }) {
               <p className="text-xs text-white/60">Budget {country.year}</p>
             </div>
             <div className="text-right">
-              <p className={`text-xl font-mono font-bold ${country.gdp_percent >= 4 ? "text-rose-300" : country.gdp_percent >= 2 ? "text-emerald-300" : "text-amber-300"}`}>
+              <p className={`text-xl font-mono font-bold ${
+                country.gdp_percent >= 4 ? "text-rose-300" :
+                country.gdp_percent >= 2.5 ? "text-amber-300" :
+                country.gdp_percent >= 2 ? "text-emerald-300" :
+                "text-yellow-200"
+              }`}>
                 {country.gdp_percent}%
               </p>
               <p className="text-xs text-white/60">of GDP</p>
@@ -2428,7 +2433,17 @@ export default function Expenditures() {
   const [sortBy, setSortBy] = useState("expenditure_desc");
   const [chartMode, setChartMode] = useState("absolute");
   const [pinnedCountry, setPinnedCountry] = useState(null);
+  const [compareList, setCompareList] = useState([]);
   const profileRef = useRef(null);
+
+  const toggleCompare = (exp) => {
+    setCompareList(prev => {
+      if (prev.some(e => e.country_code === exp.country_code))
+        return prev.filter(e => e.country_code !== exp.country_code);
+      if (prev.length >= 4) return prev;
+      return [...prev, exp];
+    });
+  };
 
   const fetchExpenditures = async () => {
     setLoading(true);
@@ -2814,7 +2829,151 @@ export default function Expenditures() {
             ))}
           </SelectContent>
         </Select>
+        {compareList.length > 0 && (
+          <button
+            onClick={() => setCompareList([])}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-purple-200 bg-purple-50 text-purple-700 text-xs font-semibold hover:bg-purple-100 transition-colors whitespace-nowrap"
+          >
+            Compare ({compareList.length}) ✕
+          </button>
+        )}
       </div>
+
+      {/* ── NATO Compliance Tracker ── */}
+      {!focusCountry && (() => {
+        const natoInView = filteredExpenditures.filter(e => NATO_MEMBERS.has(e.country_code));
+        if (!natoInView.length) return null;
+        const meeting = natoInView.filter(e => e.gdp_percent >= 2).sort((a, b) => b.gdp_percent - a.gdp_percent);
+        const missing  = natoInView.filter(e => e.gdp_percent < 2).sort((a, b) => b.gdp_percent - a.gdp_percent);
+        return (
+          <Card className="bg-white border-slate-200 shadow-sm">
+            <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-700 text-white uppercase tracking-wide">NATO</span>
+                  <CardTitle className="font-heading text-base text-slate-900">2% GDP Burden-Sharing Tracker</CardTitle>
+                </div>
+                <span className="text-xs text-slate-400">
+                  {meeting.length}/{natoInView.length} members meeting target
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 space-y-4">
+              {meeting.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 mb-2 flex items-center gap-1">
+                    <span>✓</span> Meeting ≥ 2% target ({meeting.length})
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {meeting.map(e => (
+                      <button
+                        key={e.country_code}
+                        onClick={() => handleRowClick(e)}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-colors"
+                      >
+                        <img src={getFlag(e.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
+                        <span className="text-xs font-medium text-emerald-800">{e.country}</span>
+                        <span className="text-xs font-mono font-bold text-emerald-700">{e.gdp_percent}%</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {missing.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-rose-500 mb-2 flex items-center gap-1">
+                    <span>✗</span> Below 2% target ({missing.length})
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {missing.map(e => (
+                      <button
+                        key={e.country_code}
+                        onClick={() => handleRowClick(e)}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 transition-colors"
+                      >
+                        <img src={getFlag(e.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
+                        <span className="text-xs font-medium text-rose-800">{e.country}</span>
+                        <span className="text-xs font-mono font-bold text-rose-600">{e.gdp_percent}%</span>
+                        <span className="text-[9px] text-rose-400 font-mono">({(2 - e.gdp_percent).toFixed(1)}% gap)</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="pt-1 border-t border-slate-100 flex items-center gap-2">
+                <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full transition-all"
+                    style={{ width: `${(meeting.length / natoInView.length) * 100}%` }}
+                  />
+                </div>
+                <span className="text-xs text-slate-400 font-mono whitespace-nowrap">
+                  {Math.round((meeting.length / natoInView.length) * 100)}% compliance
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
+
+      {/* ── Compare Panel ── */}
+      {compareList.length >= 2 && (
+        <Card className="bg-white border-purple-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-3 bg-purple-50/50">
+            <div className="flex items-center justify-between">
+              <CardTitle className="font-heading text-base text-slate-900">Country Comparison</CardTitle>
+              <button onClick={() => setCompareList([])} className="text-xs text-slate-400 hover:text-slate-700 underline">Clear</button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="text-left text-xs text-slate-500 font-semibold uppercase tracking-wider p-3 w-32">Metric</th>
+                  {compareList.map(e => (
+                    <th key={e.country_code} className="p-3 text-center min-w-[140px]">
+                      <div className="flex flex-col items-center gap-1">
+                        <img src={getFlag(e.country_code)} alt={e.country} className="w-8 h-5 object-cover rounded shadow-sm" />
+                        <span className="text-xs font-semibold text-slate-900">{e.country}</span>
+                        {NATO_MEMBERS.has(e.country_code) && (
+                          <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200 uppercase">NATO</span>
+                        )}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { label: 'Budget', render: e => <span className="font-mono font-bold text-slate-900">${e.expenditure}B</span> },
+                  { label: 'YoY vs 2023', render: e => YOY_DELTA[e.country_code] != null ? (
+                    <span className={`font-mono font-semibold ${YOY_DELTA[e.country_code] >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {YOY_DELTA[e.country_code] >= 0 ? '▲' : '▼'}{Math.abs(YOY_DELTA[e.country_code]).toFixed(1)}%
+                    </span>
+                  ) : <span className="text-slate-300">—</span> },
+                  { label: '% of GDP', render: e => <span className={`font-mono font-semibold px-2 py-0.5 rounded-full text-xs ${getGdpColor(e.gdp_percent)}`}>{e.gdp_percent}%</span> },
+                  { label: 'Per Capita', render: e => POPULATION_M[e.country_code]
+                    ? <span className="font-mono text-slate-700">${Math.round((e.expenditure * 1000) / POPULATION_M[e.country_code]).toLocaleString()}</span>
+                    : <span className="text-slate-300">—</span> },
+                  { label: 'Fighters', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.fighters ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Helicopters', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.helicopters ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Drones', render: e => { const cap = getCapabilitySummary(e.country_code); return cap?.drones != null ? <span className="font-mono text-slate-700">{cap.drones.toLocaleString()}</span> : <span className="text-slate-300 text-xs">N/D</span>; } },
+                  { label: 'Land Vehicles', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.land_vehicles ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Warships', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.surface_combatants ?? 0)}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Submarines', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.submarines ?? 0)}</span> : <span className="text-slate-300">—</span>; } },
+                ].map((row, i) => (
+                  <tr key={row.label} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
+                    <td className="p-3 text-xs font-medium text-slate-500">{row.label}</td>
+                    {compareList.map(e => (
+                      <td key={e.country_code} className="p-3 text-center">{row.render(e)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      )}
 
       {/* ── Country Profile ── */}
       {focusCountry && (
@@ -2870,12 +3029,14 @@ export default function Expenditures() {
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="w-8 p-2"></th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Country</th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Region</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Expenditure</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">YoY</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Per Capita</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">% of GDP</th>
+                  <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Year</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Source</th>
                 </tr>
               </thead>
@@ -2891,6 +3052,19 @@ export default function Expenditures() {
                     }`}
                     data-testid={`expenditure-row-${exp.id}`}
                   >
+                    <td className="p-2 w-8">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleCompare(exp); }}
+                        title={compareList.some(c => c.country_code === exp.country_code) ? 'Retirer du comparateur' : 'Ajouter au comparateur (max 4)'}
+                        className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold transition-colors ${
+                          compareList.some(c => c.country_code === exp.country_code)
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-slate-100 text-slate-400 hover:bg-purple-100 hover:text-purple-600'
+                        }`}
+                      >
+                        {compareList.some(c => c.country_code === exp.country_code) ? '✓' : '+'}
+                      </button>
+                    </td>
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-3">
