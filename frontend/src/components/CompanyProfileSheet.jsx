@@ -234,18 +234,8 @@ function CompanyLogo({ name, domain, size = "lg" }) {
   );
 }
 
-function getStatusStyle(status) {
-  switch (status) {
-    case "completed":    return "bg-emerald-50 text-emerald-700 border-emerald-200";
-    case "active":       return "bg-emerald-50 text-emerald-700 border-emerald-200";
-    case "pending":      return "bg-amber-50 text-amber-700 border-amber-200";
-    case "under_review": return "bg-orange-50 text-orange-700 border-orange-200";
-    case "announced":    return "bg-blue-50 text-blue-700 border-blue-200";
-    case "cancelled":    return "bg-rose-50 text-rose-700 border-rose-200";
-    case "dissolved":    return "bg-slate-100 text-slate-500 border-slate-200";
-    case "exited":       return "bg-slate-100 text-slate-600 border-slate-200";
-    default:             return "bg-slate-100 text-slate-600 border-slate-200";
-  }
+function getStatusStyle(_status) {
+  return "bg-slate-100 text-slate-600 border-slate-200";
 }
 
 function formatValue(dealValue, isDisclosed = true) {
@@ -432,7 +422,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
                 {p?.is_public !== undefined && (
                   <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${
                     p.is_public
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                      ? "bg-white/15 text-white/80 border border-white/20"
                       : "bg-slate-500/30 text-slate-300 border border-slate-500/30"
                   }`}>
                     {p.is_public ? "Public" : "Private"}
@@ -507,16 +497,16 @@ export default function CompanyProfileSheet({ name, onClose }) {
         )}
 
         {!loading && (notFound || (!p && name)) && (
-          <div className="mt-10 mx-6 rounded-xl border border-amber-200 bg-amber-50 p-6 text-center space-y-4">
+          <div className="mt-10 mx-6 rounded-xl border border-slate-200 bg-slate-50 p-6 text-center space-y-4">
             {/* Icon */}
             <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto">
-              <Building2 className="w-6 h-6 text-amber-500" />
+              <Building2 className="w-6 h-6 text-slate-400" />
             </div>
 
             {/* Company name */}
             <div>
               <p className="text-sm font-bold text-slate-800">{name}</p>
-              <p className="text-xs font-semibold text-amber-600 mt-0.5 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-slate-500 mt-0.5 uppercase tracking-wider">
                 Profile in progress
               </p>
             </div>
@@ -863,7 +853,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
                   ) : (
                     <div className="space-y-2">
                       {notes.map((note) => (
-                        <div key={note.id} className="bg-amber-50 border border-amber-100 rounded-xl p-3 group">
+                        <div key={note.id} className="bg-slate-50 border border-slate-100 rounded-xl p-3 group">
                           <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">{note.content}</p>
                           <div className="flex items-center justify-between mt-2">
                             <div className="text-[10px] text-slate-400 flex items-center gap-1.5">
