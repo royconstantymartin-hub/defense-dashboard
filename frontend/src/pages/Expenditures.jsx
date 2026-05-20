@@ -17,8 +17,9 @@ import {
   ArrowUpDown, Globe2, BarChart2, Percent, Shield,
   Anchor, Plane, Satellite, Zap, Lock, Flag, ExternalLink,
   FileText, Building2, Newspaper, Users, Globe, Crosshair,
-  Target, Gauge,
+  Target, Gauge, Download,
 } from "lucide-react";
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 
 // ── Custom military SVG icons ─────────────────────────────────────────────────
 function FighterJetIcon({ className }) {
@@ -86,25 +87,64 @@ const SORT_OPTIONS = [
   { value: "expenditure_asc", label: "Expenditure (Low to High)" },
   { value: "gdp_desc", label: "% GDP (High to Low)" },
   { value: "gdp_asc", label: "% GDP (Low to High)" },
+  { value: "per_capita_desc", label: "Per capita (High to Low)" },
+  { value: "per_capita_asc", label: "Per capita (Low to High)" },
+  { value: "yoy_desc", label: "YoY Change (Highest)" },
+  { value: "yoy_asc", label: "YoY Change (Lowest)" },
   { value: "name_asc", label: "Country (A-Z)" },
 ];
 
 const COLORS = ['#7E22CE', '#1D4ED8', '#059669', '#D97706', '#0891B2', '#DB2777', '#65A30D', '#0F766E'];
 
-const COUNTRY_FLAGS = {
-  "US": "us", "CN": "cn", "RU": "ru", "IN": "in", "SA": "sa",
-  "GB": "gb", "DE": "de", "FR": "fr", "JP": "jp", "KR": "kr",
-  "AU": "au", "IT": "it", "BR": "br", "CA": "ca", "IL": "il",
-  "TR": "tr", "ES": "es", "PL": "pl", "NL": "nl", "TW": "tw",
-  "SG": "sg", "GR": "gr", "NO": "no", "SE": "se", "FI": "fi",
-  "AE": "ae", "PK": "pk", "ID": "id", "VN": "vn", "EG": "eg",
-  "UA": "ua", "IR": "ir", "QA": "qa", "KW": "kw", "DZ": "dz",
-  "MA": "ma", "TH": "th", "MY": "my", "PH": "ph", "NZ": "nz",
-  "ZA": "za", "NG": "ng", "AR": "ar", "CO": "co", "CL": "cl",
-  "MX": "mx", "PT": "pt", "BE": "be", "CH": "ch", "AT": "at",
-  "DK": "dk", "CZ": "cz", "RO": "ro", "HU": "hu", "JO": "jo",
-  "IQ": "iq", "AZ": "az", "BD": "bd", "MM": "mm", "PE": "pe",
+// ISO 3166-1 numeric → alpha-2 — used by world-atlas GeoJSON features
+const ISO_NUM_TO_CODE = {
+  '840': 'US', '156': 'CN', '643': 'RU', '356': 'IN', '682': 'SA',
+  '826': 'GB', '804': 'UA', '276': 'DE', '250': 'FR', '392': 'JP',
+  '410': 'KR', '036': 'AU', '380': 'IT', '616': 'PL', '124': 'CA',
+  '376': 'IL', '784': 'AE', '792': 'TR', '076': 'BR', '158': 'TW',
+  '724': 'ES', '528': 'NL', '702': 'SG', '586': 'PK', '208': 'DK',
+  '578': 'NO', '360': 'ID', '012': 'DZ', '752': 'SE', '484': 'MX',
+  // Additional NATO + tracked countries
+  '300': 'GR', '246': 'FI', '642': 'RO', '620': 'PT', '203': 'CZ',
+  '348': 'HU', '056': 'BE', '008': 'AL', '100': 'BG', '191': 'HR',
+  '233': 'EE', '352': 'IS', '428': 'LV', '440': 'LT', '442': 'LU',
+  '499': 'ME', '807': 'MK', '703': 'SK', '705': 'SI',
+  '704': 'VN', '764': 'TH', '152': 'CL', '504': 'MA', '050': 'BD',
+  '170': 'CO', '608': 'PH', '368': 'IQ', '818': 'EG', '040': 'AT',
+  '032': 'AR', '554': 'NZ', '031': 'AZ', '710': 'ZA', '566': 'NG',
+  '604': 'PE', '400': 'JO', '104': 'MM', '414': 'KW', '634': 'QA',
+  '756': 'CH', '364': 'IR', '458': 'MY',
 };
+
+// All 32 NATO members (as of April 2024, Sweden being the 32nd)
+const NATO_MEMBERS = new Set([
+  'US', 'GB', 'DE', 'FR', 'IT', 'PL', 'CA', 'TR', 'ES', 'NL',
+  'DK', 'NO', 'SE', 'BE', 'GR', 'PT', 'CZ', 'HU', 'RO', 'FI',
+  'AL', 'BG', 'HR', 'EE', 'IS', 'LV', 'LT', 'LU', 'ME', 'MK', 'SK', 'SI',
+]);
+
+// Alliance memberships beyond NATO
+const AUKUS_MEMBERS  = new Set(['AU', 'GB', 'US']);
+const QUAD_MEMBERS   = new Set(['US', 'IN', 'JP', 'AU']);
+const FIVEEYES_MEMBERS = new Set(['US', 'GB', 'CA', 'AU', 'NZ']);
+const SCO_MEMBERS    = new Set(['CN', 'RU', 'IN', 'PK', 'KZ', 'KG', 'TJ', 'UZ', 'IR']);
+
+// YoY spending change 2023 → 2024 (SIPRI 2025 report, % change rounded to 1dp)
+const YOY_DELTA = {
+  US: +5.7,  CN: +7.0,  RU: +38.0, IN: +5.0,  SA: -1.1,
+  GB: +2.2,  UA: +50.5, DE: +28.0, FR: +7.4,  JP: +14.8,
+  KR: +4.1,  AU: +6.2,  IT: +4.9,  PL: +21.9, CA: +8.1,
+  IL: +79.8, AE: +2.3,  TR: +6.1,  BR: +4.2,  TW: +10.0,
+  ES: +15.2, NL: +25.0, SG: +3.1,  PK: +6.0,  DK: +18.3,
+  NO: +12.4, ID: +4.0,  DZ: +5.8,  SE: +34.9, MX: +3.2,
+  GR: +7.2,  FI: +27.4, RO: +24.8, PT: +17.2, CZ: +35.8,
+  HU: +22.1, BE: +14.5, AL: +9.0,  BG: +47.7, HR: +13.3,
+  EE: +16.8, IS: +21.4, LV: +32.7, LT: +19.2, LU: +8.1,
+  ME: +16.1, MK: +27.4, SK: +11.9, SI: +51.7,
+};
+
+const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899', '#84CC16'];
+
 
 const BRANCH_ICON = {
   army:          <Shield className="w-4 h-4" />,
@@ -534,60 +574,60 @@ function formatAmount(min, max) {
 
 // ── Defense Capabilities Data (IISS Military Balance 2024 / Global Firepower) ─
 const DEFENSE_CAPABILITIES = {
-  US: { fighters: 2085, helicopters: 5000, drones: 500, land_vehicles: 45000, surface_combatants: 107, submarines: 68 },
-  CN: { fighters: 1571, helicopters: 1400, drones: 400, land_vehicles: 14800, surface_combatants: 83,  submarines: 60 },
-  RU: { fighters: 769,  helicopters: 1400, drones: 60,  land_vehicles: 22000, surface_combatants: 54,  submarines: 65 },
-  IN: { fighters: 628,  helicopters: 720,  drones: 50,  land_vehicles: 9500,  surface_combatants: 36,  submarines: 17 },
+  US: { fighters: 2790, helicopters: 4522, drones: 632, land_vehicles: 60300, surface_combatants: 107, submarines: 68 },
+  CN: { fighters: 1571, helicopters: 900,  drones: 276, land_vehicles: 11700, surface_combatants: 83,  submarines: 60 },
+  RU: { fighters: 900,  helicopters: 900,  drones: 552, land_vehicles: 12000, surface_combatants: 54,  submarines: 65 },
+  IN: { fighters: 628,  helicopters: 720,  drones: 87,  land_vehicles: 9500,  surface_combatants: 36,  submarines: 17 },
   SA: { fighters: 356,  helicopters: 250,  drones: 30,  land_vehicles: 5000,  surface_combatants: 12,  submarines: 0  },
-  GB: { fighters: 227,  helicopters: 320,  drones: 12,  land_vehicles: 3600,  surface_combatants: 24,  submarines: 10 },
-  DE: { fighters: 260,  helicopters: 290,  drones: 10,  land_vehicles: 4200,  surface_combatants: 12,  submarines: 6  },
-  FR: { fighters: 228,  helicopters: 310,  drones: 22,  land_vehicles: 6000,  surface_combatants: 24,  submarines: 10 },
-  JP: { fighters: 354,  helicopters: 530,  drones: 8,   land_vehicles: 3200,  surface_combatants: 36,  submarines: 22 },
+  GB: { fighters: 155,  helicopters: 256,  drones: 80,  land_vehicles: 1893,  surface_combatants: 19,  submarines: 10 },
+  DE: { fighters: 180,  helicopters: 220,  drones: 83,  land_vehicles: 2693,  surface_combatants: 12,  submarines: 6  },
+  FR: { fighters: 225,  helicopters: 353,  drones: 46,  land_vehicles: 6276,  surface_combatants: 24,  submarines: 10 },
+  JP: { fighters: 320,  helicopters: 388,  drones: 16,  land_vehicles: 1668,  surface_combatants: 32,  submarines: 22 },
   KR: { fighters: 406,  helicopters: 620,  drones: 12,  land_vehicles: 7500,  surface_combatants: 28,  submarines: 22 },
   AU: { fighters: 100,  helicopters: 175,  drones: 8,   land_vehicles: 2000,  surface_combatants: 12,  submarines: 6  },
   IT: { fighters: 190,  helicopters: 250,  drones: 8,   land_vehicles: 2800,  surface_combatants: 22,  submarines: 8  },
   BR: { fighters: 122,  helicopters: 280,  drones: 6,   land_vehicles: 2200,  surface_combatants: 16,  submarines: 5  },
-  CA: { fighters: 87,   helicopters: 180,  drones: 4,   land_vehicles: 1800,  surface_combatants: 12,  submarines: 4  },
+  CA: { fighters: 87,   helicopters: 180,  drones: 18,  land_vehicles: 1800,  surface_combatants: 12,  submarines: 4  },
   IL: { fighters: 354,  helicopters: 190,  drones: 100, land_vehicles: 4800,  surface_combatants: 6,   submarines: 5  },
   TR: { fighters: 207,  helicopters: 500,  drones: 120, land_vehicles: 8000,  surface_combatants: 24,  submarines: 12 },
   ES: { fighters: 142,  helicopters: 190,  drones: 6,   land_vehicles: 2600,  surface_combatants: 17,  submarines: 4  },
   PL: { fighters: 128,  helicopters: 230,  drones: 10,  land_vehicles: 3800,  surface_combatants: 4,   submarines: 4  },
-  NL: { fighters: 61,   helicopters: 50,   drones: 4,   land_vehicles: 600,   surface_combatants: 12,  submarines: 4  },
+  NL: { fighters: 61,   helicopters: 50,   drones: 8,   land_vehicles: 600,   surface_combatants: 12,  submarines: 4  },
   TW: { fighters: 422,  helicopters: 240,  drones: 20,  land_vehicles: 3200,  surface_combatants: 32,  submarines: 4  },
   SG: { fighters: 100,  helicopters: 80,   drones: 10,  land_vehicles: 800,   surface_combatants: 8,   submarines: 4  },
   GR: { fighters: 191,  helicopters: 225,  drones: 8,   land_vehicles: 3500,  surface_combatants: 21,  submarines: 11 },
-  NO: { fighters: 57,   helicopters: 70,   drones: 4,   land_vehicles: 600,   surface_combatants: 6,   submarines: 6  },
+  NO: { fighters: 57,   helicopters: 70,   drones: 6,   land_vehicles: 600,   surface_combatants: 6,   submarines: 6  },
   SE: { fighters: 60,   helicopters: 80,   drones: 6,   land_vehicles: 600,   surface_combatants: 7,   submarines: 5  },
-  FI: { fighters: 55,   helicopters: 70,   drones: 4,   land_vehicles: 1400,  surface_combatants: 4,   submarines: 0  },
+  FI: { fighters: 55,   helicopters: 70,   drones: null,land_vehicles: 1400,  surface_combatants: 4,   submarines: 0  },
   AE: { fighters: 294,  helicopters: 150,  drones: 30,  land_vehicles: 3000,  surface_combatants: 8,   submarines: 0  },
   PK: { fighters: 425,  helicopters: 340,  drones: 40,  land_vehicles: 5500,  surface_combatants: 14,  submarines: 8  },
   ID: { fighters: 93,   helicopters: 165,  drones: 6,   land_vehicles: 2000,  surface_combatants: 22,  submarines: 4  },
-  VN: { fighters: 189,  helicopters: 180,  drones: 4,   land_vehicles: 3200,  surface_combatants: 12,  submarines: 6  },
-  EG: { fighters: 601,  helicopters: 300,  drones: 20,  land_vehicles: 10000, surface_combatants: 28,  submarines: 8  },
-  UA: { fighters: 98,   helicopters: 150,  drones: 50,  land_vehicles: 3000,  surface_combatants: 4,   submarines: 0  },
-  IR: { fighters: 372,  helicopters: 350,  drones: 80,  land_vehicles: 7000,  surface_combatants: 21,  submarines: 29 },
-  QA: { fighters: 96,   helicopters: 28,   drones: 4,   land_vehicles: 400,   surface_combatants: 4,   submarines: 0  },
+  VN: { fighters: 189,  helicopters: 180,  drones: null,land_vehicles: 3200,  surface_combatants: 12,  submarines: 6  },
+  EG: { fighters: 380,  helicopters: 300,  drones: 20,  land_vehicles: 10000, surface_combatants: 28,  submarines: 8  },
+  UA: { fighters: 98,   helicopters: 150,  drones: 120, land_vehicles: 3000,  surface_combatants: 4,   submarines: 0  },
+  IR: { fighters: 372,  helicopters: 350,  drones: 350, land_vehicles: 7000,  surface_combatants: 21,  submarines: 29 },
+  QA: { fighters: 96,   helicopters: 28,   drones: 8,   land_vehicles: 400,   surface_combatants: 4,   submarines: 0  },
   KW: { fighters: 52,   helicopters: 40,   drones: 2,   land_vehicles: 800,   surface_combatants: 5,   submarines: 0  },
   DZ: { fighters: 237,  helicopters: 200,  drones: 10,  land_vehicles: 4500,  surface_combatants: 14,  submarines: 6  },
   MA: { fighters: 89,   helicopters: 90,   drones: 8,   land_vehicles: 2200,  surface_combatants: 14,  submarines: 3  },
-  TH: { fighters: 162,  helicopters: 180,  drones: 4,   land_vehicles: 1500,  surface_combatants: 14,  submarines: 0  },
-  MY: { fighters: 65,   helicopters: 70,   drones: 4,   land_vehicles: 700,   surface_combatants: 20,  submarines: 2  },
-  PH: { fighters: 49,   helicopters: 80,   drones: 4,   land_vehicles: 400,   surface_combatants: 12,  submarines: 0  },
-  NZ: { fighters: 0,    helicopters: 60,   drones: 4,   land_vehicles: 600,   surface_combatants: 6,   submarines: 0  },
+  TH: { fighters: 162,  helicopters: 180,  drones: null,land_vehicles: 1500,  surface_combatants: 14,  submarines: 0  },
+  MY: { fighters: 65,   helicopters: 70,   drones: null,land_vehicles: 700,   surface_combatants: 20,  submarines: 2  },
+  PH: { fighters: 49,   helicopters: 80,   drones: null,land_vehicles: 400,   surface_combatants: 12,  submarines: 0  },
+  NZ: { fighters: 0,    helicopters: 60,   drones: null,land_vehicles: 600,   surface_combatants: 6,   submarines: 0  },
   ZA: { fighters: 49,   helicopters: 90,   drones: 6,   land_vehicles: 1400,  surface_combatants: 6,   submarines: 3  },
-  NG: { fighters: 78,   helicopters: 60,   drones: 4,   land_vehicles: 600,   surface_combatants: 3,   submarines: 0  },
-  AR: { fighters: 99,   helicopters: 100,  drones: 4,   land_vehicles: 1200,  surface_combatants: 14,  submarines: 3  },
-  CL: { fighters: 74,   helicopters: 80,   drones: 4,   land_vehicles: 700,   surface_combatants: 10,  submarines: 4  },
-  PT: { fighters: 30,   helicopters: 50,   drones: 4,   land_vehicles: 400,   surface_combatants: 8,   submarines: 2  },
-  RO: { fighters: 40,   helicopters: 90,   drones: 4,   land_vehicles: 2200,  surface_combatants: 6,   submarines: 1  },
-  CZ: { fighters: 24,   helicopters: 50,   drones: 4,   land_vehicles: 600,   surface_combatants: 0,   submarines: 0  },
+  NG: { fighters: 78,   helicopters: 60,   drones: null,land_vehicles: 600,   surface_combatants: 3,   submarines: 0  },
+  AR: { fighters: 99,   helicopters: 100,  drones: null,land_vehicles: 1200,  surface_combatants: 14,  submarines: 3  },
+  CL: { fighters: 74,   helicopters: 80,   drones: null,land_vehicles: 700,   surface_combatants: 10,  submarines: 4  },
+  PT: { fighters: 30,   helicopters: 50,   drones: null,land_vehicles: 400,   surface_combatants: 8,   submarines: 2  },
+  RO: { fighters: 40,   helicopters: 90,   drones: null,land_vehicles: 2200,  surface_combatants: 6,   submarines: 1  },
+  CZ: { fighters: 24,   helicopters: 50,   drones: null,land_vehicles: 600,   surface_combatants: 0,   submarines: 0  },
   HU: { fighters: 12,   helicopters: 30,   drones: 2,   land_vehicles: 300,   surface_combatants: 0,   submarines: 0  },
-  JO: { fighters: 79,   helicopters: 50,   drones: 4,   land_vehicles: 2000,  surface_combatants: 0,   submarines: 0  },
-  IQ: { fighters: 83,   helicopters: 80,   drones: 4,   land_vehicles: 1500,  surface_combatants: 0,   submarines: 0  },
+  JO: { fighters: 79,   helicopters: 50,   drones: null,land_vehicles: 2000,  surface_combatants: 0,   submarines: 0  },
+  IQ: { fighters: 83,   helicopters: 80,   drones: null,land_vehicles: 1500,  surface_combatants: 0,   submarines: 0  },
   AZ: { fighters: 64,   helicopters: 60,   drones: 30,  land_vehicles: 1800,  surface_combatants: 4,   submarines: 0  },
-  BD: { fighters: 109,  helicopters: 80,   drones: 4,   land_vehicles: 1200,  surface_combatants: 12,  submarines: 2  },
-  MM: { fighters: 146,  helicopters: 90,   drones: 4,   land_vehicles: 1000,  surface_combatants: 8,   submarines: 0  },
-  PE: { fighters: 76,   helicopters: 80,   drones: 4,   land_vehicles: 800,   surface_combatants: 8,   submarines: 6  },
+  BD: { fighters: 109,  helicopters: 80,   drones: null,land_vehicles: 1200,  surface_combatants: 12,  submarines: 2  },
+  MM: { fighters: 146,  helicopters: 90,   drones: null,land_vehicles: 1000,  surface_combatants: 8,   submarines: 0  },
+  PE: { fighters: 76,   helicopters: 80,   drones: null,land_vehicles: 800,   surface_combatants: 8,   submarines: 6  },
 };
 
 const CAP_CATEGORIES = [
@@ -716,15 +756,15 @@ CAP_CATEGORIES.forEach(({ key }) => {
 const CAPABILITY_DETAILS = {
   US: {
     fighters: [
-      { model: "F-16C/D Fighting Falcon", count: 944, manufacturer: "Lockheed Martin" },
-      { model: "F/A-18E/F/G Super Hornet / Growler", count: 635, manufacturer: "Boeing" },
+      { model: "F-16C/D Fighting Falcon (USAF / ANG)", count: 800, manufacturer: "Lockheed Martin" },
+      { model: "F/A-18E/F Super Hornet / EA-18G Growler", count: 560, manufacturer: "Boeing" },
       { model: "F-35A/B/C Lightning II", count: 620, manufacturer: "Lockheed Martin" },
-      { model: "A-10C Thunderbolt II", count: 281, manufacturer: "Fairchild-Republic / Boeing" },
-      { model: "F-22A Raptor", count: 186, manufacturer: "Lockheed Martin" },
-      { model: "B-52H Stratofortress", count: 76, manufacturer: "Boeing" },
-      { model: "B-1B Lancer", count: 45, manufacturer: "Boeing" },
-      { model: "B-2A Spirit", count: 20, manufacturer: "Northrop Grumman" },
       { model: "F-15C/D/E Strike Eagle", count: 265, manufacturer: "Boeing" },
+      { model: "F-22A Raptor (air superiority)", count: 186, manufacturer: "Lockheed Martin" },
+      { model: "A-10C Thunderbolt II (CAS)", count: 218, manufacturer: "Fairchild-Republic / Boeing" },
+      { model: "B-52H Stratofortress (strategic bomber)", count: 76, manufacturer: "Boeing" },
+      { model: "B-1B Lancer (conventional strike)", count: 45, manufacturer: "Boeing" },
+      { model: "B-2A Spirit (stealth bomber)", count: 20, manufacturer: "Northrop Grumman" },
     ],
     helicopters: [
       { model: "UH-60 Black Hawk (all variants)", count: 2135, manufacturer: "Sikorsky / Lockheed Martin" },
@@ -749,7 +789,7 @@ const CAPABILITY_DETAILS = {
       { model: "M2A3 Bradley IFV", count: 4000, manufacturer: "BAE Systems" },
       { model: "M113 APC (variants)", count: 3500, manufacturer: "BAE Systems" },
       { model: "Stryker 8×8 (variants)", count: 4300, manufacturer: "General Dynamics Land Systems" },
-      { model: "HMMWV (Humvee, variants)", count: 80000, manufacturer: "AM General" },
+      { model: "HMMWV M1151 / M1165 (combat variants)", count: 40000, manufacturer: "AM General" },
       { model: "JLTV (Joint Light Tactical)", count: 7000, manufacturer: "Oshkosh Defense" },
     ],
     surface_combatants: [
@@ -774,12 +814,12 @@ const CAPABILITY_DETAILS = {
       { model: "Su-27 / Su-30MKK", count: 97, manufacturer: "Sukhoi (Russia)" },
     ],
     helicopters: [
-      { model: "Z-8 / Z-18 Heavy Transport", count: 120, manufacturer: "Changhe Aircraft Industries" },
-      { model: "Z-9 / Z-9W (Dauphin-derived)", count: 350, manufacturer: "Harbin Aircraft Industry Group" },
-      { model: "Z-10 Attack", count: 200, manufacturer: "Changhe Aircraft Industries" },
-      { model: "Z-19 Scout / Attack", count: 100, manufacturer: "Harbin Aircraft Industry Group" },
-      { model: "Mi-17 / Mi-171 Hip", count: 80, manufacturer: "Russian Helicopters (Russia)" },
-      { model: "Z-20 (Black Hawk equivalent)", count: 150, manufacturer: "Harbin Aircraft Industry Group" },
+      { model: "Z-8G / Z-18 Medium-Heavy Transport", count: 70, manufacturer: "Changhe Aircraft Industries" },
+      { model: "Z-9 / Z-9W / Z-9G (Dauphin-derived)", count: 350, manufacturer: "Harbin Aircraft Industry Group" },
+      { model: "Z-10ME Attack", count: 200, manufacturer: "Changhe Aircraft Industries" },
+      { model: "Z-19E Scout / Attack", count: 100, manufacturer: "Harbin Aircraft Industry Group" },
+      { model: "Mi-17 / Mi-171 Hip (transport)", count: 80, manufacturer: "Russian Helicopters (Russia)" },
+      { model: "Z-20 (CAIC medium transport)", count: 100, manufacturer: "Harbin Aircraft Industry Group" },
     ],
     drones: [
       { model: "Wing Loong II MALE", count: 100, manufacturer: "CAIG / AVIC" },
@@ -814,37 +854,37 @@ const CAPABILITY_DETAILS = {
   },
   RU: {
     fighters: [
-      { model: "Su-27 Flanker / Su-30SM", count: 190, manufacturer: "Sukhoi (UAC)" },
-      { model: "MiG-31 Foxhound", count: 134, manufacturer: "Mikoyan (UAC)" },
-      { model: "Su-25 Frogfoot", count: 134, manufacturer: "Sukhoi (UAC)" },
-      { model: "Su-34 Fullback", count: 130, manufacturer: "Sukhoi (UAC)" },
-      { model: "Su-35S Flanker-E", count: 110, manufacturer: "Sukhoi (UAC)" },
-      { model: "MiG-29 Fulcrum", count: 120, manufacturer: "Mikoyan (UAC)" },
-      { model: "Tu-95 Bear / Tu-160 Blackjack", count: 80, manufacturer: "Tupolev (UAC)" },
-      { model: "Su-57 Felon (stealth)", count: 22, manufacturer: "Sukhoi (UAC)" },
+      { model: "Su-27S / Su-30SM Flanker", count: 190, manufacturer: "Sukhoi (UAC)" },
+      { model: "MiG-31BM Foxhound (interceptor)", count: 134, manufacturer: "Mikoyan (UAC)" },
+      { model: "Su-25SM Frogfoot (ground attack)", count: 134, manufacturer: "Sukhoi (UAC)" },
+      { model: "Su-34M Fullback (strike)", count: 130, manufacturer: "Sukhoi (UAC)" },
+      { model: "Su-35S Flanker-E (air superiority)", count: 110, manufacturer: "Sukhoi (UAC)" },
+      { model: "MiG-29SMT Fulcrum (multi-role)", count: 100, manufacturer: "Mikoyan (UAC)" },
+      { model: "Tu-95MS Bear / Tu-160M Blackjack (strategic)", count: 80, manufacturer: "Tupolev (UAC)" },
+      { model: "Su-57 Felon (5th gen stealth)", count: 22, manufacturer: "Sukhoi (UAC)" },
     ],
     helicopters: [
-      { model: "Mi-8/Mi-17 Hip (transport)", count: 500, manufacturer: "Russian Helicopters / Kazan" },
-      { model: "Mi-24 Hind / Mi-35 Attack", count: 300, manufacturer: "Russian Helicopters / Mil" },
-      { model: "Ka-52 Alligator Attack", count: 130, manufacturer: "Russian Helicopters / Kamov" },
-      { model: "Mi-28N Night Hunter Attack", count: 110, manufacturer: "Russian Helicopters / Mil" },
-      { model: "Ka-27 / Ka-29 Naval", count: 100, manufacturer: "Russian Helicopters / Kamov" },
-      { model: "Mi-26 Heavy Lift", count: 50, manufacturer: "Russian Helicopters / Mil" },
+      { model: "Mi-8AMTSh / Mi-17V5 Hip (transport)", count: 380, manufacturer: "Russian Helicopters / Kazan" },
+      { model: "Mi-24P / Mi-35M Hind (attack)", count: 200, manufacturer: "Russian Helicopters / Mil" },
+      { model: "Ka-52M Alligator (attack)", count: 100, manufacturer: "Russian Helicopters / Kamov" },
+      { model: "Mi-28NM Night Hunter (attack)", count: 100, manufacturer: "Russian Helicopters / Mil" },
+      { model: "Ka-27M / Ka-29 (naval ASW)", count: 70, manufacturer: "Russian Helicopters / Kamov" },
+      { model: "Mi-26T2V Heavy Lift", count: 50, manufacturer: "Russian Helicopters / Mil" },
     ],
     drones: [
-      { model: "Forpost-R MALE (Searcher derivative)", count: 40, manufacturer: "Ural Civil Aviation Plant" },
-      { model: "Orion MALE / UCAV", count: 12, manufacturer: "Kronshtadt Group" },
-      { model: "Eleron-3 / Orlan-10 tactical", count: 500, manufacturer: "Enics / Special Technology Center" },
+      { model: "Forpost-R MALE (Searcher II derivative)", count: 40, manufacturer: "Ural Civil Aviation Plant" },
+      { model: "Orion-E MALE / UCAV", count: 12, manufacturer: "Kronshtadt Group" },
+      { model: "Eleron-3 / Orlan-10 (tactical ISR)", count: 500, manufacturer: "Enics / Special Technology Center" },
     ],
     land_vehicles: [
       { model: "T-72B3 / T-72B3M MBT", count: 2800, manufacturer: "Uralvagonzavod" },
-      { model: "T-80BV / T-80U MBT", count: 3000, manufacturer: "Omsk Transmash / Kirovets" },
-      { model: "T-90A / T-90M Proryv MBT", count: 620, manufacturer: "Uralvagonzavod" },
-      { model: "T-14 Armata MBT (limited)", count: 20, manufacturer: "Uralvagonzavod" },
-      { model: "BMP-2 IFV", count: 5000, manufacturer: "Kurganmashzavod" },
+      { model: "T-80BVM / T-80U MBT", count: 1000, manufacturer: "Omsk Transmash / Kirovets" },
+      { model: "T-90A / T-90M Proryv MBT", count: 600, manufacturer: "Uralvagonzavod" },
+      { model: "T-14 Armata MBT (limited series)", count: 20, manufacturer: "Uralvagonzavod" },
+      { model: "BMP-2 / BMP-2M IFV", count: 3000, manufacturer: "Kurganmashzavod" },
       { model: "BMP-3 IFV", count: 600, manufacturer: "Kurganmashzavod" },
-      { model: "BTR-80/82A APC", count: 5000, manufacturer: "Arzamas Machine Building Plant" },
-      { model: "MT-LB Multi-purpose tractor", count: 4000, manufacturer: "Kharkov Tractor Plant" },
+      { model: "BTR-80 / BTR-82A APC", count: 3000, manufacturer: "Arzamas Machine Building Plant" },
+      { model: "MT-LB APC / artillery tractor", count: 980, manufacturer: "Kharkov Tractor Plant" },
     ],
     surface_combatants: [
       { model: "Buyan-M corvette (Pr.21631)", count: 10, manufacturer: "Zelenodolsk Shipyard" },
@@ -952,67 +992,65 @@ const CAPABILITY_DETAILS = {
   },
   GB: {
     fighters: [
-      { model: "Typhoon FGR4 / F2", count: 137, manufacturer: "BAE Systems / Eurofighter" },
-      { model: "F-35B Lightning II", count: 74, manufacturer: "Lockheed Martin / BAE Systems" },
+      { model: "Typhoon FGR4 (multi-role)", count: 107, manufacturer: "BAE Systems / Eurofighter" },
+      { model: "F-35B Lightning II (STOVL)", count: 48, manufacturer: "Lockheed Martin / BAE Systems" },
     ],
     helicopters: [
-      { model: "AH-64E Apache Guardian", count: 50, manufacturer: "Boeing / AgustaWestland" },
+      { model: "AH-64E Apache Guardian (attack)", count: 50, manufacturer: "Boeing / AgustaWestland" },
       { model: "Merlin HM2 / HC4 (naval & support)", count: 62, manufacturer: "Leonardo (AgustaWestland)" },
-      { model: "Wildcat AH1 / HMA2", count: 62, manufacturer: "Leonardo (AgustaWestland)" },
-      { model: "Puma HC2", count: 22, manufacturer: "Airbus Helicopters" },
-      { model: "Chinook HC6/6A", count: 60, manufacturer: "Boeing" },
-      { model: "Bell Griffin HT1 (training)", count: 24, manufacturer: "Bell Helicopter" },
+      { model: "Wildcat AH1 / HMA2 (army & naval)", count: 62, manufacturer: "Leonardo (AgustaWestland)" },
+      { model: "Chinook HC6 / HC6A (heavy lift)", count: 60, manufacturer: "Boeing" },
+      { model: "Puma HC2 (medium utility)", count: 22, manufacturer: "Airbus Helicopters" },
+      { model: "Bell Griffin HT1 (training)", count: 24, manufacturer: "Bell Helicopter", is_trainer: true },
     ],
     drones: [
-      { model: "MQ-9A Reaper", count: 10, manufacturer: "General Atomics" },
-      { model: "Protector RG Mk.1 (MQ-9B)", count: 16, manufacturer: "General Atomics" },
-      { model: "Watchkeeper WK450 tactical", count: 54, manufacturer: "Thales UK / Elbit" },
+      { model: "Protector RG Mk.1 (MQ-9B SkyGuardian)", count: 16, manufacturer: "General Atomics" },
+      { model: "MQ-9A Reaper (ISTAR / strike)", count: 10, manufacturer: "General Atomics" },
+      { model: "Watchkeeper WK450 (tactical ISR)", count: 54, manufacturer: "Thales UK / Elbit Systems" },
     ],
     land_vehicles: [
-      { model: "Challenger 2 MBT", count: 213, manufacturer: "BAE Systems" },
-      { model: "Warrior IFV", count: 380, manufacturer: "BAE Systems" },
-      { model: "Ajax IFV/scout (FRES)", count: 150, manufacturer: "General Dynamics UK" },
+      { model: "Challenger 2 / 2 LEP MBT", count: 213, manufacturer: "BAE Systems" },
+      { model: "Warrior IFV (CVR(T))", count: 380, manufacturer: "BAE Systems" },
+      { model: "Ajax FRES Scout SV", count: 150, manufacturer: "General Dynamics UK" },
       { model: "FV430 Bulldog APC", count: 600, manufacturer: "BAE Systems" },
       { model: "Jackal 2 HMWMV", count: 300, manufacturer: "Coyote / Babcock" },
       { model: "Mastiff / Ridgeback PPV", count: 250, manufacturer: "Force Protection Europe" },
     ],
     surface_combatants: [
-      { model: "Type 23 Duke-class FFG", count: 13, manufacturer: "Yarrow / Swan Hunter" },
+      { model: "Type 23 Duke-class FFG", count: 11, manufacturer: "Yarrow / Swan Hunter" },
       { model: "Type 45 Daring-class DDG", count: 6, manufacturer: "BAE Systems Surface Ships" },
       { model: "Queen Elizabeth-class CVF", count: 2, manufacturer: "BAE Systems / Aircraft Carrier Alliance" },
-      { model: "River-class OPV Batch 2", count: 3, manufacturer: "BAE Systems Govan" },
     ],
     submarines: [
       { model: "Vanguard-class SSBN", count: 4, manufacturer: "BAE Systems Barrow" },
-      { model: "Astute-class SSN", count: 3, manufacturer: "BAE Systems Barrow" },
-      { model: "Trafalgar-class SSN", count: 3, manufacturer: "VSEL / BAE Systems" },
+      { model: "Astute-class SSN", count: 5, manufacturer: "BAE Systems Barrow" },
+      { model: "Trafalgar-class SSN (phasing out)", count: 1, manufacturer: "VSEL / BAE Systems" },
     ],
   },
   DE: {
     fighters: [
-      { model: "Typhoon", count: 140, manufacturer: "Eurofighter / Airbus Defence" },
-      { model: "Tornado IDS (retiring)", count: 85, manufacturer: "Panavia Aircraft" },
-      { model: "F/A-18F Super Hornet (nuclear role)", count: 15, manufacturer: "Boeing" },
-      { model: "Eurofighter ECR (SEAD)", count: 20, manufacturer: "Eurofighter / Airbus" },
+      { model: "Eurofighter Typhoon (multi-role)", count: 130, manufacturer: "Eurofighter / Airbus Defence" },
+      { model: "Tornado IDS / ASSTA3 (retiring)", count: 35, manufacturer: "Panavia Aircraft" },
+      { model: "Eurofighter ECR (SEAD / EW)", count: 15, manufacturer: "Eurofighter / Airbus" },
     ],
     helicopters: [
-      { model: "Tiger HAD Attack", count: 40, manufacturer: "Airbus Helicopters" },
+      { model: "Tiger UHT / HAD (attack)", count: 40, manufacturer: "Airbus Helicopters" },
       { model: "NH90 TTH (army transport)", count: 82, manufacturer: "NHIndustries / Airbus" },
-      { model: "NH90 NTH (naval Sea Lion)", count: 18, manufacturer: "NHIndustries / Airbus" },
-      { model: "H145M (light utility)", count: 15, manufacturer: "Airbus Helicopters" },
-      { model: "CH-53G/GS/GA Sea Stallion", count: 65, manufacturer: "Sikorsky / VFW" },
+      { model: "NH90 Sea Lion (naval NTH)", count: 18, manufacturer: "NHIndustries / Airbus" },
+      { model: "H145M LUH SOF (light utility)", count: 15, manufacturer: "Airbus Helicopters" },
+      { model: "CH-53GS / CH-53GA Sea Stallion", count: 65, manufacturer: "Sikorsky / VFW" },
     ],
     drones: [
-      { model: "Heron 1 MALE (leased)", count: 7, manufacturer: "IAI (Israel)" },
+      { model: "Heron 1 MALE (leased from IAI)", count: 7, manufacturer: "IAI (Israel)" },
       { model: "Luna NG tactical UAS", count: 36, manufacturer: "EMT Penzberg" },
-      { model: "KZO battlefield UAS", count: 40, manufacturer: "Rheinmetall / Diehl" },
+      { model: "KZO battlefield reconnaissance UAS", count: 40, manufacturer: "Rheinmetall / Diehl" },
     ],
     land_vehicles: [
-      { model: "Leopard 2A6 / 2A7 MBT", count: 321, manufacturer: "Krauss-Maffei Wegmann" },
-      { model: "Puma IFV", count: 350, manufacturer: "PSM (KMW / Rheinmetall)" },
-      { model: "Marder 1A3/1A5 IFV", count: 350, manufacturer: "Rheinmetall Landsysteme" },
+      { model: "Leopard 2A6 / 2A7 / 2A7V MBT", count: 321, manufacturer: "Krauss-Maffei Wegmann" },
+      { model: "Puma IFV (VJTF-upgraded)", count: 350, manufacturer: "PSM (KMW / Rheinmetall)" },
+      { model: "Marder 1A5 IFV (in storage / Ukraine aid)", count: 350, manufacturer: "Rheinmetall Landsysteme" },
       { model: "Boxer 8×8 MRAV", count: 272, manufacturer: "ARTEC (KMW / Rheinmetall)" },
-      { model: "GTK Boxer troop carrier", count: 400, manufacturer: "ARTEC" },
+      { model: "GTK Boxer MRAV (troop carrier)", count: 400, manufacturer: "ARTEC" },
       { model: "Fuchs 1 / 2 APC", count: 1000, manufacturer: "Rheinmetall Landsysteme" },
     ],
     surface_combatants: [
@@ -1026,35 +1064,38 @@ const CAPABILITY_DETAILS = {
   },
   FR: {
     fighters: [
-      { model: "Rafale F3-R (Air Force)", count: 102, manufacturer: "Dassault Aviation" },
-      { model: "Rafale M (Navy carrier)", count: 83, manufacturer: "Dassault Aviation" },
-      { model: "Mirage 2000-5F / 2000D", count: 43, manufacturer: "Dassault Aviation" },
+      { model: "Rafale F3-R / F4 (Air Force)", count: 102, manufacturer: "Dassault Aviation" },
+      { model: "Rafale M F3-R (Navy carrier)", count: 42, manufacturer: "Dassault Aviation" },
+      { model: "Mirage 2000D (strike / SEAD)", count: 55, manufacturer: "Dassault Aviation" },
+      { model: "Mirage 2000-5F (air defense)", count: 26, manufacturer: "Dassault Aviation" },
     ],
     helicopters: [
-      { model: "Tiger HAP / HCP Attack", count: 67, manufacturer: "Airbus Helicopters" },
+      { model: "Tiger HAD / HAP (attack)", count: 67, manufacturer: "Airbus Helicopters" },
       { model: "NH90 TTH (army transport)", count: 56, manufacturer: "NHIndustries / Airbus" },
-      { model: "AS 532 Cougar (army)", count: 26, manufacturer: "Airbus Helicopters" },
-      { model: "EC725 Caracal (CSAR/special ops)", count: 27, manufacturer: "Airbus Helicopters" },
-      { model: "SA 341/342 Gazelle (recon / anti-tank)", count: 130, manufacturer: "Airbus Helicopters" },
-      { model: "NH90 NFH (naval Caïman)", count: 27, manufacturer: "NHIndustries / Airbus" },
-      { model: "Lynx Mk.4 (naval, retiring)", count: 20, manufacturer: "Westland / Leonardo" },
+      { model: "AS 532 Cougar (heavy assault)", count: 26, manufacturer: "Airbus Helicopters" },
+      { model: "EC725 Caracal (CSAR / special ops)", count: 27, manufacturer: "Airbus Helicopters" },
+      { model: "SA 341/342 Gazelle (recon / anti-tank)", count: 100, manufacturer: "Airbus Helicopters" },
+      { model: "NH90 NFH Caiman Marine (naval ASW)", count: 27, manufacturer: "NHIndustries / Airbus" },
+      { model: "AS 565 Panther (naval patrol, retiring)", count: 26, manufacturer: "Airbus Helicopters" },
+      { model: "Fennec AS 555 (light utility)", count: 24, manufacturer: "Airbus Helicopters" },
     ],
     drones: [
-      { model: "MQ-9A Reaper MALE (ISR / frappe)", count: 12, manufacturer: "General Atomics" },
-      { model: "Harfang SIDM MALE (retrait en cours)", count: 4, manufacturer: "EADS / Cassidian" },
-      { model: "Patroller MALE (armée de Terre)", count: null, manufacturer: "Safran Electronics & Defense" },
-      { model: "Spy'Ranger 330 SDT-L (tactique ISR)", count: null, manufacturer: "Thales" },
-      { model: "DRAC / Black Hornet (nano ISR infanterie)", count: null, manufacturer: "Novadem / FLIR" },
-      { model: "nEUROn UCAV (démonstrateur)", count: 1, manufacturer: "Dassault Aviation" },
-      { model: "Harmattan Combat Drone", count: null, manufacturer: "Harmattan AI" },
+      { model: "MQ-9A Reaper MALE (ISR / strike)", count: 12, manufacturer: "General Atomics" },
+      { model: "Patroller MALE (Army ISR)", count: 5, manufacturer: "Safran Electronics & Defense" },
+      { model: "Spy'Ranger 330 SDT-L (tactical ISR)", count: 24, manufacturer: "Thales" },
+      { model: "Harfang SIDM MALE (phasing out)", count: 4, manufacturer: "EADS / Cassidian" },
+      { model: "nEUROn UCAV (technology demonstrator)", count: 1, manufacturer: "Dassault Aviation" },
     ],
     land_vehicles: [
       { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems (KNDS)" },
       { model: "VBCI IFV 8×8", count: 630, manufacturer: "Nexter Systems / Thales" },
       { model: "Griffon VBMR 6×6 APC", count: 600, manufacturer: "Nexter / Thales / Arquus" },
-      { model: "Jaguar EBRC 6×6 (recon)", count: 54, manufacturer: "Nexter / Thales / Arquus" },
-      { model: "AMX-10RC (wheeled fire support)", count: 170, manufacturer: "Nexter Systems" },
       { model: "VAB APC (variants)", count: 2000, manufacturer: "Arquus (Renault Trucks Defense)" },
+      { model: "VBL Armored Light Vehicle (scout)", count: 1500, manufacturer: "Panhard / Arquus" },
+      { model: "PVP Petit Véhicule Protégé (light patrol)", count: 1000, manufacturer: "Panhard / Arquus" },
+      { model: "AMX-10RC (wheeled fire support)", count: 170, manufacturer: "Nexter Systems" },
+      { model: "Jaguar EBRC 6×6 (reconnaissance)", count: 54, manufacturer: "Nexter / Thales / Arquus" },
+      { model: "Serval VBMR-L (light protected APC)", count: 100, manufacturer: "Nexter / Arquus" },
     ],
     surface_combatants: [
       { model: "FREMM Aquitaine-class FFG", count: 8, manufacturer: "Naval Group" },
@@ -1075,7 +1116,7 @@ const CAPABILITY_DETAILS = {
       { model: "F-2 Viper Zero", count: 92, manufacturer: "Mitsubishi HI / Lockheed Martin" },
       { model: "F-35A Lightning II", count: 42, manufacturer: "Lockheed Martin / Mitsubishi HI" },
       { model: "F-35B (STOVL)", count: 20, manufacturer: "Lockheed Martin / Mitsubishi HI" },
-      { model: "T-4 (OCU / trainer)", count: 34, manufacturer: "Kawasaki Heavy Industries" },
+      { model: "T-4 (OCU / trainer)", count: 34, manufacturer: "Kawasaki Heavy Industries", is_trainer: true },
     ],
     helicopters: [
       { model: "AH-64D Apache (JGSDF)", count: 13, manufacturer: "Boeing / Fuji Heavy Industries" },
@@ -1101,7 +1142,7 @@ const CAPABILITY_DETAILS = {
     ],
     surface_combatants: [
       { model: "Murasame-class DD", count: 9, manufacturer: "IHI / Mitsubishi HI" },
-      { model: "Akizuki / Asahi-class DD", count: 8, manufacturer: "Mitsubishi HI / Japan Marine United" },
+      { model: "Akizuki / Asahi-class DD", count: 6, manufacturer: "Mitsubishi HI / Japan Marine United" },
       { model: "Takanami-class DD", count: 5, manufacturer: "IHI Corporation" },
       { model: "Kongō-class DDG (Aegis)", count: 4, manufacturer: "Mitsubishi Heavy Industries" },
       { model: "Atago-class DDG (Aegis)", count: 2, manufacturer: "Mitsubishi Heavy Industries" },
@@ -1159,6 +1200,24 @@ const CAPABILITY_DETAILS = {
     ],
   },
 };
+
+// Derives capability summary from CAPABILITY_DETAILS where available (authoritative),
+// falls back to DEFENSE_CAPABILITIES (estimated). This ensures summary tiles always
+// match the detail breakdown, eliminating dual-maintenance drift.
+function getCapabilitySummary(countryCode) {
+  const details = CAPABILITY_DETAILS[countryCode];
+  if (details) {
+    const result = { _sourced: true };
+    ['fighters', 'helicopters', 'drones', 'land_vehicles', 'surface_combatants', 'submarines'].forEach(key => {
+      result[key] = (details[key] || [])
+        .filter(item => !item.is_trainer)
+        .reduce((s, item) => s + (item.count ?? 0), 0);
+    });
+    return result;
+  }
+  const estimated = DEFENSE_CAPABILITIES[countryCode];
+  return estimated ? { ...estimated, _sourced: false } : null;
+}
 
 // Wikipedia article title overrides for capability breakdown platforms.
 // Keys match the "model" strings in CAPABILITY_DETAILS exactly.
@@ -1445,7 +1504,7 @@ function useCountUp(target, duration = 900) {
 }
 
 function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isClickable }) {
-  const animated = useCountUp(count);
+  const animated = useCountUp(count ?? 0);
   const pct = maxCount > 0 && count > 0 ? Math.min((count / maxCount) * 100, 100) : 0;
 
   return (
@@ -1466,7 +1525,7 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
             <p className="text-[10px] text-slate-400 leading-tight truncate">{cat.sublabel}</p>
           </div>
         </div>
-        {rank > 0 && count > 0 && (
+        {rank > 0 && count != null && count > 0 && (
           <span className={`shrink-0 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md border ${
             rank === 1 ? "bg-amber-50 text-amber-700 border-amber-200" :
             rank <= 3 ? "bg-slate-100 text-slate-600 border-slate-200" :
@@ -1480,8 +1539,15 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
       {/* Body */}
       <div className="bg-white p-3 flex flex-col gap-2">
         <p className={`text-3xl font-mono font-bold ${cat.countColor} tabular-nums leading-none`}>
-          {count === 0 ? "—" : animated.toLocaleString()}
+          {count === null
+            ? <span className="text-xl text-slate-300 font-mono">N/D</span>
+            : count === 0 ? "—"
+            : animated.toLocaleString()}
         </p>
+
+        {count === null && (
+          <p className="text-[10px] text-slate-400">Non documenté</p>
+        )}
 
         {count === 0 && (
           <p className="text-[10px] text-slate-400">No data / not applicable</p>
@@ -1513,6 +1579,151 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
             ▾ Details shown below
           </p>
         )}
+      </div>
+    </div>
+  );
+}
+
+// Pre-fetch GeoJSON once at module level — avoids a re-fetch on every map re-render
+const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+let _cachedGeoData = null;
+const _geoFetch = fetch(GEO_URL).then(r => r.json()).then(d => { _cachedGeoData = d; return d; }).catch(() => null);
+
+// Color tiers for the choropleth — both modes share the same 5-step palette
+// so the legend is easy to read at a glance.
+const CHORO_TIERS_ABS = [
+  { min: 0,   max: 10,  color: '#EDE9FE', label: '< $10B' },
+  { min: 10,  max: 50,  color: '#C4B5FD', label: '$10–50B' },
+  { min: 50,  max: 150, color: '#A855F7', label: '$50–150B' },
+  { min: 150, max: 400, color: '#7E22CE', label: '$150–400B' },
+  { min: 400, max: Infinity, color: '#3B0764', label: '> $400B' },
+];
+const CHORO_TIERS_GDP = [
+  { min: 0,   max: 1,   color: '#EDE9FE', label: '< 1%' },
+  { min: 1,   max: 2,   color: '#C4B5FD', label: '1–2%' },
+  { min: 2,   max: 3,   color: '#A855F7', label: '2–3%' },
+  { min: 3,   max: 5,   color: '#7E22CE', label: '3–5%' },
+  { min: 5,   max: Infinity, color: '#3B0764', label: '> 5%' },
+];
+
+function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }) {
+  const [tooltip, setTooltip] = useState(null);
+  const [geoData, setGeoData] = useState(_cachedGeoData);
+
+  useEffect(() => { setTooltip(null); }, [mode]);
+
+  useEffect(() => {
+    if (!_cachedGeoData) {
+      _geoFetch.then(d => { if (d) setGeoData(d); });
+    }
+  }, []);
+
+  const spendingByCode = useMemo(() => {
+    const m = {};
+    expenditures.forEach(e => { m[e.country_code] = e; });
+    return m;
+  }, [expenditures]);
+
+  const tiers = mode === 'gdp' ? CHORO_TIERS_GDP : CHORO_TIERS_ABS;
+
+  const getColor = (entry) => {
+    if (!entry) return '#E2E8F0';   // no data — neutral mid-gray
+    const val = mode === 'gdp' ? entry.gdp_percent : entry.expenditure;
+    const tier = tiers.find(t => val >= t.min && val < t.max);
+    return tier ? tier.color : tiers[tiers.length - 1].color;
+  };
+
+  return (
+    <div className="relative">
+      {/* Map */}
+      <ComposableMap
+        projection="geoMercator"
+        projectionConfig={{ scale: 118, center: [15, 15] }}
+        style={{ width: '100%', height: '340px' }}
+      >
+        <Geographies geography={geoData || GEO_URL}>
+          {({ geographies }) =>
+            geographies.map((geo) => {
+              const code = ISO_NUM_TO_CODE[String(geo.id).padStart(3, '0')];
+              const entry = code ? spendingByCode[code] : null;
+              const isSelected = code && selectedCode === code;
+              return (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  fill={isSelected ? '#7E22CE' : getColor(entry)}
+                  stroke="#FFFFFF"
+                  strokeWidth={0.6}
+                  style={{
+                    default: { outline: 'none', cursor: entry ? 'pointer' : 'default' },
+                    hover:   { fill: entry ? '#9333EA' : '#CBD5E1', outline: 'none' },
+                    pressed: { outline: 'none' },
+                  }}
+                  onClick={() => entry && onCountryClick(entry)}
+                  onMouseEnter={(evt) => entry && setTooltip({ entry, x: evt.clientX, y: evt.clientY })}
+                  onMouseLeave={() => setTooltip(null)}
+                />
+              );
+            })
+          }
+        </Geographies>
+      </ComposableMap>
+
+      {/* Hover tooltip */}
+      {tooltip && (
+        <div
+          className="fixed z-50 bg-white border border-slate-200 rounded-lg shadow-xl px-3 py-2 pointer-events-none min-w-[150px]"
+          style={{ left: tooltip.x + 14, top: tooltip.y - 70 }}
+        >
+          <div className="flex items-center gap-2 mb-1.5">
+            <img src={getFlag(tooltip.entry.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm border border-slate-100" />
+            <span className="font-semibold text-slate-900 text-xs">{tooltip.entry.country}</span>
+            {NATO_MEMBERS.has(tooltip.entry.country_code) && (
+              <span className="text-[8px] font-bold px-1 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200 uppercase">NATO</span>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+            <span className="text-[10px] text-slate-400">Budget</span>
+            <span className="font-mono text-xs font-semibold text-purple-700">${tooltip.entry.expenditure}B</span>
+            <span className="text-[10px] text-slate-400">% of GDP</span>
+            <span className="font-mono text-xs text-slate-700">{tooltip.entry.gdp_percent}%</span>
+            {YOY_DELTA[tooltip.entry.country_code] != null && (
+              <>
+                <span className="text-[10px] text-slate-400">YoY</span>
+                <span className={`font-mono text-xs font-semibold ${YOY_DELTA[tooltip.entry.country_code] >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  {YOY_DELTA[tooltip.entry.country_code] >= 0 ? '▲' : '▼'}{Math.abs(YOY_DELTA[tooltip.entry.country_code]).toFixed(1)}%
+                </span>
+              </>
+            )}
+          </div>
+          <p className="text-[9px] text-slate-300 mt-1.5 text-center">Click to open profile</p>
+        </div>
+      )}
+
+      {/* Legend — bottom left, horizontal tiers */}
+      <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-lg px-3 py-2 shadow-sm">
+        <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+          {mode === 'gdp' ? '% of GDP' : 'Defense Budget'}
+        </p>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {tiers.map(t => (
+            <div key={t.label} className="flex items-center gap-1">
+              <span className="w-4 h-3 rounded-sm border border-slate-200/50 inline-block" style={{ backgroundColor: t.color }} />
+              <span className="text-[9px] text-slate-500 font-mono">{t.label}</span>
+            </div>
+          ))}
+          <div className="flex items-center gap-1">
+            <span className="w-4 h-3 rounded-sm border border-slate-200 inline-block bg-slate-200" />
+            <span className="text-[9px] text-slate-400 font-mono">N/A</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Hint — bottom right */}
+      <div className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm rounded-lg px-2 py-1 border border-slate-100">
+        <p className="text-[9px] text-slate-400">
+          <span className="font-medium text-slate-500">{expenditures.length} tracked</span> · hover = preview · click = profile
+        </p>
       </div>
     </div>
   );
@@ -1660,7 +1871,7 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
 }
 
 function DefenseCapabilitiesCard({ countryCode }) {
-  const cap = DEFENSE_CAPABILITIES[countryCode];
+  const cap = getCapabilitySummary(countryCode);
   const [openCat, setOpenCat] = useState(null);
 
   const hasDetails = !!CAPABILITY_DETAILS[countryCode];
@@ -1694,7 +1905,7 @@ function DefenseCapabilitiesCard({ countryCode }) {
                   <CapabilityTile
                     key={cat.key}
                     cat={cat}
-                    count={cap[cat.key] ?? 0}
+                    count={cap[cat.key] ?? null}
                     rank={rank > 0 ? rank : null}
                     maxCount={CAP_MAX[cat.key]}
                     isClickable={isClickable}
@@ -1854,20 +2065,31 @@ function NewsCard({ article }) {
   );
 }
 
-// ── Flag tick for the regional comparison bar chart ───────────────────────────
-// SVG <image> is used (not foreignObject) for reliable rendering on all browsers including iOS Safari.
-function CustomizedFlagTick({ x, y, payload }) {
-  const code = COUNTRY_FLAGS[payload?.value] || payload?.value?.toLowerCase();
+// ── Flag + name tick for bar charts ──────────────────────────────────────────
+function CustomizedFlagTick({ x, y, payload, nameMap = {} }) {
+  const code = payload?.value?.toLowerCase();
+  const name = nameMap[payload?.value] ?? payload?.value ?? '';
   if (!code) return null;
+  const label = name.length > 13 ? name.slice(0, 12) + '…' : name;
   return (
-    <image
-      href={`https://flagcdn.com/w40/${code}.png`}
-      x={x - 22}
-      y={y - 7}
-      width={20}
-      height={14}
-      preserveAspectRatio="xMidYMid slice"
-    />
+    <g>
+      <foreignObject x={x - 112} y={y - 9} width={108} height={18}>
+        <div
+          xmlns="http://www.w3.org/1999/xhtml"
+          style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end', height: '100%' }}
+        >
+          <span style={{ fontSize: '9px', color: '#64748B', whiteSpace: 'nowrap', textAlign: 'right' }}>
+            {label}
+          </span>
+          <img
+            src={`https://flagcdn.com/w40/${code}.png`}
+            width="18" height="13"
+            style={{ objectFit: 'cover', borderRadius: '1px', flexShrink: 0 }}
+            alt=""
+          />
+        </div>
+      </foreignObject>
+    </g>
   );
 }
 
@@ -1919,10 +2141,7 @@ function CountryProfileSection({ country, allExpenditures }) {
     .sort((a, b) => b.expenditure - a.expenditure)
     .slice(0, 10);
 
-  const getFlag = (code) => {
-    const c = COUNTRY_FLAGS[code] || code.toLowerCase();
-    return `https://flagcdn.com/w40/${c}.png`;
-  };
+  const getFlag = (code) => `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
 
   return (
     <div className="space-y-5">
@@ -1952,20 +2171,50 @@ function CountryProfileSection({ country, allExpenditures }) {
               <h2 className="font-heading text-2xl font-bold text-white tracking-tight drop-shadow">
                 {country.country}
               </h2>
-              <p className="text-sm text-white/70">{country.region} · Defense Profile</p>
+              <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                <p className="text-sm text-white/70">{country.region} · Defense Profile</p>
+                {NATO_MEMBERS.has(country.country_code) && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-700/60 text-blue-100 border border-blue-500/40 uppercase tracking-wide">NATO</span>
+                )}
+                {AUKUS_MEMBERS.has(country.country_code) && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-600/60 text-sky-100 border border-sky-500/40 uppercase tracking-wide">AUKUS</span>
+                )}
+                {QUAD_MEMBERS.has(country.country_code) && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-600/60 text-violet-100 border border-violet-500/40 uppercase tracking-wide">QUAD</span>
+                )}
+                {FIVEEYES_MEMBERS.has(country.country_code) && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-700/60 text-emerald-100 border border-emerald-500/40 uppercase tracking-wide">Five Eyes</span>
+                )}
+                {SCO_MEMBERS.has(country.country_code) && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-700/60 text-rose-100 border border-rose-500/40 uppercase tracking-wide">SCO</span>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4 text-right">
-            <div>
+            <div className="text-right">
               <p className="text-xl font-mono font-bold text-white">${country.expenditure}B</p>
-              <p className="text-xs text-white/60">Defense budget</p>
+              <p className="text-xs text-white/60">Budget {country.year}</p>
             </div>
-            <div>
-              <p className={`text-xl font-mono font-bold ${country.gdp_percent >= 2 ? "text-emerald-300" : "text-amber-300"}`}>
+            <div className="text-right">
+              <p className={`text-xl font-mono font-bold ${
+                country.gdp_percent >= 4 ? "text-rose-300" :
+                country.gdp_percent >= 2.5 ? "text-amber-300" :
+                country.gdp_percent >= 2 ? "text-emerald-300" :
+                "text-yellow-200"
+              }`}>
                 {country.gdp_percent}%
               </p>
               <p className="text-xs text-white/60">of GDP</p>
             </div>
+            {YOY_DELTA[country.country_code] != null && (
+              <div className="text-right border-l border-white/20 pl-4">
+                <p className={`text-base font-mono font-bold ${YOY_DELTA[country.country_code] >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                  {YOY_DELTA[country.country_code] >= 0 ? '▲' : '▼'} {Math.abs(YOY_DELTA[country.country_code]).toFixed(1)}%
+                </p>
+                <p className="text-xs text-white/60">vs 2023</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -2015,7 +2264,7 @@ function CountryProfileSection({ country, allExpenditures }) {
           <CardContent className="pt-4">
             <div className="h-[260px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={regionalPeers} layout="vertical" margin={{ top: 12, left: 8, right: 8, bottom: 4 }}>
+                <BarChart data={regionalPeers} layout="vertical" margin={{ top: 12, left: 4, right: 8, bottom: 4 }}>
                   <XAxis
                     type="number"
                     tick={{ fill: '#64748B', fontSize: 10 }}
@@ -2026,10 +2275,10 @@ function CountryProfileSection({ country, allExpenditures }) {
                   <YAxis
                     type="category"
                     dataKey="country_code"
-                    tick={<CustomizedFlagTick />}
+                    tick={(props) => <CustomizedFlagTick {...props} nameMap={Object.fromEntries(regionalPeers.map(e => [e.country_code, e.country]))} />}
                     axisLine={false}
                     tickLine={false}
-                    width={28}
+                    width={116}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
@@ -2241,7 +2490,15 @@ function CountryProfileSection({ country, allExpenditures }) {
             </div>
           ) : profile?.news?.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {profile.news.slice(0, 6).map((article, i) => (
+              {profile.news
+                .filter(((seen) => (a) => {
+                  const key = (a.title ?? '').toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 60);
+                  if (seen.has(key)) return false;
+                  seen.add(key);
+                  return true;
+                })(new Set()))
+                .slice(0, 6)
+                .map((article, i) => (
                 <NewsCard key={i} article={article} />
               ))}
             </div>
@@ -2269,8 +2526,19 @@ export default function Expenditures() {
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [sortBy, setSortBy] = useState("expenditure_desc");
   const [chartMode, setChartMode] = useState("absolute");
+  const [mapMode, setMapMode] = useState("absolute");
   const [pinnedCountry, setPinnedCountry] = useState(null);
+  const [compareList, setCompareList] = useState([]);
   const profileRef = useRef(null);
+
+  const toggleCompare = (exp) => {
+    setCompareList(prev => {
+      if (prev.some(e => e.country_code === exp.country_code))
+        return prev.filter(e => e.country_code !== exp.country_code);
+      if (prev.length >= 4) return prev;
+      return [...prev, exp];
+    });
+  };
 
   const fetchExpenditures = async () => {
     setLoading(true);
@@ -2300,18 +2568,28 @@ export default function Expenditures() {
         e.country_code.toLowerCase().includes(term)
       );
     }
+    const perCapita = (e) => POPULATION_M[e.country_code]
+      ? (e.expenditure * 1000) / POPULATION_M[e.country_code]
+      : 0;
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "expenditure_desc": return b.expenditure - a.expenditure;
         case "expenditure_asc": return a.expenditure - b.expenditure;
         case "gdp_desc": return b.gdp_percent - a.gdp_percent;
         case "gdp_asc": return a.gdp_percent - b.gdp_percent;
+        case "per_capita_desc": return perCapita(b) - perCapita(a);
+        case "per_capita_asc": return perCapita(a) - perCapita(b);
+        case "yoy_desc": return (YOY_DELTA[b.country_code] ?? -999) - (YOY_DELTA[a.country_code] ?? -999);
+        case "yoy_asc": return (YOY_DELTA[a.country_code] ?? 999) - (YOY_DELTA[b.country_code] ?? 999);
         case "name_asc": return a.country.localeCompare(b.country);
         default: return 0;
       }
     });
     setFilteredExpenditures(filtered);
   }, [searchTerm, selectedRegion, sortBy, expenditures]);
+
+  // Single source of truth — all derived computations must use this
+  const displayedExpenditures = filteredExpenditures;
 
   const focusCountry = pinnedCountry
     ?? (filteredExpenditures.length === 1 ? filteredExpenditures[0] : null);
@@ -2324,7 +2602,7 @@ export default function Expenditures() {
   const totalExpenditure = filteredExpenditures.reduce((sum, e) => sum + e.expenditure, 0);
   const avgGdpPercent = filteredExpenditures.length
     ? (filteredExpenditures.reduce((sum, e) => sum + e.gdp_percent, 0) / filteredExpenditures.length).toFixed(1)
-    : 0;
+    : null;
 
   const topCountries = [...filteredExpenditures]
     .sort((a, b) => b.expenditure - a.expenditure)
@@ -2337,10 +2615,7 @@ export default function Expenditures() {
     return acc;
   }, []).sort((a, b) => b.value - a.value);
 
-  const getFlag = (countryCode) => {
-    const code = COUNTRY_FLAGS[countryCode] || countryCode.toLowerCase();
-    return `https://flagcdn.com/w40/${code}.png`;
-  };
+  const getFlag = (countryCode) => `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
 
   const getGdpColor = (gdpPercent) => {
     if (gdpPercent >= 4) return 'text-rose-600 bg-rose-50';
@@ -2397,9 +2672,9 @@ export default function Expenditures() {
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL SPENDING</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalExpenditure.toFixed(0)}B</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalExpenditure.toFixed(1)}B</p>
             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> YoY change not computed
+              <Database className="w-3 h-3" /> SIPRI · IISS · NATO · 2024
             </p>
           </CardContent>
         </Card>
@@ -2407,21 +2682,29 @@ export default function Expenditures() {
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COUNTRIES</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{filteredExpenditures.length}</p>
-            <p className="text-xs text-slate-500 mt-1">of {expenditures.length} total</p>
+            <p className="text-xs text-slate-500 mt-1">
+              {filteredExpenditures.length < expenditures.length
+                ? `filtered from ${expenditures.length}`
+                : `${expenditures.length} countries tracked`}
+            </p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">AVG % OF GDP</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{avgGdpPercent}%</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
+              {avgGdpPercent != null ? `${avgGdpPercent}%` : '—'}
+            </p>
             <p className="text-xs text-slate-500 mt-1">NATO target: 2%</p>
           </CardContent>
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">FISCAL YEAR</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">2024</p>
-            <p className="text-xs text-slate-500 mt-1">Latest data</p>
+            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
+              {filteredExpenditures[0]?.year ?? expenditures[0]?.year ?? '—'}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">SIPRI · IISS · NATO · 2024</p>
           </CardContent>
         </Card>
       </div>
@@ -2463,6 +2746,7 @@ export default function Expenditures() {
                     ? [...filteredExpenditures].sort((a, b) => b.gdp_percent - a.gdp_percent).slice(0, 10)
                     : topCountries}
                   layout="vertical"
+                  margin={{ left: 4, right: 8 }}
                 >
                   <XAxis
                     type="number"
@@ -2474,10 +2758,10 @@ export default function Expenditures() {
                   <YAxis
                     type="category"
                     dataKey="country_code"
-                    tick={{ fill: '#64748B', fontSize: 11 }}
+                    tick={(props) => <CustomizedFlagTick {...props} nameMap={Object.fromEntries(filteredExpenditures.map(e => [e.country_code, e.country]))} />}
                     axisLine={false}
                     tickLine={false}
-                    width={35}
+                    width={116}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
@@ -2563,6 +2847,51 @@ export default function Expenditures() {
         </Card>
       </div>}
 
+      {/* World Map */}
+      {!focusCountry && (
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <CardTitle className="font-heading text-lg text-slate-900">Defense Spending — World Map</CardTitle>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {displayedExpenditures.length} countries · color = spending intensity · hover = preview · click = full profile
+                </p>
+              </div>
+              <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+                <button
+                  onClick={() => setMapMode("absolute")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    mapMode === "absolute" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <BarChart2 className="w-3.5 h-3.5" /> $B
+                </button>
+                <button
+                  onClick={() => setMapMode("gdp")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    mapMode === "gdp" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <Percent className="w-3.5 h-3.5" /> GDP
+                </button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4">
+            <WorldChoroplethMap
+              expenditures={displayedExpenditures}
+              mode={mapMode}
+              selectedCode={pinnedCountry?.country_code}
+              onCountryClick={(entry) => {
+                setPinnedCountry(prev => prev?.id === entry.id ? null : entry);
+                setTimeout(() => profileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+              }}
+            />
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
@@ -2601,11 +2930,155 @@ export default function Expenditures() {
             ))}
           </SelectContent>
         </Select>
+        {compareList.length > 0 && (
+          <button
+            onClick={() => setCompareList([])}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-purple-200 bg-purple-50 text-purple-700 text-xs font-semibold hover:bg-purple-100 transition-colors whitespace-nowrap"
+          >
+            Compare ({compareList.length}) ✕
+          </button>
+        )}
       </div>
+
+      {/* ── NATO Compliance Tracker ── */}
+      {!focusCountry && (() => {
+        const natoInView = filteredExpenditures.filter(e => NATO_MEMBERS.has(e.country_code));
+        if (!natoInView.length) return null;
+        const meeting = natoInView.filter(e => e.gdp_percent >= 2).sort((a, b) => b.gdp_percent - a.gdp_percent);
+        const missing  = natoInView.filter(e => e.gdp_percent < 2).sort((a, b) => b.gdp_percent - a.gdp_percent);
+        return (
+          <Card className="bg-white border-slate-200 shadow-sm">
+            <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-700 text-white uppercase tracking-wide">NATO</span>
+                  <CardTitle className="font-heading text-base text-slate-900">2% GDP Burden-Sharing Tracker</CardTitle>
+                </div>
+                <span className="text-xs text-slate-400">
+                  {meeting.length}/{natoInView.length} tracked meeting target · 32 total members
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 space-y-4">
+              {meeting.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 mb-2 flex items-center gap-1">
+                    <span>✓</span> Meeting ≥ 2% target ({meeting.length})
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {meeting.map(e => (
+                      <button
+                        key={e.country_code}
+                        onClick={() => handleRowClick(e)}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-colors"
+                      >
+                        <img src={getFlag(e.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
+                        <span className="text-xs font-medium text-emerald-800">{e.country}</span>
+                        <span className="text-xs font-mono font-bold text-emerald-700">{e.gdp_percent}%</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {missing.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-rose-500 mb-2 flex items-center gap-1">
+                    <span>✗</span> Below 2% target ({missing.length})
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {missing.map(e => (
+                      <button
+                        key={e.country_code}
+                        onClick={() => handleRowClick(e)}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 transition-colors"
+                      >
+                        <img src={getFlag(e.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
+                        <span className="text-xs font-medium text-rose-800">{e.country}</span>
+                        <span className="text-xs font-mono font-bold text-rose-600">{e.gdp_percent}%</span>
+                        <span className="text-[9px] text-rose-400 font-mono">({(2 - e.gdp_percent).toFixed(1)}% gap)</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="pt-1 border-t border-slate-100 flex items-center gap-2">
+                <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full transition-all"
+                    style={{ width: `${(meeting.length / natoInView.length) * 100}%` }}
+                  />
+                </div>
+                <span className="text-xs text-slate-400 font-mono whitespace-nowrap">
+                  {Math.round((meeting.length / natoInView.length) * 100)}% compliance
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
+
+      {/* ── Compare Panel ── */}
+      {compareList.length >= 2 && (
+        <Card className="bg-white border-purple-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-3 bg-purple-50/50">
+            <div className="flex items-center justify-between">
+              <CardTitle className="font-heading text-base text-slate-900">Country Comparison</CardTitle>
+              <button onClick={() => setCompareList([])} className="text-xs text-slate-400 hover:text-slate-700 underline">Clear</button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="text-left text-xs text-slate-500 font-semibold uppercase tracking-wider p-3 w-32">Metric</th>
+                  {compareList.map(e => (
+                    <th key={e.country_code} className="p-3 text-center min-w-[140px]">
+                      <div className="flex flex-col items-center gap-1">
+                        <img src={getFlag(e.country_code)} alt={e.country} className="w-8 h-5 object-cover rounded shadow-sm" />
+                        <span className="text-xs font-semibold text-slate-900">{e.country}</span>
+                        {NATO_MEMBERS.has(e.country_code) && (
+                          <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200 uppercase">NATO</span>
+                        )}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { label: 'Budget', render: e => <span className="font-mono font-bold text-slate-900">${e.expenditure}B</span> },
+                  { label: 'YoY vs 2023', render: e => YOY_DELTA[e.country_code] != null ? (
+                    <span className={`font-mono font-semibold ${YOY_DELTA[e.country_code] >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {YOY_DELTA[e.country_code] >= 0 ? '▲' : '▼'}{Math.abs(YOY_DELTA[e.country_code]).toFixed(1)}%
+                    </span>
+                  ) : <span className="text-slate-300">—</span> },
+                  { label: '% of GDP', render: e => <span className={`font-mono font-semibold px-2 py-0.5 rounded-full text-xs ${getGdpColor(e.gdp_percent)}`}>{e.gdp_percent}%</span> },
+                  { label: 'Per Capita', render: e => POPULATION_M[e.country_code]
+                    ? <span className="font-mono text-slate-700">${Math.round((e.expenditure * 1000) / POPULATION_M[e.country_code]).toLocaleString()}</span>
+                    : <span className="text-slate-300">—</span> },
+                  { label: 'Fighters', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.fighters ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Helicopters', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.helicopters ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Drones', render: e => { const cap = getCapabilitySummary(e.country_code); return cap?.drones != null ? <span className="font-mono text-slate-700">{cap.drones.toLocaleString()}</span> : <span className="text-slate-300 text-xs">N/D</span>; } },
+                  { label: 'Land Vehicles', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.land_vehicles ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Warships', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.surface_combatants ?? 0)}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Submarines', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.submarines ?? 0)}</span> : <span className="text-slate-300">—</span>; } },
+                ].map((row, i) => (
+                  <tr key={row.label} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
+                    <td className="p-3 text-xs font-medium text-slate-500">{row.label}</td>
+                    {compareList.map(e => (
+                      <td key={e.country_code} className="p-3 text-center">{row.render(e)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      )}
 
       {/* ── Country Profile ── */}
       {focusCountry && (
-        <div ref={profileRef}>
+        <div ref={profileRef} style={{ minHeight: '520px' }}>
           {pinnedCountry && (
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-slate-500">
@@ -2625,14 +3098,44 @@ export default function Expenditures() {
 
       {/* Data Table */}
       <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
+        <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50 pt-3 px-4">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              {filteredExpenditures.length} {filteredExpenditures.length === 1 ? 'country' : 'countries'}
+            </p>
+            <button
+              onClick={() => {
+                const headers = ['Country', 'Code', 'NATO', 'Region', 'Expenditure ($B)', 'YoY vs 2023 (%)', 'Per Capita ($)', '% GDP', 'Year', 'Source'];
+                const rows = filteredExpenditures.map(e => {
+                  const pop = POPULATION_M[e.country_code];
+                  const pc = pop ? Math.round((e.expenditure * 1000) / pop) : '';
+                  const yoy = YOY_DELTA[e.country_code] != null ? YOY_DELTA[e.country_code].toFixed(1) : '';
+                  const nato = NATO_MEMBERS.has(e.country_code) ? 'Yes' : 'No';
+                  return [e.country, e.country_code, nato, e.region, e.expenditure, yoy, pc, e.gdp_percent, e.year, e.source || ''].join(',');
+                });
+                const csv = [headers.join(','), ...rows].join('\n');
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+                a.download = `defense-expenditures-${filteredExpenditures[0]?.year ?? 2024}.csv`;
+                a.click();
+              }}
+              className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:border-slate-300"
+            >
+              <Download className="w-3.5 h-3.5" /> Export CSV
+            </button>
+          </div>
+        </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto" data-testid="expenditures-table">
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="w-8 p-2"></th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Country</th>
                   <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Region</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Expenditure</th>
+                  <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">YoY</th>
+                  <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Per Capita</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">% of GDP</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Year</th>
                   <th className="text-right text-xs font-semibold uppercase tracking-wider text-slate-500 p-4">Source</th>
@@ -2650,6 +3153,19 @@ export default function Expenditures() {
                     }`}
                     data-testid={`expenditure-row-${exp.id}`}
                   >
+                    <td className="p-2 w-8">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleCompare(exp); }}
+                        title={compareList.some(c => c.country_code === exp.country_code) ? 'Remove from compare' : 'Add to compare (max 4)'}
+                        className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold transition-colors ${
+                          compareList.some(c => c.country_code === exp.country_code)
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-slate-100 text-slate-400 hover:bg-purple-100 hover:text-purple-600'
+                        }`}
+                      >
+                        {compareList.some(c => c.country_code === exp.country_code) ? '✓' : '+'}
+                      </button>
+                    </td>
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-3">
@@ -2663,7 +3179,12 @@ export default function Expenditures() {
                             onError={(e) => { e.target.src = `https://flagcdn.com/w40/${exp.country_code.toLowerCase()}.png`; }}
                           />
                           <div>
-                            <p className="text-slate-900 font-medium text-sm">{exp.country}</p>
+                            <div className="flex items-center gap-1.5">
+                              <p className="text-slate-900 font-medium text-sm">{exp.country}</p>
+                              {NATO_MEMBERS.has(exp.country_code) && (
+                                <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200 uppercase tracking-wide leading-none">NATO</span>
+                              )}
+                            </div>
                             <p className="text-xs text-slate-500 font-mono">{exp.country_code}</p>
                           </div>
                         </div>
@@ -2674,6 +3195,29 @@ export default function Expenditures() {
                     </td>
                     <td className="p-4 text-right">
                       <span className="font-mono text-sm text-slate-900 font-semibold">${exp.expenditure}B</span>
+                    </td>
+                    <td className="p-4 text-right">
+                      {YOY_DELTA[exp.country_code] != null ? (
+                        <span className={`inline-flex items-center gap-0.5 font-mono text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          YOY_DELTA[exp.country_code] >= 0
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-rose-50 text-rose-700'
+                        }`}>
+                          {YOY_DELTA[exp.country_code] >= 0 ? '▲' : '▼'}
+                          {Math.abs(YOY_DELTA[exp.country_code]).toFixed(1)}%
+                        </span>
+                      ) : (
+                        <span className="text-xs text-slate-300">—</span>
+                      )}
+                    </td>
+                    <td className="p-4 text-right">
+                      {POPULATION_M[exp.country_code] ? (
+                        <span className="font-mono text-sm text-slate-700">
+                          ${Math.round((exp.expenditure * 1000) / POPULATION_M[exp.country_code]).toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-slate-300">—</span>
+                      )}
                     </td>
                     <td className="p-4 text-right">
                       <span className={`inline-flex font-mono text-sm px-2.5 py-1 rounded-full font-medium ${getGdpColor(exp.gdp_percent)}`}>
@@ -2700,19 +3244,35 @@ export default function Expenditures() {
         </CardContent>
       </Card>
 
+      {/* GDP% color legend */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-slate-500 px-1">
+        <span className="font-medium text-slate-400 uppercase tracking-wide text-[10px]">% GDP:</span>
+        {[
+          { color: 'bg-rose-50 text-rose-600', label: '≥ 4%', desc: 'War footing / over-armed' },
+          { color: 'bg-amber-50 text-amber-600', label: '2.5 – 4%', desc: 'Above NATO target' },
+          { color: 'bg-emerald-50 text-emerald-600', label: '2 – 2.5%', desc: 'NATO target met' },
+          { color: 'bg-slate-50 text-slate-600', label: '< 2%', desc: 'Below NATO target' },
+        ].map(item => (
+          <div key={item.label} className="flex items-center gap-1.5">
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium ${item.color}`}>{item.label}</span>
+            <span className="text-slate-400">{item.desc}</span>
+          </div>
+        ))}
+      </div>
+
       {/* Top 5 focus cards */}
       <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
           <div className="flex items-center justify-between">
             <CardTitle className="font-heading text-lg text-slate-900">Focus — Top 5 Global Defense Budgets</CardTitle>
             <span className="text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-200">
-              Source : SIPRI · {filteredExpenditures[0]?.year ?? 2024}
+              Source: SIPRI · {filteredExpenditures[0]?.year ?? 2024}
             </span>
           </div>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-            {[...expenditures]
+            {[...displayedExpenditures]
               .sort((a, b) => b.expenditure - a.expenditure)
               .slice(0, 5)
               .map((exp, i) => {
@@ -2724,7 +3284,13 @@ export default function Expenditures() {
                       src={getFlag(exp.country_code)}
                       alt={exp.country}
                       className="w-12 h-8 object-cover rounded shadow-md border-2 border-white"
-                      onError={e => { e.target.style.display = "none"; }}
+                      onError={e => {
+                        e.target.style.display = "none";
+                        const span = document.createElement('span');
+                        span.textContent = exp.country_code;
+                        span.className = 'text-xs font-mono text-slate-500 bg-slate-100 px-1 rounded';
+                        e.target.parentNode?.insertBefore(span, e.target.nextSibling);
+                      }}
                     />
                     <p className="text-xs font-semibold text-slate-700 leading-tight">{exp.country}</p>
                     <span className={`text-xs font-mono text-white px-2 py-0.5 rounded ${shade[i]}`}>

@@ -14,8 +14,8 @@ import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 // ── Logo helpers ──────────────────────────────────────────────────────────────
 
 const AVATAR_PALETTE = [
-  "bg-purple-600", "bg-blue-600", "bg-emerald-600", "bg-rose-600",
-  "bg-amber-600", "bg-indigo-600", "bg-sky-600", "bg-orange-600",
+  "bg-slate-600", "bg-slate-500", "bg-slate-700", "bg-slate-600",
+  "bg-slate-500", "bg-slate-700", "bg-slate-600", "bg-slate-500",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -104,7 +104,7 @@ const MACRO_CATEGORIES = [
   {
     id: "autonomous",
     name: "Autonomous Systems & UAV",
-    description: "Unmanned platforms, loitering munitions, counter-drone",
+    description: "UAVs, loitering munitions, counter-drone",
     icon: Cpu,
     color: "purple",
     keywords: ["UAV", "Small UAV", "Loitering Munitions", "Autonomous", "Counter-UAS", "UAS", "Drones"],
@@ -116,6 +116,14 @@ const MACRO_CATEGORIES = [
     icon: Shield,
     color: "rose",
     keywords: ["Missiles", "Air Defense", "Iron Dome", "Trophy", "Rockets", "Ammunition", "Energetics", "S-400", "Remote Weapons"],
+  },
+  {
+    id: "nuclear",
+    name: "Nuclear & Advanced Tech",
+    description: "Nuclear, directed energy, advanced propulsion",
+    icon: Zap,
+    color: "orange",
+    keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"],
   },
   {
     id: "aerospace",
@@ -152,18 +160,10 @@ const MACRO_CATEGORIES = [
   {
     id: "intel",
     name: "Intelligence, Cyber & EW",
-    description: "C2, SIGINT, electronic warfare, AI & analytics",
+    description: "C2, SIGINT, cyber & electronic warfare",
     icon: Brain,
     color: "emerald",
     keywords: ["Cyber", "AI", "Intelligence", "Analytics", "Software", "Electronic Warfare", "SIGINT", "ISR", "C4I", "Communications", "Radar", "Sensors", "Optronics"],
-  },
-  {
-    id: "nuclear",
-    name: "Nuclear & Advanced Tech",
-    description: "Nuclear, directed energy, advanced propulsion",
-    icon: Zap,
-    color: "orange",
-    keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"],
   },
   {
     id: "industrial",
@@ -175,108 +175,21 @@ const MACRO_CATEGORIES = [
   },
 ];
 
-// Each color maps to real Tailwind classes — do not construct these dynamically.
-const CAT_COLORS = {
-  purple: {
-    icon: "text-purple-700",
-    iconBg: "bg-purple-50 border-purple-200",
-    badge: "bg-purple-100 text-purple-700 border border-purple-200",
-    accentBar: "bg-purple-600",
-    activeBg: "bg-purple-50/50",
-    activeBorder: "border-purple-300",
-    hoverBorder: "hover:border-purple-200",
-    headerBg: "bg-purple-50/60 border-purple-100",
-    rowAccent: "bg-purple-600",
-  },
-  rose: {
-    icon: "text-rose-600",
-    iconBg: "bg-rose-50 border-rose-200",
-    badge: "bg-rose-100 text-rose-700 border border-rose-200",
-    accentBar: "bg-rose-500",
-    activeBg: "bg-rose-50/50",
-    activeBorder: "border-rose-300",
-    hoverBorder: "hover:border-rose-200",
-    headerBg: "bg-rose-50/60 border-rose-100",
-    rowAccent: "bg-rose-500",
-  },
-  indigo: {
-    icon: "text-indigo-600",
-    iconBg: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700 border border-indigo-200",
-    accentBar: "bg-indigo-500",
-    activeBg: "bg-indigo-50/50",
-    activeBorder: "border-indigo-300",
-    hoverBorder: "hover:border-indigo-200",
-    headerBg: "bg-indigo-50/60 border-indigo-100",
-    rowAccent: "bg-indigo-500",
-  },
-  amber: {
-    icon: "text-amber-600",
-    iconBg: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700 border border-amber-200",
-    accentBar: "bg-amber-500",
-    activeBg: "bg-amber-50/50",
-    activeBorder: "border-amber-300",
-    hoverBorder: "hover:border-amber-200",
-    headerBg: "bg-amber-50/60 border-amber-100",
-    rowAccent: "bg-amber-500",
-  },
-  blue: {
-    icon: "text-blue-600",
-    iconBg: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700 border border-blue-200",
-    accentBar: "bg-blue-500",
-    activeBg: "bg-blue-50/50",
-    activeBorder: "border-blue-300",
-    hoverBorder: "hover:border-blue-200",
-    headerBg: "bg-blue-50/60 border-blue-100",
-    rowAccent: "bg-blue-500",
-  },
-  sky: {
-    icon: "text-sky-600",
-    iconBg: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700 border border-sky-200",
-    accentBar: "bg-sky-500",
-    activeBg: "bg-sky-50/50",
-    activeBorder: "border-sky-300",
-    hoverBorder: "hover:border-sky-200",
-    headerBg: "bg-sky-50/60 border-sky-100",
-    rowAccent: "bg-sky-500",
-  },
-  emerald: {
-    icon: "text-emerald-600",
-    iconBg: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700 border border-emerald-200",
-    accentBar: "bg-emerald-500",
-    activeBg: "bg-emerald-50/50",
-    activeBorder: "border-emerald-300",
-    hoverBorder: "hover:border-emerald-200",
-    headerBg: "bg-emerald-50/60 border-emerald-100",
-    rowAccent: "bg-emerald-500",
-  },
-  orange: {
-    icon: "text-orange-600",
-    iconBg: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700 border border-orange-200",
-    accentBar: "bg-orange-500",
-    activeBg: "bg-orange-50/50",
-    activeBorder: "border-orange-300",
-    hoverBorder: "hover:border-orange-200",
-    headerBg: "bg-orange-50/60 border-orange-100",
-    rowAccent: "bg-orange-500",
-  },
-  slate: {
-    icon: "text-slate-600",
-    iconBg: "bg-slate-100 border-slate-200",
-    badge: "bg-slate-100 text-slate-600 border border-slate-200",
-    accentBar: "bg-slate-500",
-    activeBg: "bg-slate-50",
-    activeBorder: "border-slate-400",
-    hoverBorder: "hover:border-slate-300",
-    headerBg: "bg-slate-50 border-slate-200",
-    rowAccent: "bg-slate-500",
-  },
+// Single neutral style shared by all categories — selected state uses purple accent only.
+const NEUTRAL_CAT = {
+  icon: "text-slate-500",
+  iconBg: "bg-slate-100 border-slate-200",
+  badge: "bg-slate-100 text-slate-500 border border-slate-200",
+  accentBar: "bg-slate-200",
+  activeBg: "bg-purple-50/40",
+  activeBorder: "border-purple-300",
+  hoverBorder: "hover:border-slate-300",
+  headerBg: "bg-slate-50 border-slate-100",
+  rowAccent: "bg-slate-300",
 };
+const CAT_COLORS = Object.fromEntries(
+  ["purple","rose","orange","indigo","amber","blue","sky","emerald","slate"].map((k) => [k, NEUTRAL_CAT])
+);
 
 function assignCategory(company) {
   const specs = new Set((company.specializations || []).map((s) => s.toLowerCase()));
@@ -306,8 +219,8 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
           : `border-slate-200 ${clr.hoverBorder} hover:shadow-md`
       }`}
     >
-      {/* Colored left accent bar */}
-      <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${clr.accentBar} ${isEmpty ? "opacity-30" : ""}`} />
+      {/* Left accent bar — purple when selected, light slate otherwise */}
+      <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${isSelected ? "bg-purple-600" : clr.accentBar} ${isEmpty ? "opacity-30" : ""}`} />
 
       {/* Header row */}
       <div className="flex items-start justify-between mb-3 pl-1">
@@ -316,12 +229,12 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
             <Icon className={`w-4 h-4 ${clr.icon}`} />
           </div>
           <div className="min-w-0">
-            <h3 className="font-semibold text-[13px] text-slate-800 leading-tight truncate">{category.name}</h3>
-            <p className="text-[11px] text-slate-400 leading-tight mt-0.5 truncate">{category.description}</p>
+            <h3 className="font-semibold text-[13px] text-slate-800 leading-tight">{category.name}</h3>
+            <p className="text-[11px] text-slate-400 leading-tight mt-0.5 line-clamp-1">{category.description}</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-          <span className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full ${clr.badge}`}>
+          <span className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full ${isSelected ? "bg-purple-100 text-purple-700 border border-purple-200" : clr.badge}`}>
             {companies.length}
           </span>
           {!isEmpty && (
@@ -385,7 +298,7 @@ function CompactPlayerRow({ company, onClick, accentColor }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-slate-300 hover:text-blue-500 flex-shrink-0 transition-colors opacity-0 group-hover:opacity-100"
+              className="text-slate-300 hover:text-slate-600 flex-shrink-0 transition-colors opacity-0 group-hover:opacity-100"
             >
               <ExternalLink className="w-3 h-3" />
             </a>
@@ -410,7 +323,7 @@ function CompactPlayerRow({ company, onClick, accentColor }) {
       </div>
 
       {stageIsNamed && (
-        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0 hidden sm:block">
+        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 flex-shrink-0 hidden sm:block">
           {stage}
         </span>
       )}
@@ -581,7 +494,7 @@ export default function PrivatePlayers() {
     [players]
   );
   const totalFunded = useMemo(
-    () => players.filter((c) => c.funding_stage && !c.funding_stage.toLowerCase().includes("private — ")).length,
+    () => players.filter((c) => /series|seed|venture|growth|bootstrap|late stage/i.test(c.funding_stage || "")).length,
     [players]
   );
 
@@ -605,7 +518,7 @@ export default function PrivatePlayers() {
           <div>
             <h1 className="text-2xl font-bold text-slate-900 font-heading">Private Players</h1>
             <p className="text-sm text-slate-500">
-              Non-publicly-listed defense companies · {players.length} tracked
+              Non-publicly-listed defense companies
             </p>
           </div>
         </div>
@@ -616,9 +529,9 @@ export default function PrivatePlayers() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
             { label: "Companies",       value: players.length,                    icon: Building2,  iconCls: "text-purple-700", bgCls: "bg-purple-50" },
-            { label: "Countries",       value: countryCounts.length,              icon: Globe,      iconCls: "text-blue-600",   bgCls: "bg-blue-50" },
-            { label: "Total Valuation", value: formatCap(totalValuation) || "—",  icon: TrendingUp, iconCls: "text-emerald-600", bgCls: "bg-emerald-50" },
-            { label: "With Funding",    value: totalFunded,                        icon: DollarSign, iconCls: "text-amber-600",  bgCls: "bg-amber-50" },
+            { label: countryCounts.length === 1 ? "Country" : "Countries", value: countryCounts.length, icon: Globe, iconCls: "text-slate-500", bgCls: "bg-slate-100" },
+            { label: "Agg. Valuation*", value: formatCap(totalValuation) || "—",  icon: TrendingUp, iconCls: "text-slate-500", bgCls: "bg-slate-100" },
+            { label: "VC / PE Backed",  value: totalFunded,                        icon: DollarSign, iconCls: "text-slate-500", bgCls: "bg-slate-100" },
           ].map(({ label, value, icon: Icon, iconCls, bgCls }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
@@ -671,7 +584,7 @@ export default function PrivatePlayers() {
         <div className="flex gap-6 items-start">
 
           {/* ── Country sidebar ── */}
-          <div className="w-48 flex-shrink-0 sticky top-6">
+          <div className="w-56 flex-shrink-0 sticky top-6">
             <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">
               Countries
             </p>
@@ -720,7 +633,7 @@ export default function PrivatePlayers() {
                       ) : (
                         <Globe className="w-4 h-4 text-slate-300 flex-shrink-0" />
                       )}
-                      <span className="truncate text-[13px]">{country}</span>
+                      <span className="text-[13px] leading-tight">{country}</span>
                     </div>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       {/* Mini proportional bar */}
@@ -792,7 +705,7 @@ export default function PrivatePlayers() {
             ) : (
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {MACRO_CATEGORIES.map((cat) => (
+                  {MACRO_CATEGORIES.filter((cat) => (categorized[cat.id] || []).length > 0).map((cat) => (
                     <CategoryTile
                       key={cat.id}
                       category={cat}

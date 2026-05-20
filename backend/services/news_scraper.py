@@ -87,8 +87,10 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "fusion", "rachat", "cession", "cède", "prise de participation",
                     "investissement stratégique", "cession d'actifs", "levée de fonds",
                     "tour de table", "protocole d'accord", "accord de partenariat stratégique"],
-    "CONTRACT":    ["contract", "award", "deal", "procurement", "tender", "bid",
-                    "ordered", "orders", "purchase agreement", "firm order", "option",
+    "CONTRACT":    ["contract", "award", "procurement", "tender", "bid",
+                    "arms deal", "defense deal", "weapons deal", "military deal",
+                    "purchase agreement", "firm order", "delivery order", "work order",
+                    "option exercised", "option contract",
                     "indefinite delivery", "idiq", "other transaction authority", "ota",
                     # Acquisition program lifecycle
                     "program of record", "program executive", "source selection",
@@ -111,7 +113,10 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "white paper", "national strategy", "defence white paper",
                     "military spending", "defence budget", "lpm", "programmation militaire",
                     "otan", "loi de programmation", "politique de défense",
-                    "effort de défense", "milliards pour"],
+                    "effort de défense", "milliards pour",
+                    "watchdog", "oversight", "inspector general", "ig report",
+                    "accountability", "evaluating military", "gao report",
+                    "contrôle parlementaire", "rapport d'inspection"],
     "TECHNOLOGY":  ["ai ", "artificial intelligence", "cyber", "satellite", "hypersonic",
                     "autonomous", "robot", "electronic warfare", "directed energy",
                     "space launch", "quantum", "radar", "stealth", "sensor",
@@ -158,6 +163,27 @@ _SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
     "Just Security":    0.55,
     "Lawfare":          0.55,
     "Small Wars Journal": 0.50,
+    # Advocacy / regional media with limited defense expertise
+    "Euromaidan Press": 0.30,
+    "Daily Excelsior":  0.25,
+    "Kyiv Independent": 0.40,
+    "Ukrinform":        0.35,
+    "Al Jazeera":       0.50,
+    "Jerusalem Post":   0.55,
+    "Times of India":   0.40,
+    "South China Morning Post": 0.50,
+    "RT":               0.10,
+    "Sputnik":          0.10,
+    "Global Times":     0.15,
+}
+
+# Sources excluded entirely from the public feed regardless of relevance score.
+# Includes state-controlled propaganda outlets whose editorial independence
+# cannot be verified.
+_BLOCKED_SOURCES: set = {
+    "RT", "Russia Today", "Sputnik", "Sputnik International",
+    "TASS", "Xinhua", "Global Times", "PLA Daily",
+    "Press TV", "Al-Manar", "Al-Alam",
 }
 
 
@@ -221,6 +247,7 @@ COMPANY_ALIASES: Dict[str, List[str]] = {
     # Spain
     "Indra Sistemas":          ["indra "],
     "Navantia":                ["navantia"],
+    "Expal Systems":           ["expal "],
     # Israel
     "Elbit Systems":           ["elbit"],
     "Israel Aerospace Industries": ["iai ", "israel aerospace"],
@@ -229,22 +256,45 @@ COMPANY_ALIASES: Dict[str, List[str]] = {
     "Baykar":                  ["baykar", "bayraktar"],
     "Aselsan":                 ["aselsan"],
     # South Korea
-    "Hanwha Aerospace":        ["hanwha"],
+    "Hanwha Aerospace":        ["hanwha aerospace"],
+    "Hanwha Systems":          ["hanwha systems"],
     "Korea Aerospace Industries": [" kai ", "korea aerospace"],
+    "LIG Nex1":                ["lig nex1", "lignex"],
     # Japan
     "Mitsubishi Heavy Industries": ["mitsubishi heavy"],
+    "NEC Defense Systems":     ["nec defense", "nec corporation defense"],
+    "Japan Marine United":     ["japan marine united", " jmu "],
+    "Mitsubishi Electric Defense": ["mitsubishi electric"],
     # Australia
     "Austal":                  ["austal"],
+    "CEA Technologies":        ["cea technologies", " cea radar"],
     # India
     "Hindustan Aeronautics":   [" hal ", "hindustan aeronautics"],
+    "Tata Advanced Systems":   ["tata advanced systems", " tasl "],
+    "Bharat Forge":            ["bharat forge"],
     # Brazil
     "Embraer Defense":         ["embraer"],
+    "Taurus Armas":            ["taurus armas", "taurus firearms"],
     # Canada
     "CAE Inc":                 [" cae "],
     # Ukraine
     "Ukroboronprom":           ["ukroboronprom"],
     # Singapore
     "ST Engineering":          ["st engineering"],
+    # Germany
+    "Krauss-Maffei Wegmann":   ["krauss-maffei wegmann", " kmw ", "leopard 2 maker"],
+    "Helsing":                 ["helsing "],
+    # Netherlands
+    "Thales Netherlands":      ["thales netherlands", "thales nl"],
+    # Poland
+    "Mesko":                   ["mesko "],
+    # Saudi Arabia
+    "Advanced Electronics Company": [" aec ", "advanced electronics company"],
+    # UK
+    "Cobham":                  ["cobham "],
+    "Serco Group":             ["serco "],
+    # Egypt
+    "Arab Organization for Industrialization": ["arab organization for industrialization", " aoi "],
 }
 
 
@@ -266,8 +316,8 @@ def detect_companies(title: str, summary: str) -> List[str]:
     return found
 
 
-def assign_category(title: str) -> str:
-    t = title.lower()
+def assign_category(title: str, summary: str = "") -> str:
+    t = (title + " " + summary).lower()
     for cat, keywords in CATEGORY_KEYWORDS.items():
         if any(kw in t for kw in keywords):
             return cat
@@ -640,7 +690,7 @@ def _fetch_rss(source: Dict) -> List[Dict]:
                 "realSource":     src_name,
                 "sourceLogo":     src_logo,
                 "publishedAt":    _parse_entry_date(entry),
-                "category":       assign_category(title),
+                "category":       assign_category(title, summary),
                 "relevanceScore": int(raw_score * weight),
                 "language":       src_lang,
                 "region":         region,
@@ -835,7 +885,7 @@ def _scrape_defensepost() -> List[Dict]:
                     "summary":        summary,
                     "source":         "The Defense Post",
                     "publishedAt":    pub_date,
-                    "category":       assign_category(title),
+                    "category":       assign_category(title, summary),
                     "relevanceScore": compute_relevance_score(title, summary),
                     "language":       "en",
                     "region":         region,
@@ -1065,9 +1115,14 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
                 if src_title:
                     real_source = src_title
 
+            if real_source in _BLOCKED_SOURCES:
+                continue
+
             summary = _extract_summary(entry)
             region_det = detect_region_from_text(title, summary) or region
-            score = compute_relevance_score(title, summary)
+            raw_score = compute_relevance_score(title, summary)
+            weight = _SOURCE_DEFENSE_WEIGHT.get(real_source, 1.0)
+            score = int(raw_score * weight)
 
             domain = _source_to_clearbit_domain(real_source) if real_source else ""
             source_logo = f"https://logo.clearbit.com/{domain}" if domain else _GOOGLE_NEWS_LOGO
@@ -1081,7 +1136,7 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
                 "realSource":     real_source,
                 "sourceLogo":     source_logo,
                 "publishedAt":    _parse_entry_date(entry),
-                "category":       assign_category(title),
+                "category":       assign_category(title, summary),
                 "relevanceScore": score,
                 "language":       "en",
                 "region":         region_det,
