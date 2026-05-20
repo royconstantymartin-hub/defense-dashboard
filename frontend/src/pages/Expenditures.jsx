@@ -2710,7 +2710,7 @@ export default function Expenditures() {
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
               {filteredExpenditures[0]?.year ?? expenditures[0]?.year ?? '—'}
             </p>
-            <p className="text-xs text-slate-500 mt-1">SIPRI · IISS · 2024</p>
+            <p className="text-xs text-slate-500 mt-1">SIPRI · IISS · NATO · 2024</p>
           </CardContent>
         </Card>
       </div>
