@@ -3550,7 +3550,7 @@ EXPENDITURES_DATA = [
     {"country": "Saudi Arabia", "country_code": "SA", "year": 2024, "expenditure": 75.0, "gdp_percent": 7.1, "region": "Middle East", "source": "SIPRI"},
     {"country": "United Kingdom", "country_code": "GB", "year": 2024, "expenditure": 68.5, "gdp_percent": 2.3, "region": "Europe", "source": "SIPRI"},
     {"country": "Ukraine", "country_code": "UA", "year": 2024, "expenditure": 64.7, "gdp_percent": 37.1, "region": "Europe", "source": "SIPRI"},
-    {"country": "Germany", "country_code": "DE", "year": 2024, "expenditure": 66.8, "gdp_percent": 1.6, "region": "Europe", "source": "SIPRI"},
+    {"country": "Germany", "country_code": "DE", "year": 2024, "expenditure": 88.5, "gdp_percent": 2.1, "region": "Europe", "source": "NATO"},
     {"country": "France", "country_code": "FR", "year": 2024, "expenditure": 61.3, "gdp_percent": 2.1, "region": "Europe", "source": "SIPRI"},
     {"country": "Japan", "country_code": "JP", "year": 2024, "expenditure": 50.2, "gdp_percent": 1.2, "region": "Asia-Pacific", "source": "SIPRI"},
     {"country": "South Korea", "country_code": "KR", "year": 2024, "expenditure": 46.4, "gdp_percent": 2.8, "region": "Asia-Pacific", "source": "SIPRI"},
@@ -3571,7 +3571,7 @@ EXPENDITURES_DATA = [
     {"country": "Norway", "country_code": "NO", "year": 2024, "expenditure": 8.9, "gdp_percent": 1.8, "region": "Europe", "source": "SIPRI"},
     {"country": "Indonesia", "country_code": "ID", "year": 2024, "expenditure": 9.2, "gdp_percent": 0.7, "region": "Asia-Pacific", "source": "SIPRI"},
     {"country": "Algeria", "country_code": "DZ", "year": 2024, "expenditure": 9.1, "gdp_percent": 6.0, "region": "Africa", "source": "SIPRI"},
-    {"country": "Sweden", "country_code": "SE", "year": 2024, "expenditure": 9.7, "gdp_percent": 1.5, "region": "Europe", "source": "SIPRI"},
+    {"country": "Sweden", "country_code": "SE", "year": 2024, "expenditure": 10.9, "gdp_percent": 2.1, "region": "Europe", "source": "SIPRI"},
     {"country": "Mexico", "country_code": "MX", "year": 2024, "expenditure": 9.4, "gdp_percent": 0.6, "region": "North America", "source": "SIPRI"},
     {"country": "Greece", "country_code": "GR", "year": 2024, "expenditure": 8.1, "gdp_percent": 3.0, "region": "Europe", "source": "SIPRI"},
     {"country": "Vietnam", "country_code": "VN", "year": 2024, "expenditure": 7.6, "gdp_percent": 2.3, "region": "Asia-Pacific", "source": "SIPRI"},
@@ -3603,6 +3603,19 @@ EXPENDITURES_DATA = [
     {"country": "Switzerland", "country_code": "CH", "year": 2024, "expenditure": 6.2, "gdp_percent": 0.7, "region": "Europe", "source": "SIPRI"},
     {"country": "Iran", "country_code": "IR", "year": 2024, "expenditure": 10.0, "gdp_percent": 2.3, "region": "Middle East", "source": "IISS"},
     {"country": "Malaysia", "country_code": "MY", "year": 2024, "expenditure": 4.8, "gdp_percent": 1.1, "region": "Asia-Pacific", "source": "SIPRI"},
+    # — Remaining 12 NATO members (SIPRI/NATO 2024) —
+    {"country": "Estonia", "country_code": "EE", "year": 2024, "expenditure": 1.4, "gdp_percent": 3.4, "region": "Europe", "source": "NATO"},
+    {"country": "Latvia", "country_code": "LV", "year": 2024, "expenditure": 1.1, "gdp_percent": 3.2, "region": "Europe", "source": "NATO"},
+    {"country": "Lithuania", "country_code": "LT", "year": 2024, "expenditure": 1.8, "gdp_percent": 2.9, "region": "Europe", "source": "NATO"},
+    {"country": "Bulgaria", "country_code": "BG", "year": 2024, "expenditure": 2.6, "gdp_percent": 2.4, "region": "Europe", "source": "NATO"},
+    {"country": "Slovakia", "country_code": "SK", "year": 2024, "expenditure": 2.1, "gdp_percent": 2.2, "region": "Europe", "source": "NATO"},
+    {"country": "Croatia", "country_code": "HR", "year": 2024, "expenditure": 1.6, "gdp_percent": 1.8, "region": "Europe", "source": "NATO"},
+    {"country": "Slovenia", "country_code": "SI", "year": 2024, "expenditure": 1.2, "gdp_percent": 1.5, "region": "Europe", "source": "NATO"},
+    {"country": "North Macedonia", "country_code": "MK", "year": 2024, "expenditure": 0.3, "gdp_percent": 2.1, "region": "Europe", "source": "NATO"},
+    {"country": "Albania", "country_code": "AL", "year": 2024, "expenditure": 0.4, "gdp_percent": 1.7, "region": "Europe", "source": "NATO"},
+    {"country": "Montenegro", "country_code": "ME", "year": 2024, "expenditure": 0.1, "gdp_percent": 1.8, "region": "Europe", "source": "NATO"},
+    {"country": "Luxembourg", "country_code": "LU", "year": 2024, "expenditure": 0.6, "gdp_percent": 1.3, "region": "Europe", "source": "NATO"},
+    {"country": "Iceland", "country_code": "IS", "year": 2024, "expenditure": 0.3, "gdp_percent": 0.3, "region": "Europe", "source": "NATO"},
 ]
 
 # Extended Regulations
