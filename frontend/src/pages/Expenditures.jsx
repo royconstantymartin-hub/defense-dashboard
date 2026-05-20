@@ -102,6 +102,15 @@ const POPULATION_M = {
   IL: 10,  AE: 10,  TR: 86,  BR: 216, TW: 23,
   ES: 48,  NL: 18,  SG: 6,   PK: 235, DK: 6,
   NO: 5,   ID: 279, DZ: 46,  SE: 11,  MX: 129,
+  // NATO members added
+  GR: 11, FI: 5.6, RO: 19, PT: 10, CZ: 11, HU: 10, BE: 11,
+  AL: 2.8, BG: 6.5, HR: 3.9, EE: 1.4, IS: 0.4, LV: 1.8,
+  LT: 2.8, LU: 0.7, ME: 0.6, MK: 2.1, SK: 5.6, SI: 2.1,
+  // Other tracked
+  VN: 98, TH: 72, CL: 20, MA: 38, BD: 172, CO: 52, PH: 117,
+  IQ: 42, EG: 107, AT: 9.1, AR: 46, NZ: 5.2, AZ: 10,
+  ZA: 60, NG: 223, PE: 34, JO: 10, MM: 54, KW: 4.9,
+  QA: 3.2, CH: 8.9, IR: 88, MY: 34,
 };
 
 // ISO 3166-1 numeric → alpha-2 — used by world-atlas GeoJSON features
@@ -112,19 +121,43 @@ const ISO_NUM_TO_CODE = {
   '376': 'IL', '784': 'AE', '792': 'TR', '076': 'BR', '158': 'TW',
   '724': 'ES', '528': 'NL', '702': 'SG', '586': 'PK', '208': 'DK',
   '578': 'NO', '360': 'ID', '012': 'DZ', '752': 'SE', '484': 'MX',
+  // Additional NATO + tracked countries
+  '300': 'GR', '246': 'FI', '642': 'RO', '620': 'PT', '203': 'CZ',
+  '348': 'HU', '056': 'BE', '008': 'AL', '100': 'BG', '191': 'HR',
+  '233': 'EE', '352': 'IS', '428': 'LV', '440': 'LT', '442': 'LU',
+  '499': 'ME', '807': 'MK', '703': 'SK', '705': 'SI',
+  '704': 'VN', '764': 'TH', '152': 'CL', '504': 'MA', '050': 'BD',
+  '170': 'CO', '608': 'PH', '368': 'IQ', '818': 'EG', '040': 'AT',
+  '032': 'AR', '554': 'NZ', '031': 'AZ', '710': 'ZA', '566': 'NG',
+  '604': 'PE', '400': 'JO', '104': 'MM', '414': 'KW', '634': 'QA',
+  '756': 'CH', '364': 'IR', '458': 'MY',
 };
 
-// NATO members (as of 2024, 32 members) — subset of tracked countries
-const NATO_MEMBERS = new Set(['US', 'GB', 'DE', 'FR', 'IT', 'PL', 'CA', 'TR', 'ES', 'NL', 'DK', 'NO', 'SE']);
+// All 32 NATO members (as of April 2024, Sweden being the 32nd)
+const NATO_MEMBERS = new Set([
+  'US', 'GB', 'DE', 'FR', 'IT', 'PL', 'CA', 'TR', 'ES', 'NL',
+  'DK', 'NO', 'SE', 'BE', 'GR', 'PT', 'CZ', 'HU', 'RO', 'FI',
+  'AL', 'BG', 'HR', 'EE', 'IS', 'LV', 'LT', 'LU', 'ME', 'MK', 'SK', 'SI',
+]);
+
+// Alliance memberships beyond NATO
+const AUKUS_MEMBERS  = new Set(['AU', 'GB', 'US']);
+const QUAD_MEMBERS   = new Set(['US', 'IN', 'JP', 'AU']);
+const FIVEEYES_MEMBERS = new Set(['US', 'GB', 'CA', 'AU', 'NZ']);
+const SCO_MEMBERS    = new Set(['CN', 'RU', 'IN', 'PK', 'KZ', 'KG', 'TJ', 'UZ', 'IR']);
 
 // YoY spending change 2023 → 2024 (SIPRI 2025 report, % change rounded to 1dp)
 const YOY_DELTA = {
-  US: +5.7, CN: +7.0,  RU: +38.0, IN: +5.0,  SA: -1.1,
-  GB: +2.2, UA: +50.5, DE: +28.0, FR: +7.4,  JP: +14.8,
-  KR: +4.1, AU: +6.2,  IT: +4.9,  PL: +21.9, CA: +8.1,
-  IL: +79.8,AE: +2.3,  TR: +6.1,  BR: +4.2,  TW: +10.0,
-  ES: +15.2,NL: +25.0, SG: +3.1,  PK: +6.0,  DK: +18.3,
-  NO: +12.4,ID: +4.0,  DZ: +5.8,  SE: +34.9, MX: +3.2,
+  US: +5.7,  CN: +7.0,  RU: +38.0, IN: +5.0,  SA: -1.1,
+  GB: +2.2,  UA: +50.5, DE: +28.0, FR: +7.4,  JP: +14.8,
+  KR: +4.1,  AU: +6.2,  IT: +4.9,  PL: +21.9, CA: +8.1,
+  IL: +79.8, AE: +2.3,  TR: +6.1,  BR: +4.2,  TW: +10.0,
+  ES: +15.2, NL: +25.0, SG: +3.1,  PK: +6.0,  DK: +18.3,
+  NO: +12.4, ID: +4.0,  DZ: +5.8,  SE: +34.9, MX: +3.2,
+  GR: +7.2,  FI: +27.4, RO: +24.8, PT: +17.2, CZ: +35.8,
+  HU: +22.1, BE: +14.5, AL: +9.0,  BG: +47.7, HR: +13.3,
+  EE: +16.8, IS: +21.4, LV: +32.7, LT: +19.2, LU: +8.1,
+  ME: +16.1, MK: +27.4, SK: +11.9, SI: +51.7,
 };
 
 const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899', '#84CC16'];
@@ -1589,6 +1622,8 @@ const CHORO_TIERS_GDP = [
 function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }) {
   const [tooltip, setTooltip] = useState(null);
 
+  useEffect(() => { setTooltip(null); }, [mode]);
+
   const spendingByCode = useMemo(() => {
     const m = {};
     expenditures.forEach(e => { m[e.country_code] = e; });
@@ -2036,28 +2071,31 @@ function NewsCard({ article }) {
   );
 }
 
-// ── Flag tick for the regional comparison bar chart ───────────────────────────
-function CustomizedFlagTick({ x, y, payload }) {
+// ── Flag + name tick for bar charts ──────────────────────────────────────────
+function CustomizedFlagTick({ x, y, payload, nameMap = {} }) {
   const code = payload?.value?.toLowerCase();
+  const name = nameMap[payload?.value] ?? payload?.value ?? '';
   if (!code) return null;
+  const label = name.length > 13 ? name.slice(0, 12) + '…' : name;
   return (
-    <foreignObject x={x - 24} y={y - 8} width={24} height={16}>
-      <img
-        src={`https://flagcdn.com/w40/${code}.png`}
-        width="20"
-        height="14"
-        style={{ objectFit: 'cover', borderRadius: '1px', display: 'block' }}
-        alt={payload.value}
-        onError={(e) => {
-          e.target.style.display = 'none';
-          const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          t.setAttribute('font-size', '8');
-          t.setAttribute('fill', '#94a3b8');
-          t.textContent = payload.value;
-          e.target.parentNode?.parentNode?.appendChild(t);
-        }}
-      />
-    </foreignObject>
+    <g>
+      <foreignObject x={x - 112} y={y - 9} width={108} height={18}>
+        <div
+          xmlns="http://www.w3.org/1999/xhtml"
+          style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end', height: '100%' }}
+        >
+          <span style={{ fontSize: '9px', color: '#64748B', whiteSpace: 'nowrap', textAlign: 'right' }}>
+            {label}
+          </span>
+          <img
+            src={`https://flagcdn.com/w40/${code}.png`}
+            width="18" height="13"
+            style={{ objectFit: 'cover', borderRadius: '1px', flexShrink: 0 }}
+            alt=""
+          />
+        </div>
+      </foreignObject>
+    </g>
   );
 }
 
@@ -2139,10 +2177,22 @@ function CountryProfileSection({ country, allExpenditures }) {
               <h2 className="font-heading text-2xl font-bold text-white tracking-tight drop-shadow">
                 {country.country}
               </h2>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
                 <p className="text-sm text-white/70">{country.region} · Defense Profile</p>
                 {NATO_MEMBERS.has(country.country_code) && (
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-700/60 text-blue-100 border border-blue-500/40 uppercase tracking-wide">NATO</span>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-700/60 text-blue-100 border border-blue-500/40 uppercase tracking-wide">NATO</span>
+                )}
+                {AUKUS_MEMBERS.has(country.country_code) && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-600/60 text-sky-100 border border-sky-500/40 uppercase tracking-wide">AUKUS</span>
+                )}
+                {QUAD_MEMBERS.has(country.country_code) && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-600/60 text-violet-100 border border-violet-500/40 uppercase tracking-wide">QUAD</span>
+                )}
+                {FIVEEYES_MEMBERS.has(country.country_code) && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-700/60 text-emerald-100 border border-emerald-500/40 uppercase tracking-wide">Five Eyes</span>
+                )}
+                {SCO_MEMBERS.has(country.country_code) && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-700/60 text-rose-100 border border-rose-500/40 uppercase tracking-wide">SCO</span>
                 )}
               </div>
             </div>
@@ -2220,7 +2270,7 @@ function CountryProfileSection({ country, allExpenditures }) {
           <CardContent className="pt-4">
             <div className="h-[260px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={regionalPeers} layout="vertical" margin={{ top: 12, left: 8, right: 8, bottom: 4 }}>
+                <BarChart data={regionalPeers} layout="vertical" margin={{ top: 12, left: 4, right: 8, bottom: 4 }}>
                   <XAxis
                     type="number"
                     tick={{ fill: '#64748B', fontSize: 10 }}
@@ -2231,10 +2281,10 @@ function CountryProfileSection({ country, allExpenditures }) {
                   <YAxis
                     type="category"
                     dataKey="country_code"
-                    tick={<CustomizedFlagTick />}
+                    tick={(props) => <CustomizedFlagTick {...props} nameMap={Object.fromEntries(regionalPeers.map(e => [e.country_code, e.country]))} />}
                     axisLine={false}
                     tickLine={false}
-                    width={28}
+                    width={116}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
@@ -2446,7 +2496,15 @@ function CountryProfileSection({ country, allExpenditures }) {
             </div>
           ) : profile?.news?.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {profile.news.slice(0, 6).map((article, i) => (
+              {profile.news
+                .filter(((seen) => (a) => {
+                  const key = (a.title ?? '').toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 60);
+                  if (seen.has(key)) return false;
+                  seen.add(key);
+                  return true;
+                })(new Set()))
+                .slice(0, 6)
+                .map((article, i) => (
                 <NewsCard key={i} article={article} />
               ))}
             </div>
@@ -2474,6 +2532,7 @@ export default function Expenditures() {
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [sortBy, setSortBy] = useState("expenditure_desc");
   const [chartMode, setChartMode] = useState("absolute");
+  const [mapMode, setMapMode] = useState("absolute");
   const [pinnedCountry, setPinnedCountry] = useState(null);
   const [compareList, setCompareList] = useState([]);
   const profileRef = useRef(null);
@@ -2651,7 +2710,7 @@ export default function Expenditures() {
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
               {filteredExpenditures[0]?.year ?? expenditures[0]?.year ?? '—'}
             </p>
-            <p className="text-xs text-slate-500 mt-1">SIPRI · Latest</p>
+            <p className="text-xs text-slate-500 mt-1">SIPRI · IISS · 2024</p>
           </CardContent>
         </Card>
       </div>
@@ -2693,6 +2752,7 @@ export default function Expenditures() {
                     ? [...filteredExpenditures].sort((a, b) => b.gdp_percent - a.gdp_percent).slice(0, 10)
                     : topCountries}
                   layout="vertical"
+                  margin={{ left: 4, right: 8 }}
                 >
                   <XAxis
                     type="number"
@@ -2704,10 +2764,10 @@ export default function Expenditures() {
                   <YAxis
                     type="category"
                     dataKey="country_code"
-                    tick={<CustomizedFlagTick />}
+                    tick={(props) => <CustomizedFlagTick {...props} nameMap={Object.fromEntries(filteredExpenditures.map(e => [e.country_code, e.country]))} />}
                     axisLine={false}
                     tickLine={false}
-                    width={28}
+                    width={116}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
@@ -2806,17 +2866,17 @@ export default function Expenditures() {
               </div>
               <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
                 <button
-                  onClick={() => setChartMode("absolute")}
+                  onClick={() => setMapMode("absolute")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                    chartMode === "absolute" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                    mapMode === "absolute" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   <BarChart2 className="w-3.5 h-3.5" /> $B
                 </button>
                 <button
-                  onClick={() => setChartMode("gdp")}
+                  onClick={() => setMapMode("gdp")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                    chartMode === "gdp" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                    mapMode === "gdp" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   <Percent className="w-3.5 h-3.5" /> GDP
@@ -2827,7 +2887,7 @@ export default function Expenditures() {
           <CardContent className="p-4">
             <WorldChoroplethMap
               expenditures={displayedExpenditures}
-              mode={chartMode}
+              mode={mapMode}
               selectedCode={pinnedCountry?.country_code}
               onCountryClick={(entry) => {
                 setPinnedCountry(prev => prev?.id === entry.id ? null : entry);
@@ -2901,7 +2961,7 @@ export default function Expenditures() {
                   <CardTitle className="font-heading text-base text-slate-900">2% GDP Burden-Sharing Tracker</CardTitle>
                 </div>
                 <span className="text-xs text-slate-400">
-                  {meeting.length}/{natoInView.length} members meeting target
+                  {meeting.length}/{natoInView.length} tracked meeting target · 32 total members
                 </span>
               </div>
             </CardHeader>
