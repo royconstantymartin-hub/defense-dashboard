@@ -407,9 +407,9 @@ function BreakingIntelPanel({ slots, onUnpin, actionLoading }) {
             <Flame className="w-5 h-5 text-orange-500" />
           </div>
           <div>
-            <h3 className="text-slate-900 font-semibold">Breaking Intel — Slots actifs</h3>
+            <h3 className="text-slate-900 font-semibold">Breaking Intel — Active Slots</h3>
             <p className="text-slate-500 text-sm">
-              Ces 3 articles sont mis en avant. Slots vidés automatiquement à 07:05 et 19:05 UTC.
+              These 3 articles are featured. Slots auto-cleared at 07:05 and 19:05 UTC.
             </p>
           </div>
         </div>
@@ -443,7 +443,7 @@ function BreakingIntelPanel({ slots, onUnpin, actionLoading }) {
                     disabled={!!actionLoading}
                     className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-rose-500 hover:text-rose-700 transition-colors disabled:opacity-40"
                   >
-                    <PinOff className="w-3 h-3" /> Retirer
+                    <PinOff className="w-3 h-3" /> Remove
                   </button>
                 </>
               ) : (
@@ -518,7 +518,7 @@ function NewsFeedAdmin({ authHeaders }) {
         setArticles((prev) =>
           prev.map((a) => a.url !== url ? a : { ...a, breakingIntel: false })
         );
-        toast.success("Article retiré des slots Breaking Intel");
+        toast.success("Article removed from Breaking Intel slots");
       } else {
         setArticles((prev) =>
           prev.map((a) => {
@@ -532,10 +532,10 @@ function NewsFeedAdmin({ authHeaders }) {
           })
         );
         toast.success(
-          action === "approve"      ? "Article validé"           :
-          action === "reject"       ? "Article retiré du flux"   :
-          action === "reset"        ? "Modération annulée"       :
-                                      `Catégorie → ${category}`
+          action === "approve"      ? "Article approved"          :
+          action === "reject"       ? "Article removed from feed" :
+          action === "reset"        ? "Moderation reset"          :
+                                      `Category → ${category}`
         );
       }
     } catch (err) {
@@ -699,7 +699,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           <button
             onClick={() => onModerate(article.url, "unpin")}
             disabled={!!actionLoading}
-            title="Retirer des slots Breaking Intel"
+            title="Remove from Breaking Intel slots"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-300 hover:bg-orange-100 transition-all disabled:opacity-40"
           >
             {busy("unpin") ? <RefreshCw className="w-3 h-3 animate-spin" /> : <PinOff className="w-3 h-3" />}
@@ -740,7 +740,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
         <button
           onClick={() => onModerate(article.url, "reject")}
           disabled={isRejected || !!actionLoading}
-          title="Retirer du flux"
+          title="Remove from feed"
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
             isRejected
               ? "bg-red-100 text-red-600 border-red-200 cursor-default"
@@ -1041,7 +1041,7 @@ function MAAdmin({ authHeaders }) {
       source_url:      d.source_url      ?? "",
     });
     setExtractPreview(null);
-    toast.success("Formulaire pré-rempli — vérifiez et soumettez");
+    toast.success("Form pre-filled — review and submit");
   };
 
   // ── Pilot seed ─────────────────────────────────────────────────────────────
@@ -1191,7 +1191,7 @@ function MAAdmin({ authHeaders }) {
 
           {extractPreview && (
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Résultat extrait — vérifiez avant d'appliquer</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Extracted result — review before applying</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 {[
                   ["Acquéreur", extractPreview.acquirer],

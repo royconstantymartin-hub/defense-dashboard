@@ -598,7 +598,7 @@ const DEFENSE_CAPABILITIES = {
   SA: { fighters: 356,  helicopters: 250,  drones: 30,  land_vehicles: 5000,  surface_combatants: 12,  submarines: 0  },
   GB: { fighters: 227,  helicopters: 320,  drones: 12,  land_vehicles: 3600,  surface_combatants: 24,  submarines: 10 },
   DE: { fighters: 260,  helicopters: 290,  drones: 10,  land_vehicles: 4200,  surface_combatants: 12,  submarines: 6  },
-  FR: { fighters: 228,  helicopters: 310,  drones: 22,  land_vehicles: 6000,  surface_combatants: 24,  submarines: 10 },
+  FR: { fighters: 228,  helicopters: 310,  drones: 45,  land_vehicles: 3700,  surface_combatants: 24,  submarines: 10 },
   JP: { fighters: 354,  helicopters: 530,  drones: 8,   land_vehicles: 3200,  surface_combatants: 36,  submarines: 22 },
   KR: { fighters: 406,  helicopters: 620,  drones: 12,  land_vehicles: 7500,  surface_combatants: 28,  submarines: 22 },
   AU: { fighters: 100,  helicopters: 175,  drones: 8,   land_vehicles: 2000,  surface_combatants: 12,  submarines: 6  },
@@ -1093,23 +1093,21 @@ const CAPABILITY_DETAILS = {
       { model: "AS 532 Cougar (army)", count: 26, manufacturer: "Airbus Helicopters" },
       { model: "EC725 Caracal (CSAR/special ops)", count: 27, manufacturer: "Airbus Helicopters" },
       { model: "SA 341/342 Gazelle (recon / anti-tank)", count: 130, manufacturer: "Airbus Helicopters" },
-      { model: "NH90 NFH (naval Caïman)", count: 27, manufacturer: "NHIndustries / Airbus" },
+      { model: "NH90 NFH (naval Caiman)", count: 27, manufacturer: "NHIndustries / Airbus" },
       { model: "Lynx Mk.4 (naval, retiring)", count: 20, manufacturer: "Westland / Leonardo" },
     ],
     drones: [
-      { model: "MQ-9A Reaper MALE (ISR / frappe)", count: 12, manufacturer: "General Atomics" },
-      { model: "Harfang SIDM MALE (retrait en cours)", count: 4, manufacturer: "EADS / Cassidian" },
-      { model: "Patroller MALE (armée de Terre)", count: 5, manufacturer: "Safran Electronics & Defense" },
-      { model: "Spy'Ranger 330 SDT-L (tactique ISR)", count: 24, manufacturer: "Thales" },
-      { model: "DRAC / Black Hornet (nano ISR infanterie)", count: 600, manufacturer: "Novadem / FLIR" },
-      { model: "nEUROn UCAV (démonstrateur)", count: 1, manufacturer: "Dassault Aviation" },
-      { model: "Harfang MALE (retraité)", count: 4, manufacturer: "EADS / Airbus" },
+      { model: "MQ-9A Reaper MALE (ISR / strike)", count: 12, manufacturer: "General Atomics" },
+      { model: "Harfang SIDM MALE (phasing out)", count: 4, manufacturer: "EADS / Cassidian" },
+      { model: "Patroller MALE (Army)", count: 5, manufacturer: "Safran Electronics & Defense" },
+      { model: "Spy'Ranger 330 SDT-L (tactical ISR)", count: 24, manufacturer: "Thales" },
+      { model: "nEUROn UCAV (technology demonstrator)", count: 1, manufacturer: "Dassault Aviation" },
     ],
     land_vehicles: [
       { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems (KNDS)" },
       { model: "VBCI IFV 8×8", count: 630, manufacturer: "Nexter Systems / Thales" },
       { model: "Griffon VBMR 6×6 APC", count: 600, manufacturer: "Nexter / Thales / Arquus" },
-      { model: "Jaguar EBRC 6×6 (recon)", count: 54, manufacturer: "Nexter / Thales / Arquus" },
+      { model: "Jaguar EBRC 6×6 (reconnaissance)", count: 54, manufacturer: "Nexter / Thales / Arquus" },
       { model: "AMX-10RC (wheeled fire support)", count: 170, manufacturer: "Nexter Systems" },
       { model: "VAB APC (variants)", count: 2000, manufacturer: "Arquus (Renault Trucks Defense)" },
     ],
@@ -1600,7 +1598,10 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
   );
 }
 
+// Pre-fetch GeoJSON once at module level — avoids a re-fetch on every map re-render
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+let _cachedGeoData = null;
+const _geoFetch = fetch(GEO_URL).then(r => r.json()).then(d => { _cachedGeoData = d; return d; }).catch(() => null);
 
 // Color tiers for the choropleth — both modes share the same 5-step palette
 // so the legend is easy to read at a glance.
@@ -1621,8 +1622,15 @@ const CHORO_TIERS_GDP = [
 
 function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }) {
   const [tooltip, setTooltip] = useState(null);
+  const [geoData, setGeoData] = useState(_cachedGeoData);
 
   useEffect(() => { setTooltip(null); }, [mode]);
+
+  useEffect(() => {
+    if (!_cachedGeoData) {
+      _geoFetch.then(d => { if (d) setGeoData(d); });
+    }
+  }, []);
 
   const spendingByCode = useMemo(() => {
     const m = {};
@@ -1647,7 +1655,7 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
         projectionConfig={{ scale: 118, center: [15, 15] }}
         style={{ width: '100%', height: '340px' }}
       >
-        <Geographies geography={GEO_URL}>
+        <Geographies geography={geoData || GEO_URL}>
           {({ geographies }) =>
             geographies.map((geo) => {
               const code = ISO_NUM_TO_CODE[String(geo.id).padStart(3, '0')];
@@ -2690,7 +2698,7 @@ export default function Expenditures() {
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{filteredExpenditures.length}</p>
             <p className="text-xs text-slate-500 mt-1">
               {filteredExpenditures.length < expenditures.length
-                ? `filtrés sur ${expenditures.length}`
+                ? `filtered from ${expenditures.length}`
                 : `${expenditures.length} countries tracked`}
             </p>
           </CardContent>
@@ -3162,7 +3170,7 @@ export default function Expenditures() {
                     <td className="p-2 w-8">
                       <button
                         onClick={(e) => { e.stopPropagation(); toggleCompare(exp); }}
-                        title={compareList.some(c => c.country_code === exp.country_code) ? 'Retirer du comparateur' : 'Ajouter au comparateur (max 4)'}
+                        title={compareList.some(c => c.country_code === exp.country_code) ? 'Remove from compare' : 'Add to compare (max 4)'}
                         className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold transition-colors ${
                           compareList.some(c => c.country_code === exp.country_code)
                             ? 'bg-purple-600 text-white'
