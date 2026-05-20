@@ -187,9 +187,9 @@ function isAlgoBreakingIntel(article) {
   const cat     = article.category       ?? "";
   const ageH    = differenceInHours(new Date(), new Date(article.publishedAt));
   if (ageH > 24) return false;
-  if (sources >= 2 && score >= 50) return true;
-  if (score >= 80 && ["CONTRACT", "M&A", "POLICY", "TECHNOLOGY"].includes(cat)) return true;
-  if (score >= 90) return true;
+  if (sources >= 2 && score >= 65) return true;
+  if (score >= 85 && ["CONTRACT", "M&A", "POLICY", "TECHNOLOGY", "CONFLICT", "GEOPOLITICS"].includes(cat)) return true;
+  if (score >= 92) return true;
   return false;
 }
 

@@ -87,8 +87,10 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "fusion", "rachat", "cession", "cède", "prise de participation",
                     "investissement stratégique", "cession d'actifs", "levée de fonds",
                     "tour de table", "protocole d'accord", "accord de partenariat stratégique"],
-    "CONTRACT":    ["contract", "award", "deal", "procurement", "tender", "bid",
-                    "ordered", "orders", "purchase agreement", "firm order", "option",
+    "CONTRACT":    ["contract", "award", "procurement", "tender", "bid",
+                    "arms deal", "defense deal", "weapons deal", "military deal",
+                    "purchase agreement", "firm order", "delivery order", "work order",
+                    "option exercised", "option contract",
                     "indefinite delivery", "idiq", "other transaction authority", "ota",
                     # Acquisition program lifecycle
                     "program of record", "program executive", "source selection",
@@ -161,6 +163,27 @@ _SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
     "Just Security":    0.55,
     "Lawfare":          0.55,
     "Small Wars Journal": 0.50,
+    # Advocacy / regional media with limited defense expertise
+    "Euromaidan Press": 0.30,
+    "Daily Excelsior":  0.25,
+    "Kyiv Independent": 0.40,
+    "Ukrinform":        0.35,
+    "Al Jazeera":       0.50,
+    "Jerusalem Post":   0.55,
+    "Times of India":   0.40,
+    "South China Morning Post": 0.50,
+    "RT":               0.10,
+    "Sputnik":          0.10,
+    "Global Times":     0.15,
+}
+
+# Sources excluded entirely from the public feed regardless of relevance score.
+# Includes state-controlled propaganda outlets whose editorial independence
+# cannot be verified.
+_BLOCKED_SOURCES: set = {
+    "RT", "Russia Today", "Sputnik", "Sputnik International",
+    "TASS", "Xinhua", "Global Times", "PLA Daily",
+    "Press TV", "Al-Manar", "Al-Alam",
 }
 
 
@@ -1092,9 +1115,14 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
                 if src_title:
                     real_source = src_title
 
+            if real_source in _BLOCKED_SOURCES:
+                continue
+
             summary = _extract_summary(entry)
             region_det = detect_region_from_text(title, summary) or region
-            score = compute_relevance_score(title, summary)
+            raw_score = compute_relevance_score(title, summary)
+            weight = _SOURCE_DEFENSE_WEIGHT.get(real_source, 1.0)
+            score = int(raw_score * weight)
 
             domain = _source_to_clearbit_domain(real_source) if real_source else ""
             source_logo = f"https://logo.clearbit.com/{domain}" if domain else _GOOGLE_NEWS_LOGO
