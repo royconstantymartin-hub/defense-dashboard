@@ -315,8 +315,10 @@ const LOGO_FALLBACK = {
 
 // Initials avatar colour palette (deterministic by name)
 const AVATAR_COLORS = [
-  "bg-slate-700", "bg-slate-600",
-  "bg-slate-800", "bg-slate-700",
+  "bg-purple-700", "bg-blue-700",
+  "bg-emerald-700", "bg-amber-600",
+  "bg-rose-700", "bg-indigo-700",
+  "bg-teal-700", "bg-slate-700",
 ];
 function avatarColor(name) {
   let h = 0;
@@ -601,10 +603,13 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
                 onClick={() => onSelectDeal?.(d)}
               >
                 <td className="px-3 py-3 text-slate-400 font-mono text-[11px]">
-                  {i === 0 ? <span className="text-amber-500 font-bold">①</span>
-                   : i === 1 ? <span className="text-slate-400 font-bold">②</span>
-                   : i === 2 ? <span className="text-orange-400 font-bold">③</span>
-                   : <span className="text-slate-300">{i + 1}</span>}
+                  {i === 0
+                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-100 text-amber-700 border border-amber-300 text-[10px] font-bold">1</span>
+                    : i === 1
+                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-bold">2</span>
+                    : i === 2
+                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-50 text-orange-600 border border-orange-200 text-[10px] font-bold">3</span>
+                    : <span className="text-slate-300 text-[11px] font-mono">{i + 1}</span>}
                 </td>
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-2.5">

@@ -201,16 +201,24 @@ function getArticleImage(article) {
   return pool[idx];
 }
 
-function articleMentionsCompany(article, ticker) {
-  const company = DEFENSE_TICKERS.find((d) => d.ticker === ticker);
-  if (!company) return false;
-  const text = (
-    (article.title   || "") + " " +
-    (article.summary || "") + " " +
-    (article.company || "")
-  ).toLowerCase();
-  return company.keywords.some((kw) => text.includes(kw));
-}
+const TIME_BAND_LABELS = {
+  today:     "Today",
+  yesterday: "Yesterday",
+  this_week: "This Week",
+  earlier:   "Earlier",
+};
+
+// ── Placeholder ───────────────────────────────────────────────────────────────
+
+const PLACEHOLDER_GRADIENT = {
+  CONTRACT:    "bg-emerald-900",
+  TECHNOLOGY:  "bg-slate-800",
+  CONFLICT:    "bg-red-900",
+  POLICY:      "bg-amber-900",
+  GEOPOLITICS: "bg-sky-900",
+  "M&A":       "bg-blue-900",
+  INDUSTRY:    "bg-slate-800",
+};
 
 function detectCompaniesHeat(articles, hours = 24) {
   const counts        = {};

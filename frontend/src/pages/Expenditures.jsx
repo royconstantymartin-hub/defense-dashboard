@@ -94,24 +94,7 @@ const SORT_OPTIONS = [
   { value: "name_asc", label: "Country (A-Z)" },
 ];
 
-// Population 2024 estimates (millions) — used for per-capita calculation
-const POPULATION_M = {
-  US: 340, CN: 1410, RU: 144, IN: 1425, SA: 37,
-  GB: 68,  UA: 37,  DE: 84,  FR: 68,  JP: 125,
-  KR: 52,  AU: 26,  IT: 59,  PL: 38,  CA: 40,
-  IL: 10,  AE: 10,  TR: 86,  BR: 216, TW: 23,
-  ES: 48,  NL: 18,  SG: 6,   PK: 235, DK: 6,
-  NO: 5,   ID: 279, DZ: 46,  SE: 11,  MX: 129,
-  // NATO members added
-  GR: 11, FI: 5.6, RO: 19, PT: 10, CZ: 11, HU: 10, BE: 11,
-  AL: 2.8, BG: 6.5, HR: 3.9, EE: 1.4, IS: 0.4, LV: 1.8,
-  LT: 2.8, LU: 0.7, ME: 0.6, MK: 2.1, SK: 5.6, SI: 2.1,
-  // Other tracked
-  VN: 98, TH: 72, CL: 20, MA: 38, BD: 172, CO: 52, PH: 117,
-  IQ: 42, EG: 107, AT: 9.1, AR: 46, NZ: 5.2, AZ: 10,
-  ZA: 60, NG: 223, PE: 34, JO: 10, MM: 54, KW: 4.9,
-  QA: 3.2, CH: 8.9, IR: 88, MY: 34,
-};
+const COLORS = ['#7E22CE', '#1D4ED8', '#059669', '#D97706', '#0891B2', '#DB2777', '#65A30D', '#0F766E'];
 
 // ISO 3166-1 numeric → alpha-2 — used by world-atlas GeoJSON features
 const ISO_NUM_TO_CODE = {
@@ -541,10 +524,10 @@ const CATEGORY_LABEL = {
 
 // ── Logo helpers (mirrors MarketData.jsx) ────────────────────────────────────
 const AVATAR_COLORS = [
-  "from-slate-700 to-slate-900", "from-blue-600 to-blue-800",
-  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
-  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
-  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
+  "bg-purple-700", "bg-blue-700",
+  "bg-emerald-700", "bg-amber-600",
+  "bg-rose-700", "bg-indigo-700",
+  "bg-teal-700", "bg-orange-600",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -560,7 +543,7 @@ function CompanyLogo({ name, size = "md" }) {
   const sz = size === "sm" ? "w-7 h-7 text-[9px]" : "w-9 h-9 text-[11px]";
   if (!urls.length || idx >= urls.length) {
     return (
-      <div className={`${sz} bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
+      <div className={`${sz} ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
         <span className="font-bold text-white tracking-tight">{initials(name)}</span>
       </div>
     );

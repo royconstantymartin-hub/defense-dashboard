@@ -16,7 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Search, FileText, Globe, Calendar, CheckCircle2, Clock, Database, Filter, Shield, ArrowUpDown, ExternalLink } from "lucide-react";
+import { Search, FileText, Globe, Calendar, CheckCircle2, Clock, Database, Filter, Shield, ArrowUpDown, ExternalLink, Lock, ArrowLeftRight, FileCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const CATEGORIES = [
@@ -118,10 +118,20 @@ export default function Regulations() {
     setFilteredRegulations(filtered);
   }, [searchTerm, selectedCategory, selectedCountry, sortBy, regulations]);
 
+  const getCategoryIcon = (category) => {
+    switch (category) {
+      case 'itar':          return { Icon: Lock,          cls: "text-rose-600",    bg: "bg-rose-50 border-rose-200" };
+      case 'export_control':return { Icon: Globe,          cls: "text-blue-600",   bg: "bg-blue-50 border-blue-200" };
+      case 'procurement':   return { Icon: FileCheck,      cls: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200" };
+      case 'offset':        return { Icon: ArrowLeftRight, cls: "text-amber-600",  bg: "bg-amber-50 border-amber-200" };
+      default:              return { Icon: FileText,       cls: "text-slate-600",  bg: "bg-slate-100 border-slate-200" };
+    }
+  };
+
   const getCategoryStyle = (category) => {
     switch (category) {
       case 'offset':
-        return 'bg-slate-100 text-slate-700 border-slate-200';
+        return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'export_control':
         return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'procurement':
@@ -176,36 +186,24 @@ export default function Regulations() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL REGULATIONS</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{regulations.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">OFFSET POLICIES</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
-              {regulations.filter(r => r.category === 'offset').length}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">EXPORT CONTROLS</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
-              {regulations.filter(r => r.category === 'export_control').length}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COUNTRIES</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
-              {new Set(regulations.map(r => r.country)).size}
-            </p>
-          </CardContent>
-        </Card>
+        {[
+          { label: "TOTAL REGULATIONS", value: regulations.length,                                    Icon: Shield,        iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-500" },
+          { label: "OFFSET POLICIES",   value: regulations.filter(r=>r.category==='offset').length,  Icon: ArrowLeftRight,iconCls: "text-amber-600",    bgCls: "bg-amber-50",     top: "border-t-2 border-t-amber-500" },
+          { label: "EXPORT CONTROLS",   value: regulations.filter(r=>r.category==='export_control').length, Icon: Globe,  iconCls: "text-blue-600",     bgCls: "bg-blue-50",      top: "border-t-2 border-t-blue-500" },
+          { label: "COUNTRIES",         value: new Set(regulations.map(r=>r.country)).size,           Icon: FileCheck,     iconCls: "text-emerald-600",  bgCls: "bg-emerald-50",   top: "border-t-2 border-t-emerald-500" },
+        ].map(({ label, value, Icon, iconCls, bgCls, top }) => (
+          <Card key={label} className={`bg-white border-slate-200 shadow-sm ${top}`}>
+            <CardContent className="p-5 flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-slate-500">{label}</p>
+                <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{value}</p>
+              </div>
+              <div className={`w-9 h-9 ${bgCls} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                <Icon className={`w-4 h-4 ${iconCls}`} />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Filters */}
@@ -279,9 +277,11 @@ export default function Regulations() {
                 >
                   <AccordionTrigger className="px-6 py-4 hover:bg-slate-50 hover:no-underline transition-colors">
                     <div className="flex items-start gap-4 text-left">
-                      <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-5 h-5 text-slate-600" />
-                      </div>
+                      {(() => { const { Icon, cls, bg } = getCategoryIcon(reg.category); return (
+                        <div className={`w-10 h-10 ${bg} border rounded-xl flex items-center justify-center flex-shrink-0`}>
+                          <Icon className={`w-5 h-5 ${cls}`} />
+                        </div>
+                      ); })()}
                       <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                           <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${getCategoryStyle(reg.category)}`}>
@@ -343,8 +343,15 @@ export default function Regulations() {
           </Accordion>
           
           {filteredRegulations.length === 0 && (
-            <div className="text-center py-12 text-slate-500">
-              No regulations found matching your criteria
+            <div className="flex flex-col items-center justify-center py-16 gap-3">
+              <Search className="w-8 h-8 text-slate-300" />
+              <p className="text-sm text-slate-500">No regulations found matching your criteria</p>
+              <button
+                onClick={() => { setSearchTerm(""); setSelectedCategory("all"); setSelectedCountry("all"); }}
+                className="text-xs text-purple-600 hover:text-purple-800 font-medium underline underline-offset-2"
+              >
+                Clear filters
+              </button>
             </div>
           )}
         </CardContent>
