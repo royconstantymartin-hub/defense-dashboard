@@ -152,13 +152,13 @@ const TIME_BAND_LABELS = {
 // ── Placeholder ───────────────────────────────────────────────────────────────
 
 const PLACEHOLDER_GRADIENT = {
-  CONTRACT:    "from-emerald-950 via-emerald-900 to-emerald-800",
-  TECHNOLOGY:  "from-slate-900 via-slate-800 to-slate-700",
-  CONFLICT:    "from-red-950 via-red-900 to-red-800",
-  POLICY:      "from-amber-950 via-amber-900 to-amber-800",
-  GEOPOLITICS: "from-sky-950 via-sky-900 to-sky-800",
-  "M&A":       "from-blue-950 via-blue-900 to-blue-800",
-  INDUSTRY:    "from-slate-900 via-slate-800 to-slate-700",
+  CONTRACT:    "bg-emerald-900",
+  TECHNOLOGY:  "bg-slate-800",
+  CONFLICT:    "bg-red-900",
+  POLICY:      "bg-amber-900",
+  GEOPOLITICS: "bg-sky-900",
+  "M&A":       "bg-blue-900",
+  INDUSTRY:    "bg-slate-800",
 };
 
 // Curated stock photos per category — all IDs verified on unsplash.com, fallback to gradient if all fail

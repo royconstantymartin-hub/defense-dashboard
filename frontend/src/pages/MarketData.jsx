@@ -125,10 +125,10 @@ function relativeTime(isoStr) {
 }
 
 const AVATAR_COLORS = [
-  "bg-slate-700", "bg-slate-600",
-  "bg-slate-800", "bg-slate-700",
-  "bg-slate-600", "bg-slate-800",
-  "bg-slate-700", "bg-slate-600",
+  "bg-purple-700", "bg-blue-700",
+  "bg-emerald-700", "bg-amber-600",
+  "bg-rose-700", "bg-indigo-700",
+  "bg-teal-700", "bg-slate-700",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -775,12 +775,12 @@ export default function MarketData() {
                   <button
                     key={name}
                     onClick={() => setSelectedPlayer(p)}
-                    className="relative flex items-center gap-4 p-5 rounded-2xl bg-slate-900 hover:bg-slate-800 transition-colors text-left"
+                    className="relative flex items-center gap-4 p-5 rounded-2xl bg-white border-2 border-purple-200 hover:border-purple-400 hover:shadow-md transition-all text-left border-t-4 border-t-purple-600"
                   >
                     <button
                       onClick={(e) => togglePin(e, name)}
                       title="Unpin"
-                      className="absolute top-3 right-3 p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+                      className="absolute top-3 right-3 p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -793,16 +793,16 @@ export default function MarketData() {
                     />
                     <div className="flex-1 min-w-0 pr-8">
                       <div className="flex items-center gap-2 mb-1">
-                        {flagUrl && <img src={flagUrl} alt={p.country} className="w-4 h-3 rounded-sm object-cover opacity-70" />}
-                        <span className="text-[10px] text-slate-400 font-mono">{p.country}</span>
+                        {flagUrl && <img src={flagUrl} alt={p.country} className="w-4 h-3 rounded-sm object-cover" />}
+                        <span className="text-[10px] text-slate-500 font-mono">{p.country}</span>
                       </div>
-                      <p className={`font-heading font-bold text-white truncate ${isLarge ? "text-xl" : "text-base"}`}>{p.name}</p>
-                      <p className="text-xs font-mono text-slate-400 mt-0.5">{priv ? "Private" : p.ticker}</p>
+                      <p className={`font-heading font-bold text-slate-900 truncate ${isLarge ? "text-xl" : "text-base"}`}>{p.name}</p>
+                      <p className="text-xs font-mono text-slate-500 mt-0.5">{priv ? "Private" : p.ticker}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className={`font-mono font-bold text-white ${isLarge ? "text-3xl" : "text-xl"}`}>${p.market_cap}B</p>
+                      <p className={`font-mono font-bold text-purple-700 ${isLarge ? "text-3xl" : "text-xl"}`}>${p.market_cap}B</p>
                       {!priv && (
-                        <span className={`text-sm font-mono font-semibold mt-1 inline-block ${isPos ? "text-emerald-400" : "text-rose-400"}`}>
+                        <span className={`text-sm font-mono font-semibold mt-1 inline-block ${isPos ? "text-emerald-600" : "text-rose-600"}`}>
                           {isPos ? "+" : ""}{change.toFixed(2)}%
                         </span>
                       )}
