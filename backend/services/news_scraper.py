@@ -111,7 +111,10 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "white paper", "national strategy", "defence white paper",
                     "military spending", "defence budget", "lpm", "programmation militaire",
                     "otan", "loi de programmation", "politique de défense",
-                    "effort de défense", "milliards pour"],
+                    "effort de défense", "milliards pour",
+                    "watchdog", "oversight", "inspector general", "ig report",
+                    "accountability", "evaluating military", "gao report",
+                    "contrôle parlementaire", "rapport d'inspection"],
     "TECHNOLOGY":  ["ai ", "artificial intelligence", "cyber", "satellite", "hypersonic",
                     "autonomous", "robot", "electronic warfare", "directed energy",
                     "space launch", "quantum", "radar", "stealth", "sensor",
@@ -290,8 +293,8 @@ def detect_companies(title: str, summary: str) -> List[str]:
     return found
 
 
-def assign_category(title: str) -> str:
-    t = title.lower()
+def assign_category(title: str, summary: str = "") -> str:
+    t = (title + " " + summary).lower()
     for cat, keywords in CATEGORY_KEYWORDS.items():
         if any(kw in t for kw in keywords):
             return cat
@@ -664,7 +667,7 @@ def _fetch_rss(source: Dict) -> List[Dict]:
                 "realSource":     src_name,
                 "sourceLogo":     src_logo,
                 "publishedAt":    _parse_entry_date(entry),
-                "category":       assign_category(title),
+                "category":       assign_category(title, summary),
                 "relevanceScore": int(raw_score * weight),
                 "language":       src_lang,
                 "region":         region,
@@ -859,7 +862,7 @@ def _scrape_defensepost() -> List[Dict]:
                     "summary":        summary,
                     "source":         "The Defense Post",
                     "publishedAt":    pub_date,
-                    "category":       assign_category(title),
+                    "category":       assign_category(title, summary),
                     "relevanceScore": compute_relevance_score(title, summary),
                     "language":       "en",
                     "region":         region,
@@ -1105,7 +1108,7 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
                 "realSource":     real_source,
                 "sourceLogo":     source_logo,
                 "publishedAt":    _parse_entry_date(entry),
-                "category":       assign_category(title),
+                "category":       assign_category(title, summary),
                 "relevanceScore": score,
                 "language":       "en",
                 "region":         region_det,

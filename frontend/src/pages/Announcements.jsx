@@ -154,6 +154,16 @@ function relativeTime(dateStr) {
   } catch { return ""; }
 }
 
+const SPECIALTY_DEFENSE_SOURCES = new Set([
+  "Breaking Defense", "Defense News", "The Defense Post", "Defense One",
+  "Aviation Week", "Jane's", "Janes", "USNI News", "Stars and Stripes",
+  "Air Force Magazine", "Army Times", "Navy Times", "Marine Corps Times",
+  "Air Force Times", "Defense Daily", "C4ISRNET", "National Defense",
+  "War on the Rocks", "The War Zone", "Bellingcat",
+  "Opex360", "Meta-Défense", "Air & Cosmos", "TTU", "Mer et Marine",
+  "La Tribune Défense",
+]);
+
 const FR_SOURCES = new Set([
   "Opex360", "Meta-Défense", "Le Monde", "Le Figaro", "Les Echos",
   "Usine Nouvelle", "Challenges", "La Tribune", "La Tribune Défense",
@@ -250,7 +260,8 @@ function SourceFavicon({ url, source, sourceLogo }) {
     }
   }
 
-  const initial = source ? source.charAt(0).toUpperCase() : "?";
+  const initial    = source ? source.charAt(0).toUpperCase() : "?";
+  const isSpecialty = SPECIALTY_DEFENSE_SOURCES.has(source);
 
   return (
     <span className="flex items-center gap-1.5 min-w-0">
@@ -264,6 +275,11 @@ function SourceFavicon({ url, source, sourceLogo }) {
       <span className="text-[11px] text-slate-500 font-semibold truncate max-w-[120px] uppercase tracking-wide">
         {source}
       </span>
+      {isSpecialty && (
+        <span className="flex-shrink-0 text-[8px] font-bold px-1 py-px rounded bg-purple-100 text-purple-700 uppercase tracking-wide leading-tight">
+          Specialty
+        </span>
+      )}
     </span>
   );
 }
@@ -395,7 +411,7 @@ function MediumCard({ article, isBookmarked, onBookmark, isBreaking = false }) {
         {srcCount >= 2 && (
           <div className="absolute top-2 right-2">
             <span className="bg-orange-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-              {srcCount} src
+              {srcCount} sources
             </span>
           </div>
         )}
@@ -1118,7 +1134,7 @@ export default function Announcements() {
               : "No articles match your filters"}
           </p>
           <p className="text-sm mt-1 text-slate-400">
-            The scraper runs automatically twice a day.
+            The scraper runs automatically four times daily.
           </p>
         </div>
       ) : (
@@ -1128,9 +1144,8 @@ export default function Announcements() {
           {breakingArticles.length > 0 && (
             <div>
               <SectionHeader
-
                 label="Breaking Intel"
-                sublabel={`— ${pinnedArticles.length}/3 slots curated · refreshes at 07:05 & 19:05 UTC`}
+                sublabel={`— ${breakingArticles.length} key ${breakingArticles.length === 1 ? "story" : "stories"}`}
                 color="orange"
               />
               <div className={`grid gap-4 ${
