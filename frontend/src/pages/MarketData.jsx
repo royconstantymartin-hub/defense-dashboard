@@ -70,6 +70,30 @@ const SORT_OPTIONS = [
 ];
 
 // Canonical segment labels for the filter
+const SPEC_TAG_COLORS = {
+  aerospace:   "bg-sky-50 text-sky-700 border-sky-200",
+  naval:       "bg-blue-50 text-blue-700 border-blue-200",
+  land:        "bg-amber-50 text-amber-700 border-amber-200",
+  missiles:    "bg-rose-50 text-rose-700 border-rose-200",
+  cyber:       "bg-violet-50 text-violet-700 border-violet-200",
+  space:       "bg-indigo-50 text-indigo-700 border-indigo-200",
+  services:    "bg-slate-100 text-slate-600 border-slate-200",
+  logistics:   "bg-orange-50 text-orange-700 border-orange-200",
+  electronics: "bg-teal-50 text-teal-700 border-teal-200",
+};
+function specTagColor(spec = "") {
+  const s = spec.toLowerCase();
+  if (s.includes("aerospace") || s.includes("aircraft") || s.includes("aviation")) return SPEC_TAG_COLORS.aerospace;
+  if (s.includes("naval") || s.includes("ship") || s.includes("submarine") || s.includes("maritime")) return SPEC_TAG_COLORS.naval;
+  if (s.includes("land") || s.includes("armor") || s.includes("vehicle") || s.includes("artillery")) return SPEC_TAG_COLORS.land;
+  if (s.includes("missile") || s.includes("air defense") || s.includes("rocket") || s.includes("ammunition")) return SPEC_TAG_COLORS.missiles;
+  if (s.includes("cyber") || s.includes("ai") || s.includes("electronic") || s.includes("sigint") || s.includes("radar") || s.includes("sensor")) return SPEC_TAG_COLORS.cyber;
+  if (s.includes("space") || s.includes("satellite") || s.includes("geospatial")) return SPEC_TAG_COLORS.space;
+  if (s.includes("logistic") || s.includes("mro")) return SPEC_TAG_COLORS.logistics;
+  if (s.includes("electronic") || s.includes("component")) return SPEC_TAG_COLORS.electronics;
+  return SPEC_TAG_COLORS.services;
+}
+
 // Values must match strings that appear in player.specializations arrays
 const SEGMENTS = [
   { value: "all",         label: "All Segments" },
@@ -1057,7 +1081,7 @@ export default function MarketData() {
                       <td className="p-4">
                         <div className="flex flex-wrap gap-1">
                           {player.specializations.slice(0, 2).map((spec, i) => (
-                            <span key={i} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+                            <span key={i} className={`text-xs border px-2 py-0.5 rounded-full font-medium ${specTagColor(spec)}`}>
                               {spec}
                             </span>
                           ))}
@@ -1168,8 +1192,8 @@ export default function MarketData() {
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-50 rounded-lg p-4">
-                  <p className="text-xs font-medium uppercase tracking-wider text-slate-500">STOCK PRICE</p>
+                <div className="bg-purple-50 border border-purple-100 rounded-lg p-4">
+                  <p className="text-xs font-medium uppercase tracking-wider text-purple-600">STOCK PRICE</p>
                   <p className="text-xl font-mono font-bold text-slate-900 mt-1">
                     {(() => {
                       const live = liveData[selectedPlayer.ticker];
@@ -1229,7 +1253,7 @@ export default function MarketData() {
                 <p className="text-xs font-medium uppercase tracking-wider text-slate-500 mb-2">SPECIALIZATIONS</p>
                 <div className="flex flex-wrap gap-2">
                   {selectedPlayer.specializations.map((spec, idx) => (
-                    <span key={idx} className="text-sm bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-full font-medium">
+                    <span key={idx} className={`text-sm border px-3 py-1 rounded-full font-medium ${specTagColor(spec)}`}>
                       {spec}
                     </span>
                   ))}
@@ -1238,7 +1262,7 @@ export default function MarketData() {
 
               <button
                 onClick={() => { setSelectedPlayer(null); setProfileName(selectedPlayer.name); }}
-                className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
               >
                 <UserCircle className="w-4 h-4" />
                 View Full Company Profile

@@ -736,8 +736,8 @@ export default function Dashboard() {
                             <Newspaper className="w-10 h-10 text-white/20" />
                           </div>
                         )}
-                        {/* Dark gradient overlay for text readability */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                        {/* Solid bottom overlay for text readability */}
+                        <div className="absolute bottom-0 left-0 right-0 h-28 bg-black/65" />
                         {/* Category badge top-left */}
                         <div className="absolute top-3 left-3">
                           <IntelCategoryBadge category={item.category} />
