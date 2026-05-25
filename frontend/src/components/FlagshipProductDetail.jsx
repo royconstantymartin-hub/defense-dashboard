@@ -344,6 +344,9 @@ function ExportsTab({ contracts }) {
                   <span>{c.delivery_window}</span>
                 </div>
               </div>
+              {c.note && (
+                <p className="mt-2 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-2">{c.note}</p>
+              )}
             </div>
           );
         })}
