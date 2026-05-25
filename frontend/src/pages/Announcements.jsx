@@ -284,18 +284,7 @@ function SourceFavicon({ url, source, sourceLogo }) {
           <span className="text-[8px] font-bold text-slate-500 leading-none">{initial}</span>
         )}
       </span>
-<<<<<<< HEAD
-      <span className="text-[11px] text-slate-500 font-semibold truncate max-w-[120px] uppercase tracking-wide">
-        {source}
-      </span>
-      {isSpecialty && (
-        <span className="flex-shrink-0 text-[8px] font-bold px-1 py-px rounded bg-purple-100 text-purple-700 uppercase tracking-wide leading-tight">
-          Specialty
-        </span>
-      )}
-=======
       <span className="text-[11px] text-slate-500 font-medium truncate max-w-[120px]">{source}</span>
->>>>>>> 107adc8 (Visual polish — P1/P2 remaining items across 5 pages)
     </span>
   );
 }
@@ -757,13 +746,6 @@ function CompanyHeatWidget({ articles, selectedCompany, onSelectCompany }) {
 
 // ── SectionHeader ──────────────────────────────────────────────────────────────
 
-<<<<<<< HEAD
-function SectionHeader({ label, sublabel, color = "slate" }) {
-  const divider = color === "orange" ? "bg-orange-200" : "bg-slate-200";
-  return (
-    <div className="flex items-center gap-2 mb-4">
-      <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">{label}</h2>
-=======
 function SectionHeader({ emoji, label, sublabel, color = "slate" }) {
   const dividerColor = color === "orange" ? "bg-orange-200" : "bg-slate-200";
   const textColor    = color === "orange" ? "text-orange-700" : "text-slate-500";
@@ -771,16 +753,11 @@ function SectionHeader({ emoji, label, sublabel, color = "slate" }) {
     <div className="flex items-center gap-3 py-1 mb-4">
       <Clock className={`w-3.5 h-3.5 flex-shrink-0 ${textColor}`} />
       <h2 className={`text-xs font-semibold uppercase tracking-widest flex-shrink-0 ${textColor}`}>{label}</h2>
->>>>>>> 107adc8 (Visual polish — P1/P2 remaining items across 5 pages)
       {sublabel && (
         <span className="text-xs text-slate-400 font-normal normal-case tracking-normal flex-shrink-0">{sublabel}</span>
       )}
-<<<<<<< HEAD
-      <div className={`flex-1 h-px ${divider} ml-2`} />
-=======
       {emoji && <span className="text-base">{emoji}</span>}
       <div className={`flex-1 h-px ${dividerColor}`} />
->>>>>>> 107adc8 (Visual polish — P1/P2 remaining items across 5 pages)
     </div>
   );
 }

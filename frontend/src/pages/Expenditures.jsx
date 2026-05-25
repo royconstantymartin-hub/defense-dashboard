@@ -94,8 +94,6 @@ const SORT_OPTIONS = [
   { value: "name_asc", label: "Country (A-Z)" },
 ];
 
-const COLORS = ['#7E22CE', '#1D4ED8', '#059669', '#D97706', '#0891B2', '#DB2777', '#65A30D', '#0F766E'];
-
 // ISO 3166-1 numeric → alpha-2 — used by world-atlas GeoJSON features
 const ISO_NUM_TO_CODE = {
   '840': 'US', '156': 'CN', '643': 'RU', '356': 'IN', '682': 'SA',
