@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo, memo } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
@@ -1626,6 +1626,41 @@ const CHORO_TIERS_GDP = [
   { min: 5,   max: Infinity, color: '#3B0764', label: '> 5%' },
 ];
 
+// Memoized inner layer — prevents all 177 Geography paths from re-rendering
+// when only the tooltip state changes (mouse hover events).
+const GeographyLayer = memo(function GeographyLayer({
+  geoData, spendingByCode, getColor, selectedCode, onCountryClick, onMouseEnter, onMouseLeave
+}) {
+  return (
+    <Geographies geography={geoData || GEO_URL}>
+      {({ geographies }) =>
+        geographies.map((geo) => {
+          const code = ISO_NUM_TO_CODE[String(geo.id).padStart(3, '0')];
+          const entry = code ? spendingByCode[code] : null;
+          const isSelected = code && selectedCode === code;
+          return (
+            <Geography
+              key={geo.rsmKey}
+              geography={geo}
+              fill={isSelected ? '#7E22CE' : getColor(entry)}
+              stroke="#FFFFFF"
+              strokeWidth={0.6}
+              style={{
+                default: { outline: 'none', cursor: entry ? 'pointer' : 'default' },
+                hover:   { fill: entry ? '#9333EA' : '#CBD5E1', outline: 'none' },
+                pressed: { outline: 'none' },
+              }}
+              onClick={() => entry && onCountryClick(entry)}
+              onMouseEnter={(evt) => entry && onMouseEnter({ entry, x: evt.clientX, y: evt.clientY })}
+              onMouseLeave={onMouseLeave}
+            />
+          );
+        })
+      }
+    </Geographies>
+  );
+});
+
 function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }) {
   const [tooltip, setTooltip] = useState(null);
   const [geoData, setGeoData] = useState(_cachedGeoData);
@@ -1646,12 +1681,15 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
 
   const tiers = mode === 'gdp' ? CHORO_TIERS_GDP : CHORO_TIERS_ABS;
 
-  const getColor = (entry) => {
-    if (!entry) return '#E2E8F0';   // no data — neutral mid-gray
+  const getColor = useCallback((entry) => {
+    if (!entry) return '#E2E8F0';
     const val = mode === 'gdp' ? entry.gdp_percent : entry.expenditure;
     const tier = tiers.find(t => val >= t.min && val < t.max);
     return tier ? tier.color : tiers[tiers.length - 1].color;
-  };
+  }, [mode, tiers]);
+
+  const handleMouseEnter = useCallback((data) => setTooltip(data), []);
+  const handleMouseLeave = useCallback(() => setTooltip(null), []);
 
   return (
     <div className="relative">
@@ -1661,32 +1699,15 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
         projectionConfig={{ scale: 118, center: [15, 15] }}
         style={{ width: '100%', height: '340px' }}
       >
-        <Geographies geography={geoData || GEO_URL}>
-          {({ geographies }) =>
-            geographies.map((geo) => {
-              const code = ISO_NUM_TO_CODE[String(geo.id).padStart(3, '0')];
-              const entry = code ? spendingByCode[code] : null;
-              const isSelected = code && selectedCode === code;
-              return (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  fill={isSelected ? '#7E22CE' : getColor(entry)}
-                  stroke="#FFFFFF"
-                  strokeWidth={0.6}
-                  style={{
-                    default: { outline: 'none', cursor: entry ? 'pointer' : 'default' },
-                    hover:   { fill: entry ? '#9333EA' : '#CBD5E1', outline: 'none' },
-                    pressed: { outline: 'none' },
-                  }}
-                  onClick={() => entry && onCountryClick(entry)}
-                  onMouseEnter={(evt) => entry && setTooltip({ entry, x: evt.clientX, y: evt.clientY })}
-                  onMouseLeave={() => setTooltip(null)}
-                />
-              );
-            })
-          }
-        </Geographies>
+        <GeographyLayer
+          geoData={geoData}
+          spendingByCode={spendingByCode}
+          getColor={getColor}
+          selectedCode={selectedCode}
+          onCountryClick={onCountryClick}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        />
       </ComposableMap>
 
       {/* Hover tooltip */}
