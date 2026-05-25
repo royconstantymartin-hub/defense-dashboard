@@ -35,6 +35,16 @@ _STOCK_PHOTO_DOMAINS = (
     "pixabay.com",
     "stocksy.com",
     "canstockphoto.com",
+    # Wikipedia/Wikimedia — parliament buildings, government portals, generic encyclopaedia images
+    "upload.wikimedia.org",
+    "commons.wikimedia.org",
+    "en.wikipedia.org",
+    # Generic wire-service photo CDNs that serve editorial stock imagery
+    "apimages.com",
+    "ap.org/image",
+    "media.gettyimages.com",
+    "imagn.com",
+    "zuma",
 )
 
 
@@ -74,9 +84,20 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "front line", "frontline", "ground offensive", "bombing campaign",
                     "airstrike on", "air strike on", "shelling of", "missile strike",
                     "artillery fire", "ambush", "insurgency", "guerrilla",
+                    # Expanded kinetic/operational terms
+                    "combat deaths", "combat losses", "friendly fire", "war zone",
+                    "under siege", "prisoner of war", "fallen soldiers", "soldiers wounded",
+                    "offensive launched", "forces advance", "advance on",
+                    "military casualties", "naval battle", "firefight", "ambushed",
+                    "troops deploy", "troops advance", "siege of",
+                    "bombing of", "bombed", "bombers strike", "drone strike on",
+                    "raid on", "incursion into", "retaliatory strike",
+                    "encirclement", "fortified position", "defensive line",
                     "conflit armé", "guerre en ", "offensive terrestre", "cessez-le-feu",
-                    "victimes civiles", "soldats tués", "bombardement de", "frappe sur"],
-    "M&A":         ["acquisition", "merger", "acquires", "acquis", "buys", "takeover",
+                    "victimes civiles", "soldats tués", "bombardement de", "frappe sur",
+                    "pertes au combat", "soldats blessés", "opération militaire en"],
+    "M&A":         ["merger", "acquires", "acquis", "buys", "takeover",
+                    "company acquisition", "hostile acquisition", "corporate acquisition",
                     "joint venture", "agrees to buy", "agrees to acquire", "strategic investment",
                     "stake in", "minority stake", "majority stake", "divests", "divestiture",
                     "spin-off", "completes purchase", "signs agreement to acquire",
@@ -601,12 +622,23 @@ def _extract_image_from_entry(entry) -> Optional[str]:
 
 
 def _extract_summary(entry) -> str:
-    """Return a plain-text summary (≤ 300 chars) from a feedparser entry."""
+    """Return a clean plain-text summary (≤ 400 chars) truncated at a sentence boundary."""
     for attr in ("summary", "description"):
         val = getattr(entry, attr, None)
         if val:
             text = BeautifulSoup(val, "html.parser").get_text(separator=" ", strip=True)
-            return text[:300] + ("..." if len(text) > 300 else "")
+            # Collapse runs of whitespace introduced by HTML stripping
+            text = " ".join(text.split())
+            if len(text) <= 400:
+                return text
+            # Prefer cutting at the last sentence-ending punctuation before 400 chars
+            for sep in (". ", "! ", "? "):
+                pos = text.rfind(sep, 80, 400)
+                if pos != -1:
+                    return text[:pos + 1]
+            # Fall back to last word boundary
+            pos = text.rfind(" ", 0, 400)
+            return (text[:pos] if pos > 0 else text[:400]) + "…"
     return ""
 
 

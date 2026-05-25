@@ -1024,7 +1024,15 @@ export default function Announcements() {
             </div>
           )}
           {lastUpdated && (
-            <span className="text-xs text-slate-400">Updated {format(lastUpdated, "HH:mm")}</span>
+            <span className="text-xs text-slate-400">
+              {(() => {
+                const mins = Math.floor((Date.now() - lastUpdated.getTime()) / 60000);
+                if (mins < 1)  return "Updated just now";
+                if (mins < 60) return `Updated ${mins}m ago`;
+                const hrs = Math.floor(mins / 60);
+                return `Updated ${hrs}h ago`;
+              })()}
+            </span>
           )}
           {token ? (
             <button
