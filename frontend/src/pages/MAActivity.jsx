@@ -375,7 +375,7 @@ function getStatusStyle(status) {
     case "completed":    return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case "active":       return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case "pending":      return "bg-amber-50 text-amber-700 border-amber-200";
-    case "under_review": return "bg-orange-50 text-orange-700 border-orange-200";
+    case "under_review": return "bg-amber-50 text-amber-700 border-amber-200";
     case "announced":    return "bg-blue-50 text-blue-700 border-blue-200";
     case "cancelled":    return "bg-rose-50 text-rose-700 border-rose-200";
     case "dissolved":    return "bg-slate-100 text-slate-500 border-slate-200";
@@ -393,6 +393,14 @@ function formatValue(dealValue, isDisclosed = true) {
   if (!isDisclosed) return "Undisclosed";
   if (!dealValue || dealValue === 0) return "—";
   return dealValue >= 1000 ? `$${(dealValue / 1000).toFixed(1)}B` : `$${dealValue}M`;
+}
+
+// Filter out scraper artifacts: sentence fragments captured instead of company names
+const GARBAGE_NAME_RE = /\binitially\b|\breportedly\b|\bconfirmed\b|\bannounced\b|^the\s+\w+-|^over\s+\d|^up to\s+\d|^approximately\s+\d/i;
+function isValidCompanyName(name) {
+  if (!name) return false;
+  if (name.length > 80) return false;
+  return !GARBAGE_NAME_RE.test(name);
 }
 
 function getStatusAccentBg(status) {
@@ -436,24 +444,27 @@ function getDealLabels(dealType) {
 }
 
 function DealSep({ type }) {
-  const base = "w-11 h-11 rounded-full flex items-center justify-center ring-2 ring-white shadow-sm";
-  if (type === "merger")  return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-blue-200`}><ArrowLeftRight className="w-4 h-4 text-blue-700" /></div></div>;
-  if (type === "jv")      return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-teal-200`}><Plus className="w-4 h-4 text-teal-700" /></div></div>;
-  if (type === "invest")  return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-emerald-200`}><CircleDot className="w-4 h-4 text-emerald-700" /></div></div>;
-  return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-slate-200`}><ArrowRight className="w-4 h-4 text-slate-600" /></div></div>;
+  const base = "w-9 h-9 rounded-full flex items-center justify-center bg-slate-100 border border-slate-200";
+  if (type === "merger")  return <div className="w-12 flex justify-center shrink-0"><div className={base}><ArrowLeftRight className="w-3.5 h-3.5 text-slate-500" /></div></div>;
+  if (type === "jv")      return <div className="w-12 flex justify-center shrink-0"><div className={base}><Plus className="w-3.5 h-3.5 text-slate-500" /></div></div>;
+  if (type === "invest")  return <div className="w-12 flex justify-center shrink-0"><div className={base}><CircleDot className="w-3.5 h-3.5 text-slate-500" /></div></div>;
+  return <div className="w-12 flex justify-center shrink-0"><div className={base}><ArrowRight className="w-3.5 h-3.5 text-slate-500" /></div></div>;
 }
 
 function RoundBadge({ roundType }) {
+  const early  = "bg-purple-50 text-purple-700 border-purple-200";
+  const late   = "bg-slate-100 text-slate-600 border-slate-200";
+  const growth = "bg-amber-50 text-amber-700 border-amber-200";
   const map = {
-    seed:     "bg-purple-50 text-purple-700 border-purple-200",
-    series_a: "bg-blue-50 text-blue-700 border-blue-200",
-    series_b: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    series_c: "bg-slate-100 text-slate-700 border-slate-200",
-    series_d: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200",
-    series_e: "bg-pink-50 text-pink-700 border-pink-200",
-    series_f: "bg-rose-50 text-rose-700 border-rose-200",
-    growth:   "bg-teal-50 text-teal-700 border-teal-200",
-    buyout:   "bg-amber-50 text-amber-700 border-amber-200",
+    seed:     early,
+    series_a: early,
+    series_b: early,
+    series_c: late,
+    series_d: late,
+    series_e: late,
+    series_f: late,
+    growth:   growth,
+    buyout:   growth,
   };
   const label = roundType?.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase());
   if (!map[roundType]) return null;
@@ -540,7 +551,7 @@ function CompanyLogo({ activity, side, size = "md" }) {
   // Level 3 — Coloured initials avatar (no network call)
   return (
     <div className="relative shrink-0">
-      <div className={`${sizeClass} rounded-xl overflow-hidden flex items-center justify-center ${avatarColor(name)}`}>
+      <div className={`${sizeClass} rounded-xl overflow-hidden flex items-center justify-center border border-slate-200/60 ${avatarColor(name)}`}>
         <span className={`${textSize} font-bold text-white tracking-tight select-none`}>
           {initials(name)}
         </span>
@@ -1208,10 +1219,7 @@ function JVProgramsView() {
   }, [filterYear, search, sortYear]);
 
   function yearColor(y) {
-    if (y === 2026) return "text-slate-900";
-    if (y === 2025) return "text-blue-600";
-    if (y === 2024) return "text-teal-600";
-    return "text-slate-500";
+    return y >= 2025 ? "text-slate-900 font-semibold" : "text-slate-500";
   }
 
   function handlePartyClick(e, name) {
@@ -1255,13 +1263,13 @@ function JVProgramsView() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search party or program…"
-              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
             />
           </div>
           <select
             value={filterYear}
             onChange={e => setFilterYear(e.target.value)}
-            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
           >
             <option value="all">All Years</option>
             {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
@@ -1852,7 +1860,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
         </p>
         <button
           onClick={toggleAll}
-          className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+          className="text-xs text-purple-700 hover:text-purple-900 font-medium"
         >
           {expanded.size === groups.length ? "Collapse all" : "Expand all"}
         </button>
@@ -2369,6 +2377,8 @@ export default function MAActivity() {
     const seenId  = new Set();
     const seenKey = new Set();
     return [...activities, ...historical].filter(a => {
+      // Drop scraper artifacts before dedup so they don't consume a seen-key slot
+      if (!isValidCompanyName(a.acquirer) || !isValidCompanyName(a.target)) return false;
       if (seenId.has(a.id)) return false;
       const normKey = `${(a.acquirer||'').toLowerCase().trim().split(/\s+/)[0]}|${(a.target||'').toLowerCase().trim().split(/\s+/)[0]}`;
       if (seenKey.has(normKey)) return false;
@@ -2574,7 +2584,7 @@ export default function MAActivity() {
               </div>
               <div className="flex items-center gap-3 text-[10px] text-slate-400">
                 <span className="flex items-center gap-1"><span className="inline-block w-3 h-2.5 rounded-sm bg-slate-400" /> Deal count</span>
-                <span className="flex items-center gap-1"><span className="inline-block w-6 border-t-2 border-dashed border-emerald-400" /> Value ($B)</span>
+                <span className="flex items-center gap-1"><span className="inline-block w-6 border-t-2 border-dashed border-slate-400" /> Value ($B)</span>
                 <span className="bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">Last 8 quarters</span>
               </div>
             </div>
@@ -2601,7 +2611,7 @@ export default function MAActivity() {
                       <div className="bg-white border border-slate-200 rounded-lg px-3 py-2 shadow text-xs">
                         <p className="font-semibold text-slate-700 mb-1">{d.quarter}</p>
                         <p className="text-slate-900 font-mono">{d.count} deal{d.count !== 1 ? "s" : ""}</p>
-                        {d.value > 0 && <p className="text-emerald-600 font-mono">{d.value >= 1000 ? `$${(d.value/1000).toFixed(1)}B` : `$${d.value}M`} disclosed</p>}
+                        {d.value > 0 && <p className="text-slate-600 font-mono">{d.value >= 1000 ? `$${(d.value/1000).toFixed(1)}B` : `$${d.value}M`} disclosed</p>}
                       </div>
                     );
                   }
@@ -2616,11 +2626,11 @@ export default function MAActivity() {
                   yAxisId="value"
                   type="monotone"
                   dataKey="value"
-                  stroke="#10B981"
+                  stroke="#94A3B8"
                   strokeWidth={1.5}
                   strokeDasharray="4 2"
                   dot={false}
-                  activeDot={{ r: 3, fill: "#10B981" }}
+                  activeDot={{ r: 3, fill: "#7E22CE" }}
                 />
               </ComposedChart>
             </ResponsiveContainer>
