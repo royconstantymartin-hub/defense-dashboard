@@ -962,7 +962,29 @@ export default function Products() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col gap-3">
+        {/* Category pills */}
+        <div className="flex flex-wrap gap-2" data-testid="category-filter">
+          {CATEGORIES.map(c => {
+            const Icon = c.icon;
+            const isActive = selectedCategory === c.value;
+            return (
+              <button
+                key={c.value}
+                onClick={() => setSelectedCategory(c.value)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
+                  isActive
+                    ? "bg-purple-700 text-white border-purple-700 shadow-sm"
+                    : "bg-white text-slate-600 border-slate-200 hover:border-purple-300 hover:text-purple-700"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                {c.label}
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
@@ -973,19 +995,6 @@ export default function Products() {
             data-testid="search-products"
           />
         </div>
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700" data-testid="category-filter">
-            <Filter className="w-4 h-4 mr-2 text-slate-400" />
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent className="bg-white border-slate-200">
-            {CATEGORIES.map(c => (
-              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-slate-50">
-                {c.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
         <Select value={selectedManufacturer} onValueChange={setSelectedManufacturer}>
           <SelectTrigger className="w-full sm:w-56 bg-white border-slate-200 text-slate-700" data-testid="manufacturer-filter">
             <Building2 className="w-4 h-4 mr-2 text-slate-400" />
@@ -1002,15 +1011,16 @@ export default function Products() {
         <Button
           variant={compareMode ? "default" : "outline"}
           onClick={() => setCompareMode(!compareMode)}
-          className={compareMode 
-            ? "bg-slate-900 hover:bg-slate-800 text-white" 
-            : "border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 hover:border-slate-300"
+          className={compareMode
+            ? "bg-purple-700 hover:bg-purple-800 text-white"
+            : "border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300"
           }
           data-testid="compare-mode-btn"
         >
           <GitCompare className="w-4 h-4 mr-2" />
           Compare
         </Button>
+        </div>
       </div>
 
       {/* Products Grid */}
@@ -1022,7 +1032,7 @@ export default function Products() {
             <Card 
               key={product.id}
               className={`bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 cursor-pointer overflow-hidden ${
-                isSelectedForCompare ? 'ring-2 ring-slate-500 border-slate-500' : ''
+                isSelectedForCompare ? 'ring-2 ring-purple-600 border-purple-400' : ''
               }`}
               onClick={() => {
                 if (compareMode) { toggleProductForCompare(product); return; }

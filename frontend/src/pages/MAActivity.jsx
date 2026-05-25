@@ -410,6 +410,16 @@ function getStatusAccentBg(status) {
     default:                               return "bg-slate-400";
   }
 }
+function getStatusBorderL(status) {
+  switch (status) {
+    case "completed": case "active":       return "border-l-emerald-500";
+    case "pending":   case "under_review": return "border-l-amber-400";
+    case "announced":                      return "border-l-blue-500";
+    case "cancelled":                      return "border-l-rose-500";
+    case "dissolved": case "exited":       return "border-l-slate-400";
+    default:                               return "border-l-slate-400";
+  }
+}
 
 function getDealSizeBadge(value) {
   if (!value || value === 0) return null;
@@ -431,16 +441,16 @@ function getDealLabels(dealType) {
 }
 
 function DealSep({ type }) {
-  const base = "w-9 h-9 rounded-full flex items-center justify-center";
-  if (type === "merger")  return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-blue-100`}><ArrowLeftRight className="w-4 h-4 text-blue-600" /></div></div>;
-  if (type === "jv")      return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-teal-100`}><Plus className="w-4 h-4 text-teal-600" /></div></div>;
-  if (type === "invest")  return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-emerald-100`}><CircleDot className="w-4 h-4 text-emerald-600" /></div></div>;
-  return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-slate-100`}><ArrowRight className="w-4 h-4 text-slate-600" /></div></div>;
+  const base = "w-11 h-11 rounded-full flex items-center justify-center ring-2 ring-white shadow-sm";
+  if (type === "merger")  return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-blue-200`}><ArrowLeftRight className="w-4 h-4 text-blue-700" /></div></div>;
+  if (type === "jv")      return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-teal-200`}><Plus className="w-4 h-4 text-teal-700" /></div></div>;
+  if (type === "invest")  return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-emerald-200`}><CircleDot className="w-4 h-4 text-emerald-700" /></div></div>;
+  return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-slate-200`}><ArrowRight className="w-4 h-4 text-slate-600" /></div></div>;
 }
 
 function RoundBadge({ roundType }) {
   const map = {
-    seed:     "bg-violet-50 text-violet-700 border-violet-200",
+    seed:     "bg-purple-50 text-purple-700 border-purple-200",
     series_a: "bg-blue-50 text-blue-700 border-blue-200",
     series_b: "bg-indigo-50 text-indigo-700 border-indigo-200",
     series_c: "bg-slate-100 text-slate-700 border-slate-200",
@@ -726,13 +736,10 @@ function MACard({ activity, onOpenProfile }) {
 
   return (
     <div
-      className="relative bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 overflow-hidden"
+      className={`relative bg-white border border-l-4 border-slate-200 ${getStatusBorderL(activity.status)} rounded-xl shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 overflow-hidden`}
       data-testid={`ma-item-${activity.id}`}
     >
-      {/* Status colour stripe */}
-      <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${accent}`} />
-
-      <div className="p-5 pl-6">
+      <div className="p-5 pl-5">
         {/* ── Top: companies + meta ── */}
         <div className="flex flex-col lg:flex-row lg:items-start gap-5">
 
