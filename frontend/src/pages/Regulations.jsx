@@ -120,28 +120,15 @@ export default function Regulations() {
 
   const getCategoryIcon = (category) => {
     switch (category) {
-      case 'itar':          return { Icon: Lock,          cls: "text-rose-600",    bg: "bg-rose-50 border-rose-200" };
-      case 'export_control':return { Icon: Globe,          cls: "text-blue-600",   bg: "bg-blue-50 border-blue-200" };
-      case 'procurement':   return { Icon: FileCheck,      cls: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200" };
-      case 'offset':        return { Icon: ArrowLeftRight, cls: "text-amber-600",  bg: "bg-amber-50 border-amber-200" };
-      default:              return { Icon: FileText,       cls: "text-slate-600",  bg: "bg-slate-100 border-slate-200" };
+      case 'itar':          return { Icon: Lock,          cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
+      case 'export_control':return { Icon: Globe,          cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
+      case 'procurement':   return { Icon: FileCheck,      cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
+      case 'offset':        return { Icon: ArrowLeftRight, cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
+      default:              return { Icon: FileText,       cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
     }
   };
 
-  const getCategoryStyle = (category) => {
-    switch (category) {
-      case 'offset':
-        return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'export_control':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'procurement':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'itar':
-        return 'bg-rose-50 text-rose-700 border-rose-200';
-      default:
-        return 'bg-slate-100 text-slate-600 border-slate-200';
-    }
-  };
+  const getCategoryStyle = (_category) => 'bg-slate-100 text-slate-600 border-slate-200';
 
   const getFlag = (country) => {
     const code = COUNTRY_FLAGS[country];
@@ -187,10 +174,10 @@ export default function Regulations() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "TOTAL REGULATIONS", value: regulations.length,                                    Icon: Shield,        iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-500" },
-          { label: "OFFSET POLICIES",   value: regulations.filter(r=>r.category==='offset').length,  Icon: ArrowLeftRight,iconCls: "text-amber-600",    bgCls: "bg-amber-50",     top: "border-t-2 border-t-amber-500" },
-          { label: "EXPORT CONTROLS",   value: regulations.filter(r=>r.category==='export_control').length, Icon: Globe,  iconCls: "text-blue-600",     bgCls: "bg-blue-50",      top: "border-t-2 border-t-blue-500" },
-          { label: "COUNTRIES",         value: new Set(regulations.map(r=>r.country)).size,           Icon: FileCheck,     iconCls: "text-emerald-600",  bgCls: "bg-emerald-50",   top: "border-t-2 border-t-emerald-500" },
+          { label: "TOTAL REGULATIONS", value: regulations.length,                                    Icon: Shield,        iconCls: "text-purple-700",  bgCls: "bg-purple-50",    top: "border-t-2 border-t-purple-600" },
+          { label: "OFFSET POLICIES",   value: regulations.filter(r=>r.category==='offset').length,  Icon: ArrowLeftRight,iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-400" },
+          { label: "EXPORT CONTROLS",   value: regulations.filter(r=>r.category==='export_control').length, Icon: Globe,  iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-400" },
+          { label: "COUNTRIES",         value: new Set(regulations.map(r=>r.country)).size,           Icon: FileCheck,     iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-400" },
         ].map(({ label, value, Icon, iconCls, bgCls, top }) => (
           <Card key={label} className={`bg-white border-slate-200 shadow-sm ${top}`}>
             <CardContent className="p-5 flex items-start justify-between">
