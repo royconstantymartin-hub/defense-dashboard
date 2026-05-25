@@ -1221,7 +1221,7 @@ export default function MarketData() {
                         </p>
                         {!isPrivate(selectedPlayer.ticker) && (
                           <button
-                            className="text-xs text-blue-600 underline mt-1 cursor-pointer"
+                            className="text-xs text-purple-700 hover:text-purple-900 underline mt-1 cursor-pointer"
                             onClick={() => {
                               setSelectedPlayer(null);
                               setChartPlayer(selectedPlayer);

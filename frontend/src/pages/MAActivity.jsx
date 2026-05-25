@@ -677,7 +677,7 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
                       href={d.source_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-slate-400 hover:text-blue-600 transition-colors inline-flex"
+                      className="text-slate-400 hover:text-purple-600 transition-colors inline-flex"
                       title="View official press release"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -864,7 +864,7 @@ function MACard({ activity, onOpenProfile }) {
               {(activity.rationale || activity.description) && (
                 <button
                   onClick={() => setOpen((v) => !v)}
-                  className="flex items-center gap-0.5 text-[11px] text-blue-600 hover:text-blue-800 font-semibold transition-colors mt-0.5"
+                  className="flex items-center gap-0.5 text-[11px] text-purple-700 hover:text-purple-900 font-semibold transition-colors mt-0.5"
                 >
                   {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                   {open ? "Less" : "Details"}
@@ -939,7 +939,7 @@ function MACard({ activity, onOpenProfile }) {
                   href={activity.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 font-semibold"
+                  className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 font-semibold"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   Read source
@@ -1039,7 +1039,7 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 font-medium"
+                className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 font-medium"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 Source article
@@ -1967,7 +1967,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={e => e.stopPropagation()}
-                              className="text-slate-400 hover:text-blue-600 transition-colors inline-flex"
+                              className="text-slate-400 hover:text-purple-600 transition-colors inline-flex"
                               title="Source"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
