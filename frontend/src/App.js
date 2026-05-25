@@ -23,6 +23,9 @@ import PrivatePlayers from "@/pages/PrivatePlayers";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
 
+// Global timeout: prevent requests from hanging indefinitely when backend is slow
+axios.defaults.timeout = 20000;
+
 // ── Language Context ──────────────────────────────────────────────────────────
 export const LanguageContext = createContext({ lang: "en", setLang: () => {} });
 
