@@ -314,12 +314,7 @@ const LOGO_FALLBACK = {
 };
 
 // Initials avatar colour palette (deterministic by name)
-const AVATAR_COLORS = [
-  "bg-purple-700", "bg-blue-700",
-  "bg-emerald-700", "bg-amber-600",
-  "bg-rose-700", "bg-indigo-700",
-  "bg-teal-700", "bg-slate-700",
-];
+const AVATAR_COLORS = ["bg-slate-700"];
 function avatarColor(name) {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
@@ -423,9 +418,9 @@ function getStatusBorderL(status) {
 
 function getDealSizeBadge(value) {
   if (!value || value === 0) return null;
-  if (value >= 5000)  return { label: "Mega deal",  cls: "bg-rose-50 text-rose-700 border-rose-200" };
-  if (value >= 1000)  return { label: "Large deal",  cls: "bg-orange-50 text-orange-700 border-orange-200" };
-  if (value >= 100)   return { label: "Mid-size",    cls: "bg-yellow-50 text-yellow-700 border-yellow-200" };
+  if (value >= 5000)  return { label: "Mega deal",  cls: "bg-slate-800 text-white border-slate-700" };
+  if (value >= 1000)  return { label: "Large deal",  cls: "bg-slate-200 text-slate-700 border-slate-300" };
+  if (value >= 100)   return { label: "Mid-size",    cls: "bg-slate-100 text-slate-600 border-slate-200" };
   return null;
 }
 
@@ -614,11 +609,11 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
               >
                 <td className="px-3 py-3 text-slate-400 font-mono text-[11px]">
                   {i === 0
-                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-100 text-amber-700 border border-amber-300 text-[10px] font-bold">1</span>
+                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-white text-[10px] font-bold">1</span>
                     : i === 1
-                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-bold">2</span>
+                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-300 text-slate-700 text-[10px] font-bold">2</span>
                     : i === 2
-                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-50 text-orange-600 border border-orange-200 text-[10px] font-bold">3</span>
+                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 text-slate-500 text-[10px] font-bold">3</span>
                     : <span className="text-slate-300 text-[11px] font-mono">{i + 1}</span>}
                 </td>
                 <td className="px-3 py-3">

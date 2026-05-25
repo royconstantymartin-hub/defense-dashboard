@@ -95,16 +95,6 @@ const T = {
   seeExpendTip: { en: "See defense expenditure for this country" },
 };
 
-const CATEGORY_COLORS = {
-  aerospace: "bg-sky-50 text-sky-700 border-sky-200",
-  naval:     "bg-blue-50 text-blue-700 border-blue-200",
-  land:      "bg-amber-50 text-amber-700 border-amber-200",
-  cyber:     "bg-violet-50 text-violet-700 border-violet-200",
-  services:  "bg-amber-50 text-amber-700 border-amber-200",
-  logistics: "bg-orange-50 text-orange-700 border-orange-200",
-  space:     "bg-indigo-50 text-indigo-700 border-indigo-200",
-  missiles:  "bg-rose-50 text-rose-700 border-rose-200",
-};
 
 const STATUS_DOT = {
   open:      "bg-blue-500",
@@ -309,7 +299,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
           {contract.description}
         </p>
         <div className="flex flex-wrap gap-2">
-          <span className={`text-xs px-2 py-0.5 rounded-full border ${CATEGORY_COLORS[contract.category] || "bg-slate-100 text-slate-600 border-slate-200"}`}>
+          <span className="text-xs px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200">
             {tCategory[contract.category] || contract.category}
           </span>
           <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
