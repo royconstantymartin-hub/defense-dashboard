@@ -143,6 +143,21 @@ const YOY_DELTA = {
 
 const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899', '#84CC16'];
 
+// Population in millions — used for per-capita spending calculations
+const POPULATION_M = {
+  US: 334,  CN: 1410, RU: 144,  IN: 1428, SA: 36,   GB: 68,   UA: 44,   DE: 84,
+  FR: 68,   JP: 124,  KR: 52,   AU: 26,   IT: 60,   PL: 38,   CA: 38,   IL: 9.7,
+  AE: 9.9,  TR: 85,   BR: 215,  TW: 23.6, ES: 47.4, NL: 17.9, SG: 5.9,  PK: 231,
+  DK: 5.9,  NO: 5.4,  ID: 275,  DZ: 45,   SE: 10.5, MX: 129,  GR: 10.4, FI: 5.5,
+  RO: 19,   PT: 10.2, CZ: 10.9, HU: 9.7,  BE: 11.6, AL: 2.8,  BG: 6.5,  HR: 4.0,
+  EE: 1.4,  IS: 0.37, LV: 1.8,  LT: 2.8,  LU: 0.66, ME: 0.62, MK: 2.1,  SK: 5.5,
+  SI: 2.1,  VN: 98,   EG: 102,  IR: 87,   QA: 2.9,  KW: 4.3,  MA: 37,   TH: 72,
+  MY: 33,   PH: 113,  NZ: 5.1,  ZA: 60,   NG: 218,  AR: 45,   CL: 19.6, JO: 10.3,
+  IQ: 41,   AZ: 10.1, BD: 169,  MM: 54,   PE: 33,
+};
+
+const getFlag = (code) => `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
+
 
 const BRANCH_ICON = {
   army:          <Shield className="w-4 h-4" />,
@@ -2146,8 +2161,6 @@ function CountryProfileSection({ country, allExpenditures }) {
     .sort((a, b) => b.expenditure - a.expenditure)
     .slice(0, 10);
 
-  const getFlag = (code) => `https://flagcdn.com/w40/${code.toLowerCase()}.png`;
-
   return (
     <div className="space-y-5">
       {/* Hero banner */}
@@ -2620,7 +2633,6 @@ export default function Expenditures() {
     return acc;
   }, []).sort((a, b) => b.value - a.value);
 
-  const getFlag = (countryCode) => `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
 
   const getGdpColor = (gdpPercent) => {
     if (gdpPercent >= 4) return 'text-rose-600 bg-rose-50';
