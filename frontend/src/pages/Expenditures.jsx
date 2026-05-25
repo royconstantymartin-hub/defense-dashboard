@@ -1570,7 +1570,7 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
         </p>
 
         {count === null && (
-          <p className="text-[10px] text-slate-400">Non documenté</p>
+          <p className="text-[10px] text-slate-400">Not documented</p>
         )}
 
         {count === 0 && (
@@ -2456,7 +2456,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                               <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
                               {isCluster && (
                                 <span className="text-[9px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-semibold shrink-0">
-                                  Conglomérat d'État
+                                  State conglomerate
                                 </span>
                               )}
                             </div>
