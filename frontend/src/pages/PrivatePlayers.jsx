@@ -367,9 +367,6 @@ const CAT_COLORS = {
     headerBg: "bg-slate-50", text: "text-slate-600",
   },
 };
-const CAT_COLORS = Object.fromEntries(
-  ["purple","rose","orange","indigo","amber","blue","sky","emerald","slate"].map((k) => [k, NEUTRAL_CAT])
-);
 
 function assignCategory(company) {
   const specs = new Set((company.specializations || []).map((s) => s.toLowerCase()));
