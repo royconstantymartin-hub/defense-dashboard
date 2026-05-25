@@ -41,6 +41,7 @@ const NEWS_CATEGORIES = [
   { value: "POLICY",      label: "Policy" },
   { value: "GEOPOLITICS", label: "Geopolitics" },
   { value: "M&A",         label: "M&A" },
+  { value: "EARNINGS",    label: "Earnings" },
   { value: "INDUSTRY",    label: "Industry" },
 ];
 
@@ -139,6 +140,7 @@ function getCategoryStyle(category) {
     case "TECHNOLOGY":  return "bg-slate-100  text-slate-700   border-slate-200";
     case "CONFLICT":    return "bg-red-50     text-red-700     border-red-200";
     case "GEOPOLITICS": return "bg-sky-50     text-sky-700     border-sky-200";
+    case "EARNINGS":    return "bg-teal-50    text-teal-700    border-teal-200";
     default:            return "bg-slate-100  text-slate-600   border-slate-200";
   }
 }
@@ -354,10 +356,16 @@ function HeroCard({ article, isBookmarked, onBookmark }) {
         </div>
 
         <a href={article.url} target="_blank" rel="noopener noreferrer">
-          <h2 className="text-[22px] font-bold text-slate-900 leading-tight group-hover:text-purple-700 transition-colors line-clamp-3 mb-4">
+          <h2 className="text-[22px] font-bold text-slate-900 leading-tight group-hover:text-purple-700 transition-colors line-clamp-3 mb-3">
             {article.title}
           </h2>
         </a>
+
+        {article.summary && (
+          <p className="text-[13px] text-slate-500 leading-relaxed line-clamp-3 mb-4">
+            {article.summary}
+          </p>
+        )}
 
         <div className="flex items-center justify-end gap-2">
           <button
@@ -410,7 +418,7 @@ function MediumCard({ article, isBookmarked, onBookmark, isBreaking = false }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
         <div className="absolute bottom-2 left-2 flex items-center gap-1.5">
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider backdrop-blur-sm bg-white/90 ${getCategoryStyle(article.category)}`}>
-            {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
+            {article.category === "GEOPOLITICS" ? "GEO" : article.category === "EARNINGS" ? "EARN" : (article.category || "INDUSTRY")}
           </span>
           {countryCode && (
             <img src={`https://flagcdn.com/w20/${countryCode}.png`} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
@@ -437,10 +445,15 @@ function MediumCard({ article, isBookmarked, onBookmark, isBreaking = false }) {
           <span className="text-[10px] text-slate-400">{relativeTime(article.publishedAt)}</span>
         </div>
         <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
-          <h3 className="text-slate-800 font-bold text-[14px] leading-snug line-clamp-3 group-hover:text-purple-700 transition-colors">
+          <h3 className="text-slate-800 font-bold text-[14px] leading-snug line-clamp-2 group-hover:text-purple-700 transition-colors">
             {article.title}
           </h3>
         </a>
+        {article.summary && (
+          <p className="text-[12px] text-slate-400 leading-snug line-clamp-2">
+            {article.summary}
+          </p>
+        )}
         <div className="flex items-center justify-end gap-1 pt-1">
           <button
             onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
@@ -539,9 +552,15 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
             </h3>
           </a>
 
+          {article.summary && (
+            <p className="text-[12px] text-slate-400 leading-snug line-clamp-2">
+              {article.summary}
+            </p>
+          )}
+
           <div className="flex items-center gap-2 mt-auto">
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider flex-shrink-0 ${getCategoryStyle(article.category)}`}>
-              {article.category === "GEOPOLITICS" ? "GEO" : (article.category || "INDUSTRY")}
+              {article.category === "GEOPOLITICS" ? "GEO" : article.category === "EARNINGS" ? "EARN" : (article.category || "INDUSTRY")}
             </span>
             {countryCode && (
               <img
@@ -987,7 +1006,7 @@ export default function Announcements() {
             <div className="flex items-center gap-2 text-xs bg-white border border-slate-200 rounded-lg px-3 py-2">
               <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
               {highCount > 0 && (
-                <span className="text-emerald-700 font-semibold">{highCount} high priority</span>
+                <span className="text-emerald-700 font-semibold">{highCount} high relevance</span>
               )}
               {highCount > 0 && <span className="text-slate-300">·</span>}
               <span className="text-slate-500">
