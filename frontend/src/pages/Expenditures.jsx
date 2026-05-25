@@ -572,14 +572,14 @@ function formatAmount(min, max) {
 
 // ── Defense Capabilities Data (IISS Military Balance 2024 / Global Firepower) ─
 const DEFENSE_CAPABILITIES = {
-  US: { fighters: 2790, helicopters: 4522, drones: 3632, land_vehicles: 60300, surface_combatants: 107, submarines: 68 },
-  CN: { fighters: 1571, helicopters: 900,  drones: 576,  land_vehicles: 11700, surface_combatants: 83,  submarines: 60 },
+  US: { fighters: 2790, helicopters: 4522, drones: 632,  land_vehicles: 60300, surface_combatants: 107, submarines: 68 },
+  CN: { fighters: 1571, helicopters: 900,  drones: 276,  land_vehicles: 11700, surface_combatants: 83,  submarines: 60 },
   RU: { fighters: 900,  helicopters: 900,  drones: 552,  land_vehicles: 12000, surface_combatants: 54,  submarines: 65 },
-  IN: { fighters: 559,  helicopters: 632,  drones: 387,  land_vehicles: 6214,  surface_combatants: 30,  submarines: 17 },
+  IN: { fighters: 559,  helicopters: 632,  drones: 87,   land_vehicles: 6214,  surface_combatants: 30,  submarines: 17 },
   SA: { fighters: 306,  helicopters: 262,  drones: 30,   land_vehicles: 3913,  surface_combatants: 15,  submarines: 0  },
-  GB: { fighters: 155,  helicopters: 256,  drones: 1680, land_vehicles: 1893,  surface_combatants: 19,  submarines: 10 },
+  GB: { fighters: 155,  helicopters: 256,  drones: 80,   land_vehicles: 1893,  surface_combatants: 19,  submarines: 10 },
   DE: { fighters: 180,  helicopters: 220,  drones: 83,   land_vehicles: 2693,  surface_combatants: 12,  submarines: 6  },
-  FR: { fighters: 225,  helicopters: 353,  drones: 546,  land_vehicles: 6276,  surface_combatants: 24,  submarines: 10 },
+  FR: { fighters: 225,  helicopters: 353,  drones: 46,   land_vehicles: 6276,  surface_combatants: 24,  submarines: 10 },
   JP: { fighters: 320,  helicopters: 388,  drones: 66,   land_vehicles: 1668,  surface_combatants: 32,  submarines: 22 },
   KR: { fighters: 406,  helicopters: 620,  drones: 12,  land_vehicles: 7500,  surface_combatants: 28,  submarines: 22 },
   AU: { fighters: 100,  helicopters: 175,  drones: 8,   land_vehicles: 2000,  surface_combatants: 12,  submarines: 6  },
@@ -602,7 +602,7 @@ const DEFENSE_CAPABILITIES = {
   ID: { fighters: 93,   helicopters: 165,  drones: 6,   land_vehicles: 2000,  surface_combatants: 22,  submarines: 4  },
   VN: { fighters: 189,  helicopters: 180,  drones: null,land_vehicles: 3200,  surface_combatants: 12,  submarines: 6  },
   EG: { fighters: 380,  helicopters: 300,  drones: 20,  land_vehicles: 10000, surface_combatants: 28,  submarines: 8  },
-  UA: { fighters: 98,   helicopters: 150,  drones: 120, land_vehicles: 3000,  surface_combatants: 4,   submarines: 0  },
+  UA: { fighters: 98,   helicopters: 150,  drones: 120, land_vehicles: 3000,  surface_combatants: 4,   submarines: 0  }, // FPV production ~8M/yr not reflected in this count
   IR: { fighters: 372,  helicopters: 350,  drones: 350, land_vehicles: 7000,  surface_combatants: 21,  submarines: 29 },
   QA: { fighters: 96,   helicopters: 28,   drones: 8,   land_vehicles: 400,   surface_combatants: 4,   submarines: 0  },
   KW: { fighters: 52,   helicopters: 40,   drones: 2,   land_vehicles: 800,   surface_combatants: 5,   submarines: 0  },
@@ -669,7 +669,7 @@ const CAP_CATEGORIES = [
   {
     key: "drones",
     label: "Drones & UAS",
-    sublabel: "MALE, Tactical & Nano UAS",
+    sublabel: "Operational UAS Fleet (MALE / HALE / Tactical)",
     Icon: ({ className }) => (
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/>
@@ -780,7 +780,7 @@ const CAPABILITY_DETAILS = {
       { model: "RQ-4 Global Hawk / MQ-4C Triton (HALE)", count: 35, manufacturer: "Northrop Grumman" },
       { model: "RQ-7B Shadow (tactical brigade)", count: 140, manufacturer: "Textron" },
       { model: "MQ-25 Stingray (carrier refueling UAV)", count: 7, manufacturer: "Boeing" },
-      { model: "RQ-11B Raven (nano hand-launched ISR)", count: 3000, manufacturer: "AeroVironment" },
+      { model: "RQ-11B Raven (nano hand-launched ISR)", count: 3000, manufacturer: "AeroVironment", is_expendable: true },
     ],
     land_vehicles: [
       { model: "M1A2 SEP v3 Abrams MBT", count: 4400, manufacturer: "General Dynamics Land Systems" },
@@ -826,7 +826,7 @@ const CAPABILITY_DETAILS = {
       { model: "TB-001 Twin-tailed Scorpion MALE/UCAV", count: 40, manufacturer: "Tengden Technology" },
       { model: "WZ-7 Soaring Dragon HALE", count: 10, manufacturer: "Guizhou Aircraft Industry" },
       { model: "GJ-11 Sharp Sword UCAV (stealth)", count: 6, manufacturer: "Hongdu Aviation Industry" },
-      { model: "ASN-301 / Caihong CH-901 loitering munition", count: 300, manufacturer: "CASC / ASN" },
+      { model: "ASN-301 / CH-901 loitering munition (expendable)", count: 300, manufacturer: "CASC / ASN", is_expendable: true },
     ],
     land_vehicles: [
       { model: "Type 99A MBT", count: 1200, manufacturer: "Inner Mongolia First Machinery Group" },
@@ -874,7 +874,9 @@ const CAPABILITY_DETAILS = {
     drones: [
       { model: "Forpost-R MALE (Searcher II derivative)", count: 40, manufacturer: "Ural Civil Aviation Plant" },
       { model: "Orion-E MALE / UCAV", count: 12, manufacturer: "Kronshtadt Group" },
-      { model: "Eleron-3 / Orlan-10 (tactical ISR)", count: 500, manufacturer: "Enics / Special Technology Center" },
+      { model: "Eleron-3 / Orlan-10 (tactical ISR, ~500 active)", count: 500, manufacturer: "Enics / Special Technology Center" },
+      { model: "Shahed-136 / Geran-2 loitering munition (57,000+ fired in Ukraine; Alabuga factory: ~3,000/month)", count: 5000, manufacturer: "IRGC design / Alabuga JSC (Tatarstan)", is_expendable: true },
+      { model: "FPV kamikaze drones (produced domestically, rate-limited by electronics)", count: 15000, manufacturer: "Various Russian manufacturers", is_expendable: true },
     ],
     land_vehicles: [
       { model: "T-72B3 / T-72B3M MBT", count: 2800, manufacturer: "Uralvagonzavod" },
@@ -929,7 +931,7 @@ const CAPABILITY_DETAILS = {
       { model: "MQ-9B Sea Guardian MALE (maritime ISR)", count: 31, manufacturer: "General Atomics" },
       { model: "Heron I / Heron TP MALE", count: 50, manufacturer: "IAI (Israel)" },
       { model: "Rustom-2 MALE (TAPAS-BH-201)", count: 6, manufacturer: "DRDO / ADE" },
-      { model: "Nagastra-1 loitering munition (indigenous)", count: 300, manufacturer: "Solar Industries / EEL" },
+      { model: "Nagastra-1 loitering munition (expendable, 300 ordered)", count: 300, manufacturer: "Solar Industries / EEL", is_expendable: true },
     ],
     land_vehicles: [
       { model: "T-90S Bhishma MBT", count: 1657, manufacturer: "Heavy Vehicles Factory / Uralvagonzavod" },
@@ -1007,7 +1009,7 @@ const CAPABILITY_DETAILS = {
       { model: "Protector RG Mk.1 (MQ-9B SkyGuardian, MALE)", count: 16, manufacturer: "General Atomics" },
       { model: "MQ-9A Reaper (ISTAR / strike, MALE)", count: 10, manufacturer: "General Atomics" },
       { model: "Watchkeeper WK450 (tactical ISR, >150 kg)", count: 54, manufacturer: "Thales UK / Elbit Systems" },
-      { model: "Black Hornet PD-100 nano (SUAS infantry ISR)", count: 1600, manufacturer: "Teledyne FLIR" },
+      { model: "Black Hornet PD-100 nano (SUAS infantry ISR)", count: 1600, manufacturer: "Teledyne FLIR", is_expendable: true },
     ],
     land_vehicles: [
       { model: "Challenger 2 / 2 LEP MBT", count: 213, manufacturer: "BAE Systems" },
@@ -1086,7 +1088,7 @@ const CAPABILITY_DETAILS = {
       { model: "Harfang SIDM MALE (phasing out)", count: 4, manufacturer: "EADS / Cassidian" },
       { model: "Spy'Ranger 330 SDT-L (tactical ISR systems)", count: 24, manufacturer: "Thales" },
       { model: "nEUROn UCAV (technology demonstrator)", count: 1, manufacturer: "Dassault Aviation" },
-      { model: "Parrot ANAFI Ai / DRAC nano (infantry ISR)", count: 500, manufacturer: "Parrot / AeroVironment" },
+      { model: "Parrot ANAFI Ai / DRAC nano (infantry ISR, ~500 units)", count: 500, manufacturer: "Parrot / AeroVironment", is_expendable: true },
     ],
     land_vehicles: [
       { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems (KNDS)" },
@@ -1213,7 +1215,7 @@ function getCapabilitySummary(countryCode) {
     const result = { _sourced: true };
     ['fighters', 'helicopters', 'drones', 'land_vehicles', 'surface_combatants', 'submarines'].forEach(key => {
       result[key] = (details[key] || [])
-        .filter(item => !item.is_trainer)
+        .filter(item => !item.is_trainer && !item.is_expendable)
         .reduce((s, item) => s + (item.count ?? 0), 0);
     });
     return result;
@@ -1549,7 +1551,7 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
         </p>
 
         {count === null && (
-          <p className="text-[10px] text-slate-400">Non documenté</p>
+          <p className="text-[10px] text-slate-400">Not documented</p>
         )}
 
         {count === 0 && (
@@ -2435,7 +2437,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                               <p className="text-sm font-semibold text-slate-800 truncate">{c.name}</p>
                               {isCluster && (
                                 <span className="text-[9px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-semibold shrink-0">
-                                  Conglomérat d'État
+                                  State conglomerate
                                 </span>
                               )}
                             </div>
