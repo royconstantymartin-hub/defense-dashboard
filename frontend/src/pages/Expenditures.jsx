@@ -574,15 +574,15 @@ function formatAmount(min, max) {
 
 // ── Defense Capabilities Data (IISS Military Balance 2024 / Global Firepower) ─
 const DEFENSE_CAPABILITIES = {
-  US: { fighters: 2790, helicopters: 4522, drones: 632, land_vehicles: 60300, surface_combatants: 107, submarines: 68 },
-  CN: { fighters: 1571, helicopters: 900,  drones: 276, land_vehicles: 11700, surface_combatants: 83,  submarines: 60 },
-  RU: { fighters: 900,  helicopters: 900,  drones: 552, land_vehicles: 12000, surface_combatants: 54,  submarines: 65 },
-  IN: { fighters: 628,  helicopters: 720,  drones: 87,  land_vehicles: 9500,  surface_combatants: 36,  submarines: 17 },
-  SA: { fighters: 356,  helicopters: 250,  drones: 30,  land_vehicles: 5000,  surface_combatants: 12,  submarines: 0  },
-  GB: { fighters: 155,  helicopters: 256,  drones: 80,  land_vehicles: 1893,  surface_combatants: 19,  submarines: 10 },
-  DE: { fighters: 180,  helicopters: 220,  drones: 83,  land_vehicles: 2693,  surface_combatants: 12,  submarines: 6  },
-  FR: { fighters: 225,  helicopters: 353,  drones: 46,  land_vehicles: 6276,  surface_combatants: 24,  submarines: 10 },
-  JP: { fighters: 320,  helicopters: 388,  drones: 16,  land_vehicles: 1668,  surface_combatants: 32,  submarines: 22 },
+  US: { fighters: 2790, helicopters: 4522, drones: 3632, land_vehicles: 60300, surface_combatants: 107, submarines: 68 },
+  CN: { fighters: 1571, helicopters: 900,  drones: 576,  land_vehicles: 11700, surface_combatants: 83,  submarines: 60 },
+  RU: { fighters: 900,  helicopters: 900,  drones: 552,  land_vehicles: 12000, surface_combatants: 54,  submarines: 65 },
+  IN: { fighters: 559,  helicopters: 632,  drones: 387,  land_vehicles: 6214,  surface_combatants: 30,  submarines: 17 },
+  SA: { fighters: 306,  helicopters: 262,  drones: 30,   land_vehicles: 3913,  surface_combatants: 15,  submarines: 0  },
+  GB: { fighters: 155,  helicopters: 256,  drones: 1680, land_vehicles: 1893,  surface_combatants: 19,  submarines: 10 },
+  DE: { fighters: 180,  helicopters: 220,  drones: 83,   land_vehicles: 2693,  surface_combatants: 12,  submarines: 6  },
+  FR: { fighters: 225,  helicopters: 353,  drones: 546,  land_vehicles: 6276,  surface_combatants: 24,  submarines: 10 },
+  JP: { fighters: 320,  helicopters: 388,  drones: 66,   land_vehicles: 1668,  surface_combatants: 32,  submarines: 22 },
   KR: { fighters: 406,  helicopters: 620,  drones: 12,  land_vehicles: 7500,  surface_combatants: 28,  submarines: 22 },
   AU: { fighters: 100,  helicopters: 175,  drones: 8,   land_vehicles: 2000,  surface_combatants: 12,  submarines: 6  },
   IT: { fighters: 190,  helicopters: 250,  drones: 8,   land_vehicles: 2800,  surface_combatants: 22,  submarines: 8  },
@@ -671,7 +671,7 @@ const CAP_CATEGORIES = [
   {
     key: "drones",
     label: "Drones & UAS",
-    sublabel: "MALE, HALE & Combat UAS",
+    sublabel: "MALE, Tactical & Nano UAS",
     Icon: ({ className }) => (
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/>
@@ -777,11 +777,12 @@ const CAPABILITY_DETAILS = {
       { model: "UH-1Y Venom", count: 160, manufacturer: "Bell Helicopter" },
     ],
     drones: [
-      { model: "MQ-9A/B Reaper", count: 300, manufacturer: "General Atomics" },
-      { model: "MQ-1C Gray Eagle", count: 150, manufacturer: "General Atomics" },
-      { model: "RQ-4 Global Hawk / Triton", count: 35, manufacturer: "Northrop Grumman" },
-      { model: "MQ-25 Stingray (carrier UAV)", count: 7, manufacturer: "Boeing" },
-      { model: "RQ-7B Shadow", count: 140, manufacturer: "Textron" },
+      { model: "MQ-9A/B Reaper (MALE / strike)", count: 300, manufacturer: "General Atomics" },
+      { model: "MQ-1C Gray Eagle (MALE, Army)", count: 150, manufacturer: "General Atomics" },
+      { model: "RQ-4 Global Hawk / MQ-4C Triton (HALE)", count: 35, manufacturer: "Northrop Grumman" },
+      { model: "RQ-7B Shadow (tactical brigade)", count: 140, manufacturer: "Textron" },
+      { model: "MQ-25 Stingray (carrier refueling UAV)", count: 7, manufacturer: "Boeing" },
+      { model: "RQ-11B Raven (nano hand-launched ISR)", count: 3000, manufacturer: "AeroVironment" },
     ],
     land_vehicles: [
       { model: "M1A2 SEP v3 Abrams MBT", count: 4400, manufacturer: "General Dynamics Land Systems" },
@@ -822,11 +823,12 @@ const CAPABILITY_DETAILS = {
       { model: "Z-20 (CAIC medium transport)", count: 100, manufacturer: "Harbin Aircraft Industry Group" },
     ],
     drones: [
-      { model: "Wing Loong II MALE", count: 100, manufacturer: "CAIG / AVIC" },
+      { model: "Wing Loong II MALE (ISR / strike)", count: 100, manufacturer: "CAIG / AVIC" },
       { model: "CH-4 / CH-5 Rainbow MALE", count: 120, manufacturer: "CASC" },
-      { model: "TB-001 Twin-tailed Scorpion", count: 40, manufacturer: "Tengden Technology" },
+      { model: "TB-001 Twin-tailed Scorpion MALE/UCAV", count: 40, manufacturer: "Tengden Technology" },
       { model: "WZ-7 Soaring Dragon HALE", count: 10, manufacturer: "Guizhou Aircraft Industry" },
-      { model: "GJ-11 Sharp Sword UCAV", count: 6, manufacturer: "Hongdu Aviation Industry" },
+      { model: "GJ-11 Sharp Sword UCAV (stealth)", count: 6, manufacturer: "Hongdu Aviation Industry" },
+      { model: "ASN-301 / Caihong CH-901 loitering munition", count: 300, manufacturer: "CASC / ASN" },
     ],
     land_vehicles: [
       { model: "Type 99A MBT", count: 1200, manufacturer: "Inner Mongolia First Machinery Group" },
@@ -909,13 +911,13 @@ const CAPABILITY_DETAILS = {
   },
   IN: {
     fighters: [
-      { model: "Su-30MKI Flanker-H", count: 262, manufacturer: "HAL / Sukhoi" },
-      { model: "SEPECAT Jaguar IS/IB", count: 120, manufacturer: "BAE Systems / HAL" },
-      { model: "MiG-29 / MiG-29UPG", count: 66, manufacturer: "Mikoyan / HAL" },
-      { model: "Mirage 2000H/TH", count: 51, manufacturer: "Dassault Aviation" },
-      { model: "Tejas Mk.1A LCA", count: 83, manufacturer: "Hindustan Aeronautics Limited" },
-      { model: "Rafale", count: 36, manufacturer: "Dassault Aviation" },
-      { model: "MiG-21 Bison (phasing out)", count: 56, manufacturer: "Mikoyan / HAL" },
+      { model: "Su-30MKI Flanker-H", count: 260, manufacturer: "HAL / Sukhoi" },
+      { model: "SEPECAT Jaguar IS/IB (limited serviceability)", count: 75, manufacturer: "BAE Systems / HAL" },
+      { model: "MiG-29 / MiG-29UPG Baaz", count: 65, manufacturer: "Mikoyan / HAL" },
+      { model: "Mirage 2000H/TH Vajra", count: 49, manufacturer: "Dassault Aviation" },
+      { model: "Tejas Mk.1 LCA (operational)", count: 40, manufacturer: "Hindustan Aeronautics Limited" },
+      { model: "Rafale EH/DH", count: 36, manufacturer: "Dassault Aviation" },
+      { model: "MiG-21 Bison (phasing out)", count: 34, manufacturer: "Mikoyan / HAL" },
     ],
     helicopters: [
       { model: "Dhruv ALH (all variants)", count: 250, manufacturer: "Hindustan Aeronautics Limited" },
@@ -926,9 +928,10 @@ const CAPABILITY_DETAILS = {
       { model: "Sea King Mk.42B/C", count: 20, manufacturer: "Westland / HAL" },
     ],
     drones: [
-      { model: "MQ-9B Sea Guardian / Sky Guardian", count: 31, manufacturer: "General Atomics" },
+      { model: "MQ-9B Sea Guardian MALE (maritime ISR)", count: 31, manufacturer: "General Atomics" },
       { model: "Heron I / Heron TP MALE", count: 50, manufacturer: "IAI (Israel)" },
       { model: "Rustom-2 MALE (TAPAS-BH-201)", count: 6, manufacturer: "DRDO / ADE" },
+      { model: "Nagastra-1 loitering munition (indigenous)", count: 300, manufacturer: "Solar Industries / EEL" },
     ],
     land_vehicles: [
       { model: "T-90S Bhishma MBT", count: 1657, manufacturer: "Heavy Vehicles Factory / Uralvagonzavod" },
@@ -956,11 +959,10 @@ const CAPABILITY_DETAILS = {
   },
   SA: {
     fighters: [
-      { model: "Tornado IDS/ADV", count: 80, manufacturer: "Panavia / BAE Systems" },
-      { model: "F-15SA Strike Eagle", count: 84, manufacturer: "Boeing" },
-      { model: "F-15C/D Eagle", count: 70, manufacturer: "Boeing" },
-      { model: "Typhoon", count: 72, manufacturer: "BAE Systems / Eurofighter" },
-      { model: "F-5 Tiger II (reserve)", count: 50, manufacturer: "Northrop" },
+      { model: "Tornado IDS/ADV (multi-role / strike)", count: 80, manufacturer: "Panavia / BAE Systems" },
+      { model: "F-15SA Advanced Eagle (multi-role)", count: 84, manufacturer: "Boeing" },
+      { model: "F-15C/D Eagle (air superiority)", count: 70, manufacturer: "Boeing" },
+      { model: "Eurofighter Typhoon (air defense)", count: 72, manufacturer: "BAE Systems / Eurofighter" },
     ],
     helicopters: [
       { model: "AH-64D Apache", count: 12, manufacturer: "Boeing" },
@@ -1004,9 +1006,10 @@ const CAPABILITY_DETAILS = {
       { model: "Bell Griffin HT1 (training)", count: 24, manufacturer: "Bell Helicopter", is_trainer: true },
     ],
     drones: [
-      { model: "Protector RG Mk.1 (MQ-9B SkyGuardian)", count: 16, manufacturer: "General Atomics" },
-      { model: "MQ-9A Reaper (ISTAR / strike)", count: 10, manufacturer: "General Atomics" },
-      { model: "Watchkeeper WK450 (tactical ISR)", count: 54, manufacturer: "Thales UK / Elbit Systems" },
+      { model: "Protector RG Mk.1 (MQ-9B SkyGuardian, MALE)", count: 16, manufacturer: "General Atomics" },
+      { model: "MQ-9A Reaper (ISTAR / strike, MALE)", count: 10, manufacturer: "General Atomics" },
+      { model: "Watchkeeper WK450 (tactical ISR, >150 kg)", count: 54, manufacturer: "Thales UK / Elbit Systems" },
+      { model: "Black Hornet PD-100 nano (SUAS infantry ISR)", count: 1600, manufacturer: "Teledyne FLIR" },
     ],
     land_vehicles: [
       { model: "Challenger 2 / 2 LEP MBT", count: 213, manufacturer: "BAE Systems" },
@@ -1081,10 +1084,11 @@ const CAPABILITY_DETAILS = {
     ],
     drones: [
       { model: "MQ-9A Reaper MALE (ISR / strike)", count: 12, manufacturer: "General Atomics" },
-      { model: "Patroller MALE (Army ISR)", count: 5, manufacturer: "Safran Electronics & Defense" },
-      { model: "Spy'Ranger 330 SDT-L (tactical ISR)", count: 24, manufacturer: "Thales" },
+      { model: "Patroller MALE SDT (Army ISR)", count: 5, manufacturer: "Safran Electronics & Defense" },
       { model: "Harfang SIDM MALE (phasing out)", count: 4, manufacturer: "EADS / Cassidian" },
+      { model: "Spy'Ranger 330 SDT-L (tactical ISR systems)", count: 24, manufacturer: "Thales" },
       { model: "nEUROn UCAV (technology demonstrator)", count: 1, manufacturer: "Dassault Aviation" },
+      { model: "Parrot ANAFI Ai / DRAC nano (infantry ISR)", count: 500, manufacturer: "Parrot / AeroVironment" },
     ],
     land_vehicles: [
       { model: "Leclerc MBT", count: 222, manufacturer: "Nexter Systems (KNDS)" },
@@ -1128,9 +1132,10 @@ const CAPABILITY_DETAILS = {
       { model: "UH-1J Iroquois", count: 130, manufacturer: "Bell / Fuji Heavy Industries" },
     ],
     drones: [
-      { model: "RQ-4B Global Hawk", count: 3, manufacturer: "Northrop Grumman" },
-      { model: "MQ-9B Reaper (on order)", count: 3, manufacturer: "General Atomics" },
-      { model: "FFR-4 reconnaissance UAS (naval)", count: 10, manufacturer: "Mitsubishi HI / Fuji" },
+      { model: "RQ-4B Global Hawk (HALE strategic ISR)", count: 3, manufacturer: "Northrop Grumman" },
+      { model: "MQ-9B SeaGuardian MALE (Maritime patrol)", count: 3, manufacturer: "General Atomics" },
+      { model: "FFR-4 Shinonome (naval reconnaissance UAS)", count: 10, manufacturer: "Mitsubishi HI / Fuji" },
+      { model: "Orion-M mini-UAS (ground surveillance)", count: 50, manufacturer: "Mitsubishi Electric / Subaru" },
     ],
     land_vehicles: [
       { model: "Type 74 MBT (reserve)", count: 450, manufacturer: "Mitsubishi Heavy Industries" },
