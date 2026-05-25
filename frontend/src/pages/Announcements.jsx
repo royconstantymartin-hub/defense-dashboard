@@ -41,6 +41,7 @@ const NEWS_CATEGORIES = [
   { value: "POLICY",      label: "Policy" },
   { value: "GEOPOLITICS", label: "Geopolitics" },
   { value: "M&A",         label: "M&A" },
+  { value: "EARNINGS",    label: "Earnings" },
   { value: "INDUSTRY",    label: "Industry" },
 ];
 
@@ -139,6 +140,7 @@ function getCategoryStyle(category) {
     case "TECHNOLOGY":  return "bg-slate-100  text-slate-700   border-slate-200";
     case "CONFLICT":    return "bg-red-50     text-red-700     border-red-200";
     case "GEOPOLITICS": return "bg-sky-50     text-sky-700     border-sky-200";
+    case "EARNINGS":    return "bg-teal-50    text-teal-700    border-teal-200";
     default:            return "bg-slate-100  text-slate-600   border-slate-200";
   }
 }
@@ -979,7 +981,7 @@ export default function Announcements() {
             <div className="flex items-center gap-2 text-xs bg-white border border-slate-200 rounded-lg px-3 py-2">
               <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
               {highCount > 0 && (
-                <span className="text-emerald-700 font-semibold">{highCount} high priority</span>
+                <span className="text-emerald-700 font-semibold">{highCount} high relevance</span>
               )}
               {highCount > 0 && <span className="text-slate-300">·</span>}
               <span className="text-slate-500">
