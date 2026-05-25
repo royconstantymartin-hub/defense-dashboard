@@ -70,29 +70,8 @@ const SORT_OPTIONS = [
 ];
 
 // Canonical segment labels for the filter
-const SPEC_TAG_COLORS = {
-  aerospace:   "bg-sky-50 text-sky-700 border-sky-200",
-  naval:       "bg-blue-50 text-blue-700 border-blue-200",
-  land:        "bg-amber-50 text-amber-700 border-amber-200",
-  missiles:    "bg-rose-50 text-rose-700 border-rose-200",
-  cyber:       "bg-violet-50 text-violet-700 border-violet-200",
-  space:       "bg-indigo-50 text-indigo-700 border-indigo-200",
-  services:    "bg-slate-100 text-slate-600 border-slate-200",
-  logistics:   "bg-orange-50 text-orange-700 border-orange-200",
-  electronics: "bg-teal-50 text-teal-700 border-teal-200",
-};
-function specTagColor(spec = "") {
-  const s = spec.toLowerCase();
-  if (s.includes("aerospace") || s.includes("aircraft") || s.includes("aviation")) return SPEC_TAG_COLORS.aerospace;
-  if (s.includes("naval") || s.includes("ship") || s.includes("submarine") || s.includes("maritime")) return SPEC_TAG_COLORS.naval;
-  if (s.includes("land") || s.includes("armor") || s.includes("vehicle") || s.includes("artillery")) return SPEC_TAG_COLORS.land;
-  if (s.includes("missile") || s.includes("air defense") || s.includes("rocket") || s.includes("ammunition")) return SPEC_TAG_COLORS.missiles;
-  if (s.includes("cyber") || s.includes("ai") || s.includes("electronic") || s.includes("sigint") || s.includes("radar") || s.includes("sensor")) return SPEC_TAG_COLORS.cyber;
-  if (s.includes("space") || s.includes("satellite") || s.includes("geospatial")) return SPEC_TAG_COLORS.space;
-  if (s.includes("logistic") || s.includes("mro")) return SPEC_TAG_COLORS.logistics;
-  if (s.includes("electronic") || s.includes("component")) return SPEC_TAG_COLORS.electronics;
-  return SPEC_TAG_COLORS.services;
-}
+const NEUTRAL_TAG = "bg-slate-50 text-slate-600 border-slate-200";
+function specTagColor(_spec = "") { return NEUTRAL_TAG; }
 
 // Values must match strings that appear in player.specializations arrays
 const SEGMENTS = [
@@ -148,12 +127,7 @@ function relativeTime(isoStr) {
   return `${d}d ago`;
 }
 
-const AVATAR_COLORS = [
-  "bg-purple-700", "bg-blue-700",
-  "bg-emerald-700", "bg-amber-600",
-  "bg-rose-700", "bg-indigo-700",
-  "bg-teal-700", "bg-slate-700",
-];
+const AVATAR_COLORS = ["bg-slate-700"];
 function avatarColor(name = "") {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
@@ -1221,7 +1195,7 @@ export default function MarketData() {
                         </p>
                         {!isPrivate(selectedPlayer.ticker) && (
                           <button
-                            className="text-xs text-blue-600 underline mt-1 cursor-pointer"
+                            className="text-xs text-purple-700 hover:text-purple-900 underline mt-1 cursor-pointer"
                             onClick={() => {
                               setSelectedPlayer(null);
                               setChartPlayer(selectedPlayer);

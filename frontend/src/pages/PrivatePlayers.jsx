@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import {
   Search, Lock, Globe, Building2, ExternalLink,
   DollarSign, TrendingUp, ChevronRight, ChevronLeft, ChevronDown,
-  Plane, Cpu, Anchor, Brain, Satellite, Zap, Wrench, Truck, Shield,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
@@ -43,10 +42,7 @@ function LogoWithFallback({ name, website, size = 40 }) {
         className={`${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0 shadow-sm`}
         style={{ width: size, height: size }}
       >
-        <span
-          className="font-bold text-white tracking-tight"
-          style={{ fontSize: size < 32 ? 9 : size < 40 ? 11 : 13 }}
-        >
+        <span className="font-bold text-white tracking-tight" style={{ fontSize: size < 32 ? 9 : 12 }}>
           {initials(name)}
         </span>
       </div>
@@ -98,14 +94,145 @@ function isPrivatePlayer(company) {
   );
 }
 
+// ── Category SVG icons ────────────────────────────────────────────────────────
+// Each icon is a miniature silhouette of a real defense product.
+
+function CategoryIcon({ id, className }) {
+  const icons = {
+    // Quadcopter drone — top-down view
+    autonomous: (
+      <svg viewBox="0 0 40 40" className={className}>
+        <line x1="13" y1="13" x2="6" y2="6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <line x1="27" y1="13" x2="34" y2="6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <line x1="13" y1="27" x2="6" y2="34" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <line x1="27" y1="27" x2="34" y2="34" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <rect x="12" y="12" width="16" height="16" rx="3" fill="currentColor" />
+        <circle cx="5" cy="5" r="4.5" fill="currentColor" />
+        <circle cx="35" cy="5" r="4.5" fill="currentColor" />
+        <circle cx="5" cy="35" r="4.5" fill="currentColor" />
+        <circle cx="35" cy="35" r="4.5" fill="currentColor" />
+      </svg>
+    ),
+    // Ballistic missile — upright side profile
+    missiles: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        <polygon points="20,2 15,13 25,13" />
+        <rect x="15" y="13" width="10" height="18" rx="1.5" />
+        <polygon points="15,27 8,36 15,32" />
+        <polygon points="25,27 32,36 25,32" />
+        <ellipse cx="20" cy="33" rx="5" ry="2.5" opacity="0.45" />
+      </svg>
+    ),
+    // Fighter jet — top-down silhouette
+    aerospace: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* fuselage */}
+        <polygon points="20,2 17.5,25 20,30 22.5,25" />
+        {/* wings */}
+        <polygon points="17.5,19 2,31 17.5,25" />
+        <polygon points="22.5,19 38,31 22.5,25" />
+        {/* tail fins */}
+        <polygon points="17.5,26 13,37 19,32" />
+        <polygon points="22.5,26 27,37 21,32" />
+      </svg>
+    ),
+    // Battle tank — side profile
+    land: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* tracks */}
+        <rect x="4" y="25" width="32" height="10" rx="5" />
+        {/* hull */}
+        <rect x="7" y="18" width="24" height="9" rx="2" />
+        {/* turret */}
+        <rect x="11" y="11" width="14" height="9" rx="2" />
+        {/* barrel */}
+        <rect x="23" y="13" width="13" height="3.5" rx="1.75" />
+      </svg>
+    ),
+    // Submarine — side profile
+    naval: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* hull */}
+        <ellipse cx="20" cy="26" rx="17" ry="8" />
+        {/* conning tower */}
+        <rect x="13" y="16" width="11" height="11" rx="2" />
+        {/* periscope stem */}
+        <rect x="18.5" y="8" width="3" height="10" rx="1.5" />
+        {/* periscope head */}
+        <rect x="14" y="7" width="10" height="3.5" rx="1.75" />
+      </svg>
+    ),
+    // Reconnaissance satellite — classic box + solar arrays
+    space: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* solar panel left */}
+        <rect x="1" y="17" width="11" height="8" rx="1.5" />
+        {/* arm left */}
+        <rect x="12" y="19.5" width="3" height="3" />
+        {/* body */}
+        <rect x="13" y="14" width="14" height="14" rx="2" />
+        {/* arm right */}
+        <rect x="27" y="19.5" width="3" height="3" />
+        {/* solar panel right */}
+        <rect x="30" y="17" width="11" height="8" rx="1.5" />
+        {/* antenna */}
+        <rect x="18.5" y="5" width="3" height="9" rx="1.5" />
+        <circle cx="20" cy="4" r="3" />
+      </svg>
+    ),
+    // Radar screen — circular scope with sweep
+    intel: (
+      <svg viewBox="0 0 40 40" className={className} fill="none" stroke="currentColor">
+        <circle cx="20" cy="20" r="16" strokeWidth="2.5" />
+        <circle cx="20" cy="20" r="10" strokeWidth="1.5" opacity="0.5" />
+        <circle cx="20" cy="20" r="4" strokeWidth="1.5" opacity="0.5" />
+        <line x1="4" y1="20" x2="36" y2="20" strokeWidth="1.2" opacity="0.35" />
+        <line x1="20" y1="4" x2="20" y2="36" strokeWidth="1.2" opacity="0.35" />
+        {/* sweep arm */}
+        <line x1="20" y1="20" x2="34" y2="11" strokeWidth="2.5" strokeLinecap="round" />
+        {/* blip */}
+        <circle cx="31" cy="13" r="2.5" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+    // Atom — nucleus + 3 elliptical orbits
+    nuclear: (
+      <svg viewBox="0 0 40 40" className={className} fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="20" cy="20" r="4" fill="currentColor" stroke="none" />
+        <ellipse cx="20" cy="20" rx="17" ry="6" />
+        <ellipse cx="20" cy="20" rx="17" ry="6" transform="rotate(60 20 20)" />
+        <ellipse cx="20" cy="20" rx="17" ry="6" transform="rotate(120 20 20)" />
+      </svg>
+    ),
+    // Factory — building with chimneys
+    industrial: (
+      <svg viewBox="0 0 40 40" fill="currentColor" className={className}>
+        {/* main building */}
+        <rect x="4" y="20" width="32" height="16" rx="1.5" />
+        {/* chimneys */}
+        <rect x="7" y="11" width="5" height="11" rx="1" />
+        <rect x="15" y="14" width="5" height="8" rx="1" />
+        <rect x="28" y="9" width="5" height="13" rx="1" />
+        {/* smoke puffs */}
+        <circle cx="9.5" cy="9.5" r="3.5" />
+        <circle cx="17.5" cy="12.5" r="2.5" />
+        <circle cx="30.5" cy="7.5" r="3" />
+        {/* windows */}
+        <rect x="9" y="24" width="5" height="5" rx="1" fill="white" opacity="0.35" />
+        <rect x="18" y="24" width="5" height="5" rx="1" fill="white" opacity="0.35" />
+        <rect x="27" y="24" width="5" height="5" rx="1" fill="white" opacity="0.35" />
+      </svg>
+    ),
+  };
+  return icons[id] || null;
+}
+
 // ── Macro category taxonomy ───────────────────────────────────────────────────
 
 const MACRO_CATEGORIES = [
   {
     id: "autonomous",
     name: "Autonomous Systems & UAV",
-    description: "UAVs, loitering munitions, counter-drone",
-    icon: Cpu,
+    description: "Unmanned platforms, loitering munitions, counter-drone",
     color: "purple",
     keywords: ["UAV", "Small UAV", "Loitering Munitions", "Autonomous", "Counter-UAS", "UAS", "Drones"],
   },
@@ -113,7 +240,6 @@ const MACRO_CATEGORIES = [
     id: "missiles",
     name: "Missiles & Air Defense",
     description: "Strike systems, interceptors, rockets, ammunition",
-    icon: Shield,
     color: "rose",
     keywords: ["Missiles", "Air Defense", "Iron Dome", "Trophy", "Rockets", "Ammunition", "Energetics", "S-400", "Remote Weapons"],
   },
@@ -129,7 +255,6 @@ const MACRO_CATEGORIES = [
     id: "aerospace",
     name: "Aerospace & Aviation",
     description: "Fixed-wing, rotorcraft, engines, launch systems",
-    icon: Plane,
     color: "indigo",
     keywords: ["Aircraft", "Helicopters", "Aerospace", "Rotorcraft", "Rafale", "MiG", "Sukhoi", "Business Jets", "Engines", "Propulsion", "Launch"],
   },
@@ -137,7 +262,6 @@ const MACRO_CATEGORIES = [
     id: "land",
     name: "Land Systems",
     description: "Armored vehicles, artillery, ground platforms",
-    icon: Truck,
     color: "amber",
     keywords: ["Land Systems", "Tanks", "Artillery", "Military Vehicles", "VAB", "Griffon", "K9", "Armored"],
   },
@@ -145,7 +269,6 @@ const MACRO_CATEGORIES = [
     id: "naval",
     name: "Naval & Maritime",
     description: "Ships, submarines, maritime systems",
-    icon: Anchor,
     color: "blue",
     keywords: ["Naval", "Submarines", "Surface Ships", "Shipbuilding", "Maritime", "Frigates", "Sonar"],
   },
@@ -153,44 +276,97 @@ const MACRO_CATEGORIES = [
     id: "space",
     name: "Space & ISR",
     description: "Satellites, imagery, geospatial intelligence",
-    icon: Satellite,
     color: "sky",
     keywords: ["Space", "Satellites", "Imagery", "Geospatial"],
   },
   {
     id: "intel",
     name: "Intelligence, Cyber & EW",
-    description: "C2, SIGINT, cyber & electronic warfare",
-    icon: Brain,
+    description: "C2, SIGINT, electronic warfare, AI & analytics",
     color: "emerald",
     keywords: ["Cyber", "AI", "Intelligence", "Analytics", "Software", "Electronic Warfare", "SIGINT", "ISR", "C4I", "Communications", "Radar", "Sensors", "Optronics"],
+  },
+  {
+    id: "nuclear",
+    name: "Nuclear & Advanced Tech",
+    description: "Nuclear, directed energy, advanced propulsion",
+    color: "orange",
+    keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"],
   },
   {
     id: "industrial",
     name: "Industrial & Tech Base",
     description: "Components, electronics, R&D, simulation, IT",
-    icon: Wrench,
     color: "slate",
     keywords: ["Components", "Electronics", "Defense Electronics", "Transmissions", "R&D", "Testing", "Simulation", "Integration", "Engineering", "MRO", "IT", "Consulting", "Health", "Law Enforcement"],
   },
 ];
 
-// Single neutral style shared by all categories — selected state uses purple accent only.
-const NEUTRAL_CAT = {
-  icon: "text-slate-500",
-  iconBg: "bg-slate-100 border-slate-200",
-  badge: "bg-slate-100 text-slate-500 border border-slate-200",
-  accentBar: "bg-slate-200",
-  activeBg: "bg-purple-50/40",
-  activeBorder: "border-purple-300",
-  hoverBorder: "hover:border-slate-300",
-  headerBg: "bg-slate-50 border-slate-100",
-  rowAccent: "bg-slate-300",
+const CAT_COLORS = {
+  purple: {
+    border: "border-purple-200", hoverBorder: "hover:border-purple-300",
+    activeBorder: "border-purple-500", activeBg: "bg-purple-50/60",
+    iconBg: "bg-purple-50 border-purple-100", icon: "text-purple-700",
+    badge: "bg-purple-100 text-purple-700",
+    headerBg: "bg-purple-50/80", text: "text-purple-700",
+  },
+  rose: {
+    border: "border-rose-200", hoverBorder: "hover:border-rose-300",
+    activeBorder: "border-rose-500", activeBg: "bg-rose-50/60",
+    iconBg: "bg-rose-50 border-rose-100", icon: "text-rose-600",
+    badge: "bg-rose-100 text-rose-700",
+    headerBg: "bg-rose-50/80", text: "text-rose-700",
+  },
+  indigo: {
+    border: "border-indigo-200", hoverBorder: "hover:border-indigo-300",
+    activeBorder: "border-indigo-500", activeBg: "bg-indigo-50/60",
+    iconBg: "bg-indigo-50 border-indigo-100", icon: "text-indigo-600",
+    badge: "bg-indigo-100 text-indigo-700",
+    headerBg: "bg-indigo-50/80", text: "text-indigo-700",
+  },
+  amber: {
+    border: "border-amber-200", hoverBorder: "hover:border-amber-300",
+    activeBorder: "border-amber-500", activeBg: "bg-amber-50/60",
+    iconBg: "bg-amber-50 border-amber-100", icon: "text-amber-600",
+    badge: "bg-amber-100 text-amber-700",
+    headerBg: "bg-amber-50/80", text: "text-amber-700",
+  },
+  blue: {
+    border: "border-blue-200", hoverBorder: "hover:border-blue-300",
+    activeBorder: "border-blue-500", activeBg: "bg-blue-50/60",
+    iconBg: "bg-blue-50 border-blue-100", icon: "text-blue-600",
+    badge: "bg-blue-100 text-blue-700",
+    headerBg: "bg-blue-50/80", text: "text-blue-700",
+  },
+  sky: {
+    border: "border-sky-200", hoverBorder: "hover:border-sky-300",
+    activeBorder: "border-sky-500", activeBg: "bg-sky-50/60",
+    iconBg: "bg-sky-50 border-sky-100", icon: "text-sky-600",
+    badge: "bg-sky-100 text-sky-700",
+    headerBg: "bg-sky-50/80", text: "text-sky-700",
+  },
+  emerald: {
+    border: "border-emerald-200", hoverBorder: "hover:border-emerald-300",
+    activeBorder: "border-emerald-500", activeBg: "bg-emerald-50/60",
+    iconBg: "bg-emerald-50 border-emerald-100", icon: "text-emerald-600",
+    badge: "bg-emerald-100 text-emerald-700",
+    headerBg: "bg-emerald-50/80", text: "text-emerald-700",
+  },
+  orange: {
+    border: "border-orange-200", hoverBorder: "hover:border-orange-300",
+    activeBorder: "border-orange-500", activeBg: "bg-orange-50/60",
+    iconBg: "bg-orange-50 border-orange-100", icon: "text-orange-600",
+    badge: "bg-orange-100 text-orange-700",
+    headerBg: "bg-orange-50/80", text: "text-orange-700",
+  },
+  slate: {
+    border: "border-slate-200", hoverBorder: "hover:border-slate-300",
+    activeBorder: "border-slate-400", activeBg: "bg-slate-50",
+    iconBg: "bg-slate-50 border-slate-100", icon: "text-slate-500",
+    badge: "bg-slate-100 text-slate-600",
+    headerBg: "bg-slate-50", text: "text-slate-600",
+  },
 };
-const CAT_COLORS = Object.fromEntries(
-  ["purple","rose","orange","indigo","amber","blue","sky","emerald","slate"].map((k) => [k, NEUTRAL_CAT])
-);
-
 function assignCategory(company) {
   const specs = new Set((company.specializations || []).map((s) => s.toLowerCase()));
   for (const cat of MACRO_CATEGORIES) {
@@ -203,15 +379,14 @@ function assignCategory(company) {
 
 function CategoryTile({ category, companies, isSelected, onSelect }) {
   const clr = CAT_COLORS[category.color];
-  const Icon = category.icon;
-  const topLogos = companies.slice(0, 6);
   const isEmpty = companies.length === 0;
+  const topLogos = companies.slice(0, 8);
 
   return (
     <button
       onClick={isEmpty ? undefined : onSelect}
       disabled={isEmpty}
-      className={`relative w-full text-left p-4 rounded-xl border transition-all duration-150 bg-white overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] ${
+      className={`w-full text-left p-4 rounded-xl border bg-white transition-all duration-150 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] ${
         isEmpty
           ? "opacity-40 cursor-default border-slate-100"
           : isSelected
@@ -219,42 +394,39 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
           : `border-slate-200 ${clr.hoverBorder} hover:shadow-md`
       }`}
     >
-      {/* Left accent bar — purple when selected, light slate otherwise */}
-      <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${isSelected ? "bg-purple-600" : clr.accentBar} ${isEmpty ? "opacity-30" : ""}`} />
-
-      {/* Header row */}
-      <div className="flex items-start justify-between mb-3 pl-1">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center border flex-shrink-0 ${clr.iconBg}`}>
-            <Icon className={`w-4 h-4 ${clr.icon}`} />
-          </div>
-          <div className="min-w-0">
-            <h3 className="font-semibold text-[13px] text-slate-800 leading-tight">{category.name}</h3>
-            <p className="text-[11px] text-slate-400 leading-tight mt-0.5 line-clamp-1">{category.description}</p>
-          </div>
+      {/* Header: icon + name + count + chevron */}
+      <div className="flex items-center gap-3 mb-3">
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border flex-shrink-0 p-2 ${clr.iconBg}`}>
+          <CategoryIcon id={category.id} className={`w-full h-full ${clr.icon}`} />
         </div>
-        <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-          <span className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full ${isSelected ? "bg-purple-100 text-purple-700 border border-purple-200" : clr.badge}`}>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-[13px] text-slate-800 leading-snug">{category.name}</h3>
+          <p className="text-[11px] text-slate-400 leading-tight mt-0.5 truncate">{category.description}</p>
+        </div>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ${clr.badge}`}>
             {companies.length}
           </span>
           {!isEmpty && (
-            <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isSelected ? "rotate-180" : ""}`} />
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isSelected ? "rotate-180" : ""}`}
+            />
           )}
         </div>
       </div>
 
       {/* Logo strip */}
       {topLogos.length > 0 && (
-        <div className="flex items-center gap-1.5 mt-2 pl-1">
+        <div className="flex flex-wrap gap-1.5">
           {topLogos.map((c) => (
             <LogoWithFallback key={c.id || c.name} name={c.name} website={c.website} size={30} />
           ))}
-          {companies.length > 6 && (
+          {companies.length > 8 && (
             <div
               className={`rounded-lg flex items-center justify-center flex-shrink-0 border ${clr.iconBg}`}
               style={{ width: 30, height: 30 }}
             >
-              <span className={`text-[9px] font-bold ${clr.icon}`}>+{companies.length - 6}</span>
+              <span className="text-[9px] text-slate-500 font-medium">+{companies.length - 8}</span>
             </div>
           )}
         </div>
@@ -282,11 +454,8 @@ function CompactPlayerRow({ company, onClick, accentColor }) {
       className="relative flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer group"
       onClick={onClick}
     >
-      {/* Hover accent bar */}
-      <div className={`absolute left-0 top-2 bottom-2 w-[3px] rounded-r ${accentColor || "bg-purple-600"} opacity-0 group-hover:opacity-100 transition-opacity`} />
-
-      <LogoWithFallback name={company.name} website={company.website} size={36} />
-
+      <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <LogoWithFallback name={company.name} website={company.website} size={32} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="font-semibold text-[13px] text-slate-800 group-hover:text-slate-900 transition-colors truncate">
@@ -321,14 +490,7 @@ function CompactPlayerRow({ company, onClick, accentColor }) {
           </span>
         </div>
       </div>
-
-      {stageIsNamed && (
-        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 flex-shrink-0 hidden sm:block">
-          {stage}
-        </span>
-      )}
-
-      <div className="w-24 text-right flex-shrink-0">
+      <div className="w-28 text-right flex-shrink-0">
         {cap ? (
           <div>
             <span className="text-xs font-mono font-semibold text-slate-700">{cap}</span>
@@ -338,8 +500,7 @@ function CompactPlayerRow({ company, onClick, accentColor }) {
           <span className="text-xs text-slate-200">—</span>
         )}
       </div>
-
-      <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-slate-500 transition-colors flex-shrink-0" />
+      <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-purple-400 transition-colors flex-shrink-0" />
     </div>
   );
 }
@@ -348,17 +509,15 @@ function CompactPlayerRow({ company, onClick, accentColor }) {
 
 function ExpandedList({ category, companies, onCompanyClick }) {
   const clr = CAT_COLORS[category.color];
-  const Icon = category.icon;
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
-      {/* Colored header */}
-      <div className={`flex items-center gap-3 px-4 py-3 border-b ${clr.headerBg}`}>
-        <div className={`w-7 h-7 rounded-lg flex items-center justify-center border ${clr.iconBg}`}>
-          <Icon className={`w-3.5 h-3.5 ${clr.icon}`} />
+      <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${clr.headerBg}`} style={{ borderBottomColor: "inherit" }}>
+        <div className={`w-7 h-7 rounded-lg flex items-center justify-center border p-1.5 flex-shrink-0 ${clr.iconBg}`}>
+          <CategoryIcon id={category.id} className={`w-full h-full ${clr.icon}`} />
         </div>
-        <span className="text-sm font-semibold text-slate-700">{category.name}</span>
-        <span className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full ml-auto ${clr.badge}`}>
-          {companies.length} companies
+        <span className={`text-sm font-semibold ${clr.text}`}>{category.name}</span>
+        <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ml-auto ${clr.badge}`}>
+          {companies.length}
         </span>
       </div>
       {/* Column headers */}
@@ -373,12 +532,7 @@ function ExpandedList({ category, companies, onCompanyClick }) {
       </div>
       <div className="divide-y divide-slate-50">
         {companies.map((c) => (
-          <CompactPlayerRow
-            key={c.id || c.name}
-            company={c}
-            accentColor={clr.accentBar}
-            onClick={() => onCompanyClick(c.name)}
-          />
+          <CompactPlayerRow key={c.id || c.name} company={c} onClick={() => onCompanyClick(c.name)} />
         ))}
       </div>
     </div>
@@ -528,11 +682,11 @@ export default function PrivatePlayers() {
       {!loading && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Companies",       value: players.length,                    icon: Building2,  iconCls: "text-purple-700", bgCls: "bg-purple-50" },
-            { label: countryCounts.length === 1 ? "Country" : "Countries", value: countryCounts.length, icon: Globe, iconCls: "text-slate-500", bgCls: "bg-slate-100" },
-            { label: "Agg. Valuation*", value: formatCap(totalValuation) || "—",  icon: TrendingUp, iconCls: "text-slate-500", bgCls: "bg-slate-100" },
-            { label: "VC / PE Backed",  value: totalFunded,                        icon: DollarSign, iconCls: "text-slate-500", bgCls: "bg-slate-100" },
-          ].map(({ label, value, icon: Icon, iconCls, bgCls }) => (
+            { label: "Companies",       value: players.length,                    icon: Building2,  color: "text-purple-700" },
+            { label: "Countries",       value: countryCounts.length,              icon: Globe,      color: "text-blue-600"   },
+            { label: "Total Valuation", value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-emerald-600" },
+            { label: "With Funding",    value: totalFunded,                       icon: DollarSign, color: "text-amber-600"  },
+          ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl ${bgCls} flex items-center justify-center flex-shrink-0`}>
@@ -583,9 +737,9 @@ export default function PrivatePlayers() {
       ) : (
         <div className="flex gap-6 items-start">
 
-          {/* ── Country sidebar ── */}
-          <div className="w-56 flex-shrink-0 sticky top-6">
-            <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">
+          {/* ── Country sidebar (desktop only) ── */}
+          <div className="hidden md:block w-44 flex-shrink-0 sticky top-6">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">
               Countries
             </p>
             <div className="flex flex-col gap-0.5">
@@ -605,9 +759,6 @@ export default function PrivatePlayers() {
                   {players.length}
                 </span>
               </button>
-
-              <div className="my-1 border-t border-slate-100" />
-
               {countryCounts.map(([country, count]) => {
                 const iso = COUNTRY_ISO[country];
                 const active = filterCountry === country;
@@ -657,6 +808,46 @@ export default function PrivatePlayers() {
 
           {/* ── Main content ── */}
           <div className="flex-1 min-w-0">
+
+            {/* Mobile country chips */}
+            <div className="flex md:hidden gap-2 overflow-x-auto pb-2 mb-4 -mx-1 px-1">
+              <button
+                onClick={() => setFilterCountry("all")}
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                  filterCountry === "all"
+                    ? "bg-purple-700 text-white border-purple-700"
+                    : "bg-white text-slate-600 border-slate-200"
+                }`}
+              >
+                All ({players.length})
+              </button>
+              {countryCounts.map(([country, count]) => {
+                const iso = COUNTRY_ISO[country];
+                const active = filterCountry === country;
+                return (
+                  <button
+                    key={country}
+                    onClick={() => setFilterCountry(country)}
+                    className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                      active
+                        ? "bg-purple-700 text-white border-purple-700"
+                        : "bg-white text-slate-600 border-slate-200"
+                    }`}
+                  >
+                    {iso && (
+                      <img
+                        src={`https://flagcdn.com/w20/${iso}.png`}
+                        alt={country}
+                        className="w-3.5 h-auto rounded-sm"
+                        onError={(e) => { e.target.style.display = "none"; }}
+                      />
+                    )}
+                    {country} ({count})
+                  </button>
+                );
+              })}
+            </div>
+
             {isSearchActive ? (
               searchResults.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 gap-2">
@@ -704,8 +895,8 @@ export default function PrivatePlayers() {
               )
             ) : (
               <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {MACRO_CATEGORIES.filter((cat) => (categorized[cat.id] || []).length > 0).map((cat) => (
+                <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
+                  {MACRO_CATEGORIES.map((cat) => (
                     <CategoryTile
                       key={cat.id}
                       category={cat}

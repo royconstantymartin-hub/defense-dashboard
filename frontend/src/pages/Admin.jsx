@@ -449,7 +449,7 @@ function BreakingIntelPanel({ slots, onUnpin, actionLoading }) {
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-slate-400 text-xs text-center gap-1 py-2">
                   <Pin className="w-4 h-4 opacity-30" />
-                  <span>Slot {i + 1} — vide</span>
+                  <span>Slot {i + 1} — empty</span>
                 </div>
               )}
             </div>
@@ -512,7 +512,7 @@ function NewsFeedAdmin({ authHeaders }) {
         setArticles((prev) =>
           prev.map((a) => a.url !== url ? a : { ...a, breakingIntel: true })
         );
-        toast.success("Article épinglé en Breaking Intel 🔥");
+        toast.success("Article pinned to Breaking Intel 🔥");
       } else if (action === "unpin") {
         setBreakingSlots((prev) => prev.filter((a) => a.url !== url));
         setArticles((prev) =>
@@ -577,7 +577,7 @@ function NewsFeedAdmin({ authHeaders }) {
           <div>
             <h3 className="text-slate-900 font-semibold">News Feed Moderation</h3>
             <p className="text-slate-500 text-sm">
-              Épingler des articles en Breaking Intel, recatégoriser ou retirer les hors-sujet.
+              Pin articles to Breaking Intel, re-categorize or remove off-topic content.
             </p>
           </div>
         </div>
@@ -709,7 +709,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           <button
             onClick={() => onModerate(article.url, "pin")}
             disabled={slotsFull || !!actionLoading}
-            title={slotsFull ? "3/3 slots déjà utilisés — retirez un article d'abord" : "Épingler en Breaking Intel"}
+            title={slotsFull ? "3/3 slots already used — remove an article first" : "Pin to Breaking Intel"}
             className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
               slotsFull
                 ? "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed"
@@ -769,7 +769,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           <button
             onClick={() => setCatOpen((o) => !o)}
             disabled={!!actionLoading}
-            title="Changer la catégorie"
+            title="Change category"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition-all disabled:opacity-40"
           >
             <Tag className="w-3 h-3" />
@@ -1051,7 +1051,7 @@ function MAAdmin({ authHeaders }) {
     try {
       const res = await axios.post(`${API}/ma-activities/seed-pilot`, {}, { headers: authHeaders });
       setPilotResult({ ok: true, data: res.data });
-      toast.success(`Pilot chargé — ${res.data.deals} deals`);
+      toast.success(`Pilot loaded — ${res.data.deals} deals`);
       fetchItems();
     } catch (err) {
       const msg = err.response?.data?.detail || err.message;
@@ -1078,7 +1078,7 @@ function MAAdmin({ authHeaders }) {
         announced_date:   form.announced_date || null,
       };
       await axios.post(`${API}/ma-activities`, payload, { headers: authHeaders });
-      toast.success("Deal créé !");
+      toast.success("Deal created!");
       setForm(EMPTY_FORM);
       fetchItems();
     } catch (err) {
@@ -1088,7 +1088,7 @@ function MAAdmin({ authHeaders }) {
 
   const handleDelete = async (id) => {
     await axios.delete(`${API}/ma-activities/${id}`, { headers: authHeaders });
-    toast.success("Supprimé");
+    toast.success("Deleted");
     fetchItems();
   };
 
@@ -1102,11 +1102,11 @@ function MAAdmin({ authHeaders }) {
         <CardContent className="pt-4 pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1">
-              <p className="text-slate-900 font-semibold text-sm">M&A Pilot — 9 deals curatés</p>
-              <p className="text-slate-500 text-xs mt-0.5">Réinitialise la collection avec 9 deals vérifiés.</p>
+              <p className="text-slate-900 font-semibold text-sm">M&A Pilot — 9 curated deals</p>
+              <p className="text-slate-500 text-xs mt-0.5">Resets the collection with 9 verified deals.</p>
               {pilotResult && (
                 <p className={`text-xs mt-1 font-medium ${pilotResult.ok ? "text-emerald-600" : "text-rose-600"}`}>
-                  {pilotResult.ok ? `✓ ${pilotResult.data.deals} deals chargés` : pilotResult.msg}
+                  {pilotResult.ok ? `✓ ${pilotResult.data.deals} deals loaded` : pilotResult.msg}
                 </p>
               )}
             </div>
@@ -1122,13 +1122,13 @@ function MAAdmin({ authHeaders }) {
       <Card className="bg-white border-slate-300">
         <CardHeader className="border-b border-slate-100 pb-3">
           <CardTitle className="text-slate-900 flex items-center gap-2 text-base">
-            <Sparkles className="w-4 h-4 text-slate-600" /> Extraction IA — URL ou capture d'écran
+            <Sparkles className="w-4 h-4 text-slate-600" /> AI Extraction — URL or screenshot
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
           {/* Mode toggle */}
           <div className="flex gap-2">
-            {[{ k: "url", icon: Link2, label: "URL article" }, { k: "image", icon: ImageIcon, label: "Capture d'écran" }].map(({ k, icon: Icon, label }) => (
+            {[{ k: "url", icon: Link2, label: "Article URL" }, { k: "image", icon: ImageIcon, label: "Screenshot" }].map(({ k, icon: Icon, label }) => (
               <button key={k} onClick={() => { setExtractMode(k); setExtractError(null); setExtractPreview(null); }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${extractMode === k ? "bg-slate-100 border-slate-400 text-slate-900" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"}`}>
                 <Icon className="w-3.5 h-3.5" />{label}
@@ -1147,7 +1147,7 @@ function MAAdmin({ authHeaders }) {
               <Button onClick={handleExtract} disabled={extracting || !extractUrl.trim()}
                 className="bg-slate-900 hover:bg-slate-800 shrink-0">
                 {extracting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                {extracting ? "Extraction…" : "Extraire"}
+                {extracting ? "Extracting…" : "Extract"}
               </Button>
             </div>
           ) : (
@@ -1159,12 +1159,12 @@ function MAAdmin({ authHeaders }) {
                 {pastedImage ? (
                   <div className="space-y-2">
                     <img src={pastedImage.preview} alt="preview" className="max-h-40 mx-auto rounded-lg object-contain" />
-                    <p className="text-xs text-emerald-600 font-medium">Image prête</p>
+                    <p className="text-xs text-emerald-600 font-medium">Image ready</p>
                   </div>
                 ) : (
                   <div className="space-y-1">
                     <ImageIcon className="w-8 h-8 text-slate-300 mx-auto" />
-                    <p className="text-sm text-slate-500">Collez une capture d'écran ici <span className="font-mono text-xs">(Ctrl+V)</span></p>
+                    <p className="text-sm text-slate-500">Paste a screenshot here <span className="font-mono text-xs">(Ctrl+V)</span></p>
                     <p className="text-xs text-slate-400">ou</p>
                   </div>
                 )}
@@ -1173,13 +1173,13 @@ function MAAdmin({ authHeaders }) {
                 <label className="flex-1">
                   <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                   <div className="flex items-center justify-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 cursor-pointer transition-colors">
-                    <ImageIcon className="w-4 h-4" /> Choisir un fichier
+                    <ImageIcon className="w-4 h-4" /> Choose a file
                   </div>
                 </label>
                 <Button onClick={handleExtract} disabled={extracting || !pastedImage}
                   className="bg-slate-900 hover:bg-slate-800 shrink-0">
                   {extracting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                  {extracting ? "Extraction…" : "Extraire"}
+                  {extracting ? "Extracting…" : "Extract"}
                 </Button>
               </div>
             </div>
@@ -1194,16 +1194,16 @@ function MAAdmin({ authHeaders }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Extracted result — review before applying</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 {[
-                  ["Acquéreur", extractPreview.acquirer],
-                  ["Cible", extractPreview.target],
-                  ["Valeur", extractPreview.deal_value != null ? `$${extractPreview.deal_value}M` : "—"],
-                  ["Statut", extractPreview.status],
+                  ["Acquirer", extractPreview.acquirer],
+                  ["Target", extractPreview.target],
+                  ["Value", extractPreview.deal_value != null ? `$${extractPreview.deal_value}M` : "—"],
+                  ["Status", extractPreview.status],
                   ["Type", extractPreview.deal_type],
                   ["Round", extractPreview.round_type || "—"],
                   ["Stake", extractPreview.stake_percentage ? `${extractPreview.stake_percentage}%` : "—"],
                   ["Date", extractPreview.announced_date],
-                  ["Pays acq.", extractPreview.acquirer_country || "—"],
-                  ["Pays cible", extractPreview.target_country || "—"],
+                  ["Acq. country", extractPreview.acquirer_country || "—"],
+                  ["Target country", extractPreview.target_country || "—"],
                 ].map(([label, val]) => (
                   <div key={label} className="flex gap-1">
                     <span className="text-slate-400 shrink-0 w-20">{label}:</span>
@@ -1215,7 +1215,7 @@ function MAAdmin({ authHeaders }) {
                 <p className="text-xs text-slate-600 italic border-t border-slate-200 pt-2">{extractPreview.description}</p>
               )}
               <Button onClick={applyExtracted} className="w-full bg-slate-900 hover:bg-slate-800 text-sm">
-                Charger dans le formulaire
+                Load into form
               </Button>
             </div>
           )}
@@ -1235,12 +1235,12 @@ function MAAdmin({ authHeaders }) {
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Acquéreur / Investisseur</Label>
+                  <Label className="text-slate-600 text-xs">Acquirer / Investor</Label>
                   <Input value={form.acquirer} onChange={e => f("acquirer", e.target.value)}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" required />
                 </div>
                 <div>
-                  <Label className="text-slate-600 text-xs">Cible / Startup</Label>
+                  <Label className="text-slate-600 text-xs">Target / Startup</Label>
                   <Input value={form.target} onChange={e => f("target", e.target.value)}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" required />
                 </div>
@@ -1248,7 +1248,7 @@ function MAAdmin({ authHeaders }) {
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Valeur (M$)</Label>
+                  <Label className="text-slate-600 text-xs">Value ($M)</Label>
                   <Input type="number" step="any" value={form.deal_value} onChange={e => f("deal_value", e.target.value)}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
                 </div>
@@ -1258,7 +1258,7 @@ function MAAdmin({ authHeaders }) {
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
                 </div>
                 <div>
-                  <Label className="text-slate-600 text-xs">Date annonce</Label>
+                  <Label className="text-slate-600 text-xs">Announced Date</Label>
                   <Input type="date" value={form.announced_date} onChange={e => f("announced_date", e.target.value)}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
                 </div>
@@ -1266,7 +1266,7 @@ function MAAdmin({ authHeaders }) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Statut</Label>
+                  <Label className="text-slate-600 text-xs">Status</Label>
                   <Select value={form.status} onValueChange={v => f("status", v)}>
                     <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-8 text-sm">
                       <SelectValue />
@@ -1279,7 +1279,7 @@ function MAAdmin({ authHeaders }) {
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-slate-600 text-xs">Type de deal</Label>
+                  <Label className="text-slate-600 text-xs">Deal Type</Label>
                   <Select value={form.deal_type} onValueChange={v => f("deal_type", v)}>
                     <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-8 text-sm">
                       <SelectValue />
@@ -1295,7 +1295,7 @@ function MAAdmin({ authHeaders }) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Round (si applicable)</Label>
+                  <Label className="text-slate-600 text-xs">Round (if applicable)</Label>
                   <Select value={form.round_type || "none"} onValueChange={v => f("round_type", v === "none" ? "" : v)}>
                     <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-8 text-sm">
                       <SelectValue placeholder="—" />
@@ -1313,19 +1313,19 @@ function MAAdmin({ authHeaders }) {
                     <input type="checkbox" checked={form.is_disclosed}
                       onChange={e => f("is_disclosed", e.target.checked)}
                       className="accent-slate-600" />
-                    <span className="text-xs text-slate-600">Valeur divulguée</span>
+                    <span className="text-xs text-slate-600">Disclosed value</span>
                   </label>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Pays acquéreur (ISO-2)</Label>
+                  <Label className="text-slate-600 text-xs">Acquirer country (ISO-2)</Label>
                   <Input placeholder="FR, US, DE…" value={form.acquirer_country} onChange={e => f("acquirer_country", e.target.value.toUpperCase().slice(0,2))}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm font-mono" maxLength={2} />
                 </div>
                 <div>
-                  <Label className="text-slate-600 text-xs">Pays cible (ISO-2)</Label>
+                  <Label className="text-slate-600 text-xs">Target country (ISO-2)</Label>
                   <Input placeholder="FR, US, DE…" value={form.target_country} onChange={e => f("target_country", e.target.value.toUpperCase().slice(0,2))}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm font-mono" maxLength={2} />
                 </div>
@@ -1344,7 +1344,7 @@ function MAAdmin({ authHeaders }) {
               </div>
 
               <div>
-                <Label className="text-slate-600 text-xs">Rationale stratégique (optionnel)</Label>
+                <Label className="text-slate-600 text-xs">Strategic rationale (optional)</Label>
                 <Textarea value={form.rationale} onChange={e => f("rationale", e.target.value)}
                   className="bg-white border-slate-200 text-slate-900 text-sm" rows={2} />
               </div>
@@ -1359,7 +1359,7 @@ function MAAdmin({ authHeaders }) {
         {/* ── Recent deals list ── */}
         <Card className="bg-white border-slate-200">
           <CardHeader className="border-b border-slate-200">
-            <CardTitle className="text-slate-900 text-base">Deals récents</CardTitle>
+            <CardTitle className="text-slate-900 text-base">Recent deals</CardTitle>
           </CardHeader>
           <CardContent className="pt-4 max-h-[700px] overflow-y-auto">
             <div className="space-y-2">

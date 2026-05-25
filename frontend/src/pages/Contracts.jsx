@@ -95,16 +95,6 @@ const T = {
   seeExpendTip: { en: "See defense expenditure for this country" },
 };
 
-const CATEGORY_COLORS = {
-  aerospace: "bg-sky-50 text-sky-700 border-sky-200",
-  naval:     "bg-blue-50 text-blue-700 border-blue-200",
-  land:      "bg-amber-50 text-amber-700 border-amber-200",
-  cyber:     "bg-violet-50 text-violet-700 border-violet-200",
-  services:  "bg-amber-50 text-amber-700 border-amber-200",
-  logistics: "bg-orange-50 text-orange-700 border-orange-200",
-  space:     "bg-indigo-50 text-indigo-700 border-indigo-200",
-  missiles:  "bg-rose-50 text-rose-700 border-rose-200",
-};
 
 const STATUS_DOT = {
   open:      "bg-blue-500",
@@ -291,7 +281,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
                 <button
                   onClick={(e) => { e.stopPropagation(); onGoExpend(contract.authority_country); }}
                   title={tSeeExpendTip}
-                  className="ml-auto text-[10px] text-blue-600 hover:text-blue-800 hover:underline leading-none"
+                  className="ml-auto text-[10px] text-purple-700 hover:text-purple-900 hover:underline leading-none"
                 >
                   {tSeeExpend}
                 </button>
@@ -309,7 +299,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
           {contract.description}
         </p>
         <div className="flex flex-wrap gap-2">
-          <span className={`text-xs px-2 py-0.5 rounded-full border ${CATEGORY_COLORS[contract.category] || "bg-slate-100 text-slate-600 border-slate-200"}`}>
+          <span className="text-xs px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200">
             {tCategory[contract.category] || contract.category}
           </span>
           <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
@@ -351,7 +341,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
           {contract.source_url ? (
             <a href={contract.source_url} target="_blank" rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors">
+              className="flex items-center gap-1 text-xs text-purple-700 hover:text-purple-900 transition-colors">
               <ExternalLink size={11} />
               {tOfficSrc}
             </a>
@@ -486,7 +476,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile, onGoExpend }) 
           {contract.source_url && (
             <div className="pt-1 border-t border-slate-100">
               <a href={contract.source_url} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 transition-colors">
+                className="flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 transition-colors">
                 <ExternalLink size={12} />
                 {tOfficSrc}
               </a>
@@ -730,7 +720,7 @@ export default function Contracts() {
           <p className="text-sm">{tNoMatch}</p>
           <button
             onClick={() => { setSearchTerm(""); setSelectedStatus("all"); setSelectedAuthority("all"); setSelectedCategory("all"); }}
-            className="mt-4 text-xs text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2"
+            className="mt-4 text-xs text-purple-700 hover:text-purple-900 font-medium underline underline-offset-2"
           >
             Clear all filters
           </button>

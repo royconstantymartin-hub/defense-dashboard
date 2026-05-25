@@ -38,12 +38,7 @@ import {
 
 const COLORS = ['#7E22CE', '#1D4ED8', '#059669', '#D97706', '#0891B2', '#DB2777', '#65A30D'];
 
-const AVATAR_COLORS = [
-  "bg-purple-700", "bg-blue-700",
-  "bg-emerald-700", "bg-amber-600",
-  "bg-rose-700", "bg-indigo-700",
-  "bg-teal-700", "bg-slate-700",
-];
+const AVATAR_COLORS = ["bg-slate-700"];
 function avatarColor(name = "") {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
@@ -518,10 +513,10 @@ export default function Dashboard() {
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-mono font-bold ${
-                              idx === 0 ? "bg-amber-100 text-amber-700" :
+                              idx === 0 ? "bg-slate-800 text-white" :
                               idx === 1 ? "bg-slate-200 text-slate-600" :
-                              idx === 2 ? "bg-orange-50 text-orange-600" :
-                              "bg-slate-100 text-slate-400"
+                              idx === 2 ? "bg-slate-100 text-slate-500" :
+                              "bg-slate-50 text-slate-400"
                             }`}>
                               {idx + 1}
                             </span>
@@ -724,15 +719,7 @@ export default function Dashboard() {
                             onError={(e) => { e.target.style.display = "none"; }}
                           />
                         ) : (
-                          <div className={`w-full h-full flex items-center justify-center ${
-                            item.category === 'CONTRACT'    ? 'bg-emerald-900' :
-                            item.category === 'TECHNOLOGY'  ? 'bg-slate-800'   :
-                            item.category === 'CONFLICT'    ? 'bg-rose-900'    :
-                            item.category === 'POLICY'      ? 'bg-amber-900'   :
-                            item.category === 'GEOPOLITICS' ? 'bg-sky-900'     :
-                            item.category === 'M&A'         ? 'bg-blue-900'    :
-                            'bg-slate-800'
-                          }`}>
+                          <div className="w-full h-full flex items-center justify-center bg-slate-800">
                             <Newspaper className="w-10 h-10 text-white/20" />
                           </div>
                         )}
@@ -796,24 +783,8 @@ export default function Dashboard() {
                               onError={(e) => { e.target.parentNode.classList.add("flex", "items-center", "justify-center"); e.target.style.display = "none"; }}
                             />
                           ) : (
-                            <div className={`w-full h-full flex items-center justify-center ${
-                              item.category === 'CONTRACT'    ? 'bg-emerald-50' :
-                              item.category === 'TECHNOLOGY'  ? 'bg-slate-50'   :
-                              item.category === 'CONFLICT'    ? 'bg-rose-50'    :
-                              item.category === 'POLICY'      ? 'bg-amber-50'   :
-                              item.category === 'GEOPOLITICS' ? 'bg-sky-50'     :
-                              item.category === 'M&A'         ? 'bg-blue-50'    :
-                              'bg-slate-50'
-                            }`}>
-                              <Newspaper className={`w-5 h-5 ${
-                                item.category === 'CONTRACT'    ? 'text-emerald-400' :
-                                item.category === 'TECHNOLOGY'  ? 'text-slate-400'   :
-                                item.category === 'CONFLICT'    ? 'text-rose-400'    :
-                                item.category === 'POLICY'      ? 'text-amber-400'   :
-                                item.category === 'GEOPOLITICS' ? 'text-sky-400'     :
-                                item.category === 'M&A'         ? 'text-blue-400'    :
-                                'text-slate-300'
-                              }`} />
+                            <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                              <Newspaper className="w-5 h-5 text-slate-300" />
                             </div>
                           )}
                         </div>
@@ -864,15 +835,7 @@ export default function Dashboard() {
 }
 
 function IntelCategoryBadge({ category, small = false }) {
-  const styles = {
-    CONTRACT:    "bg-emerald-50 text-emerald-700 border-emerald-200",
-    TECHNOLOGY:  "bg-slate-100  text-slate-700   border-slate-200",
-    CONFLICT:    "bg-red-50     text-red-700     border-red-200",
-    POLICY:      "bg-amber-50   text-amber-700   border-amber-200",
-    GEOPOLITICS: "bg-sky-50     text-sky-700     border-sky-200",
-    "M&A":       "bg-blue-50    text-blue-700    border-blue-200",
-  };
-  const cls = styles[category] || "bg-slate-50 text-slate-600 border-slate-200";
+  const cls = "bg-slate-100 text-slate-600 border-slate-200";
   return (
     <span className={`border font-medium rounded-full ${small ? "text-[9px] px-1.5 py-px" : "text-xs px-2 py-0.5"} ${cls}`}>
       {category || "INDUSTRY"}
@@ -881,10 +844,10 @@ function IntelCategoryBadge({ category, small = false }) {
 }
 
 const METRIC_COLORS = {
-  "TOTAL MARKET CAP":     { iconCls: "text-purple-700", bgCls: "bg-purple-50", topBorder: "border-t-2 border-t-purple-500" },
-  "GLOBAL EXPENDITURE":   { iconCls: "text-blue-600",   bgCls: "bg-blue-50",   topBorder: "border-t-2 border-t-blue-500" },
-  "TRACKED PLAYERS":      { iconCls: "text-emerald-600", bgCls: "bg-emerald-50", topBorder: "border-t-2 border-t-emerald-500" },
-  "M&A TRACKED":          { iconCls: "text-amber-600",  bgCls: "bg-amber-50",  topBorder: "border-t-2 border-t-amber-500" },
+  "TOTAL MARKET CAP":     { iconCls: "text-purple-700", bgCls: "bg-purple-50", topBorder: "border-t-2 border-t-purple-600" },
+  "GLOBAL EXPENDITURE":   { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
+  "TRACKED PLAYERS":      { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
+  "M&A TRACKED":          { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
 };
 
 function MetricCard({ label, value, subtext, icon: Icon, testId }) {

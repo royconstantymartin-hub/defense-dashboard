@@ -35,6 +35,16 @@ _STOCK_PHOTO_DOMAINS = (
     "pixabay.com",
     "stocksy.com",
     "canstockphoto.com",
+    # Wikipedia/Wikimedia — parliament buildings, government portals, generic encyclopaedia images
+    "upload.wikimedia.org",
+    "commons.wikimedia.org",
+    "en.wikipedia.org",
+    # Generic wire-service photo CDNs that serve editorial stock imagery
+    "apimages.com",
+    "ap.org/image",
+    "media.gettyimages.com",
+    "imagn.com",
+    "zuma",
 )
 
 
@@ -74,23 +84,34 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "front line", "frontline", "ground offensive", "bombing campaign",
                     "airstrike on", "air strike on", "shelling of", "missile strike",
                     "artillery fire", "ambush", "insurgency", "guerrilla",
+                    # Expanded kinetic/operational terms
+                    "combat deaths", "combat losses", "friendly fire", "war zone",
+                    "under siege", "prisoner of war", "fallen soldiers", "soldiers wounded",
+                    "offensive launched", "forces advance", "advance on",
+                    "military casualties", "naval battle", "firefight", "ambushed",
+                    "troops deploy", "troops advance", "siege of",
+                    "bombing of", "bombed", "bombers strike", "drone strike on",
+                    "raid on", "incursion into", "retaliatory strike",
+                    "encirclement", "fortified position", "defensive line",
                     "conflit armé", "guerre en ", "offensive terrestre", "cessez-le-feu",
-                    "victimes civiles", "soldats tués", "bombardement de", "frappe sur"],
-    "M&A":         ["acquisition", "merger", "acquires", "acquis", "buys", "takeover",
+                    "victimes civiles", "soldats tués", "bombardement de", "frappe sur",
+                    "pertes au combat", "soldats blessés", "opération militaire en"],
+    "M&A":         ["merger", "acquires", "acquis", "buys", "takeover",
+                    "company acquisition", "hostile acquisition", "corporate acquisition",
                     "joint venture", "agrees to buy", "agrees to acquire", "strategic investment",
                     "stake in", "minority stake", "majority stake", "divests", "divestiture",
                     "spin-off", "completes purchase", "signs agreement to acquire",
                     "investment round", "series a", "series b", "ipo", "goes public",
                     "raises funding", "raises $", "valuation", "private equity",
-                    "memorandum of understanding", "mou signed", "teaming agreement",
-                    "letter of intent", "strategic partnership agreement",
+                    "letter of intent",
                     "fusion", "rachat", "cession", "cède", "prise de participation",
                     "investissement stratégique", "cession d'actifs", "levée de fonds",
-                    "tour de table", "protocole d'accord", "accord de partenariat stratégique"],
+                    "tour de table", "accord de partenariat stratégique"],
     "CONTRACT":    ["contract", "award", "procurement", "tender", "bid",
                     "arms deal", "defense deal", "weapons deal", "military deal",
                     "purchase agreement", "firm order", "delivery order", "work order",
                     "option exercised", "option contract",
+                    "teaming agreement", "consortium bid", "prime contractor",
                     "indefinite delivery", "idiq", "other transaction authority", "ota",
                     # Acquisition program lifecycle
                     "program of record", "program executive", "source selection",
@@ -111,8 +132,9 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "lethal aid", "military package", "arms transfer",
                     "weapon shipment", "weapons shipment", "aid package",
                     "weapons to ukraine", "arms to ukraine", "weapons reaching",
+                    "memorandum of understanding", "mou signed", "strategic mou",
                     "diplomatie", "sommet", "accord bilatéral", "partenariat stratégique",
-                    "contrôle des exportations", "embargo",
+                    "contrôle des exportations", "embargo", "protocole d'accord",
                     "aide militaire", "livraison d'armes", "assistance sécuritaire"],
     "POLICY":      ["nato", "eu ", "law", "regulation", "policy", "spending", "gdp",
                     "budget", "legislation", "congress", "parliament", "defence review",
@@ -169,6 +191,17 @@ _SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
     "Just Security":    0.55,
     "Lawfare":          0.55,
     "Small Wars Journal": 0.50,
+    # New tier-1 specialty additions — full weight
+    "Defense Scoop":    1.00,
+    "Army Recognition": 0.95,
+    "Naval Post":       0.95,
+    "Atlantic Council": 0.90,
+    "IISS":             0.95,
+    "SIPRI":            0.90,
+    "NTI":              0.85,
+    "Asia Times Defense": 0.85,
+    "ASD News":         0.90,
+    "Defense Review":   0.90,
     # Advocacy / regional media with limited defense expertise
     "Euromaidan Press": 0.30,
     "Daily Excelsior":  0.25,
@@ -589,12 +622,23 @@ def _extract_image_from_entry(entry) -> Optional[str]:
 
 
 def _extract_summary(entry) -> str:
-    """Return a plain-text summary (≤ 300 chars) from a feedparser entry."""
+    """Return a clean plain-text summary (≤ 400 chars) truncated at a sentence boundary."""
     for attr in ("summary", "description"):
         val = getattr(entry, attr, None)
         if val:
             text = BeautifulSoup(val, "html.parser").get_text(separator=" ", strip=True)
-            return text[:300] + ("..." if len(text) > 300 else "")
+            # Collapse runs of whitespace introduced by HTML stripping
+            text = " ".join(text.split())
+            if len(text) <= 400:
+                return text
+            # Prefer cutting at the last sentence-ending punctuation before 400 chars
+            for sep in (". ", "! ", "? "):
+                pos = text.rfind(sep, 80, 400)
+                if pos != -1:
+                    return text[:pos + 1]
+            # Fall back to last word boundary
+            pos = text.rfind(" ", 0, 400)
+            return (text[:pos] if pos > 0 else text[:400]) + "…"
     return ""
 
 
@@ -1045,6 +1089,27 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Air & Space Forces",       "url": "https://www.airandspaceforces.com/feed/",                                  "language": "en", "region": "us",      "max_items": 30},
     # Defense & Aerospace Report — international programs, FMS, industry
     {"name": "Defense Aerospace Report", "url": "https://darreport.com/feed/",                                              "language": "en", "region": "global",  "max_items": 25},
+    # ── Additional specialty (tier 1 additions) ──────────────────────────────
+    # Defense Scoop — DoD cyber, technology acquisition, Pentagon digital strategy
+    {"name": "Defense Scoop",            "url": "https://defensescoop.com/feed/",                                           "language": "en", "region": "us",      "max_items": 30},
+    # Army Recognition — international ground forces, IFV, MBT, artillery programs
+    {"name": "Army Recognition",         "url": "https://www.armyrecognition.com/rss.xml",                                  "language": "en", "region": "global",  "max_items": 35},
+    # Naval Post — naval programs, shipbuilding, maritime security worldwide
+    {"name": "Naval Post",               "url": "https://navalpost.com/feed/",                                              "language": "en", "region": "global",  "max_items": 30},
+    # Atlantic Council — transatlantic security, NATO, European defence strategy
+    {"name": "Atlantic Council",         "url": "https://www.atlanticcouncil.org/feed/",                                   "language": "en", "region": "global",  "max_items": 20},
+    # IISS — strategic analysis, military balance, nuclear programs
+    {"name": "IISS",                     "url": "https://www.iiss.org/publications/survival/rss",                          "language": "en", "region": "global",  "max_items": 15},
+    # SIPRI — arms transfers, military expenditure, conflict data
+    {"name": "SIPRI",                    "url": "https://www.sipri.org/news.rss",                                           "language": "en", "region": "global",  "max_items": 15},
+    # NTI — nuclear, biological, chemical threat reduction
+    {"name": "NTI",                      "url": "https://www.nti.org/feed/",                                                "language": "en", "region": "global",  "max_items": 15},
+    # Asia Times Defense — Asia-Pacific military programs, PLA, Indo-Pacific
+    {"name": "Asia Times Defense",       "url": "https://asiatimes.com/category/defense/feed/",                            "language": "en", "region": "asia-pacific", "max_items": 25},
+    # ASD News — European defence industry news, programs, procurement
+    {"name": "ASD News",                 "url": "https://www.asdnews.com/news-defense/rss",                                 "language": "en", "region": "europe",  "max_items": 25},
+    # Defense Review — US advanced military technology, R&D programs
+    {"name": "Defense Review",           "url": "https://www.defensereview.com/feed/",                                     "language": "en", "region": "us",      "max_items": 20},
 ]
 
 HTML_SCRAPERS = [_scrape_nato, _scrape_janes, _scrape_defensepost]
@@ -1080,6 +1145,15 @@ _GOOGLE_NEWS_QUERIES: List[Dict] = [
     {"q": "Lockheed Raytheon Northrop Boeing earnings quarterly results", "region": "us"},
     {"q": "defense company earnings revenue quarterly results","region": "global"},
     {"q": "Anduril Kratos AeroVironment Mercury earnings",     "region": "us"},
+    # Additional topic coverage
+    {"q": "nuclear deterrence weapons treaty arms control",         "region": "global"},
+    {"q": "Middle East arms procurement Saudi UAE defense",         "region": "middle-east"},
+    {"q": "cyber warfare military hack defense cyber command",      "region": "global"},
+    {"q": "special operations forces SOCOM commando raid",         "region": "global"},
+    {"q": "submarine nuclear ballistic missile program",            "region": "global"},
+    {"q": "artificial intelligence autonomous weapons military AI", "region": "global"},
+    {"q": "Taiwan Strait South China Sea PLA Navy military",       "region": "asia-pacific"},
+    {"q": "European defence EDTIB OCCAR rearmament spending",      "region": "europe"},
 ]
 
 
