@@ -367,7 +367,6 @@ const CAT_COLORS = {
     headerBg: "bg-slate-50", text: "text-slate-600",
   },
 };
-
 function assignCategory(company) {
   const specs = new Set((company.specializations || []).map((s) => s.toLowerCase()));
   for (const cat of MACRO_CATEGORIES) {
