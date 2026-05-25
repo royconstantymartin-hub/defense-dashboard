@@ -1532,6 +1532,18 @@ async def run_news_scraper_job() -> dict:
         )
         unique_articles = unique_articles[:500]
 
+        # Cap per source to prevent any single outlet flooding the DB.
+        # Articles are already sorted by relevance desc, so we keep the best ones.
+        _src_counts: dict = {}
+        _MAX_PER_SOURCE = 15
+        _capped: list = []
+        for a in unique_articles:
+            src = a.get("source", "")
+            if _src_counts.get(src, 0) < _MAX_PER_SOURCE:
+                _capped.append(a)
+                _src_counts[src] = _src_counts.get(src, 0) + 1
+        unique_articles = _capped
+
         scraped_at = datetime.now(timezone.utc)
         saved = 0
         for article in unique_articles:
@@ -1692,6 +1704,27 @@ def _build_news_query(
     return {"$and": conditions} if len(conditions) > 1 else conditions[0]
 
 
+def _interleave_sources(articles: list) -> list:
+    """
+    Round-robin interleave articles across sources so no single outlet
+    dominates the visible feed. Each source's articles stay in their
+    original relevance order relative to each other.
+    """
+    from collections import defaultdict
+    buckets: dict = defaultdict(list)
+    for a in articles:
+        buckets[a.get("source", "")].append(a)
+
+    source_order = list(buckets.keys())
+    result: list = []
+    while source_order:
+        for src in source_order:
+            if buckets[src]:
+                result.append(buckets[src].pop(0))
+        source_order = [s for s in source_order if buckets[s]]
+    return result
+
+
 def _normalise_article(a: dict) -> dict:
     """Ensure every article has correct datetime, language, and region fields."""
     for field in ("publishedAt", "scrapedAt"):
@@ -1748,7 +1781,8 @@ async def get_news(
             fb_query, {"_id": 0}
         ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(limit).to_list(limit)
 
-    return [_normalise_article(a) for a in articles]
+    normalised = [_normalise_article(a) for a in articles]
+    return _interleave_sources(normalised)
 
 
 @api_router.get("/news/company")
@@ -1987,6 +2021,30 @@ async def get_article_og_image(url: str):
         return {"image": img}
 
     return {"image": None}
+
+
+@api_router.post("/admin/purge-stock-photo-images")
+async def purge_stock_photo_images(current_user: dict = Depends(get_current_user)):
+    """
+    Null-out image fields that point to known stock-photo hosting domains
+    (Unsplash, Getty, Shutterstock, iStock, Pexels, etc.) so the frontend
+    falls back to defence-themed category placeholders.
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+
+    STOCK_DOMAINS = [
+        "unsplash.com", "gettyimages.com", "istockphoto.com", "shutterstock.com",
+        "depositphotos.com", "pexels.com", "dreamstime.com", "123rf.com",
+        "alamy.com", "stock.adobe.com", "pixabay.com", "stocksy.com",
+        "canstockphoto.com",
+    ]
+    regex_pattern = "|".join(re.escape(d) for d in STOCK_DOMAINS)
+    result = await db.news_articles.update_many(
+        {"image": {"$regex": regex_pattern, "$options": "i"}},
+        {"$set": {"image": None}},
+    )
+    return {"purged": result.modified_count}
 
 
 @api_router.post("/admin/refresh-article-images")

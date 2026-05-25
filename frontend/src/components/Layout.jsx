@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { useAuth, useLang } from "@/App";
+import { useAuth, API } from "@/App";
+import axios from "axios";
 import {
   Activity,
   Globe,
@@ -19,7 +20,7 @@ import {
   FileCheck,
   Lock
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -45,8 +46,43 @@ const navItems = [
 export default function Layout() {
   const location = useLocation();
   const { user, logout } = useAuth();
-  const { lang, setLang } = useLang();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [systemStatus, setSystemStatus] = useState("checking");
+
+  useEffect(() => {
+    const check = () => {
+      axios.get(`${API}/`, { timeout: 5000 })
+        .then(() => setSystemStatus("ok"))
+        .catch(() => setSystemStatus("degraded"));
+    };
+    check();
+    const id = setInterval(check, 60000);
+    return () => clearInterval(id);
+  }, []);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [notifLoading, setNotifLoading] = useState(false);
+  const [hasNew, setHasNew] = useState(true);
+  const notifRef = useRef(null);
+
+  useEffect(() => {
+    if (!notifOpen) return;
+    setNotifLoading(true);
+    axios.get(`${API}/announcements?limit=5`)
+      .then(res => setNotifications((res.data || []).slice(0, 5)))
+      .catch(() => setNotifications([]))
+      .finally(() => setNotifLoading(false));
+    setHasNew(false);
+  }, [notifOpen]);
+
+  useEffect(() => {
+    if (!notifOpen) return;
+    const handle = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
+    };
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, [notifOpen]);
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -72,7 +108,7 @@ export default function Layout() {
               <img src="/favicon.png" alt="Defense Dashboard" className="w-10 h-10 object-contain" />
               <div>
                 <h1 className="font-heading font-bold text-slate-900 tracking-tight">DEFENSE</h1>
-                <p className="text-[10px] font-mono text-purple-600 tracking-widest">DASHBOARD</p>
+                <p className="text-[10px] font-mono text-purple-400 tracking-widest">INTELLIGENCE HUB</p>
               </div>
             </Link>
           </div>
@@ -89,14 +125,14 @@ export default function Layout() {
                   onClick={() => setSidebarOpen(false)}
                   className={`
                     flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200
-                    ${isActive 
-                      ? 'bg-purple-50 text-purple-700 font-medium border-l-2 border-purple-600 -ml-[2px]' 
+                    ${isActive
+                      ? 'bg-purple-50 text-purple-900 font-semibold border-l-2 border-purple-700 -ml-[2px]'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }
                   `}
                   data-testid={`nav-${item.path === '/' ? 'dashboard' : item.path.slice(1)}`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-purple-600' : ''}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-purple-700' : ''}`} />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -110,7 +146,7 @@ export default function Layout() {
                   className={`
                     flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200
                     ${location.pathname === '/admin'
-                      ? 'bg-purple-50 text-purple-700 font-medium border-l-2 border-purple-600 -ml-[2px]'
+                      ? 'bg-purple-50 text-purple-900 font-semibold border-l-2 border-purple-700 -ml-[2px]'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }
                   `}
@@ -129,8 +165,8 @@ export default function Layout() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-purple-700" />
+                    <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-slate-700" />
                     </div>
                     <div className="flex-1 text-left">
                       <p className="text-slate-900 text-sm font-medium truncate">{user.name}</p>
@@ -174,40 +210,74 @@ export default function Layout() {
 
             <div className="hidden lg:flex items-center gap-2">
               <span className="text-xs font-medium text-slate-500">SYSTEM STATUS:</span>
-              <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="text-xs font-medium">OPERATIONAL</span>
-              </span>
+              {systemStatus === "ok" && (
+                <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-medium">OPERATIONAL</span>
+                </span>
+              )}
+              {systemStatus === "degraded" && (
+                <span className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-medium">DEGRADED</span>
+                </span>
+              )}
+              {systemStatus === "checking" && (
+                <span className="flex items-center gap-1.5 bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-pulse" />
+                  <span className="text-xs font-medium">CHECKING</span>
+                </span>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Language toggle */}
-            <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden text-xs font-semibold">
+            <div className="relative" ref={notifRef}>
               <button
-                onClick={() => setLang("en")}
-                className={`px-2.5 py-1.5 transition-colors ${lang === "en" ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-100"}`}
+                onClick={() => setNotifOpen(o => !o)}
+                className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors relative"
               >
-                EN
+                <Bell className="w-5 h-5" />
+                {hasNew && <span className="absolute top-1 right-1 w-2 h-2 bg-purple-600 rounded-full" />}
               </button>
-              <button
-                onClick={() => setLang("fr")}
-                className={`px-2.5 py-1.5 transition-colors ${lang === "fr" ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-100"}`}
-              >
-                FR
-              </button>
+
+              {notifOpen && (
+                <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-lg z-50">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                    <span className="text-sm font-semibold text-slate-900">Recent Announcements</span>
+                    <Link
+                      to="/announcements"
+                      onClick={() => setNotifOpen(false)}
+                      className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                    >
+                      View all →
+                    </Link>
+                  </div>
+
+                  <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+                    {notifLoading && (
+                      <p className="text-xs text-slate-400 text-center py-6">Loading…</p>
+                    )}
+                    {!notifLoading && notifications.length === 0 && (
+                      <p className="text-xs text-slate-400 text-center py-6">No announcements yet.</p>
+                    )}
+                    {!notifLoading && notifications.map((n, i) => (
+                      <Link
+                        key={i}
+                        to="/announcements"
+                        onClick={() => setNotifOpen(false)}
+                        className="block px-4 py-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <p className="text-xs font-medium text-slate-800 line-clamp-2 leading-snug">{n.title}</p>
+                        <p className="text-xs text-slate-400 mt-1">{n.source || n.company || "—"}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-            <button className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-purple-600 rounded-full" />
-            </button>
-            <span className="text-sm font-medium text-slate-600">
-              {new Date().toLocaleDateString('en-US', { 
-                weekday: 'short', 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
-              })}
+            <span className="hidden sm:flex items-center bg-slate-100 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-600">
+              {new Date().toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
             </span>
           </div>
         </header>

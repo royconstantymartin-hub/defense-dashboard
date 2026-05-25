@@ -111,7 +111,7 @@ function AdminSetup({ token }) {
           <Button
             type="submit"
             disabled={loading || !setupKey}
-            className="w-full bg-purple-700 hover:bg-purple-800 disabled:opacity-50"
+            className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50"
           >
             {loading ? "Activating…" : "Activate Admin Access"}
           </Button>
@@ -133,18 +133,18 @@ export default function Admin() {
   const [refreshingImages, setRefreshingImages] = useState(false);
   const [imageRefreshResult, setImageRefreshResult] = useState(null);
 
-  const tDbTab      = useT({ en: "Database",                                    fr: "Base de données" });
-  const tDbTitle    = useT({ en: "Database Initialization",                     fr: "Initialisation de la base de données" });
-  const tDbDesc     = useT({ en: "Load reference data: companies, M&A, expenditures, regulations, contracts, products.", fr: "Charge les données de référence : entreprises, M&A, dépenses, réglementations, contrats, produits." });
-  const tNote1      = useT({ en: "• Idempotent — existing entries are not overwritten",       fr: "• Opération idempotente — les entrées existantes ne sont pas écrasées" });
-  const tNote2      = useT({ en: "• M&A records are upserted (existing data enriched)",       fr: "• Les M&A sont upsertés (enrichissement des données existantes)" });
-  const tNote3      = useT({ en: "• Admin role required",                                     fr: "• Rôle admin requis" });
-  const tSeedBtn    = useT({ en: "Initialize Database",                          fr: "Initialiser la base de données" });
-  const tSeeding    = useT({ en: "Initializing…",                                fr: "Initialisation en cours…" });
-  const tSeedOk     = useT({ en: "Success",                                      fr: "Succès" });
-  const tCompanies  = useT({ en: "companies",                                    fr: "entreprises" });
-  const tAnnoun     = useT({ en: "announcements",                                fr: "annonces" });
-  const tContracts  = useT({ en: "contracts",                                    fr: "contrats" });
+  const tDbTab      = useT({ en: "Database" });
+  const tDbTitle    = useT({ en: "Database Initialization" });
+  const tDbDesc     = useT({ en: "Load reference data: companies, M&A, expenditures, regulations, contracts, products." });
+  const tNote1      = useT({ en: "• Idempotent — existing entries are not overwritten" });
+  const tNote2      = useT({ en: "• M&A records are upserted (existing data enriched)" });
+  const tNote3      = useT({ en: "• Admin role required" });
+  const tSeedBtn    = useT({ en: "Initialize Database" });
+  const tSeeding    = useT({ en: "Initializing…" });
+  const tSeedOk     = useT({ en: "Success" });
+  const tCompanies  = useT({ en: "companies" });
+  const tAnnoun     = useT({ en: "announcements" });
+  const tContracts  = useT({ en: "contracts" });
 
   const authHeaders = {
     Authorization: `Bearer ${token}`
@@ -191,7 +191,7 @@ export default function Admin() {
           Please login to access the admin panel and manage defense industry data.
         </p>
         <Link to="/login">
-          <Button className="bg-purple-700 hover:bg-purple-800">
+          <Button className="bg-slate-900 hover:bg-slate-800">
             Login to Continue
           </Button>
         </Link>
@@ -255,8 +255,8 @@ export default function Admin() {
           <div className="space-y-6 max-w-2xl">
             <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-50 rounded-lg">
-                  <Database className="w-5 h-5 text-purple-700" />
+                <div className="p-2 bg-slate-100 rounded-lg">
+                  <Database className="w-5 h-5 text-slate-700" />
                 </div>
                 <div>
                   <h3 className="text-slate-900 font-semibold">{tDbTitle}</h3>
@@ -271,7 +271,7 @@ export default function Admin() {
               <button
                 onClick={handleSeed}
                 disabled={seeding}
-                className="flex items-center gap-2 px-4 py-2.5 bg-purple-700 hover:bg-purple-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
               >
                 {seeding
                   ? <><RefreshCw className="w-4 h-4 animate-spin" /> {tSeeding}</>
@@ -390,7 +390,7 @@ function getCatStyle(cat) {
     case "CONTRACT":    return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case "POLICY":      return "bg-amber-50   text-amber-700   border-amber-200";
     case "M&A":         return "bg-blue-50    text-blue-700    border-blue-200";
-    case "TECHNOLOGY":  return "bg-purple-50  text-purple-700  border-purple-200";
+    case "TECHNOLOGY":  return "bg-slate-100   text-slate-700   border-slate-200";
     case "CONFLICT":    return "bg-red-50     text-red-700     border-red-200";
     case "GEOPOLITICS": return "bg-sky-50     text-sky-700     border-sky-200";
     default:            return "bg-slate-100  text-slate-600   border-slate-200";
@@ -407,9 +407,9 @@ function BreakingIntelPanel({ slots, onUnpin, actionLoading }) {
             <Flame className="w-5 h-5 text-orange-500" />
           </div>
           <div>
-            <h3 className="text-slate-900 font-semibold">Breaking Intel — Slots actifs</h3>
+            <h3 className="text-slate-900 font-semibold">Breaking Intel — Active Slots</h3>
             <p className="text-slate-500 text-sm">
-              Ces 3 articles sont mis en avant. Slots vidés automatiquement à 07:05 et 19:05 UTC.
+              These 3 articles are featured. Slots auto-cleared at 07:05 and 19:05 UTC.
             </p>
           </div>
         </div>
@@ -443,13 +443,13 @@ function BreakingIntelPanel({ slots, onUnpin, actionLoading }) {
                     disabled={!!actionLoading}
                     className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-rose-500 hover:text-rose-700 transition-colors disabled:opacity-40"
                   >
-                    <PinOff className="w-3 h-3" /> Retirer
+                    <PinOff className="w-3 h-3" /> Remove
                   </button>
                 </>
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-slate-400 text-xs text-center gap-1 py-2">
                   <Pin className="w-4 h-4 opacity-30" />
-                  <span>Slot {i + 1} — vide</span>
+                  <span>Slot {i + 1} — empty</span>
                 </div>
               )}
             </div>
@@ -512,13 +512,13 @@ function NewsFeedAdmin({ authHeaders }) {
         setArticles((prev) =>
           prev.map((a) => a.url !== url ? a : { ...a, breakingIntel: true })
         );
-        toast.success("Article épinglé en Breaking Intel 🔥");
+        toast.success("Article pinned to Breaking Intel 🔥");
       } else if (action === "unpin") {
         setBreakingSlots((prev) => prev.filter((a) => a.url !== url));
         setArticles((prev) =>
           prev.map((a) => a.url !== url ? a : { ...a, breakingIntel: false })
         );
-        toast.success("Article retiré des slots Breaking Intel");
+        toast.success("Article removed from Breaking Intel slots");
       } else {
         setArticles((prev) =>
           prev.map((a) => {
@@ -532,10 +532,10 @@ function NewsFeedAdmin({ authHeaders }) {
           })
         );
         toast.success(
-          action === "approve"      ? "Article validé"           :
-          action === "reject"       ? "Article retiré du flux"   :
-          action === "reset"        ? "Modération annulée"       :
-                                      `Catégorie → ${category}`
+          action === "approve"      ? "Article approved"          :
+          action === "reject"       ? "Article removed from feed" :
+          action === "reset"        ? "Moderation reset"          :
+                                      `Category → ${category}`
         );
       }
     } catch (err) {
@@ -571,13 +571,13 @@ function NewsFeedAdmin({ authHeaders }) {
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-purple-50 rounded-lg">
-            <Rss className="w-5 h-5 text-purple-700" />
+          <div className="p-2 bg-slate-100 rounded-lg">
+            <Rss className="w-5 h-5 text-slate-700" />
           </div>
           <div>
             <h3 className="text-slate-900 font-semibold">News Feed Moderation</h3>
             <p className="text-slate-500 text-sm">
-              Épingler des articles en Breaking Intel, recatégoriser ou retirer les hors-sujet.
+              Pin articles to Breaking Intel, re-categorize or remove off-topic content.
             </p>
           </div>
         </div>
@@ -609,7 +609,7 @@ function NewsFeedAdmin({ authHeaders }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by title or source…"
-            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-900 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-300"
+            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-900 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -680,7 +680,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           )}
         </div>
         <a href={article.url} target="_blank" rel="noopener noreferrer"
-           className="text-slate-900 font-semibold text-sm leading-snug line-clamp-2 hover:text-purple-700 transition-colors">
+           className="text-slate-900 font-semibold text-sm leading-snug line-clamp-2 hover:text-slate-700 transition-colors">
           {article.title}
         </a>
         {article.summary && (
@@ -699,7 +699,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           <button
             onClick={() => onModerate(article.url, "unpin")}
             disabled={!!actionLoading}
-            title="Retirer des slots Breaking Intel"
+            title="Remove from Breaking Intel slots"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-300 hover:bg-orange-100 transition-all disabled:opacity-40"
           >
             {busy("unpin") ? <RefreshCw className="w-3 h-3 animate-spin" /> : <PinOff className="w-3 h-3" />}
@@ -709,7 +709,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           <button
             onClick={() => onModerate(article.url, "pin")}
             disabled={slotsFull || !!actionLoading}
-            title={slotsFull ? "3/3 slots déjà utilisés — retirez un article d'abord" : "Épingler en Breaking Intel"}
+            title={slotsFull ? "3/3 slots already used — remove an article first" : "Pin to Breaking Intel"}
             className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
               slotsFull
                 ? "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed"
@@ -725,7 +725,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
         <button
           onClick={() => onModerate(article.url, "approve")}
           disabled={isApproved || !!actionLoading}
-          title="Valider l'article"
+          title="Approve article"
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
             isApproved
               ? "bg-emerald-100 text-emerald-700 border-emerald-200 cursor-default"
@@ -740,7 +740,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
         <button
           onClick={() => onModerate(article.url, "reject")}
           disabled={isRejected || !!actionLoading}
-          title="Retirer du flux"
+          title="Remove from feed"
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
             isRejected
               ? "bg-red-100 text-red-600 border-red-200 cursor-default"
@@ -756,7 +756,7 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           <button
             onClick={() => onModerate(article.url, "reset")}
             disabled={!!actionLoading}
-            title="Annuler la modération"
+            title="Reset moderation"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-500 border border-slate-200 hover:bg-slate-50 transition-all disabled:opacity-40"
           >
             {busy("reset") ? <RefreshCw className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
@@ -769,8 +769,8 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
           <button
             onClick={() => setCatOpen((o) => !o)}
             disabled={!!actionLoading}
-            title="Changer la catégorie"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-purple-700 border border-purple-200 hover:bg-purple-50 transition-all disabled:opacity-40"
+            title="Change category"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition-all disabled:opacity-40"
           >
             <Tag className="w-3 h-3" />
             <span className="hidden sm:inline">Category</span>
@@ -781,8 +781,8 @@ function ArticleModerationRow({ article, actionLoading, onModerate, slotsCount }
                 <button
                   key={cat}
                   onClick={() => { onModerate(article.url, "recategorize", cat); setCatOpen(false); }}
-                  className={`w-full text-left px-3 py-1.5 text-xs font-semibold hover:bg-purple-50 transition-colors ${
-                    article.category === cat ? "text-purple-700 bg-purple-50" : "text-slate-700"
+                  className={`w-full text-left px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 transition-colors ${
+                    article.category === cat ? "text-slate-900 bg-slate-100" : "text-slate-700"
                   }`}
                 >
                   {cat}
@@ -905,7 +905,7 @@ function AnnouncementsAdmin({ authHeaders }) {
                 className="bg-white border-slate-200 text-slate-900"
               />
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Announcement
             </Button>
           </form>
@@ -1041,17 +1041,17 @@ function MAAdmin({ authHeaders }) {
       source_url:      d.source_url      ?? "",
     });
     setExtractPreview(null);
-    toast.success("Formulaire pré-rempli — vérifiez et soumettez");
+    toast.success("Form pre-filled — review and submit");
   };
 
   // ── Pilot seed ─────────────────────────────────────────────────────────────
   const handlePilotSeed = async () => {
-    if (!window.confirm("Supprimer tous les deals M&A et charger les 9 deals pilotes vérifiés ?")) return;
+    if (!window.confirm("Delete all M&A deals and load the 9 verified pilot deals?")) return;
     setPiloting(true); setPilotResult(null);
     try {
       const res = await axios.post(`${API}/ma-activities/seed-pilot`, {}, { headers: authHeaders });
       setPilotResult({ ok: true, data: res.data });
-      toast.success(`Pilot chargé — ${res.data.deals} deals`);
+      toast.success(`Pilot loaded — ${res.data.deals} deals`);
       fetchItems();
     } catch (err) {
       const msg = err.response?.data?.detail || err.message;
@@ -1078,17 +1078,17 @@ function MAAdmin({ authHeaders }) {
         announced_date:   form.announced_date || null,
       };
       await axios.post(`${API}/ma-activities`, payload, { headers: authHeaders });
-      toast.success("Deal créé !");
+      toast.success("Deal created!");
       setForm(EMPTY_FORM);
       fetchItems();
     } catch (err) {
-      toast.error(err.response?.data?.detail || "Erreur création");
+      toast.error(err.response?.data?.detail || "Creation error");
     }
   };
 
   const handleDelete = async (id) => {
     await axios.delete(`${API}/ma-activities/${id}`, { headers: authHeaders });
-    toast.success("Supprimé");
+    toast.success("Deleted");
     fetchItems();
   };
 
@@ -1102,35 +1102,35 @@ function MAAdmin({ authHeaders }) {
         <CardContent className="pt-4 pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1">
-              <p className="text-slate-900 font-semibold text-sm">M&A Pilot — 9 deals curatés</p>
-              <p className="text-slate-500 text-xs mt-0.5">Réinitialise la collection avec 9 deals vérifiés.</p>
+              <p className="text-slate-900 font-semibold text-sm">M&A Pilot — 9 curated deals</p>
+              <p className="text-slate-500 text-xs mt-0.5">Resets the collection with 9 verified deals.</p>
               {pilotResult && (
                 <p className={`text-xs mt-1 font-medium ${pilotResult.ok ? "text-emerald-600" : "text-rose-600"}`}>
-                  {pilotResult.ok ? `✓ ${pilotResult.data.deals} deals chargés` : pilotResult.msg}
+                  {pilotResult.ok ? `✓ ${pilotResult.data.deals} deals loaded` : pilotResult.msg}
                 </p>
               )}
             </div>
             <button onClick={handlePilotSeed} disabled={piloting}
               className="shrink-0 flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors">
-              {piloting ? <><RefreshCw className="w-4 h-4 animate-spin" /> Chargement…</> : <><Database className="w-4 h-4" /> Charger Pilot 9</>}
+              {piloting ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading…</> : <><Database className="w-4 h-4" /> Load Pilot 9</>}
             </button>
           </div>
         </CardContent>
       </Card>
 
       {/* ── AI Extraction ── */}
-      <Card className="bg-white border-purple-200">
+      <Card className="bg-white border-slate-300">
         <CardHeader className="border-b border-slate-100 pb-3">
           <CardTitle className="text-slate-900 flex items-center gap-2 text-base">
-            <Sparkles className="w-4 h-4 text-purple-600" /> Extraction IA — URL ou capture d'écran
+            <Sparkles className="w-4 h-4 text-slate-600" /> AI Extraction — URL or screenshot
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
           {/* Mode toggle */}
           <div className="flex gap-2">
-            {[{ k: "url", icon: Link2, label: "URL article" }, { k: "image", icon: ImageIcon, label: "Capture d'écran" }].map(({ k, icon: Icon, label }) => (
+            {[{ k: "url", icon: Link2, label: "Article URL" }, { k: "image", icon: ImageIcon, label: "Screenshot" }].map(({ k, icon: Icon, label }) => (
               <button key={k} onClick={() => { setExtractMode(k); setExtractError(null); setExtractPreview(null); }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${extractMode === k ? "bg-purple-50 border-purple-300 text-purple-700" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${extractMode === k ? "bg-slate-100 border-slate-400 text-slate-900" : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"}`}>
                 <Icon className="w-3.5 h-3.5" />{label}
               </button>
             ))}
@@ -1145,26 +1145,26 @@ function MAAdmin({ authHeaders }) {
                 className="bg-white border-slate-200 text-slate-900 flex-1"
               />
               <Button onClick={handleExtract} disabled={extracting || !extractUrl.trim()}
-                className="bg-purple-700 hover:bg-purple-800 shrink-0">
+                className="bg-slate-900 hover:bg-slate-800 shrink-0">
                 {extracting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                {extracting ? "Extraction…" : "Extraire"}
+                {extracting ? "Extracting…" : "Extract"}
               </Button>
             </div>
           ) : (
             <div className="space-y-2">
               <div
                 onPaste={handlePaste}
-                className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center cursor-default hover:border-purple-300 transition-colors"
+                className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center cursor-default hover:border-slate-400 transition-colors"
               >
                 {pastedImage ? (
                   <div className="space-y-2">
                     <img src={pastedImage.preview} alt="preview" className="max-h-40 mx-auto rounded-lg object-contain" />
-                    <p className="text-xs text-emerald-600 font-medium">Image prête</p>
+                    <p className="text-xs text-emerald-600 font-medium">Image ready</p>
                   </div>
                 ) : (
                   <div className="space-y-1">
                     <ImageIcon className="w-8 h-8 text-slate-300 mx-auto" />
-                    <p className="text-sm text-slate-500">Collez une capture d'écran ici <span className="font-mono text-xs">(Ctrl+V)</span></p>
+                    <p className="text-sm text-slate-500">Paste a screenshot here <span className="font-mono text-xs">(Ctrl+V)</span></p>
                     <p className="text-xs text-slate-400">ou</p>
                   </div>
                 )}
@@ -1173,13 +1173,13 @@ function MAAdmin({ authHeaders }) {
                 <label className="flex-1">
                   <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                   <div className="flex items-center justify-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 cursor-pointer transition-colors">
-                    <ImageIcon className="w-4 h-4" /> Choisir un fichier
+                    <ImageIcon className="w-4 h-4" /> Choose a file
                   </div>
                 </label>
                 <Button onClick={handleExtract} disabled={extracting || !pastedImage}
-                  className="bg-purple-700 hover:bg-purple-800 shrink-0">
+                  className="bg-slate-900 hover:bg-slate-800 shrink-0">
                   {extracting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                  {extracting ? "Extraction…" : "Extraire"}
+                  {extracting ? "Extracting…" : "Extract"}
                 </Button>
               </div>
             </div>
@@ -1190,20 +1190,20 @@ function MAAdmin({ authHeaders }) {
           )}
 
           {extractPreview && (
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-purple-600">Résultat extrait — vérifiez avant d'appliquer</p>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Extracted result — review before applying</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 {[
-                  ["Acquéreur", extractPreview.acquirer],
-                  ["Cible", extractPreview.target],
-                  ["Valeur", extractPreview.deal_value != null ? `$${extractPreview.deal_value}M` : "—"],
-                  ["Statut", extractPreview.status],
+                  ["Acquirer", extractPreview.acquirer],
+                  ["Target", extractPreview.target],
+                  ["Value", extractPreview.deal_value != null ? `$${extractPreview.deal_value}M` : "—"],
+                  ["Status", extractPreview.status],
                   ["Type", extractPreview.deal_type],
                   ["Round", extractPreview.round_type || "—"],
                   ["Stake", extractPreview.stake_percentage ? `${extractPreview.stake_percentage}%` : "—"],
                   ["Date", extractPreview.announced_date],
-                  ["Pays acq.", extractPreview.acquirer_country || "—"],
-                  ["Pays cible", extractPreview.target_country || "—"],
+                  ["Acq. country", extractPreview.acquirer_country || "—"],
+                  ["Target country", extractPreview.target_country || "—"],
                 ].map(([label, val]) => (
                   <div key={label} className="flex gap-1">
                     <span className="text-slate-400 shrink-0 w-20">{label}:</span>
@@ -1212,10 +1212,10 @@ function MAAdmin({ authHeaders }) {
                 ))}
               </div>
               {extractPreview.description && (
-                <p className="text-xs text-slate-600 italic border-t border-purple-100 pt-2">{extractPreview.description}</p>
+                <p className="text-xs text-slate-600 italic border-t border-slate-200 pt-2">{extractPreview.description}</p>
               )}
-              <Button onClick={applyExtracted} className="w-full bg-purple-700 hover:bg-purple-800 text-sm">
-                Charger dans le formulaire
+              <Button onClick={applyExtracted} className="w-full bg-slate-900 hover:bg-slate-800 text-sm">
+                Load into form
               </Button>
             </div>
           )}
@@ -1228,19 +1228,19 @@ function MAAdmin({ authHeaders }) {
         <Card className="bg-white border-slate-200">
           <CardHeader className="border-b border-slate-200">
             <CardTitle className="text-slate-900 flex items-center gap-2 text-base">
-              <Plus className="w-4 h-4" /> Ajouter un deal M&A
+              <Plus className="w-4 h-4" /> Add M&A Deal
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-5">
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Acquéreur / Investisseur</Label>
+                  <Label className="text-slate-600 text-xs">Acquirer / Investor</Label>
                   <Input value={form.acquirer} onChange={e => f("acquirer", e.target.value)}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" required />
                 </div>
                 <div>
-                  <Label className="text-slate-600 text-xs">Cible / Startup</Label>
+                  <Label className="text-slate-600 text-xs">Target / Startup</Label>
                   <Input value={form.target} onChange={e => f("target", e.target.value)}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" required />
                 </div>
@@ -1248,7 +1248,7 @@ function MAAdmin({ authHeaders }) {
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Valeur (M$)</Label>
+                  <Label className="text-slate-600 text-xs">Value ($M)</Label>
                   <Input type="number" step="any" value={form.deal_value} onChange={e => f("deal_value", e.target.value)}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
                 </div>
@@ -1258,7 +1258,7 @@ function MAAdmin({ authHeaders }) {
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
                 </div>
                 <div>
-                  <Label className="text-slate-600 text-xs">Date annonce</Label>
+                  <Label className="text-slate-600 text-xs">Announced Date</Label>
                   <Input type="date" value={form.announced_date} onChange={e => f("announced_date", e.target.value)}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm" />
                 </div>
@@ -1266,7 +1266,7 @@ function MAAdmin({ authHeaders }) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Statut</Label>
+                  <Label className="text-slate-600 text-xs">Status</Label>
                   <Select value={form.status} onValueChange={v => f("status", v)}>
                     <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-8 text-sm">
                       <SelectValue />
@@ -1279,7 +1279,7 @@ function MAAdmin({ authHeaders }) {
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-slate-600 text-xs">Type de deal</Label>
+                  <Label className="text-slate-600 text-xs">Deal Type</Label>
                   <Select value={form.deal_type} onValueChange={v => f("deal_type", v)}>
                     <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-8 text-sm">
                       <SelectValue />
@@ -1295,7 +1295,7 @@ function MAAdmin({ authHeaders }) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Round (si applicable)</Label>
+                  <Label className="text-slate-600 text-xs">Round (if applicable)</Label>
                   <Select value={form.round_type || "none"} onValueChange={v => f("round_type", v === "none" ? "" : v)}>
                     <SelectTrigger className="bg-white border-slate-200 text-slate-900 h-8 text-sm">
                       <SelectValue placeholder="—" />
@@ -1312,20 +1312,20 @@ function MAAdmin({ authHeaders }) {
                   <label className="flex items-center gap-2 cursor-pointer mb-1">
                     <input type="checkbox" checked={form.is_disclosed}
                       onChange={e => f("is_disclosed", e.target.checked)}
-                      className="accent-purple-600" />
-                    <span className="text-xs text-slate-600">Valeur divulguée</span>
+                      className="accent-slate-600" />
+                    <span className="text-xs text-slate-600">Disclosed value</span>
                   </label>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-slate-600 text-xs">Pays acquéreur (ISO-2)</Label>
+                  <Label className="text-slate-600 text-xs">Acquirer country (ISO-2)</Label>
                   <Input placeholder="FR, US, DE…" value={form.acquirer_country} onChange={e => f("acquirer_country", e.target.value.toUpperCase().slice(0,2))}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm font-mono" maxLength={2} />
                 </div>
                 <div>
-                  <Label className="text-slate-600 text-xs">Pays cible (ISO-2)</Label>
+                  <Label className="text-slate-600 text-xs">Target country (ISO-2)</Label>
                   <Input placeholder="FR, US, DE…" value={form.target_country} onChange={e => f("target_country", e.target.value.toUpperCase().slice(0,2))}
                     className="bg-white border-slate-200 text-slate-900 h-8 text-sm font-mono" maxLength={2} />
                 </div>
@@ -1344,13 +1344,13 @@ function MAAdmin({ authHeaders }) {
               </div>
 
               <div>
-                <Label className="text-slate-600 text-xs">Rationale stratégique (optionnel)</Label>
+                <Label className="text-slate-600 text-xs">Strategic rationale (optional)</Label>
                 <Textarea value={form.rationale} onChange={e => f("rationale", e.target.value)}
                   className="bg-white border-slate-200 text-slate-900 text-sm" rows={2} />
               </div>
 
-              <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
-                <Plus className="w-4 h-4 mr-1" /> Créer le deal
+              <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
+                <Plus className="w-4 h-4 mr-1" /> Create deal
               </Button>
             </form>
           </CardContent>
@@ -1359,7 +1359,7 @@ function MAAdmin({ authHeaders }) {
         {/* ── Recent deals list ── */}
         <Card className="bg-white border-slate-200">
           <CardHeader className="border-b border-slate-200">
-            <CardTitle className="text-slate-900 text-base">Deals récents</CardTitle>
+            <CardTitle className="text-slate-900 text-base">Recent deals</CardTitle>
           </CardHeader>
           <CardContent className="pt-4 max-h-[700px] overflow-y-auto">
             <div className="space-y-2">
@@ -1548,7 +1548,7 @@ function PlayersAdmin({ authHeaders }) {
                 ))}
               </div>
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Player
             </Button>
           </form>
@@ -1702,7 +1702,7 @@ function ExpendituresAdmin({ authHeaders }) {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Expenditure
             </Button>
           </form>
@@ -1864,7 +1864,7 @@ function RegulationsAdmin({ authHeaders }) {
                 ))}
               </div>
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Regulation
             </Button>
           </form>
@@ -2077,7 +2077,7 @@ function ProductsAdmin({ authHeaders }) {
                 ))}
               </div>
             </div>
-            <Button type="submit" className="w-full bg-purple-700 hover:bg-purple-800">
+            <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800">
               Add Product
             </Button>
           </form>

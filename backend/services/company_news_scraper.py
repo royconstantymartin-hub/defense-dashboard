@@ -28,6 +28,8 @@ from services.news_scraper import (
     compute_relevance_score,
     detect_companies,
     detect_region_from_text,
+    _BLOCKED_SOURCES,
+    _SOURCE_DEFENSE_WEIGHT,
 )
 
 logger = logging.getLogger(__name__)
@@ -272,6 +274,10 @@ def _fetch_one_company(company_name: str) -> List[Dict]:
 
             # ── Problem 1: extract real outlet from title suffix ──────────
             clean_title, real_source = _parse_google_title(raw_title)
+
+            if real_source in _BLOCKED_SOURCES:
+                continue
+
             domain = _source_to_clearbit_domain(real_source) if real_source else ""
             source_logo = (
                 f"https://logo.clearbit.com/{domain}"
@@ -281,6 +287,7 @@ def _fetch_one_company(company_name: str) -> List[Dict]:
 
             summary   = _extract_summary(entry)
             raw_score = compute_relevance_score(clean_title, summary)
+            weight    = _SOURCE_DEFENSE_WEIGHT.get(real_source, 1.0)
             region    = detect_region_from_text(clean_title, summary) or "global"
 
             companies = detect_companies(clean_title, summary)
@@ -298,8 +305,8 @@ def _fetch_one_company(company_name: str) -> List[Dict]:
                 "realSource":        real_source,
                 "sourceLogo":        source_logo,
                 "publishedAt":       _parse_entry_date(entry),
-                "category":          assign_category(clean_title),
-                "relevanceScore":    min(100, raw_score + _COMPANY_SPECIFIC_SCORE_BONUS),
+                "category":          assign_category(clean_title, summary),
+                "relevanceScore":    min(100, int(raw_score * weight) + _COMPANY_SPECIFIC_SCORE_BONUS),
                 "language":          "en",
                 "region":            region,
                 "companies":         companies,

@@ -36,14 +36,9 @@ import {
   Cell
 } from "recharts";
 
-const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899'];
+const COLORS = ['#7E22CE', '#1D4ED8', '#059669', '#D97706', '#0891B2', '#DB2777', '#65A30D'];
 
-const AVATAR_COLORS = [
-  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
-  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
-  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
-  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
-];
+const AVATAR_COLORS = ["bg-slate-700"];
 function avatarColor(name = "") {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
@@ -57,7 +52,7 @@ function CompanyLogoCell({ name }) {
   const [urlIndex, setUrlIndex] = useState(0);
   if (!urls.length || urlIndex >= urls.length) {
     return (
-      <div className={`w-8 h-8 bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
+      <div className={`w-8 h-8 ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}>
         <span className="text-[10px] font-bold text-white tracking-tight">{initials(name)}</span>
       </div>
     );
@@ -105,10 +100,10 @@ function hostFromUrl(url) {
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const tBannerTitle   = useT({ en: "Database not initialized",   fr: "Base de données non initialisée" });
-  const tBannerDesc    = useT({ en: "The dashboard is empty. An administrator must initialize the database to load reference data (companies, M&A, contracts, expenditures…).", fr: "Le dashboard est vide. Pour charger les données de référence (entreprises, M&A, contrats, dépenses…), un administrateur doit initialiser la base de données." });
-  const tBannerAdmin   = useT({ en: "Admin → Seed",               fr: "Admin → Seed" });
-  const tBannerContact = useT({ en: "Contact an admin",           fr: "Contacter un admin" });
+  const tBannerTitle   = useT({ en: "Database not initialized" });
+  const tBannerDesc    = useT({ en: "The dashboard is empty. An administrator must initialize the database to load reference data (companies, M&A, contracts, expenditures…)." });
+  const tBannerAdmin   = useT({ en: "Admin → Seed" });
+  const tBannerContact = useT({ en: "Contact an admin" });
   const [stats, setStats] = useState(null);
   const [players, setPlayers] = useState([]);
   const [recentNews, setRecentNews] = useState([]);
@@ -250,8 +245,9 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+      <div className="flex flex-col items-center justify-center h-64 gap-3">
+        <div className="animate-spin w-8 h-8 border-2 border-slate-200 border-t-purple-700 rounded-full" />
+        <p className="text-sm text-slate-400">Loading dashboard…</p>
       </div>
     );
   }
@@ -260,7 +256,7 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
         <p className="font-medium">Failed to load dashboard data.</p>
-        <button onClick={fetchData} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">Retry</button>
+        <button onClick={fetchData} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 transition-colors">Retry</button>
       </div>
     );
   }
@@ -292,7 +288,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3 flex-wrap">
           {/* Search bar */}
           <div className="relative" ref={searchRef}>
-            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-100 transition-all w-64">
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-100 transition-all w-64">
               <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               <input
                 type="text"
@@ -317,7 +313,7 @@ export default function Dashboard() {
                   return (
                     <button
                       key={company.id}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-purple-50 transition-colors text-left"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 transition-colors text-left"
                       onClick={() => { setSelectedCompany(company.name); setShowSearch(false); setSearchQuery(""); }}
                     >
                       <CompanyLogoCell name={company.name} />
@@ -329,7 +325,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       {company.ticker && (
-                        <span className="font-mono text-xs text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded shrink-0">
+                        <span className="font-mono text-xs text-slate-700 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded shrink-0">
                           {company.ticker}
                         </span>
                       )}
@@ -385,29 +381,29 @@ export default function Dashboard() {
       )}
 
       {/* This week summary strip */}
-      <div className="bg-gradient-to-r from-purple-50 to-slate-50 border border-purple-100 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center">
+      <div className="bg-purple-50 border border-purple-100 rounded-xl px-5 py-4 flex flex-wrap gap-6 items-center">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-purple-600" />
           <span className="text-xs font-semibold text-purple-700 uppercase tracking-wider">This week</span>
         </div>
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-1.5">
-            <span className={`text-sm font-mono font-bold ${weeklyMA.length > 0 ? "text-purple-700" : "text-slate-400"}`}>
+            <span className={`text-sm font-mono font-bold ${weeklyMA.length > 0 ? "text-slate-900" : "text-slate-400"}`}>
               {weeklyMA.length}
             </span>
             <span className="text-xs text-slate-500">M&amp;A deal{weeklyMA.length !== 1 ? "s" : ""}</span>
             {weeklyMA.length > 0 && (
-              <Link to="/ma-activity" className="text-[10px] text-purple-500 hover:text-purple-700 font-medium ml-1">→</Link>
+              <Link to="/ma-activity" className="text-[10px] text-purple-600 hover:text-purple-800 font-medium ml-1">→</Link>
             )}
           </div>
-          <div className="w-px h-4 bg-slate-200 self-center" />
+          <div className="w-px h-4 bg-purple-200 self-center" />
           <div className="flex items-center gap-1.5">
             <span className={`text-sm font-mono font-bold ${contractNews.length > 0 ? "text-emerald-700" : "text-slate-400"}`}>
               {contractNews.length}
             </span>
             <span className="text-xs text-slate-500">contract {contractNews.length !== 1 ? "updates" : "update"}</span>
           </div>
-          <div className="w-px h-4 bg-slate-200 self-center" />
+          <div className="w-px h-4 bg-purple-200 self-center" />
           <div className="flex items-center gap-1.5">
             <span className={`text-sm font-mono font-bold ${recentNews.length > 0 ? "text-slate-700" : "text-slate-400"}`}>
               {recentNews.length}
@@ -487,7 +483,7 @@ export default function Dashboard() {
               </div>
               <Link
                 to="/market-data"
-                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
+                className="text-xs text-purple-600 hover:text-purple-800 flex items-center gap-1 font-medium"
                 data-testid="view-all-market"
               >
                 View All <ArrowRight className="w-3 h-3" />
@@ -513,10 +509,15 @@ export default function Dashboard() {
                     const change = live?.change_since_open ?? live?.change_percent ?? player.change_percent;
                     const isLive = !!live;
                     return (
-                      <tr key={player.id} className="border-b border-slate-100 hover:bg-purple-50/30 transition-colors cursor-pointer" onClick={() => setSelectedCompany(player.name)}>
+                      <tr key={player.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => setSelectedCompany(player.name)}>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium">
+                            <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-mono font-bold ${
+                              idx === 0 ? "bg-slate-800 text-white" :
+                              idx === 1 ? "bg-slate-200 text-slate-600" :
+                              idx === 2 ? "bg-slate-100 text-slate-500" :
+                              "bg-slate-50 text-slate-400"
+                            }`}>
                               {idx + 1}
                             </span>
                             <CompanyLogoCell name={player.name} />
@@ -532,7 +533,7 @@ export default function Dashboard() {
                           </div>
                         </td>
                         <td className="p-4 text-right">
-                          <span className="font-mono text-sm text-purple-700 font-medium bg-purple-50 px-2 py-0.5 rounded">
+                          <span className="font-mono text-sm text-slate-700 font-medium bg-slate-100 px-2 py-0.5 rounded">
                             {player.ticker}
                           </span>
                         </td>
@@ -595,7 +596,7 @@ export default function Dashboard() {
                         return (
                           <div className="bg-white border border-slate-200 p-3 rounded-lg shadow-lg">
                             <p className="text-slate-900 text-sm font-medium">{payload[0].name}</p>
-                            <p className="font-mono text-purple-700 font-semibold">${payload[0].value.toFixed(1)}B</p>
+                            <p className="font-mono text-slate-900 font-semibold">${payload[0].value.toFixed(1)}B</p>
                           </div>
                         );
                       }
@@ -609,8 +610,8 @@ export default function Dashboard() {
               {regionData.slice(0, 4).map((region, idx) => (
                 <div key={region.name} className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
-                    <span 
-                      className="w-2 h-2 rounded-full" 
+                    <span
+                      className="w-3 h-1.5 rounded-sm flex-shrink-0"
                       style={{ backgroundColor: COLORS[idx] }}
                     />
                     <span className="text-slate-600">{region.name}</span>
@@ -632,7 +633,7 @@ export default function Dashboard() {
               <CardTitle className="font-heading text-lg text-slate-900">Top Defense Budgets</CardTitle>
               <Link 
                 to="/expenditures" 
-                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
+                className="text-xs text-purple-600 hover:text-purple-800 flex items-center gap-1 font-medium"
               >
                 View All <ArrowRight className="w-3 h-3" />
               </Link>
@@ -663,7 +664,7 @@ export default function Dashboard() {
                         return (
                           <div className="bg-white border border-slate-200 p-3 rounded-lg shadow-lg">
                             <p className="text-slate-900 text-sm font-medium">{payload[0].payload.country}</p>
-                            <p className="font-mono text-purple-700 font-semibold">${payload[0].value}B</p>
+                            <p className="font-mono text-slate-900 font-semibold">${payload[0].value}B</p>
                             <p className="text-xs text-slate-500">{payload[0].payload.gdp_percent}% of GDP</p>
                           </div>
                         );
@@ -685,7 +686,7 @@ export default function Dashboard() {
               <CardTitle className="font-heading text-lg text-slate-900">Recent Intel</CardTitle>
               <Link
                 to="/announcements"
-                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1 font-medium"
+                className="text-xs text-purple-600 hover:text-purple-800 flex items-center gap-1 font-medium"
               >
                 View All <ArrowRight className="w-3 h-3" />
               </Link>
@@ -718,20 +719,12 @@ export default function Dashboard() {
                             onError={(e) => { e.target.style.display = "none"; }}
                           />
                         ) : (
-                          <div className={`w-full h-full flex items-center justify-center ${
-                            item.category === 'CONTRACT'    ? 'bg-emerald-900' :
-                            item.category === 'TECHNOLOGY'  ? 'bg-purple-900'  :
-                            item.category === 'CONFLICT'    ? 'bg-rose-900'    :
-                            item.category === 'POLICY'      ? 'bg-amber-900'   :
-                            item.category === 'GEOPOLITICS' ? 'bg-sky-900'     :
-                            item.category === 'M&A'         ? 'bg-blue-900'    :
-                            'bg-slate-800'
-                          }`}>
+                          <div className="w-full h-full flex items-center justify-center bg-slate-800">
                             <Newspaper className="w-10 h-10 text-white/20" />
                           </div>
                         )}
-                        {/* Dark gradient overlay for text readability */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                        {/* Solid bottom overlay for text readability */}
+                        <div className="absolute bottom-0 left-0 right-0 h-28 bg-black/65" />
                         {/* Category badge top-left */}
                         <div className="absolute top-3 left-3">
                           <IntelCategoryBadge category={item.category} />
@@ -745,7 +738,7 @@ export default function Dashboard() {
                         )}
                         {/* Title overlay */}
                         <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <p className="text-white font-semibold text-sm leading-snug line-clamp-3 group-hover:text-purple-200 transition-colors">
+                          <p className="text-white font-semibold text-sm leading-snug line-clamp-3 group-hover:text-slate-200 transition-colors">
                             {item.title}
                           </p>
                           <div className="flex items-center gap-2 mt-2">
@@ -778,7 +771,7 @@ export default function Dashboard() {
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-start gap-3 p-3 hover:bg-purple-50/40 transition-colors group"
+                        className="flex items-start gap-3 p-3 hover:bg-slate-50 transition-colors group"
                       >
                         {/* Thumbnail or colored placeholder */}
                         <div className="w-16 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-100 relative">
@@ -790,31 +783,15 @@ export default function Dashboard() {
                               onError={(e) => { e.target.parentNode.classList.add("flex", "items-center", "justify-center"); e.target.style.display = "none"; }}
                             />
                           ) : (
-                            <div className={`w-full h-full flex items-center justify-center ${
-                              item.category === 'CONTRACT'    ? 'bg-emerald-50' :
-                              item.category === 'TECHNOLOGY'  ? 'bg-purple-50'  :
-                              item.category === 'CONFLICT'    ? 'bg-rose-50'    :
-                              item.category === 'POLICY'      ? 'bg-amber-50'   :
-                              item.category === 'GEOPOLITICS' ? 'bg-sky-50'     :
-                              item.category === 'M&A'         ? 'bg-blue-50'    :
-                              'bg-slate-50'
-                            }`}>
-                              <Newspaper className={`w-5 h-5 ${
-                                item.category === 'CONTRACT'    ? 'text-emerald-400' :
-                                item.category === 'TECHNOLOGY'  ? 'text-purple-400'  :
-                                item.category === 'CONFLICT'    ? 'text-rose-400'    :
-                                item.category === 'POLICY'      ? 'text-amber-400'   :
-                                item.category === 'GEOPOLITICS' ? 'text-sky-400'     :
-                                item.category === 'M&A'         ? 'text-blue-400'    :
-                                'text-slate-300'
-                              }`} />
+                            <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                              <Newspaper className="w-5 h-5 text-slate-300" />
                             </div>
                           )}
                         </div>
 
                         {/* Text content */}
                         <div className="flex-1 min-w-0">
-                          <p className="text-slate-800 text-xs font-medium leading-snug line-clamp-2 group-hover:text-purple-700 transition-colors">
+                          <p className="text-slate-800 text-xs font-medium leading-snug line-clamp-2 group-hover:text-slate-900 transition-colors">
                             {item.title}
                           </p>
                           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -858,15 +835,7 @@ export default function Dashboard() {
 }
 
 function IntelCategoryBadge({ category, small = false }) {
-  const styles = {
-    CONTRACT:    "bg-emerald-50 text-emerald-700 border-emerald-200",
-    TECHNOLOGY:  "bg-purple-50  text-purple-700  border-purple-200",
-    CONFLICT:    "bg-red-50     text-red-700     border-red-200",
-    POLICY:      "bg-amber-50   text-amber-700   border-amber-200",
-    GEOPOLITICS: "bg-sky-50     text-sky-700     border-sky-200",
-    "M&A":       "bg-blue-50    text-blue-700    border-blue-200",
-  };
-  const cls = styles[category] || "bg-slate-50 text-slate-600 border-slate-200";
+  const cls = "bg-slate-100 text-slate-600 border-slate-200";
   return (
     <span className={`border font-medium rounded-full ${small ? "text-[9px] px-1.5 py-px" : "text-xs px-2 py-0.5"} ${cls}`}>
       {category || "INDUSTRY"}
@@ -874,10 +843,18 @@ function IntelCategoryBadge({ category, small = false }) {
   );
 }
 
+const METRIC_COLORS = {
+  "TOTAL MARKET CAP":     { iconCls: "text-purple-700", bgCls: "bg-purple-50", topBorder: "border-t-2 border-t-purple-600" },
+  "GLOBAL EXPENDITURE":   { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
+  "TRACKED PLAYERS":      { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
+  "M&A TRACKED":          { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
+};
+
 function MetricCard({ label, value, subtext, icon: Icon, testId }) {
+  const clr = METRIC_COLORS[label] || { iconCls: "text-slate-600", bgCls: "bg-slate-100", topBorder: "" };
   return (
     <Card
-      className="bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer"
+      className={`bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 cursor-pointer ${clr.topBorder}`}
       data-testid={testId}
     >
       <CardContent className="p-5">
@@ -887,8 +864,8 @@ function MetricCard({ label, value, subtext, icon: Icon, testId }) {
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{value}</p>
             {subtext && <p className="text-xs text-slate-500 mt-1">{subtext}</p>}
           </div>
-          <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-            <Icon className="w-5 h-5 text-purple-600" />
+          <div className={`w-10 h-10 ${clr.bgCls} rounded-xl flex items-center justify-center`}>
+            <Icon className={`w-5 h-5 ${clr.iconCls}`} />
           </div>
         </div>
       </CardContent>

@@ -18,6 +18,41 @@ logger = logging.getLogger(__name__)
 
 REQUEST_TIMEOUT = 12  # seconds
 
+# Stock-photo hosting domains that produce off-topic thumbnails (e.g. pilates
+# images on a defence article).  Images whose URLs contain any of these
+# substrings are discarded so the frontend falls back to category placeholders.
+_STOCK_PHOTO_DOMAINS = (
+    "unsplash.com",
+    "gettyimages.com",
+    "istockphoto.com",
+    "shutterstock.com",
+    "depositphotos.com",
+    "pexels.com",
+    "dreamstime.com",
+    "123rf.com",
+    "alamy.com",
+    "stock.adobe.com",
+    "pixabay.com",
+    "stocksy.com",
+    "canstockphoto.com",
+    # Wikipedia/Wikimedia — parliament buildings, government portals, generic encyclopaedia images
+    "upload.wikimedia.org",
+    "commons.wikimedia.org",
+    "en.wikipedia.org",
+    # Generic wire-service photo CDNs that serve editorial stock imagery
+    "apimages.com",
+    "ap.org/image",
+    "media.gettyimages.com",
+    "imagn.com",
+    "zuma",
+)
+
+
+def _is_stock_photo(url: str) -> bool:
+    """Return True if *url* points to a generic stock-photo service."""
+    low = url.lower()
+    return any(domain in low for domain in _STOCK_PHOTO_DOMAINS)
+
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -49,21 +84,34 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "front line", "frontline", "ground offensive", "bombing campaign",
                     "airstrike on", "air strike on", "shelling of", "missile strike",
                     "artillery fire", "ambush", "insurgency", "guerrilla",
+                    # Expanded kinetic/operational terms
+                    "combat deaths", "combat losses", "friendly fire", "war zone",
+                    "under siege", "prisoner of war", "fallen soldiers", "soldiers wounded",
+                    "offensive launched", "forces advance", "advance on",
+                    "military casualties", "naval battle", "firefight", "ambushed",
+                    "troops deploy", "troops advance", "siege of",
+                    "bombing of", "bombed", "bombers strike", "drone strike on",
+                    "raid on", "incursion into", "retaliatory strike",
+                    "encirclement", "fortified position", "defensive line",
                     "conflit armé", "guerre en ", "offensive terrestre", "cessez-le-feu",
-                    "victimes civiles", "soldats tués", "bombardement de", "frappe sur"],
-    "M&A":         ["acquisition", "merger", "acquires", "acquis", "buys", "takeover",
+                    "victimes civiles", "soldats tués", "bombardement de", "frappe sur",
+                    "pertes au combat", "soldats blessés", "opération militaire en"],
+    "M&A":         ["merger", "acquires", "acquis", "buys", "takeover",
+                    "company acquisition", "hostile acquisition", "corporate acquisition",
                     "joint venture", "agrees to buy", "agrees to acquire", "strategic investment",
                     "stake in", "minority stake", "majority stake", "divests", "divestiture",
                     "spin-off", "completes purchase", "signs agreement to acquire",
                     "investment round", "series a", "series b", "ipo", "goes public",
                     "raises funding", "raises $", "valuation", "private equity",
-                    "memorandum of understanding", "mou signed", "teaming agreement",
-                    "letter of intent", "strategic partnership agreement",
+                    "letter of intent",
                     "fusion", "rachat", "cession", "cède", "prise de participation",
                     "investissement stratégique", "cession d'actifs", "levée de fonds",
-                    "tour de table", "protocole d'accord", "accord de partenariat stratégique"],
-    "CONTRACT":    ["contract", "award", "deal", "procurement", "tender", "bid",
-                    "ordered", "orders", "purchase agreement", "firm order", "option",
+                    "tour de table", "accord de partenariat stratégique"],
+    "CONTRACT":    ["contract", "award", "procurement", "tender", "bid",
+                    "arms deal", "defense deal", "weapons deal", "military deal",
+                    "purchase agreement", "firm order", "delivery order", "work order",
+                    "option exercised", "option contract",
+                    "teaming agreement", "consortium bid", "prime contractor",
                     "indefinite delivery", "idiq", "other transaction authority", "ota",
                     # Acquisition program lifecycle
                     "program of record", "program executive", "source selection",
@@ -79,14 +127,24 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
     "GEOPOLITICS": ["sanctions", "diplomacy", "talks", "summit", "alliance", "tensions",
                     "treaty", "bilateral", "multilateral", "cooperation agreement",
                     "foreign policy", "arms embargo", "export control",
+                    "military aid", "security assistance", "defense assistance",
+                    "arms delivery", "weapon delivery", "weapons delivery",
+                    "lethal aid", "military package", "arms transfer",
+                    "weapon shipment", "weapons shipment", "aid package",
+                    "weapons to ukraine", "arms to ukraine", "weapons reaching",
+                    "memorandum of understanding", "mou signed", "strategic mou",
                     "diplomatie", "sommet", "accord bilatéral", "partenariat stratégique",
-                    "contrôle des exportations", "embargo"],
+                    "contrôle des exportations", "embargo", "protocole d'accord",
+                    "aide militaire", "livraison d'armes", "assistance sécuritaire"],
     "POLICY":      ["nato", "eu ", "law", "regulation", "policy", "spending", "gdp",
                     "budget", "legislation", "congress", "parliament", "defence review",
                     "white paper", "national strategy", "defence white paper",
                     "military spending", "defence budget", "lpm", "programmation militaire",
                     "otan", "loi de programmation", "politique de défense",
-                    "effort de défense", "milliards pour"],
+                    "effort de défense", "milliards pour",
+                    "watchdog", "oversight", "inspector general", "ig report",
+                    "accountability", "evaluating military", "gao report",
+                    "contrôle parlementaire", "rapport d'inspection"],
     "TECHNOLOGY":  ["ai ", "artificial intelligence", "cyber", "satellite", "hypersonic",
                     "autonomous", "robot", "electronic warfare", "directed energy",
                     "space launch", "quantum", "radar", "stealth", "sensor",
@@ -125,6 +183,46 @@ _SOURCE_DEFENSE_WEIGHT: Dict[str, float] = {
     "Foreign Policy":   0.70,
     "Bellingcat":       0.80,
     "Stars and Stripes": 0.90,
+    # Military lifestyle / benefits — lower signal for industry analysis
+    "Sandboxx":         0.30,
+    "Task & Purpose":   0.50,
+    "Military.com":     0.55,
+    # Academic / legal — slow publishing, niche
+    "Just Security":    0.55,
+    "Lawfare":          0.55,
+    "Small Wars Journal": 0.50,
+    # New tier-1 specialty additions — full weight
+    "Defense Scoop":    1.00,
+    "Army Recognition": 0.95,
+    "Naval Post":       0.95,
+    "Atlantic Council": 0.90,
+    "IISS":             0.95,
+    "SIPRI":            0.90,
+    "NTI":              0.85,
+    "Asia Times Defense": 0.85,
+    "ASD News":         0.90,
+    "Defense Review":   0.90,
+    # Advocacy / regional media with limited defense expertise
+    "Euromaidan Press": 0.30,
+    "Daily Excelsior":  0.25,
+    "Kyiv Independent": 0.40,
+    "Ukrinform":        0.35,
+    "Al Jazeera":       0.50,
+    "Jerusalem Post":   0.55,
+    "Times of India":   0.40,
+    "South China Morning Post": 0.50,
+    "RT":               0.10,
+    "Sputnik":          0.10,
+    "Global Times":     0.15,
+}
+
+# Sources excluded entirely from the public feed regardless of relevance score.
+# Includes state-controlled propaganda outlets whose editorial independence
+# cannot be verified.
+_BLOCKED_SOURCES: set = {
+    "RT", "Russia Today", "Sputnik", "Sputnik International",
+    "TASS", "Xinhua", "Global Times", "PLA Daily",
+    "Press TV", "Al-Manar", "Al-Alam",
 }
 
 
@@ -188,6 +286,7 @@ COMPANY_ALIASES: Dict[str, List[str]] = {
     # Spain
     "Indra Sistemas":          ["indra "],
     "Navantia":                ["navantia"],
+    "Expal Systems":           ["expal "],
     # Israel
     "Elbit Systems":           ["elbit"],
     "Israel Aerospace Industries": ["iai ", "israel aerospace"],
@@ -196,22 +295,45 @@ COMPANY_ALIASES: Dict[str, List[str]] = {
     "Baykar":                  ["baykar", "bayraktar"],
     "Aselsan":                 ["aselsan"],
     # South Korea
-    "Hanwha Aerospace":        ["hanwha"],
+    "Hanwha Aerospace":        ["hanwha aerospace"],
+    "Hanwha Systems":          ["hanwha systems"],
     "Korea Aerospace Industries": [" kai ", "korea aerospace"],
+    "LIG Nex1":                ["lig nex1", "lignex"],
     # Japan
     "Mitsubishi Heavy Industries": ["mitsubishi heavy"],
+    "NEC Defense Systems":     ["nec defense", "nec corporation defense"],
+    "Japan Marine United":     ["japan marine united", " jmu "],
+    "Mitsubishi Electric Defense": ["mitsubishi electric"],
     # Australia
     "Austal":                  ["austal"],
+    "CEA Technologies":        ["cea technologies", " cea radar"],
     # India
     "Hindustan Aeronautics":   [" hal ", "hindustan aeronautics"],
+    "Tata Advanced Systems":   ["tata advanced systems", " tasl "],
+    "Bharat Forge":            ["bharat forge"],
     # Brazil
     "Embraer Defense":         ["embraer"],
+    "Taurus Armas":            ["taurus armas", "taurus firearms"],
     # Canada
     "CAE Inc":                 [" cae "],
     # Ukraine
     "Ukroboronprom":           ["ukroboronprom"],
     # Singapore
     "ST Engineering":          ["st engineering"],
+    # Germany
+    "Krauss-Maffei Wegmann":   ["krauss-maffei wegmann", " kmw ", "leopard 2 maker"],
+    "Helsing":                 ["helsing "],
+    # Netherlands
+    "Thales Netherlands":      ["thales netherlands", "thales nl"],
+    # Poland
+    "Mesko":                   ["mesko "],
+    # Saudi Arabia
+    "Advanced Electronics Company": [" aec ", "advanced electronics company"],
+    # UK
+    "Cobham":                  ["cobham "],
+    "Serco Group":             ["serco "],
+    # Egypt
+    "Arab Organization for Industrialization": ["arab organization for industrialization", " aoi "],
 }
 
 
@@ -233,8 +355,8 @@ def detect_companies(title: str, summary: str) -> List[str]:
     return found
 
 
-def assign_category(title: str) -> str:
-    t = title.lower()
+def assign_category(title: str, summary: str = "") -> str:
+    t = (title + " " + summary).lower()
     for cat, keywords in CATEGORY_KEYWORDS.items():
         if any(kw in t for kw in keywords):
             return cat
@@ -457,11 +579,12 @@ def _extract_image_from_entry(entry) -> Optional[str]:
         mime   = m.get("type", "")
         # Accept: explicit image medium, image/* MIME, OR no typing at all
         if medium == "image" or mime.startswith("image") or (not medium and not mime):
-            return url
+            if not _is_stock_photo(url):
+                return url
 
     # media:thumbnail
     thumbs = getattr(entry, "media_thumbnail", [])
-    if thumbs and thumbs[0].get("url"):
+    if thumbs and thumbs[0].get("url") and not _is_stock_photo(thumbs[0]["url"]):
         return thumbs[0]["url"]
 
     # enclosures — accept image MIME or image URL extension
@@ -469,7 +592,7 @@ def _extract_image_from_entry(entry) -> Optional[str]:
     for enc in getattr(entry, "enclosures", []):
         url  = enc.get("url") or enc.get("href", "")
         mime = enc.get("type", "")
-        if url and (mime.startswith("image") or any(url.lower().endswith(e) for e in _IMG_EXTS)):
+        if url and not _is_stock_photo(url) and (mime.startswith("image") or any(url.lower().endswith(e) for e in _IMG_EXTS)):
             return url
 
     # Parse from full article HTML (WordPress content:encoded, Guardian, etc.)
@@ -486,25 +609,36 @@ def _extract_image_from_entry(entry) -> Optional[str]:
             if img:
                 src = (img.get("src") or img.get("data-src")
                        or img.get("data-lazy-src") or img.get("data-original", ""))
-                if src and src.startswith("http"):
+                if src and src.startswith("http") and not _is_stock_photo(src):
                     return src
         # Fall back to any <img> — skip tiny tracking pixels and GIFs
         for img in soup.find_all("img"):
             src = (img.get("src") or img.get("data-src")
                    or img.get("data-lazy-src") or img.get("data-original", ""))
-            if src and src.startswith("http") and not src.endswith(".gif"):
+            if src and src.startswith("http") and not src.endswith(".gif") and not _is_stock_photo(src):
                 return src
 
     return None
 
 
 def _extract_summary(entry) -> str:
-    """Return a plain-text summary (≤ 300 chars) from a feedparser entry."""
+    """Return a clean plain-text summary (≤ 400 chars) truncated at a sentence boundary."""
     for attr in ("summary", "description"):
         val = getattr(entry, attr, None)
         if val:
             text = BeautifulSoup(val, "html.parser").get_text(separator=" ", strip=True)
-            return text[:300] + ("..." if len(text) > 300 else "")
+            # Collapse runs of whitespace introduced by HTML stripping
+            text = " ".join(text.split())
+            if len(text) <= 400:
+                return text
+            # Prefer cutting at the last sentence-ending punctuation before 400 chars
+            for sep in (". ", "! ", "? "):
+                pos = text.rfind(sep, 80, 400)
+                if pos != -1:
+                    return text[:pos + 1]
+            # Fall back to last word boundary
+            pos = text.rfind(" ", 0, 400)
+            return (text[:pos] if pos > 0 else text[:400]) + "…"
     return ""
 
 
@@ -544,7 +678,7 @@ def _fetch_og_image(article_url: str, timeout: int = 6) -> Optional[str]:
             tag = soup.find("meta", attrs=selector)
             if tag:
                 content = tag.get("content", "")
-                if content and content.startswith("http"):
+                if content and content.startswith("http") and not _is_stock_photo(content):
                     return content
     except Exception:
         pass
@@ -606,7 +740,7 @@ def _fetch_rss(source: Dict) -> List[Dict]:
                 "realSource":     src_name,
                 "sourceLogo":     src_logo,
                 "publishedAt":    _parse_entry_date(entry),
-                "category":       assign_category(title),
+                "category":       assign_category(title, summary),
                 "relevanceScore": int(raw_score * weight),
                 "language":       src_lang,
                 "region":         region,
@@ -801,7 +935,7 @@ def _scrape_defensepost() -> List[Dict]:
                     "summary":        summary,
                     "source":         "The Defense Post",
                     "publishedAt":    pub_date,
-                    "category":       assign_category(title),
+                    "category":       assign_category(title, summary),
                     "relevanceScore": compute_relevance_score(title, summary),
                     "language":       "en",
                     "region":         region,
@@ -860,8 +994,6 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Defense Aerospace",        "url": "https://www.defense-aerospace.com/rss.xml",                                 "language": "en", "region": "global",  "max_items": 30},
     # CSIS Defense360: strategic analysis, programs, acquisition policy
     {"name": "CSIS Defense",             "url": "https://defense360.csis.org/feed/",                                         "language": "en", "region": "global",  "max_items": 20},
-    # Scout Warrior (Warrior Maven sister site): ground systems, programs
-    {"name": "Scout Warrior",            "url": "https://www.scoutwarrior.com/feed/",                                        "language": "en", "region": "us",      "max_items": 30},
     # ── Defense specialty — French ──────────────────────────────────────────
     {"name": "Opex360",                   "url": "https://www.opex360.com/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
     {"name": "Meta-Défense",              "url": "https://meta-defense.fr/feed/",                                             "language": "fr", "region": "europe",  "max_items": 30},
@@ -874,6 +1006,8 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Secret Défense",            "url": "https://secretdefense.blogs.liberation.fr/rss.xml",                        "language": "fr", "region": "europe",  "max_items": 25},
     # Lignes de Défense — blog Philippe Chapleau (Ouest-France), OPEX & équipements
     {"name": "Lignes de Défense",         "url": "https://lignesdedefense.blogs.ouest-france.fr/rss.xml",                    "language": "fr", "region": "europe",  "max_items": 25},
+    # Zone Militaire — blog de référence sur l'industrie et les opérations de défense françaises
+    {"name": "Zone Militaire",            "url": "https://www.zoneMilitaire.com/feed/",                                       "language": "fr", "region": "europe",  "max_items": 40},
     # Ministère des Armées — communiqués officiels, contrats, nominations
     {"name": "Ministère des Armées",      "url": "https://www.defense.gouv.fr/actualites/rss.xml",                           "language": "fr", "region": "europe",  "max_items": 20},
     # Aerobuzz — actualité aéronautique et défense aérienne française
@@ -942,6 +1076,40 @@ RSS_SOURCES: List[Dict] = [
     {"name": "Kyiv Independent",         "url": "https://kyivindependent.com/feed/",                                         "language": "en", "region": "europe",  "max_items": 20},
     # Defence Connect (Australia) — Australian defence industry procurement
     {"name": "Defence Connect",          "url": "https://www.defenceconnect.com.au/feed",                                    "language": "en", "region": "asia-pacific", "max_items": 25},
+    # ── Premier tier additions ───────────────────────────────────────────────
+    # ISW (Institute for the Study of War) — daily Ukraine/Russia sitreps, gold standard
+    {"name": "ISW",                      "url": "https://www.understandingwar.org/feeds/all",                                "language": "en", "region": "europe",  "max_items": 30},
+    # The Diplomat — leading Asia-Pacific security & geopolitics publication
+    {"name": "The Diplomat",             "url": "https://thediplomat.com/feed/",                                             "language": "en", "region": "asia-pacific", "max_items": 30},
+    # EurActiv Defence — EU defence policy, European defence industry
+    {"name": "EurActiv Defence",         "url": "https://www.euractiv.com/section/defence-and-security/feed/",              "language": "en", "region": "europe",  "max_items": 30},
+    # Politico National Security — US defence policy, Congress, Pentagon coverage
+    {"name": "Politico Defense",         "url": "https://www.politico.com/rss/national-security.xml",                       "language": "en", "region": "us",      "max_items": 30},
+    # Air & Space Forces Magazine — USAF & Space Force official magazine
+    {"name": "Air & Space Forces",       "url": "https://www.airandspaceforces.com/feed/",                                  "language": "en", "region": "us",      "max_items": 30},
+    # Defense & Aerospace Report — international programs, FMS, industry
+    {"name": "Defense Aerospace Report", "url": "https://darreport.com/feed/",                                              "language": "en", "region": "global",  "max_items": 25},
+    # ── Additional specialty (tier 1 additions) ──────────────────────────────
+    # Defense Scoop — DoD cyber, technology acquisition, Pentagon digital strategy
+    {"name": "Defense Scoop",            "url": "https://defensescoop.com/feed/",                                           "language": "en", "region": "us",      "max_items": 30},
+    # Army Recognition — international ground forces, IFV, MBT, artillery programs
+    {"name": "Army Recognition",         "url": "https://www.armyrecognition.com/rss.xml",                                  "language": "en", "region": "global",  "max_items": 35},
+    # Naval Post — naval programs, shipbuilding, maritime security worldwide
+    {"name": "Naval Post",               "url": "https://navalpost.com/feed/",                                              "language": "en", "region": "global",  "max_items": 30},
+    # Atlantic Council — transatlantic security, NATO, European defence strategy
+    {"name": "Atlantic Council",         "url": "https://www.atlanticcouncil.org/feed/",                                   "language": "en", "region": "global",  "max_items": 20},
+    # IISS — strategic analysis, military balance, nuclear programs
+    {"name": "IISS",                     "url": "https://www.iiss.org/publications/survival/rss",                          "language": "en", "region": "global",  "max_items": 15},
+    # SIPRI — arms transfers, military expenditure, conflict data
+    {"name": "SIPRI",                    "url": "https://www.sipri.org/news.rss",                                           "language": "en", "region": "global",  "max_items": 15},
+    # NTI — nuclear, biological, chemical threat reduction
+    {"name": "NTI",                      "url": "https://www.nti.org/feed/",                                                "language": "en", "region": "global",  "max_items": 15},
+    # Asia Times Defense — Asia-Pacific military programs, PLA, Indo-Pacific
+    {"name": "Asia Times Defense",       "url": "https://asiatimes.com/category/defense/feed/",                            "language": "en", "region": "asia-pacific", "max_items": 25},
+    # ASD News — European defence industry news, programs, procurement
+    {"name": "ASD News",                 "url": "https://www.asdnews.com/news-defense/rss",                                 "language": "en", "region": "europe",  "max_items": 25},
+    # Defense Review — US advanced military technology, R&D programs
+    {"name": "Defense Review",           "url": "https://www.defensereview.com/feed/",                                     "language": "en", "region": "us",      "max_items": 20},
 ]
 
 HTML_SCRAPERS = [_scrape_nato, _scrape_janes, _scrape_defensepost]
@@ -977,6 +1145,15 @@ _GOOGLE_NEWS_QUERIES: List[Dict] = [
     {"q": "Lockheed Raytheon Northrop Boeing earnings quarterly results", "region": "us"},
     {"q": "defense company earnings revenue quarterly results","region": "global"},
     {"q": "Anduril Kratos AeroVironment Mercury earnings",     "region": "us"},
+    # Additional topic coverage
+    {"q": "nuclear deterrence weapons treaty arms control",         "region": "global"},
+    {"q": "Middle East arms procurement Saudi UAE defense",         "region": "middle-east"},
+    {"q": "cyber warfare military hack defense cyber command",      "region": "global"},
+    {"q": "special operations forces SOCOM commando raid",         "region": "global"},
+    {"q": "submarine nuclear ballistic missile program",            "region": "global"},
+    {"q": "artificial intelligence autonomous weapons military AI", "region": "global"},
+    {"q": "Taiwan Strait South China Sea PLA Navy military",       "region": "asia-pacific"},
+    {"q": "European defence EDTIB OCCAR rearmament spending",      "region": "europe"},
 ]
 
 
@@ -1018,9 +1195,14 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
                 if src_title:
                     real_source = src_title
 
+            if real_source in _BLOCKED_SOURCES:
+                continue
+
             summary = _extract_summary(entry)
             region_det = detect_region_from_text(title, summary) or region
-            score = compute_relevance_score(title, summary)
+            raw_score = compute_relevance_score(title, summary)
+            weight = _SOURCE_DEFENSE_WEIGHT.get(real_source, 1.0)
+            score = int(raw_score * weight)
 
             domain = _source_to_clearbit_domain(real_source) if real_source else ""
             source_logo = f"https://logo.clearbit.com/{domain}" if domain else _GOOGLE_NEWS_LOGO
@@ -1034,7 +1216,7 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
                 "realSource":     real_source,
                 "sourceLogo":     source_logo,
                 "publishedAt":    _parse_entry_date(entry),
-                "category":       assign_category(title),
+                "category":       assign_category(title, summary),
                 "relevanceScore": score,
                 "language":       "en",
                 "region":         region_det,

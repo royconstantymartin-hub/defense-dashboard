@@ -314,10 +314,7 @@ const LOGO_FALLBACK = {
 };
 
 // Initials avatar colour palette (deterministic by name)
-const AVATAR_COLORS = [
-  "bg-purple-600", "bg-blue-600", "bg-emerald-600", "bg-amber-600",
-  "bg-rose-600",   "bg-indigo-600","bg-teal-600",   "bg-orange-600",
-];
+const AVATAR_COLORS = ["bg-slate-700"];
 function avatarColor(name) {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
@@ -382,7 +379,7 @@ function getStatusStyle(status) {
     case "announced":    return "bg-blue-50 text-blue-700 border-blue-200";
     case "cancelled":    return "bg-rose-50 text-rose-700 border-rose-200";
     case "dissolved":    return "bg-slate-100 text-slate-500 border-slate-200";
-    case "exited":       return "bg-purple-50 text-purple-700 border-purple-200";
+    case "exited":       return "bg-slate-100 text-slate-600 border-slate-200";
     default:             return "bg-slate-100 text-slate-600 border-slate-200";
   }
 }
@@ -405,15 +402,25 @@ function getStatusAccentBg(status) {
     case "announced":                      return "bg-blue-500";
     case "cancelled":                      return "bg-rose-500";
     case "dissolved": case "exited":       return "bg-slate-400";
-    default:                               return "bg-purple-500";
+    default:                               return "bg-slate-400";
+  }
+}
+function getStatusBorderL(status) {
+  switch (status) {
+    case "completed": case "active":       return "border-l-emerald-500";
+    case "pending":   case "under_review": return "border-l-amber-400";
+    case "announced":                      return "border-l-blue-500";
+    case "cancelled":                      return "border-l-rose-500";
+    case "dissolved": case "exited":       return "border-l-slate-400";
+    default:                               return "border-l-slate-400";
   }
 }
 
 function getDealSizeBadge(value) {
   if (!value || value === 0) return null;
-  if (value >= 5000)  return { label: "Mega deal",  cls: "bg-rose-50 text-rose-700 border-rose-200" };
-  if (value >= 1000)  return { label: "Large deal",  cls: "bg-orange-50 text-orange-700 border-orange-200" };
-  if (value >= 100)   return { label: "Mid-size",    cls: "bg-yellow-50 text-yellow-700 border-yellow-200" };
+  if (value >= 5000)  return { label: "Mega deal",  cls: "bg-slate-800 text-white border-slate-700" };
+  if (value >= 1000)  return { label: "Large deal",  cls: "bg-slate-200 text-slate-700 border-slate-300" };
+  if (value >= 100)   return { label: "Mid-size",    cls: "bg-slate-100 text-slate-600 border-slate-200" };
   return null;
 }
 
@@ -429,19 +436,19 @@ function getDealLabels(dealType) {
 }
 
 function DealSep({ type }) {
-  const base = "w-9 h-9 rounded-full flex items-center justify-center";
-  if (type === "merger")  return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-blue-100`}><ArrowLeftRight className="w-4 h-4 text-blue-600" /></div></div>;
-  if (type === "jv")      return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-teal-100`}><Plus className="w-4 h-4 text-teal-600" /></div></div>;
-  if (type === "invest")  return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-emerald-100`}><CircleDot className="w-4 h-4 text-emerald-600" /></div></div>;
-  return <div className="w-10 flex justify-center shrink-0"><div className={`${base} bg-purple-100`}><ArrowRight className="w-4 h-4 text-purple-600" /></div></div>;
+  const base = "w-11 h-11 rounded-full flex items-center justify-center ring-2 ring-white shadow-sm";
+  if (type === "merger")  return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-blue-200`}><ArrowLeftRight className="w-4 h-4 text-blue-700" /></div></div>;
+  if (type === "jv")      return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-teal-200`}><Plus className="w-4 h-4 text-teal-700" /></div></div>;
+  if (type === "invest")  return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-emerald-200`}><CircleDot className="w-4 h-4 text-emerald-700" /></div></div>;
+  return <div className="w-12 flex justify-center shrink-0"><div className={`${base} bg-slate-200`}><ArrowRight className="w-4 h-4 text-slate-600" /></div></div>;
 }
 
 function RoundBadge({ roundType }) {
   const map = {
-    seed:     "bg-violet-50 text-violet-700 border-violet-200",
+    seed:     "bg-purple-50 text-purple-700 border-purple-200",
     series_a: "bg-blue-50 text-blue-700 border-blue-200",
     series_b: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    series_c: "bg-purple-50 text-purple-700 border-purple-200",
+    series_c: "bg-slate-100 text-slate-700 border-slate-200",
     series_d: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200",
     series_e: "bg-pink-50 text-pink-700 border-pink-200",
     series_f: "bg-rose-50 text-rose-700 border-rose-200",
@@ -572,7 +579,7 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
     <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
       <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-purple-600" />
+          <Trophy className="w-4 h-4 text-slate-600" />
           <div>
             <p className="text-sm font-bold text-slate-900">Post-Money Valuation Ranking</p>
             <p className="text-[11px] text-slate-400 mt-0.5">{rows.length} companies · based on latest funding rounds</p>
@@ -597,14 +604,17 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
             {rows.map((d, i) => (
               <tr
                 key={d.id || d.target}
-                className={`border-b border-slate-50 hover:bg-purple-50/50 transition-colors cursor-pointer ${i % 2 === 0 ? "bg-white" : "bg-slate-50/30"}`}
+                className={`border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer ${i % 2 === 0 ? "bg-white" : "bg-slate-50/30"}`}
                 onClick={() => onSelectDeal?.(d)}
               >
                 <td className="px-3 py-3 text-slate-400 font-mono text-[11px]">
-                  {i === 0 ? <span className="text-amber-500 font-bold">①</span>
-                   : i === 1 ? <span className="text-slate-400 font-bold">②</span>
-                   : i === 2 ? <span className="text-orange-400 font-bold">③</span>
-                   : <span className="text-slate-300">{i + 1}</span>}
+                  {i === 0
+                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-white text-[10px] font-bold">1</span>
+                    : i === 1
+                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-300 text-slate-700 text-[10px] font-bold">2</span>
+                    : i === 2
+                    ? <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 text-slate-500 text-[10px] font-bold">3</span>
+                    : <span className="text-slate-300 text-[11px] font-mono">{i + 1}</span>}
                 </td>
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-2.5">
@@ -614,7 +624,7 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
                     <div>
                       <button
                         onClick={() => onOpenProfile(resolvePlayerName(d.target) || d.target)}
-                        className="font-semibold text-slate-900 hover:text-purple-700 transition-colors text-left text-xs"
+                        className="font-semibold text-slate-900 hover:text-slate-900 transition-colors text-left text-xs"
                       >
                         {d.target}
                       </button>
@@ -630,7 +640,7 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
                         return (
                           <div className="flex flex-wrap gap-0.5 mt-1">
                             {player.specializations.slice(0, 3).map(s => (
-                              <span key={s} className="text-[9px] bg-purple-50 text-purple-600 border border-purple-100 px-1.5 py-0.5 rounded-full font-medium">{s}</span>
+                              <span key={s} className="text-[9px] bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded-full font-medium">{s}</span>
                             ))}
                           </div>
                         );
@@ -644,7 +654,7 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
                     : <span className="text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded capitalize">{d.deal_type.replaceAll("_", " ")}</span>
                   }
                 </td>
-                <td className="px-3 py-3 text-right font-mono font-semibold text-purple-700 whitespace-nowrap">
+                <td className="px-3 py-3 text-right font-mono font-semibold text-slate-900 whitespace-nowrap">
                   {formatValue(d.deal_value, d.is_disclosed ?? true)}
                 </td>
                 <td className="px-3 py-3 text-right">
@@ -705,7 +715,7 @@ function CompanyNameBtn({ name, onOpenProfile, className = "" }) {
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onOpenProfile(canonical || name); }}
-      className={`hover:text-purple-700 transition-colors text-left ${className}`}
+      className={`hover:text-slate-900 transition-colors text-left ${className}`}
     >
       {name}
     </button>
@@ -721,13 +731,10 @@ function MACard({ activity, onOpenProfile }) {
 
   return (
     <div
-      className="relative bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-300 overflow-hidden"
+      className={`relative bg-white border border-l-4 border-slate-200 ${getStatusBorderL(activity.status)} rounded-xl shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 overflow-hidden`}
       data-testid={`ma-item-${activity.id}`}
     >
-      {/* Status colour stripe */}
-      <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${accent}`} />
-
-      <div className="p-5 pl-6">
+      <div className="p-5 pl-5">
         {/* ── Top: companies + meta ── */}
         <div className="flex flex-col lg:flex-row lg:items-start gap-5">
 
@@ -793,7 +800,7 @@ function MACard({ activity, onOpenProfile }) {
               <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">
                 {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type) ? "Amount Raised" : "Value"}
               </p>
-              <p className="text-lg font-mono font-bold text-purple-700 leading-none">
+              <p className="text-lg font-mono font-bold text-slate-900 leading-none">
                 {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
               </p>
               {activity.stake_percentage != null && (
@@ -818,7 +825,7 @@ function MACard({ activity, onOpenProfile }) {
                 {format(new Date(activity.announced_date), "d MMM yyyy")}
               </p>
               {daysAgo >= 0 && daysAgo <= 14 && (
-                <p className="text-[9px] text-purple-600 font-semibold mt-0.5">
+                <p className="text-[9px] text-slate-600 font-semibold mt-0.5">
                   {daysAgo === 0 ? "Today" : `${daysAgo}d ago`}
                 </p>
               )}
@@ -852,7 +859,7 @@ function MACard({ activity, onOpenProfile }) {
               {(activity.rationale || activity.description) && (
                 <button
                   onClick={() => setOpen((v) => !v)}
-                  className="flex items-center gap-0.5 text-[11px] text-purple-600 hover:text-purple-800 font-semibold transition-colors mt-0.5"
+                  className="flex items-center gap-0.5 text-[11px] text-purple-700 hover:text-purple-900 font-semibold transition-colors mt-0.5"
                 >
                   {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                   {open ? "Less" : "Details"}
@@ -871,7 +878,7 @@ function MACard({ activity, onOpenProfile }) {
 
         {/* Accordion — rationale + investment details + source link */}
         {open && (
-          <div className="mt-3 pt-3 border-t border-purple-100 space-y-3">
+          <div className="mt-3 pt-3 border-t border-slate-100 space-y-3">
             {activity.rationale && (
               <p className="text-slate-600 text-sm leading-relaxed">{activity.rationale}</p>
             )}
@@ -927,7 +934,7 @@ function MACard({ activity, onOpenProfile }) {
                   href={activity.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 font-semibold"
+                  className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 font-semibold"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   Read source
@@ -951,7 +958,7 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
   return (
     <>
       <tr
-        className={`${index % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-purple-50 transition-colors cursor-pointer`}
+        className={`${index % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-slate-50 transition-colors cursor-pointer`}
         onClick={() => hasDetail && setOpen((v) => !v)}
       >
         <td className="px-4 py-3 text-sm text-slate-700 font-medium">
@@ -969,7 +976,7 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
             <CompanyCell activity={activity} side="target" onOpenProfile={onOpenProfile} />
           </div>
         </td>
-        <td className="px-4 py-3 text-sm font-mono font-semibold text-purple-700">
+        <td className="px-4 py-3 text-sm font-mono font-semibold text-slate-900">
           <div>
             {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
             {activity.stake_percentage != null && (
@@ -1008,7 +1015,7 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
         </td>
         <td className="px-4 py-3 text-center">
           {hasDetail && (
-            <button className="text-purple-400 hover:text-purple-700 transition-colors" aria-label="Expand">
+            <button className="text-slate-400 hover:text-slate-700 transition-colors" aria-label="Expand">
               {open ? <ChevronUp className="w-4 h-4 mx-auto" /> : <ChevronDown className="w-4 h-4 mx-auto" />}
             </button>
           )}
@@ -1016,7 +1023,7 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
       </tr>
 
       {open && hasDetail && (
-        <tr className="bg-purple-50">
+        <tr className="bg-slate-50">
           <td colSpan={8} className="px-6 py-4">
             {activity.rationale && (
               <p className="text-slate-600 text-sm leading-relaxed mb-2">{activity.rationale}</p>
@@ -1027,7 +1034,7 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 font-medium"
+                className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 font-medium"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 Source article
@@ -1201,7 +1208,7 @@ function JVProgramsView() {
   }, [filterYear, search, sortYear]);
 
   function yearColor(y) {
-    if (y === 2026) return "text-purple-700";
+    if (y === 2026) return "text-slate-900";
     if (y === 2025) return "text-blue-600";
     if (y === 2024) return "text-teal-600";
     return "text-slate-500";
@@ -1221,7 +1228,7 @@ function JVProgramsView() {
           <FlagImg iso2={iso} />
           <button
             onClick={e => handlePartyClick(e, name)}
-            className={`text-xs font-medium text-left ${resolvePlayerName(name) ? "text-slate-800 hover:text-purple-700 hover:underline cursor-pointer" : "text-slate-600 cursor-default"}`}
+            className={`text-xs font-medium text-left ${resolvePlayerName(name) ? "text-slate-800 hover:text-slate-900 hover:underline cursor-pointer" : "text-slate-600 cursor-default"}`}
           >
             {name}
           </button>
@@ -1248,13 +1255,13 @@ function JVProgramsView() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search party or program…"
-              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
           <select
             value={filterYear}
             onChange={e => setFilterYear(e.target.value)}
-            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             <option value="all">All Years</option>
             {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
@@ -1290,7 +1297,7 @@ function JVProgramsView() {
                     <tr
                       key={row.id}
                       onClick={() => setExpandedId(isOpen ? null : row.id)}
-                      className={`border-b border-slate-50 transition-colors cursor-pointer group ${isOpen ? "bg-purple-50/60" : "hover:bg-purple-50/40"}`}
+                      className={`border-b border-slate-50 transition-colors cursor-pointer group ${isOpen ? "bg-slate-50" : "hover:bg-slate-50"}`}
                     >
                       {/* Index */}
                       <td className="px-4 py-3 text-[11px] font-mono text-slate-400">
@@ -1330,7 +1337,7 @@ function JVProgramsView() {
 
                       {/* Products */}
                       <td className="px-3 py-3">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-50 border border-purple-100 text-[11px] font-medium text-purple-700">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-medium text-slate-700">
                           {row.products}
                         </span>
                       </td>
@@ -1342,7 +1349,7 @@ function JVProgramsView() {
                             {row.year}
                           </span>
                           {row.description && (
-                            <ChevronDown className={`w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-transform duration-200 ${isOpen ? "rotate-180 text-purple-400" : ""}`} />
+                            <ChevronDown className={`w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-transform duration-200 ${isOpen ? "rotate-180 text-slate-500" : ""}`} />
                           )}
                         </div>
                       </td>
@@ -1350,11 +1357,11 @@ function JVProgramsView() {
 
                     {/* Expanded description row */}
                     {isOpen && row.description && (
-                      <tr key={`desc-${row.id}`} className="bg-purple-50/40 border-b border-purple-100/60">
+                      <tr key={`desc-${row.id}`} className="bg-slate-50 border-b border-slate-100">
                         <td />
                         <td colSpan={7} className="px-3 pb-4 pt-2">
                           <div className="flex items-start gap-2">
-                            <Info className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                            <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
                             <p className="text-[12px] text-slate-600 leading-relaxed">{row.description}</p>
                           </div>
                         </td>
@@ -1555,7 +1562,7 @@ function AvatarGroup({ parties, activity, side, onOpenProfile }) {
                 <button
                   key={i}
                   onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(p.name) || p.name); }}
-                  className="relative shrink-0 rounded-xl hover:ring-2 hover:ring-purple-300 focus:outline-none transition-all"
+                  className="relative shrink-0 rounded-xl hover:ring-2 hover:ring-slate-300 focus:outline-none transition-all"
                   style={{ marginLeft: i > 0 ? -10 : 0, zIndex: MAX_VIS - i }}
                   aria-label={p.name}
                 >
@@ -1607,7 +1614,7 @@ function CompanyCell({ activity, side, onOpenProfile }) {
         <div className="min-w-0">
           <button
             onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }}
-            className="block text-[13px] font-semibold text-slate-800 hover:text-purple-700 transition-colors text-left leading-snug truncate max-w-[160px]"
+            className="block text-[13px] font-semibold text-slate-800 hover:text-slate-900 transition-colors text-left leading-snug truncate max-w-[160px]"
           >
             {rawName}
           </button>
@@ -1633,7 +1640,7 @@ function CompanyCell({ activity, side, onOpenProfile }) {
           <button
             key={i}
             onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(p.name) || p.name); }}
-            className="relative rounded-lg hover:ring-2 hover:ring-purple-300 focus:outline-none transition-all shrink-0"
+            className="relative rounded-lg hover:ring-2 hover:ring-slate-300 focus:outline-none transition-all shrink-0"
             style={{ marginLeft: i > 0 ? -8 : 0, zIndex: 2 - i }}
           >
             <CompanyLogo activity={partyActivity(p.name, activity, side)} side={side} size="sm" />
@@ -1653,7 +1660,7 @@ function CompanyCell({ activity, side, onOpenProfile }) {
               {i > 0 && <span className="text-slate-300 mx-0.5">·</span>}
               <button
                 onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(p.name) || p.name); }}
-                className="hover:text-purple-700 transition-colors"
+                className="hover:text-slate-900 transition-colors"
               >{p.name}</button>
             </span>
           ))}
@@ -1686,7 +1693,7 @@ function CompanyCellNoLogo({ activity, side, onOpenProfile }) {
       <div className="min-w-0">
         <button
           onClick={e => { e.stopPropagation(); onOpenProfile(canonical || rawName); }}
-          className="block text-[13px] font-semibold text-slate-800 hover:text-purple-700 transition-colors text-left leading-snug truncate max-w-[160px]"
+          className="block text-[13px] font-semibold text-slate-800 hover:text-slate-900 transition-colors text-left leading-snug truncate max-w-[160px]"
         >
           {rawName}
         </button>
@@ -1711,7 +1718,7 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
 
   return (
     <tr
-      className={`${rowBg} hover:bg-purple-50/60 transition-colors cursor-pointer border-b border-slate-100 group`}
+      className={`${rowBg} hover:bg-slate-50 transition-colors cursor-pointer border-b border-slate-100 group`}
       onClick={() => onSelectDeal(activity)}
     >
       <td className="px-3 py-2 text-[11px] text-slate-400 font-mono w-10 select-none">{index + 1}</td>
@@ -1743,7 +1750,7 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
       </td>
 
       {/* Value */}
-      <td className="px-3 py-2 text-sm font-mono font-semibold text-purple-700 whitespace-nowrap">
+      <td className="px-3 py-2 text-sm font-mono font-semibold text-slate-900 whitespace-nowrap">
         {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
         {activity.stake_percentage != null && (
           <span className="text-[10px] text-slate-400 ml-1">{activity.stake_percentage}%</span>
@@ -1770,7 +1777,7 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={e => e.stopPropagation()}
-            className="text-slate-300 hover:text-purple-600 transition-colors inline-flex opacity-0 group-hover:opacity-100"
+            className="text-slate-300 hover:text-blue-600 transition-colors inline-flex opacity-0 group-hover:opacity-100"
             title="Source"
           >
             <ExternalLink className="w-3 h-3" />
@@ -1845,7 +1852,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
         </p>
         <button
           onClick={toggleAll}
-          className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+          className="text-xs text-blue-600 hover:text-blue-800 font-medium"
         >
           {expanded.size === groups.length ? "Collapse all" : "Expand all"}
         </button>
@@ -1859,7 +1866,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
         return (
           <div key={group.target} className="border-b border-slate-100 last:border-0">
             <div
-              className={`flex items-center gap-4 px-5 py-3.5 cursor-pointer transition-colors ${isOpen ? "bg-purple-50/60" : "hover:bg-slate-50"}`}
+              className={`flex items-center gap-4 px-5 py-3.5 cursor-pointer transition-colors ${isOpen ? "bg-slate-50" : "hover:bg-slate-50"}`}
               onClick={() => toggle(group.target)}
             >
               {/* Target company — LEFT */}
@@ -1870,7 +1877,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
                 <div className="min-w-0">
                   <button
                     onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(group.target) || group.target); }}
-                    className="font-semibold text-slate-900 hover:text-purple-700 text-sm leading-snug text-left block truncate"
+                    className="font-semibold text-slate-900 hover:text-slate-900 text-sm leading-snug text-left block truncate"
                   >
                     {group.target}
                   </button>
@@ -1896,7 +1903,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
                 {group.totalRaised > 0 && (
                   <div className="text-right">
                     <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">Total raised</p>
-                    <p className="text-sm font-mono font-bold text-purple-700">
+                    <p className="text-sm font-mono font-bold text-slate-900">
                       {group.totalRaised >= 1000 ? `$${(group.totalRaised / 1000).toFixed(1)}B` : `$${group.totalRaised}M`}
                     </p>
                   </div>
@@ -1914,10 +1921,10 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
 
             {/* Expanded: investor rounds table */}
             {isOpen && (
-              <div className="bg-purple-50/30 border-t border-purple-100">
+              <div className="bg-slate-50 border-t border-slate-100">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-purple-100">
+                    <tr className="border-b border-slate-100">
                       <th className="px-5 pl-16 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-left">Investor</th>
                       <th className="px-3 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-left">Round</th>
                       <th className="px-3 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-right">Amount</th>
@@ -1927,7 +1934,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
                   </thead>
                   <tbody>
                     {group.rounds.map((r, rIdx) => (
-                      <tr key={r.id || rIdx} className={`border-b border-purple-50 last:border-0 cursor-pointer hover:bg-purple-100/40 transition-colors ${rIdx % 2 === 0 ? "bg-white/60" : "bg-purple-50/20"}`} onClick={() => onSelectDeal?.(r)}>
+                      <tr key={r.id || rIdx} className={`border-b border-slate-100 last:border-0 cursor-pointer hover:bg-slate-100/40 transition-colors ${rIdx % 2 === 0 ? "bg-white/60" : "bg-slate-50/20"}`} onClick={() => onSelectDeal?.(r)}>
                         <td className="px-5 pl-16 py-2.5">
                           <div className="flex items-center gap-2">
                             <button onClick={e => { e.stopPropagation(); onOpenProfile(resolvePlayerName(r.acquirer) || r.acquirer); }} className="shrink-0">
@@ -1942,7 +1949,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
                             : <span className="text-[10px] text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded capitalize">{r.deal_type.replaceAll("_", " ")}</span>
                           }
                         </td>
-                        <td className="px-3 py-2.5 text-right font-mono font-semibold text-purple-700 whitespace-nowrap">
+                        <td className="px-3 py-2.5 text-right font-mono font-semibold text-slate-900 whitespace-nowrap">
                           {formatValue(r.deal_value, r.is_disclosed ?? true)}
                         </td>
                         <td className="px-3 py-2.5 text-slate-500 whitespace-nowrap">
@@ -2011,7 +2018,7 @@ function CountryFilter({ allDeals, selected, onSelect }) {
           onClick={() => onSelect("all")}
           className={`w-full text-left text-xs px-2 py-1 rounded transition-colors ${
             selected === "all"
-              ? "bg-purple-50 text-purple-700 font-semibold"
+              ? "bg-slate-100 text-slate-900 font-semibold"
               : "text-slate-600 hover:bg-slate-50"
           }`}
         >
@@ -2023,13 +2030,13 @@ function CountryFilter({ allDeals, selected, onSelect }) {
             onClick={() => onSelect(selected === code ? "all" : code)}
             className={`w-full text-left text-xs px-2 py-1 rounded transition-colors flex items-center gap-2 ${
               selected === code
-                ? "bg-purple-50 text-purple-700 font-semibold"
+                ? "bg-slate-100 text-slate-900 font-semibold"
                 : "text-slate-600 hover:bg-slate-50"
             }`}
           >
             <FlagImg iso2={code} />
             <span className="flex-1 truncate">{COUNTRY_LABEL[code] || code}</span>
-            <span className={`text-[9px] font-mono ${selected === code ? "text-purple-400" : "text-slate-400"}`}>{count}</span>
+            <span className={`text-[9px] font-mono ${selected === code ? "text-slate-600" : "text-slate-400"}`}>{count}</span>
           </button>
         ))}
       </div>
@@ -2103,7 +2110,7 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
                       </button>
                       <button
                         onClick={() => onOpenProfile(resolvePlayerName(p.name) || p.name)}
-                        className="font-semibold text-slate-900 hover:text-purple-700 text-sm text-left transition-colors"
+                        className="font-semibold text-slate-900 hover:text-slate-900 text-sm text-left transition-colors"
                       >
                         {p.name}
                       </button>
@@ -2123,7 +2130,7 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
                 </button>
                 <button
                   onClick={() => onOpenProfile(resolvePlayerName(deal.target) || deal.target)}
-                  className="font-semibold text-slate-900 hover:text-purple-700 text-sm text-left transition-colors"
+                  className="font-semibold text-slate-900 hover:text-slate-900 text-sm text-left transition-colors"
                 >
                   {deal.target}
                 </button>
@@ -2141,7 +2148,7 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
               <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1">
                 {["strategic_investment","minority_stake","funding_round"].includes(deal.deal_type) ? "Amount Raised" : "Value"}
               </p>
-              <p className="text-2xl font-mono font-bold text-purple-700 leading-none">
+              <p className="text-2xl font-mono font-bold text-slate-900 leading-none">
                 {formatValue(deal.deal_value, deal.is_disclosed ?? true)}
               </p>
               {deal.stake_percentage != null && (
@@ -2258,7 +2265,7 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
               <button
                 key={p.name}
                 onClick={() => { onClose(); onOpenProfile(resolvePlayerName(p.name) || p.name); }}
-                className="flex items-center gap-2 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 hover:bg-purple-100 transition-colors"
+                className="flex items-center gap-2 text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 hover:bg-slate-200 transition-colors"
               >
                 <CompanyLogo activity={partyActivity(p.name, deal, "acquirer")} side="acquirer" size="sm" />
                 <span className="truncate">{p.name}</span>
@@ -2266,7 +2273,7 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
             ))}
             <button
               onClick={() => { onClose(); onOpenProfile(resolvePlayerName(deal.target) || deal.target); }}
-              className="flex items-center gap-2 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 hover:bg-purple-100 transition-colors"
+              className="flex items-center gap-2 text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 hover:bg-slate-200 transition-colors"
             >
               <CompanyLogo activity={deal} side="target" size="sm" />
               <span className="truncate">{deal.target}</span>
@@ -2456,7 +2463,7 @@ export default function MAActivity() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-slate-200 border-t-slate-800 rounded-full" />
       </div>
     );
   }
@@ -2498,7 +2505,7 @@ export default function MAActivity() {
             <button
               onClick={handleRefresh}
               disabled={scraping}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900 transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${scraping ? "animate-spin" : ""}`} />
               {scraping ? "Scraping…" : "Refresh"}
@@ -2522,13 +2529,13 @@ export default function MAActivity() {
             onClick={() => setDealTypeTab(t.value)}
             className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-all -mb-px ${
               dealTypeTab === t.value
-                ? "border-purple-600 text-purple-700"
+                ? "border-slate-900 text-slate-900"
                 : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
             }`}
           >
             {t.label}
             <span className={`ml-1.5 text-[10px] font-mono px-1.5 py-0.5 rounded-full ${
-              dealTypeTab === t.value ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-500"
+              dealTypeTab === t.value ? "bg-slate-200 text-slate-900" : "bg-slate-100 text-slate-500"
             }`}>
               {t.value === "jv" ? JV_EU_PROGRAMS.length : (tabCounts[t.value] || 0)}
             </span>
@@ -2566,7 +2573,7 @@ export default function MAActivity() {
                 </p>
               </div>
               <div className="flex items-center gap-3 text-[10px] text-slate-400">
-                <span className="flex items-center gap-1"><span className="inline-block w-3 h-2.5 rounded-sm bg-purple-200" /> Deal count</span>
+                <span className="flex items-center gap-1"><span className="inline-block w-3 h-2.5 rounded-sm bg-slate-400" /> Deal count</span>
                 <span className="flex items-center gap-1"><span className="inline-block w-6 border-t-2 border-dashed border-emerald-400" /> Value ($B)</span>
                 <span className="bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">Last 8 quarters</span>
               </div>
@@ -2593,7 +2600,7 @@ export default function MAActivity() {
                     return (
                       <div className="bg-white border border-slate-200 rounded-lg px-3 py-2 shadow text-xs">
                         <p className="font-semibold text-slate-700 mb-1">{d.quarter}</p>
-                        <p className="text-purple-700 font-mono">{d.count} deal{d.count !== 1 ? "s" : ""}</p>
+                        <p className="text-slate-900 font-mono">{d.count} deal{d.count !== 1 ? "s" : ""}</p>
                         {d.value > 0 && <p className="text-emerald-600 font-mono">{d.value >= 1000 ? `$${(d.value/1000).toFixed(1)}B` : `$${d.value}M`} disclosed</p>}
                       </div>
                     );
@@ -2631,7 +2638,7 @@ export default function MAActivity() {
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                 <Filter className="w-3.5 h-3.5" /> Filters
                 {activeFilterCount > 0 && (
-                  <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full">{activeFilterCount}</span>
+                  <span className="bg-slate-200 text-slate-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full">{activeFilterCount}</span>
                 )}
               </span>
               {activeFilterCount > 0 && (
@@ -2652,7 +2659,7 @@ export default function MAActivity() {
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 data-testid="search-ma"
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-purple-300"
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -2667,7 +2674,7 @@ export default function MAActivity() {
                     data-testid={o.value === "all" ? "status-filter" : undefined}
                     className={`w-full text-left text-xs px-2 py-1 rounded transition-colors ${
                       selectedStatus === o.value
-                        ? "bg-purple-50 text-purple-700 font-semibold"
+                        ? "bg-slate-100 text-slate-900 font-semibold"
                         : "text-slate-600 hover:bg-slate-50"
                     }`}
                   >
@@ -2687,8 +2694,8 @@ export default function MAActivity() {
                     onClick={() => setSelectedYear(o.value)}
                     className={`text-[10px] font-mono px-1.5 py-0.5 rounded border transition-colors ${
                       selectedYear === o.value
-                        ? "bg-purple-600 text-white border-purple-600"
-                        : "bg-white text-slate-600 border-slate-200 hover:border-purple-300"
+                        ? "bg-slate-900 text-white border-slate-900"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
                     }`}
                   >
                     {o.value === "all" ? "All" : o.label}
@@ -2709,8 +2716,8 @@ export default function MAActivity() {
                     onClick={() => setMinValue(o.value)}
                     className={`text-[10px] font-mono px-1.5 py-0.5 rounded border transition-colors ${
                       minValue === o.value
-                        ? "bg-purple-600 text-white border-purple-600"
-                        : "bg-white text-slate-600 border-slate-200 hover:border-purple-300"
+                        ? "bg-slate-900 text-white border-slate-900"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
                     }`}
                   >
                     {o.label}
@@ -2764,7 +2771,7 @@ export default function MAActivity() {
             <button
               onClick={() => exportCSV(filteredDeals)}
               disabled={filteredDeals.length === 0}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 transition-colors disabled:opacity-40"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900 transition-colors disabled:opacity-40"
             >
               <Download className="w-3.5 h-3.5" /> Export CSV
             </button>
@@ -2774,7 +2781,7 @@ export default function MAActivity() {
           <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden" data-testid="ma-activities-list">
             {(histLoading && allDeals.length === 0) ? (
               <div className="flex items-center justify-center h-40">
-                <div className="animate-spin w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full" />
+                <div className="animate-spin w-6 h-6 border-2 border-slate-200 border-t-slate-800 rounded-full" />
               </div>
             ) : filteredDeals.length === 0 ? (
               <div className="text-center py-16 text-slate-500 text-sm">No deals match the selected filters.</div>

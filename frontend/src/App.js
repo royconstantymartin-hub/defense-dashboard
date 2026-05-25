@@ -28,7 +28,7 @@ export const LanguageContext = createContext({ lang: "en", setLang: () => {} });
 
 export const useLang = () => useContext(LanguageContext);
 
-/** Inline translation helper. Usage: useT({ en: "Hello", fr: "Bonjour" }) */
+/** Inline translation helper. Usage: useT({ en: "Hello" }) */
 export const useT = (strings) => {
   const { lang } = useLang();
   return strings[lang] ?? strings.en;
@@ -108,15 +108,8 @@ const AuthProvider = ({ children }) => {
 function App() {
   // Seed data is now admin-only — auto-seeding removed.
   // Use Admin Panel > "Seed Data" button to initialize the database.
-  const [lang, setLang] = useState(() => localStorage.getItem("lang") || "en");
-
-  const handleSetLang = (l) => {
-    setLang(l);
-    localStorage.setItem("lang", l);
-  };
-
   return (
-    <LanguageContext.Provider value={{ lang, setLang: handleSetLang }}>
+    <LanguageContext.Provider value={{ lang: "en", setLang: () => {} }}>
     <AuthProvider>
       <BrowserRouter>
         <Toaster position="top-right" richColors />

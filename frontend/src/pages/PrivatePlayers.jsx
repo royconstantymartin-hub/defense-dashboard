@@ -12,16 +12,14 @@ import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
 // ── Logo helpers ──────────────────────────────────────────────────────────────
 
-const AVATAR_COLORS = [
-  "from-purple-600 to-purple-800", "from-blue-600 to-blue-800",
-  "from-emerald-600 to-emerald-800", "from-amber-600 to-amber-800",
-  "from-rose-600 to-rose-800", "from-indigo-600 to-indigo-800",
-  "from-teal-600 to-teal-800", "from-orange-600 to-orange-800",
+const AVATAR_PALETTE = [
+  "bg-slate-600", "bg-slate-500", "bg-slate-700", "bg-slate-600",
+  "bg-slate-500", "bg-slate-700", "bg-slate-600", "bg-slate-500",
 ];
 function avatarColor(name = "") {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
-  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+  return AVATAR_PALETTE[h % AVATAR_PALETTE.length];
 }
 function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
@@ -41,7 +39,7 @@ function LogoWithFallback({ name, website, size = 40 }) {
   if (!urls.length || urlIndex >= urls.length) {
     return (
       <div
-        className={`bg-gradient-to-br ${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0`}
+        className={`${avatarColor(name)} rounded-lg flex items-center justify-center shrink-0 shadow-sm`}
         style={{ width: size, height: size }}
       >
         <span className="font-bold text-white tracking-tight" style={{ fontSize: size < 32 ? 9 : 12 }}>
@@ -54,7 +52,7 @@ function LogoWithFallback({ name, website, size = 40 }) {
     <img
       src={urls[urlIndex]}
       alt={name}
-      className="rounded-lg object-contain bg-white border border-slate-100 shrink-0"
+      className="rounded-lg object-contain bg-white border border-slate-100 shrink-0 shadow-sm"
       style={{ width: size, height: size }}
       onError={() => setUrlIndex((i) => i + 1)}
     />
@@ -246,6 +244,14 @@ const MACRO_CATEGORIES = [
     keywords: ["Missiles", "Air Defense", "Iron Dome", "Trophy", "Rockets", "Ammunition", "Energetics", "S-400", "Remote Weapons"],
   },
   {
+    id: "nuclear",
+    name: "Nuclear & Advanced Tech",
+    description: "Nuclear, directed energy, advanced propulsion",
+    icon: Zap,
+    color: "orange",
+    keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"],
+  },
+  {
     id: "aerospace",
     name: "Aerospace & Aviation",
     description: "Fixed-wing, rotorcraft, engines, launch systems",
@@ -361,6 +367,9 @@ const CAT_COLORS = {
     headerBg: "bg-slate-50", text: "text-slate-600",
   },
 };
+const CAT_COLORS = Object.fromEntries(
+  ["purple","rose","orange","indigo","amber","blue","sky","emerald","slate"].map((k) => [k, NEUTRAL_CAT])
+);
 
 function assignCategory(company) {
   const specs = new Set((company.specializations || []).map((s) => s.toLowerCase()));
@@ -386,7 +395,7 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
           ? "opacity-40 cursor-default border-slate-100"
           : isSelected
           ? `${clr.activeBorder} ${clr.activeBg} shadow-md`
-          : `${clr.border} ${clr.hoverBorder} hover:shadow-md`
+          : `border-slate-200 ${clr.hoverBorder} hover:shadow-md`
       }`}
     >
       {/* Header: icon + name + count + chevron */}
@@ -414,12 +423,12 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
       {topLogos.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {topLogos.map((c) => (
-            <LogoWithFallback key={c.id || c.name} name={c.name} website={c.website} size={26} />
+            <LogoWithFallback key={c.id || c.name} name={c.name} website={c.website} size={30} />
           ))}
           {companies.length > 8 && (
             <div
-              className="rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0"
-              style={{ width: 26, height: 26 }}
+              className={`rounded-lg flex items-center justify-center flex-shrink-0 border ${clr.iconBg}`}
+              style={{ width: 30, height: 30 }}
             >
               <span className="text-[9px] text-slate-500 font-medium">+{companies.length - 8}</span>
             </div>
@@ -432,24 +441,28 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
 
 // ── Compact company row ───────────────────────────────────────────────────────
 
-function CompactPlayerRow({ company, onClick }) {
+function CompactPlayerRow({ company, onClick, accentColor }) {
   const iso = COUNTRY_ISO[(company.country || "").trim()];
   const cap = formatCap(company.market_cap) || formatCap(company.revenue);
   const isRevenue = !formatCap(company.market_cap) && !!formatCap(company.revenue);
   const url = company.website
     ? (company.website.startsWith("http") ? company.website : `https://${company.website}`)
     : null;
+  const stage = company.funding_stage
+    ? company.funding_stage.replace(/^Private\s*[—–-]\s*/i, "").trim()
+    : null;
+  const stageIsNamed = stage && /series|seed|venture|growth|bootstrap/i.test(stage);
 
   return (
     <div
-      className="relative flex items-center gap-3 px-4 py-2.5 hover:bg-purple-50/40 transition-colors cursor-pointer group"
+      className="relative flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer group"
       onClick={onClick}
     >
       <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
       <LogoWithFallback name={company.name} website={company.website} size={32} />
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <span className="font-medium text-[13px] text-slate-800 group-hover:text-purple-700 transition-colors truncate">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-[13px] text-slate-800 group-hover:text-slate-900 transition-colors truncate">
             {company.name}
           </span>
           {url && (
@@ -458,7 +471,7 @@ function CompactPlayerRow({ company, onClick }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-slate-200 hover:text-purple-400 flex-shrink-0 transition-colors"
+              className="text-slate-300 hover:text-slate-600 flex-shrink-0 transition-colors opacity-0 group-hover:opacity-100"
             >
               <ExternalLink className="w-3 h-3" />
             </a>
@@ -469,14 +482,14 @@ function CompactPlayerRow({ company, onClick }) {
             <img
               src={`https://flagcdn.com/w20/${iso}.png`}
               alt={company.country}
-              className="w-3.5 h-auto rounded-sm flex-shrink-0"
+              className="w-4 h-auto rounded-sm flex-shrink-0"
               onError={(e) => { e.target.style.display = "none"; }}
             />
           )}
           <span className="text-[11px] text-slate-400 truncate">
             {company.headquarters || company.country || "—"}
             {company.founded_year && (
-              <span className="text-slate-300"> · {company.founded_year}</span>
+              <span className="text-slate-300"> · est. {company.founded_year}</span>
             )}
           </span>
         </div>
@@ -488,7 +501,7 @@ function CompactPlayerRow({ company, onClick }) {
             {isRevenue && <p className="text-[9px] text-slate-400 leading-tight">revenue</p>}
           </div>
         ) : (
-          <span className="text-xs text-slate-300">—</span>
+          <span className="text-xs text-slate-200">—</span>
         )}
       </div>
       <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-purple-400 transition-colors flex-shrink-0" />
@@ -511,11 +524,13 @@ function ExpandedList({ category, companies, onCompanyClick }) {
           {companies.length}
         </span>
       </div>
+      {/* Column headers */}
       <div className="flex items-center gap-3 px-4 py-1.5 border-b border-slate-100 bg-slate-50/50">
-        <div className="w-8 flex-shrink-0" />
+        <div className="w-9 flex-shrink-0" />
         <div className="flex-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Company</div>
-        <div className="w-28 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
-          Valuation (est.)
+        <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider hidden sm:block" style={{ width: 80 }}>Stage</div>
+        <div className="w-24 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
+          Valuation
         </div>
         <div className="w-3.5 flex-shrink-0" />
       </div>
@@ -595,6 +610,11 @@ export default function PrivatePlayers() {
     return Object.entries(map).sort((a, b) => b[1] - a[1]);
   }, [players]);
 
+  const maxCountryCount = useMemo(
+    () => countryCounts.reduce((m, [, n]) => Math.max(m, n), 0),
+    [countryCounts]
+  );
+
   const countryFiltered = useMemo(() => {
     if (filterCountry === "all") return players;
     return players.filter((c) => c.country === filterCountry);
@@ -632,7 +652,7 @@ export default function PrivatePlayers() {
     [players]
   );
   const totalFunded = useMemo(
-    () => players.filter((c) => c.funding_stage && !c.funding_stage.toLowerCase().includes("private — ")).length,
+    () => players.filter((c) => /series|seed|venture|growth|bootstrap|late stage/i.test(c.funding_stage || "")).length,
     [players]
   );
 
@@ -646,16 +666,17 @@ export default function PrivatePlayers() {
 
   return (
     <div className="p-6 max-w-screen-2xl mx-auto">
+
       {/* Page header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-purple-700 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-purple-700 flex items-center justify-center shadow-sm">
             <Lock className="w-5 h-5 text-white" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-900 font-heading">Private Players</h1>
             <p className="text-sm text-slate-500">
-              Non-publicly-listed defense companies · {players.length} tracked
+              Non-publicly-listed defense companies
             </p>
           </div>
         </div>
@@ -672,11 +693,11 @@ export default function PrivatePlayers() {
           ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-lg bg-slate-50 flex items-center justify-center ${color}`}>
-                  <Icon className="w-4 h-4" />
+                <div className={`w-10 h-10 rounded-xl ${bgCls} flex items-center justify-center flex-shrink-0`}>
+                  <Icon className={`w-5 h-5 ${iconCls}`} />
                 </div>
                 <div>
-                  <p className="text-xl font-bold text-slate-900">{value}</p>
+                  <p className="text-xl font-bold text-slate-900 font-heading">{value}</p>
                   <p className="text-xs text-slate-500">{label}</p>
                 </div>
               </CardContent>
@@ -709,7 +730,7 @@ export default function PrivatePlayers() {
       {/* Body */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
-          <div className="w-10 h-10 rounded-full border-4 border-purple-200 border-t-purple-700 animate-spin" />
+          <div className="w-10 h-10 rounded-full border-4 border-slate-200 border-t-purple-700 animate-spin" />
           <p className="text-sm text-slate-500">Loading companies…</p>
         </div>
       ) : error ? (
@@ -726,16 +747,17 @@ export default function PrivatePlayers() {
               Countries
             </p>
             <div className="flex flex-col gap-0.5">
+              {/* All countries row */}
               <button
                 onClick={() => setFilterCountry("all")}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                   filterCountry === "all"
-                    ? "bg-purple-50 text-purple-700 font-medium"
+                    ? "bg-purple-50 text-purple-900 font-semibold border border-purple-200"
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                 }`}
               >
                 <span>All countries</span>
-                <span className={`text-xs font-mono px-1.5 py-0.5 rounded-full ${
+                <span className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
                   filterCountry === "all" ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-400"
                 }`}>
                   {players.length}
@@ -744,17 +766,18 @@ export default function PrivatePlayers() {
               {countryCounts.map(([country, count]) => {
                 const iso = COUNTRY_ISO[country];
                 const active = filterCountry === country;
+                const barPct = maxCountryCount > 0 ? Math.round((count / maxCountryCount) * 100) : 0;
                 return (
                   <button
                     key={country}
                     onClick={() => setFilterCountry(country)}
-                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                       active
-                        ? "bg-purple-50 text-purple-700 font-medium"
+                        ? "bg-purple-50 text-purple-900 font-semibold border border-purple-200"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                     }`}
                   >
-                    <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
                       {iso ? (
                         <img
                           src={`https://flagcdn.com/w20/${iso}.png`}
@@ -765,13 +788,22 @@ export default function PrivatePlayers() {
                       ) : (
                         <Globe className="w-4 h-4 text-slate-300 flex-shrink-0" />
                       )}
-                      <span className="truncate">{country}</span>
+                      <span className="text-[13px] leading-tight">{country}</span>
                     </div>
-                    <span className={`text-xs font-mono px-1.5 py-0.5 rounded-full flex-shrink-0 ml-1 ${
-                      active ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-400"
-                    }`}>
-                      {count}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      {/* Mini proportional bar */}
+                      <div className="w-10 h-1 rounded-full bg-slate-100 overflow-hidden hidden sm:block">
+                        <div
+                          className={`h-full rounded-full transition-all ${active ? "bg-purple-400" : "bg-slate-300"}`}
+                          style={{ width: `${barPct}%` }}
+                        />
+                      </div>
+                      <span className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
+                        active ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-400"
+                      }`}>
+                        {count}
+                      </span>
+                    </div>
                   </button>
                 );
               })}
@@ -825,6 +857,12 @@ export default function PrivatePlayers() {
                 <div className="flex flex-col items-center justify-center py-24 gap-2">
                   <Lock className="w-10 h-10 text-slate-200" />
                   <p className="text-slate-400 text-sm">No companies match your search.</p>
+                  <button
+                    onClick={() => { setSearch(""); setFilterCountry("all"); setSelectedCategory(null); }}
+                    className="mt-1 text-xs text-purple-600 hover:text-purple-800 font-medium underline underline-offset-2"
+                  >
+                    Clear search
+                  </button>
                 </div>
               ) : (
                 <>
@@ -833,10 +871,11 @@ export default function PrivatePlayers() {
                   </p>
                   <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
                     <div className="flex items-center gap-3 px-4 py-1.5 border-b border-slate-100 bg-slate-50/50">
-                      <div className="w-8 flex-shrink-0" />
+                      <div className="w-9 flex-shrink-0" />
                       <div className="flex-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Company</div>
-                      <div className="w-28 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
-                        Valuation (est.)
+                      <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider hidden sm:block" style={{ width: 80 }}>Stage</div>
+                      <div className="w-24 text-[10px] font-semibold text-slate-400 uppercase tracking-wider text-right">
+                        Valuation
                       </div>
                       <div className="w-3.5 flex-shrink-0" />
                     </div>

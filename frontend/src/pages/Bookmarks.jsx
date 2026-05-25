@@ -9,25 +9,24 @@ import { fr, enUS } from "date-fns/locale";
 import { useLang } from "@/App";
 
 const T = {
-  title:      { en: "Saved Articles",              fr: "Articles sauvegardés" },
-  subtitle:   { en: "Bookmarks from the news feed", fr: "Articles mis de côté depuis la veille" },
-  count1:     { en: "article",                      fr: "article" },
-  countN:     { en: "articles",                     fr: "articles" },
-  recentFirst:{ en: "Most recently saved first",    fr: "Sauvegardés récemment en premier" },
-  empty:      { en: "No saved articles",            fr: "Aucun article sauvegardé" },
-  emptyDesc:  { en: "From the News Feed, click the bookmark icon on any article to save it here.",
-                fr: "Depuis la page Actualités, cliquez sur l'icône marque-page d'un article pour le retrouver ici." },
-  goNews:     { en: "Go to News Feed",              fr: "Aller aux actualités" },
-  loginMsg:   { en: "Log in to access your saved articles", fr: "Connectez-vous pour accéder à vos sauvegardes" },
-  loginBtn:   { en: "Log in",                       fr: "Se connecter" },
-  untitled:   { en: "Untitled article",             fr: "Article sans titre" },
-  remove:     { en: "Remove bookmark",              fr: "Retirer la sauvegarde" },
-  openArticle:{ en: "Open article",                 fr: "Ouvrir l'article" },
+  title:      { en: "Saved Articles" },
+  subtitle:   { en: "Bookmarks from the news feed" },
+  count1:     { en: "article" },
+  countN:     { en: "articles" },
+  recentFirst:{ en: "Most recently saved first" },
+  empty:      { en: "No saved articles" },
+  emptyDesc:  { en: "From the News Feed, click the bookmark icon on any article to save it here." },
+  goNews:     { en: "Go to News Feed" },
+  loginMsg:   { en: "Log in to access your saved articles" },
+  loginBtn:   { en: "Log in" },
+  untitled:   { en: "Untitled article" },
+  remove:     { en: "Remove bookmark" },
+  openArticle:{ en: "Open article" },
 };
 
 const CATEGORY_STYLES = {
   CONTRACT:    "bg-emerald-50 text-emerald-700 border-emerald-200",
-  TECHNOLOGY:  "bg-purple-50 text-purple-700 border-purple-200",
+  TECHNOLOGY:  "bg-slate-100 text-slate-700 border-slate-200",
   CONFLICT:    "bg-red-50 text-red-700 border-red-200",
   POLICY:      "bg-amber-50 text-amber-700 border-amber-200",
   GEOPOLITICS: "bg-sky-50 text-sky-700 border-sky-200",
@@ -82,7 +81,7 @@ export default function Bookmarks() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-slate-200 border-t-slate-800 rounded-full" />
       </div>
     );
   }
@@ -94,7 +93,7 @@ export default function Bookmarks() {
         <p className="font-medium">{tLoginMsg}</p>
         <button
           onClick={() => navigate("/login")}
-          className="flex items-center gap-2 px-4 py-2 bg-purple-700 text-white rounded-lg text-sm font-medium hover:bg-purple-800 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors"
         >
           <LogIn className="w-4 h-4" /> {tLoginBtn}
         </button>
@@ -132,7 +131,7 @@ export default function Bookmarks() {
           <p className="text-sm text-center max-w-xs">{tEmptyDesc}</p>
           <button
             onClick={() => navigate("/announcements")}
-            className="mt-2 flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 rounded-lg text-sm font-medium hover:bg-purple-100 transition-colors border border-purple-200"
+            className="mt-2 flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors border border-slate-200"
           >
             <Newspaper className="w-4 h-4" /> {tGoNews}
           </button>
@@ -151,7 +150,7 @@ export default function Bookmarks() {
 
             return (
               <Card key={bookmark.id}
-                className="bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                className="bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200">
                 <CardContent className="p-4 flex flex-col gap-3 h-full">
                   {art.image && (
                     <div className="w-full h-32 rounded-md overflow-hidden bg-slate-100 flex-shrink-0">
@@ -186,7 +185,7 @@ export default function Bookmarks() {
                       </button>
                       {art.url && (
                         <a href={art.url} target="_blank" rel="noopener noreferrer" title={tOpenArt}
-                          className="p-1.5 rounded-md text-slate-300 hover:text-purple-600 hover:bg-purple-50 transition-colors">
+                          className="p-1.5 rounded-md text-slate-300 hover:text-blue-600 hover:bg-blue-50 transition-colors">
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                       )}

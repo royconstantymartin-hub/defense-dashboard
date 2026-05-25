@@ -16,7 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Search, FileText, Globe, Calendar, CheckCircle2, Clock, Database, Filter, Shield, ArrowUpDown, ExternalLink } from "lucide-react";
+import { Search, FileText, Globe, Calendar, CheckCircle2, Clock, Database, Filter, Shield, ArrowUpDown, ExternalLink, Lock, ArrowLeftRight, FileCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const CATEGORIES = [
@@ -118,20 +118,17 @@ export default function Regulations() {
     setFilteredRegulations(filtered);
   }, [searchTerm, selectedCategory, selectedCountry, sortBy, regulations]);
 
-  const getCategoryStyle = (category) => {
+  const getCategoryIcon = (category) => {
     switch (category) {
-      case 'offset':
-        return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'export_control':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'procurement':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'itar':
-        return 'bg-rose-50 text-rose-700 border-rose-200';
-      default:
-        return 'bg-slate-100 text-slate-600 border-slate-200';
+      case 'itar':          return { Icon: Lock,          cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
+      case 'export_control':return { Icon: Globe,          cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
+      case 'procurement':   return { Icon: FileCheck,      cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
+      case 'offset':        return { Icon: ArrowLeftRight, cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
+      default:              return { Icon: FileText,       cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
     }
   };
+
+  const getCategoryStyle = (_category) => 'bg-slate-100 text-slate-600 border-slate-200';
 
   const getFlag = (country) => {
     const code = COUNTRY_FLAGS[country];
@@ -141,7 +138,7 @@ export default function Regulations() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-slate-200 border-t-slate-800 rounded-full" />
       </div>
     );
   }
@@ -150,7 +147,7 @@ export default function Regulations() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
         <p className="font-medium">Failed to load regulations.</p>
-        <button onClick={fetchRegulations} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors">Retry</button>
+        <button onClick={fetchRegulations} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 transition-colors">Retry</button>
       </div>
     );
   }
@@ -167,7 +164,7 @@ export default function Regulations() {
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
           <Clock className="w-3.5 h-3.5" />
-          <span>Updated: Q4 2024</span>
+          <span>Updated: {new Date().getFullYear()}</span>
           <span className="text-slate-300">|</span>
           <Database className="w-3.5 h-3.5" />
           <span>Official sources</span>
@@ -176,36 +173,24 @@ export default function Regulations() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL REGULATIONS</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{regulations.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">OFFSET POLICIES</p>
-            <p className="text-2xl font-mono font-bold text-purple-600 mt-2">
-              {regulations.filter(r => r.category === 'offset').length}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">EXPORT CONTROLS</p>
-            <p className="text-2xl font-mono font-bold text-blue-600 mt-2">
-              {regulations.filter(r => r.category === 'export_control').length}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COUNTRIES</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
-              {new Set(regulations.map(r => r.country)).size}
-            </p>
-          </CardContent>
-        </Card>
+        {[
+          { label: "TOTAL REGULATIONS", value: regulations.length,                                    Icon: Shield,        iconCls: "text-purple-700",  bgCls: "bg-purple-50",    top: "border-t-2 border-t-purple-600" },
+          { label: "OFFSET POLICIES",   value: regulations.filter(r=>r.category==='offset').length,  Icon: ArrowLeftRight,iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-400" },
+          { label: "EXPORT CONTROLS",   value: regulations.filter(r=>r.category==='export_control').length, Icon: Globe,  iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-400" },
+          { label: "COUNTRIES",         value: new Set(regulations.map(r=>r.country)).size,           Icon: FileCheck,     iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-400" },
+        ].map(({ label, value, Icon, iconCls, bgCls, top }) => (
+          <Card key={label} className={`bg-white border-slate-200 shadow-sm ${top}`}>
+            <CardContent className="p-5 flex items-start justify-between">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-slate-500">{label}</p>
+                <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{value}</p>
+              </div>
+              <div className={`w-9 h-9 ${bgCls} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                <Icon className={`w-4 h-4 ${iconCls}`} />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Filters */}
@@ -227,7 +212,7 @@ export default function Regulations() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {CATEGORIES.map(c => (
-              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-purple-50">
+              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-slate-50">
                 {c.label}
               </SelectItem>
             ))}
@@ -240,7 +225,7 @@ export default function Regulations() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200 max-h-80">
             {COUNTRIES.map(c => (
-              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-purple-50">
+              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-slate-50">
                 {c.label}
               </SelectItem>
             ))}
@@ -253,9 +238,9 @@ export default function Regulations() {
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
-            <SelectItem value="date_desc" className="text-slate-700 focus:bg-purple-50">Date (newest first)</SelectItem>
-            <SelectItem value="date_asc" className="text-slate-700 focus:bg-purple-50">Date (oldest first)</SelectItem>
-            <SelectItem value="country_asc" className="text-slate-700 focus:bg-purple-50">Country (A → Z)</SelectItem>
+            <SelectItem value="date_desc" className="text-slate-700 focus:bg-slate-50">Date (newest first)</SelectItem>
+            <SelectItem value="date_asc" className="text-slate-700 focus:bg-slate-50">Date (oldest first)</SelectItem>
+            <SelectItem value="country_asc" className="text-slate-700 focus:bg-slate-50">Country (A → Z)</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -266,7 +251,7 @@ export default function Regulations() {
           <Accordion type="single" collapsible className="w-full">
             {filteredRegulations.map((reg) => {
               const flagUrl = getFlag(reg.country);
-              // "Récent" = effective_date within the last 12 months
+              // "Recent" = effective_date within the last 12 months
               const isRecent = reg.effective_date
                 && (new Date() - new Date(reg.effective_date)) < 365 * 24 * 3600 * 1000
                 && new Date(reg.effective_date) <= new Date();
@@ -277,11 +262,13 @@ export default function Regulations() {
                   className="border-b border-slate-100 last:border-0"
                   data-testid={`regulation-item-${reg.id}`}
                 >
-                  <AccordionTrigger className="px-6 py-4 hover:bg-purple-50/30 hover:no-underline transition-colors">
+                  <AccordionTrigger className="px-6 py-4 hover:bg-slate-50 hover:no-underline transition-colors">
                     <div className="flex items-start gap-4 text-left">
-                      <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-5 h-5 text-purple-600" />
-                      </div>
+                      {(() => { const { Icon, cls, bg } = getCategoryIcon(reg.category); return (
+                        <div className={`w-10 h-10 ${bg} border rounded-xl flex items-center justify-center flex-shrink-0`}>
+                          <Icon className={`w-5 h-5 ${cls}`} />
+                        </div>
+                      ); })()}
                       <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                           <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${getCategoryStyle(reg.category)}`}>
@@ -294,7 +281,7 @@ export default function Regulations() {
                               e.stopPropagation();
                               navigate(`/expenditures?country=${encodeURIComponent(reg.country)}`);
                             }}
-                            className="text-xs text-slate-500 flex items-center gap-1.5 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 px-2 py-0.5 rounded-full transition-colors"
+                            className="text-xs text-slate-500 flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 hover:text-slate-900 px-2 py-0.5 rounded-full transition-colors"
                             title={`View ${reg.country} expenditures`}
                           >
                             {flagUrl && (
@@ -343,8 +330,15 @@ export default function Regulations() {
           </Accordion>
           
           {filteredRegulations.length === 0 && (
-            <div className="text-center py-12 text-slate-500">
-              No regulations found matching your criteria
+            <div className="flex flex-col items-center justify-center py-16 gap-3">
+              <Search className="w-8 h-8 text-slate-300" />
+              <p className="text-sm text-slate-500">No regulations found matching your criteria</p>
+              <button
+                onClick={() => { setSearchTerm(""); setSelectedCategory("all"); setSelectedCountry("all"); }}
+                className="text-xs text-purple-600 hover:text-purple-800 font-medium underline underline-offset-2"
+              >
+                Clear filters
+              </button>
             </div>
           )}
         </CardContent>

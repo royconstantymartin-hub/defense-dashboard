@@ -37,75 +37,64 @@ import { getLogoUrl } from "@/lib/companyLogos";
 
 // ── Translations ──────────────────────────────────────────────────────────────
 const T = {
-  title:       { en: "Contracts & Tenders",                             fr: "Contrats & Appels d'offres" },
-  subtitle:    { en: "Defense procurement reference — consultants & industry", fr: "Marchés défense publics — référence consultants et industriels" },
-  total:       { en: "Total",         fr: "Total" },
-  indexed:     { en: "contracts indexed",  fr: "contrats référencés" },
-  open:        { en: "Open",          fr: "Ouverts" },
-  activeTend:  { en: "active tenders",     fr: "appels d'offres actifs" },
-  awarded:     { en: "Awarded",       fr: "Attribués" },
-  signed:      { en: "contracts signed",   fr: "contrats signés" },
-  totalVal:    { en: "Total Est. Value",   fr: "Valeur totale est." },
-  midpoint:    { en: "midpoint estimate",  fr: "milieu fourchette — estimatif" },
-  searchPh:    { en: "Search contract, authority, program...", fr: "Rechercher un contrat, une autorité, un programme..." },
-  allStatus:   { en: "All Statuses",       fr: "Tous les statuts" },
-  allAuth:     { en: "All Authorities",    fr: "Toutes autorités" },
-  allCat:      { en: "All Categories",     fr: "Toutes catégories" },
-  sourceNote:  { en: "Data sourced from public procurement databases (DGA, OCCAR, NATO NSPA, DoD SAR, OJEU) — reference use only · not a real-time procurement monitoring tool",
-                 fr: "Données issues de sources publiques (DGA, OCCAR, NATO NSPA, DoD SAR, OJEU) — usage référentiel uniquement · pas un outil de veille temps réel" },
-  shown:       { en: "contracts shown", fr: "contrats affichés" },
-  contract:    { en: "contract shown",  fr: "contrat affiché" },
-  noMatch:     { en: "No contracts match the selected filters.", fr: "Aucun contrat ne correspond aux filtres sélectionnés." },
-  exportCsv:   { en: "Export CSV",     fr: "Export CSV" },
+  title:       { en: "Contracts & Tenders" },
+  subtitle:    { en: "Defense procurement reference — consultants & industry" },
+  total:       { en: "Total" },
+  indexed:     { en: "contracts indexed" },
+  open:        { en: "Open" },
+  activeTend:  { en: "active tenders" },
+  awarded:     { en: "Awarded" },
+  signed:      { en: "contracts signed" },
+  totalVal:    { en: "Total Est. Value" },
+  midpoint:    { en: "midpoint estimate" },
+  searchPh:    { en: "Search contract, authority, program..." },
+  allStatus:   { en: "All Statuses" },
+  allAuth:     { en: "All Authorities" },
+  allCat:      { en: "All Categories" },
+  sourceNote:  { en: "Data sourced from public procurement databases (DGA, OCCAR, NATO NSPA, DoD SAR, OJEU) — reference use only · not a real-time procurement monitoring tool" },
+  shown:       { en: "contracts shown" },
+  contract:    { en: "contract shown" },
+  noMatch:     { en: "No contracts match the selected filters." },
+  exportCsv:   { en: "Export CSV" },
   // Status labels
-  sOpen:       { en: "Open",      fr: "Ouvert" },
-  sAwarded:    { en: "Awarded",   fr: "Attribué" },
-  sClosed:     { en: "Closed",    fr: "Fermé" },
-  sCancelled:  { en: "Cancelled", fr: "Annulé" },
+  sOpen:       { en: "Open" },
+  sAwarded:    { en: "Awarded" },
+  sClosed:     { en: "Closed" },
+  sCancelled:  { en: "Cancelled" },
   // Authority labels
-  aNational:   { en: "National",  fr: "Nationale" },
-  aNato:       { en: "NATO",      fr: "OTAN" },
-  aEu:         { en: "EU",        fr: "UE" },
-  aBilateral:  { en: "Bilateral", fr: "Bilatéral" },
+  aNational:   { en: "National" },
+  aNato:       { en: "NATO" },
+  aEu:         { en: "EU" },
+  aBilateral:  { en: "Bilateral" },
   // Category labels
-  cAero:       { en: "Aerospace", fr: "Aérospatial" },
-  cNaval:      { en: "Naval",     fr: "Naval" },
-  cLand:       { en: "Land",      fr: "Terrestre" },
-  cCyber:      { en: "Cyber",     fr: "Cyber" },
-  cSvc:        { en: "Services",  fr: "Services" },
-  cLog:        { en: "Logistics", fr: "Logistique" },
-  cSpace:      { en: "Space",     fr: "Spatial" },
-  cMissiles:   { en: "Missiles",  fr: "Missiles" },
+  cAero:       { en: "Aerospace" },
+  cNaval:      { en: "Naval" },
+  cLand:       { en: "Land" },
+  cCyber:      { en: "Cyber" },
+  cSvc:        { en: "Services" },
+  cLog:        { en: "Logistics" },
+  cSpace:      { en: "Space" },
+  cMissiles:   { en: "Missiles" },
   // Recent strip
-  recent:      { en: "Recent Activity",  fr: "Activité récente" },
-  recentSub:   { en: "Latest contracts & tenders indexed", fr: "Derniers contrats & appels d'offres référencés" },
+  recent:      { en: "Recent Activity" },
+  recentSub:   { en: "Latest contracts & tenders indexed" },
   // Card fields
-  estVal:      { en: "Est. Value",    fr: "Valeur estimée" },
-  published:   { en: "Published",     fr: "Publication" },
-  deadline:    { en: "Deadline",      fr: "Échéance" },
-  awardedTo:   { en: "Awarded To",    fr: "Attributaire" },
-  undisclosed: { en: "Undisclosed",   fr: "Non divulgué" },
-  officialSrc: { en: "Official source", fr: "Source officielle" },
-  noSrc:       { en: "No source",     fr: "Source non renseignée" },
-  confirmed:   { en: "✓ Confirmed",   fr: "✓ Confirmé" },
-  estimated:   { en: "~ Estimated",   fr: "~ Estimé" },
-  category:    { en: "Category",      fr: "Catégorie" },
-  reliability: { en: "Reliability",   fr: "Fiabilité" },
-  viewProfile:  { en: "View profile for",      fr: "Voir le profil de" },
-  seeExpend:    { en: "Defense budget →",       fr: "Budget défense →" },
-  seeExpendTip: { en: "See defense expenditure for this country", fr: "Voir les dépenses défense de ce pays" },
+  estVal:      { en: "Est. Value" },
+  published:   { en: "Published" },
+  deadline:    { en: "Deadline" },
+  awardedTo:   { en: "Awarded To" },
+  undisclosed: { en: "Undisclosed" },
+  officialSrc: { en: "Official source" },
+  noSrc:       { en: "No source" },
+  confirmed:   { en: "✓ Confirmed" },
+  estimated:   { en: "~ Estimated" },
+  category:    { en: "Category" },
+  reliability: { en: "Reliability" },
+  viewProfile:  { en: "View profile for" },
+  seeExpend:    { en: "Defense budget →" },
+  seeExpendTip: { en: "See defense expenditure for this country" },
 };
 
-const CATEGORY_COLORS = {
-  aerospace: "bg-sky-50 text-sky-700 border-sky-200",
-  naval:     "bg-blue-50 text-blue-700 border-blue-200",
-  land:      "bg-amber-50 text-amber-700 border-amber-200",
-  cyber:     "bg-purple-50 text-purple-700 border-purple-200",
-  services:  "bg-slate-100 text-slate-600 border-slate-200",
-  logistics: "bg-orange-50 text-orange-700 border-orange-200",
-  space:     "bg-indigo-50 text-indigo-700 border-indigo-200",
-  missiles:  "bg-rose-50 text-rose-700 border-rose-200",
-};
 
 const STATUS_DOT = {
   open:      "bg-blue-500",
@@ -212,7 +201,7 @@ function RecentStrip({ contracts }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] p-4">
       <div className="flex items-center gap-2 mb-3">
-        <History size={15} className="text-purple-700" />
+        <History size={15} className="text-slate-700" />
         <div>
           <p className="text-sm font-semibold text-slate-900">{tRecent}</p>
           <p className="text-xs text-slate-400">{tRecentS}</p>
@@ -220,7 +209,7 @@ function RecentStrip({ contracts }) {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
         {recent.map((c) => (
-          <div key={c.id} className="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-purple-200 transition-colors">
+          <div key={c.id} className="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-slate-300 transition-colors">
             <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[c.status] || "bg-slate-400"}`} />
             <div className="min-w-0">
               <p className="text-xs font-medium text-slate-800 leading-snug line-clamp-2">{c.title}</p>
@@ -277,7 +266,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
   return (
     <Card
       onClick={() => onSelect(contract)}
-      className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg hover:border-purple-200 transition-all duration-300 cursor-pointer"
+      className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg hover:border-slate-300 transition-all duration-300 cursor-pointer"
     >
       <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
         <div className="flex items-start justify-between gap-3">
@@ -292,7 +281,7 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
                 <button
                   onClick={(e) => { e.stopPropagation(); onGoExpend(contract.authority_country); }}
                   title={tSeeExpendTip}
-                  className="ml-auto text-[10px] text-purple-600 hover:text-purple-800 hover:underline leading-none"
+                  className="ml-auto text-[10px] text-purple-700 hover:text-purple-900 hover:underline leading-none"
                 >
                   {tSeeExpend}
                 </button>
@@ -310,14 +299,14 @@ function ContractCard({ contract, onOpenProfile, onSelect, onGoExpend }) {
           {contract.description}
         </p>
         <div className="flex flex-wrap gap-2">
-          <span className={`text-xs px-2 py-0.5 rounded-full border ${CATEGORY_COLORS[contract.category] || "bg-slate-100 text-slate-600 border-slate-200"}`}>
+          <span className="text-xs px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200">
             {tCategory[contract.category] || contract.category}
           </span>
           <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
             {tAuthority[contract.authority_type] || contract.authority_type}
           </span>
           {contract.program && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-mono">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-mono">
               {contract.program}
             </span>
           )}
@@ -414,7 +403,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile, onGoExpend }) 
               {tStatus[contract.status] || contract.status}
             </span>
             {contract.program && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-mono">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-mono">
                 {contract.program}
               </span>
             )}
@@ -431,7 +420,7 @@ function ContractDetailDialog({ contract, onClose, onOpenProfile, onGoExpend }) 
               <button
                 onClick={() => { onClose(); onGoExpend(contract.authority_country); }}
                 title={tSeeExpendTip}
-                className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 hover:border-purple-300 transition-colors whitespace-nowrap"
+                className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:border-slate-300 transition-colors whitespace-nowrap"
               >
                 {tSeeExpend}
               </button>
@@ -637,7 +626,7 @@ export default function Contracts() {
         <button
           onClick={exportCSV}
           disabled={filtered.length === 0}
-          className="flex items-center gap-2 px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-40 self-start lg:self-auto"
+          className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-40 self-start lg:self-auto"
         >
           <Download size={14} />
           {tExport}
@@ -656,21 +645,21 @@ export default function Contracts() {
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
             <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tOpen}</p>
-            <p className="text-2xl font-bold text-blue-600 mt-1">{kpis.open}</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">{kpis.open}</p>
             <p className="text-xs text-slate-400 mt-0.5">{tActiveTend}</p>
           </CardContent>
         </Card>
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
             <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tAwarded}</p>
-            <p className="text-2xl font-bold text-emerald-600 mt-1">{kpis.awarded}</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">{kpis.awarded}</p>
             <p className="text-xs text-slate-400 mt-0.5">{tSigned}</p>
           </CardContent>
         </Card>
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-4">
             <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{tTotalVal}</p>
-            <p className="text-2xl font-bold text-purple-700 mt-1">${kpis.midB}B</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">${kpis.midB}B</p>
             <p className="text-xs text-slate-400 mt-0.5">{tMidpoint}</p>
           </CardContent>
         </Card>
@@ -721,13 +710,20 @@ export default function Contracts() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-16">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-700" />
+        <div className="flex flex-col items-center justify-center py-16 gap-3">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-700" />
+          <p className="text-sm text-slate-400">Loading contracts…</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-slate-400">
           <FileCheck size={40} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">{tNoMatch}</p>
+          <button
+            onClick={() => { setSearchTerm(""); setSelectedStatus("all"); setSelectedAuthority("all"); setSelectedCategory("all"); }}
+            className="mt-4 text-xs text-purple-700 hover:text-purple-900 font-medium underline underline-offset-2"
+          >
+            Clear all filters
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
