@@ -164,8 +164,13 @@ const SPECIALTY_DEFENSE_SOURCES = new Set([
   "Air Force Magazine", "Army Times", "Navy Times", "Marine Corps Times",
   "Air Force Times", "Defense Daily", "C4ISRNET", "National Defense",
   "War on the Rocks", "The War Zone", "Bellingcat",
+  "Defense Scoop", "Army Recognition", "Naval Post", "Naval News",
+  "IISS", "SIPRI", "NTI", "Atlantic Council", "ASD News",
+  "Defense Review", "Defense Aerospace Report", "ASPI Strategist",
+  "Warrior Maven", "DoD News", "Federal News Network",
+  "Modern War Institute", "The Cipher Brief", "ISW",
   "Opex360", "Meta-Défense", "Air & Cosmos", "TTU", "Mer et Marine",
-  "La Tribune Défense",
+  "La Tribune Défense", "Forces Operations", "Zone Militaire",
 ]);
 
 const FR_SOURCES = new Set([
@@ -917,6 +922,11 @@ export default function Announcements() {
     return matchCat && matchSearch && matchCompany;
   }), [articles, selectedCat, searchTerm, selectedCompany]);
 
+  const uniqueSourceCount = useMemo(
+    () => new Set(articles.map((a) => a.realSource || a.source).filter(Boolean)).size,
+    [articles]
+  );
+
   // Reset to page 1 whenever any filter changes
   useEffect(() => { setCurrentPage(1); }, [searchTerm, selectedCat, selectedCompany]);
 
@@ -1011,10 +1021,24 @@ export default function Announcements() {
                 {filtered.length}
                 {filtered.length < articles.length ? ` / ${articles.length}` : ""} articles
               </span>
+              {uniqueSourceCount > 0 && (
+                <>
+                  <span className="text-slate-300">·</span>
+                  <span className="text-slate-400">{uniqueSourceCount} sources</span>
+                </>
+              )}
             </div>
           )}
           {lastUpdated && (
-            <span className="text-xs text-slate-400">Updated {format(lastUpdated, "HH:mm")}</span>
+            <span className="text-xs text-slate-400">
+              {(() => {
+                const mins = Math.floor((Date.now() - lastUpdated.getTime()) / 60000);
+                if (mins < 1)  return "Updated just now";
+                if (mins < 60) return `Updated ${mins}m ago`;
+                const hrs = Math.floor(mins / 60);
+                return `Updated ${hrs}h ago`;
+              })()}
+            </span>
           )}
           {token ? (
             <button
