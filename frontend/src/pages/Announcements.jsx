@@ -12,7 +12,6 @@ import {
 import {
   Search,
   ExternalLink,
-  Filter,
   Rss,
   RefreshCw,
   TrendingUp,
@@ -24,7 +23,6 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   BarChart2,
   Tag,
   Clock,
@@ -37,7 +35,7 @@ import { useAuth } from "@/App";
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 const NEWS_CATEGORIES = [
-  { value: "all",         label: "All Categories" },
+  { value: "all",         label: "All" },
   { value: "CONTRACT",    label: "Contracts" },
   { value: "TECHNOLOGY",  label: "Technology" },
   { value: "CONFLICT",    label: "Conflict" },
@@ -59,14 +57,21 @@ const REGION_OPTIONS = [
 ];
 
 const LANG_OPTIONS = [
-  { value: "en",  label: "EN" },
-  { value: "all", label: "All" },
-  { value: "fr",  label: "FR" },
+  { value: "en",  label: "EN", flag: "🇬🇧" },
+  { value: "all", label: "All", flag: "🌐" },
+  { value: "fr",  label: "FR", flag: "🇫🇷" },
 ];
 
 const ARTICLES_PER_PAGE = 20;
 
-// ── Defense company tickers ────────────────────────────────────────────────────
+const HOT_KEYWORDS = [
+  "F-35", "F-22", "drone", "NATO", "Ukraine", "Russia", "China",
+  "AI", "hypersonic", "cyber", "missile", "nuclear", "AUKUS",
+  "Taiwan", "satellite", "submarine", "HIMARS", "Patriot", "Javelin",
+  "B-21", "Rafale", "Eurofighter",
+];
+
+// ── Defense tickers ────────────────────────────────────────────────────────────
 
 const DEFENSE_TICKERS = [
   { ticker: "LMT",    name: "Lockheed Martin",   country: "us", keywords: ["lockheed", "f-35", "f-22", "sikorsky"] },
@@ -89,8 +94,6 @@ const DEFENSE_TICKERS = [
   { ticker: "IDR.MC", name: "Indra",              country: "es", keywords: ["indra sistemas", "indra"] },
   { ticker: "HAG.DE", name: "Hensoldt",           country: "de", keywords: ["hensoldt"] },
 ];
-
-// ── Stock photos (always-available fallbacks per category) ─────────────────────
 
 const CATEGORY_STOCK_PHOTOS = {
   TECHNOLOGY: [
@@ -181,11 +184,6 @@ const FR_SOURCES = new Set([
   "TTU", "Mer et Marine",
 ]);
 
-function resolveLanguage(article) {
-  if (article.language === "fr" || article.language === "en") return article.language;
-  return FR_SOURCES.has(article.source) ? "fr" : "en";
-}
-
 function isBreakingIntel(article) {
   return !!article.breakingIntel;
 }
@@ -203,7 +201,6 @@ function isAlgoBreakingIntel(article) {
   return false;
 }
 
-// Returns a guaranteed image URL for any article — never a colored placeholder
 function getArticleImage(article) {
   if (article.image) return article.image;
   const pool = CATEGORY_STOCK_PHOTOS[article.category] || CATEGORY_STOCK_PHOTOS.TECHNOLOGY;
@@ -211,24 +208,31 @@ function getArticleImage(article) {
   return pool[idx];
 }
 
-const TIME_BAND_LABELS = {
-  today:     "Today",
-  yesterday: "Yesterday",
-  this_week: "This Week",
-  earlier:   "Earlier",
-};
+function articleMentionsCompany(article, ticker) {
+  const def = DEFENSE_TICKERS.find((d) => d.ticker === ticker);
+  if (!def) return false;
+  const text = (
+    (article.title   || "") + " " +
+    (article.summary || "") + " " +
+    (article.company || "")
+  ).toLowerCase();
+  return def.keywords.some((kw) => text.includes(kw));
+}
 
-// ── Placeholder ───────────────────────────────────────────────────────────────
-
-const PLACEHOLDER_GRADIENT = {
-  CONTRACT:    "bg-emerald-900",
-  TECHNOLOGY:  "bg-slate-800",
-  CONFLICT:    "bg-red-900",
-  POLICY:      "bg-amber-900",
-  GEOPOLITICS: "bg-sky-900",
-  "M&A":       "bg-blue-900",
-  INDUSTRY:    "bg-slate-800",
-};
+function detectArticleCompany(article, stockData) {
+  const text = (
+    (article.title   || "") + " " +
+    (article.summary || "") + " " +
+    (article.company || "")
+  ).toLowerCase();
+  for (const def of DEFENSE_TICKERS) {
+    if (def.keywords.some((kw) => text.includes(kw))) {
+      const stock = stockData[def.ticker];
+      return { ticker: def.ticker, name: def.name, change: stock?.change_percent ?? null };
+    }
+  }
+  return null;
+}
 
 function detectCompaniesHeat(articles, hours = 24) {
   const counts        = {};
@@ -263,6 +267,60 @@ function detectCompaniesHeat(articles, hours = 24) {
     }));
 }
 
+function getTopSources(articles, limit = 6) {
+  const counts = {};
+  articles.forEach((a) => {
+    const src = a.realSource || a.source;
+    if (src) counts[src] = (counts[src] || 0) + 1;
+  });
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([source, count]) => ({ source, count }));
+}
+
+function getHotTopics(articles, limit = 10) {
+  const counts = {};
+  articles.forEach((a) => {
+    const text = ((a.title || "") + " " + (a.summary || "")).toLowerCase();
+    HOT_KEYWORDS.forEach((kw) => {
+      if (text.includes(kw.toLowerCase())) {
+        counts[kw] = (counts[kw] || 0) + 1;
+      }
+    });
+  });
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([keyword, count]) => ({ keyword, count }));
+}
+
+function timeBand(article) {
+  const h = differenceInHours(new Date(), new Date(article.publishedAt));
+  if (h < 24)  return "today";
+  if (h < 48)  return "yesterday";
+  if (h < 168) return "this_week";
+  return "earlier";
+}
+
+const CAT_LEFT_BORDER = {
+  CONTRACT:    "border-l-emerald-400",
+  TECHNOLOGY:  "border-l-purple-400",
+  CONFLICT:    "border-l-red-400",
+  POLICY:      "border-l-amber-400",
+  GEOPOLITICS: "border-l-sky-400",
+  "M&A":       "border-l-blue-400",
+  INDUSTRY:    "border-l-slate-300",
+  EARNINGS:    "border-l-teal-400",
+};
+
+const TIME_BAND_DISPLAY = [
+  { key: "today",     label: "Today" },
+  { key: "yesterday", label: "Yesterday" },
+  { key: "this_week", label: "This Week" },
+  { key: "earlier",   label: "Earlier" },
+];
+
 // ── SourceFavicon ──────────────────────────────────────────────────────────────
 
 function SourceFavicon({ url, source, sourceLogo }) {
@@ -278,223 +336,30 @@ function SourceFavicon({ url, source, sourceLogo }) {
     }
   }
 
-  const initial    = source ? source.charAt(0).toUpperCase() : "?";
+  const initial     = source ? source.charAt(0).toUpperCase() : "?";
   const isSpecialty = SPECIALTY_DEFENSE_SOURCES.has(source);
 
   return (
     <span className="flex items-center gap-1.5 min-w-0">
-      <span className="w-4 h-4 rounded flex-shrink-0 overflow-hidden bg-slate-100 flex items-center justify-center">
+      <span className={`w-4 h-4 rounded flex-shrink-0 overflow-hidden flex items-center justify-center ${isSpecialty ? "bg-purple-50" : "bg-slate-100"}`}>
         {logoUrl && !err ? (
           <img src={logoUrl} alt="" width={16} height={16} className="w-full h-full object-contain" onError={() => setErr(true)} />
         ) : (
           <span className="text-[8px] font-bold text-slate-500 leading-none">{initial}</span>
         )}
       </span>
-      <span className="text-[11px] text-slate-500 font-medium truncate max-w-[120px]">{source}</span>
+      <span className={`text-[11px] font-medium truncate max-w-[120px] ${isSpecialty ? "text-purple-600" : "text-slate-500"}`}>
+        {source}
+      </span>
     </span>
   );
 }
 
-// ── HeroCard — full-width editorial hero (page 1, first article) ───────────────
+// ── ArticleCard — single unified card format ───────────────────────────────────
 
-function HeroCard({ article, isBookmarked, onBookmark }) {
-  const [imgError, setImgError] = useState(false);
-  const image     = imgError ? getArticleImage({ ...article, image: null }) : getArticleImage(article);
-  const isNew     = differenceInHours(new Date(), new Date(article.publishedAt)) < 4;
-  const srcCount  = article.source_count ?? 1;
-  const countryCode = article.country_code?.toLowerCase();
-
-  return (
-    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-purple-200 transition-all duration-200 group">
-      {/* Large image */}
-      <a href={article.url} target="_blank" rel="noopener noreferrer"
-        className="block relative h-[300px] overflow-hidden">
-        <img
-          src={image}
-          alt={article.title}
-          loading="lazy"
-          onError={() => setImgError(true)}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-
-        {/* Bottom-left: category + flag */}
-        <div className="absolute bottom-4 left-4 flex items-center gap-2">
-          <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border uppercase tracking-wider backdrop-blur-sm bg-white/90 ${getCategoryStyle(article.category)}`}>
-            {article.category || "INDUSTRY"}
-          </span>
-          {countryCode && (
-            <img src={`https://flagcdn.com/w20/${countryCode}.png`} alt="" className="w-6 h-4 object-cover rounded-sm shadow" />
-          )}
-        </div>
-
-        {isNew && (
-          <div className="absolute top-3 left-3">
-            <span className="bg-slate-900/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm tracking-wider">
-              NEW
-            </span>
-          </div>
-        )}
-        {srcCount >= 2 && (
-          <div className="absolute top-3 right-3">
-            <span className="bg-orange-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
-              {srcCount} sources
-            </span>
-          </div>
-        )}
-      </a>
-
-      {/* Text block */}
-      <div className="p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <SourceFavicon
-            url={article.url}
-            source={article.realSource || article.source}
-            sourceLogo={article.sourceLogo}
-          />
-          <span className="text-slate-200">·</span>
-          <span className="text-[11px] text-slate-400">{relativeTime(article.publishedAt)}</span>
-        </div>
-
-        <a href={article.url} target="_blank" rel="noopener noreferrer">
-          <h2 className="text-[22px] font-bold text-slate-900 leading-tight group-hover:text-purple-700 transition-colors line-clamp-3 mb-3">
-            {article.title}
-          </h2>
-        </a>
-
-        {article.summary && (
-          <p className="text-[13px] text-slate-500 leading-relaxed line-clamp-3 mb-4">
-            {article.summary}
-          </p>
-        )}
-
-        <div className="flex items-center justify-end gap-2">
-          <button
-            onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
-            className={`p-2 rounded-lg transition-colors ${
-              isBookmarked ? "text-amber-500 bg-amber-50" : "text-slate-300 hover:text-amber-500 hover:bg-amber-50"
-            }`}
-          >
-            {isBookmarked ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
-          </button>
-          <a
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-purple-700 transition-colors"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Read <ExternalLink className="w-3.5 h-3.5" />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── MediumCard — half-width card (featured grid, breaking intel) ───────────────
-
-function MediumCard({ article, isBookmarked, onBookmark, isBreaking = false }) {
-  const [imgError, setImgError]   = useState(false);
-  const image       = imgError ? getArticleImage({ ...article, image: null }) : getArticleImage(article);
-  const countryCode = article.country_code?.toLowerCase();
-  const srcCount    = article.source_count ?? 1;
-
-  return (
-    <div className={`bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group flex flex-col ${
-      isBreaking
-        ? "border-orange-200 hover:border-orange-300"
-        : "border-slate-200 hover:border-purple-200"
-    }`}>
-      {/* Image */}
-      <a href={article.url} target="_blank" rel="noopener noreferrer"
-        className="block relative h-[190px] overflow-hidden flex-shrink-0">
-        <img
-          src={image}
-          alt={article.title}
-          loading="lazy"
-          onError={() => setImgError(true)}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-        <div className="absolute bottom-2 left-2 flex items-center gap-1.5">
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider backdrop-blur-sm bg-white/90 ${getCategoryStyle(article.category)}`}>
-            {article.category === "GEOPOLITICS" ? "GEO" : article.category === "EARNINGS" ? "EARN" : (article.category || "INDUSTRY")}
-          </span>
-          {countryCode && (
-            <img src={`https://flagcdn.com/w20/${countryCode}.png`} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
-          )}
-        </div>
-        {srcCount >= 2 && (
-          <div className="absolute top-2 right-2">
-            <span className="bg-orange-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-              {srcCount} sources
-            </span>
-          </div>
-        )}
-      </a>
-
-      {/* Text */}
-      <div className="p-3 flex flex-col gap-2 flex-1">
-        <div className="flex items-center gap-1.5">
-          <SourceFavicon
-            url={article.url}
-            source={article.realSource || article.source}
-            sourceLogo={article.sourceLogo}
-          />
-          <span className="text-[10px] text-slate-300">·</span>
-          <span className="text-[10px] text-slate-400">{relativeTime(article.publishedAt)}</span>
-        </div>
-        <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
-          <h3 className="text-slate-800 font-bold text-[14px] leading-snug line-clamp-2 group-hover:text-purple-700 transition-colors">
-            {article.title}
-          </h3>
-        </a>
-        {article.summary && (
-          <p className="text-[12px] text-slate-400 leading-snug line-clamp-2">
-            {article.summary}
-          </p>
-        )}
-        <div className="flex items-center justify-end gap-1 pt-1">
-          <button
-            onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
-            className={`p-1 rounded-lg transition-colors ${
-              isBookmarked ? "text-amber-500 bg-amber-50" : "text-slate-300 hover:text-amber-500 hover:bg-amber-50"
-            }`}
-          >
-            {isBookmarked ? <BookmarkCheck className="w-3 h-3" /> : <Bookmark className="w-3 h-3" />}
-          </button>
-          <a
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-purple-700 transition-colors"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Read <ExternalLink className="w-2.5 h-2.5" />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── NewsCard — compact list row with optional thumbnail ────────────────────────
-
-const CAT_LEFT_BORDER = {
-  CONTRACT:    "border-l-emerald-400",
-  TECHNOLOGY:  "border-l-purple-400",
-  CONFLICT:    "border-l-red-400",
-  POLICY:      "border-l-amber-400",
-  GEOPOLITICS: "border-l-sky-400",
-  "M&A":       "border-l-blue-400",
-  INDUSTRY:    "border-l-slate-300",
-  EARNINGS:    "border-l-teal-400",
-};
-
-function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
-  const [imgError,    setImgError]    = useState(false);
-  const [localImage,  setLocalImage]  = useState(null);
+function ArticleCard({ article, isBookmarked, onBookmark, isBreaking = false, stockData = {} }) {
+  const [imgError,   setImgError]   = useState(false);
+  const [localImage, setLocalImage] = useState(null);
 
   useEffect(() => {
     if (!article.image && !localImage && article.url) {
@@ -511,17 +376,24 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
   const srcCount     = article.source_count ?? 1;
   const coveredBy    = article.covered_by   ?? [];
   const countryCode  = article.country_code?.toLowerCase();
-  const accent       = CAT_LEFT_BORDER[article.category] || CAT_LEFT_BORDER.INDUSTRY;
+  const companyHit   = detectArticleCompany(article, stockData);
+
+  const accentClass = isBreaking
+    ? "border-l-orange-400"
+    : (CAT_LEFT_BORDER[article.category] || "border-l-slate-300");
+
+  const borderClass = isBreaking
+    ? "border-orange-100 hover:border-orange-200"
+    : "border-slate-200 hover:border-slate-300";
 
   return (
-    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 group border-l-2 ${accent} ${
-      isHot
-        ? "border border-orange-200 shadow-sm hover:shadow-md hover:border-orange-300"
-        : "border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300"
-    }`}>
+    <div className={`bg-white rounded-xl overflow-hidden transition-all duration-200 group border-l-2 ${accentClass} border ${borderClass} shadow-sm hover:shadow-md`}>
       <div className="flex min-h-[88px]">
-        {/* Text */}
+
+        {/* Text block */}
         <div className="flex-1 min-w-0 p-4 flex flex-col gap-2">
+
+          {/* Meta row */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <SourceFavicon
               url={article.url}
@@ -530,6 +402,13 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
             />
             <span className="text-[11px] text-slate-300">·</span>
             <span className="text-[11px] text-slate-400 font-medium">{relativeTime(article.publishedAt)}</span>
+            {countryCode && (
+              <img
+                src={`https://flagcdn.com/w20/${countryCode}.png`}
+                alt={countryCode.toUpperCase()}
+                className="w-5 h-3.5 object-cover rounded-sm opacity-75 flex-shrink-0"
+              />
+            )}
             {isNew && (
               <span className="bg-slate-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full tracking-wider">
                 NEW
@@ -543,33 +422,38 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
                 {srcCount} sources
               </span>
             )}
+            {companyHit && companyHit.change != null && (
+              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full font-mono flex-shrink-0 ${
+                companyHit.change > 0
+                  ? "bg-emerald-50 text-emerald-700"
+                  : companyHit.change < 0
+                  ? "bg-rose-50 text-rose-700"
+                  : "bg-slate-100 text-slate-500"
+              }`}>
+                {companyHit.ticker} {companyHit.change > 0 ? "+" : ""}{companyHit.change.toFixed(2)}%
+              </span>
+            )}
           </div>
 
+          {/* Title */}
           <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
-            <h3 className={`font-bold leading-snug line-clamp-2 group-hover:text-slate-900 transition-colors ${
-              isHot ? "text-[15px] text-slate-900" : "text-[14px] text-slate-800"
-            }`}>
+            <h3 className="font-bold text-[14px] leading-snug line-clamp-2 text-slate-800 group-hover:text-purple-700 transition-colors">
               {article.title}
             </h3>
           </a>
 
+          {/* Summary */}
           {article.summary && (
             <p className="text-[12px] text-slate-400 leading-snug line-clamp-2">
               {article.summary}
             </p>
           )}
 
-          <div className="flex items-center gap-2 mt-auto">
+          {/* Action row */}
+          <div className="flex items-center gap-2 mt-auto pt-1">
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider flex-shrink-0 ${getCategoryStyle(article.category)}`}>
               {article.category === "GEOPOLITICS" ? "GEO" : article.category === "EARNINGS" ? "EARN" : (article.category || "INDUSTRY")}
             </span>
-            {countryCode && (
-              <img
-                src={`https://flagcdn.com/w20/${countryCode}.png`}
-                alt={countryCode.toUpperCase()}
-                className="w-5 h-3.5 object-cover rounded-sm opacity-75 flex-shrink-0"
-              />
-            )}
             <div className="ml-auto flex items-center gap-1">
               <button
                 onClick={(e) => { e.stopPropagation(); onBookmark(article); }}
@@ -585,7 +469,7 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-slate-800 transition-colors"
+                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-semibold hover:bg-purple-700 transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 Read <ExternalLink className="w-2.5 h-2.5" />
@@ -594,13 +478,13 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
           </div>
         </div>
 
-        {/* Thumbnail — only when a real scraped image exists */}
+        {/* Thumbnail */}
         {hasImage && (
           <a
             href={article.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-shrink-0 w-[120px] self-stretch relative overflow-hidden"
+            className="flex-shrink-0 w-[100px] self-stretch relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <img
@@ -617,153 +501,228 @@ function NewsCard({ article, isBookmarked, onBookmark, isHot }) {
   );
 }
 
-// ── CompanyHeatWidget ──────────────────────────────────────────────────────────
+// ── CategoryPills ──────────────────────────────────────────────────────────────
 
-function CompanyHeatWidget({ articles, selectedCompany, onSelectCompany }) {
-  const [heatWindow, setHeatWindow] = useState(24);
-  const [stockData,  setStockData]  = useState({});
-
-  const companies = useMemo(
-    () => detectCompaniesHeat(articles, heatWindow),
-    [articles, heatWindow]
-  );
-
-  useEffect(() => {
-    if (companies.length === 0) return;
-    const tickers = companies.map((c) => c.ticker).join(",");
-    axios
-      .get(`${API}/stocks/prices`, { params: { tickers } })
-      .then((r) => setStockData(r.data))
-      .catch(() => {});
-  }, [companies]);
-
-  if (companies.length === 0) return null;
-
+function CategoryPills({ selected, onSelect, counts }) {
   return (
-    <div className="w-72 flex-shrink-0">
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm sticky top-4 overflow-hidden">
-
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <BarChart2 className="w-3.5 h-3.5 text-slate-500" />
-            <span className="text-[11px] font-bold text-slate-700 uppercase tracking-widest">
-              Market Pulse
-            </span>
-          </div>
-          <div className="flex rounded-lg border border-slate-200 overflow-hidden bg-white">
-            {[24, 48].map((h) => (
-              <button
-                key={h}
-                onClick={() => setHeatWindow(h)}
-                className={`px-2.5 py-1 text-[10px] font-bold transition-colors ${
-                  heatWindow === h ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-50"
-                }`}
-              >
-                {h}H
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Company rows */}
-        <div className="divide-y divide-slate-50">
-          {companies.map(({ ticker, name, country, count, latestArticle }) => {
-            const stock    = stockData[ticker];
-            const change   = stock?.change_percent ?? null;
-            const price    = stock?.price          ?? null;
-            const isPos    = change > 0;
-            const isNeg    = change < 0;
-            const isActive = selectedCompany === ticker;
-
-            return (
-              <button
-                key={ticker}
-                onClick={() => onSelectCompany(isActive ? null : ticker)}
-                className={`w-full text-left px-4 py-3 transition-colors hover:bg-slate-50 ${
-                  isActive ? "bg-purple-50 border-l-2 border-l-purple-500" : ""
-                }`}
-              >
-                {/* Name + stock */}
-                <div className="flex items-center justify-between gap-2 mb-1">
-                  <div className="flex items-center gap-2 min-w-0">
-                    {country && (
-                      <img
-                        src={`https://flagcdn.com/w20/${country}.png`}
-                        alt=""
-                        className="w-4 h-3 object-cover rounded-sm opacity-80 flex-shrink-0"
-                      />
-                    )}
-                    <div className="min-w-0">
-                      <div className="text-[12px] font-bold text-slate-800 truncate">{name}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">{ticker}</div>
-                    </div>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    {price != null && (
-                      <div className="text-[11px] text-slate-600 font-mono">{price.toFixed(2)}</div>
-                    )}
-                    {change != null ? (
-                      <div className={`text-[11px] font-bold flex items-center gap-0.5 justify-end ${
-                        isPos ? "text-emerald-600" : isNeg ? "text-rose-600" : "text-slate-400"
-                      }`}>
-                        {isPos ? <TrendingUp className="w-3 h-3" /> : isNeg ? <TrendingDown className="w-3 h-3" /> : null}
-                        {isPos ? "+" : ""}{change.toFixed(2)}%
-                      </div>
-                    ) : (
-                      <div className="text-[11px] text-slate-300">—</div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Article count */}
-                <div className="flex items-center gap-1 mb-1.5">
-                  <Tag className="w-3 h-3 text-slate-300" />
-                  <span className="text-[10px] text-slate-400">
-                    {count} article{count > 1 ? "s" : ""} · {heatWindow}h
-                  </span>
-                </div>
-
-                {/* Latest article headline */}
-                {latestArticle && (
-                  <p className="text-[11px] text-slate-500 leading-snug line-clamp-2 border-l-2 border-slate-200 pl-2 hover:border-purple-300 transition-colors">
-                    {latestArticle.title}
-                  </p>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {selectedCompany && (
-          <div className="px-4 py-2.5 border-t border-slate-100 bg-purple-50">
-            <button
-              onClick={() => onSelectCompany(null)}
-              className="w-full text-[11px] text-purple-600 hover:text-purple-800 font-medium text-center"
-            >
-              × Clear company filter
-            </button>
-          </div>
-        )}
-      </div>
+    <div className="flex items-center gap-2 flex-wrap">
+      {NEWS_CATEGORIES.map((cat) => {
+        const count = counts?.[cat.value];
+        return (
+          <button
+            key={cat.value}
+            onClick={() => onSelect(cat.value)}
+            className={`px-3 py-1.5 text-[12px] font-semibold rounded-full transition-all border whitespace-nowrap ${
+              selected === cat.value
+                ? "bg-slate-900 text-white border-slate-900"
+                : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+            }`}
+          >
+            {cat.label}
+            {count !== undefined && count > 0 && (
+              <span className={`ml-1.5 text-[10px] font-bold ${
+                selected === cat.value ? "text-white/60" : "text-slate-400"
+              }`}>
+                {count}
+              </span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
 
 // ── SectionHeader ──────────────────────────────────────────────────────────────
 
-function SectionHeader({ emoji, label, sublabel, color = "slate" }) {
-  const dividerColor = color === "orange" ? "bg-orange-200" : "bg-slate-200";
-  const textColor    = color === "orange" ? "text-orange-700" : "text-slate-500";
+function SectionHeader({ label, sublabel, isBreaking = false }) {
   return (
     <div className="flex items-center gap-3 py-1 mb-4">
-      <Clock className={`w-3.5 h-3.5 flex-shrink-0 ${textColor}`} />
-      <h2 className={`text-xs font-semibold uppercase tracking-widest flex-shrink-0 ${textColor}`}>{label}</h2>
+      {isBreaking
+        ? <Zap className="w-3.5 h-3.5 flex-shrink-0 text-orange-500" />
+        : <Clock className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
+      }
+      <h2 className={`text-xs font-semibold uppercase tracking-widest flex-shrink-0 ${
+        isBreaking ? "text-orange-700" : "text-slate-500"
+      }`}>
+        {label}
+      </h2>
       {sublabel && (
-        <span className="text-xs text-slate-400 font-normal normal-case tracking-normal flex-shrink-0">{sublabel}</span>
+        <span className="text-xs text-slate-400 font-normal normal-case tracking-normal flex-shrink-0">
+          {sublabel}
+        </span>
       )}
-      {emoji && <span className="text-base">{emoji}</span>}
-      <div className={`flex-1 h-px ${dividerColor}`} />
+      <div className={`flex-1 h-px ${isBreaking ? "bg-orange-100" : "bg-slate-200"}`} />
+    </div>
+  );
+}
+
+// ── EnhancedSidebar ────────────────────────────────────────────────────────────
+
+function EnhancedSidebar({ articles, selectedCompany, onSelectCompany, stockData }) {
+  const [heatWindow, setHeatWindow] = useState(24);
+
+  const companies  = useMemo(() => detectCompaniesHeat(articles, heatWindow), [articles, heatWindow]);
+  const topSources = useMemo(() => getTopSources(articles), [articles]);
+  const hotTopics  = useMemo(() => getHotTopics(articles), [articles]);
+
+  const maxSourceCount = topSources[0]?.count || 1;
+
+  return (
+    <div className="w-72 flex-shrink-0">
+      <div className="flex flex-col gap-4 sticky top-4">
+
+        {/* Market Pulse */}
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+            <div className="flex items-center gap-2">
+              <BarChart2 className="w-3.5 h-3.5 text-slate-500" />
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-widest">Market Pulse</span>
+            </div>
+            <div className="flex rounded-lg border border-slate-200 overflow-hidden bg-white">
+              {[24, 48].map((h) => (
+                <button
+                  key={h}
+                  onClick={() => setHeatWindow(h)}
+                  className={`px-2.5 py-1 text-[10px] font-bold transition-colors ${
+                    heatWindow === h ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-50"
+                  }`}
+                >
+                  {h}H
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {companies.length === 0 ? (
+            <div className="px-4 py-6 text-center text-[12px] text-slate-400">
+              No company activity in the past {heatWindow}h
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-50">
+              {companies.map(({ ticker, name, country, count, latestArticle }) => {
+                const stock    = stockData[ticker];
+                const change   = stock?.change_percent ?? null;
+                const price    = stock?.price          ?? null;
+                const isPos    = change > 0;
+                const isNeg    = change < 0;
+                const isActive = selectedCompany === ticker;
+
+                return (
+                  <button
+                    key={ticker}
+                    onClick={() => onSelectCompany(isActive ? null : ticker)}
+                    className={`w-full text-left px-4 py-3 transition-colors hover:bg-slate-50 ${
+                      isActive ? "bg-purple-50 border-l-2 border-l-purple-500" : ""
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <div className="flex items-center gap-2 min-w-0">
+                        {country && (
+                          <img
+                            src={`https://flagcdn.com/w20/${country}.png`}
+                            alt=""
+                            className="w-4 h-3 object-cover rounded-sm opacity-80 flex-shrink-0"
+                          />
+                        )}
+                        <div className="min-w-0">
+                          <div className="text-[12px] font-bold text-slate-800 truncate">{name}</div>
+                          <div className="text-[10px] text-slate-400 font-mono">{ticker}</div>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        {price != null && (
+                          <div className="text-[11px] text-slate-600 font-mono">{price.toFixed(2)}</div>
+                        )}
+                        {change != null ? (
+                          <div className={`text-[11px] font-bold flex items-center gap-0.5 justify-end ${
+                            isPos ? "text-emerald-600" : isNeg ? "text-rose-600" : "text-slate-400"
+                          }`}>
+                            {isPos ? <TrendingUp className="w-3 h-3" /> : isNeg ? <TrendingDown className="w-3 h-3" /> : null}
+                            {isPos ? "+" : ""}{change.toFixed(2)}%
+                          </div>
+                        ) : (
+                          <div className="text-[11px] text-slate-300">—</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 mb-1.5">
+                      <Tag className="w-3 h-3 text-slate-300" />
+                      <span className="text-[10px] text-slate-400">
+                        {count} article{count > 1 ? "s" : ""} · {heatWindow}h
+                      </span>
+                    </div>
+                    {latestArticle && (
+                      <p className="text-[11px] text-slate-500 leading-snug line-clamp-2 border-l-2 border-slate-200 pl-2">
+                        {latestArticle.title}
+                      </p>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {selectedCompany && (
+            <div className="px-4 py-2.5 border-t border-slate-100 bg-purple-50">
+              <button
+                onClick={() => onSelectCompany(null)}
+                className="w-full text-[11px] text-purple-600 hover:text-purple-800 font-medium text-center"
+              >
+                × Clear company filter
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Top Sources */}
+        {topSources.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-100">
+              <Newspaper className="w-3.5 h-3.5 text-slate-500" />
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-widest">Top Sources</span>
+            </div>
+            <div className="px-4 py-3 flex flex-col gap-2.5">
+              {topSources.map(({ source, count }) => (
+                <div key={source} className="flex items-center gap-2">
+                  <span className="text-[11px] text-slate-600 flex-1 truncate min-w-0">{source}</span>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-purple-400 rounded-full transition-all"
+                        style={{ width: `${(count / maxSourceCount) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-slate-400 font-mono w-5 text-right">{count}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Hot Topics */}
+        {hotTopics.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-100">
+              <Flame className="w-3.5 h-3.5 text-orange-400" />
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-widest">Hot Topics</span>
+            </div>
+            <div className="px-4 py-3 flex flex-wrap gap-2">
+              {hotTopics.map(({ keyword, count }) => (
+                <span
+                  key={keyword}
+                  className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-50 text-slate-600 border border-slate-200"
+                >
+                  {keyword}
+                  <span className="text-[10px] text-slate-400 font-mono">{count}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }
@@ -838,6 +797,7 @@ export default function Announcements() {
   const [currentPage,     setCurrentPage]     = useState(1);
   const [lastUpdated,     setLastUpdated]     = useState(null);
   const [bookmarkedUrls,  setBookmarkedUrls]  = useState(new Set());
+  const [stockData,       setStockData]       = useState({});
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
 
@@ -859,11 +819,22 @@ export default function Announcements() {
 
   useEffect(() => { fetchNews("en", "all"); }, [fetchNews]);
 
+  useEffect(() => {
+    const tickers = DEFENSE_TICKERS.map((d) => d.ticker).join(",");
+    axios
+      .get(`${API}/stocks/prices`, { params: { tickers } })
+      .then((r) => setStockData(r.data))
+      .catch(() => {});
+  }, []);
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
+
   const handleLangChange = (lang) => {
     setSelectedLang(lang);
     setCurrentPage(1);
     fetchNews(lang, selectedRegion);
   };
+
   const handleRegionChange = (region) => {
     setSelectedRegion(region);
     setCurrentPage(1);
@@ -912,9 +883,9 @@ export default function Announcements() {
   // ── Filter ────────────────────────────────────────────────────────────────
 
   const filtered = useMemo(() => articles.filter((a) => {
-    const matchCat    = selectedCat === "all" || a.category === selectedCat;
-    const term        = searchTerm.toLowerCase();
-    const matchSearch = !term
+    const matchCat     = selectedCat === "all" || a.category === selectedCat;
+    const term         = searchTerm.toLowerCase();
+    const matchSearch  = !term
       || a.title.toLowerCase().includes(term)
       || (a.summary && a.summary.toLowerCase().includes(term))
       || a.source.toLowerCase().includes(term)
@@ -923,18 +894,20 @@ export default function Announcements() {
     return matchCat && matchSearch && matchCompany;
   }), [articles, selectedCat, searchTerm, selectedCompany]);
 
-  const uniqueSourceCount = useMemo(
-    () => new Set(articles.map((a) => a.realSource || a.source).filter(Boolean)).size,
-    [articles]
-  );
+  const categoryCounts = useMemo(() => {
+    const counts = { all: articles.length };
+    NEWS_CATEGORIES.slice(1).forEach(({ value }) => {
+      counts[value] = articles.filter((a) => a.category === value).length;
+    });
+    return counts;
+  }, [articles]);
 
-  // Reset to page 1 whenever any filter changes
   useEffect(() => { setCurrentPage(1); }, [searchTerm, selectedCat, selectedCompany]);
 
   // ── Breaking Intel ────────────────────────────────────────────────────────
 
-  const pinnedArticles = filtered.filter(isBreakingIntel).slice(0, 3);
-  const algoArticles   = pinnedArticles.length < 3
+  const pinnedArticles   = filtered.filter(isBreakingIntel).slice(0, 3);
+  const algoArticles     = pinnedArticles.length < 3
     ? filtered
         .filter((a) => !isBreakingIntel(a) && isAlgoBreakingIntel(a))
         .slice(0, 3 - pinnedArticles.length)
@@ -951,10 +924,8 @@ export default function Announcements() {
     currentPage * ARTICLES_PER_PAGE
   );
 
-  // Page 1 gets editorial layout; page 2+ gets flat list
-  const heroArticle   = currentPage === 1 ? pageArticles[0]      : null;
-  const mediumArticles = currentPage === 1 ? pageArticles.slice(1, 3) : [];
-  const listArticles   = currentPage === 1 ? pageArticles.slice(3)    : pageArticles;
+  const groupedByBand = { today: [], yesterday: [], this_week: [], earlier: [] };
+  pageArticles.forEach((a) => { groupedByBand[timeBand(a)].push(a); });
 
   const highCount = filtered.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
 
@@ -984,33 +955,19 @@ export default function Announcements() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const cardProps = { bookmarkedUrls, onBookmark: toggleBookmark };
-
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div data-testid="announcements-page" className="space-y-6 animate-fade-in">
+    <div data-testid="announcements-page" className="space-y-5 animate-fade-in">
 
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
-            Live News Feed
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Defense intelligence from specialty &amp; mainstream media
-          </p>
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">Live News Feed</h1>
+          <p className="text-slate-500 text-sm mt-1">Defense intelligence from specialty &amp; mainstream media</p>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          {filtered.length > 0 && (
-            <button
-              onClick={exportCSV}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
-            >
-              <Download className="w-4 h-4" /> Export CSV
-            </button>
-          )}
           {articles.length > 0 && (
             <div className="flex items-center gap-2 text-xs bg-white border border-slate-200 rounded-lg px-3 py-2">
               <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
@@ -1019,8 +976,7 @@ export default function Announcements() {
               )}
               {highCount > 0 && <span className="text-slate-300">·</span>}
               <span className="text-slate-500">
-                {filtered.length}
-                {filtered.length < articles.length ? ` / ${articles.length}` : ""} articles
+                {filtered.length}{filtered.length < articles.length ? ` / ${articles.length}` : ""} articles
               </span>
               {uniqueSourceCount > 0 && (
                 <>
@@ -1040,6 +996,14 @@ export default function Announcements() {
                 return `Updated ${hrs}h ago`;
               })()}
             </span>
+          )}
+          {filtered.length > 0 && (
+            <button
+              onClick={exportCSV}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
+            >
+              <Download className="w-4 h-4" /> Export
+            </button>
           )}
           {token ? (
             <button
@@ -1070,105 +1034,90 @@ export default function Announcements() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col gap-3">
+      {/* Category Pills */}
+      <CategoryPills
+        selected={selectedCat}
+        onSelect={(v) => { setSelectedCat(v); setCurrentPage(1); }}
+        counts={categoryCounts}
+      />
 
-        {/* Row 1: search + category + region */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input
-              placeholder="Search by title, source, company or keyword…"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"
-            />
-          </div>
-
-          <Select value={selectedCat} onValueChange={(v) => { setSelectedCat(v); setCurrentPage(1); }}>
-            <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700">
-              <Filter className="w-4 h-4 mr-2 text-slate-400" />
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent className="bg-white border-slate-200">
-              {NEWS_CATEGORIES.map((cat) => (
-                <SelectItem key={cat.value} value={cat.value} className="text-slate-700 focus:bg-slate-50">
-                  {cat.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={selectedRegion} onValueChange={handleRegionChange}>
-            <SelectTrigger className="w-full sm:w-48 bg-white border-slate-200 text-slate-700">
-              <MapPin className="w-4 h-4 mr-2 text-slate-400" />
-              <SelectValue placeholder="Region" />
-            </SelectTrigger>
-            <SelectContent className="bg-white border-slate-200">
-              {REGION_OPTIONS.map((r) => (
-                <SelectItem key={r.value} value={r.value} className="text-slate-700 focus:bg-slate-50">
-                  <span className="mr-1.5">{r.flag}</span>{r.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Filters row */}
+      <div className="flex flex-col sm:flex-row gap-3 items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Input
+            placeholder="Search by title, source, company or keyword…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"
+          />
         </div>
 
-        {/* Row 2: language toggle + active company chip */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-slate-400 flex-shrink-0" />
-            <span className="text-xs text-slate-500 font-medium">Language:</span>
-            <div className="flex rounded-lg border border-slate-200 overflow-hidden bg-white">
-              {LANG_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => handleLangChange(opt.value)}
-                  className={`px-4 py-1.5 text-xs font-semibold transition-colors ${
-                    selectedLang === opt.value
-                      ? "bg-slate-900 text-white"
-                      : "text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  {opt.value === "en" && "🇬🇧 "}
-                  {opt.value === "fr" && "🇫🇷 "}
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
+        <Select value={selectedRegion} onValueChange={handleRegionChange}>
+          <SelectTrigger className="w-full sm:w-44 bg-white border-slate-200 text-slate-700">
+            <MapPin className="w-4 h-4 mr-2 text-slate-400" />
+            <SelectValue placeholder="Region" />
+          </SelectTrigger>
+          <SelectContent className="bg-white border-slate-200">
+            {REGION_OPTIONS.map((r) => (
+              <SelectItem key={r.value} value={r.value} className="text-slate-700 focus:bg-slate-50">
+                <span className="mr-1.5">{r.flag}</span>{r.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-          {selectedCompany && (
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg">
-              <Building2 className="w-3.5 h-3.5 text-purple-600" />
-              <span className="text-xs text-purple-700 font-semibold">
-                {DEFENSE_TICKERS.find((d) => d.ticker === selectedCompany)?.name}
-              </span>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Globe className="w-4 h-4 text-slate-400" />
+          <div className="flex rounded-lg border border-slate-200 overflow-hidden bg-white">
+            {LANG_OPTIONS.map((opt) => (
               <button
-                onClick={() => setSelectedCompany(null)}
-                className="text-purple-400 hover:text-purple-700 ml-1 font-bold text-sm leading-none"
+                key={opt.value}
+                onClick={() => handleLangChange(opt.value)}
+                className={`px-3 py-2 text-xs font-semibold transition-colors ${
+                  selectedLang === opt.value
+                    ? "bg-slate-900 text-white"
+                    : "text-slate-600 hover:bg-slate-50"
+                }`}
               >
-                ×
+                {opt.flag} {opt.label}
               </button>
-            </div>
-          )}
-
-          {(selectedLang !== "all" || selectedRegion !== "all" || selectedCompany) && (
-            <button
-              onClick={() => {
-                setSelectedLang("all");
-                setSelectedRegion("all");
-                setSelectedCompany(null);
-                setCurrentPage(1);
-                fetchNews("all", "all");
-              }}
-              className="text-xs text-slate-400 hover:text-slate-600 underline"
-            >
-              Clear all filters
-            </button>
-          )}
+            ))}
+          </div>
         </div>
+
+        {(selectedLang !== "en" || selectedRegion !== "all" || selectedCompany || selectedCat !== "all") && (
+          <button
+            onClick={() => {
+              setSelectedLang("en");
+              setSelectedRegion("all");
+              setSelectedCompany(null);
+              setSelectedCat("all");
+              setCurrentPage(1);
+              fetchNews("en", "all");
+            }}
+            className="text-xs text-slate-400 hover:text-slate-600 underline whitespace-nowrap flex-shrink-0"
+          >
+            Clear all
+          </button>
+        )}
       </div>
+
+      {/* Active company chip */}
+      {selectedCompany && (
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg w-fit">
+          <Building2 className="w-3.5 h-3.5 text-purple-600" />
+          <span className="text-xs text-purple-700 font-semibold">
+            {DEFENSE_TICKERS.find((d) => d.ticker === selectedCompany)?.name}
+          </span>
+          <button
+            onClick={() => setSelectedCompany(null)}
+            className="text-purple-400 hover:text-purple-700 ml-1 font-bold text-sm leading-none"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Content */}
       {loading ? (
@@ -1183,118 +1132,88 @@ export default function Announcements() {
               ? "No articles yet — trigger a scrape above"
               : "No articles match your filters"}
           </p>
-          <p className="text-sm mt-1 text-slate-400">
-            The scraper runs automatically four times daily.
-          </p>
+          <p className="text-sm mt-1 text-slate-400">The scraper runs automatically four times daily.</p>
         </div>
       ) : (
-        <div className="space-y-10">
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
 
-          {/* ── BREAKING INTEL ── */}
-          {breakingArticles.length > 0 && (
-            <div>
-              <SectionHeader
-                label="Breaking Intel"
-                sublabel={`— ${breakingArticles.length} key ${breakingArticles.length === 1 ? "story" : "stories"}`}
-                color="orange"
-              />
-              <div className={`grid gap-4 ${
-                breakingArticles.length === 1
-                  ? "grid-cols-1"
-                  : breakingArticles.length === 2
-                  ? "grid-cols-1 md:grid-cols-2"
-                  : "grid-cols-1 md:grid-cols-3"
-              }`}>
-                {breakingArticles.map((a, i) => (
-                  <MediumCard
-                    key={a.url || `breaking-${i}`}
-                    article={a}
-                    isBookmarked={bookmarkedUrls.has(a.url)}
-                    onBookmark={toggleBookmark}
-                    isBreaking
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Articles column */}
+          <div className="flex-1 min-w-0 space-y-8">
 
-          {/* ── MAIN FEED + COMPANY HEAT ── */}
-          {regularArticles.length > 0 && (
-            <div>
-              <SectionHeader
-                label={currentPage === 1 ? "Latest" : `Page ${currentPage}`}
-                sublabel={`— ${regularArticles.length} articles · page ${currentPage} of ${totalPages}`}
-              />
+            {/* Breaking Intel */}
+            {breakingArticles.length > 0 && (
+              <section>
+                <SectionHeader
+                  label="Breaking Intel"
+                  sublabel={`— ${breakingArticles.length} key ${breakingArticles.length === 1 ? "story" : "stories"}`}
+                  isBreaking
+                />
+                <div className="flex flex-col gap-3">
+                  {breakingArticles.map((a, i) => (
+                    <ArticleCard
+                      key={a.url || `breaking-${i}`}
+                      article={a}
+                      isBookmarked={bookmarkedUrls.has(a.url)}
+                      onBookmark={toggleBookmark}
+                      isBreaking
+                      stockData={stockData}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
-              <div className="flex flex-col lg:flex-row gap-6 items-start">
+            {/* Main feed */}
+            {regularArticles.length > 0 && (
+              <section className="space-y-8">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-slate-400">
+                    {filtered.length} articles · page {currentPage} of {totalPages}
+                  </span>
+                </div>
 
-                {/* Articles column */}
-                <div className="flex-1 min-w-0 space-y-5">
-
-                  {/* Page 1: Hero → 2 Medium → list */}
-                  {currentPage === 1 && (
-                    <>
-                      {heroArticle && (
-                        <HeroCard
-                          article={heroArticle}
-                          isBookmarked={bookmarkedUrls.has(heroArticle.url)}
-                          onBookmark={toggleBookmark}
-                        />
-                      )}
-                      {mediumArticles.length > 0 && (
-                        <div className={`grid gap-4 ${
-                          mediumArticles.length === 1 ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
-                        }`}>
-                          {mediumArticles.map((a, i) => (
-                            <MediumCard
-                              key={a.url || `medium-${i}`}
-                              article={a}
-                              isBookmarked={bookmarkedUrls.has(a.url)}
-                              onBookmark={toggleBookmark}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-
-                  {/* List (page 1: articles 4+, page 2+: all) */}
-                  {listArticles.length > 0 && (
-                    <div className="flex flex-col gap-3">
-                      {listArticles.map((a, i) => (
-                        <NewsCard
-                          key={a.url || `list-${i}`}
-                          article={a}
-                          isBookmarked={bookmarkedUrls.has(a.url)}
-                          onBookmark={toggleBookmark}
-                        />
-                      ))}
+                {TIME_BAND_DISPLAY.map(({ key, label }) => {
+                  const bandArticles = groupedByBand[key];
+                  if (!bandArticles.length) return null;
+                  return (
+                    <div key={key}>
+                      <SectionHeader label={label} sublabel={`— ${bandArticles.length}`} />
+                      <div className="flex flex-col gap-3">
+                        {bandArticles.map((a, i) => (
+                          <ArticleCard
+                            key={a.url || `${key}-${i}`}
+                            article={a}
+                            isBookmarked={bookmarkedUrls.has(a.url)}
+                            onBookmark={toggleBookmark}
+                            stockData={stockData}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  )}
-                </div>
+                  );
+                })}
 
-                {/* Company Heat panel */}
-                <div className="hidden lg:block">
-                  <CompanyHeatWidget
-                    articles={filtered}
-                    selectedCompany={selectedCompany}
-                    onSelectCompany={(ticker) => {
-                      setSelectedCompany(ticker);
-                      setCurrentPage(1);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </section>
+            )}
+          </div>
 
-          {/* ── PAGINATION ── */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-
+          {/* Enhanced Sidebar */}
+          <div className="hidden lg:block">
+            <EnhancedSidebar
+              articles={filtered}
+              selectedCompany={selectedCompany}
+              onSelectCompany={(ticker) => {
+                setSelectedCompany(ticker);
+                setCurrentPage(1);
+              }}
+              stockData={stockData}
+            />
+          </div>
         </div>
       )}
     </div>
