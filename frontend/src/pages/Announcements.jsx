@@ -26,9 +26,6 @@ import {
   BarChart2,
   Tag,
   Clock,
-  Zap,
-  Flame,
-  Newspaper,
   Building2,
 } from "lucide-react";
 import { format, differenceInHours } from "date-fns";
