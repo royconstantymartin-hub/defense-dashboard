@@ -682,15 +682,15 @@ export default function PrivatePlayers() {
       {!loading && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Companies",       value: players.length,                    icon: Building2,  color: "text-purple-700" },
-            { label: "Countries",       value: countryCounts.length,              icon: Globe,      color: "text-blue-600"   },
-            { label: "Total Valuation", value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-emerald-600" },
-            { label: "With Funding",    value: totalFunded,                       icon: DollarSign, color: "text-amber-600"  },
-          ].map(({ label, value, icon: Icon, color }) => (
+            { label: "Companies",       value: players.length,                    icon: Building2,  color: "text-purple-700", bg: "bg-purple-50"  },
+            { label: "Countries",       value: countryCounts.length,              icon: Globe,      color: "text-blue-600",   bg: "bg-blue-50"    },
+            { label: "Total Valuation", value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
+            { label: "With Funding",    value: totalFunded,                       icon: DollarSign, color: "text-amber-600",  bg: "bg-amber-50"   },
+          ].map(({ label, value, icon: Icon, color, bg }) => (
             <Card key={label} className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
               <CardContent className="p-4 flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl ${bgCls} flex items-center justify-center flex-shrink-0`}>
-                  <Icon className={`w-5 h-5 ${iconCls}`} />
+                <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center flex-shrink-0`}>
+                  <Icon className={`w-5 h-5 ${color}`} />
                 </div>
                 <div>
                   <p className="text-xl font-bold text-slate-900 font-heading">{value}</p>
