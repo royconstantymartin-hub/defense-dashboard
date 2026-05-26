@@ -370,7 +370,7 @@ function RivalsTab({ competitors, onSelectProduct }) {
               {c.dashboard_product_id && (
                 <button
                   onClick={() => onSelectProduct && onSelectProduct(c.dashboard_product_id)}
-                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 shrink-0 transition-colors"
+                  className="flex items-center gap-1 text-xs text-purple-700 hover:text-purple-900 shrink-0 transition-colors"
                 >
                   View profile
                   <ExternalLink className="w-3 h-3" />
@@ -402,7 +402,7 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
           className="w-[min(95vw,860px)] p-0 flex flex-col gap-0 overflow-hidden"
         >
           {/* ── Hero image ───────────────────────────────────────────── */}
-          <div className="h-44 bg-gradient-to-br from-slate-100 to-slate-50 shrink-0 relative">
+          <div className="h-44 bg-slate-100 shrink-0 relative">
             {imgSrc ? (
               <img
                 src={imgSrc}
@@ -418,13 +418,13 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
                 className="absolute inset-0"
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
             {/* Status badge — bottom left to avoid overlap with SheetContent's close button */}
             <span className={`absolute bottom-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full border ${statusInfo.cls}`}>
               {statusInfo.label}
             </span>
-            <span className="absolute bottom-3 right-3 text-xs font-medium px-2 py-1 rounded-full bg-slate-800 text-white">
+            <span className="absolute bottom-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-700 text-white">
               ★ Full Profile
             </span>
           </div>
@@ -463,7 +463,7 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
           </div>
 
           {/* ── Key figures strip ─────────────────────────────────────── */}
-          <div className="grid grid-cols-4 divide-x divide-slate-100 border-b border-slate-100 shrink-0">
+          <div className="grid grid-cols-4 divide-x divide-slate-100 border-b border-slate-200 bg-slate-50/60 shrink-0">
             <div className="px-4 py-3">
               <SourcedStat label="Built" data={detail.total_units_produced} />
             </div>
@@ -513,7 +513,7 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
                   <TabsTrigger
                     key={value}
                     value={value}
-                    className="flex items-center gap-1.5 text-xs rounded-none border-b-2 border-transparent data-[state=active]:border-slate-900 data-[state=active]:text-slate-900 data-[state=active]:bg-transparent px-4 h-full text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap"
+                    className="flex items-center gap-1.5 text-xs rounded-none border-b-2 border-transparent data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 data-[state=active]:bg-transparent px-4 h-full text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap"
                   >
                     <Icon className="w-3.5 h-3.5" />
                     {label}

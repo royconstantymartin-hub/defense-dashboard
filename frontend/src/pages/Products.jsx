@@ -1070,7 +1070,7 @@ export default function Products() {
                   {product.status.toUpperCase()}
                 </span>
                 {FLAGSHIP_PRODUCTS[product.name] && !compareMode && (
-                  <span className="absolute bottom-2 left-2 text-xs font-medium px-2 py-0.5 rounded-full bg-slate-800 text-white">
+                  <span className="absolute bottom-2 left-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-700 text-white">
                     ★ Full Profile
                   </span>
                 )}
@@ -1165,7 +1165,7 @@ export default function Products() {
                       size="sm"
                       onClick={() => setCurrentPage(p)}
                       className={p === currentPage
-                        ? 'bg-slate-900 hover:bg-slate-800 text-white border-slate-900 min-w-[36px]'
+                        ? 'bg-purple-700 hover:bg-purple-800 text-white border-purple-700 min-w-[36px]'
                         : 'border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 hover:border-slate-300 min-w-[36px]'
                       }
                     >
@@ -1367,6 +1367,7 @@ export default function Products() {
                   />
                 );
               })()}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
               <span className={`absolute top-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full border ${getStatusStyle(selectedProduct.status)}`}>
                 {selectedProduct.status.toUpperCase()}
               </span>
@@ -1458,7 +1459,7 @@ export default function Products() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Technical Specifications</p>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.entries(selectedProduct.specifications).map(([key, value]) => (
-                    <div key={key} className="bg-slate-50 border border-slate-100 px-3 py-2.5 rounded-lg">
+                    <div key={key} className="bg-slate-50 border border-slate-100 hover:border-purple-200 hover:bg-purple-50/30 px-3 py-2.5 rounded-lg transition-colors">
                       <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{key.replace(/_/g, ' ')}</p>
                       <p className="text-slate-900 font-mono text-sm mt-0.5">{value}</p>
                     </div>
@@ -1471,7 +1472,7 @@ export default function Products() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Materials & Composites</p>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedProduct.materials.map((material, idx) => (
-                    <span key={idx} className="text-xs bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-full">
+                    <span key={idx} className="text-xs bg-slate-100 text-slate-700 border border-slate-200 hover:border-purple-200 hover:text-purple-700 px-2.5 py-1 rounded-full transition-colors">
                       {material}
                     </span>
                   ))}
