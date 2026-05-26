@@ -27,6 +27,8 @@ import {
   Tag,
   Clock,
   Building2,
+  Zap,
+  Newspaper,
 } from "lucide-react";
 import { format, differenceInHours } from "date-fns";
 import { useNavigate } from "react-router-dom";
