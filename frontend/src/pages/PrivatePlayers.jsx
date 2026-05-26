@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Search, Lock, Globe, Building2, ExternalLink,
-  DollarSign, TrendingUp, ChevronRight, ChevronLeft, ChevronDown,
+  DollarSign, TrendingUp, ChevronRight, ChevronLeft, ChevronDown, Zap,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 
