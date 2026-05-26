@@ -175,12 +175,12 @@ import { API } from "@/App";
 The canonical design spec lives in `design_guidelines.json`. Key rules:
 
 - **Theme:** Light only — `bg-slate-50` app background, `bg-white` card surfaces
-- **Primary accent:** Purple-700 (`#7E22CE`) — buttons, active states, focus rings
+- **Primary accent:** Blue-800 (`#1e40af`) — buttons, active states, focus rings (Intel Blue — OSINT/defense palette)
 - **Typography:**
   - Headings: `font-heading` → Chivo (bold)
   - Body: `font-sans` → Inter
   - Code/data: `font-mono` → JetBrains Mono
-- **Cards:** `bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]` with hover `shadow-lg hover:border-purple-200`
+- **Cards:** `bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]` with hover `shadow-lg hover:border-blue-200`
 - **No dark mode classes** — do not add `dark:` variants
 - **No gradients** on backgrounds — keep flat and clean
 - **Flags:** `https://flagcdn.com/w40/{code}.png` (ISO 3166-1 alpha-2 lowercase)

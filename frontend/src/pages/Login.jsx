@@ -55,12 +55,12 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-purple-700 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/40">
+          <div className="w-12 h-12 bg-blue-800 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/40">
             <Shield className="w-7 h-7 text-white" />
           </div>
           <div>
             <h1 className="font-heading font-bold text-xl text-white tracking-tight">DEFENSE</h1>
-            <p className="text-[10px] font-mono text-purple-400 tracking-widest">INTELLIGENCE HUB</p>
+            <p className="text-[10px] font-mono text-blue-400 tracking-widest">INTELLIGENCE HUB</p>
           </div>
         </div>
 
@@ -140,7 +140,7 @@ export default function Login() {
 
               <Button
                 type="submit"
-                className="w-full bg-purple-700 hover:bg-purple-800 text-white font-medium rounded-lg"
+                className="w-full bg-blue-800 hover:bg-blue-900 text-white font-medium rounded-lg"
                 disabled={loading}
                 data-testid="submit-button"
               >

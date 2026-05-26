@@ -537,7 +537,7 @@ const CATEGORY_LABEL = {
 
 // ── Logo helpers (mirrors MarketData.jsx) ────────────────────────────────────
 const AVATAR_COLORS = [
-  "bg-purple-700", "bg-blue-700",
+  "bg-blue-800", "bg-blue-700",
   "bg-emerald-700", "bg-amber-600",
   "bg-rose-700", "bg-indigo-700",
   "bg-teal-700", "bg-orange-600",
@@ -1725,7 +1725,7 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
           </div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
             <span className="text-[10px] text-slate-400">Budget</span>
-            <span className="font-mono text-xs font-semibold text-purple-700">${tooltip.entry.expenditure}B</span>
+            <span className="font-mono text-xs font-semibold text-blue-800">${tooltip.entry.expenditure}B</span>
             <span className="text-[10px] text-slate-400">% of GDP</span>
             <span className="font-mono text-xs text-slate-700">{tooltip.entry.gdp_percent}%</span>
             {YOY_DELTA[tooltip.entry.country_code] != null && (
@@ -2971,7 +2971,7 @@ export default function Expenditures() {
         {compareList.length > 0 && (
           <button
             onClick={() => setCompareList([])}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-purple-200 bg-purple-50 text-purple-700 text-xs font-semibold hover:bg-purple-100 transition-colors whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-blue-200 bg-blue-50 text-blue-800 text-xs font-semibold hover:bg-blue-100 transition-colors whitespace-nowrap"
           >
             Compare ({compareList.length}) ✕
           </button>
@@ -3057,8 +3057,8 @@ export default function Expenditures() {
 
       {/* ── Compare Panel ── */}
       {compareList.length >= 2 && (
-        <Card className="bg-white border-purple-200 shadow-sm">
-          <CardHeader className="border-b border-slate-100 pb-3 bg-purple-50/50">
+        <Card className="bg-white border-blue-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-3 bg-blue-50/50">
             <div className="flex items-center justify-between">
               <CardTitle className="font-heading text-base text-slate-900">Country Comparison</CardTitle>
               <button onClick={() => setCompareList([])} className="text-xs text-slate-400 hover:text-slate-700 underline">Clear</button>
@@ -3197,8 +3197,8 @@ export default function Expenditures() {
                         title={compareList.some(c => c.country_code === exp.country_code) ? 'Remove from compare' : 'Add to compare (max 4)'}
                         className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold transition-colors ${
                           compareList.some(c => c.country_code === exp.country_code)
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-slate-100 text-slate-400 hover:bg-purple-100 hover:text-purple-600'
+                            ? 'bg-blue-700 text-white'
+                            : 'bg-slate-100 text-slate-400 hover:bg-blue-100 hover:text-blue-700'
                         }`}
                       >
                         {compareList.some(c => c.country_code === exp.country_code) ? '✓' : '+'}

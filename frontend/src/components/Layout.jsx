@@ -108,7 +108,7 @@ export default function Layout() {
               <img src="/favicon.png" alt="Defense Dashboard" className="w-10 h-10 object-contain" />
               <div>
                 <h1 className="font-heading font-bold text-slate-900 tracking-tight">DEFENSE</h1>
-                <p className="text-[10px] font-mono text-purple-400 tracking-widest">INTELLIGENCE HUB</p>
+                <p className="text-[10px] font-mono text-blue-400 tracking-widest">INTELLIGENCE HUB</p>
               </div>
             </Link>
           </div>
@@ -126,13 +126,13 @@ export default function Layout() {
                   className={`
                     flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200
                     ${isActive
-                      ? 'bg-purple-50 text-purple-900 font-semibold border-l-2 border-purple-700 -ml-[2px]'
+                      ? 'bg-blue-50 text-blue-900 font-semibold border-l-2 border-blue-800 -ml-[2px]'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }
                   `}
                   data-testid={`nav-${item.path === '/' ? 'dashboard' : item.path.slice(1)}`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-purple-700' : ''}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-blue-800' : ''}`} />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -146,7 +146,7 @@ export default function Layout() {
                   className={`
                     flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200
                     ${location.pathname === '/admin'
-                      ? 'bg-purple-50 text-purple-900 font-semibold border-l-2 border-purple-700 -ml-[2px]'
+                      ? 'bg-blue-50 text-blue-900 font-semibold border-l-2 border-blue-800 -ml-[2px]'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }
                   `}
@@ -238,7 +238,7 @@ export default function Layout() {
                 className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors relative"
               >
                 <Bell className="w-5 h-5" />
-                {hasNew && <span className="absolute top-1 right-1 w-2 h-2 bg-purple-600 rounded-full" />}
+                {hasNew && <span className="absolute top-1 right-1 w-2 h-2 bg-blue-700 rounded-full" />}
               </button>
 
               {notifOpen && (
@@ -248,7 +248,7 @@ export default function Layout() {
                     <Link
                       to="/announcements"
                       onClick={() => setNotifOpen(false)}
-                      className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                      className="text-xs text-blue-700 hover:text-blue-900 font-medium"
                     >
                       View all →
                     </Link>

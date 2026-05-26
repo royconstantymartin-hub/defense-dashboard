@@ -304,11 +304,11 @@ const MACRO_CATEGORIES = [
 
 const CAT_COLORS = {
   purple: {
-    border: "border-purple-200", hoverBorder: "hover:border-purple-300",
-    activeBorder: "border-purple-500", activeBg: "bg-purple-50/60",
-    iconBg: "bg-purple-50 border-purple-100", icon: "text-purple-700",
-    badge: "bg-purple-100 text-purple-700",
-    headerBg: "bg-purple-50/80", text: "text-purple-700",
+    border: "border-blue-200", hoverBorder: "hover:border-blue-300",
+    activeBorder: "border-blue-600", activeBg: "bg-blue-50/60",
+    iconBg: "bg-blue-50 border-blue-100", icon: "text-blue-800",
+    badge: "bg-blue-100 text-blue-800",
+    headerBg: "bg-blue-50/80", text: "text-blue-800",
   },
   rose: {
     border: "border-rose-200", hoverBorder: "hover:border-rose-300",
@@ -454,7 +454,7 @@ function CompactPlayerRow({ company, onClick, accentColor }) {
       className="relative flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer group"
       onClick={onClick}
     >
-      <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity" />
       <LogoWithFallback name={company.name} website={company.website} size={32} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
@@ -500,7 +500,7 @@ function CompactPlayerRow({ company, onClick, accentColor }) {
           <span className="text-xs text-slate-200">—</span>
         )}
       </div>
-      <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-purple-400 transition-colors flex-shrink-0" />
+      <ChevronRight className="w-3.5 h-3.5 text-slate-200 group-hover:text-blue-400 transition-colors flex-shrink-0" />
     </div>
   );
 }
@@ -666,7 +666,7 @@ export default function PrivatePlayers() {
       {/* Page header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-purple-700 flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-blue-800 flex items-center justify-center shadow-sm">
             <Lock className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -682,7 +682,7 @@ export default function PrivatePlayers() {
       {!loading && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Companies",       value: players.length,                    icon: Building2,  color: "text-purple-700" },
+            { label: "Companies",       value: players.length,                    icon: Building2,  color: "text-blue-800" },
             { label: "Countries",       value: countryCounts.length,              icon: Globe,      color: "text-blue-600"   },
             { label: "Total Valuation", value: formatCap(totalValuation) || "—", icon: TrendingUp, color: "text-emerald-600" },
             { label: "With Funding",    value: totalFunded,                       icon: DollarSign, color: "text-amber-600"  },
@@ -726,7 +726,7 @@ export default function PrivatePlayers() {
       {/* Body */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
-          <div className="w-10 h-10 rounded-full border-4 border-slate-200 border-t-purple-700 animate-spin" />
+          <div className="w-10 h-10 rounded-full border-4 border-slate-200 border-t-blue-800 animate-spin" />
           <p className="text-sm text-slate-500">Loading companies…</p>
         </div>
       ) : error ? (
@@ -748,13 +748,13 @@ export default function PrivatePlayers() {
                 onClick={() => setFilterCountry("all")}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                   filterCountry === "all"
-                    ? "bg-purple-50 text-purple-900 font-semibold border border-purple-200"
+                    ? "bg-blue-50 text-blue-900 font-semibold border border-blue-200"
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                 }`}
               >
                 <span>All countries</span>
                 <span className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
-                  filterCountry === "all" ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-400"
+                  filterCountry === "all" ? "bg-blue-100 text-blue-800" : "bg-slate-100 text-slate-400"
                 }`}>
                   {players.length}
                 </span>
@@ -769,7 +769,7 @@ export default function PrivatePlayers() {
                     onClick={() => setFilterCountry(country)}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                       active
-                        ? "bg-purple-50 text-purple-900 font-semibold border border-purple-200"
+                        ? "bg-blue-50 text-blue-900 font-semibold border border-blue-200"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                     }`}
                   >
@@ -790,12 +790,12 @@ export default function PrivatePlayers() {
                       {/* Mini proportional bar */}
                       <div className="w-10 h-1 rounded-full bg-slate-100 overflow-hidden hidden sm:block">
                         <div
-                          className={`h-full rounded-full transition-all ${active ? "bg-purple-400" : "bg-slate-300"}`}
+                          className={`h-full rounded-full transition-all ${active ? "bg-blue-400" : "bg-slate-300"}`}
                           style={{ width: `${barPct}%` }}
                         />
                       </div>
                       <span className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
-                        active ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-400"
+                        active ? "bg-blue-100 text-blue-800" : "bg-slate-100 text-slate-400"
                       }`}>
                         {count}
                       </span>
@@ -815,7 +815,7 @@ export default function PrivatePlayers() {
                 onClick={() => setFilterCountry("all")}
                 className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                   filterCountry === "all"
-                    ? "bg-purple-700 text-white border-purple-700"
+                    ? "bg-blue-800 text-white border-blue-800"
                     : "bg-white text-slate-600 border-slate-200"
                 }`}
               >
@@ -830,7 +830,7 @@ export default function PrivatePlayers() {
                     onClick={() => setFilterCountry(country)}
                     className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                       active
-                        ? "bg-purple-700 text-white border-purple-700"
+                        ? "bg-blue-800 text-white border-blue-800"
                         : "bg-white text-slate-600 border-slate-200"
                     }`}
                   >
@@ -855,7 +855,7 @@ export default function PrivatePlayers() {
                   <p className="text-slate-400 text-sm">No companies match your search.</p>
                   <button
                     onClick={() => { setSearch(""); setFilterCountry("all"); setSelectedCategory(null); }}
-                    className="mt-1 text-xs text-purple-600 hover:text-purple-800 font-medium underline underline-offset-2"
+                    className="mt-1 text-xs text-blue-700 hover:text-blue-900 font-medium underline underline-offset-2"
                   >
                     Clear search
                   </button>

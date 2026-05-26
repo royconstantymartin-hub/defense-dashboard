@@ -174,7 +174,7 @@ export default function Regulations() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "TOTAL REGULATIONS", value: regulations.length,                                    Icon: Shield,        iconCls: "text-purple-700",  bgCls: "bg-purple-50",    top: "border-t-2 border-t-purple-600" },
+          { label: "TOTAL REGULATIONS", value: regulations.length,                                    Icon: Shield,        iconCls: "text-blue-800",  bgCls: "bg-blue-50",    top: "border-t-2 border-t-blue-700" },
           { label: "OFFSET POLICIES",   value: regulations.filter(r=>r.category==='offset').length,  Icon: ArrowLeftRight,iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-400" },
           { label: "EXPORT CONTROLS",   value: regulations.filter(r=>r.category==='export_control').length, Icon: Globe,  iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-400" },
           { label: "COUNTRIES",         value: new Set(regulations.map(r=>r.country)).size,           Icon: FileCheck,     iconCls: "text-slate-600",    bgCls: "bg-slate-100",    top: "border-t-2 border-t-slate-400" },
@@ -335,7 +335,7 @@ export default function Regulations() {
               <p className="text-sm text-slate-500">No regulations found matching your criteria</p>
               <button
                 onClick={() => { setSearchTerm(""); setSelectedCategory("all"); setSelectedCountry("all"); }}
-                className="text-xs text-purple-600 hover:text-purple-800 font-medium underline underline-offset-2"
+                className="text-xs text-blue-700 hover:text-blue-900 font-medium underline underline-offset-2"
               >
                 Clear filters
               </button>

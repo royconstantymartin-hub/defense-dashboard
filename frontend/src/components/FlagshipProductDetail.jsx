@@ -370,7 +370,7 @@ function RivalsTab({ competitors, onSelectProduct }) {
               {c.dashboard_product_id && (
                 <button
                   onClick={() => onSelectProduct && onSelectProduct(c.dashboard_product_id)}
-                  className="flex items-center gap-1 text-xs text-purple-700 hover:text-purple-900 shrink-0 transition-colors"
+                  className="flex items-center gap-1 text-xs text-blue-800 hover:text-blue-900 shrink-0 transition-colors"
                 >
                   View profile
                   <ExternalLink className="w-3 h-3" />
@@ -424,7 +424,7 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
             <span className={`absolute bottom-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full border ${statusInfo.cls}`}>
               {statusInfo.label}
             </span>
-            <span className="absolute bottom-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-700 text-white">
+            <span className="absolute bottom-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-800 text-white">
               ★ Full Profile
             </span>
           </div>
@@ -513,7 +513,7 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
                   <TabsTrigger
                     key={value}
                     value={value}
-                    className="flex items-center gap-1.5 text-xs rounded-none border-b-2 border-transparent data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 data-[state=active]:bg-transparent px-4 h-full text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap"
+                    className="flex items-center gap-1.5 text-xs rounded-none border-b-2 border-transparent data-[state=active]:border-blue-800 data-[state=active]:text-blue-800 data-[state=active]:bg-transparent px-4 h-full text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap"
                   >
                     <Icon className="w-3.5 h-3.5" />
                     {label}

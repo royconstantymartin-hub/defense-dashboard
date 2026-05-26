@@ -773,7 +773,7 @@ export default function MarketData() {
                   <button
                     key={name}
                     onClick={() => setSelectedPlayer(p)}
-                    className="relative flex items-center gap-4 p-5 rounded-2xl bg-white border-2 border-purple-200 hover:border-purple-400 hover:shadow-md transition-all text-left border-t-4 border-t-purple-600"
+                    className="relative flex items-center gap-4 p-5 rounded-2xl bg-white border-2 border-blue-200 hover:border-blue-400 hover:shadow-md transition-all text-left border-t-4 border-t-blue-700"
                   >
                     <button
                       onClick={(e) => togglePin(e, name)}
@@ -798,7 +798,7 @@ export default function MarketData() {
                       <p className="text-xs font-mono text-slate-500 mt-0.5">{priv ? "Private" : p.ticker}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className={`font-mono font-bold text-purple-700 ${isLarge ? "text-3xl" : "text-xl"}`}>${p.market_cap}B</p>
+                      <p className={`font-mono font-bold text-blue-800 ${isLarge ? "text-3xl" : "text-xl"}`}>${p.market_cap}B</p>
                       {!priv && (
                         <span className={`text-sm font-mono font-semibold mt-1 inline-block ${isPos ? "text-emerald-600" : "text-rose-600"}`}>
                           {isPos ? "+" : ""}{change.toFixed(2)}%
@@ -1166,8 +1166,8 @@ export default function MarketData() {
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-purple-50 border border-purple-100 rounded-lg p-4">
-                  <p className="text-xs font-medium uppercase tracking-wider text-purple-600">STOCK PRICE</p>
+                <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                  <p className="text-xs font-medium uppercase tracking-wider text-blue-700">STOCK PRICE</p>
                   <p className="text-xl font-mono font-bold text-slate-900 mt-1">
                     {(() => {
                       const live = liveData[selectedPlayer.ticker];
@@ -1195,7 +1195,7 @@ export default function MarketData() {
                         </p>
                         {!isPrivate(selectedPlayer.ticker) && (
                           <button
-                            className="text-xs text-purple-700 hover:text-purple-900 underline mt-1 cursor-pointer"
+                            className="text-xs text-blue-800 hover:text-blue-900 underline mt-1 cursor-pointer"
                             onClick={() => {
                               setSelectedPlayer(null);
                               setChartPlayer(selectedPlayer);
@@ -1236,7 +1236,7 @@ export default function MarketData() {
 
               <button
                 onClick={() => { setSelectedPlayer(null); setProfileName(selectedPlayer.name); }}
-                className="w-full flex items-center justify-center gap-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-blue-800 hover:bg-blue-900 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
               >
                 <UserCircle className="w-4 h-4" />
                 View Full Company Profile
