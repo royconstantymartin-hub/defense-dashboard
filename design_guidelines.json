@@ -145,7 +145,7 @@
   "instructions_to_main_agent": {
     "general": [
       "Switch entire app to Light Mode. Remove all 'dark' class variants or hardcoded dark backgrounds.",
-      "Use 'Purple-700' (#0F172A) as the primary accent color instead of blue or green.",
+      "Use 'Blue-800' (#1e40af) as the primary accent color — Intel Blue palette for OSINT/defense aesthetic.",
       "Implement the Bento Grid layout for the main dashboard.",
       "Use Chivo font for headings and Inter for body text.",
       "Ensure all cards have a white background with a subtle border and shadow.",
@@ -160,7 +160,7 @@
     "accessibility": [
       "Ensure text contrast ratio is at least 4.5:1 against the white background.",
       "Add aria-labels to all icon buttons.",
-      "Focus states must be visible (purple ring)."
+      "Focus states must be visible (blue-800 ring)."
     ]
   },
   "universal_guidelines": [

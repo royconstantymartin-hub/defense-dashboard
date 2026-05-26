@@ -452,7 +452,7 @@ function DealSep({ type }) {
 }
 
 function RoundBadge({ roundType }) {
-  const early  = "bg-purple-50 text-purple-700 border-purple-200";
+  const early  = "bg-blue-50 text-blue-800 border-blue-200";
   const late   = "bg-slate-100 text-slate-600 border-slate-200";
   const growth = "bg-amber-50 text-amber-700 border-amber-200";
   const map = {
@@ -683,7 +683,7 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
                       href={d.source_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-slate-400 hover:text-purple-600 transition-colors inline-flex"
+                      className="text-slate-400 hover:text-blue-700 transition-colors inline-flex"
                       title="View official press release"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -870,7 +870,7 @@ function MACard({ activity, onOpenProfile }) {
               {(activity.rationale || activity.description) && (
                 <button
                   onClick={() => setOpen((v) => !v)}
-                  className="flex items-center gap-0.5 text-[11px] text-purple-700 hover:text-purple-900 font-semibold transition-colors mt-0.5"
+                  className="flex items-center gap-0.5 text-[11px] text-blue-800 hover:text-blue-900 font-semibold transition-colors mt-0.5"
                 >
                   {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                   {open ? "Less" : "Details"}
@@ -945,7 +945,7 @@ function MACard({ activity, onOpenProfile }) {
                   href={activity.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 font-semibold"
+                  className="inline-flex items-center gap-1.5 text-xs text-blue-800 hover:text-blue-900 font-semibold"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   Read source
@@ -1045,7 +1045,7 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 text-xs text-purple-700 hover:text-purple-900 font-medium"
+                className="inline-flex items-center gap-1.5 text-xs text-blue-800 hover:text-blue-900 font-medium"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 Source article
@@ -1263,13 +1263,13 @@ function JVProgramsView() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search party or program…"
-              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
             />
           </div>
           <select
             value={filterYear}
             onChange={e => setFilterYear(e.target.value)}
-            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-purple-400"
+            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
           >
             <option value="all">All Years</option>
             {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
@@ -1860,7 +1860,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
         </p>
         <button
           onClick={toggleAll}
-          className="text-xs text-purple-700 hover:text-purple-900 font-medium"
+          className="text-xs text-blue-800 hover:text-blue-900 font-medium"
         >
           {expanded.size === groups.length ? "Collapse all" : "Expand all"}
         </button>
@@ -1970,7 +1970,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={e => e.stopPropagation()}
-                              className="text-slate-400 hover:text-purple-600 transition-colors inline-flex"
+                              className="text-slate-400 hover:text-blue-700 transition-colors inline-flex"
                               title="Source"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />

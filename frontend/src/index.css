@@ -131,8 +131,8 @@ code {
     @apply bg-slate-50 text-slate-600 border border-slate-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
-.badge-purple {
-    @apply bg-slate-100 text-slate-700 border border-slate-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
+.badge-blue {
+    @apply bg-blue-50 text-blue-800 border border-blue-200 rounded-full px-2.5 py-0.5 text-xs font-medium;
 }
 
 /* Animations */
