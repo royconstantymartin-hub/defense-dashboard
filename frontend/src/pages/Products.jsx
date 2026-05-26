@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play, Eye, Wind, Zap } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import FlagshipProductDetail from "@/components/FlagshipProductDetail";
 import { FLAGSHIP_PRODUCTS } from "@/data/flagship-products/index.js";
@@ -29,6 +29,14 @@ const CATEGORIES = [
   { value: "radar", label: "Radar Systems", icon: Radio },
   { value: "cyber", label: "Cyber / EW", icon: Cpu },
   { value: "space", label: "Space", icon: Satellite },
+];
+
+const AIRCRAFT_SUBTYPES = [
+  { value: "all", label: "All Aircraft", icon: Plane },
+  { value: "fixed_wing", label: "Fixed-Wing", icon: Plane, types: ["fighter", "bomber", "attack", "gunship"] },
+  { value: "rotary_wing", label: "Rotary-Wing", icon: Wind, types: ["helicopter", "tiltrotor"] },
+  { value: "uav", label: "UAVs / Drones", icon: Zap, types: ["uav", "loitering_munition"] },
+  { value: "support_isr", label: "Support & ISR", icon: Eye, types: ["transport", "tanker", "awacs", "patrol", "reconnaissance"] },
 ];
 
 const MANUFACTURERS = [
@@ -612,6 +620,7 @@ export default function Products() {
   const [flagshipEntry, setFlagshipEntry] = useState(null); // { product, detail }
   const [playingVideo, setPlayingVideo] = useState(false);
   const [profileName, setProfileName] = useState(null);
+  const [selectedAircraftSubType, setSelectedAircraftSubType] = useState("all");
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showComparison, setShowComparison]= useState(false);
@@ -746,27 +755,34 @@ export default function Products() {
 
   useEffect(() => {
     let filtered = products;
-    
+
     if (selectedCategory !== "all") {
       filtered = filtered.filter(p => p.category === selectedCategory);
     }
-    
+
+    if (selectedCategory === "aircraft" && selectedAircraftSubType !== "all") {
+      const sub = AIRCRAFT_SUBTYPES.find(s => s.value === selectedAircraftSubType);
+      if (sub?.types) {
+        filtered = filtered.filter(p => sub.types.includes(p.product_type));
+      }
+    }
+
     if (selectedManufacturer !== "all") {
       filtered = filtered.filter(p => p.manufacturer === selectedManufacturer);
     }
-    
+
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(term) || 
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(term) ||
         p.product_type.toLowerCase().includes(term) ||
         p.manufacturer.toLowerCase().includes(term)
       );
     }
-    
+
     setFilteredProducts(filtered);
     setCurrentPage(1);
-  }, [searchTerm, selectedCategory, selectedManufacturer, products]);
+  }, [searchTerm, selectedCategory, selectedAircraftSubType, selectedManufacturer, products]);
 
   const getCategoryIcon = (category) => {
     const cat = CATEGORIES.find(c => c.value === category);
@@ -971,7 +987,7 @@ export default function Products() {
             return (
               <button
                 key={c.value}
-                onClick={() => setSelectedCategory(c.value)}
+                onClick={() => { setSelectedCategory(c.value); setSelectedAircraftSubType("all"); }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
                   isActive
                     ? "bg-blue-800 text-white border-blue-800 shadow-sm"
@@ -984,6 +1000,36 @@ export default function Products() {
             );
           })}
         </div>
+
+        {/* Aircraft sub-type pills — visible only when Aircraft category is selected */}
+        {selectedCategory === "aircraft" && (
+          <div className="flex flex-wrap gap-2 pl-1 border-l-2 border-blue-200" data-testid="aircraft-subtype-filter">
+            {AIRCRAFT_SUBTYPES.map(s => {
+              const Icon = s.icon;
+              const isActive = selectedAircraftSubType === s.value;
+              return (
+                <button
+                  key={s.value}
+                  onClick={() => setSelectedAircraftSubType(s.value)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
+                    isActive
+                      ? "bg-slate-800 text-white border-slate-800 shadow-sm"
+                      : "bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-400 hover:text-slate-900"
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {s.label}
+                  <span className={`ml-0.5 text-xs font-mono ${isActive ? "text-slate-300" : "text-slate-400"}`}>
+                    {s.value === "all"
+                      ? products.filter(p => p.category === "aircraft").length
+                      : products.filter(p => p.category === "aircraft" && s.types?.includes(p.product_type)).length
+                    }
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
