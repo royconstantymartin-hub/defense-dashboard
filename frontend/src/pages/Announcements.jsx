@@ -28,6 +28,7 @@ import {
   BarChart2,
   Tag,
   Clock,
+  Building2,
 } from "lucide-react";
 import { format, differenceInHours } from "date-fns";
 import { useNavigate } from "react-router-dom";
