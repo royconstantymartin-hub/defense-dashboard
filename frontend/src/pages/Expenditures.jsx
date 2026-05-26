@@ -141,7 +141,7 @@ const YOY_DELTA = {
   ME: +16.1, MK: +27.4, SK: +11.9, SI: +51.7,
 };
 
-const COLORS = ['#7E22CE', '#A855F7', '#10B981', '#F59E0B', '#3B82F6', '#06B6D4', '#EC4899', '#84CC16'];
+const COLORS = ['#0F172A', '#1e40af', '#3B82F6', '#64748B', '#94A3B8', '#CBD5E1'];
 
 // Population in millions — used for per-capita spending calculations
 const POPULATION_M = {
@@ -1612,18 +1612,18 @@ const _geoFetch = fetch(GEO_URL).then(r => r.json()).then(d => { _cachedGeoData 
 // Color tiers for the choropleth — both modes share the same 5-step palette
 // so the legend is easy to read at a glance.
 const CHORO_TIERS_ABS = [
-  { min: 0,   max: 10,  color: '#EDE9FE', label: '< $10B' },
-  { min: 10,  max: 50,  color: '#C4B5FD', label: '$10–50B' },
-  { min: 50,  max: 150, color: '#A855F7', label: '$50–150B' },
-  { min: 150, max: 400, color: '#7E22CE', label: '$150–400B' },
-  { min: 400, max: Infinity, color: '#3B0764', label: '> $400B' },
+  { min: 0,   max: 10,  color: '#DBEAFE', label: '< $10B' },
+  { min: 10,  max: 50,  color: '#93C5FD', label: '$10–50B' },
+  { min: 50,  max: 150, color: '#3B82F6', label: '$50–150B' },
+  { min: 150, max: 400, color: '#1D4ED8', label: '$150–400B' },
+  { min: 400, max: Infinity, color: '#1e3a8a', label: '> $400B' },
 ];
 const CHORO_TIERS_GDP = [
-  { min: 0,   max: 1,   color: '#EDE9FE', label: '< 1%' },
-  { min: 1,   max: 2,   color: '#C4B5FD', label: '1–2%' },
-  { min: 2,   max: 3,   color: '#A855F7', label: '2–3%' },
-  { min: 3,   max: 5,   color: '#7E22CE', label: '3–5%' },
-  { min: 5,   max: Infinity, color: '#3B0764', label: '> 5%' },
+  { min: 0,   max: 1,   color: '#DBEAFE', label: '< 1%' },
+  { min: 1,   max: 2,   color: '#93C5FD', label: '1–2%' },
+  { min: 2,   max: 3,   color: '#3B82F6', label: '2–3%' },
+  { min: 3,   max: 5,   color: '#1D4ED8', label: '3–5%' },
+  { min: 5,   max: Infinity, color: '#1e3a8a', label: '> 5%' },
 ];
 
 // Memoized inner layer — prevents all 177 Geography paths from re-rendering
@@ -1642,12 +1642,12 @@ const GeographyLayer = memo(function GeographyLayer({
             <Geography
               key={geo.rsmKey}
               geography={geo}
-              fill={isSelected ? '#7E22CE' : getColor(entry)}
+              fill={isSelected ? '#1e40af' : getColor(entry)}
               stroke="#FFFFFF"
               strokeWidth={0.6}
               style={{
                 default: { outline: 'none', cursor: entry ? 'pointer' : 'default' },
-                hover:   { fill: entry ? '#9333EA' : '#CBD5E1', outline: 'none' },
+                hover:   { fill: entry ? '#2563eb' : '#CBD5E1', outline: 'none' },
                 pressed: { outline: 'none' },
               }}
               onClick={() => entry && onCountryClick(entry)}
@@ -2219,7 +2219,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                   <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-600/60 text-sky-100 border border-sky-500/40 uppercase tracking-wide">AUKUS</span>
                 )}
                 {QUAD_MEMBERS.has(country.country_code) && (
-                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-600/60 text-violet-100 border border-violet-500/40 uppercase tracking-wide">QUAD</span>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-600/60 text-indigo-100 border border-indigo-500/40 uppercase tracking-wide">QUAD</span>
                 )}
                 {FIVEEYES_MEMBERS.has(country.country_code) && (
                   <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-700/60 text-emerald-100 border border-emerald-500/40 uppercase tracking-wide">Five Eyes</span>
@@ -2338,7 +2338,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                     {regionalPeers.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={entry.country_code === country.country_code ? '#7E22CE' : '#DDD6FE'}
+                        fill={entry.country_code === country.country_code ? '#1e40af' : '#BFDBFE'}
                       />
                     ))}
                   </Bar>
@@ -2348,7 +2348,7 @@ function CountryProfileSection({ country, allExpenditures }) {
             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-slate-700 inline-block" />
               {country.country} highlighted
-              <span className="w-2 h-2 rounded-full bg-violet-200 inline-block ml-2" />
+              <span className="w-2 h-2 rounded-full bg-blue-200 inline-block ml-2" />
               Regional peers
             </p>
           </CardContent>
@@ -2819,7 +2819,7 @@ export default function Expenditures() {
                       return null;
                     }}
                   />
-                  <Bar dataKey={chartMode === "gdp" ? "gdp_percent" : "expenditure"} fill="#7E22CE" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey={chartMode === "gdp" ? "gdp_percent" : "expenditure"} fill="#1e40af" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -3214,7 +3214,7 @@ export default function Expenditures() {
                             src={getFlag(exp.country_code)}
                             alt={exp.country}
                             className="w-8 h-6 object-cover rounded shadow-sm border border-slate-100 shrink-0"
-                            onError={(e) => { e.target.src = `https://flagcdn.com/w40/${exp.country_code.toLowerCase()}.png`; }}
+                            onError={(e) => { e.target.style.display = 'none'; }}
                           />
                           <div>
                             <div className="flex items-center gap-1.5">
