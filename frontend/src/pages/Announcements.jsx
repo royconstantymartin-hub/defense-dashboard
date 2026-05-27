@@ -350,16 +350,19 @@ export default function Announcements() {
 
   // ── Filter & pagination ───────────────────────────────────────────────────
 
-  const filtered = useMemo(() => articles.filter((a) => {
-    const matchCat    = selectedCat === "all" || a.category === selectedCat;
-    const term        = searchTerm.toLowerCase();
-    const matchSearch = !term
-      || a.title.toLowerCase().includes(term)
-      || (a.summary && a.summary.toLowerCase().includes(term))
-      || a.source.toLowerCase().includes(term)
-      || (a.company && a.company.toLowerCase().includes(term));
-    return matchCat && matchSearch;
-  }), [articles, selectedCat, searchTerm]);
+  const filtered = useMemo(() => articles
+    .filter((a) => {
+      const matchCat    = selectedCat === "all" || a.category === selectedCat;
+      const term        = searchTerm.toLowerCase();
+      const matchSearch = !term
+        || a.title.toLowerCase().includes(term)
+        || (a.summary && a.summary.toLowerCase().includes(term))
+        || a.source.toLowerCase().includes(term)
+        || (a.company && a.company.toLowerCase().includes(term));
+      return matchCat && matchSearch;
+    })
+    .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)),
+  [articles, selectedCat, searchTerm]);
 
   const categoryCounts = useMemo(() => {
     const counts = { all: articles.length };
