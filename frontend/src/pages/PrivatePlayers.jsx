@@ -209,12 +209,12 @@ const CLR = {
   badge:        "bg-slate-100 text-slate-700",
 };
 
-function assignCategory(company) {
+function getCategories(company) {
   const specs = new Set((company.specializations || []).map((s) => s.toLowerCase()));
-  for (const cat of MACRO_CATEGORIES) {
-    if (cat.keywords.some((kw) => specs.has(kw.toLowerCase()))) return cat.id;
-  }
-  return "industrial";
+  const matched = MACRO_CATEGORIES.filter((cat) =>
+    cat.keywords.some((kw) => specs.has(kw.toLowerCase()))
+  ).map((cat) => cat.id);
+  return matched.length > 0 ? matched : ["industrial"];
 }
 
 // ─── Company type badge ────────────────────────────────────────────────────────
@@ -517,7 +517,9 @@ export default function DefensePlayers() {
   const categorized = useMemo(() => {
     const map = {};
     MACRO_CATEGORIES.forEach((cat) => { map[cat.id] = []; });
-    players.forEach((c) => { map[assignCategory(c)].push(c); });
+    players.forEach((c) => {
+      getCategories(c).forEach((catId) => { map[catId].push(c); });
+    });
     return map;
   }, [players]);
 

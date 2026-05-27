@@ -138,7 +138,7 @@ export default function Layout() {
               );
             })}
 
-            {user?.role === "admin" && (
+            {user && (
               <div className="pt-4 border-t border-slate-100 mt-4">
                 <Link
                   to="/admin"
