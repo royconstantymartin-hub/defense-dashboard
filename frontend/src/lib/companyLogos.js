@@ -244,7 +244,7 @@ export const COMPANY_LOGOS = {
   "Firestorm Labs": "firestormlabs.co",
   "DroneShield": "droneshield.com",
   "Iris Automation": "irisautomation.ai",
-  "Preligens": "preligens.com",
+  "Safran AI": "safranai.com",
   "Sarcos Technology": "sarcos.com",
   "Palantir Technologies": "palantir.com",
   "Joby Aviation": "jobyaviation.com",
