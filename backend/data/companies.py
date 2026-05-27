@@ -274,6 +274,113 @@ DEFENSE_COMPANIES = [
     {"name": "Novadem", "ticker": "PRIVATE", "country": "France", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 50, "specializations": ["UAV", "Reconnaissance", "Autonomous"], "funding_stage": "Series A", "founded_year": 2007, "headquarters": "Aix-en-Provence, France", "website": "https://novadem.com", "description": "Mini-drones tactiques pour les forces armées et la sécurité civile"},
     {"name": "Texelis", "ticker": "PRIVATE", "country": "France", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.08, "employees": 350, "specializations": ["Land Systems", "Mobility", "Military Vehicles"], "funding_stage": "Private", "founded_year": 2015, "headquarters": "Limoges, France", "website": "https://texelis.com", "description": "Systèmes de mobilité tout-terrain pour véhicules militaires blindés"},
     {"name": "Lynred", "ticker": "PRIVATE", "country": "France", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 700, "specializations": ["Infrared", "Optronics", "Sensors"], "funding_stage": "Private", "founded_year": 2019, "headquarters": "Veurey-Voroize, France", "website": "https://lynred.com", "description": "Détecteurs infrarouge pour l'optronique de défense et l'espace"},
+
+    # === Baltic States — Estonia (additional) ===
+    {"name": "Defendec", "ticker": "DEF-PRIV", "country": "Estonia", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 30, "specializations": ["Surveillance", "Sensors", "Border Security"], "founded_year": 2012, "headquarters": "Tallinn, Estonia", "website": "https://defendec.com"},
+
+    # === Baltic States — Latvia ===
+    {"name": "SAF Tehnika", "ticker": "SAF1R.RI", "country": "Latvia", "market_cap": 0.06, "stock_price": 4.50, "change_percent": 0.5, "revenue": 0.02, "employees": 180, "specializations": ["Communications", "Microwave", "Defense Electronics"], "founded_year": 1999, "headquarters": "Riga, Latvia", "website": "https://saftehnika.com"},
+    {"name": "Dati Group", "ticker": "DATI-PRIV", "country": "Latvia", "market_cap": 0.08, "stock_price": 0, "change_percent": 0, "revenue": 0.03, "employees": 200, "specializations": ["IT", "Cyber", "Defense Services"], "founded_year": 1991, "headquarters": "Riga, Latvia", "website": "https://dati.lv"},
+
+    # === Baltic States — Lithuania ===
+    {"name": "Brolis Semiconductors", "ticker": "BRL-PRIV", "country": "Lithuania", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 50, "specializations": ["Photonics", "Sensors", "Infrared"], "funding_stage": "Series A", "founded_year": 2013, "headquarters": "Vilnius, Lithuania", "website": "https://brolissemi.com"},
+    {"name": "Teltonika Networks", "ticker": "TLTK-PRIV", "country": "Lithuania", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2500, "specializations": ["Communications", "IoT", "Defense Networks"], "founded_year": 2000, "headquarters": "Vilnius, Lithuania", "website": "https://teltonika-networks.com"},
+
+    # === Poland — additional ===
+    {"name": "HSW", "ticker": "HSW-PRIV", "country": "Poland", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 2500, "specializations": ["Land Systems", "Artillery", "Armored Vehicles"], "founded_year": 1937, "headquarters": "Stalowa Wola, Poland", "website": "https://hsw.pl"},
+    {"name": "PCO SA", "ticker": "PCO-PRIV", "country": "Poland", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 600, "specializations": ["Optronics", "Night Vision", "Sensors"], "founded_year": 1950, "headquarters": "Warsaw, Poland", "website": "https://pcosa.com.pl"},
+    {"name": "AMZ-Kutno", "ticker": "AMZ-PRIV", "country": "Poland", "market_cap": 0.15, "stock_price": 0, "change_percent": 0, "revenue": 0.08, "employees": 400, "specializations": ["Military Vehicles", "Armored", "Land Systems"], "founded_year": 2002, "headquarters": "Kutno, Poland", "website": "https://amz.com.pl"},
+
+    # === Romania ===
+    {"name": "Romarm", "ticker": "ROM-PRIV", "country": "Romania", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 4000, "specializations": ["Ammunition", "Weapons", "Land Systems"], "founded_year": 1990, "headquarters": "Bucharest, Romania", "website": "https://romarm.ro"},
+    {"name": "IAR SA", "ticker": "IAR-PRIV", "country": "Romania", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 800, "specializations": ["Helicopters", "MRO", "Aviation"], "founded_year": 1968, "headquarters": "Brasov, Romania", "website": "https://iar.ro"},
+
+    # === Czech Republic — additional ===
+    {"name": "RETIA", "ticker": "RET-PRIV", "country": "Czech Republic", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.08, "employees": 350, "specializations": ["Radar", "Air Defense", "C2 Systems"], "founded_year": 1942, "headquarters": "Pardubice, Czech Republic", "website": "https://retia.cz"},
+    {"name": "Tatra Defence Vehicle", "ticker": "TDV-PRIV", "country": "Czech Republic", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 1800, "specializations": ["Military Vehicles", "Trucks", "Land Systems"], "founded_year": 1850, "headquarters": "Koprivnice, Czech Republic", "website": "https://tatra.cz"},
+
+    # === Greece ===
+    {"name": "Intracom Defense Electronics", "ticker": "INTR-PRIV", "country": "Greece", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 800, "specializations": ["Defense Electronics", "Communications", "C2 Systems"], "founded_year": 1977, "headquarters": "Athens, Greece", "website": "https://intracomdefense.com"},
+    {"name": "Hellenic Aerospace Industry", "ticker": "HAI-PRIV", "country": "Greece", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 1500, "specializations": ["Aviation", "MRO", "Aircraft"], "founded_year": 1975, "headquarters": "Tanagra, Greece", "website": "https://haicorp.com"},
+
+    # === Portugal ===
+    {"name": "Tekever", "ticker": "TKV-PRIV", "country": "Portugal", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.06, "employees": 250, "specializations": ["UAV", "ISR", "Maritime"], "funding_stage": "Series B", "founded_year": 2001, "headquarters": "Lisbon, Portugal", "website": "https://tekever.com"},
+    {"name": "OGMA", "ticker": "OGM-PRIV", "country": "Portugal", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 1200, "specializations": ["MRO", "Aviation", "Military Aircraft"], "founded_year": 1918, "headquarters": "Alverca, Portugal", "website": "https://ogma.pt"},
+
+    # === Denmark — additional ===
+    {"name": "Systematic A/S", "ticker": "SYS-PRIV", "country": "Denmark", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.25, "employees": 1200, "specializations": ["Defense Software", "C2 Systems", "IT"], "founded_year": 1985, "headquarters": "Aarhus, Denmark", "website": "https://systematic.com"},
+
+    # === Finland — additional ===
+    {"name": "ICEYE", "ticker": "ICY-PRIV", "country": "Finland", "market_cap": 1.0, "stock_price": 0, "change_percent": 0, "revenue": 0.1, "employees": 500, "specializations": ["Space", "SAR", "Satellites", "ISR"], "funding_stage": "Series D", "founded_year": 2014, "headquarters": "Espoo, Finland", "website": "https://iceye.com"},
+
+    # === Germany — additional ===
+    {"name": "Helsing", "ticker": "HEL-PRIV", "country": "Germany", "market_cap": 5.0, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 400, "specializations": ["AI", "Electronic Warfare", "ISR"], "funding_stage": "Series B", "founded_year": 2021, "headquarters": "Munich, Germany", "website": "https://helsing.ai"},
+    {"name": "ARX Robotics", "ticker": "ARX-PRIV", "country": "Germany", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 80, "specializations": ["UGV", "Autonomous", "Land Systems"], "funding_stage": "Series A", "founded_year": 2022, "headquarters": "Munich, Germany", "website": "https://arx-robotics.com"},
+    {"name": "Quantum Systems", "ticker": "QSY-PRIV", "country": "Germany", "market_cap": 0.15, "stock_price": 0, "change_percent": 0, "revenue": 0.03, "employees": 120, "specializations": ["UAV", "Reconnaissance", "Autonomous"], "funding_stage": "Series B", "founded_year": 2015, "headquarters": "Munich, Germany", "website": "https://quantum-systems.com"},
+
+    # === Italy — additional ===
+    {"name": "Beretta Defence", "ticker": "BER-PRIV", "country": "Italy", "market_cap": 2.0, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 3000, "specializations": ["Small Arms", "Pistols", "Rifles"], "founded_year": 1526, "headquarters": "Gardone Val Trompia, Italy", "website": "https://beretta.com"},
+    {"name": "Piaggio Aerospace", "ticker": "PIA-PRIV", "country": "Italy", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 1100, "specializations": ["Aircraft", "UAV", "MRO"], "founded_year": 1884, "headquarters": "Villanova d'Albenga, Italy", "website": "https://piaggioaerospace.it"},
+
+    # === Austria ===
+    {"name": "Steyr Arms", "ticker": "STR-PRIV", "country": "Austria", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 600, "specializations": ["Small Arms", "Rifles", "Sniper Systems"], "founded_year": 1864, "headquarters": "Steyr, Austria", "website": "https://steyr-arms.com"},
+    {"name": "Diamond Aircraft", "ticker": "DIA-PRIV", "country": "Austria", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 1300, "specializations": ["Aircraft", "Training", "Surveillance"], "founded_year": 1981, "headquarters": "Wiener Neustadt, Austria", "website": "https://diamondaircraft.com"},
+
+    # === UK — additional ===
+    {"name": "Smiths Detection", "ticker": "SMTH-PRIV", "country": "UK", "market_cap": 2.5, "stock_price": 0, "change_percent": 0, "revenue": 0.8, "employees": 2800, "specializations": ["Detection", "Security", "Sensors"], "founded_year": 1946, "headquarters": "London, UK", "website": "https://smithsdetection.com"},
+    {"name": "Marshall Aerospace", "ticker": "MAE-PRIV", "country": "UK", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.5, "employees": 2000, "specializations": ["MRO", "Aircraft", "C2 Systems"], "founded_year": 1912, "headquarters": "Cambridge, UK", "website": "https://marshallaerospace.com"},
+
+    # === France — additional ===
+    {"name": "Shark Robotics", "ticker": "SHK-PRIV", "country": "France", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 30, "specializations": ["UGV", "Autonomous", "Land Systems"], "funding_stage": "Series A", "founded_year": 2015, "headquarters": "La Rochelle, France", "website": "https://shark-robotics.com"},
+
+    # === Israel — additional ===
+    {"name": "D-Fend Solutions", "ticker": "DFS-PRIV", "country": "Israel", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 150, "specializations": ["Counter-UAS", "Electronic Warfare", "Cyber"], "funding_stage": "Series B", "founded_year": 2016, "headquarters": "Ra'anana, Israel", "website": "https://d-fendsolutions.com"},
+    {"name": "Xtend", "ticker": "XTD-PRIV", "country": "Israel", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.03, "employees": 100, "specializations": ["UAV", "AI", "Autonomous"], "funding_stage": "Series B", "founded_year": 2018, "headquarters": "Tel Aviv, Israel", "website": "https://xtend.me"},
+    {"name": "SpearUAV", "ticker": "SPR-PRIV", "country": "Israel", "market_cap": 0.15, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 80, "specializations": ["UAV", "Loitering Munitions", "Reconnaissance"], "funding_stage": "Series A", "founded_year": 2017, "headquarters": "Modiin, Israel", "website": "https://spearuav.com"},
+
+    # === Taiwan ===
+    {"name": "AIDC", "ticker": "AIDC-PRIV", "country": "Taiwan", "market_cap": 2.5, "stock_price": 0, "change_percent": 0, "revenue": 1.5, "employees": 4500, "specializations": ["Aircraft", "Engines", "MRO"], "founded_year": 1969, "headquarters": "Taichung, Taiwan", "website": "https://aidc.com.tw"},
+    {"name": "NCSIST", "ticker": "NCSI-PRIV", "country": "Taiwan", "market_cap": 5.0, "stock_price": 0, "change_percent": 0, "revenue": 2.0, "employees": 6000, "specializations": ["Missiles", "Cyber", "Electronics", "Space"], "founded_year": 1969, "headquarters": "Longtan, Taiwan", "website": "https://ncsist.org.tw"},
+
+    # === Indonesia ===
+    {"name": "PT Dirgantara Indonesia", "ticker": "PTDI-PRIV", "country": "Indonesia", "market_cap": 1.0, "stock_price": 0, "change_percent": 0, "revenue": 0.4, "employees": 4000, "specializations": ["Aircraft", "Helicopters", "Aerospace"], "founded_year": 1976, "headquarters": "Bandung, Indonesia", "website": "https://indonesian-aerospace.com"},
+    {"name": "Pindad", "ticker": "PIN-PRIV", "country": "Indonesia", "market_cap": 0.8, "stock_price": 0, "change_percent": 0, "revenue": 0.3, "employees": 3000, "specializations": ["Land Systems", "Small Arms", "Armored Vehicles"], "founded_year": 1906, "headquarters": "Bandung, Indonesia", "website": "https://pindad.com"},
+
+    # === Malaysia ===
+    {"name": "Destini Berhad", "ticker": "DEST-PRIV", "country": "Malaysia", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.15, "employees": 1200, "specializations": ["Naval", "Land Systems", "Services"], "founded_year": 1981, "headquarters": "Kuala Lumpur, Malaysia", "website": "https://destini.com.my"},
+
+    # === Vietnam ===
+    {"name": "Viettel Military Industry", "ticker": "VTL-PRIV", "country": "Vietnam", "market_cap": 2.0, "stock_price": 0, "change_percent": 0, "revenue": 1.5, "employees": 55000, "specializations": ["Telecommunications", "Cyber", "Electronics"], "founded_year": 1989, "headquarters": "Hanoi, Vietnam", "website": "https://viettel.com.vn"},
+
+    # === Australia — additional ===
+    {"name": "SYPAQ Systems", "ticker": "SYP-PRIV", "country": "Australia", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.03, "employees": 100, "specializations": ["UAV", "Autonomous", "Logistics"], "founded_year": 2007, "headquarters": "Melbourne, Australia", "website": "https://sypaq.com.au"},
+    {"name": "DroneShield", "ticker": "DRO.AX", "country": "Australia", "market_cap": 0.8, "stock_price": 0.58, "change_percent": 2.5, "revenue": 0.06, "employees": 200, "specializations": ["Counter-UAS", "Sensors", "Electronic Warfare"], "founded_year": 2014, "headquarters": "Sydney, Australia", "website": "https://droneshield.com"},
+    {"name": "Advanced Navigation", "ticker": "ADV-PRIV", "country": "Australia", "market_cap": 0.4, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 300, "specializations": ["Navigation", "Autonomous", "Sensors"], "founded_year": 2011, "headquarters": "Sydney, Australia", "website": "https://advancednavigation.com"},
+
+    # === Canada — additional ===
+    {"name": "Kraken Robotics", "ticker": "PNG.V", "country": "Canada", "market_cap": 0.3, "stock_price": 0.65, "change_percent": 1.5, "revenue": 0.05, "employees": 250, "specializations": ["Naval", "Robotics", "Sonar"], "founded_year": 2012, "headquarters": "St. John's, Canada", "website": "https://krakenrobotics.com"},
+
+    # === India — additional ===
+    {"name": "NewSpace Research and Technologies", "ticker": "NSR-PRIV", "country": "India", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.03, "employees": 200, "specializations": ["Space", "Rockets", "UAV"], "funding_stage": "Series B", "founded_year": 2018, "headquarters": "Bangalore, India", "website": "https://newspace.co.in"},
+    {"name": "Tonbo Imaging", "ticker": "TBI-PRIV", "country": "India", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 150, "specializations": ["Optronics", "Thermal Imaging", "Sensors"], "funding_stage": "Series B", "founded_year": 2010, "headquarters": "Bangalore, India", "website": "https://tonboimaging.com"},
+    {"name": "Raphe mPhibr", "ticker": "RPH-PRIV", "country": "India", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 80, "specializations": ["UAV", "Helicopters", "Autonomous"], "funding_stage": "Series A", "founded_year": 2017, "headquarters": "Bangalore, India", "website": "https://raphemphibr.com"},
+
+    # === South Korea — additional ===
+    {"name": "Hancom InSpace", "ticker": "HCI-PRIV", "country": "South Korea", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 200, "specializations": ["Space", "Satellites", "Earth Observation"], "founded_year": 2006, "headquarters": "Seoul, South Korea", "website": "https://hancom-inspace.com"},
+    {"name": "Nearthlab", "ticker": "NLB-PRIV", "country": "South Korea", "market_cap": 0.1, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 80, "specializations": ["UAV", "AI", "Inspection"], "funding_stage": "Series A", "founded_year": 2016, "headquarters": "Seoul, South Korea", "website": "https://nearthlab.com"},
+
+    # === UAE — additional ===
+    {"name": "Calidus", "ticker": "CAL-PRIV", "country": "UAE", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.2, "employees": 400, "specializations": ["Aircraft", "Light Attack", "Aerospace"], "founded_year": 2017, "headquarters": "Abu Dhabi, UAE", "website": "https://calidus.ae"},
+
+    # === Singapore — additional ===
+    {"name": "ShieldWorks AI", "ticker": "SWA-PRIV", "country": "Singapore", "market_cap": 0.05, "stock_price": 0, "change_percent": 0, "revenue": 0.005, "employees": 25, "specializations": ["AI", "Cyber", "Defense"], "funding_stage": "Seed", "founded_year": 2022, "headquarters": "Singapore", "website": "https://shieldworks.ai"},
+
+    # === USA — additional defense tech ===
+    {"name": "Saronic Technologies", "ticker": "SAR-PRIV", "country": "USA", "market_cap": 0.6, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 200, "specializations": ["Naval", "Autonomous", "Surface Vessels"], "funding_stage": "Series B", "founded_year": 2021, "headquarters": "Austin, Texas", "website": "https://saronic.com"},
+    {"name": "Xona Space Systems", "ticker": "XNA-PRIV", "country": "USA", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.02, "employees": 80, "specializations": ["Space", "Navigation", "GPS"], "funding_stage": "Series B", "founded_year": 2020, "headquarters": "San Mateo, California", "website": "https://xonaspace.com"},
+    {"name": "Albedo Space", "ticker": "ALB-PRIV", "country": "USA", "market_cap": 0.3, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 60, "specializations": ["Space", "Imagery", "ISR"], "funding_stage": "Series B", "founded_year": 2020, "headquarters": "Denver, Colorado", "website": "https://albedo.space"},
+    {"name": "Firehawk Aerospace", "ticker": "FHK-PRIV", "country": "USA", "market_cap": 0.2, "stock_price": 0, "change_percent": 0, "revenue": 0.01, "employees": 60, "specializations": ["Space", "Propulsion", "Rockets"], "funding_stage": "Series A", "founded_year": 2019, "headquarters": "Dallas, Texas", "website": "https://firehawkaerospace.com"},
+    {"name": "Chaos Industries", "ticker": "CHS-PRIV", "country": "USA", "market_cap": 0.5, "stock_price": 0, "change_percent": 0, "revenue": 0.05, "employees": 120, "specializations": ["Electronic Warfare", "Counter-UAS", "Communications"], "funding_stage": "Series A", "founded_year": 2020, "headquarters": "Los Angeles, California", "website": "https://chaosinc.com"},
 ]
 
 # News sources for announcements
