@@ -28,6 +28,7 @@ import {
   Clock,
   Building2,
   Zap,
+  Flame,
   Newspaper,
 } from "lucide-react";
 import { format, differenceInHours } from "date-fns";
