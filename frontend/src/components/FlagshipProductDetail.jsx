@@ -402,6 +402,10 @@ function SourcesTab({ detail }) {
           Last updated: <strong className="text-slate-700">{detail.last_updated}</strong>
         </span>
       </div>
+      <div className="flex items-start gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-500">
+        <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" />
+        <span>Some links may require a subscription or may have moved since publication. Use the source title to search for the article if a link no longer works.</span>
+      </div>
       {sources.length === 0 ? (
         <p className="text-sm text-slate-400 italic">No source links available for this product.</p>
       ) : (
@@ -618,7 +622,7 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
           <div className="px-5 py-2.5 border-t border-slate-100 shrink-0 flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-3 text-xs text-slate-500">
               <span>
-                Dernière mise à jour :{" "}
+                Last updated:{" "}
                 <strong className="text-slate-700">{detail.last_updated}</strong>
               </span>
               <button
@@ -630,9 +634,9 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
               </button>
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-400">
-              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-emerald-400" /> Fiable</span>
-              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-amber-400" /> Estimé</span>
-              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-rose-400" /> Incertain</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-emerald-400" /> Reliable</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-amber-400" /> Estimated</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-rose-400" /> Uncertain</span>
             </div>
           </div>
         </SheetContent>

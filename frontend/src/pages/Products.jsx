@@ -1556,7 +1556,7 @@ export default function Products() {
                       {/* Badge */}
                       <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-black/70 rounded px-2 py-1">
                         <Youtube className="w-3.5 h-3.5 text-red-500" />
-                        <span className="text-white text-xs font-medium">Lire ici</span>
+                        <span className="text-white text-xs font-medium">Watch here</span>
                       </div>
                     </button>
                   )}
