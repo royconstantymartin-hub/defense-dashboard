@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getLogoUrls } from "@/lib/companyLogos";
+import { getLogoUrls, COMPANY_LOGOS } from "@/lib/companyLogos";
 import {
   Sheet, SheetContent,
 } from "@/components/ui/sheet";
@@ -460,33 +460,45 @@ export default function CompanyProfileSheet({ name, onClose }) {
             </div>
           </div>
 
-          {/* External links in header */}
-          {(p?.website || p?.linkedin) && (
-            <div className="flex gap-3 mt-4">
-              {p.website && (
-                <a
-                  href={p.website.startsWith("http") ? p.website : `https://${p.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white bg-white/10 hover:bg-white/20 transition-colors px-3 py-1.5 rounded-lg border border-white/10"
-                >
-                  <Globe className="w-3.5 h-3.5" />
-                  Website
-                </a>
-              )}
-              {p.linkedin && (
-                <a
-                  href={p.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white bg-white/10 hover:bg-white/20 transition-colors px-3 py-1.5 rounded-lg border border-white/10"
-                >
-                  <Linkedin className="w-3.5 h-3.5" />
-                  LinkedIn
-                </a>
-              )}
-            </div>
-          )}
+          {/* External links in header — always shown when we have data */}
+          {(() => {
+            const websiteUrl = p?.website
+              ? (p.website.startsWith("http") ? p.website : `https://${p.website}`)
+              : COMPANY_LOGOS[name] ? `https://${COMPANY_LOGOS[name]}` : null;
+            const linkedinSlug = (name || "")
+              .toLowerCase()
+              .replace(/&/g, "and")
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-|-$/g, "");
+            const linkedinUrl = p?.linkedin || (linkedinSlug ? `https://www.linkedin.com/company/${linkedinSlug}` : null);
+            if (!websiteUrl && !linkedinUrl) return null;
+            return (
+              <div className="flex gap-3 mt-4">
+                {websiteUrl && (
+                  <a
+                    href={websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white bg-white/10 hover:bg-white/20 transition-colors px-3 py-1.5 rounded-lg border border-white/10"
+                  >
+                    <Globe className="w-3.5 h-3.5" />
+                    Website
+                  </a>
+                )}
+                {linkedinUrl && (
+                  <a
+                    href={linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white bg-white/10 hover:bg-white/20 transition-colors px-3 py-1.5 rounded-lg border border-white/10"
+                  >
+                    <Linkedin className="w-3.5 h-3.5" />
+                    LinkedIn
+                  </a>
+                )}
+              </div>
+            );
+          })()}
         </div>
 
         {/* ── Loading ── */}

@@ -45,6 +45,7 @@ export const COMPANY_LOGOS = {
   "Shield AI": "shield.ai",
   "Peraton": "peraton.com",
   "V2X Inc": "v2x.com",
+  "Viasat": "viasat.com",
   "Axon Enterprise": "axon.com",
   "OSI Systems": "osi-systems.com",
   "Redwire Corporation": "redwirespace.com",
@@ -425,6 +426,7 @@ export const COMPANY_WIKI_LOGOS = {
   "ManTech International":         WP + "ManTech International logo.png",
   "Hexcel":                        WP + "Hexcel_logo.svg",
   // V2X Inc has no Wikipedia Commons logo — falls through to Clearbit (v2x.com)
+  // Viasat has no Wikipedia Commons logo — falls through to Clearbit (viasat.com)
   "Redwire Corporation":           WP + "Redwire logo.svg",
   "HEICO Corporation":             WP + "HEICO_logo.png",
   // Parsons Corporation — falls through to Clearbit (parsons.com)
