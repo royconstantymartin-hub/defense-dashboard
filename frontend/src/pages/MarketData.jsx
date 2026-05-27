@@ -570,40 +570,41 @@ export default function MarketData() {
       .finally(() => setCatalystsLoading(false));
   }, [players]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Computed: Defense Index (weekly) ──────────────────────────────────────
+  // ── Computed: Defense Index (weekly, live only) ───────────────────────────
   const defenseIndex = useMemo(() => {
-    if (!players.length) return null;
-    const changes = players.map(p =>
-      liveData[p.ticker]?.week_change_percent ?? liveData[p.ticker]?.change_percent ?? p.change_percent
+    const withLive = players.filter(p => liveData[p.ticker] != null);
+    if (!withLive.length) return null;
+    const changes = withLive.map(p =>
+      liveData[p.ticker].week_change_percent ?? liveData[p.ticker].change_percent
     );
     return changes.reduce((s, c) => s + c, 0) / changes.length;
   }, [players, liveData]);
 
-  // ── Computed: Domain performance (weekly) ─────────────────────────────────
+  // ── Computed: Domain performance (weekly, live only — no stale DB fallback)
   const domainPerf = useMemo(() => {
     return DOMAINS.map(domain => {
       const matching = players.filter(p =>
         Array.isArray(p.specializations) &&
         p.specializations.some(s =>
           domain.keywords.some(k => s.toLowerCase().includes(k.toLowerCase()))
-        )
+        ) &&
+        liveData[p.ticker] != null
       );
       if (!matching.length) return { ...domain, change: null, count: 0 };
       const changes = matching.map(p =>
-        liveData[p.ticker]?.week_change_percent ?? liveData[p.ticker]?.change_percent ?? p.change_percent
+        liveData[p.ticker].week_change_percent ?? liveData[p.ticker].change_percent
       );
       const avg = changes.reduce((s, c) => s + c, 0) / changes.length;
       return { ...domain, change: avg, count: matching.length };
     }).filter(d => d.count > 0);
   }, [players, liveData]);
 
-  // ── Computed: Top movers (daily — what moved today) ───────────────────────
+  // ── Computed: Top movers (5-day, live only — no stale DB fallback) ─────────
   const topMovers = useMemo(() => {
-    const listed = players.map(p => ({
-      ...p,
-      _change: liveData[p.ticker]?.change_percent ?? p.change_percent,
-    }));
-    const sorted = [...listed].sort((a, b) => b._change - a._change);
+    const withLive = players
+      .filter(p => liveData[p.ticker]?.week_change_percent != null)
+      .map(p => ({ ...p, _change: liveData[p.ticker].week_change_percent }));
+    const sorted = [...withLive].sort((a, b) => b._change - a._change);
     return {
       gainers: sorted.slice(0, 5),
       losers: sorted.slice(-5).reverse(),
@@ -980,7 +981,7 @@ export default function MarketData() {
                 <ArrowUp className="w-3.5 h-3.5 text-emerald-600" />
               </span>
               Top Gainers
-              <span className="text-xs font-normal text-slate-400 ml-1">today · listed companies</span>
+              <span className="text-xs font-normal text-slate-400 ml-1">5D · listed companies</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-1 pb-2">
@@ -1026,7 +1027,7 @@ export default function MarketData() {
                 <ArrowDown className="w-3.5 h-3.5 text-rose-600" />
               </span>
               Top Losers
-              <span className="text-xs font-normal text-slate-400 ml-1">today · listed companies</span>
+              <span className="text-xs font-normal text-slate-400 ml-1">5D · listed companies</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-1 pb-2">
@@ -1248,8 +1249,8 @@ export default function MarketData() {
                   const flagUrl = getFlag(player.country);
                   const live = liveData[player.ticker];
                   const displayPrice = live?.price ?? player.stock_price;
-                  const displayChange = live?.change_percent ?? player.change_percent;
-                  const isPos = displayChange >= 0;
+                  const displayChange = live?.change_percent ?? null;
+                  const isPos = (displayChange ?? 0) >= 0;
                   const priceChanged = live?.price != null && Math.abs(live.price - player.stock_price) > 0.01;
 
                   return (
@@ -1348,6 +1349,10 @@ export default function MarketData() {
                       <td className="p-4 text-right">
                         {isPrivate(player.ticker) ? (
                           <span className="text-slate-400 text-sm">—</span>
+                        ) : displayChange === null ? (
+                          liveLoading
+                            ? <span className="inline-block w-12 h-5 bg-slate-100 rounded-full animate-pulse" />
+                            : <span className="text-slate-400 text-sm">—</span>
                         ) : (
                           <button
                             className={`inline-flex items-center gap-1 font-mono text-sm px-2 py-0.5 rounded-full transition-all hover:scale-105 hover:shadow-md cursor-pointer ${
