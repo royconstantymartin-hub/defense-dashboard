@@ -750,6 +750,7 @@ async def get_stock_prices(tickers: str = ""):
         result[t] = {
             "price": data["price"],
             "change_percent": data["change_percent"],
+            "week_change_percent": data.get("week_change_percent", data["change_percent"]),
             "prev_close": data.get("prev_close", data["price"]),
             "open_price": data.get("open_price"),
             "change_since_open": data.get("change_since_open"),
