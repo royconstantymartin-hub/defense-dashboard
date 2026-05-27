@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
@@ -12,20 +12,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock, Database, RefreshCw, X, UserCircle, Star, Pin, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Search, TrendingUp, ArrowUpDown, ArrowDown, ArrowUp, Building2, Clock,
+  Database, RefreshCw, X, UserCircle, Star, Pin, ChevronLeft, ChevronRight,
+  Newspaper, Activity, Zap,
+} from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  CartesianGrid,
-  ReferenceLine,
+  XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area,
+  CartesianGrid, ReferenceLine,
 } from "recharts";
 
+// ─── Module-level pure helpers ────────────────────────────────────────────────
+const isPrivate = (ticker) => !ticker || ticker === "Private" || ticker.includes("PRIV");
+
+const CATALYST_CONFIG = {
+  contract:    { label: "CONTRACT",    bg: "bg-blue-50",    text: "text-blue-800",   bar: "bg-blue-800" },
+  earnings:    { label: "EARNINGS",    bg: "bg-violet-50",  text: "text-violet-700", bar: "bg-violet-600" },
+  ipo:         { label: "IPO",         bg: "bg-amber-50",   text: "text-amber-700",  bar: "bg-amber-500" },
+  merger:      { label: "M&A",         bg: "bg-orange-50",  text: "text-orange-700", bar: "bg-orange-500" },
+  acquisition: { label: "ACQUISITION", bg: "bg-orange-50",  text: "text-orange-700", bar: "bg-orange-500" },
+  partnership: { label: "PARTNERSHIP", bg: "bg-emerald-50", text: "text-emerald-700",bar: "bg-emerald-600" },
+  product:     { label: "PRODUCT",     bg: "bg-slate-50",   text: "text-slate-600",  bar: "bg-slate-400" },
+};
+
+const CATALYST_PRIORITY = {
+  ipo: 1, earnings: 2, contract: 3, merger: 4, acquisition: 4, partnership: 5, product: 6,
+};
+
+const DOMAINS = [
+  { key: "aerospace",   label: "Aerospace",    keywords: ["Aerospace", "Aircraft", "Helicopter", "Rotorcraft", "Aerostructures"] },
+  { key: "naval",       label: "Naval",         keywords: ["Naval", "Shipbuilding", "Maritime", "Submarine", "LCS"] },
+  { key: "missiles",    label: "Missiles",      keywords: ["Missiles", "Munitions", "Rockets", "Loitering"] },
+  { key: "cyber",       label: "Cyber / EW",    keywords: ["Cyber", "Electronic", "ISR", "Intelligence", "SIGINT"] },
+  { key: "space",       label: "Space",         keywords: ["Space", "Satellites", "Launch", "Orbital"] },
+  { key: "land",        label: "Land Systems",  keywords: ["Land", "Armored", "UGV", "Artillery"] },
+  { key: "electronics", label: "Electronics",   keywords: ["Electronics", "Radar", "Sensors", "Communications", "RF"] },
+  { key: "services",    label: "Services",      keywords: ["IT", "Services", "Consulting", "Logistics", "Training"] },
+];
+
+// ─── Filter / sort constants ──────────────────────────────────────────────────
 const COUNTRIES = [
   { value: "all", label: "All Countries" },
   { value: "USA", label: "🇺🇸 United States" },
@@ -69,11 +96,9 @@ const SORT_OPTIONS = [
   { value: "name_asc", label: "Name (A-Z)" },
 ];
 
-// Canonical segment labels for the filter
 const NEUTRAL_TAG = "bg-slate-50 text-slate-600 border-slate-200";
 function specTagColor(_spec = "") { return NEUTRAL_TAG; }
 
-// Values must match strings that appear in player.specializations arrays
 const SEGMENTS = [
   { value: "all",         label: "All Segments" },
   { value: "aerospace",   label: "Aerospace" },
@@ -104,8 +129,6 @@ const HISTORY_PERIODS = [
   { value: "1y", label: "1Y" },
 ];
 
-// All timestamps from the backend are UTC (ISO 8601 with offset).
-// Display times in Europe/Paris so they match what users see on financial sites.
 const PARIS_TZ = "Europe/Paris";
 function formatHistoryTime(isoStr, period) {
   const d = new Date(isoStr);
@@ -137,8 +160,6 @@ function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-// Tries each URL in sequence; falls back to letter avatar when all fail.
-// Accepts either `urls` (array, preferred) or legacy `clearbitUrl` (single string).
 function LogoWithFallback({ name, urls, clearbitUrl, sizeClass = "w-8 h-8", textClass = "text-[10px]", rounded = "rounded-lg" }) {
   const urlList = urls ?? (clearbitUrl ? [clearbitUrl] : []);
   const [urlIndex, setUrlIndex] = useState(0);
@@ -161,11 +182,11 @@ function LogoWithFallback({ name, urls, clearbitUrl, sizeClass = "w-8 h-8", text
   );
 }
 
-// Stock History Chart — slides in from the right like CompanyProfileSheet
+// ─── Stock History Chart ──────────────────────────────────────────────────────
 function StockChartModal({ player, liveData, onClose }) {
   const [period, setPeriod] = useState("1d");
   const [history, setHistory] = useState([]);
-  const [dataSource, setDataSource] = useState(null); // 'live' | 'unavailable' | 'private'
+  const [dataSource, setDataSource] = useState(null);
   const [dataMessage, setDataMessage] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [articles, setArticles] = useState([]);
@@ -191,7 +212,6 @@ function StockChartModal({ player, liveData, onClose }) {
     }
   }, [player]);
 
-  // Fetch company news once on mount
   useEffect(() => {
     const fetchArticles = async () => {
       setLoadingArticles(true);
@@ -212,50 +232,27 @@ function StockChartModal({ player, liveData, onClose }) {
   }, [period, fetchHistory]);
 
   const live = liveData?.[player.ticker];
-
-  // When live history is loaded, use its last point as the current price —
-  // more reliable than liveData which may still carry stale seed-DB values.
-  const historyPrice = dataSource === "live" && history.length
-    ? history[history.length - 1].price
-    : null;
-
+  const historyPrice = dataSource === "live" && history.length ? history[history.length - 1].price : null;
   const displayPrice = historyPrice ?? live?.price ?? player.stock_price;
-
-  // For 1D with live history: change = first → last point (vs open).
-  // For 1D without live history: fall back to liveData change_percent.
-  // For other periods: always compute from history range.
   const liveChange = live?.change_percent ?? player.change_percent;
   const periodChange = history.length >= 2
     ? ((history[history.length - 1].price - history[0].price) / history[0].price) * 100
     : liveChange;
-  const displayChange = period !== "1d" ? periodChange
-    : historyPrice !== null       ? periodChange   // vs open, live
-    : liveChange;                                  // fallback
+  const displayChange = period !== "1d" ? periodChange : historyPrice !== null ? periodChange : liveChange;
   const isPositive = displayChange >= 0;
   const color = isPositive ? "#059669" : "#E11D48";
-  const colorLight = isPositive ? "#D1FAE5" : "#FFE4E6";
 
-  // Compute a tight domain with ~0.5% padding
   const prices = history.map(d => d.price);
   const chartMin = prices.length ? Math.min(...prices) * 0.995 : undefined;
   const chartMax = prices.length ? Math.max(...prices) * 1.005 : undefined;
   const openPrice = history.length ? history[0].price : null;
-
-  // Reduce X-axis label density based on dataset size
   const tickCount = history.length;
-  const xInterval = tickCount <= 12 ? 0
-    : tickCount <= 30 ? Math.floor(tickCount / 6)
-    : Math.floor(tickCount / 8);
-
-  const chartData = history.map(d => ({
-    ...d,
-    label: formatHistoryTime(d.time, period),
-  }));
+  const xInterval = tickCount <= 12 ? 0 : tickCount <= 30 ? Math.floor(tickCount / 6) : Math.floor(tickCount / 8);
+  const chartData = history.map(d => ({ ...d, label: formatHistoryTime(d.time, period) }));
 
   return (
     <Sheet open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto p-0 gap-0 flex flex-col [&>button:first-child]:hidden">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
@@ -274,7 +271,6 @@ function StockChartModal({ player, liveData, onClose }) {
           </button>
         </div>
 
-        {/* Price + Change */}
         <div className="px-6 pt-4 pb-2 flex items-end gap-4">
           <p className="text-3xl font-mono font-bold text-slate-900">
             {displayPrice > 0 ? `$${displayPrice.toFixed(2)}` : "Private"}
@@ -295,16 +291,13 @@ function StockChartModal({ player, liveData, onClose }) {
           )}
         </div>
 
-        {/* Period selector */}
         <div className="px-6 pb-3 flex gap-1">
           {HISTORY_PERIODS.map(p => (
             <button
               key={p.value}
               onClick={() => setPeriod(p.value)}
               className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
-                period === p.value
-                  ? "bg-slate-900 text-white"
-                  : "text-slate-500 hover:bg-slate-100"
+                period === p.value ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-100"
               }`}
             >
               {p.label}
@@ -312,7 +305,6 @@ function StockChartModal({ player, liveData, onClose }) {
           ))}
         </div>
 
-        {/* Chart */}
         <div className="px-2 pb-1">
           {loadingHistory ? (
             <div className="h-52 flex items-center justify-center">
@@ -342,13 +334,7 @@ function StockChartModal({ player, liveData, onClose }) {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis
-                  dataKey="label"
-                  tick={{ fill: "#94A3B8", fontSize: 10 }}
-                  axisLine={false}
-                  tickLine={false}
-                  interval={xInterval}
-                />
+                <XAxis dataKey="label" tick={{ fill: "#94A3B8", fontSize: 10 }} axisLine={false} tickLine={false} interval={xInterval} />
                 <YAxis
                   domain={[chartMin, chartMax]}
                   tick={{ fill: "#94A3B8", fontSize: 10 }}
@@ -361,9 +347,7 @@ function StockChartModal({ player, liveData, onClose }) {
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       const val = payload[0].value;
-                      const pct = openPrice
-                        ? (((val - openPrice) / openPrice) * 100).toFixed(2)
-                        : null;
+                      const pct = openPrice ? (((val - openPrice) / openPrice) * 100).toFixed(2) : null;
                       return (
                         <div className="bg-white border border-slate-200 rounded-lg px-3 py-2 shadow-lg text-sm">
                           <p className="text-slate-400 text-xs mb-1">{payload[0].payload.label}</p>
@@ -379,28 +363,13 @@ function StockChartModal({ player, liveData, onClose }) {
                     return null;
                   }}
                 />
-                {openPrice && (
-                  <ReferenceLine
-                    y={openPrice}
-                    stroke="#CBD5E1"
-                    strokeDasharray="4 4"
-                    strokeWidth={1}
-                  />
-                )}
-                <Area
-                  type="monotone"
-                  dataKey="price"
-                  stroke={color}
-                  strokeWidth={2}
-                  fill="url(#priceGradient)"
-                  dot={false}
-                  activeDot={{ r: 4, fill: color, strokeWidth: 0 }}
-                />
+                {openPrice && <ReferenceLine y={openPrice} stroke="#CBD5E1" strokeDasharray="4 4" strokeWidth={1} />}
+                <Area type="monotone" dataKey="price" stroke={color} strokeWidth={2} fill="url(#priceGradient)" dot={false} activeDot={{ r: 4, fill: color, strokeWidth: 0 }} />
               </AreaChart>
             </ResponsiveContainer>
           )}
         </div>
-        {/* Data source attribution */}
+
         {dataSource === "live" && (
           <div className="px-4 pb-3 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
@@ -413,11 +382,8 @@ function StockChartModal({ player, liveData, onClose }) {
           </div>
         )}
 
-        {/* Recent Articles */}
         <div className="px-6 pb-6 border-t border-slate-100 pt-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
-            Recent activity
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Recent activity</p>
           {loadingArticles ? (
             <div className="flex items-center gap-2 text-slate-400 text-sm py-4">
               <div className="animate-spin w-4 h-4 border-2 border-slate-300 border-t-slate-700 rounded-full" />
@@ -463,6 +429,7 @@ function StockChartModal({ player, liveData, onClose }) {
   );
 }
 
+// ─── Main page ────────────────────────────────────────────────────────────────
 export default function MarketData() {
   const { token } = useAuth();
   const [searchParams] = useSearchParams();
@@ -477,22 +444,23 @@ export default function MarketData() {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [chartPlayer, setChartPlayer] = useState(null);
   const [profileName, setProfileName] = useState(null);
-  // liveData: { [ticker]: { price, change_percent, prev_close } }
   const [liveData, setLiveData] = useState({});
   const [liveLoading, setLiveLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
-  // watchlist: Set of company names
   const [watchlist, setWatchlist] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
 
-  // pinnedCompanies: up to 3 company names, persisted in localStorage
   const [pinnedCompanies, setPinnedCompanies] = useState(() => {
     try { return JSON.parse(localStorage.getItem("market_pinned_v1")) || []; }
     catch { return []; }
   });
 
-  // Load watchlist (authenticated users only)
+  // Market Catalysts
+  const [catalysts, setCatalysts] = useState([]);
+  const [catalystsLoading, setCatalystsLoading] = useState(true);
+
+  // ── Watchlist ──────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!token) return;
     axios.get(`${API}/watchlist`, { headers: { Authorization: `Bearer ${token}` } })
@@ -500,54 +468,7 @@ export default function MarketData() {
       .catch(() => {});
   }, [token]);
 
-  const togglePin = (e, companyName) => {
-    e.stopPropagation();
-    setPinnedCompanies((prev) => {
-      let next;
-      if (prev.includes(companyName)) {
-        next = prev.filter((n) => n !== companyName);
-      } else if (prev.length < 3) {
-        next = [...prev, companyName];
-      } else {
-        return prev;
-      }
-      localStorage.setItem("market_pinned_v1", JSON.stringify(next));
-      return next;
-    });
-  };
-
-  const toggleWatch = async (e, companyName) => {
-    e.stopPropagation();
-    if (!token) return;
-    const isWatched = watchlist.has(companyName);
-    // Optimistic
-    setWatchlist((prev) => {
-      const next = new Set(prev);
-      isWatched ? next.delete(companyName) : next.add(companyName);
-      return next;
-    });
-    try {
-      if (isWatched) {
-        await axios.delete(`${API}/watchlist`, {
-          params: { company_name: companyName },
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } else {
-        await axios.post(`${API}/watchlist`, null, {
-          params: { company_name: companyName },
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      }
-    } catch {
-      // Revert on error
-      setWatchlist((prev) => {
-        const next = new Set(prev);
-        isWatched ? next.add(companyName) : next.delete(companyName);
-        return next;
-      });
-    }
-  };
-
+  // ── Fetch players ──────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
@@ -563,7 +484,7 @@ export default function MarketData() {
     fetchPlayers();
   }, []);
 
-  // Fetch live prices whenever the players list changes
+  // ── Fetch live prices ──────────────────────────────────────────────────────
   const fetchLivePrices = useCallback(async (playersList) => {
     const publicTickers = playersList
       .map(p => p.ticker)
@@ -591,37 +512,105 @@ export default function MarketData() {
   useEffect(() => {
     if (players.length > 0) {
       fetchLivePrices(players);
-      // Refresh every 5 minutes
       const interval = setInterval(() => fetchLivePrices(players), 5 * 60 * 1000);
       return () => clearInterval(interval);
     }
   }, [players, fetchLivePrices]);
 
+  // ── Fetch market catalysts ─────────────────────────────────────────────────
+  useEffect(() => {
+    if (!players.length) return;
+    const listedMap = {};
+    players.filter(p => !isPrivate(p.ticker)).forEach(p => {
+      listedMap[p.name.toLowerCase()] = p;
+    });
+
+    setCatalystsLoading(true);
+    axios.get(`${API}/announcements?limit=100`)
+      .then(res => {
+        const matched = [];
+        for (const a of res.data) {
+          if (!a.company) continue;
+          const key = a.company.toLowerCase();
+          let player = listedMap[key];
+          if (!player) {
+            player = players.find(p =>
+              !isPrivate(p.ticker) && (
+                p.name.toLowerCase().includes(key) || key.includes(p.name.toLowerCase())
+              )
+            );
+          }
+          if (player) matched.push({ ...a, _player: player });
+        }
+        matched.sort((a, b) =>
+          (CATALYST_PRIORITY[a.category?.toLowerCase()] || 99) -
+          (CATALYST_PRIORITY[b.category?.toLowerCase()] || 99)
+        );
+        setCatalysts(matched.slice(0, 4));
+      })
+      .catch(() => setCatalysts([]))
+      .finally(() => setCatalystsLoading(false));
+  }, [players]);
+
+  // ── Computed: Defense Index ────────────────────────────────────────────────
+  const defenseIndex = useMemo(() => {
+    const listed = players.filter(p => !isPrivate(p.ticker));
+    if (!listed.length) return null;
+    const changes = listed.map(p => liveData[p.ticker]?.change_percent ?? p.change_percent);
+    return changes.reduce((s, c) => s + c, 0) / changes.length;
+  }, [players, liveData]);
+
+  // ── Computed: Domain performance ───────────────────────────────────────────
+  const domainPerf = useMemo(() => {
+    return DOMAINS.map(domain => {
+      const matching = players.filter(p =>
+        !isPrivate(p.ticker) &&
+        Array.isArray(p.specializations) &&
+        p.specializations.some(s =>
+          domain.keywords.some(k => s.toLowerCase().includes(k.toLowerCase()))
+        )
+      );
+      if (!matching.length) return { ...domain, change: null, count: 0 };
+      const changes = matching.map(p => liveData[p.ticker]?.change_percent ?? p.change_percent);
+      const avg = changes.reduce((s, c) => s + c, 0) / changes.length;
+      return { ...domain, change: avg, count: matching.length };
+    }).filter(d => d.count > 0);
+  }, [players, liveData]);
+
+  // ── Computed: Top movers ───────────────────────────────────────────────────
+  const topMovers = useMemo(() => {
+    const listed = players
+      .filter(p => !isPrivate(p.ticker))
+      .map(p => ({ ...p, _change: liveData[p.ticker]?.change_percent ?? p.change_percent }));
+    const sorted = [...listed].sort((a, b) => b._change - a._change);
+    return {
+      gainers: sorted.slice(0, 5),
+      losers: sorted.slice(-5).reverse(),
+    };
+  }, [players, liveData]);
+
+  // ── Filtering & sorting ────────────────────────────────────────────────────
   useEffect(() => {
     let filtered = [...players];
 
-    if (selectedCountry !== "all") {
+    if (selectedCountry !== "all")
       filtered = filtered.filter(p => p.country === selectedCountry);
-    }
 
-    if (selectedSegment !== "all") {
+    if (selectedSegment !== "all")
       filtered = filtered.filter(p =>
         Array.isArray(p.specializations) &&
         p.specializations.some(s => s.toLowerCase().includes(selectedSegment.toLowerCase()))
       );
-    }
 
-    if (watchlistOnly) {
+    if (watchlistOnly)
       filtered = filtered.filter(p => watchlist.has(p.name));
-    }
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(term) ||
         p.ticker.toLowerCase().includes(term) ||
-        (Array.isArray(p.specializations) &&
-          p.specializations.some(s => s.toLowerCase().includes(term)))
+        (Array.isArray(p.specializations) && p.specializations.some(s => s.toLowerCase().includes(term)))
       );
     }
 
@@ -643,12 +632,54 @@ export default function MarketData() {
     setCurrentPage(1);
   }, [searchTerm, selectedCountry, selectedSegment, watchlistOnly, sortBy, players, liveData, watchlist]);
 
-  const totalPages = Math.ceil(filteredPlayers.length / ITEMS_PER_PAGE);
-  const paginatedPlayers = filteredPlayers.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  // ── Pin / watchlist helpers ────────────────────────────────────────────────
+  const togglePin = (e, companyName) => {
+    e.stopPropagation();
+    setPinnedCompanies((prev) => {
+      let next;
+      if (prev.includes(companyName)) {
+        next = prev.filter((n) => n !== companyName);
+      } else if (prev.length < 3) {
+        next = [...prev, companyName];
+      } else {
+        return prev;
+      }
+      localStorage.setItem("market_pinned_v1", JSON.stringify(next));
+      return next;
+    });
+  };
 
+  const toggleWatch = async (e, companyName) => {
+    e.stopPropagation();
+    if (!token) return;
+    const isWatched = watchlist.has(companyName);
+    setWatchlist((prev) => {
+      const next = new Set(prev);
+      isWatched ? next.delete(companyName) : next.add(companyName);
+      return next;
+    });
+    try {
+      if (isWatched) {
+        await axios.delete(`${API}/watchlist`, {
+          params: { company_name: companyName },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        await axios.post(`${API}/watchlist`, null, {
+          params: { company_name: companyName },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+    } catch {
+      setWatchlist((prev) => {
+        const next = new Set(prev);
+        isWatched ? next.add(companyName) : next.delete(companyName);
+        return next;
+      });
+    }
+  };
+
+  // ── Derived totals ─────────────────────────────────────────────────────────
   const totalMarketCap = filteredPlayers.reduce((sum, p) => sum + p.market_cap, 0);
   const totalRevenue = filteredPlayers.reduce((sum, p) => sum + p.revenue, 0);
   const totalEmployees = filteredPlayers.reduce((sum, p) => sum + p.employees, 0);
@@ -658,7 +689,13 @@ export default function MarketData() {
     return code ? `https://flagcdn.com/w40/${code}.png` : null;
   };
 
-  const isPrivate = (ticker) => !ticker || ticker === "Private" || ticker.includes("PRIV");
+  const totalPages = Math.ceil(filteredPlayers.length / ITEMS_PER_PAGE);
+  const paginatedPlayers = filteredPlayers.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const listedCount = players.filter(p => !isPrivate(p.ticker)).length;
 
   if (loading) {
     return (
@@ -668,15 +705,15 @@ export default function MarketData() {
     );
   }
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div data-testid="market-data-page" className="space-y-6 animate-fade-in">
-      {/* Header */}
+
+      {/* ── Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
-            Market Data
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">Defense Industry Market Capitalization & Live Stock Prices</p>
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">Market Data</h1>
+          <p className="text-slate-500 text-sm mt-1">Live prices, market catalysts and performance across the defense universe</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
           {liveLoading ? (
@@ -684,11 +721,7 @@ export default function MarketData() {
           ) : (
             <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
           )}
-          <span>
-            {lastUpdated
-              ? `Live · Updated ${lastUpdated.toLocaleTimeString()}`
-              : "Loading live prices…"}
-          </span>
+          <span>{lastUpdated ? `Live · Updated ${lastUpdated.toLocaleTimeString()}` : "Loading live prices…"}</span>
           <span className="text-slate-300">|</span>
           <Clock className="w-3.5 h-3.5" />
           <span>Refreshes every 5 min</span>
@@ -698,7 +731,7 @@ export default function MarketData() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* ── KPI Row ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
@@ -732,7 +765,281 @@ export default function MarketData() {
         </Card>
       </div>
 
-      {/* Pinned Favorites */}
+      {/* ── Defense Index + Domain Performance ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+
+        {/* Defense Index */}
+        <Card className="bg-white border-slate-200 shadow-sm border-t-4 border-t-blue-800">
+          <CardContent className="p-5 h-full flex flex-col justify-between">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <Zap className="w-3 h-3 text-blue-800" />
+                Defense Index
+              </p>
+              <div className="mt-3">
+                {defenseIndex === null ? (
+                  <div className="animate-pulse h-10 w-28 bg-slate-100 rounded" />
+                ) : (
+                  <div className="flex items-end gap-2">
+                    <p className={`text-4xl font-mono font-bold leading-none ${defenseIndex >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                      {defenseIndex >= 0 ? "+" : ""}{defenseIndex.toFixed(2)}%
+                    </p>
+                    <span className={`mb-0.5 inline-flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-full ${
+                      defenseIndex >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
+                    }`}>
+                      {defenseIndex >= 0 ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+                      today
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 mt-4">
+              Avg. across <span className="font-mono font-medium text-slate-600">{listedCount}</span> listed companies
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Domain Performance */}
+        <Card className="lg:col-span-3 bg-white border-slate-200 shadow-sm">
+          <CardContent className="p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500 mb-4">
+              Performance by Capability Domain
+            </p>
+            {domainPerf.length === 0 ? (
+              <div className="flex items-center justify-center h-14 text-slate-400 text-sm">
+                <div className="animate-spin w-4 h-4 border-2 border-slate-200 border-t-slate-500 rounded-full mr-2" />
+                Loading…
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {domainPerf.map(domain => {
+                  const isPos = (domain.change ?? 0) >= 0;
+                  return (
+                    <div
+                      key={domain.key}
+                      className={`rounded-xl p-3 border transition-colors ${
+                        isPos
+                          ? "bg-emerald-50 border-emerald-100"
+                          : "bg-rose-50 border-rose-100"
+                      }`}
+                    >
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 truncate leading-none mb-2">
+                        {domain.label.split(" / ")[0]}
+                      </p>
+                      <p className={`text-lg font-mono font-bold leading-none ${isPos ? "text-emerald-700" : "text-rose-700"}`}>
+                        {isPos ? "+" : ""}{domain.change.toFixed(2)}%
+                      </p>
+                      <p className="text-[10px] text-slate-400 mt-1.5 font-mono">{domain.count} co.</p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* ── Market Catalysts ── */}
+      <Card className="bg-white border-slate-200 shadow-sm">
+        <CardHeader className="border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-3">
+            <Activity className="w-4 h-4 text-blue-800" />
+            <CardTitle className="font-heading text-lg text-slate-900">Market Catalysts</CardTitle>
+            <span className="flex items-center gap-1.5 text-xs text-slate-400">
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+              Market-moving news on listed companies
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-4">
+          {catalystsLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="animate-pulse rounded-xl border border-slate-100 overflow-hidden">
+                  <div className="h-1 w-full bg-slate-100" />
+                  <div className="p-4 space-y-3">
+                    <div className="h-3 w-16 bg-slate-100 rounded-full" />
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 bg-slate-100 rounded-md" />
+                      <div className="space-y-1 flex-1">
+                        <div className="h-2.5 w-3/4 bg-slate-100 rounded" />
+                        <div className="h-2 w-1/2 bg-slate-100 rounded" />
+                      </div>
+                    </div>
+                    <div className="h-3 w-full bg-slate-100 rounded" />
+                    <div className="h-3 w-2/3 bg-slate-100 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : catalysts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 gap-3 text-slate-400">
+              <Newspaper className="w-8 h-8 text-slate-200" />
+              <p className="text-sm font-medium text-slate-400">No market-moving news linked to listed companies right now.</p>
+              <p className="text-xs text-slate-300">Seed fresh announcements via the Admin panel to populate this section.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {catalysts.map((catalyst, i) => {
+                const cfg = CATALYST_CONFIG[catalyst.category?.toLowerCase()] ?? CATALYST_CONFIG.product;
+                const player = catalyst._player;
+                const change = liveData[player.ticker]?.change_percent ?? player.change_percent;
+                const isPos = change >= 0;
+                const flagUrl = getFlag(player.country);
+                return (
+                  <div
+                    key={i}
+                    className="relative rounded-xl border border-slate-100 overflow-hidden hover:shadow-md hover:border-slate-200 transition-all cursor-pointer group"
+                    onClick={() => setSelectedPlayer(player)}
+                  >
+                    {/* Category colour bar */}
+                    <div className={`h-1 w-full ${cfg.bar}`} />
+
+                    <div className="p-4">
+                      {/* Badge */}
+                      <span className={`inline-block text-[10px] font-bold tracking-widest px-2.5 py-0.5 rounded-full mb-3 ${cfg.bg} ${cfg.text}`}>
+                        {cfg.label}
+                      </span>
+
+                      {/* Company row */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <LogoWithFallback
+                          name={player.name}
+                          urls={getLogoUrls(player.name)}
+                          sizeClass="w-7 h-7"
+                          textClass="text-[9px]"
+                          rounded="rounded-md"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-semibold text-slate-700 truncate leading-none">{player.name}</p>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <span className="font-mono text-[10px] text-slate-400 bg-slate-100 px-1 py-px rounded">{player.ticker}</span>
+                            {flagUrl && <img src={flagUrl} alt={player.country} className="w-3.5 h-2.5 object-cover rounded-sm" />}
+                          </div>
+                        </div>
+                        <span className={`text-xs font-mono font-bold shrink-0 ${isPos ? "text-emerald-600" : "text-rose-600"}`}>
+                          {isPos ? "+" : ""}{change.toFixed(2)}%
+                        </span>
+                      </div>
+
+                      {/* Headline */}
+                      <p className="text-sm font-medium text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-800 transition-colors">
+                        {catalyst.title}
+                      </p>
+
+                      {/* Meta */}
+                      <p className="text-[11px] text-slate-400 mt-2.5 flex items-center gap-1.5">
+                        <span>{catalyst.source}</span>
+                        <span className="text-slate-200">·</span>
+                        <span>{catalyst.date ? relativeTime(catalyst.date) : "recent"}</span>
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* ── Top Movers ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        {/* Gainers */}
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-3">
+            <CardTitle className="font-heading text-base text-slate-900 flex items-center gap-2">
+              <span className="w-6 h-6 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center justify-center">
+                <ArrowUp className="w-3.5 h-3.5 text-emerald-600" />
+              </span>
+              Top Gainers
+              <span className="text-xs font-normal text-slate-400 ml-1">today · listed companies</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-1 pb-2">
+            {topMovers.gainers.map((p, i) => {
+              const flagUrl = getFlag(p.country);
+              const price = liveData[p.ticker]?.price ?? p.stock_price;
+              return (
+                <div
+                  key={p.id}
+                  className="flex items-center gap-3 px-2 py-2.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
+                  onClick={() => setSelectedPlayer(p)}
+                >
+                  <span className="text-xs font-mono text-slate-300 w-4 shrink-0 text-right">{i + 1}</span>
+                  <LogoWithFallback
+                    name={p.name}
+                    urls={getLogoUrls(p.name)}
+                    sizeClass="w-7 h-7"
+                    textClass="text-[9px]"
+                    rounded="rounded-md"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-800 truncate leading-none">{p.name}</p>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span className="font-mono text-[10px] text-slate-400">{p.ticker}</span>
+                      {flagUrl && <img src={flagUrl} alt={p.country} className="w-3.5 h-2.5 object-cover rounded-sm" />}
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-mono font-bold text-emerald-600">+{p._change.toFixed(2)}%</p>
+                    <p className="text-[10px] font-mono text-slate-400 mt-0.5">${price > 0 ? price.toFixed(2) : "—"}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* Losers */}
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-3">
+            <CardTitle className="font-heading text-base text-slate-900 flex items-center gap-2">
+              <span className="w-6 h-6 bg-rose-50 border border-rose-100 rounded-lg flex items-center justify-center">
+                <ArrowDown className="w-3.5 h-3.5 text-rose-600" />
+              </span>
+              Top Losers
+              <span className="text-xs font-normal text-slate-400 ml-1">today · listed companies</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-1 pb-2">
+            {topMovers.losers.map((p, i) => {
+              const flagUrl = getFlag(p.country);
+              const price = liveData[p.ticker]?.price ?? p.stock_price;
+              return (
+                <div
+                  key={p.id}
+                  className="flex items-center gap-3 px-2 py-2.5 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
+                  onClick={() => setSelectedPlayer(p)}
+                >
+                  <span className="text-xs font-mono text-slate-300 w-4 shrink-0 text-right">{i + 1}</span>
+                  <LogoWithFallback
+                    name={p.name}
+                    urls={getLogoUrls(p.name)}
+                    sizeClass="w-7 h-7"
+                    textClass="text-[9px]"
+                    rounded="rounded-md"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-800 truncate leading-none">{p.name}</p>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span className="font-mono text-[10px] text-slate-400">{p.ticker}</span>
+                      {flagUrl && <img src={flagUrl} alt={p.country} className="w-3.5 h-2.5 object-cover rounded-sm" />}
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-mono font-bold text-rose-600">{p._change.toFixed(2)}%</p>
+                    <p className="text-[10px] font-mono text-slate-400 mt-0.5">${price > 0 ? price.toFixed(2) : "—"}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* ── Pinned Companies ── */}
       <Card className="bg-white border-slate-200 shadow-sm" data-testid="market-cap-chart">
         <CardHeader className="border-b border-slate-100 pb-3">
           <div className="flex items-center justify-between">
@@ -741,7 +1048,9 @@ export default function MarketData() {
                 <Pin className="w-4 h-4 text-slate-600" />
                 Pinned Companies
               </CardTitle>
-              <p className="text-xs text-slate-400 mt-0.5">Click the <Pin className="w-3 h-3 inline text-slate-500" /> icon in the table to pin up to 3 companies</p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Click the <Pin className="w-3 h-3 inline text-slate-500" /> icon in the table to pin up to 3 companies
+              </p>
             </div>
             <span className="text-xs font-mono text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-md">
               {pinnedCompanies.length} / 3
@@ -813,7 +1122,7 @@ export default function MarketData() {
         </CardContent>
       </Card>
 
-      {/* Filters */}
+      {/* ── Filters ── */}
       <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -831,9 +1140,7 @@ export default function MarketData() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {COUNTRIES.map(c => (
-              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-slate-50">
-                {c.label}
-              </SelectItem>
+              <SelectItem key={c.value} value={c.value} className="text-slate-700 focus:bg-slate-50">{c.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -843,9 +1150,7 @@ export default function MarketData() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {SEGMENTS.map(s => (
-              <SelectItem key={s.value} value={s.value} className="text-slate-700 focus:bg-slate-50">
-                {s.label}
-              </SelectItem>
+              <SelectItem key={s.value} value={s.value} className="text-slate-700 focus:bg-slate-50">{s.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -856,15 +1161,13 @@ export default function MarketData() {
           </SelectTrigger>
           <SelectContent className="bg-white border-slate-200">
             {SORT_OPTIONS.map(opt => (
-              <SelectItem key={opt.value} value={opt.value} className="text-slate-700 focus:bg-slate-50">
-                {opt.label}
-              </SelectItem>
+              <SelectItem key={opt.value} value={opt.value} className="text-slate-700 focus:bg-slate-50">{opt.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      {/* Active filter summary */}
+      {/* Active filter chips */}
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-xs text-slate-500">{filteredPlayers.length} {filteredPlayers.length === 1 ? "company" : "companies"}</span>
         {token && (
@@ -883,22 +1186,18 @@ export default function MarketData() {
         {selectedSegment !== "all" && (
           <span className="flex items-center gap-1 text-xs bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
             {SEGMENTS.find(s => s.value === selectedSegment)?.label}
-            <button onClick={() => setSelectedSegment("all")} className="hover:text-slate-900 ml-0.5">
-              <X className="w-3 h-3" />
-            </button>
+            <button onClick={() => setSelectedSegment("all")} className="hover:text-slate-900 ml-0.5"><X className="w-3 h-3" /></button>
           </span>
         )}
         {selectedCountry !== "all" && (
           <span className="flex items-center gap-1 text-xs bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
             {selectedCountry}
-            <button onClick={() => setSelectedCountry("all")} className="hover:text-slate-900 ml-0.5">
-              <X className="w-3 h-3" />
-            </button>
+            <button onClick={() => setSelectedCountry("all")} className="hover:text-slate-900 ml-0.5"><X className="w-3 h-3" /></button>
           </span>
         )}
       </div>
 
-      {/* Players Table */}
+      {/* ── Players Table ── */}
       <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto" data-testid="players-table">
@@ -940,11 +1239,9 @@ export default function MarketData() {
                           <button
                             onClick={(e) => togglePin(e, player.name)}
                             title={
-                              pinnedCompanies.includes(player.name)
-                                ? "Unpin"
-                                : pinnedCompanies.length >= 3
-                                ? "Maximum 3 companies pinned"
-                                : "Pin"
+                              pinnedCompanies.includes(player.name) ? "Unpin"
+                              : pinnedCompanies.length >= 3 ? "Maximum 3 companies pinned"
+                              : "Pin"
                             }
                             disabled={!pinnedCompanies.includes(player.name) && pinnedCompanies.length >= 3}
                             className={`p-1 rounded transition-colors ${
@@ -980,16 +1277,11 @@ export default function MarketData() {
                             className="flex items-center gap-2.5 group text-left"
                             title={`View ${player.name} profile`}
                           >
-                          <LogoWithFallback
-                            name={player.name}
-                            urls={getLogoUrls(player.name)}
-                          />
+                            <LogoWithFallback name={player.name} urls={getLogoUrls(player.name)} />
                             <div>
                               <p className="text-slate-900 group-hover:text-slate-700 font-medium text-sm transition-colors">{player.name}</p>
                               <div className="flex items-center gap-1.5 mt-0.5">
-                                {flagUrl && (
-                                  <img src={flagUrl} alt={player.country} className="w-4 h-3 object-cover rounded-sm" />
-                                )}
+                                {flagUrl && <img src={flagUrl} alt={player.country} className="w-4 h-3 object-cover rounded-sm" />}
                                 <span className="text-xs text-slate-500">{player.country}</span>
                               </div>
                             </div>
@@ -1004,16 +1296,14 @@ export default function MarketData() {
                         </span>
                       </td>
 
-                      {/* Stock Price — live when available */}
+                      {/* Stock Price */}
                       <td className="p-4 text-right">
                         {isPrivate(player.ticker) ? (
                           <span className="font-mono text-sm text-slate-400">Private</span>
                         ) : (
-                          <span className={`font-mono text-sm font-medium ${priceChanged ? "text-slate-900" : "text-slate-900"}`}>
+                          <span className="font-mono text-sm font-medium text-slate-900">
                             {displayPrice > 0 ? `$${displayPrice.toFixed(2)}` : "—"}
-                            {priceChanged && (
-                              <span className="ml-1 text-xs text-slate-500">live</span>
-                            )}
+                            {priceChanged && <span className="ml-1 text-xs text-slate-500">live</span>}
                           </span>
                         )}
                       </td>
@@ -1028,7 +1318,7 @@ export default function MarketData() {
                         <span className="font-mono text-sm text-slate-600">${player.revenue}B</span>
                       </td>
 
-                      {/* Change — clickable to open chart */}
+                      {/* Change */}
                       <td className="p-4 text-right">
                         {isPrivate(player.ticker) ? (
                           <span className="text-slate-400 text-sm">—</span>
@@ -1039,10 +1329,7 @@ export default function MarketData() {
                                 ? "text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
                                 : "text-rose-700 bg-rose-50 hover:bg-rose-100"
                             }`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setChartPlayer(player);
-                            }}
+                            onClick={(e) => { e.stopPropagation(); setChartPlayer(player); }}
                             title="Click to view price chart"
                           >
                             {isPos ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
@@ -1122,16 +1409,12 @@ export default function MarketData() {
         </CardContent>
       </Card>
 
-      {/* Stock Chart Modal */}
+      {/* ── Stock Chart Modal ── */}
       {chartPlayer && (
-        <StockChartModal
-          player={chartPlayer}
-          liveData={liveData}
-          onClose={() => setChartPlayer(null)}
-        />
+        <StockChartModal player={chartPlayer} liveData={liveData} onClose={() => setChartPlayer(null)} />
       )}
 
-      {/* Player Detail Modal */}
+      {/* ── Player Detail Modal ── */}
       {selectedPlayer && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
@@ -1196,10 +1479,7 @@ export default function MarketData() {
                         {!isPrivate(selectedPlayer.ticker) && (
                           <button
                             className="text-xs text-blue-800 hover:text-blue-900 underline mt-1 cursor-pointer"
-                            onClick={() => {
-                              setSelectedPlayer(null);
-                              setChartPlayer(selectedPlayer);
-                            }}
+                            onClick={() => { setSelectedPlayer(null); setChartPlayer(selectedPlayer); }}
                           >
                             View chart →
                           </button>
@@ -1246,7 +1526,7 @@ export default function MarketData() {
         </div>
       )}
 
-      {/* Company Profile Sheet */}
+      {/* ── Company Profile Sheet ── */}
       <CompanyProfileSheet name={profileName} onClose={() => setProfileName(null)} />
     </div>
   );
