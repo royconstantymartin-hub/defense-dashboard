@@ -459,6 +459,7 @@ export default function MarketData() {
   // Market Catalysts
   const [catalysts, setCatalysts] = useState([]);
   const [catalystsLoading, setCatalystsLoading] = useState(true);
+  const [catalystWindow, setCatalystWindow] = useState("48h");
 
   // ── Watchlist ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -468,13 +469,14 @@ export default function MarketData() {
       .catch(() => {});
   }, [token]);
 
-  // ── Fetch players ──────────────────────────────────────────────────────────
+  // ── Fetch players — listed companies only on this page ────────────────────
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
         const response = await axios.get(`${API}/defense-players`);
-        setPlayers(response.data);
-        setFilteredPlayers(response.data);
+        const listed = response.data.filter(p => !isPrivate(p.ticker));
+        setPlayers(listed);
+        setFilteredPlayers(listed);
       } catch (error) {
         console.error("Error fetching players:", error);
       } finally {
@@ -518,70 +520,89 @@ export default function MarketData() {
   }, [players, fetchLivePrices]);
 
   // ── Fetch market catalysts ─────────────────────────────────────────────────
+  // Non-ASCII heuristic to skip non-English announcements (é, ä, ö, etc.)
+  const isEnglish = (text = "") => !/[àáâãäåæçèéêëìíîïðñòóôõöùúûüýþßœ]/i.test(text);
+
   useEffect(() => {
     if (!players.length) return;
     const listedMap = {};
-    players.filter(p => !isPrivate(p.ticker)).forEach(p => {
-      listedMap[p.name.toLowerCase()] = p;
-    });
+    players.forEach(p => { listedMap[p.name.toLowerCase()] = p; });
 
     setCatalystsLoading(true);
-    axios.get(`${API}/announcements?limit=100`)
+    axios.get(`${API}/announcements?limit=200`)
       .then(res => {
-        const matched = [];
-        for (const a of res.data) {
-          if (!a.company) continue;
-          const key = a.company.toLowerCase();
-          let player = listedMap[key];
-          if (!player) {
-            player = players.find(p =>
-              !isPrivate(p.ticker) && (
+        const now = Date.now();
+        const H48 = 48 * 3600 * 1000;
+        const D7  = 7 * 24 * 3600 * 1000;
+
+        const matchAndFilter = (maxAge) => {
+          const out = [];
+          for (const a of res.data) {
+            if (!a.company) continue;
+            if (!isEnglish(a.title)) continue;
+            if (a.date && (now - new Date(a.date).getTime()) > maxAge) continue;
+            const key = a.company.toLowerCase();
+            let player = listedMap[key];
+            if (!player) {
+              player = players.find(p =>
                 p.name.toLowerCase().includes(key) || key.includes(p.name.toLowerCase())
-              )
-            );
+              );
+            }
+            if (player) out.push({ ...a, _player: player });
           }
-          if (player) matched.push({ ...a, _player: player });
+          out.sort((a, b) =>
+            (CATALYST_PRIORITY[a.category?.toLowerCase()] || 99) -
+            (CATALYST_PRIORITY[b.category?.toLowerCase()] || 99)
+          );
+          return out.slice(0, 4);
+        };
+
+        let result = matchAndFilter(H48);
+        let window = "last 48h";
+        if (result.length === 0) {
+          result = matchAndFilter(D7);
+          window = "last 7 days";
         }
-        matched.sort((a, b) =>
-          (CATALYST_PRIORITY[a.category?.toLowerCase()] || 99) -
-          (CATALYST_PRIORITY[b.category?.toLowerCase()] || 99)
-        );
-        setCatalysts(matched.slice(0, 4));
+        setCatalysts(result);
+        setCatalystWindow(window);
       })
       .catch(() => setCatalysts([]))
       .finally(() => setCatalystsLoading(false));
-  }, [players]);
+  }, [players]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Computed: Defense Index ────────────────────────────────────────────────
+  // ── Computed: Defense Index (weekly) ──────────────────────────────────────
   const defenseIndex = useMemo(() => {
-    const listed = players.filter(p => !isPrivate(p.ticker));
-    if (!listed.length) return null;
-    const changes = listed.map(p => liveData[p.ticker]?.change_percent ?? p.change_percent);
+    if (!players.length) return null;
+    const changes = players.map(p =>
+      liveData[p.ticker]?.week_change_percent ?? liveData[p.ticker]?.change_percent ?? p.change_percent
+    );
     return changes.reduce((s, c) => s + c, 0) / changes.length;
   }, [players, liveData]);
 
-  // ── Computed: Domain performance ───────────────────────────────────────────
+  // ── Computed: Domain performance (weekly) ─────────────────────────────────
   const domainPerf = useMemo(() => {
     return DOMAINS.map(domain => {
       const matching = players.filter(p =>
-        !isPrivate(p.ticker) &&
         Array.isArray(p.specializations) &&
         p.specializations.some(s =>
           domain.keywords.some(k => s.toLowerCase().includes(k.toLowerCase()))
         )
       );
       if (!matching.length) return { ...domain, change: null, count: 0 };
-      const changes = matching.map(p => liveData[p.ticker]?.change_percent ?? p.change_percent);
+      const changes = matching.map(p =>
+        liveData[p.ticker]?.week_change_percent ?? liveData[p.ticker]?.change_percent ?? p.change_percent
+      );
       const avg = changes.reduce((s, c) => s + c, 0) / changes.length;
       return { ...domain, change: avg, count: matching.length };
     }).filter(d => d.count > 0);
   }, [players, liveData]);
 
-  // ── Computed: Top movers ───────────────────────────────────────────────────
+  // ── Computed: Top movers (daily — what moved today) ───────────────────────
   const topMovers = useMemo(() => {
-    const listed = players
-      .filter(p => !isPrivate(p.ticker))
-      .map(p => ({ ...p, _change: liveData[p.ticker]?.change_percent ?? p.change_percent }));
+    const listed = players.map(p => ({
+      ...p,
+      _change: liveData[p.ticker]?.change_percent ?? p.change_percent,
+    }));
     const sorted = [...listed].sort((a, b) => b._change - a._change);
     return {
       gainers: sorted.slice(0, 5),
@@ -695,7 +716,7 @@ export default function MarketData() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  const listedCount = players.filter(p => !isPrivate(p.ticker)).length;
+  const listedCount = players.length;
 
   if (loading) {
     return (
@@ -758,9 +779,9 @@ export default function MarketData() {
         </Card>
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">COMPANIES</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">LISTED COMPANIES</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">{filteredPlayers.length}</p>
-            <p className="text-xs text-slate-500 mt-1">of {players.length} total</p>
+            <p className="text-xs text-slate-500 mt-1">publicly traded · {players.length} tracked</p>
           </CardContent>
         </Card>
       </div>
@@ -788,14 +809,14 @@ export default function MarketData() {
                       defenseIndex >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
                     }`}>
                       {defenseIndex >= 0 ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-                      today
+                      1W
                     </span>
                   </div>
                 )}
               </div>
             </div>
             <p className="text-xs text-slate-400 mt-4">
-              Avg. across <span className="font-mono font-medium text-slate-600">{listedCount}</span> listed companies
+              Weekly avg. · <span className="font-mono font-medium text-slate-600">{listedCount}</span> listed companies
             </p>
           </CardContent>
         </Card>
@@ -803,9 +824,14 @@ export default function MarketData() {
         {/* Domain Performance */}
         <Card className="lg:col-span-3 bg-white border-slate-200 shadow-sm">
           <CardContent className="p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500 mb-4">
-              Performance by Capability Domain
-            </p>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                Performance by Capability Domain
+              </p>
+              <span className="text-[10px] font-mono text-slate-400 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">
+                1W · this week
+              </span>
+            </div>
             {domainPerf.length === 0 ? (
               <div className="flex items-center justify-center h-14 text-slate-400 text-sm">
                 <div className="animate-spin w-4 h-4 border-2 border-slate-200 border-t-slate-500 rounded-full mr-2" />
@@ -848,7 +874,7 @@ export default function MarketData() {
             <CardTitle className="font-heading text-lg text-slate-900">Market Catalysts</CardTitle>
             <span className="flex items-center gap-1.5 text-xs text-slate-400">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-              Market-moving news on listed companies
+              {catalystWindow} · listed companies · English
             </span>
           </div>
         </CardHeader>

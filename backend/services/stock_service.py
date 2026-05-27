@@ -66,6 +66,9 @@ def _fetch_price_sync(ticker: str) -> Optional[dict]:
         change_pct = round(((price - prev_close) / prev_close) * 100, 2) if prev_close > 0 else 0.0
         open_price = round(float(hist["Open"].iloc[-1]), 2)
         change_since_open = round(((price - open_price) / open_price) * 100, 2) if open_price > 0 else 0.0
+        # Weekly change: close 5 trading days ago → today (same 5d history already loaded)
+        week_open = round(float(hist["Close"].iloc[0]), 2)
+        week_change_pct = round(((price - week_open) / week_open) * 100, 2) if week_open > 0 else 0.0
 
         return {
             "ticker": ticker,
@@ -74,6 +77,7 @@ def _fetch_price_sync(ticker: str) -> Optional[dict]:
             "prev_close": prev_close,
             "open_price": open_price,
             "change_since_open": change_since_open,
+            "week_change_percent": week_change_pct,
         }
     except Exception as exc:
         logger.warning("Price fetch failed for %s: %s", ticker, exc)
