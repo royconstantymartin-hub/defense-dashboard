@@ -28,6 +28,7 @@ import {
   Clock,
   Building2,
   Zap,
+  Flame,
   Newspaper,
 } from "lucide-react";
 import { format, differenceInHours } from "date-fns";
@@ -930,6 +931,10 @@ export default function Announcements() {
   pageArticles.forEach((a) => { groupedByBand[timeBand(a)].push(a); });
 
   const highCount = filtered.filter((a) => (a.relevanceScore ?? 0) >= 70).length;
+  const uniqueSourceCount = useMemo(
+    () => new Set(filtered.map((a) => a.realSource || a.source).filter(Boolean)).size,
+    [filtered]
+  );
 
   // ── Export ────────────────────────────────────────────────────────────────
 
