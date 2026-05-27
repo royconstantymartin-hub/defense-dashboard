@@ -188,27 +188,25 @@ function CategoryIcon({ id, className }) {
 // ─── Taxonomy ─────────────────────────────────────────────────────────────────
 
 const MACRO_CATEGORIES = [
-  { id: "autonomous", name: "Autonomous & UAV",       description: "Unmanned platforms, loitering munitions, counter-drone", color: "purple",  keywords: ["UAV", "Small UAV", "Loitering Munitions", "Autonomous", "Counter-UAS", "UAS", "Drones"] },
-  { id: "missiles",   name: "Missiles & Air Defense", description: "Strike systems, interceptors, rockets, ammunition",       color: "rose",    keywords: ["Missiles", "Air Defense", "Rockets", "Ammunition", "Energetics", "Remote Weapons"] },
-  { id: "nuclear",    name: "Nuclear & Advanced Tech", description: "Nuclear, directed energy, advanced propulsion",          color: "orange",  keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"] },
-  { id: "aerospace",  name: "Aerospace & Aviation",   description: "Fixed-wing, rotorcraft, engines, launch systems",        color: "indigo",  keywords: ["Aircraft", "Helicopters", "Aerospace", "Rotorcraft", "Business Jets", "Engines", "Propulsion", "Launch", "Aerostructures"] },
-  { id: "land",       name: "Land Systems",           description: "Armored vehicles, artillery, ground platforms",          color: "amber",   keywords: ["Land Systems", "Tanks", "Artillery", "Military Vehicles", "Armored", "Land"] },
-  { id: "naval",      name: "Naval & Maritime",       description: "Ships, submarines, maritime systems",                   color: "blue",    keywords: ["Naval", "Submarines", "Surface Ships", "Shipbuilding", "Maritime", "Sonar", "LCS"] },
-  { id: "space",      name: "Space & ISR",            description: "Satellites, imagery, geospatial intelligence",          color: "sky",     keywords: ["Space", "Satellites", "Imagery", "Geospatial", "Launch"] },
-  { id: "intel",      name: "Cyber, EW & Intelligence", description: "C2, SIGINT, electronic warfare, AI & analytics",     color: "emerald", keywords: ["Cyber", "AI", "Intelligence", "Analytics", "Software", "Electronic Warfare", "SIGINT", "ISR", "C4I", "Communications", "Radar", "Sensors", "Optronics", "EW"] },
-  { id: "industrial", name: "Industrial & Tech Base", description: "Components, electronics, R&D, simulation, IT services", color: "slate",   keywords: ["Components", "Electronics", "Defense Electronics", "R&D", "Testing", "Simulation", "Integration", "Engineering", "MRO", "IT", "Consulting", "Services", "Logistics", "Training"] },
+  { id: "autonomous", name: "Autonomous & UAV",        description: "Unmanned platforms, loitering munitions, counter-drone", keywords: ["UAV", "Small UAV", "Loitering Munitions", "Autonomous", "Counter-UAS", "UAS", "Drones"] },
+  { id: "missiles",   name: "Missiles & Air Defense",  description: "Strike systems, interceptors, rockets, ammunition",      keywords: ["Missiles", "Air Defense", "Rockets", "Ammunition", "Energetics", "Remote Weapons"] },
+  { id: "nuclear",    name: "Nuclear & Advanced Tech",  description: "Nuclear, directed energy, advanced propulsion",         keywords: ["Nuclear", "Electromagnetic", "Directed Energy", "Hypersonic", "Power Systems"] },
+  { id: "aerospace",  name: "Aerospace & Aviation",    description: "Fixed-wing, rotorcraft, engines, launch systems",       keywords: ["Aircraft", "Helicopters", "Aerospace", "Rotorcraft", "Business Jets", "Engines", "Propulsion", "Launch", "Aerostructures"] },
+  { id: "land",       name: "Land Systems",            description: "Armored vehicles, artillery, ground platforms",         keywords: ["Land Systems", "Tanks", "Artillery", "Military Vehicles", "Armored", "Land"] },
+  { id: "naval",      name: "Naval & Maritime",        description: "Ships, submarines, maritime systems",                   keywords: ["Naval", "Submarines", "Surface Ships", "Shipbuilding", "Maritime", "Sonar", "LCS"] },
+  { id: "space",      name: "Space & ISR",             description: "Satellites, imagery, geospatial intelligence",         keywords: ["Space", "Satellites", "Imagery", "Geospatial", "Launch"] },
+  { id: "intel",      name: "Cyber, EW & Intelligence", description: "C2, SIGINT, electronic warfare, AI & analytics",      keywords: ["Cyber", "AI", "Intelligence", "Analytics", "Software", "Electronic Warfare", "SIGINT", "ISR", "C4I", "Communications", "Radar", "Sensors", "Optronics", "EW"] },
+  { id: "industrial", name: "Industrial & Tech Base",  description: "Components, electronics, R&D, simulation, IT services", keywords: ["Components", "Electronics", "Defense Electronics", "R&D", "Testing", "Simulation", "Integration", "Engineering", "MRO", "IT", "Consulting", "Services", "Logistics", "Training"] },
 ];
 
-const CAT_COLORS = {
-  purple:  { border: "border-violet-200", activeBorder: "border-violet-600", activeBg: "bg-violet-50/60", iconBg: "bg-violet-50 border-violet-100", icon: "text-violet-700", badge: "bg-violet-100 text-violet-800", headerBg: "bg-violet-50/80", text: "text-violet-800" },
-  rose:    { border: "border-rose-200",   activeBorder: "border-rose-500",   activeBg: "bg-rose-50/60",   iconBg: "bg-rose-50 border-rose-100",     icon: "text-rose-600",   badge: "bg-rose-100 text-rose-700",     headerBg: "bg-rose-50/80",   text: "text-rose-700"   },
-  orange:  { border: "border-orange-200", activeBorder: "border-orange-500", activeBg: "bg-orange-50/60", iconBg: "bg-orange-50 border-orange-100", icon: "text-orange-600", badge: "bg-orange-100 text-orange-700", headerBg: "bg-orange-50/80", text: "text-orange-700" },
-  indigo:  { border: "border-indigo-200", activeBorder: "border-indigo-500", activeBg: "bg-indigo-50/60", iconBg: "bg-indigo-50 border-indigo-100", icon: "text-indigo-600", badge: "bg-indigo-100 text-indigo-700", headerBg: "bg-indigo-50/80", text: "text-indigo-700" },
-  amber:   { border: "border-amber-200",  activeBorder: "border-amber-500",  activeBg: "bg-amber-50/60",  iconBg: "bg-amber-50 border-amber-100",   icon: "text-amber-600",  badge: "bg-amber-100 text-amber-700",  headerBg: "bg-amber-50/80",  text: "text-amber-700"  },
-  blue:    { border: "border-blue-200",   activeBorder: "border-blue-500",   activeBg: "bg-blue-50/60",   iconBg: "bg-blue-50 border-blue-100",     icon: "text-blue-600",   badge: "bg-blue-100 text-blue-700",     headerBg: "bg-blue-50/80",   text: "text-blue-700"   },
-  sky:     { border: "border-sky-200",    activeBorder: "border-sky-500",    activeBg: "bg-sky-50/60",    iconBg: "bg-sky-50 border-sky-100",       icon: "text-sky-600",    badge: "bg-sky-100 text-sky-700",       headerBg: "bg-sky-50/80",    text: "text-sky-700"    },
-  emerald: { border: "border-emerald-200",activeBorder: "border-emerald-500",activeBg: "bg-emerald-50/60",iconBg: "bg-emerald-50 border-emerald-100",icon: "text-emerald-600",badge: "bg-emerald-100 text-emerald-700",headerBg: "bg-emerald-50/80",text: "text-emerald-700"},
-  slate:   { border: "border-slate-200",  activeBorder: "border-slate-400",  activeBg: "bg-slate-50",     iconBg: "bg-slate-50 border-slate-100",   icon: "text-slate-500",  badge: "bg-slate-100 text-slate-600",  headerBg: "bg-slate-50",     text: "text-slate-600"  },
+// Single monochrome palette — no per-category colors
+const CLR = {
+  border:       "border-slate-200",
+  activeBorder: "border-blue-800",
+  activeBg:     "bg-blue-50/40",
+  iconBg:       "bg-slate-50 border-slate-200",
+  icon:         "text-slate-600",
+  badge:        "bg-slate-100 text-slate-700",
 };
 
 function assignCategory(company) {
@@ -241,7 +239,6 @@ function TypeBadge({ listed }) {
 // ─── Category tile ────────────────────────────────────────────────────────────
 
 function CategoryTile({ category, companies, isSelected, onSelect }) {
-  const clr = CAT_COLORS[category.color];
   const isEmpty = companies.length === 0;
   const listedCount = companies.filter(isListed).length;
   const privateCount = companies.length - listedCount;
@@ -255,21 +252,21 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
         isEmpty
           ? "opacity-40 cursor-default border-slate-100"
           : isSelected
-          ? `${clr.activeBorder} ${clr.activeBg} shadow-md border-2`
-          : `${clr.border} hover:shadow-md hover:border-opacity-80`
+          ? `${CLR.activeBorder} ${CLR.activeBg} shadow-md border-2`
+          : `${CLR.border} hover:shadow-md hover:border-blue-200`
       }`}
     >
       {/* Header */}
       <div className="flex items-start gap-3 mb-3">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border flex-shrink-0 p-2 ${clr.iconBg}`}>
-          <CategoryIcon id={category.id} className={`w-full h-full ${clr.icon}`} />
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border flex-shrink-0 p-2 ${isSelected ? "bg-blue-50 border-blue-200" : CLR.iconBg}`}>
+          <CategoryIcon id={category.id} className={`w-full h-full ${isSelected ? "text-blue-800" : CLR.icon}`} />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-[13px] text-slate-800 leading-snug">{category.name}</h3>
           <p className="text-[11px] text-slate-400 leading-tight mt-0.5 line-clamp-1">{category.description}</p>
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
-          <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ${clr.badge}`}>
+          <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ${CLR.badge}`}>
             {companies.length}
           </span>
           {!isEmpty && (
@@ -282,7 +279,7 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
       {companies.length > 0 && (
         <div className="flex items-center gap-2 mb-3">
           {listedCount > 0 && (
-            <span className="text-[10px] font-medium text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span className="text-[10px] font-medium text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full flex items-center gap-1">
               <BarChart2 className="w-2.5 h-2.5" />{listedCount} listed
             </span>
           )}
@@ -301,7 +298,7 @@ function CategoryTile({ category, companies, isSelected, onSelect }) {
             <LogoWithFallback key={c.id || c.name} name={c.name} website={c.website} size={28} />
           ))}
           {companies.length > 8 && (
-            <div className={`rounded-lg flex items-center justify-center flex-shrink-0 border ${clr.iconBg}`} style={{ width: 28, height: 28 }}>
+            <div className="rounded-lg flex items-center justify-center flex-shrink-0 border bg-slate-50 border-slate-200" style={{ width: 28, height: 28 }}>
               <span className="text-[9px] text-slate-500 font-medium">+{companies.length - 8}</span>
             </div>
           )}
@@ -398,15 +395,14 @@ function CompanyRow({ company, onClick }) {
 // ─── Expanded category panel ──────────────────────────────────────────────────
 
 function ExpandedList({ category, companies, onCompanyClick }) {
-  const clr = CAT_COLORS[category.color];
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
-      <div className={`flex items-center gap-2.5 px-4 py-3 border-b border-slate-100 ${clr.headerBg}`}>
-        <div className={`w-7 h-7 rounded-lg flex items-center justify-center border p-1.5 flex-shrink-0 ${clr.iconBg}`}>
-          <CategoryIcon id={category.id} className={`w-full h-full ${clr.icon}`} />
+    <div className="bg-white rounded-xl border border-blue-800 overflow-hidden shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+      <div className="flex items-center gap-2.5 px-4 py-3 border-b border-slate-100 bg-blue-50/40">
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center border p-1.5 flex-shrink-0 bg-blue-50 border-blue-200">
+          <CategoryIcon id={category.id} className="w-full h-full text-blue-800" />
         </div>
-        <span className={`text-sm font-semibold ${clr.text}`}>{category.name}</span>
-        <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ml-auto ${clr.badge}`}>
+        <span className="text-sm font-semibold text-blue-900">{category.name}</span>
+        <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full ml-auto bg-slate-100 text-slate-700">
           {companies.length}
         </span>
       </div>
