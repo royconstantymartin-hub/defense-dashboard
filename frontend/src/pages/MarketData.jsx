@@ -519,61 +519,59 @@ export default function MarketData() {
     }
   }, [players, fetchLivePrices]);
 
-  // ── Fetch market catalysts ─────────────────────────────────────────────────
-  // Non-ASCII heuristic to skip non-English announcements (é, ä, ö, etc.)
-  const isEnglish = (text = "") => !/[àáâãäåæçèéêëìíîïðñòóôõöùúûüýþßœ]/i.test(text);
+  // ── Fetch market catalysts from live news feed ────────────────────────────
+  const deriveCatalystCategory = (title = "") => {
+    const t = title.toLowerCase();
+    if (/\b(contract|award|bid|tender|procurement)\b/.test(t))    return "contract";
+    if (/\b(earn|revenue|profit|quarter|eps|guidance)\b/.test(t)) return "earnings";
+    if (/\b(ipo|listing|goes public|float)\b/.test(t))            return "ipo";
+    if (/\b(merger|acqui|takeover|buyout|M&A)\b/.test(t))         return "acquisition";
+    if (/\b(partner|joint venture|teaming|agreement|alliance)\b/.test(t)) return "partnership";
+    return "product";
+  };
 
   useEffect(() => {
     if (!players.length) return;
     const listedMap = {};
     players.forEach(p => { listedMap[p.name.toLowerCase()] = p; });
 
-    setCatalystsLoading(true);
-    axios.get(`${API}/announcements?limit=200`)
-      .then(res => {
-        const now = Date.now();
-        const H48 = 48 * 3600 * 1000;
-        const D7  = 7 * 24 * 3600 * 1000;
-
-        const matchAndFilter = (maxAge) => {
+    const tryWindow = (hours) =>
+      axios.get(`${API}/news`, { params: { hours, limit: 80, language: "en" } })
+        .then(res => {
           const out = [];
           for (const a of res.data) {
-            if (!a.company) continue;
-            if (!isEnglish(a.title)) continue;
-            // maxAge=null means no date restriction (show any age)
-            if (maxAge !== null && a.date && (now - new Date(a.date).getTime()) > maxAge) continue;
-            const key = a.company.toLowerCase();
-            let player = listedMap[key];
-            if (!player) {
-              player = players.find(p =>
+            const companyNames = Array.isArray(a.companies) ? a.companies : [];
+            let player = null;
+            for (const cname of companyNames) {
+              const key = cname.toLowerCase();
+              player = listedMap[key] ?? players.find(p =>
                 p.name.toLowerCase().includes(key) || key.includes(p.name.toLowerCase())
               );
+              if (player) break;
             }
-            if (player) out.push({ ...a, _player: player });
+            if (!player) continue;
+            const category = deriveCatalystCategory(a.title);
+            out.push({ ...a, date: a.publishedAt, category, _player: player });
           }
-          // Sort: by priority first, then most recent date
           out.sort((a, b) => {
-            const pa = CATALYST_PRIORITY[a.category?.toLowerCase()] ?? 99;
-            const pb = CATALYST_PRIORITY[b.category?.toLowerCase()] ?? 99;
+            const pa = CATALYST_PRIORITY[a.category] ?? 99;
+            const pb = CATALYST_PRIORITY[b.category] ?? 99;
             if (pa !== pb) return pa - pb;
             return new Date(b.date || 0) - new Date(a.date || 0);
           });
           return out.slice(0, 4);
-        };
+        });
 
-        let result = matchAndFilter(H48);
-        let window = "last 48h";
-        if (result.length === 0) {
-          result = matchAndFilter(D7);
-          window = "last 7 days";
-        }
-        if (result.length === 0) {
-          // Fallback: no date limit — always show the most relevant catalysts
-          result = matchAndFilter(null);
-          window = "recent";
-        }
-        setCatalysts(result);
-        setCatalystWindow(window);
+    setCatalystsLoading(true);
+    tryWindow(24)
+      .then(result => {
+        if (result.length > 0) { setCatalysts(result); setCatalystWindow("last 24h"); return; }
+        return tryWindow(48).then(r => {
+          if (r.length > 0) { setCatalysts(r); setCatalystWindow("last 48h"); return; }
+          return tryWindow(168).then(r7 => {
+            setCatalysts(r7); setCatalystWindow(r7.length > 0 ? "last 7 days" : "recent");
+          });
+        });
       })
       .catch(() => setCatalysts([]))
       .finally(() => setCatalystsLoading(false));
@@ -927,7 +925,7 @@ export default function MarketData() {
                   <div
                     key={i}
                     className="relative rounded-xl border border-slate-100 overflow-hidden hover:shadow-md hover:border-slate-200 transition-all cursor-pointer group"
-                    onClick={() => setSelectedPlayer(player)}
+                    onClick={() => catalyst.url ? window.open(catalyst.url, "_blank", "noopener") : setSelectedPlayer(player)}
                   >
                     {/* Category colour bar */}
                     <div className={`h-1 w-full ${cfg.bar}`} />
