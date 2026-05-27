@@ -32,14 +32,14 @@ import {
 const navItems = [
   { path: "/", icon: LayoutDashboard, label: "Dashboard" },
   { path: "/announcements", icon: Activity, label: "Announcements" },
-  { path: "/ma-activity", icon: Handshake, label: "M&A Activity" },
+  { path: "/ma-activity", icon: Handshake, label: "M&A Activity", inProgress: true },
   { path: "/market-data", icon: TrendingUp, label: "Market Data" },
   { path: "/private-players", icon: Lock, label: "Private Players" },
   { path: "/expenditures", icon: Globe, label: "Countries" },
-  { path: "/regulations", icon: FileText, label: "Regulations" },
+  { path: "/regulations", icon: FileText, label: "Regulations", inProgress: true },
   { path: "/products", icon: Package, label: "Products" },
-  { path: "/follow", icon: Rss, label: "Sources" },
-  { path: "/contracts", icon: FileCheck, label: "Contracts" },
+  { path: "/follow", icon: Rss, label: "Sources", inProgress: true },
+  { path: "/contracts", icon: FileCheck, label: "Contracts", inProgress: true },
   { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
 ];
 
@@ -133,7 +133,12 @@ export default function Layout() {
                   data-testid={`nav-${item.path === '/' ? 'dashboard' : item.path.slice(1)}`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-blue-800' : ''}`} />
-                  <span>{item.label}</span>
+                  <span className="flex-1">{item.label}</span>
+                  {item.inProgress && (
+                    <span className="text-[9px] font-mono font-semibold tracking-wider bg-amber-100 text-amber-700 border border-amber-300 rounded px-1 py-0.5 leading-none">
+                      WIP
+                    </span>
+                  )}
                 </Link>
               );
             })}
