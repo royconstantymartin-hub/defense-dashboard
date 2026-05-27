@@ -32,6 +32,11 @@ const COUNTRY_ISO = {
   "South Korea": "kr", "Japan": "jp", "Australia": "au",
   "Brazil": "br", "Canada": "ca", "Singapore": "sg",
   "South Africa": "za", "EU": "eu",
+  "Indonesia": "id", "Latvia": "lv", "Lithuania": "lt",
+  "Romania": "ro", "Malaysia": "my", "Vietnam": "vn",
+  "Thailand": "th", "Argentina": "ar", "Pakistan": "pk",
+  "Taiwan": "tw", "Austria": "at", "Bulgaria": "bg",
+  "Egypt": "eg", "Jordan": "jo", "Serbia": "rs",
 };
 
 function formatCap(value) {
@@ -209,12 +214,12 @@ const CLR = {
   badge:        "bg-slate-100 text-slate-700",
 };
 
-function assignCategory(company) {
+function getCategories(company) {
   const specs = new Set((company.specializations || []).map((s) => s.toLowerCase()));
-  for (const cat of MACRO_CATEGORIES) {
-    if (cat.keywords.some((kw) => specs.has(kw.toLowerCase()))) return cat.id;
-  }
-  return "industrial";
+  const matched = MACRO_CATEGORIES.filter((cat) =>
+    cat.keywords.some((kw) => specs.has(kw.toLowerCase()))
+  ).map((cat) => cat.id);
+  return matched.length > 0 ? matched : ["industrial"];
 }
 
 // ─── Company type badge ────────────────────────────────────────────────────────
@@ -517,7 +522,9 @@ export default function DefensePlayers() {
   const categorized = useMemo(() => {
     const map = {};
     MACRO_CATEGORIES.forEach((cat) => { map[cat.id] = []; });
-    players.forEach((c) => { map[assignCategory(c)].push(c); });
+    players.forEach((c) => {
+      getCategories(c).forEach((catId) => { map[catId].push(c); });
+    });
     return map;
   }, [players]);
 
@@ -671,7 +678,7 @@ export default function DefensePlayers() {
           {/* ── Country sidebar (desktop) ── */}
           <div className="hidden md:block w-44 flex-shrink-0 sticky top-6">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">Countries</p>
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col gap-0.5 max-h-[calc(100vh-160px)] overflow-y-auto pr-0.5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-200 hover:[&::-webkit-scrollbar-thumb]:bg-slate-300">
               <button
                 onClick={() => setFilterCountry("all")}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
