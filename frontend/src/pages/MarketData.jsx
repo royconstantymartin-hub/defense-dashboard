@@ -540,7 +540,8 @@ export default function MarketData() {
           for (const a of res.data) {
             if (!a.company) continue;
             if (!isEnglish(a.title)) continue;
-            if (a.date && (now - new Date(a.date).getTime()) > maxAge) continue;
+            // maxAge=null means no date restriction (show any age)
+            if (maxAge !== null && a.date && (now - new Date(a.date).getTime()) > maxAge) continue;
             const key = a.company.toLowerCase();
             let player = listedMap[key];
             if (!player) {
@@ -550,10 +551,13 @@ export default function MarketData() {
             }
             if (player) out.push({ ...a, _player: player });
           }
-          out.sort((a, b) =>
-            (CATALYST_PRIORITY[a.category?.toLowerCase()] || 99) -
-            (CATALYST_PRIORITY[b.category?.toLowerCase()] || 99)
-          );
+          // Sort: by priority first, then most recent date
+          out.sort((a, b) => {
+            const pa = CATALYST_PRIORITY[a.category?.toLowerCase()] ?? 99;
+            const pb = CATALYST_PRIORITY[b.category?.toLowerCase()] ?? 99;
+            if (pa !== pb) return pa - pb;
+            return new Date(b.date || 0) - new Date(a.date || 0);
+          });
           return out.slice(0, 4);
         };
 
@@ -562,6 +566,11 @@ export default function MarketData() {
         if (result.length === 0) {
           result = matchAndFilter(D7);
           window = "last 7 days";
+        }
+        if (result.length === 0) {
+          // Fallback: no date limit — always show the most relevant catalysts
+          result = matchAndFilter(null);
+          window = "recent";
         }
         setCatalysts(result);
         setCatalystWindow(window);
