@@ -1125,7 +1125,7 @@ const CAPABILITY_DETAILS = {
     ],
     submarines: [
       { model: "Triomphant-class SSBN", count: 4, manufacturer: "Naval Group / Cherbourg" },
-      { model: "Barracuda-class SSN (Suffren)", count: 3, manufacturer: "Naval Group" },
+      { model: "Suffren-class SSN (Barracuda programme)", count: 3, manufacturer: "Naval Group" },
       { model: "Rubis-class SSN", count: 3, manufacturer: "Naval Group" },
     ],
   },
@@ -1473,7 +1473,7 @@ const PLATFORM_WIKI_TITLES = {
   "Astute-class SSN":                 "Astute-class submarine",
   "Vanguard-class SSBN":              "Vanguard-class submarine",
   "Trafalgar-class SSN":              "Trafalgar-class submarine",
-  "Barracuda-class SSN (Suffren)":    "Suffren-class submarine",
+  "Suffren-class SSN (Barracuda programme)": "Suffren-class submarine",
   "Triomphant-class SSBN":            "Le Triomphant-class submarine",
   "Rubis-class SSN":                  "Rubis-class submarine",
   "Borei-class SSBN (Pr.955)":        "Borei-class submarine",
@@ -2127,6 +2127,13 @@ function CustomizedFlagTick({ x, y, payload, nameMap = {} }) {
             width="18" height="13"
             style={{ objectFit: 'cover', borderRadius: '1px', flexShrink: 0 }}
             alt=""
+            onError={(e) => {
+              e.target.style.display = 'none';
+              const span = document.createElement('span');
+              span.style.cssText = 'font-size:8px;color:#94a3b8;font-family:monospace;';
+              span.textContent = payload?.value?.toUpperCase() ?? '';
+              e.target.parentNode?.appendChild(span);
+            }}
           />
         </div>
       </foreignObject>
@@ -2568,7 +2575,9 @@ export default function Expenditures() {
   const [mapMode, setMapMode] = useState("absolute");
   const [pinnedCountry, setPinnedCountry] = useState(null);
   const [compareList, setCompareList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const profileRef = useRef(null);
+  const PAGE_SIZE = 20;
 
   const toggleCompare = (exp) => {
     setCompareList(prev => {
@@ -2625,6 +2634,7 @@ export default function Expenditures() {
       }
     });
     setFilteredExpenditures(filtered);
+    setCurrentPage(1);
   }, [searchTerm, selectedRegion, sortBy, expenditures]);
 
   // Single source of truth — all derived computations must use this
@@ -3000,19 +3010,24 @@ export default function Expenditures() {
             <CardContent className="p-4 space-y-4">
               {meeting.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 mb-2 flex items-center gap-1">
-                    <span>✓</span> Meeting ≥ 2% target ({meeting.length})
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
+                    <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block shrink-0" />
+                    Meeting ≥ 2% target ({meeting.length})
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {meeting.map(e => (
                       <button
                         key={e.country_code}
                         onClick={() => handleRowClick(e)}
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-colors"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors"
                       >
-                        <img src={getFlag(e.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
-                        <span className="text-xs font-medium text-emerald-800">{e.country}</span>
-                        <span className="text-xs font-mono font-bold text-emerald-700">{e.gdp_percent}%</span>
+                        <img
+                          src={getFlag(e.country_code)} alt=""
+                          className="w-5 h-3.5 object-cover rounded-sm"
+                          onError={(ev) => { ev.target.style.display = 'none'; }}
+                        />
+                        <span className="text-xs font-medium text-slate-700">{e.country}</span>
+                        <span className="text-xs font-mono font-bold text-emerald-600">{e.gdp_percent}%</span>
                       </button>
                     ))}
                   </div>
@@ -3020,20 +3035,25 @@ export default function Expenditures() {
               )}
               {missing.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-rose-500 mb-2 flex items-center gap-1">
-                    <span>✗</span> Below 2% target ({missing.length})
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
+                    <span className="w-3.5 h-3.5 rounded-full bg-rose-400 inline-block shrink-0" />
+                    Below 2% target ({missing.length})
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {missing.map(e => (
                       <button
                         key={e.country_code}
                         onClick={() => handleRowClick(e)}
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 transition-colors"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors"
                       >
-                        <img src={getFlag(e.country_code)} alt="" className="w-5 h-3.5 object-cover rounded-sm" />
-                        <span className="text-xs font-medium text-rose-800">{e.country}</span>
-                        <span className="text-xs font-mono font-bold text-rose-600">{e.gdp_percent}%</span>
-                        <span className="text-[9px] text-rose-400 font-mono">({(2 - e.gdp_percent).toFixed(1)}% gap)</span>
+                        <img
+                          src={getFlag(e.country_code)} alt=""
+                          className="w-5 h-3.5 object-cover rounded-sm"
+                          onError={(ev) => { ev.target.style.display = 'none'; }}
+                        />
+                        <span className="text-xs font-medium text-slate-700">{e.country}</span>
+                        <span className="text-xs font-mono font-bold text-rose-500">{e.gdp_percent}%</span>
+                        <span className="text-[9px] text-slate-400 font-mono">−{(2 - e.gdp_percent).toFixed(1)}%</span>
                       </button>
                     ))}
                   </div>
@@ -3180,7 +3200,7 @@ export default function Expenditures() {
                 </tr>
               </thead>
               <tbody>
-                {filteredExpenditures.map((exp, idx) => (
+                {filteredExpenditures.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE).map((exp, idx) => (
                   <tr
                     key={exp.id}
                     onClick={() => handleRowClick(exp)}
@@ -3208,7 +3228,7 @@ export default function Expenditures() {
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-3">
                           <span className="w-6 h-6 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-mono text-slate-500 font-medium shrink-0">
-                            {idx + 1}
+                            {(currentPage - 1) * PAGE_SIZE + idx + 1}
                           </span>
                           <img
                             src={getFlag(exp.country_code)}
@@ -3279,6 +3299,43 @@ export default function Expenditures() {
               </tbody>
             </table>
           </div>
+          {/* Pagination controls */}
+          {filteredExpenditures.length > PAGE_SIZE && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
+              <span className="text-xs text-slate-400 font-mono">
+                {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filteredExpenditures.length)} of {filteredExpenditures.length} countries
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-2.5 py-1.5 rounded-md text-xs font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  ← Prev
+                </button>
+                {Array.from({ length: Math.ceil(filteredExpenditures.length / PAGE_SIZE) }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-7 h-7 rounded-md text-xs font-medium transition-colors ${
+                      page === currentPage
+                        ? 'bg-blue-700 text-white border border-blue-700'
+                        : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredExpenditures.length / PAGE_SIZE), p + 1))}
+                  disabled={currentPage === Math.ceil(filteredExpenditures.length / PAGE_SIZE)}
+                  className="px-2.5 py-1.5 rounded-md text-xs font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
