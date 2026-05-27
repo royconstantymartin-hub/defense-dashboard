@@ -196,7 +196,7 @@ export const COMPANY_LOGOS = {
   "Terma A/S": "terma.com",
   "Dynamit Nobel Defence": "dynamit-nobel-defence.de",
   "Theon Sensors": "theonsensors.com",
-  "PZL Mielec": "pzl.mielec.pl",
+  "PZL Mielec": "pzlmielec.pl",
   // Private players — previously missing
   "Helsing": "helsing.ai",
   "STM Savunma": "stm.com.tr",
@@ -332,6 +332,58 @@ export const COMPANY_LOGOS = {
   "High Earth Orbit Robotics": "heorobotics.com",
   "SYPAQ Systems": "sypaq.com.au",
   "Advanced Navigation": "advancednavigation.com",
+  "DroneShield": "droneshield.com",
+  // Baltic states
+  "SAF Tehnika": "saftehnika.com",
+  "Dati Group": "dati.lv",
+  "Brolis Semiconductors": "brolissemi.com",
+  "Teltonika Networks": "teltonika-networks.com",
+  // Poland — additional
+  "HSW": "hsw.pl",
+  "PCO SA": "pcosa.com.pl",
+  "AMZ-Kutno": "amz.com.pl",
+  // Romania
+  "Romarm": "romarm.ro",
+  "IAR SA": "iar.ro",
+  // Czech Republic — additional
+  "RETIA": "retia.cz",
+  "Tatra Defence Vehicle": "tatra.cz",
+  // Greece
+  "Intracom Defense Electronics": "intracomdefense.com",
+  "Hellenic Aerospace Industry": "haicorp.com",
+  // Portugal
+  "OGMA": "ogma.pt",
+  // Denmark — additional
+  "Systematic A/S": "systematic.com",
+  // Italy — additional
+  "Beretta Defence": "beretta.com",
+  "Piaggio Aerospace": "piaggioaerospace.it",
+  // Austria
+  "Steyr Arms": "steyr-arms.com",
+  "Diamond Aircraft": "diamondaircraft.com",
+  // UK — additional
+  "Smiths Detection": "smithsdetection.com",
+  "Marshall Aerospace": "marshallaerospace.com",
+  // Taiwan
+  "AIDC": "aidc.com.tw",
+  "NCSIST": "ncsist.org.tw",
+  // Indonesia
+  "PT Dirgantara Indonesia": "indonesian-aerospace.com",
+  "Pindad": "pindad.com",
+  // Malaysia
+  "Destini Berhad": "destini.com.my",
+  // Vietnam
+  "Viettel Military Industry": "viettel.com.vn",
+  // Canada — additional
+  "Kraken Robotics": "krakenrobotics.com",
+  // UAE — additional
+  "Calidus": "calidus.ae",
+  // USA — additional defense tech
+  "Saronic Technologies": "saronic.com",
+  "Chaos Industries": "chaosinc.com",
+  "Xona Space Systems": "xonaspace.com",
+  "Albedo Space": "albedo.space",
+  "Firehawk Aerospace": "firehawkaerospace.com",
 };
 
 // Direct Wikipedia Commons logo URLs — confirmed filenames, never blocked by ad-blockers.
@@ -540,6 +592,25 @@ export const COMPANY_WIKI_LOGOS = {
   "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
   // South Africa — Denel/Paramount fall through to Clearbit (no confirmed Wikipedia logos)
   // UAE — EDGE Group falls through to Clearbit (edgegroup.ae)
+  // Italy — additional
+  "Beretta Defence":            WP + "Beretta_logo.svg",
+  // Germany — additional
+  "Helsing":                    WP + "Helsing_logo.svg",
+  // Taiwan
+  "AIDC":                       WP + "Aerospace_Industrial_Development_Corporation_logo.svg",
+  // Indonesia
+  "PT Dirgantara Indonesia":    WP + "Indonesian_Aerospace.svg",
+  "Pindad":                     WP + "Pindad_logo.svg",
+  // Czech Republic
+  "Tatra Defence Vehicle":      WP + "Tatra_logo.svg",
+  // Vietnam
+  "Viettel Military Industry":  WP + "Viettel_logo.svg",
+  // Australia
+  "DroneShield":                WP + "DroneShield_logo.svg",
+  // UK additional
+  "Smiths Detection":           WP + "Smiths_Detection_logo.svg",
+  // Finland
+  "ICEYE":                      WP + "ICEYE_logo.svg",
 };
 
 export function getLogoDomain(name) {
@@ -568,7 +639,7 @@ export function getClearbitUrl(name) {
 // icon (HTTP 200) with no custom favicon, which fools the onerror handler.
 // These TLDs return a generic globe favicon (HTTP 200) for sites without a custom icon,
 // which fools the onerror handler. Skip Google Favicon for these; fall back to initials.
-const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in"];
+const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in", ".com.ua", ".gov.ua", ".org.tw", ".com.tw"];
 
 export function getLogoUrls(name) {
   const urls = [];
