@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play, Eye, Wind, Zap } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play, Eye, Wind, Zap, Anchor, Waves, Shield, Globe } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import FlagshipProductDetail from "@/components/FlagshipProductDetail";
 import { FLAGSHIP_PRODUCTS } from "@/data/flagship-products/index.js";
@@ -38,6 +38,68 @@ const AIRCRAFT_SUBTYPES = [
   { value: "uav", label: "UAVs / Drones", icon: Zap, types: ["uav", "loitering_munition"] },
   { value: "support_isr", label: "Support & ISR", icon: Eye, types: ["transport", "tanker", "awacs", "patrol", "reconnaissance"] },
 ];
+
+const NAVAL_SUBTYPES = [
+  { value: "all", label: "All Naval", icon: Ship },
+  { value: "submarine", label: "Submarines", icon: Anchor, types: ["submarine"] },
+  { value: "frigate", label: "Frigates", icon: Ship, types: ["frigate"] },
+  { value: "destroyer", label: "Destroyers", icon: Ship, types: ["destroyer"] },
+  { value: "aircraft_carrier", label: "Aircraft Carriers", icon: Plane, types: ["aircraft_carrier"] },
+  { value: "corvette", label: "Corvettes", icon: Ship, types: ["corvette"] },
+  { value: "amphibious", label: "Amphibious & Other", icon: Waves, types: ["amphibious", "littoral_combat_ship", "usv", "uuv"] },
+];
+
+const LAND_SUBTYPES = [
+  { value: "all", label: "All Land", icon: Target },
+  { value: "tank", label: "Tanks", icon: Target, types: ["tank"] },
+  { value: "ifv_apc", label: "IFV & APC", icon: Shield, types: ["ifv", "apc", "armored_vehicle", "active_protection"] },
+  { value: "artillery", label: "Artillery & MLRS", icon: Rocket, types: ["artillery", "mlrs"] },
+  { value: "autonomous", label: "Autonomous Systems", icon: Cpu, types: ["ugv", "reconnaissance", "tactical_vehicle", "autocannon"] },
+];
+
+const MISSILE_SUBTYPES = [
+  { value: "all", label: "All Missiles", icon: Rocket },
+  { value: "sam", label: "Air Defense (SAM)", icon: Shield, types: ["sam", "shorad", "manpads", "anti_ballistic"] },
+  { value: "cruise", label: "Cruise & Ballistic", icon: Rocket, types: ["cruise_missile", "precision_strike", "hypersonic", "ballistic_missile"] },
+  { value: "anti_ship", label: "Anti-Ship", icon: Waves, types: ["anti_ship", "air_to_ship"] },
+  { value: "air_to_air", label: "Air-to-Air", icon: Plane, types: ["air_to_air"] },
+  { value: "air_to_ground", label: "Air-to-Ground", icon: Target, types: ["air_to_ground", "anti_tank", "atgm", "anti_radiation"] },
+  { value: "loitering", label: "Loitering Munitions", icon: Eye, types: ["loitering_munition"] },
+];
+
+const RADAR_SUBTYPES = [
+  { value: "all", label: "All Radar", icon: Radio },
+  { value: "airborne", label: "Airborne Radar", icon: Plane, types: ["airborne_radar", "multimode_radar"] },
+  { value: "naval_radar", label: "Naval Radar", icon: Waves, types: ["naval_radar"] },
+  { value: "ground", label: "Ground-Based", icon: Target, types: ["air_surveillance", "radar", "ballistic_missile_radar"] },
+];
+
+const CYBER_SUBTYPES = [
+  { value: "all", label: "All Cyber/EW", icon: Cpu },
+  { value: "ew", label: "Electronic Warfare", icon: Zap, types: ["electronic_warfare"] },
+  { value: "software", label: "Cyber & Software", icon: Database, types: ["software"] },
+  { value: "directed_energy", label: "Directed Energy", icon: Zap, types: ["directed_energy", "c_uas"] },
+  { value: "comms", label: "Communications", icon: Radio, types: ["communications", "surveillance"] },
+];
+
+const SPACE_SUBTYPES = [
+  { value: "all", label: "All Space", icon: Satellite },
+  { value: "isr", label: "Reconnaissance & ISR", icon: Eye, types: ["reconnaissance_satellite", "sigint"] },
+  { value: "comms_sat", label: "Communications Sats", icon: Radio, types: ["communications_satellite"] },
+  { value: "nav_sat", label: "Navigation Sats", icon: Globe, types: ["navigation_satellite"] },
+  { value: "early_warning", label: "Early Warning", icon: Shield, types: ["early_warning_satellite"] },
+  { value: "vehicle", label: "Space Vehicles", icon: Rocket, types: ["spaceplane"] },
+];
+
+const CATEGORY_SUBTYPES = {
+  aircraft: AIRCRAFT_SUBTYPES,
+  naval: NAVAL_SUBTYPES,
+  land: LAND_SUBTYPES,
+  missile: MISSILE_SUBTYPES,
+  radar: RADAR_SUBTYPES,
+  cyber: CYBER_SUBTYPES,
+  space: SPACE_SUBTYPES,
+};
 
 const MANUFACTURERS = [
   { value: "all", label: "All Manufacturers" },
@@ -620,7 +682,7 @@ export default function Products() {
   const [flagshipEntry, setFlagshipEntry] = useState(null); // { product, detail }
   const [playingVideo, setPlayingVideo] = useState(false);
   const [profileName, setProfileName] = useState(null);
-  const [selectedAircraftSubType, setSelectedAircraftSubType] = useState("all");
+  const [selectedSubType, setSelectedSubType] = useState("all");
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showComparison, setShowComparison]= useState(false);
@@ -760,8 +822,9 @@ export default function Products() {
       filtered = filtered.filter(p => p.category === selectedCategory);
     }
 
-    if (selectedCategory === "aircraft" && selectedAircraftSubType !== "all") {
-      const sub = AIRCRAFT_SUBTYPES.find(s => s.value === selectedAircraftSubType);
+    const subtypes = CATEGORY_SUBTYPES[selectedCategory];
+    if (subtypes && selectedSubType !== "all") {
+      const sub = subtypes.find(s => s.value === selectedSubType);
       if (sub?.types) {
         filtered = filtered.filter(p => sub.types.includes(p.product_type));
       }
@@ -782,7 +845,7 @@ export default function Products() {
 
     setFilteredProducts(filtered);
     setCurrentPage(1);
-  }, [searchTerm, selectedCategory, selectedAircraftSubType, selectedManufacturer, products]);
+  }, [searchTerm, selectedCategory, selectedSubType, selectedManufacturer, products]);
 
   const getCategoryIcon = (category) => {
     const cat = CATEGORIES.find(c => c.value === category);
@@ -987,7 +1050,7 @@ export default function Products() {
             return (
               <button
                 key={c.value}
-                onClick={() => { setSelectedCategory(c.value); setSelectedAircraftSubType("all"); }}
+                onClick={() => { setSelectedCategory(c.value); setSelectedSubType("all"); }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
                   isActive
                     ? "bg-blue-800 text-white border-blue-800 shadow-sm"
@@ -1001,16 +1064,16 @@ export default function Products() {
           })}
         </div>
 
-        {/* Aircraft sub-type pills — visible only when Aircraft category is selected */}
-        {selectedCategory === "aircraft" && (
+        {/* Sub-type pills — visible when a category with subtypes is selected */}
+        {CATEGORY_SUBTYPES[selectedCategory] && (
           <div className="flex flex-wrap gap-2 pl-1 border-l-2 border-blue-200" data-testid="aircraft-subtype-filter">
-            {AIRCRAFT_SUBTYPES.map(s => {
+            {CATEGORY_SUBTYPES[selectedCategory].map(s => {
               const Icon = s.icon;
-              const isActive = selectedAircraftSubType === s.value;
+              const isActive = selectedSubType === s.value;
               return (
                 <button
                   key={s.value}
-                  onClick={() => setSelectedAircraftSubType(s.value)}
+                  onClick={() => setSelectedSubType(s.value)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
                     isActive
                       ? "bg-slate-800 text-white border-slate-800 shadow-sm"
@@ -1021,8 +1084,8 @@ export default function Products() {
                   {s.label}
                   <span className={`ml-0.5 text-xs font-mono ${isActive ? "text-slate-300" : "text-slate-400"}`}>
                     {s.value === "all"
-                      ? products.filter(p => p.category === "aircraft").length
-                      : products.filter(p => p.category === "aircraft" && s.types?.includes(p.product_type)).length
+                      ? products.filter(p => p.category === selectedCategory).length
+                      : products.filter(p => p.category === selectedCategory && s.types?.includes(p.product_type)).length
                     }
                   </span>
                 </button>
