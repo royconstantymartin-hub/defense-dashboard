@@ -479,12 +479,24 @@ export default function DefensePlayers() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Remove subsidiaries: companies whose name starts with another company's name + space
+  // e.g. "Thales Netherlands" is filtered when "Thales" is also in the list
+  const baseCompanies = useMemo(() => {
+    const nameSet = new Set(companies.map((c) => c.name));
+    return companies.filter((c) => {
+      for (const parent of nameSet) {
+        if (parent !== c.name && c.name.startsWith(parent + " ")) return false;
+      }
+      return true;
+    });
+  }, [companies]);
+
   // Apply type filter first, then country filter
   const typeFiltered = useMemo(() => {
-    if (filterType === "listed")  return companies.filter(isListed);
-    if (filterType === "private") return companies.filter((c) => !isListed(c));
-    return companies;
-  }, [companies, filterType]);
+    if (filterType === "listed")  return baseCompanies.filter(isListed);
+    if (filterType === "private") return baseCompanies.filter((c) => !isListed(c));
+    return baseCompanies;
+  }, [baseCompanies, filterType]);
 
   const countryCounts = useMemo(() => {
     const map = {};
@@ -530,11 +542,11 @@ export default function DefensePlayers() {
 
   useEffect(() => { setPage(1); }, [search, filterCountry, filterType]);
 
-  // KPI totals (always over all companies, not filtered)
-  const allListed  = useMemo(() => companies.filter(isListed).length, [companies]);
-  const allPrivate = useMemo(() => companies.filter((c) => !isListed(c)).length, [companies]);
-  const allCountries = useMemo(() => new Set(companies.map((c) => c.country).filter(Boolean)).size, [companies]);
-  const totalEmployees = useMemo(() => companies.reduce((s, c) => s + (c.employees || 0), 0), [companies]);
+  // KPI totals — computed on baseCompanies (subsidiaries excluded)
+  const allListed  = useMemo(() => baseCompanies.filter(isListed).length, [baseCompanies]);
+  const allPrivate = useMemo(() => baseCompanies.filter((c) => !isListed(c)).length, [baseCompanies]);
+  const allCountries = useMemo(() => new Set(baseCompanies.map((c) => c.country).filter(Boolean)).size, [baseCompanies]);
+  const totalEmployees = useMemo(() => baseCompanies.reduce((s, c) => s + (c.employees || 0), 0), [baseCompanies]);
 
   const activeCategoryData = selectedCategory
     ? MACRO_CATEGORIES.find((c) => c.id === selectedCategory)
@@ -548,7 +560,7 @@ export default function DefensePlayers() {
         <div>
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">Defense Players</h1>
           <p className="text-slate-500 text-sm mt-1">
-            Complete intelligence directory — {companies.length} companies · listed &amp; private
+            Complete intelligence directory — {baseCompanies.length} companies · listed &amp; private
           </p>
         </div>
       </div>
@@ -562,7 +574,7 @@ export default function DefensePlayers() {
                 <Building2 className="w-5 h-5 text-blue-800" />
               </div>
               <div>
-                <p className="text-2xl font-mono font-bold text-slate-900">{companies.length}</p>
+                <p className="text-2xl font-mono font-bold text-slate-900">{baseCompanies.length}</p>
                 <p className="text-xs text-slate-500">Total companies</p>
               </div>
             </CardContent>
