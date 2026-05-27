@@ -742,7 +742,7 @@ function MACard({ activity, onOpenProfile }) {
 
   return (
     <div
-      className={`relative bg-white border border-l-4 border-slate-200 ${getStatusBorderL(activity.status)} rounded-xl shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 overflow-hidden`}
+      className="relative bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-300 overflow-hidden"
       data-testid={`ma-item-${activity.id}`}
     >
       <div className="p-5 pl-5">
@@ -862,7 +862,7 @@ function MACard({ activity, onOpenProfile }) {
                   href={activity.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-[9px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full hover:bg-emerald-100 transition-colors"
+                  className="flex items-center gap-1 text-[9px] font-semibold text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors"
                 >
                   <ExternalLink className="w-2.5 h-2.5" /> Source
                 </a>
@@ -896,13 +896,13 @@ function MACard({ activity, onOpenProfile }) {
 
             {/* Investment detail box — shown for investment/funding types */}
             {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type) && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Investment Details</p>
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">Investment Details</p>
                 <div className="flex flex-wrap gap-x-6 gap-y-2">
                   {activity.deal_value > 0 && (activity.is_disclosed ?? true) && (
                     <div>
                       <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Amount Raised / Invested</p>
-                      <p className="text-base font-mono font-bold text-emerald-700">{formatValue(activity.deal_value, true)}</p>
+                      <p className="text-base font-mono font-bold text-slate-900">{formatValue(activity.deal_value, true)}</p>
                     </div>
                   )}
                   {activity.stake_percentage != null && (
@@ -923,7 +923,7 @@ function MACard({ activity, onOpenProfile }) {
                     href={activity.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-white border border-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-800 bg-white border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     View official press release
@@ -1014,7 +1014,7 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 text-[10px] font-medium text-emerald-600 hover:text-emerald-800"
+                className="flex items-center gap-1 text-[10px] font-medium text-blue-800 hover:text-blue-900"
               >
                 <ExternalLink className="w-2.5 h-2.5" /> Source
               </a>
@@ -1249,9 +1249,9 @@ function JVProgramsView() {
     <div className="space-y-3">
       {/* Header + filters */}
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="bg-slate-900 px-5 py-4">
+        <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
           <p className="text-[10px] font-semibold tracking-[0.18em] text-slate-400 uppercase mb-0.5">Aerospace &amp; Defense</p>
-          <h2 className="text-sm font-bold text-white tracking-wider uppercase">Joint Ventures — Europe</h2>
+          <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase">Joint Ventures — Europe</h2>
           <p className="text-[10px] text-slate-400 mt-1">Sources: company press releases, regulatory filings, Breaking Defense, Defense News, Reuters, Bloomberg</p>
         </div>
 
@@ -2255,7 +2255,7 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
               href={deal.source_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 hover:bg-emerald-100 transition-colors"
+              className="flex items-center gap-2 text-sm font-medium text-blue-800 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 hover:bg-blue-100 transition-colors"
             >
               <ExternalLink className="w-4 h-4 shrink-0" />
               View primary source
@@ -2619,7 +2619,7 @@ export default function MAActivity() {
                 }} />
                 <Bar yAxisId="count" dataKey="count" radius={[3, 3, 0, 0]}>
                   {quarterlyData.map((_, i) => (
-                    <Cell key={i} fill={i === quarterlyData.length - 1 ? "#7E22CE" : "#E9D5FF"} />
+                    <Cell key={i} fill={i === quarterlyData.length - 1 ? "#1e40af" : "#dbeafe"} />
                   ))}
                 </Bar>
                 <Line
@@ -2630,7 +2630,7 @@ export default function MAActivity() {
                   strokeWidth={1.5}
                   strokeDasharray="4 2"
                   dot={false}
-                  activeDot={{ r: 3, fill: "#7E22CE" }}
+                  activeDot={{ r: 3, fill: "#1e40af" }}
                 />
               </ComposedChart>
             </ResponsiveContainer>
