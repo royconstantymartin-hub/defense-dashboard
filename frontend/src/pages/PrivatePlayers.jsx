@@ -32,6 +32,11 @@ const COUNTRY_ISO = {
   "South Korea": "kr", "Japan": "jp", "Australia": "au",
   "Brazil": "br", "Canada": "ca", "Singapore": "sg",
   "South Africa": "za", "EU": "eu",
+  "Indonesia": "id", "Latvia": "lv", "Lithuania": "lt",
+  "Romania": "ro", "Malaysia": "my", "Vietnam": "vn",
+  "Thailand": "th", "Argentina": "ar", "Pakistan": "pk",
+  "Taiwan": "tw", "Austria": "at", "Bulgaria": "bg",
+  "Egypt": "eg", "Jordan": "jo", "Serbia": "rs",
 };
 
 function formatCap(value) {
@@ -673,7 +678,7 @@ export default function DefensePlayers() {
           {/* ── Country sidebar (desktop) ── */}
           <div className="hidden md:block w-44 flex-shrink-0 sticky top-6">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">Countries</p>
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col gap-0.5 max-h-[calc(100vh-160px)] overflow-y-auto pr-0.5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-200 hover:[&::-webkit-scrollbar-thumb]:bg-slate-300">
               <button
                 onClick={() => setFilterCountry("all")}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
