@@ -39,6 +39,41 @@ const CONFIDENCE_LABELS = {
   low:    "Uncertain — unconfirmed or conflicting sources",
 };
 
+function getUnitLabel(categoryLabel = "") {
+  const lc = categoryLabel.toLowerCase();
+  if (/\b(tank|mbt|armou?red|ifv|apc|vehicle)\b/.test(lc)) return "vehicles";
+  if (/\b(frigate|destroyer|corvette|submarine|vessel|ship|naval)\b/.test(lc)) return "vessels";
+  if (/\b(artillery|howitzer|gun|self.propelled)\b/.test(lc)) return "systems";
+  if (/\b(missile|rocket|sam|manpad|interceptor)\b/.test(lc)) return "missiles";
+  return "aircraft";
+}
+
+function getRateSuffix(categoryLabel = "") {
+  const unit = getUnitLabel(categoryLabel);
+  const map = { vehicles: " veh.", vessels: " vessels", systems: " syst.", missiles: " miss.", aircraft: " ac." };
+  return map[unit] ?? " units";
+}
+
+function collectAllSources(detail) {
+  const seen = new Set();
+  const all = [];
+  const push = (src, context) => {
+    if (src?.url && !seen.has(src.url)) {
+      seen.add(src.url);
+      all.push({ ...src, context });
+    }
+  };
+  [
+    [detail.total_units_produced, "Total units produced"],
+    [detail.unit_cost_usd, "Unit cost"],
+    [detail.production_rate_per_year, "Production rate"],
+    [detail.total_ordered, "Total ordered"],
+    [detail.total_delivered, "Total delivered"],
+  ].forEach(([stat, label]) => stat?.sources?.forEach(s => push(s, label)));
+  detail.variants?.forEach(v => v.units_produced?.sources?.forEach(s => push(s, v.name)));
+  return all;
+}
+
 function Flag({ code, size = 20 }) {
   if (!code) return null;
   return (
@@ -303,7 +338,7 @@ function ProductionTab({ detail }) {
   );
 }
 
-function ExportsTab({ contracts }) {
+function ExportsTab({ contracts, unitLabel = "units" }) {
   return (
     <div className="p-5 space-y-3">
       <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
@@ -331,7 +366,7 @@ function ExportsTab({ contracts }) {
               <div className="flex flex-wrap gap-4 mt-3 text-xs text-slate-600">
                 <div className="flex items-center gap-1">
                   <Package className="w-3.5 h-3.5 text-slate-400" />
-                  <span><strong>{c.units}</strong> aircraft</span>
+                  <span><strong>{c.units}</strong> {unitLabel}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <DollarSign className="w-3.5 h-3.5 text-slate-400" />
@@ -351,6 +386,50 @@ function ExportsTab({ contracts }) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function SourcesTab({ detail }) {
+  const sources = collectAllSources(detail);
+  return (
+    <div className="p-5 space-y-3">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+          Primary Sources ({sources.length})
+        </p>
+        <span className="text-xs text-slate-500">
+          Last updated: <strong className="text-slate-700">{detail.last_updated}</strong>
+        </span>
+      </div>
+      {sources.length === 0 ? (
+        <p className="text-sm text-slate-400 italic">No source links available for this product.</p>
+      ) : (
+        <div className="space-y-2">
+          {sources.map((s, i) => (
+            <div key={i} className="border border-slate-200 rounded-xl px-3 py-2.5 hover:border-slate-300 hover:bg-slate-50/50 transition-colors">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-slate-800 leading-snug truncate">{s.label}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    <span className="text-blue-700">{s.context}</span>
+                    {s.date ? ` · ${s.date}` : ""}
+                  </p>
+                </div>
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1 text-xs text-blue-800 hover:text-blue-900 shrink-0 font-medium"
+                >
+                  Open
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -393,13 +472,15 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
   if (!product || !detail) return null;
 
   const statusInfo = STATUS_LABELS[detail.production_status] ?? STATUS_LABELS.in_service_only;
+  const unitLabel = getUnitLabel(detail.category_label);
+  const rateSuffix = getRateSuffix(detail.category_label);
 
   return (
     <TooltipProvider delayDuration={200}>
       <Sheet open={open} onOpenChange={v => { if (!v) onClose(); }}>
         <SheetContent
           side="right"
-          className="w-[min(95vw,860px)] p-0 flex flex-col gap-0 overflow-hidden"
+          className="w-[min(95vw,860px)] sm:max-w-[860px] p-0 flex flex-col gap-0 overflow-hidden"
         >
           {/* ── Hero image ───────────────────────────────────────────── */}
           <div className="h-44 bg-slate-100 shrink-0 relative">
@@ -488,7 +569,7 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
             </div>
             <div className="px-4 py-3">
               {detail.production_rate_per_year ? (
-                <SourcedStat label="Rate/yr" data={detail.production_rate_per_year} suffix=" ac." />
+                <SourcedStat label="Rate/yr" data={detail.production_rate_per_year} suffix={rateSuffix} />
               ) : (
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Rate/yr</p>
@@ -504,11 +585,12 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
             <div className="shrink-0 bg-slate-50 border-b border-slate-100 overflow-x-auto">
               <TabsList className="bg-transparent rounded-none justify-start px-3 gap-0 h-10 w-max min-w-full">
                 {[
-                  { value: "overview",   label: "Variants",    Icon: Shield  },
-                  { value: "specs",      label: "Specs",       Icon: Cpu     },
-                  { value: "production", label: "Production",  Icon: Truck   },
-                  { value: "exports",    label: "Exports",     Icon: Globe   },
-                  { value: "rivals",     label: "Rivals",      Icon: Target  },
+                  { value: "overview",   label: "Variants",    Icon: Shield   },
+                  { value: "specs",      label: "Specs",       Icon: Cpu      },
+                  { value: "production", label: "Production",  Icon: Truck    },
+                  { value: "exports",    label: "Exports",     Icon: Globe    },
+                  { value: "rivals",     label: "Rivals",      Icon: Target   },
+                  { value: "sources",    label: "Sources",     Icon: FileText },
                 ].map(({ value, label, Icon }) => (
                   <TabsTrigger
                     key={value}
@@ -526,18 +608,31 @@ export default function FlagshipProductDetail({ product, detail, open, onClose, 
               <TabsContent value="overview"   className="mt-0 focus-visible:ring-0"><OverviewTab detail={detail} /></TabsContent>
               <TabsContent value="specs"      className="mt-0 focus-visible:ring-0"><SpecsTab detail={detail} /></TabsContent>
               <TabsContent value="production" className="mt-0 focus-visible:ring-0"><ProductionTab detail={detail} /></TabsContent>
-              <TabsContent value="exports"    className="mt-0 focus-visible:ring-0"><ExportsTab contracts={detail.export_contracts} /></TabsContent>
+              <TabsContent value="exports"    className="mt-0 focus-visible:ring-0"><ExportsTab contracts={detail.export_contracts} unitLabel={unitLabel} /></TabsContent>
               <TabsContent value="rivals"     className="mt-0 focus-visible:ring-0"><RivalsTab competitors={detail.competitors} onSelectProduct={onNavigateToProduct} /></TabsContent>
+              <TabsContent value="sources"    className="mt-0 focus-visible:ring-0"><SourcesTab detail={detail} /></TabsContent>
             </div>
           </Tabs>
 
           {/* ── Footer ────────────────────────────────────────────────── */}
-          <div className="px-5 py-2.5 border-t border-slate-100 shrink-0 flex items-center justify-between">
-            <p className="text-xs text-slate-400">Updated: {detail.last_updated}</p>
+          <div className="px-5 py-2.5 border-t border-slate-100 shrink-0 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-3 text-xs text-slate-500">
+              <span>
+                Dernière mise à jour :{" "}
+                <strong className="text-slate-700">{detail.last_updated}</strong>
+              </span>
+              <button
+                onClick={() => setActiveTab("sources")}
+                className="flex items-center gap-1 text-blue-800 hover:underline"
+              >
+                <FileText className="w-3 h-3" />
+                {collectAllSources(detail).length} sources
+              </button>
+            </div>
             <div className="flex items-center gap-3 text-xs text-slate-400">
-              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-emerald-400" /> Reliable</span>
-              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-amber-400" /> Estimated</span>
-              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-rose-400" /> Uncertain</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-emerald-400" /> Fiable</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-amber-400" /> Estimé</span>
+              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full bg-rose-400" /> Incertain</span>
             </div>
           </div>
         </SheetContent>
