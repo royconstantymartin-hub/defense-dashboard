@@ -218,6 +218,100 @@ export const COMPANY_LOGOS = {
   "Motor Sich": "motorsich.com",
   "Tencore": "tencore.com.ua",
   "Ukrainian Armor": "ukrainianarmor.com",
+  // Israel — acquired/state-owned
+  "Israel Military Industries": "elbitsystems.com",
+  // Russia
+  "Kalashnikov Concern": "kalashnikov.com",
+  // Saudi Arabia
+  "Military Industries Corporation": "mic.com.sa",
+  // India — state entities
+  "Ordnance Factory Board": "ofbindia.gov.in",
+  // Thales subsidiaries
+  "Thales Nederland": "thalesgroup.com",
+  "Thales Netherlands": "thalesgroup.com",
+  "Thales Norway": "thalesgroup.com",
+  // Germany — industrial
+  "Atlas Elektronik": "atlas-elektronik.com",
+  "Krauss-Maffei Wegmann": "kmweg.com",
+  "Rohde & Schwarz": "rohde-schwarz.com",
+  // Italy
+  "Beretta Group": "beretta.com",
+  // UK
+  "Cobham": "cobham.com",
+  "Cobham Advanced Electronics": "cobham.com",
+  // USA
+  "Cubic Corporation": "cubic.com",
+  // Sweden / Scandinavia
+  "Aimpoint AB": "aimpoint.com",
+  "Weibel Scientific": "weibel.dk",
+  // Spain
+  "Expal Systems": "expal.com",
+  "ITP Aero": "itpaero.com",
+  "SENER Aerospace": "sener.es",
+  // Turkey
+  "FNSS Defence Systems": "fnss.com.tr",
+  "Atlas Elektronik Turkey": "atlas-elektronik.com",
+  // Netherlands
+  "Fokker Technologies": "fokker.com",
+  "GKN Fokker": "gknaerospace.com",
+  // Belgium
+  "SABCA": "sabca.be",
+  // UAE
+  "Halcon": "halcon.ae",
+  // Argentina
+  "INVAP": "invap.com.ar",
+  "INVAP SE": "invap.com.ar",
+  // India — private
+  "Adani Defence and Aerospace": "adanidefence.com",
+  "Larsen & Toubro Defence": "lntdefence.com",
+  "Mahindra Defence Systems": "mahindradefence.com",
+  "Tata Advanced Systems": "tataadvancedsystems.com",
+  "Insta DefSec": "insta.fi",
+  // Middle East
+  "Arab Organization for Industrialization": "aoi.com.eg",
+  "Advanced Electronics Company": "aec.com.sa",
+  "KADDB": "kaddb.jo",
+  // Brazil
+  "AEL Sistemas": "aelsistemas.com.br",
+  // Canada
+  "PAL Aerospace": "palaerospace.com",
+  // Pakistan
+  "Pakistan Aeronautical Complex": "pac.org.pk",
+  "Pakistan Ordnance Factories": "pof.gov.pk",
+  // South Korea — JVs
+  "Samsung Thales": "hanwhathales.com",
+  // Thailand
+  "Chaiseri Metal and Rubber": "chaiseri.com",
+  // Poland
+  "Mesko": "mesko.com.pl",
+  // Bulgaria
+  "Kintex JSC": "kintex.bg",
+  // Serbia
+  "Yugoimport SDPR": "yugoimport.com",
+  // UK subsidiaries
+  "BAE Systems Hägglunds": "baesystems.com",
+  "Chemring Nobel": "chemring.co.uk",
+  // Singapore subsidiary
+  "ST Aerospace": "stengg.com",
+  // Japan
+  "Japan Marine United": "jmuc.co.jp",
+  // French JV
+  "Roxel": "roxel-group.com",
+  // Switzerland (General Dynamics acquisition)
+  "MOWAG": "gd.com",
+  // Missing companies — case variants and subsidiaries
+  "Aerojet Rocketdyne": "aerojetrocketdyne.com",
+  "Bharat Forge": "bharatforge.com",
+  "Defendtex": "defendtex.com",
+  "Hanwha Systems": "hanwhasystems.com",
+  "Leonardo DRS": "leonardodrs.com",
+  "Mitsubishi Electric Defense": "mitsubishielectric.com",
+  "NEC Defense Systems": "nec.com",
+  "Otokar": "otokar.com",
+  "Saab Dynamics": "saab.com",
+  "Sabca": "sabca.be",
+  "Serco Group": "serco.com",
+  "ideaForge Technology": "ideaforgetech.com",
   // Defense Tech Startups
   "Harmattan AI": "harmattan.ai",
   "Harmattan.ai": "harmattan.ai",
@@ -561,6 +655,7 @@ export const COMPANY_WIKI_LOGOS = {
   // Kratos Defense — no confirmed Wikipedia logo, falls through to Clearbit (kratosdefense.com)
   "Teledyne Technologies":         WP + "Teledyne logo.svg",
   "SERCO Group":                   WP + "Serco_logo.svg",
+  "Serco Group":                   WP + "Serco_logo.svg",
   // Turkey
   "Roketsan":                      WP + "Roketsan_logo.svg",
   "Baykar":                        WP + "BaykarLogo.png",
@@ -611,6 +706,51 @@ export const COMPANY_WIKI_LOGOS = {
   "Smiths Detection":           WP + "Smiths_Detection_logo.svg",
   // Finland
   "ICEYE":                      WP + "ICEYE_logo.svg",
+  // Germany — additional industrials
+  "Krauss-Maffei Wegmann":      WP + "KMW_logo.svg",
+  "Rohde & Schwarz":            WP + "Rohde_%26_Schwarz_Logo.svg",
+  // Italy — Beretta group
+  "Beretta Group":              WP + "Beretta_logo.svg",
+  // UK — Cobham
+  "Cobham":                     WP + "Cobham_Group_logo.svg",
+  "Cobham Advanced Electronics": WP + "Cobham_Group_logo.svg",
+  // USA — Cubic
+  "Cubic Corporation":          WP + "Cubic_Corporation_logo.svg",
+  // Thales subsidiaries — use parent logo
+  "Thales Nederland":           WP + "Thales_Logo.svg",
+  "Thales Netherlands":         WP + "Thales_Logo.svg",
+  "Thales Norway":              WP + "Thales_Logo.svg",
+  // Sweden
+  "BAE Systems Hägglunds":      WP + "BAE_Systems_logo.svg",
+  // Norway
+  "Chemring Nobel":             WP + "Chemring_logo.svg",
+  // Spain
+  "Expal Systems":              WP + "Expal_Systems_logo.svg",
+  // Netherlands
+  "Fokker Technologies":        WP + "Fokker_logo.svg",
+  // India — private groups
+  "Larsen & Toubro Defence":    WP + "Larsen_%26_Toubro_logo.svg",
+  "Adani Defence and Aerospace": WP + "Adani_Group_Logo.svg",
+  "Tata Advanced Systems":      WP + "Tata_logo.svg",
+  // Israel
+  "Israel Military Industries": WP + "Elbit_Systems_logo.svg",
+  // Russia
+  "Kalashnikov Concern":        WP + "Kalashnikov_Concern_logo.svg",
+  // Brazil
+  "AEL Sistemas":               WP + "AEL_Sistemas_logo.svg",
+  // Japan
+  "Japan Marine United":        WP + "Japan_Marine_United_logo.svg",
+  // Additional missing companies
+  "Aerojet Rocketdyne":         WP + "Aerojet_Rocketdyne_logo.svg",
+  "Hanwha Systems":             WP + "Hanwha_logo.svg",
+  "Leonardo DRS":               WP + "Leonardo_DRS_logo.svg",
+  "Mitsubishi Electric Defense": WP + "Mitsubishi_Electric_logo.svg",
+  "NEC Defense Systems":        WP + "NEC_logo.svg",
+  "Otokar":                     WP + "Otokar_logo.svg",
+  "Saab Dynamics":              WP + "Saab_wordmark_blue.svg",
+  "Sabca":                      WP + "SABCA_logo.svg",
+  "Bharat Forge":               WP + "Bharat_Forge_logo.svg",
+  "ideaForge Technology":       WP + "IdeasForge_logo.svg",
 };
 
 export function getLogoDomain(name) {
@@ -635,11 +775,10 @@ export function getClearbitUrl(name) {
 }
 
 // Returns ordered list of logo URLs to try: [wikipedia?, clearbit?, google-favicon?]
-// Google Favicon is skipped for .cn and .ru domains — those return a generic globe
-// icon (HTTP 200) with no custom favicon, which fools the onerror handler.
-// These TLDs return a generic globe favicon (HTTP 200) for sites without a custom icon,
-// which fools the onerror handler. Skip Google Favicon for these; fall back to initials.
-const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in", ".com.ua", ".gov.ua", ".org.tw", ".com.tw"];
+// Google Favicon is skipped for TLDs that return a generic globe icon (HTTP 200)
+// with no custom favicon, which fools the onerror handler.
+// .com.ua is intentionally excluded — Ukrainian commercial startups have proper favicons.
+export const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in", ".gov.ua", ".org.tw", ".com.tw"];
 
 export function getLogoUrls(name) {
   const urls = [];

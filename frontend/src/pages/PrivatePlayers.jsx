@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { API } from "@/App";
-import { getLogoUrls } from "@/lib/companyLogos";
+import { getLogoUrls, FAVICON_SKIP_TLDS } from "@/lib/companyLogos";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -62,7 +62,10 @@ function LogoWithFallback({ name, website, size = 40 }) {
     if (curated.length > 0) return curated;
     if (website) {
       const domain = website.replace(/^https?:\/\//, "").split("/")[0].toLowerCase();
-      return [`https://logo.clearbit.com/${domain}`];
+      const skipFavicon = FAVICON_SKIP_TLDS.some((tld) => domain.endsWith(tld));
+      const fallback = [`https://logo.clearbit.com/${domain}`];
+      if (!skipFavicon) fallback.push(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
+      return fallback;
     }
     return [];
   }, [name, website]);
@@ -381,7 +384,7 @@ function CompanyRow({ company, onClick }) {
         {cap ? (
           <div>
             <span className="text-xs font-mono font-semibold text-slate-700">{cap}</span>
-            <p className="text-[9px] text-slate-400 leading-tight">mkt cap</p>
+            <p className="text-[9px] text-slate-400 leading-tight">{listed ? "mkt cap" : "valuation"}</p>
           </div>
         ) : rev ? (
           <div>

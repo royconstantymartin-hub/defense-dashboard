@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getLogoUrls, COMPANY_LOGOS } from "@/lib/companyLogos";
+import { getLogoUrls, COMPANY_LOGOS, FAVICON_SKIP_TLDS } from "@/lib/companyLogos";
 import {
   Sheet, SheetContent,
 } from "@/components/ui/sheet";
@@ -205,7 +205,7 @@ function CompanyLogo({ name, domain, size = "lg" }) {
     const curated = getLogoUrls(name);
     if (curated.length > 0) return curated;
     if (domain) {
-      const skipFavicon = [".cn", ".ru"].some((tld) => domain.endsWith(tld));
+      const skipFavicon = FAVICON_SKIP_TLDS.some((tld) => domain.endsWith(tld));
       return [
         `https://logo.clearbit.com/${domain}`,
         ...(!skipFavicon ? [`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`] : []),
