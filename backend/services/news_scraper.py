@@ -45,6 +45,18 @@ _STOCK_PHOTO_DOMAINS = (
     "media.gettyimages.com",
     "imagn.com",
     "zuma",
+    # MSN / Bing image CDN — often serves generic city skylines, landmarks,
+    # world maps and parliament buildings unrelated to the article subject.
+    "img-s-msn-com",
+    "img-prod-cms-rt-microsoft-com",
+    "assets.msn.com",
+    # Euromaidan Press and similar outlets sometimes pull thumbnails from these
+    # generic editorial photo agencies
+    "agency-images.com",
+    "cfr.org/sites/default/files",  # Council on Foreign Relations generic maps
+    # Reuters/AP generic map/infographic CDNs
+    "graphics.reuters.com",
+    "s.abcnews.com",
 )
 
 
