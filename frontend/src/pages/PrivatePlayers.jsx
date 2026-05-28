@@ -381,7 +381,7 @@ function CompanyRow({ company, onClick }) {
         {cap ? (
           <div>
             <span className="text-xs font-mono font-semibold text-slate-700">{cap}</span>
-            <p className="text-[9px] text-slate-400 leading-tight">mkt cap</p>
+            <p className="text-[9px] text-slate-400 leading-tight">{listed ? "mkt cap" : "valuation"}</p>
           </div>
         ) : rev ? (
           <div>

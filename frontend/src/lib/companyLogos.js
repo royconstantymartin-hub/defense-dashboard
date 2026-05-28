@@ -218,6 +218,87 @@ export const COMPANY_LOGOS = {
   "Motor Sich": "motorsich.com",
   "Tencore": "tencore.com.ua",
   "Ukrainian Armor": "ukrainianarmor.com",
+  // Israel — acquired/state-owned
+  "Israel Military Industries": "elbitsystems.com",
+  // Russia
+  "Kalashnikov Concern": "kalashnikov.com",
+  // Saudi Arabia
+  "Military Industries Corporation": "mic.com.sa",
+  // India — state entities
+  "Ordnance Factory Board": "ofbindia.gov.in",
+  // Thales subsidiaries
+  "Thales Nederland": "thalesgroup.com",
+  "Thales Netherlands": "thalesgroup.com",
+  "Thales Norway": "thalesgroup.com",
+  // Germany — industrial
+  "Atlas Elektronik": "atlas-elektronik.com",
+  "Krauss-Maffei Wegmann": "kmweg.com",
+  "Rohde & Schwarz": "rohde-schwarz.com",
+  // Italy
+  "Beretta Group": "beretta.com",
+  // UK
+  "Cobham": "cobham.com",
+  "Cobham Advanced Electronics": "cobham.com",
+  // USA
+  "Cubic Corporation": "cubic.com",
+  // Sweden / Scandinavia
+  "Aimpoint AB": "aimpoint.com",
+  "Weibel Scientific": "weibel.dk",
+  // Spain
+  "Expal Systems": "expal.com",
+  "ITP Aero": "itpaero.com",
+  "SENER Aerospace": "sener.es",
+  // Turkey
+  "FNSS Defence Systems": "fnss.com.tr",
+  "Atlas Elektronik Turkey": "atlas-elektronik.com",
+  // Netherlands
+  "Fokker Technologies": "fokker.com",
+  "GKN Fokker": "gknaerospace.com",
+  // Belgium
+  "SABCA": "sabca.be",
+  // UAE
+  "Halcon": "halcon.ae",
+  // Argentina
+  "INVAP": "invap.com.ar",
+  "INVAP SE": "invap.com.ar",
+  // India — private
+  "Adani Defence and Aerospace": "adanidefence.com",
+  "Larsen & Toubro Defence": "lntdefence.com",
+  "Mahindra Defence Systems": "mahindradefence.com",
+  "Tata Advanced Systems": "tataadvancedsystems.com",
+  "Insta DefSec": "insta.fi",
+  // Middle East
+  "Arab Organization for Industrialization": "aoi.com.eg",
+  "Advanced Electronics Company": "aec.com.sa",
+  "KADDB": "kaddb.jo",
+  // Brazil
+  "AEL Sistemas": "aelsistemas.com.br",
+  // Canada
+  "PAL Aerospace": "palaerospace.com",
+  // Pakistan
+  "Pakistan Aeronautical Complex": "pac.org.pk",
+  "Pakistan Ordnance Factories": "pof.gov.pk",
+  // South Korea — JVs
+  "Samsung Thales": "hanwhathales.com",
+  // Thailand
+  "Chaiseri Metal and Rubber": "chaiseri.com",
+  // Poland
+  "Mesko": "mesko.com.pl",
+  // Bulgaria
+  "Kintex JSC": "kintex.bg",
+  // Serbia
+  "Yugoimport SDPR": "yugoimport.com",
+  // UK subsidiaries
+  "BAE Systems Hägglunds": "baesystems.com",
+  "Chemring Nobel": "chemring.co.uk",
+  // Singapore subsidiary
+  "ST Aerospace": "stengg.com",
+  // Japan
+  "Japan Marine United": "jmuc.co.jp",
+  // French JV
+  "Roxel": "roxel-group.com",
+  // Switzerland (General Dynamics acquisition)
+  "MOWAG": "gd.com",
   // Defense Tech Startups
   "Harmattan AI": "harmattan.ai",
   "Harmattan.ai": "harmattan.ai",
@@ -611,6 +692,40 @@ export const COMPANY_WIKI_LOGOS = {
   "Smiths Detection":           WP + "Smiths_Detection_logo.svg",
   // Finland
   "ICEYE":                      WP + "ICEYE_logo.svg",
+  // Germany — additional industrials
+  "Krauss-Maffei Wegmann":      WP + "KMW_logo.svg",
+  "Rohde & Schwarz":            WP + "Rohde_%26_Schwarz_Logo.svg",
+  // Italy — Beretta group
+  "Beretta Group":              WP + "Beretta_logo.svg",
+  // UK — Cobham
+  "Cobham":                     WP + "Cobham_Group_logo.svg",
+  "Cobham Advanced Electronics": WP + "Cobham_Group_logo.svg",
+  // USA — Cubic
+  "Cubic Corporation":          WP + "Cubic_Corporation_logo.svg",
+  // Thales subsidiaries — use parent logo
+  "Thales Nederland":           WP + "Thales_Logo.svg",
+  "Thales Netherlands":         WP + "Thales_Logo.svg",
+  "Thales Norway":              WP + "Thales_Logo.svg",
+  // Sweden
+  "BAE Systems Hägglunds":      WP + "BAE_Systems_logo.svg",
+  // Norway
+  "Chemring Nobel":             WP + "Chemring_logo.svg",
+  // Spain
+  "Expal Systems":              WP + "Expal_Systems_logo.svg",
+  // Netherlands
+  "Fokker Technologies":        WP + "Fokker_logo.svg",
+  // India — private groups
+  "Larsen & Toubro Defence":    WP + "Larsen_%26_Toubro_logo.svg",
+  "Adani Defence and Aerospace": WP + "Adani_Group_Logo.svg",
+  "Tata Advanced Systems":      WP + "Tata_logo.svg",
+  // Israel
+  "Israel Military Industries": WP + "Elbit_Systems_logo.svg",
+  // Russia
+  "Kalashnikov Concern":        WP + "Kalashnikov_Concern_logo.svg",
+  // Brazil
+  "AEL Sistemas":               WP + "AEL_Sistemas_logo.svg",
+  // Japan
+  "Japan Marine United":        WP + "Japan_Marine_United_logo.svg",
 };
 
 export function getLogoDomain(name) {
