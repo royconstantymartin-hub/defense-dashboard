@@ -2262,6 +2262,7 @@ function CountryProfileSection({ country, allExpenditures }) {
   const regionalPeers = allExpenditures
     .filter(e => e.region === country.region)
     .sort((a, b) => b.expenditure - a.expenditure)
+    .filter((e, idx, arr) => arr.findIndex(x => x.country_code === e.country_code) === idx)
     .slice(0, 10);
 
   return (
@@ -2396,6 +2397,7 @@ function CountryProfileSection({ country, allExpenditures }) {
                   <YAxis
                     type="category"
                     dataKey="country_code"
+                    interval={0}
                     tick={(props) => <CustomizedFlagTick {...props} nameMap={Object.fromEntries(regionalPeers.map(e => [e.country_code, e.country]))} />}
                     axisLine={false}
                     tickLine={false}
@@ -2730,6 +2732,7 @@ export default function Expenditures() {
 
   const topCountries = [...filteredExpenditures]
     .sort((a, b) => b.expenditure - a.expenditure)
+    .filter((e, idx, arr) => arr.findIndex(x => x.country_code === e.country_code) === idx)
     .slice(0, 10);
 
   const regionData = filteredExpenditures.reduce((acc, exp) => {
@@ -2866,7 +2869,7 @@ export default function Expenditures() {
               <ResponsiveContainer width="100%" height="100%" minWidth={200}>
                 <BarChart
                   data={chartMode === "gdp"
-                    ? [...filteredExpenditures].sort((a, b) => b.gdp_percent - a.gdp_percent).slice(0, 10)
+                    ? [...filteredExpenditures].sort((a, b) => b.gdp_percent - a.gdp_percent).filter((e, idx, arr) => arr.findIndex(x => x.country_code === e.country_code) === idx).slice(0, 10)
                     : topCountries}
                   layout="vertical"
                   margin={{ left: 4, right: 8 }}
@@ -2881,6 +2884,7 @@ export default function Expenditures() {
                   <YAxis
                     type="category"
                     dataKey="country_code"
+                    interval={0}
                     tick={(props) => <CustomizedFlagTick {...props} nameMap={Object.fromEntries(filteredExpenditures.map(e => [e.country_code, e.country]))} />}
                     axisLine={false}
                     tickLine={false}
