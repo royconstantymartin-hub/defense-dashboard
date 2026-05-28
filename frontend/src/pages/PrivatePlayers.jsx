@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { API } from "@/App";
-import { getLogoUrls } from "@/lib/companyLogos";
+import { getLogoUrls, FAVICON_SKIP_TLDS } from "@/lib/companyLogos";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -62,9 +62,10 @@ function LogoWithFallback({ name, website, size = 40 }) {
     if (curated.length > 0) return curated;
     if (website) {
       const domain = website.replace(/^https?:\/\//, "").split("/")[0].toLowerCase();
-      // Google Favicon excluded: returns a generic globe (HTTP 200) for sites without a favicon,
-      // which fools onError and shows a broken-looking globe instead of the letter avatar.
-      return [`https://logo.clearbit.com/${domain}`];
+      const skipFavicon = FAVICON_SKIP_TLDS.some((tld) => domain.endsWith(tld));
+      const fallback = [`https://logo.clearbit.com/${domain}`];
+      if (!skipFavicon) fallback.push(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
+      return fallback;
     }
     return [];
   }, [name, website]);
