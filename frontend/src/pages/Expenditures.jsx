@@ -1373,6 +1373,24 @@ const PLATFORM_WIKI_TITLES = {
   "DRAC / Black Hornet (nano ISR infanterie)": "Black Hornet Nano",
   "nEUROn UCAV (démonstrateur)":               "Dassault nEUROn",
   "Harmattan Combat Drone":                    "Harmattan AI",
+  // ── French fighters ─────────────────────────────────────────────────────
+  "Rafale F3-R / F4 (Air Force)":              "Dassault Rafale",
+  "Rafale M F3-R (Navy carrier)":              "Dassault Rafale",
+  "Mirage 2000D (strike / SEAD)":              "Dassault Mirage 2000",
+  "Mirage 2000-5F (air defense)":              "Dassault Mirage 2000",
+  // ── French helicopters ──────────────────────────────────────────────────
+  "Tiger HAD / HAP (attack)":                  "Eurocopter Tiger",
+  "AS 532 Cougar (heavy assault)":             "Aerospatiale AS 332 Super Puma",
+  "EC725 Caracal (CSAR / special ops)":        "H225M Caracal",
+  "NH90 NFH Caiman Marine (naval ASW)":        "NHIndustries NH90",
+  "AS 565 Panther (naval patrol, retiring)":   "Eurocopter AS565 Panther",
+  "Fennec AS 555 (light utility)":             "Eurocopter AS555 Fennec",
+  // ── French drones ───────────────────────────────────────────────────────
+  "Patroller MALE SDT (Army ISR)":             "Safran Patroller",
+  "Harfang SIDM MALE (phasing out)":           "EADS Harfang",
+  "Spy'Ranger 330 SDT-L (tactical ISR systems)": "Thales Spy Ranger",
+  "nEUROn UCAV (technology demonstrator)":     "Dassault nEUROn",
+  "Parrot ANAFI Ai / DRAC nano (infantry ISR, ~500 units)": "Parrot ANAFI",
   // ── Land – MBT ──────────────────────────────────────────────────────────
   "M1A2 SEP v3 Abrams MBT":           "M1 Abrams",
   "M1A1 Abrams MBT":                  "M1 Abrams",
@@ -1770,6 +1788,44 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
   );
 }
 
+// Maps model name prefixes → product search query for "Browse Products" links.
+// Rafale variants and other multi-variant families link to a single canonical product.
+const PLATFORM_PRODUCT_SEARCH = {
+  "Rafale":           "Rafale",
+  "Mirage 2000":      "Mirage 2000",
+  "Tiger HAD":        "Tigre HAD",
+  "NH90":             "NH90",
+  "EC725":            "EC725 Caracal",
+  "AS 532":           "AS 532 Cougar",
+  "SA 341":           "SA 342 Gazelle",
+  "SA 342":           "SA 342 Gazelle",
+  "Leclerc":          "Leclerc",
+  "VBCI":             "VBCI",
+  "Griffon VBMR":     "VBMR Griffon",
+  "Serval VBMR":      "VBMR Serval",
+  "CAESAR":           "CAESAR",
+  "MQ-9A Reaper":     "MQ-9 Reaper",
+  "MQ-9B":            "MQ-9B SkyGuardian",
+  "Patroller":        "Patroller MALE",
+  "nEUROn":           "Dassault nEUROn UCAV",
+  "Harfang":          "Harfang MALE",
+  "F-35":             "F-35 Lightning II",
+  "F-22":             "F-22 Raptor",
+  "F-15":             "F-15EX Eagle II",
+  "Leopard 2":        "Leopard 2A7+",
+  "K2 Black Panther": "K2 Black Panther",
+  "Bayraktar TB2":    "Bayraktar TB2",
+  "Eurofighter":      "Eurofighter Typhoon",
+  "Typhoon":          "Eurofighter Typhoon",
+};
+
+function getProductBrowseLink(model, manufacturer) {
+  const key = Object.keys(PLATFORM_PRODUCT_SEARCH).find(k => model.startsWith(k));
+  if (key) return `/products?search=${encodeURIComponent(PLATFORM_PRODUCT_SEARCH[key])}`;
+  const mfr = manufacturer.split(' / ')[0].split(' (')[0];
+  return `/products?manufacturer=${encodeURIComponent(mfr)}`;
+}
+
 function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
   const barPct = maxCount > 0 ? Math.round(((item.count ?? 0) / maxCount) * 100) : 0;
   const primaryMfr = item.manufacturer.split(' / ')[0].split(' (')[0];
@@ -1813,7 +1869,7 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
         <p className="text-[10px] text-slate-400 truncate mt-0.5">{primaryMfr}</p>
 
         <a
-          href={`/products?manufacturer=${encodeURIComponent(primaryMfr)}`}
+          href={getProductBrowseLink(item.model, item.manufacturer)}
           className={`mt-auto inline-flex items-center gap-1 text-[10px] font-semibold ${cat.labelColor} hover:underline`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -2043,9 +2099,29 @@ function BranchCard({ branch, typePhoto, emblemUrl }) {
 }
 
 // ── News card — uniform h-36 image area regardless of image presence ──────────
+// Defense-themed stock photos for news fallback (same Unsplash pool as Announcements page)
+const COUNTRY_NEWS_FALLBACKS = [
+  "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1578241030078-01b38ededda4?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1708342421457-9c59f4843fe1?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1650526087824-163941841b52?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1759610545704-9bbee32cb17c?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+];
+
+function getNewsStockPhoto(title) {
+  const h = Math.abs(Array.from(title || '').reduce((acc, c) => (acc * 31 + c.charCodeAt(0)) | 0, 0));
+  return COUNTRY_NEWS_FALLBACKS[h % COUNTRY_NEWS_FALLBACKS.length];
+}
+
 function NewsCard({ article }) {
   const [imgError, setImgError] = useState(false);
-  const hasImage = !!article.image && !imgError;
+  const [fallbackError, setFallbackError] = useState(false);
+  const primaryImg = !imgError ? article.image : null;
+  const fallbackImg = !fallbackError ? getNewsStockPhoto(article.title) : null;
+  const displayImg = primaryImg || fallbackImg;
 
   const fmtDate = (raw) => {
     if (!raw) return null;
@@ -2061,19 +2137,22 @@ function NewsCard({ article }) {
       rel="noopener noreferrer"
       className="group flex flex-col rounded-lg border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all overflow-hidden bg-white"
     >
-      {/* Fixed-height image zone — always h-36, always the same visual weight */}
-      <div className="w-full h-36 overflow-hidden shrink-0 relative">
-        {hasImage ? (
+      {/* Fixed-height image zone */}
+      <div className="w-full h-36 overflow-hidden shrink-0 relative bg-slate-100">
+        {displayImg ? (
           <img
-            src={article.image}
+            src={displayImg}
             alt={article.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={() => setImgError(true)}
+            onError={() => {
+              if (!imgError) setImgError(true);
+              else setFallbackError(true);
+            }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex flex-col items-center justify-center gap-2">
-            <Newspaper className="w-7 h-7 text-slate-500" />
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center px-4 line-clamp-1">
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-slate-50">
+            <Newspaper className="w-7 h-7 text-slate-300" />
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center px-4 line-clamp-1">
               {article.source}
             </p>
           </div>
@@ -2111,32 +2190,28 @@ function CustomizedFlagTick({ x, y, payload, nameMap = {} }) {
   const code = payload?.value?.toLowerCase();
   const name = nameMap[payload?.value] ?? payload?.value ?? '';
   if (!code) return null;
-  const label = name.length > 13 ? name.slice(0, 12) + '…' : name;
+  const label = name.length > 12 ? name.slice(0, 11) + '…' : name;
+  // Pure SVG approach — avoids foreignObject namespace issues in React/Recharts
   return (
     <g>
-      <foreignObject x={x - 112} y={y - 9} width={108} height={18}>
-        <div
-          xmlns="http://www.w3.org/1999/xhtml"
-          style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end', height: '100%' }}
-        >
-          <span style={{ fontSize: '9px', color: '#64748B', whiteSpace: 'nowrap', textAlign: 'right' }}>
-            {label}
-          </span>
-          <img
-            src={`https://flagcdn.com/w40/${code}.png`}
-            width="18" height="13"
-            style={{ objectFit: 'cover', borderRadius: '1px', flexShrink: 0 }}
-            alt=""
-            onError={(e) => {
-              e.target.style.display = 'none';
-              const span = document.createElement('span');
-              span.style.cssText = 'font-size:8px;color:#94a3b8;font-family:monospace;';
-              span.textContent = payload?.value?.toUpperCase() ?? '';
-              e.target.parentNode?.appendChild(span);
-            }}
-          />
-        </div>
-      </foreignObject>
+      <text
+        x={x - 22}
+        y={y + 4}
+        textAnchor="end"
+        fill="#64748B"
+        fontSize={9}
+        fontFamily="Inter, system-ui, sans-serif"
+      >
+        {label}
+      </text>
+      <image
+        href={`https://flagcdn.com/w40/${code}.png`}
+        x={x - 20}
+        y={y - 7}
+        width={18}
+        height={13}
+        preserveAspectRatio="none"
+      />
     </g>
   );
 }

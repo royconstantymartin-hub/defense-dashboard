@@ -1065,15 +1065,32 @@ async def get_country_profile(country_name: str):
 
     companies = [_shape(p, True) for p in national_raw] + [_shape(p, False) for p in eu_raw]
 
-    # --- News (DB first, RSS fallback) ---
+    # --- News (DB first — English only, RSS fallback) ---
     esc = re.escape(country_name)
-    db_news = await db.news_articles.find(
-        {"title": {"$regex": esc, "$options": "i"}},
-        {"_id": 0, "title": 1, "url": 1, "source": 1, "publishedAt": 1, "description": 1, "image": 1}
-    ).sort("publishedAt", -1).limit(5).to_list(5)
+    _news_proj = {"_id": 0, "title": 1, "url": 1, "source": 1, "publishedAt": 1, "description": 1, "image": 1}
 
-    news = [
-        {
+    # Try English-only first
+    db_news = await db.news_articles.find(
+        {"title": {"$regex": esc, "$options": "i"}, "language": "en"},
+        _news_proj
+    ).sort("publishedAt", -1).limit(6).to_list(6)
+
+    # Fall back to any language if not enough English articles
+    if len(db_news) < 3:
+        db_news_any = await db.news_articles.find(
+            {"title": {"$regex": esc, "$options": "i"}, "language": {"$ne": "fr"}},
+            _news_proj
+        ).sort("publishedAt", -1).limit(6).to_list(6)
+        # Merge, deduplicate by URL
+        seen_urls = {a.get("url") for a in db_news}
+        for a in db_news_any:
+            if a.get("url") not in seen_urls:
+                db_news.append(a)
+                seen_urls.add(a.get("url"))
+        db_news = db_news[:6]
+
+    def _shape_article(a):
+        return {
             "title":       a.get("title", ""),
             "url":         a.get("url", ""),
             "source":      a.get("source", ""),
@@ -1081,12 +1098,12 @@ async def get_country_profile(country_name: str):
             "description": a.get("description", ""),
             "image":       a.get("image"),
         }
-        for a in db_news
-    ]
+
+    news = [_shape_article(a) for a in db_news]
 
     if len(news) < 3:
         try:
-            rss_articles = await asyncio.to_thread(_fetch_rss_country_news, country_name, 5 - len(news))
+            rss_articles = await asyncio.to_thread(_fetch_rss_country_news, country_name, 6 - len(news))
             news.extend(rss_articles)
         except Exception:
             pass
