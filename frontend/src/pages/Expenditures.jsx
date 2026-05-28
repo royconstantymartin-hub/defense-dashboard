@@ -4,6 +4,7 @@ import axios from "axios";
 import { API } from "@/App";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
+import CountryContractsSheet from "@/components/CountryContractsSheet";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -17,7 +18,7 @@ import {
   ArrowUpDown, Globe2, BarChart2, Percent, Shield,
   Anchor, Plane, Satellite, Zap, Lock, Flag, ExternalLink,
   FileText, Building2, Newspaper, Users, Globe, Crosshair,
-  Target, Gauge, Download,
+  Target, Gauge, Download, FileCheck,
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 
@@ -2143,7 +2144,7 @@ function CustomizedFlagTick({ x, y, payload, nameMap = {} }) {
 
 // ── Country Profile Section ──────────────────────────────────────────────────
 
-function CountryProfileSection({ country, allExpenditures }) {
+function CountryProfileSection({ country, allExpenditures, onOpenContractsSheet }) {
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [industryTab, setIndustryTab] = useState("national");
@@ -2264,6 +2265,19 @@ function CountryProfileSection({ country, allExpenditures }) {
           </div>
         </div>
       </div>
+
+      {/* Contracts & Regulations quick-access */}
+      {onOpenContractsSheet && (
+        <div className="flex justify-end">
+          <button
+            onClick={() => onOpenContractsSheet(country)}
+            className="flex items-center gap-2 text-xs font-semibold text-blue-700 hover:text-blue-900 bg-white border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg shadow-sm transition-all"
+          >
+            <FileCheck className="w-3.5 h-3.5" />
+            Contracts &amp; Regulations
+          </button>
+        </div>
+      )}
 
       {/* Defense Capabilities Infographic */}
       <DefenseCapabilitiesCard countryCode={country.country_code} />
@@ -2556,6 +2570,10 @@ function CountryProfileSection({ country, allExpenditures }) {
       {selectedCompany && (
         <CompanyProfileSheet name={selectedCompany} onClose={() => setSelectedCompany(null)} />
       )}
+      <CountryContractsSheet
+        country={contractsSheetCountry}
+        onClose={() => setContractsSheetCountry(null)}
+      />
     </div>
   );
 }
@@ -2574,6 +2592,7 @@ export default function Expenditures() {
   const [chartMode, setChartMode] = useState("absolute");
   const [mapMode, setMapMode] = useState("absolute");
   const [pinnedCountry, setPinnedCountry] = useState(null);
+  const [contractsSheetCountry, setContractsSheetCountry] = useState(null);
   const [compareList, setCompareList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const profileRef = useRef(null);
@@ -3150,7 +3169,11 @@ export default function Expenditures() {
               </button>
             </div>
           )}
-          <CountryProfileSection country={focusCountry} allExpenditures={expenditures} />
+          <CountryProfileSection
+            country={focusCountry}
+            allExpenditures={expenditures}
+            onOpenContractsSheet={setContractsSheetCountry}
+          />
         </div>
       )}
 
