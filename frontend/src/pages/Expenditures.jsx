@@ -598,12 +598,12 @@ const DEFENSE_CAPABILITIES = {
   FR: { fighters: 225,  helicopters: 353,  drones: 46,   land_vehicles: 6276,  surface_combatants: 24,  submarines: 10 },
   JP: { fighters: 320,  helicopters: 388,  drones: 66,   land_vehicles: 1668,  surface_combatants: 32,  submarines: 22 },
   KR: { fighters: 406,  helicopters: 620,  drones: 12,  land_vehicles: 7500,  surface_combatants: 28,  submarines: 22 },
-  AU: { fighters: 100,  helicopters: 175,  drones: 8,   land_vehicles: 2000,  surface_combatants: 12,  submarines: 6  },
+  AU: { fighters: 100,  helicopters: 96,   drones: 8,   land_vehicles: 2416,  surface_combatants: 13,  submarines: 6  },
   IT: { fighters: 190,  helicopters: 250,  drones: 8,   land_vehicles: 2800,  surface_combatants: 22,  submarines: 8  },
   BR: { fighters: 122,  helicopters: 280,  drones: 6,   land_vehicles: 2200,  surface_combatants: 16,  submarines: 5  },
   CA: { fighters: 87,   helicopters: 180,  drones: 18,  land_vehicles: 1800,  surface_combatants: 12,  submarines: 4  },
-  IL: { fighters: 354,  helicopters: 190,  drones: 100, land_vehicles: 4800,  surface_combatants: 6,   submarines: 5  },
-  TR: { fighters: 207,  helicopters: 500,  drones: 120, land_vehicles: 8000,  surface_combatants: 24,  submarines: 12 },
+  IL: { fighters: 354,  helicopters: 150,  drones: 132, land_vehicles: 4800,  surface_combatants: 21,  submarines: 5  },
+  TR: { fighters: 207,  helicopters: 342,  drones: 120, land_vehicles: 8000,  surface_combatants: 24,  submarines: 12 },
   ES: { fighters: 142,  helicopters: 190,  drones: 6,   land_vehicles: 2600,  surface_combatants: 17,  submarines: 4  },
   PL: { fighters: 128,  helicopters: 230,  drones: 10,  land_vehicles: 3800,  surface_combatants: 4,   submarines: 4  },
   NL: { fighters: 61,   helicopters: 50,   drones: 8,   land_vehicles: 600,   surface_combatants: 12,  submarines: 4  },
@@ -1220,6 +1220,122 @@ const CAPABILITY_DETAILS = {
       { model: "Jangbogo-III (KSS-III) SSK", count: 3, manufacturer: "Daewoo Shipbuilding (DSME)" },
     ],
   },
+  TR: {
+    fighters: [
+      { model: "F-16C/D Block 40/50 Fighting Falcon", count: 157, manufacturer: "Lockheed Martin / TAI" },
+      { model: "F-16C/D Block 70 (ordered, deliveries 2024+)", count: 40, manufacturer: "Lockheed Martin" },
+      { model: "F-4E/2020 Terminator (multi-role, phasing)", count: 10, manufacturer: "IAI / TAI" },
+    ],
+    helicopters: [
+      { model: "T129 ATAK (attack)", count: 51, manufacturer: "TAI / AgustaWestland" },
+      { model: "S-70B Seahawk (naval ASW)", count: 24, manufacturer: "Sikorsky / TAI" },
+      { model: "UH-60 Black Hawk (utility)", count: 96, manufacturer: "Sikorsky / TAI" },
+      { model: "AS532UL Cougar (CSAR / special ops)", count: 40, manufacturer: "Airbus Helicopters / TAI" },
+      { model: "CH-47F Chinook (heavy lift)", count: 25, manufacturer: "Boeing" },
+      { model: "AH-1W Super Cobra (attack, ageing)", count: 28, manufacturer: "Bell Helicopter" },
+      { model: "S-70A Black Hawk (land forces)", count: 50, manufacturer: "Sikorsky / TAI" },
+      { model: "AB205 / UH-1H Iroquois (utility, phasing)", count: 40, manufacturer: "Bell / TAI" },
+      { model: "NH90 TTH (army transport, ordered)", count: 8, manufacturer: "NHIndustries / TAI" },
+    ],
+    drones: [
+      { model: "Bayraktar TB2 MALE", count: 60, manufacturer: "Baykar" },
+      { model: "Bayraktar Akıncı MALE/UCAV", count: 25, manufacturer: "Baykar" },
+      { model: "Anka-S MALE (TAI)", count: 12, manufacturer: "Turkish Aerospace Industries" },
+      { model: "Aksungur MALE", count: 6, manufacturer: "Turkish Aerospace Industries" },
+      { model: "Vestel Karayel-SU MALE", count: 17, manufacturer: "Vestel Defence" },
+    ],
+    land_vehicles: [
+      { model: "M60T Sabra / M60TM MBT", count: 170, manufacturer: "IMI Systems / Roketsan" },
+      { model: "Leopard 2A4 MBT", count: 354, manufacturer: "Krauss-Maffei Wegmann" },
+      { model: "M60A3 TTS MBT", count: 756, manufacturer: "General Dynamics" },
+      { model: "Altay MBT (limited production)", count: 30, manufacturer: "BMC / Roketsan" },
+      { model: "ACV-15 IFV (AIFV)", count: 650, manufacturer: "FMC / BMC / FNSS" },
+      { model: "FNSS ACV-19 IFV", count: 260, manufacturer: "FNSS Defence Systems" },
+      { model: "KIRPI MRAP (variants)", count: 700, manufacturer: "BMC" },
+      { model: "M113 APC (variants)", count: 2000, manufacturer: "BAE Systems / FNSS" },
+    ],
+    surface_combatants: [
+      { model: "BARBAROS-class FFG (MEKO 200TN)", count: 4, manufacturer: "Blohm+Voss / Aselsan" },
+      { model: "GABYA-class FFG (Oliver Hazard Perry)", count: 8, manufacturer: "Bath Iron Works / HAVELSAN" },
+      { model: "MİLGEM Ada-class corvette", count: 4, manufacturer: "Istanbul Naval Shipyard" },
+      { model: "Burak-class fast attack craft", count: 8, manufacturer: "Taskizak Naval Shipyard" },
+    ],
+    submarines: [
+      { model: "Preveze-class SSK (Type 209/1400)", count: 4, manufacturer: "HDW / Gölcük Shipyard" },
+      { model: "Gür-class SSK (Type 209/1200)", count: 4, manufacturer: "HDW / Gölcük Shipyard" },
+      { model: "Ay-class SSK (Type 209/1200)", count: 4, manufacturer: "HDW / Gölcük Shipyard" },
+    ],
+  },
+  IL: {
+    fighters: [
+      { model: "F-35I Adir (stealth multi-role)", count: 36, manufacturer: "Lockheed Martin" },
+      { model: "F-15I Ra'am (long-range strike)", count: 25, manufacturer: "Boeing" },
+      { model: "F-15C/D Baz (air superiority)", count: 50, manufacturer: "Boeing" },
+      { model: "F-16D Brakeet / F-16I Sufa (multi-role)", count: 243, manufacturer: "Lockheed Martin / IAI" },
+    ],
+    helicopters: [
+      { model: "AH-64D/E Apache Saraf (attack)", count: 50, manufacturer: "Boeing" },
+      { model: "UH-60 Black Hawk Yanshuf (utility)", count: 50, manufacturer: "Sikorsky" },
+      { model: "CH-53 Yas'ur (heavy lift)", count: 24, manufacturer: "Sikorsky" },
+      { model: "AW109 / Bell 206 (light utility / training)", count: 26, manufacturer: "AgustaWestland / Bell" },
+    ],
+    drones: [
+      { model: "Heron 1 / Heron TP MALE", count: 32, manufacturer: "IAI" },
+      { model: "Hermes 450 MALE", count: 38, manufacturer: "Elbit Systems" },
+      { model: "Hermes 900 MALE", count: 12, manufacturer: "Elbit Systems" },
+      { model: "HAROP loitering munition", count: 100, manufacturer: "IAI", is_expendable: true },
+      { model: "Skylark III tactical UAS", count: 50, manufacturer: "Elbit Systems" },
+    ],
+    land_vehicles: [
+      { model: "Merkava Mk.4M / 4 Barak MBT", count: 800, manufacturer: "MANTAK (Israeli Ministry of Defense)" },
+      { model: "Merkava Mk.3 MBT (reserve)", count: 600, manufacturer: "MANTAK" },
+      { model: "Namer APC (Merkava hull)", count: 200, manufacturer: "MANTAK" },
+      { model: "M113 APC (variants, reserve)", count: 800, manufacturer: "BAE Systems" },
+      { model: "Eitan 8×8 APC", count: 150, manufacturer: "Israeli Ministry of Defense" },
+    ],
+    surface_combatants: [
+      { model: "Sa'ar 6 Magen-class corvette", count: 4, manufacturer: "ThyssenKrupp Marine Systems" },
+      { model: "Sa'ar 5 Eilat-class corvette", count: 3, manufacturer: "Northrop Grumman / IAI" },
+      { model: "Super Dvora Mk.III / Shaldag fast attack", count: 14, manufacturer: "IAI / Ramta" },
+    ],
+    submarines: [
+      { model: "Dolphin II-class SSK", count: 3, manufacturer: "ThyssenKrupp Marine Systems" },
+      { model: "Dolphin-class SSK", count: 2, manufacturer: "HDW / ThyssenKrupp" },
+    ],
+  },
+  AU: {
+    fighters: [
+      { model: "F/A-18F Super Hornet (multi-role)", count: 24, manufacturer: "Boeing" },
+      { model: "EA-18G Growler (EW / SEAD)", count: 12, manufacturer: "Boeing" },
+      { model: "F-35A Lightning II", count: 64, manufacturer: "Lockheed Martin" },
+    ],
+    helicopters: [
+      { model: "MH-60R Seahawk (naval ASW)", count: 24, manufacturer: "Sikorsky" },
+      { model: "MRH90 Taipan (utility, retired mid-2023)", count: 40, manufacturer: "NHIndustries / Airbus" },
+      { model: "CH-47F Chinook (heavy lift)", count: 10, manufacturer: "Boeing" },
+      { model: "ARH Tiger (armed recon)", count: 22, manufacturer: "Airbus Helicopters" },
+      { model: "EC135 Eurocopter (training)", count: 15, manufacturer: "Airbus Helicopters", is_trainer: true },
+    ],
+    drones: [
+      { model: "MQ-4C Triton HALE (JORN supplement)", count: 3, manufacturer: "Northrop Grumman" },
+      { model: "MQ-9B SkyGuardian MALE", count: 3, manufacturer: "General Atomics" },
+      { model: "Heron I MALE (leased)", count: 2, manufacturer: "IAI" },
+    ],
+    land_vehicles: [
+      { model: "M1A1 AIM Abrams MBT (upgrade to M1A2)", count: 59, manufacturer: "General Dynamics Land Systems" },
+      { model: "ASLAV IFV (ASLAVs-25)", count: 257, manufacturer: "General Dynamics Canada" },
+      { model: "Bushmaster PMV", count: 1000, manufacturer: "Thales Australia" },
+      { model: "Hawkei PMV-L", count: 1100, manufacturer: "Thales Australia" },
+    ],
+    surface_combatants: [
+      { model: "Hobart-class DDG (Air Warfare Destroyer)", count: 3, manufacturer: "ASC / Navantia" },
+      { model: "Anzac-class FFH", count: 8, manufacturer: "Tenix Defence / ASC" },
+      { model: "Arafura-class OPV (in build)", count: 2, manufacturer: "Luerssen / ASC" },
+    ],
+    submarines: [
+      { model: "Collins-class SSK", count: 6, manufacturer: "ASC / Kockums" },
+    ],
+  },
 };
 
 // Derives capability summary from CAPABILITY_DETAILS where available (authoritative),
@@ -1520,6 +1636,147 @@ const PLATFORM_WIKI_TITLES = {
   "Shishumar-class SSK (Type 209)":   "Type 209 submarine",
   "Arihant-class SSBN":               "Arihant-class submarine",
   "Type 212A SSK":                    "Type 212 submarine",
+  // ── Missing FR drone entry ───────────────────────────────────────────────
+  "MQ-9A Reaper MALE (ISR / strike)":            "General Atomics MQ-9 Reaper",
+  // ── TR drones ───────────────────────────────────────────────────────────
+  "Bayraktar TB2 MALE":                          "Bayraktar TB2",
+  "Bayraktar Akıncı MALE/UCAV":                 "Bayraktar Akıncı",
+  "Anka-S MALE (TAI)":                           "TAI Anka",
+  "Aksungur MALE":                               "TAI Aksungur",
+  "Vestel Karayel-SU MALE":                      "Vestel Karayel",
+  // ── IL drones ───────────────────────────────────────────────────────────
+  "Heron 1 / Heron TP MALE":                     "IAI Heron",
+  "Hermes 450 MALE":                             "Elbit Hermes 450",
+  "Hermes 900 MALE":                             "Elbit Hermes 900",
+  "HAROP loitering munition":                    "IAI Harop",
+  "Skylark III tactical UAS":                    "Elbit Skylark",
+  // ── AU drones ───────────────────────────────────────────────────────────
+  "MQ-4C Triton HALE (JORN supplement)":         "Northrop Grumman MQ-4C Triton",
+  "MQ-9B SkyGuardian MALE":                      "General Atomics MQ-9 Reaper",
+  "Heron I MALE (leased)":                       "IAI Heron",
+};
+
+// Static Wikimedia fallback images for capability breakdown platforms.
+// Keys are the EXACT model strings from CAPABILITY_DETAILS.
+// Uses Special:FilePath redirects (survive file renames on Commons).
+const WKP = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+const STATIC_PLATFORM_IMAGES = {
+  // ── Drones / UAVs ─────────────────────────────────────────────────────────
+  "MQ-9A Reaper MALE (ISR / strike)":                         WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
+  "MQ-9A/B Reaper (MALE / strike)":                           WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
+  "Protector RG Mk.1 (MQ-9B SkyGuardian, MALE)":             WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
+  "MQ-9A Reaper (ISTAR / strike, MALE)":                      WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
+  "MQ-9B Sea Guardian MALE (maritime ISR)":                    WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
+  "MQ-9B SeaGuardian MALE (Maritime patrol)":                  WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
+  "MQ-9B SkyGuardian MALE":                                   WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
+  "MQ-1C Gray Eagle (MALE, Army)":                            WKP + "MQ-1C_Gray_Eagle.jpg",
+  "RQ-4 Global Hawk / MQ-4C Triton (HALE)":                  WKP + "Global_Hawk.jpg",
+  "RQ-4B Global Hawk (HALE strategic ISR)":                   WKP + "Global_Hawk.jpg",
+  "MQ-4C Triton HALE (JORN supplement)":                      WKP + "MQ-4C_Triton.jpg",
+  "Patroller MALE SDT (Army ISR)":                            WKP + "Safran_Patroller_MALE_UAS.jpg",
+  "Harfang SIDM MALE (phasing out)":                          WKP + "Harfang_uav.jpg",
+  "nEUROn UCAV (technology demonstrator)":                    WKP + "Dassault_nEUROn.jpg",
+  "Parrot ANAFI Ai / DRAC nano (infantry ISR, ~500 units)":   WKP + "Parrot_ANAFI_Ai.jpg",
+  "Bayraktar TB2 MALE":                                       WKP + "Bayraktar_TB2_UAS.jpg",
+  "Bayraktar Akıncı MALE/UCAV":                              WKP + "Bayraktar_Akinci.jpg",
+  "Wing Loong II MALE (ISR / strike)":                        WKP + "WingLoong_II.jpg",
+  "Wing Loong I/II MALE":                                     WKP + "WingLoong_II.jpg",
+  "CH-4 / CH-5 Rainbow MALE":                                 WKP + "CH-4_UAV.jpg",
+  "CH-4 Rainbow MALE":                                        WKP + "CH-4_UAV.jpg",
+  "Heron I / Heron TP MALE":                                  WKP + "IAI_Heron_1.jpg",
+  "Heron 1 MALE (leased from IAI)":                           WKP + "IAI_Heron_1.jpg",
+  "Heron I MALE (leased)":                                    WKP + "IAI_Heron_1.jpg",
+  "Heron TP MALE":                                            WKP + "Heron_TP_IAI.jpg",
+  "Heron 1 / Heron TP MALE":                                  WKP + "IAI_Heron_1.jpg",
+  "Watchkeeper WK450 (tactical ISR, >150 kg)":               WKP + "Watchkeeper_WK450.jpg",
+  "Black Hornet PD-100 nano (SUAS infantry ISR)":             WKP + "Black_Hornet_Nano.jpg",
+  "RQ-11B Raven (nano hand-launched ISR)":                    WKP + "RQ-11_Raven.jpg",
+  "Forpost-R MALE (Searcher II derivative)":                  WKP + "IAI_Searcher_Mk2.jpg",
+  "Orion-E MALE / UCAV":                                      WKP + "Kronshtadt_Orion.jpg",
+  "Luna NG tactical UAS":                                     WKP + "EMT_Luna_NG.jpg",
+  "KZO battlefield reconnaissance UAS":                       WKP + "Kleinflugzeug_zur_Zielortung.jpg",
+  "Rustom-2 MALE (TAPAS-BH-201)":                             WKP + "DRDO_Rustom_2.jpg",
+  // ── Fighters ──────────────────────────────────────────────────────────────
+  "F-35A/B/C Lightning II":                                   WKP + "F-35A_CTOL_variant.jpg",
+  "F-35A Lightning II":                                       WKP + "F-35A_CTOL_variant.jpg",
+  "F-35B Lightning II (STOVL)":                               WKP + "F-35A_CTOL_variant.jpg",
+  "F-35B (STOVL)":                                            WKP + "F-35A_CTOL_variant.jpg",
+  "F-22A Raptor (air superiority)":                           WKP + "F-22_Raptor_edit1_(cropped).jpg",
+  "F-15C/D/E Strike Eagle":                                   WKP + "F-15EX_Eagle_II_in_flight.jpg",
+  "F-16C/D Fighting Falcon (USAF / ANG)":                     WKP + "F-16_June_2008.jpg",
+  "F-16C/D Fighting Falcon (KF-16)":                         WKP + "F-16_June_2008.jpg",
+  "F/A-18E/F Super Hornet / EA-18G Growler":                  WKP + "F-A-18E_Super_Hornet_breaking_the_sound_barrier_(July_7,_1999).jpg",
+  "Su-57 Felon (5th gen stealth)":                           WKP + "Su-57_Felon.jpg",
+  "J-20 Mighty Dragon (stealth)":                             WKP + "Chengdu_J-20_20170919.jpg",
+  "Rafale F3-R / F4 (Air Force)":                             WKP + "Dassault_Rafale_C_(cropped).jpg",
+  "Rafale M F3-R (Navy carrier)":                             WKP + "Dassault_Rafale_C_(cropped).jpg",
+  "Eurofighter Typhoon (multi-role)":                         WKP + "Eurofighter_Typhoon_(Ala_11)_MG_3894_(15939726449).jpg",
+  "Typhoon FGR4 (multi-role)":                                WKP + "Eurofighter_Typhoon_(Ala_11)_MG_3894_(15939726449).jpg",
+  "Mirage 2000D (strike / SEAD)":                             WKP + "Mirage_2000C_Dijon_2012.jpg",
+  "Mirage 2000-5F (air defense)":                             WKP + "Mirage_2000C_Dijon_2012.jpg",
+  "Mirage 2000H/TH Vajra":                                    WKP + "Mirage_2000C_Dijon_2012.jpg",
+  "Su-30MKI Flanker-H":                                       WKP + "Su-30MKI_at_Aero_India_2007.jpg",
+  "B-52H Stratofortress (strategic bomber)":                  WKP + "B-52H_Stratofortress.jpg",
+  "B-2A Spirit (stealth bomber)":                             WKP + "B-2_spirit_bombing.jpg",
+  "A-10C Thunderbolt II (CAS)":                               WKP + "A-10_Thunderbolt_II_In-flight-2.jpg",
+  "KF-21 Boramae (initial batch)":                            WKP + "KAI_KF-21_Boramae_first_flight.jpg",
+  // ── Helicopters ───────────────────────────────────────────────────────────
+  "UH-60 Black Hawk (all variants)":                          WKP + "Uh-60_blackhawk.jpg",
+  "AH-64D/E Apache":                                          WKP + "AH-64D_Apache_Longbow.jpg",
+  "AH-64D Apache":                                            WKP + "AH-64D_Apache_Longbow.jpg",
+  "AH-64E Apache Guardian (attack)":                          WKP + "AH-64D_Apache_Longbow.jpg",
+  "CH-47F Chinook":                                           WKP + "CH-47_Chinook.jpg",
+  "Chinook HC6 / HC6A (heavy lift)":                         WKP + "CH-47_Chinook.jpg",
+  "Tiger HAD / HAP (attack)":                                 WKP + "Tigre_HAP.jpg",
+  "NH90 TTH (army transport)":                                WKP + "NH90_TTH_1.jpg",
+  "NH90 NFH Caiman Marine (naval ASW)":                       WKP + "NH90_TTH_1.jpg",
+  "EC725 Caracal (CSAR / special ops)":                       WKP + "H225M_Caracal_Malaysian_Air_Force.jpg",
+  "AS 532 Cougar (heavy assault)":                            WKP + "AS_532_Cougar_FLIR.jpg",
+  "SA 341/342 Gazelle (recon / anti-tank)":                   WKP + "Eurocopter_Gazelle_of_the_French_Army.jpg",
+  "AS 565 Panther (naval patrol, retiring)":                  WKP + "AS565_Panther_Samp_T.jpg",
+  "Fennec AS 555 (light utility)":                            WKP + "AS565_Panther_Samp_T.jpg",
+  "Merlin HM2 / HC4 (naval & support)":                      WKP + "Merlin_HM2_ZJ116_(9457988891).jpg",
+  "Wildcat AH1 / HMA2 (army & naval)":                       WKP + "Merlin_HM2_ZJ116_(9457988891).jpg",
+  // ── Land – Tanks ──────────────────────────────────────────────────────────
+  "M1A2 SEP v3 Abrams MBT":                                   WKP + "M1A2_Abrams.jpg",
+  "M1A1 Abrams MBT":                                          WKP + "M1A2_Abrams.jpg",
+  "M1A2S Abrams MBT":                                         WKP + "M1A2_Abrams.jpg",
+  "Leclerc MBT":                                              WKP + "Leclerc_tank_HD.jpg",
+  "Leopard 2A6 / 2A7 / 2A7V MBT":                            WKP + "Leopard_2A7_(Randers_2022).jpg",
+  "Challenger 2 / 2 LEP MBT":                                 WKP + "Challenger_2_Bovington.jpg",
+  "K2 Black Panther MBT":                                     WKP + "K2_Black_Panther.jpg",
+  "T-72B3 / T-72B3M MBT":                                     WKP + "T-72B3.jpg",
+  "T-90A / T-90M Proryv MBT":                                 WKP + "T-90M_Proryv_parade.jpg",
+  "T-14 Armata MBT (limited series)":                         WKP + "T-14_Armata.jpg",
+  // ── Land – IFV / APC ──────────────────────────────────────────────────────
+  "VBCI IFV 8×8":                                            WKP + "VBCI_2010.jpg",
+  "Griffon VBMR 6×6 APC":                                    WKP + "VBMR_Griffon.jpg",
+  "AMX-10RC (wheeled fire support)":                          WKP + "AMX-10RC.jpg",
+  "Jaguar EBRC 6×6 (reconnaissance)":                        WKP + "Jaguar_EBRC_Satory_2022.jpg",
+  "VAB APC (variants)":                                       WKP + "VAB_APC.jpg",
+  "Serval VBMR-L (light protected APC)":                     WKP + "VBMR_Griffon_SCORPION.jpg",
+  "Puma IFV (VJTF-upgraded)":                                 WKP + "Puma_Heer_2020_Koblenz.jpg",
+  "Marder 1A5 IFV (in storage / Ukraine aid)":               WKP + "Marder_IFV_2.jpg",
+  "Boxer 8×8 MRAV":                                           WKP + "Boxer_MRAV.jpg",
+  "GTK Boxer MRAV (troop carrier)":                           WKP + "Boxer_MRAV.jpg",
+  "M2A3 Bradley IFV":                                         WKP + "Bradley_IFV_Front.jpg",
+  "M2A2 Bradley IFV":                                         WKP + "Bradley_IFV_Front.jpg",
+  "Stryker 8×8 (variants)":                                   WKP + "Stryker_2.jpg",
+  "K21 IFV":                                                  WKP + "K21_IFV.jpg",
+  "BMP-2 / BMP-2M IFV":                                       WKP + "BMP-2.jpg",
+  "BMP-3 IFV":                                                WKP + "BMP-3.jpg",
+  // ── Naval – Surface ───────────────────────────────────────────────────────
+  "Arleigh Burke-class DDG":                                   WKP + "USS_Arleigh_Burke_(DDG-51)_FRAMv1.jpg",
+  "Type 45 Daring-class DDG":                                 WKP + "HMS_Diamond_(D34)_MOD_45147547.jpg",
+  "FREMM Aquitaine-class FFG":                                WKP + "FREMM_DA_Martinengo.jpg",
+  "Queen Elizabeth-class CVF":                                WKP + "HMS_Queen_Elizabeth_(R08)_(41426987832).jpg",
+  "Charles de Gaulle CVN":                                    WKP + "Charles_de_Gaulle_porte-avions.jpg",
+  "Mistral-class LHD":                                        WKP + "Mistral_class_BPC.jpg",
+  // ── Naval – Submarines ────────────────────────────────────────────────────
+  "Virginia-class SSN":                                        WKP + "USS_Virginia_(SSN_774)_underway.jpg",
+  "Suffren-class SSN (Barracuda programme)":                  WKP + "Suffren_at_Cape_Brun_off_Toulon_on_26_July_2020.jpg",
+  "Vanguard-class SSBN":                                       WKP + "HMS_Vanguard_(S28).jpg",
+  "Astute-class SSN":                                          WKP + "HMS_Astute_at_HMNB_Clyde.jpg",
 };
 
 function useCountUp(target, duration = 900) {
@@ -1888,7 +2145,9 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
     [countryCode, cat.key]
   );
   const total = details.reduce((s, d) => s + (d.count ?? 0), 0);
-  const maxCount = details.length > 0 ? Math.max(...details.map(d => d.count ?? 0)) : 0;
+  // Exclude expendable items from scale so bars are meaningful
+  const nonExpendable = details.filter(d => !d.is_expendable);
+  const maxCount = nonExpendable.length > 0 ? Math.max(...nonExpendable.map(d => d.count ?? 0)) : 0;
 
   const [platformImages, setPlatformImages] = useState({});
   const [imgErrors, setImgErrors] = useState({});
@@ -1959,7 +2218,9 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
             item={item}
             cat={cat}
             maxCount={maxCount}
-            imgSrc={!imgErrors[item.model] ? platformImages[item.model] : undefined}
+            imgSrc={!imgErrors[item.model]
+              ? (platformImages[item.model] || STATIC_PLATFORM_IMAGES[item.model])
+              : undefined}
             onImgError={() => setImgErrors(prev => ({ ...prev, [item.model]: true }))}
           />
         ))}
