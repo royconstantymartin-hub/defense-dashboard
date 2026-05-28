@@ -4,7 +4,6 @@ import axios from "axios";
 import {
   Activity,
   Globe,
-  FileText,
   Package,
   LayoutDashboard,
   Handshake,
@@ -17,7 +16,6 @@ import {
   Rss,
   Bell,
   Bookmark,
-  FileCheck,
   Lock
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
@@ -36,10 +34,8 @@ const navItems = [
   { path: "/market-data", icon: TrendingUp, label: "Market Data" },
   { path: "/private-players", icon: Lock, label: "Private Players" },
   { path: "/expenditures", icon: Globe, label: "Countries" },
-  { path: "/regulations", icon: FileText, label: "Regulations", inProgress: true },
   { path: "/products", icon: Package, label: "Products" },
   { path: "/follow", icon: Rss, label: "Sources", inProgress: true },
-  { path: "/contracts", icon: FileCheck, label: "Contracts", inProgress: true },
   { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
 ];
 

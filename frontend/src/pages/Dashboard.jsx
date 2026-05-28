@@ -109,6 +109,7 @@ export default function Dashboard() {
   const [recentNews, setRecentNews] = useState([]);
   const [recentMA, setRecentMA] = useState([]);
   const [expenditures, setExpenditures] = useState([]);
+  const [productCount, setProductCount] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   // Timestamp set once at fetch time — not on every render
@@ -147,18 +148,20 @@ export default function Dashboard() {
     setLoading(true);
     setError(false);
     try {
-      const [statsRes, playersRes, newsRes, expendituresRes, maRes] = await Promise.all([
+      const [statsRes, playersRes, newsRes, expendituresRes, maRes, productsRes] = await Promise.all([
         axios.get(`${API}/dashboard/stats`),
         axios.get(`${API}/defense-players`),
         axios.get(`${API}/news?limit=5&hours=48`),
         axios.get(`${API}/expenditures?year=2024`),
         axios.get(`${API}/ma-activities`),
+        axios.get(`${API}/products`).catch(() => ({ data: [] })),
       ]);
       setStats(statsRes.data);
       setPlayers(playersRes.data);
       setRecentNews(newsRes.data);
       setExpenditures(expendituresRes.data);
       setRecentMA(maRes.data);
+      setProductCount((productsRes.data || []).length);
       setFetchedAt(new Date());
       // Fetch live prices right after players load
       fetchLivePrices(playersRes.data);
@@ -417,7 +420,7 @@ export default function Dashboard() {
       </div>
 
       {/* Key Metrics — cliquables */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Link to="/market-data">
           <MetricCard
             label="TOTAL MARKET CAP"
@@ -452,6 +455,15 @@ export default function Dashboard() {
             subtext="Deals in database"
             icon={Handshake}
             testId="metric-ma"
+          />
+        </Link>
+        <Link to="/products">
+          <MetricCard
+            label="DEFENSE SYSTEMS"
+            value={productCount ?? "—"}
+            subtext="Products in catalog"
+            icon={Database}
+            testId="metric-products"
           />
         </Link>
       </div>
@@ -625,7 +637,7 @@ export default function Dashboard() {
       </div>
 
       {/* Bottom Section */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-3 gap-6">
         {/* Top Expenditures Chart */}
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
@@ -676,6 +688,66 @@ export default function Dashboard() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent M&A Deals */}
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 pb-4 bg-slate-50/50">
+            <div className="flex items-center justify-between">
+              <CardTitle className="font-heading text-lg text-slate-900">Recent M&amp;A</CardTitle>
+              <Link to="/ma-activity" className="text-xs text-blue-700 hover:text-blue-900 flex items-center gap-1 font-medium">
+                View All <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {recentMA.length === 0 ? (
+              <div className="p-8 text-center text-slate-500 text-sm">No M&amp;A activity</div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {[...recentMA]
+                  .sort((a, b) => new Date(b.announced_date) - new Date(a.announced_date))
+                  .slice(0, 5)
+                  .map((deal) => {
+                    const statusColor = {
+                      completed: "text-emerald-600 bg-emerald-50",
+                      pending:   "text-amber-600 bg-amber-50",
+                      announced: "text-blue-600 bg-blue-50",
+                      cancelled: "text-rose-600 bg-rose-50",
+                    }[deal.status] || "text-slate-600 bg-slate-100";
+                    const value = deal.deal_value
+                      ? (deal.deal_value >= 1000
+                          ? `$${(deal.deal_value / 1000).toFixed(1)}B`
+                          : `$${deal.deal_value}M`)
+                      : null;
+                    const ago = relativeTime(deal.announced_date);
+                    return (
+                      <div key={deal.id} className="px-4 py-3 hover:bg-slate-50 transition-colors">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-xs font-semibold text-slate-800 leading-snug flex-1">
+                            <span className="text-slate-900">{deal.acquirer}</span>
+                            <span className="text-slate-400 mx-1">→</span>
+                            <span className="text-slate-700">{deal.target}</span>
+                          </p>
+                          <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 ${statusColor}`}>
+                            {deal.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                          {value && (
+                            <span className="font-mono text-xs font-semibold text-slate-900">{value}</span>
+                          )}
+                          {deal.deal_type && (
+                            <span className="text-[10px] text-slate-400 capitalize">{deal.deal_type.replace("_", " ")}</span>
+                          )}
+                          {ago && <span className="text-[10px] text-slate-400 ml-auto">{ago}</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -848,6 +920,7 @@ const METRIC_COLORS = {
   "GLOBAL EXPENDITURE":   { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
   "TRACKED PLAYERS":      { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
   "M&A TRACKED":          { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
+  "DEFENSE SYSTEMS":      { iconCls: "text-slate-600",  bgCls: "bg-slate-100", topBorder: "border-t-2 border-t-slate-400" },
 };
 
 function MetricCard({ label, value, subtext, icon: Icon, testId }) {
