@@ -774,20 +774,16 @@ export function getClearbitUrl(name) {
   return null;
 }
 
-// Returns ordered list of logo URLs to try: [wikipedia?, clearbit?, google-favicon?]
-// Google Favicon is skipped for TLDs that return a generic globe icon (HTTP 200)
-// with no custom favicon, which fools the onerror handler.
-// .com.ua is intentionally excluded — Ukrainian commercial startups have proper favicons.
+// FAVICON_SKIP_TLDS kept for PrivatePlayers.jsx which builds its own fallback chain from website domains.
 export const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in", ".gov.ua", ".org.tw", ".com.tw"];
 
+// Returns ordered list of logo URLs to try: [wikipedia?, clearbit?]
+// Google Favicon is intentionally excluded: it returns a generic globe icon (HTTP 200)
+// for sites without a custom favicon, which fools onError and shows a broken-looking globe.
 export function getLogoUrls(name) {
   const urls = [];
   if (COMPANY_WIKI_LOGOS[name]) urls.push(COMPANY_WIKI_LOGOS[name]);
   const domain = COMPANY_LOGOS[name];
-  if (domain) {
-    urls.push(`https://logo.clearbit.com/${domain}`);
-    const skipFavicon = FAVICON_SKIP_TLDS.some((tld) => domain.endsWith(tld));
-    if (!skipFavicon) urls.push(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
-  }
+  if (domain) urls.push(`https://logo.clearbit.com/${domain}`);
   return urls;
 }

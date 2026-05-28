@@ -543,12 +543,7 @@ function CompanyLogo({ activity, side, size = "md" }) {
   // Level 1 — Clearbit HD logo (size=128 ensures a crisp PNG, not a tiny favicon)
   if (level === 1 && domain) return logoBox(`https://logo.clearbit.com/${domain}?size=128`);
 
-  // Level 2 — Google Favicon V2 (sz=128)
-  if (level === 2 && domain) {
-    return logoBox(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=128`);
-  }
-
-  // Level 3 — Coloured initials avatar (no network call)
+  // Level 2 — Coloured initials avatar (no network call)
   return (
     <div className="relative shrink-0">
       <div className={`${sizeClass} rounded-xl overflow-hidden flex items-center justify-center border border-slate-200/60 ${avatarColor(name)}`}>
@@ -1184,7 +1179,6 @@ function PartyLogoSmall({ name, iso }) {
     );
   }
   if (lvl === 1 && domain) return box(`https://logo.clearbit.com/${domain}?size=64`);
-  if (lvl === 2 && domain) return box(`https://www.google.com/s2/favicons?domain=https://${domain}&sz=64`);
   return (
     <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${avatarColor(name)}`}>
       <span className="text-[8px] font-bold text-white">{initials(name)}</span>
