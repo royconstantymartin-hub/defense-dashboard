@@ -299,6 +299,19 @@ export const COMPANY_LOGOS = {
   "Roxel": "roxel-group.com",
   // Switzerland (General Dynamics acquisition)
   "MOWAG": "gd.com",
+  // Missing companies — case variants and subsidiaries
+  "Aerojet Rocketdyne": "aerojetrocketdyne.com",
+  "Bharat Forge": "bharatforge.com",
+  "Defendtex": "defendtex.com",
+  "Hanwha Systems": "hanwhasystems.com",
+  "Leonardo DRS": "leonardodrs.com",
+  "Mitsubishi Electric Defense": "mitsubishielectric.com",
+  "NEC Defense Systems": "nec.com",
+  "Otokar": "otokar.com",
+  "Saab Dynamics": "saab.com",
+  "Sabca": "sabca.be",
+  "Serco Group": "serco.com",
+  "ideaForge Technology": "ideaforgetech.com",
   // Defense Tech Startups
   "Harmattan AI": "harmattan.ai",
   "Harmattan.ai": "harmattan.ai",
@@ -642,6 +655,7 @@ export const COMPANY_WIKI_LOGOS = {
   // Kratos Defense — no confirmed Wikipedia logo, falls through to Clearbit (kratosdefense.com)
   "Teledyne Technologies":         WP + "Teledyne logo.svg",
   "SERCO Group":                   WP + "Serco_logo.svg",
+  "Serco Group":                   WP + "Serco_logo.svg",
   // Turkey
   "Roketsan":                      WP + "Roketsan_logo.svg",
   "Baykar":                        WP + "BaykarLogo.png",
@@ -726,6 +740,17 @@ export const COMPANY_WIKI_LOGOS = {
   "AEL Sistemas":               WP + "AEL_Sistemas_logo.svg",
   // Japan
   "Japan Marine United":        WP + "Japan_Marine_United_logo.svg",
+  // Additional missing companies
+  "Aerojet Rocketdyne":         WP + "Aerojet_Rocketdyne_logo.svg",
+  "Hanwha Systems":             WP + "Hanwha_logo.svg",
+  "Leonardo DRS":               WP + "Leonardo_DRS_logo.svg",
+  "Mitsubishi Electric Defense": WP + "Mitsubishi_Electric_logo.svg",
+  "NEC Defense Systems":        WP + "NEC_logo.svg",
+  "Otokar":                     WP + "Otokar_logo.svg",
+  "Saab Dynamics":              WP + "Saab_wordmark_blue.svg",
+  "Sabca":                      WP + "SABCA_logo.svg",
+  "Bharat Forge":               WP + "Bharat_Forge_logo.svg",
+  "ideaForge Technology":       WP + "IdeasForge_logo.svg",
 };
 
 export function getLogoDomain(name) {
@@ -750,11 +775,10 @@ export function getClearbitUrl(name) {
 }
 
 // Returns ordered list of logo URLs to try: [wikipedia?, clearbit?, google-favicon?]
-// Google Favicon is skipped for .cn and .ru domains — those return a generic globe
-// icon (HTTP 200) with no custom favicon, which fools the onerror handler.
-// These TLDs return a generic globe favicon (HTTP 200) for sites without a custom icon,
-// which fools the onerror handler. Skip Google Favicon for these; fall back to initials.
-const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in", ".com.ua", ".gov.ua", ".org.tw", ".com.tw"];
+// Google Favicon is skipped for TLDs that return a generic globe icon (HTTP 200)
+// with no custom favicon, which fools the onerror handler.
+// .com.ua is intentionally excluded — Ukrainian commercial startups have proper favicons.
+export const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in", ".gov.ua", ".org.tw", ".com.tw"];
 
 export function getLogoUrls(name) {
   const urls = [];
