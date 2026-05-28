@@ -21,6 +21,11 @@ import {
   ExternalLink,
   Search,
   X,
+  Shield,
+  FileText,
+  Crosshair,
+  BarChart2,
+  Scale,
 } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Link } from "react-router-dom";
@@ -781,19 +786,21 @@ export default function Dashboard() {
                       rel="noopener noreferrer"
                       className="block group relative overflow-hidden"
                     >
-                      {/* Image or gradient fallback */}
+                      {/* Image or category-themed fallback */}
                       <div className="relative h-44 bg-slate-100 overflow-hidden">
                         {item.image ? (
                           <img
                             src={item.image}
                             alt={item.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            onError={(e) => { e.target.style.display = "none"; }}
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.nextSibling && (e.target.nextSibling.style.display = "flex");
+                            }}
                           />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-slate-800">
-                            <Newspaper className="w-10 h-10 text-white/20" />
-                          </div>
+                        ) : null}
+                        {(!item.image) && (
+                          <CategoryImagePlaceholder category={item.category} />
                         )}
                         {/* Solid bottom overlay for text readability */}
                         <div className="absolute bottom-0 left-0 right-0 h-28 bg-black/65" />
@@ -845,19 +852,25 @@ export default function Dashboard() {
                         rel="noopener noreferrer"
                         className="flex items-start gap-3 p-3 hover:bg-slate-50 transition-colors group"
                       >
-                        {/* Thumbnail or colored placeholder */}
-                        <div className="w-16 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-100 relative">
+                        {/* Thumbnail or category-themed placeholder */}
+                        <div className="w-16 h-14 rounded-lg overflow-hidden shrink-0 relative">
                           {item.image ? (
-                            <img
-                              src={item.image}
-                              alt=""
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                              onError={(e) => { e.target.parentNode.classList.add("flex", "items-center", "justify-center"); e.target.style.display = "none"; }}
-                            />
+                            <>
+                              <img
+                                src={item.image}
+                                alt=""
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                onError={(e) => {
+                                  e.target.style.display = "none";
+                                  e.target.nextSibling && (e.target.nextSibling.style.display = "flex");
+                                }}
+                              />
+                              <div style={{ display: "none" }} className="w-full h-full absolute inset-0">
+                                <CategoryImagePlaceholder category={item.category} />
+                              </div>
+                            </>
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-slate-100">
-                              <Newspaper className="w-5 h-5 text-slate-300" />
-                            </div>
+                            <CategoryImagePlaceholder category={item.category} />
                           )}
                         </div>
 
@@ -902,6 +915,26 @@ export default function Dashboard() {
           onClose={() => setSelectedCompany(null)}
         />
       )}
+    </div>
+  );
+}
+
+const CATEGORY_VISUALS = {
+  CONFLICT:   { bg: "bg-rose-900",   Icon: Crosshair  },
+  CONTRACT:   { bg: "bg-blue-800",   Icon: FileText   },
+  "M&A":      { bg: "bg-emerald-800", Icon: Handshake },
+  TECHNOLOGY: { bg: "bg-violet-800", Icon: Zap        },
+  GEOPOLITICS:{ bg: "bg-slate-700",  Icon: Globe      },
+  POLICY:     { bg: "bg-slate-600",  Icon: Scale      },
+  EARNINGS:   { bg: "bg-green-800",  Icon: BarChart2  },
+  INDUSTRY:   { bg: "bg-slate-700",  Icon: Building2  },
+};
+
+function CategoryImagePlaceholder({ category, className = "" }) {
+  const { bg, Icon } = CATEGORY_VISUALS[category] || { bg: "bg-slate-700", Icon: Shield };
+  return (
+    <div className={`w-full h-full flex items-center justify-center ${bg} ${className}`}>
+      <Icon className="w-1/3 h-1/3 text-white/25" />
     </div>
   );
 }
