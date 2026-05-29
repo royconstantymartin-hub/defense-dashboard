@@ -162,7 +162,7 @@ export const COMPANY_LOGOS = {
   "EDGE Group": "edgegroup.ae",
   "Emirates Defence Industries": "edi.ae",
   "SAMI": "sami.com.sa",
-  "Paramount Group": "paramountgroup.biz",
+  "Paramount Group": "paramountgroup.com",
   "Denel": "denel.co.za",
   // China
   "AVIC": "avic.com.cn",
@@ -195,7 +195,7 @@ export const COMPANY_LOGOS = {
   "Milrem Robotics": "milremrobotics.com",
   "Terma A/S": "terma.com",
   "Dynamit Nobel Defence": "dynamit-nobel-defence.de",
-  "Theon Sensors": "theonsensors.com",
+  "Theon Sensors": "theon.com",
   "PZL Mielec": "pzlmielec.pl",
   // Private players — previously missing
   "Helsing": "helsing.ai",
@@ -457,7 +457,7 @@ export const COMPANY_LOGOS = {
   "Diamond Aircraft": "diamondaircraft.com",
   // UK — additional
   "Smiths Detection": "smithsdetection.com",
-  "Marshall Aerospace": "marshallaerospace.com",
+  "Marshall Aerospace": "marshallgroup.com",
   // Taiwan
   "AIDC": "aidc.com.tw",
   "NCSIST": "ncsist.org.tw",
@@ -693,9 +693,9 @@ export const COMPANY_WIKI_LOGOS = {
   "Helsing":                    WP + "Helsing_logo.svg",
   // Taiwan
   "AIDC":                       WP + "Aerospace_Industrial_Development_Corporation_logo.svg",
-  // Indonesia
-  "PT Dirgantara Indonesia":    WP + "Indonesian_Aerospace.svg",
-  "Pindad":                     WP + "Pindad_logo.svg",
+  // Indonesia — fixed filenames (confirmed on Wikipedia Commons)
+  "PT Dirgantara Indonesia":    WP + "Indonesian_Aerospace_logo.png",
+  "Pindad":                     "https://pindad.com/assets/img/theme-1/logo.png",
   // Czech Republic
   "Tatra Defence Vehicle":      WP + "Tatra_logo.svg",
   // Vietnam
@@ -751,6 +751,80 @@ export const COMPANY_WIKI_LOGOS = {
   "Sabca":                      WP + "SABCA_logo.svg",
   "Bharat Forge":               WP + "Bharat_Forge_logo.svg",
   "ideaForge Technology":       WP + "IdeasForge_logo.svg",
+
+  // ── Logos ajoutés après audit complet (mai 2026) ────────────────────────
+
+  // Pologne — conglomérats & industriels
+  "Polska Grupa Zbrojeniowa":   "https://logo.clearbit.com/pgzsa.pl",
+  "WB Electronics":             "https://www.wbgroup.pl/app/themes/wbgroup/dist/images/wbgroup-logo--en_fd9a668e.svg",
+  "HSW":                        WP + "Stalowa_Wola_logo.jpg",
+  "PCO SA":                     "https://logo.clearbit.com/pcosa.com.pl",
+  "AMZ-Kutno":                  "https://amz.pl/templates/default/img/logo.jpg",
+  "PZL Mielec":                 "https://logo.clearbit.com/pzlmielec.pl",
+
+  // République tchèque
+  "Czechoslovak Group":         WP + "Czechoslovak_Group_logo_2023.svg",
+  "Aero Vodochody":             WP + "AERO_Vodochody_logo.svg",
+  "RETIA":                      WP + "RETIA,_a.s._-_logo.svg",
+
+  // Roumanie
+  "IAR SA":                     "https://www.iar.ro/wp-content/uploads/2021/10/logo3.png",
+
+  // Émirats Arabes Unis & Arabie Saoudite
+  "EDGE Group":                 WP + "Edge_Group_Logo.svg",
+  "SAMI":                       WP + "SAMI_Logo.svg",
+  "Military Industries Corporation": "https://logo.clearbit.com/mic.com.sa",
+
+  // Afrique du Sud
+  "Paramount Group":            "https://logo.clearbit.com/paramountgroup.com",
+
+  // Malaisie & Asie du Sud-Est
+  "Destini Berhad":             "https://www.destinigroup.com/wp-content/uploads/2015/12/logo-1.png",
+
+  // Grèce
+  "Hellenic Aerospace Industry": WP + "Hellenic_Aerospace_logo_design.png",
+  "Intracom Defense Electronics": "https://logo.clearbit.com/intracomdefense.com",
+
+  // Japon
+  "Japan Steel Works":          WP + "JSW.svg",
+
+  // Italie
+  "Piaggio Aerospace":          WP + "Piaggio_Aerospace_Logo.svg",
+
+  // Autriche
+  "Steyr Arms":                 WP + "STEYR_ARMS_GmbH_Logo_2019.jpg",
+  "Diamond Aircraft":           WP + "Diamond_Aircraft_logo.svg",
+
+  // Royaume-Uni
+  "Marshall Aerospace":         "https://logo.clearbit.com/marshallgroup.com",
+
+  // Suède
+  "Saab Kockums":               WP + "Kockums.svg",
+
+  // Estonie
+  "Milrem Robotics":            WP + "MILREM_Robotics_Color.svg",
+
+  // Lettonie
+  "SAF Tehnika":                WP + "SAF_Tehnika_logo.jpg",
+
+  // Grèce — optronique
+  "Theon Sensors":              "https://logo.clearbit.com/theon.com",
+
+  // Allemagne
+  "Dynamit Nobel Defence":      "https://dn-defence.com/wp-content/uploads/2019/06/cropped-DND-Logo-blau_ohne-1.png",
+
+  // France — Lynred (ex-Sofradir, rebranded 2019)
+  "Sofradir":                   "https://www.lynred.com/themes/custom/black/logo.svg",
+  "Lynred":                     "https://www.lynred.com/themes/custom/black/logo.svg",
+
+  // Danemark
+  "Systematic A/S":             "https://logo.clearbit.com/systematic.com",
+
+  // USA — startups TLDs inhabituels
+  "Beta Technologies":          "https://beta.team/hubfs/Brand/BETA_Logo_Gray_Updated.png",
+
+  // Taiwan — gouvernement (FAVICON_SKIP_TLDS contourne favicon mais pas Wikipedia)
+  "NCSIST":                     WP + "NCSIST_logo.svg",
 };
 
 export function getLogoDomain(name) {
