@@ -1591,7 +1591,7 @@ async def run_news_scraper_job() -> dict:
                     {"url": doc["url"]},
                     {
                         "$set": doc,
-                        "$setOnInsert": {"publishedAt": pub_at_value},
+                        "$min": {"publishedAt": pub_at_value},
                     },
                     upsert=True,
                 )
