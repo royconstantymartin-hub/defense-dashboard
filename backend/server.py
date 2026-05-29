@@ -1586,9 +1586,13 @@ async def run_news_scraper_job() -> dict:
                     "covered_by":     article.get("covered_by", [src]),
                     "companies":      article.get("companies", []),
                 }
+                pub_at_value = doc.pop("publishedAt")
                 await db.news_articles.update_one(
                     {"url": doc["url"]},
-                    {"$set": doc},
+                    {
+                        "$set": doc,
+                        "$setOnInsert": {"publishedAt": pub_at_value},
+                    },
                     upsert=True,
                 )
                 saved += 1
