@@ -314,7 +314,10 @@ const LOGO_FALLBACK = {
 };
 
 // Initials avatar colour palette (deterministic by name)
-const AVATAR_COLORS = ["bg-slate-700"];
+const AVATAR_COLORS = [
+  "bg-slate-700", "bg-slate-600", "bg-blue-900",
+  "bg-zinc-600",  "bg-slate-800", "bg-indigo-800",
+];
 function avatarColor(name) {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
@@ -372,15 +375,13 @@ function resolveTargetCountry(activity) {
 
 function getStatusStyle(status) {
   switch (status) {
-    case "completed":    return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    case "completed":
     case "active":       return "bg-emerald-50 text-emerald-700 border-emerald-200";
-    case "pending":      return "bg-amber-50 text-amber-700 border-amber-200";
+    case "pending":
     case "under_review": return "bg-amber-50 text-amber-700 border-amber-200";
     case "announced":    return "bg-blue-50 text-blue-700 border-blue-200";
     case "cancelled":    return "bg-rose-50 text-rose-700 border-rose-200";
-    case "dissolved":    return "bg-slate-100 text-slate-500 border-slate-200";
-    case "exited":       return "bg-slate-100 text-slate-600 border-slate-200";
-    default:             return "bg-slate-100 text-slate-600 border-slate-200";
+    default:             return "bg-slate-100 text-slate-500 border-slate-200";
   }
 }
 
@@ -426,9 +427,9 @@ function getStatusBorderL(status) {
 
 function getDealSizeBadge(value) {
   if (!value || value === 0) return null;
-  if (value >= 5000)  return { label: "Mega deal",  cls: "bg-slate-800 text-white border-slate-700" };
-  if (value >= 1000)  return { label: "Large deal",  cls: "bg-slate-200 text-slate-700 border-slate-300" };
-  if (value >= 100)   return { label: "Mid-size",    cls: "bg-slate-100 text-slate-600 border-slate-200" };
+  if (value >= 5000)  return { label: "Mega deal",  cls: "bg-slate-100 text-slate-700 border-slate-300" };
+  if (value >= 1000)  return { label: "Large deal",  cls: "bg-slate-100 text-slate-600 border-slate-200" };
+  if (value >= 100)   return { label: "Mid-size",    cls: "bg-slate-100 text-slate-500 border-slate-200" };
   return null;
 }
 
@@ -452,23 +453,10 @@ function DealSep({ type }) {
 }
 
 function RoundBadge({ roundType }) {
-  const early  = "bg-blue-50 text-blue-800 border-blue-200";
-  const late   = "bg-slate-100 text-slate-600 border-slate-200";
-  const growth = "bg-amber-50 text-amber-700 border-amber-200";
-  const map = {
-    seed:     early,
-    series_a: early,
-    series_b: early,
-    series_c: late,
-    series_d: late,
-    series_e: late,
-    series_f: late,
-    growth:   growth,
-    buyout:   growth,
-  };
-  const label = roundType?.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase());
-  if (!map[roundType]) return null;
-  return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${map[roundType]}`}>{label}</span>;
+  const valid = new Set(["seed","series_a","series_b","series_c","series_d","series_e","series_f","growth","buyout"]);
+  if (!valid.has(roundType)) return null;
+  const label = roundType.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase());
+  return <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200">{label}</span>;
 }
 
 // Corporate suffixes to strip when doing fuzzy name matching
@@ -514,39 +502,30 @@ function getLogoDomain(activity, side) {
 //   3. Initiales colorées déterministes     — dernier recours, pas d'appel réseau
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  const [level, setLevel] = useState(1); // 1=clearbit 2=google 3=initials
+  const [failed, setFailed] = useState(false);
 
-  const name    = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
-  const country = activity[side === "acquirer" ? "acquirer_country" : "target_country"];
-  const domain  = getLogoDomain(activity, side);
+  const name   = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
+  const domain = getLogoDomain(activity, side);
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
   const textSize  = size === "sm" ? "text-[9px]" : "text-[11px]";
 
-  // Reset when the domain changes (different deal row)
-  useEffect(() => { setLevel(1); }, [domain, name]);
+  useEffect(() => { setFailed(false); }, [domain, name]);
 
-  function logoBox(src) {
+  if (!failed && domain) {
     return (
       <div className="relative shrink-0">
         <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
           <img
-            src={src}
+            src={`https://logo.clearbit.com/${domain}?size=128`}
             alt={name}
             className="w-full h-full object-contain p-1"
-            onError={() => setLevel(l => l + 1)}
+            onError={() => setFailed(true)}
           />
         </div>
       </div>
     );
   }
 
-  // Level 1 — Clearbit HD logo (size=128 ensures a crisp PNG, not a tiny favicon)
-  if (level === 1 && domain) return logoBox(`https://logo.clearbit.com/${domain}?size=128`);
-
-  // Level 2 — DuckDuckGo favicon (returns real 404 for unknown sites, unlike Google)
-  if (level === 2 && domain) return logoBox(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
-
-  // Level 3 — Coloured initials avatar (no network call)
   return (
     <div className="relative shrink-0">
       <div className={`${sizeClass} rounded-xl overflow-hidden flex items-center justify-center border border-slate-200/60 ${avatarColor(name)}`}>
@@ -1170,19 +1149,17 @@ const JV_EU_PROGRAMS = [
 // ── JV Programs table view ────────────────────────────────────────────────────
 
 function PartyLogoSmall({ name, iso }) {
-  const [lvl, setLvl] = useState(1);
+  const [failed, setFailed] = useState(false);
   const domain = LOGO_FALLBACK[name];
-  useEffect(() => { setLvl(1); }, [name]);
+  useEffect(() => { setFailed(false); }, [name]);
 
-  function box(src) {
+  if (!failed && domain) {
     return (
       <div className="w-7 h-7 rounded-lg bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center shrink-0">
-        <img src={src} alt={name} className="w-full h-full object-contain p-0.5" onError={() => setLvl(l => l + 1)} />
+        <img src={`https://logo.clearbit.com/${domain}?size=64`} alt={name} className="w-full h-full object-contain p-0.5" onError={() => setFailed(true)} />
       </div>
     );
   }
-  if (lvl === 1 && domain) return box(`https://logo.clearbit.com/${domain}?size=64`);
-  if (lvl === 2 && domain) return box(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
   return (
     <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${avatarColor(name)}`}>
       <span className="text-[8px] font-bold text-white">{initials(name)}</span>
@@ -2556,8 +2533,8 @@ export default function MAActivity() {
         {[
             { label: "TOTAL DEALS", value: filteredDeals.length, sub: DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900", testid: "kpi-total-deals" },
           { label: "TOTAL VALUE",  value: formatValue(totalValue), sub: "Disclosed only",       color: "text-slate-900",  testid: "kpi-total-value" },
-          { label: "IN PROGRESS",  value: filteredDeals.filter(a => ["announced","pending","under_review"].includes(a.status)).length, sub: "Announced + Pending", color: "text-amber-600",  testid: "kpi-in-progress" },
-          { label: "CLOSED",       value: filteredDeals.filter(a => ["completed","active"].includes(a.status)).length,                sub: "Completed + Active", color: "text-emerald-600", testid: "kpi-closed" },
+          { label: "IN PROGRESS",  value: filteredDeals.filter(a => ["announced","pending","under_review"].includes(a.status)).length, sub: "Announced + Pending", color: "text-slate-900",  testid: "kpi-in-progress" },
+          { label: "CLOSED",       value: filteredDeals.filter(a => ["completed","active"].includes(a.status)).length,                sub: "Completed + Active", color: "text-slate-900", testid: "kpi-closed" },
         ].map(s => (
           <Card key={s.label} className="bg-white border-slate-200 shadow-sm" data-testid={s.testid}>
             <CardContent className="p-4">
@@ -2617,7 +2594,7 @@ export default function MAActivity() {
                 }} />
                 <Bar yAxisId="count" dataKey="count" radius={[3, 3, 0, 0]}>
                   {quarterlyData.map((_, i) => (
-                    <Cell key={i} fill={i === quarterlyData.length - 1 ? "#1e40af" : "#dbeafe"} />
+                    <Cell key={i} fill={i === quarterlyData.length - 1 ? "#1e40af" : "#cbd5e1"} />
                   ))}
                 </Bar>
                 <Line
