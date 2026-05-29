@@ -3300,10 +3300,6 @@ function CountryProfileSection({ country, allExpenditures, onOpenContractsSheet 
       {selectedCompany && (
         <CompanyProfileSheet name={selectedCompany} onClose={() => setSelectedCompany(null)} />
       )}
-      <CountryContractsSheet
-        country={contractsSheetCountry}
-        onClose={() => setContractsSheetCountry(null)}
-      />
     </div>
   );
 }
@@ -4153,6 +4149,10 @@ export default function Expenditures() {
           </div>
         </CardContent>
       </Card>
+      <CountryContractsSheet
+        country={contractsSheetCountry}
+        onClose={() => setContractsSheetCountry(null)}
+      />
     </div>
   );
 }
