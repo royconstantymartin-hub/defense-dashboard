@@ -4137,6 +4137,240 @@ PRODUCTS_DATA = [
     {"name": "H-6K/N Badger", "manufacturer": "Xi'an Aircraft Industrial Corporation (XAC) / AVIC", "category": "aircraft", "product_type": "bomber", "specifications": {"role": "Strategic / maritime strike bomber", "length": "34.8 m", "max_speed": "1,050 km/h (Mach 0.86)", "ceiling": "13,000 m", "combat_radius": "3,500 km (H-6K)", "weapons": "H-6K: 6× CJ-20 / KD-20 ALCM (2,000+ km range); H-6N: 1× DF-21D ASBM under fuselage (air-launched)", "engine": "2× Soloviev D-30KP-2 turbofans (H-6K)", "operators": "PLAAF / PLAN Aviation (80 aircraft)"}, "materials": ["Aluminum alloy airframe (Tu-16 derived)", "D-30KP-2 turbofan engines", "CJ-20 land-attack cruise missile pylons"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f3/H-6K_bomber_2.jpg"},
     {"name": "Type 039/A/B Yuan-class SSK", "manufacturer": "Wuhan Shipyard / Jiangnan Shipyard (CSSC)", "category": "naval", "product_type": "submarine", "specifications": {"role": "Conventional / AIP patrol submarine (SSK)", "displacement": "1,850 t surfaced / 2,250 t submerged", "length": "77.6 m", "crew": "58", "speed_submerged": "20 kt", "armament": "6× 533mm torpedo tubes (Yu-6 torpedoes, YJ-18 ASCM, CY-5 ASROC)", "propulsion": "Diesel-electric + Stirling AIP (Type 039A/B)", "operators": "People's Liberation Army Navy (32 boats active: 20 Type 039/A + 12 Type 041)"}, "materials": ["Double-hull high-yield steel", "Stirling cycle AIP modules", "Integrated hull-mounted sonar"], "status": "active", "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Type_039A_Yuan-class_submarine.jpg"},
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # DRONES — Extended coverage (MALE, HALE, UCAV, tactical UAVs by country)
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    # Turkey — TAI / Baykar
+    {"name": "Baykar Akinci", "manufacturer": "Baykar", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "20 m", "payload": "1,350 kg", "ceiling": "40,000 ft", "endurance": "24 h", "max_speed": "361 km/h", "mtow": "6,000 kg"},
+     "materials": ["Carbon Fiber Composites", "High-Strength Alloys", "Stealth-reduced RCS airframe"], "status": "active",
+     "description": "Baykar's largest armed MALE UCAV, able to carry multiple air-to-surface munitions including Roketsan MAM-L, UMTAS and Teber smart micro-munitions. Ordered by Ukraine and several Middle East customers; first combat use 2023."},
+    {"name": "TAI ANKA-S", "manufacturer": "Turkish Aerospace Industries", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "17.5 m", "payload": "350 kg", "ceiling": "30,000 ft", "endurance": "24 h", "max_speed": "240 km/h", "range": "5,000 km satellite link"},
+     "materials": ["Carbon Fibre Reinforced Polymer", "Kevlar Composites"], "status": "active",
+     "description": "ANKA-S is the SATCOM-equipped intelligence, surveillance and armed variant of TAI's ANKA MALE platform. Capable of real-time satellite communications beyond line-of-sight and armed with MAM-L laser-guided micro-munitions. The main MALE programme of the Turkish Air Force."},
+    {"name": "TAI Aksungur", "manufacturer": "Turkish Aerospace Industries", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "24 m", "payload": "750 kg weapons + sensors", "ceiling": "40,000 ft", "endurance": "50 h", "max_speed": "280 km/h", "mtow": "3,300 kg"},
+     "materials": ["Carbon Fiber Reinforced Polymer", "Aluminum Alloys"], "status": "active",
+     "description": "Heavy naval/maritime patrol MALE UCAV developed by TAI for Turkey's Navy. Can carry up to six MAM-L smart micro-munitions or two Roketsan UMTAS anti-tank missiles alongside ISR payloads. First delivery to Turkish Naval Forces 2023."},
+
+    # Israel — Elbit / IAI
+    {"name": "Elbit Hermes 450", "manufacturer": "Elbit Systems", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "10.5 m", "payload": "180 kg", "ceiling": "18,000 ft", "endurance": "17 h", "max_speed": "176 km/h", "range": "200 km (LOS)"},
+     "materials": ["Carbon Fiber Composites", "Fiberglass"], "status": "active",
+     "description": "Elbit's medium-altitude long-endurance UAV, the world's most commercially successful tactical MALE platform exported to 15+ countries including UK (Watchkeeper basis), Brazil, Colombia, Azerbaijan, and Georgia. Battle-proven in conflicts from Afghanistan to Nagorno-Karabakh."},
+    {"name": "Elbit Hermes 900", "manufacturer": "Elbit Systems", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "15 m", "payload": "450 kg", "ceiling": "30,000 ft", "endurance": "36 h", "max_speed": "220 km/h", "mtow": "1,180 kg"},
+     "materials": ["Carbon Fiber Reinforced Polymer", "Aluminum Alloys"], "status": "active",
+     "description": "Elbit's upgraded MALE UCAV, an enlarged derivative of the Hermes 450 with increased payload and range for long-endurance ISR and armed missions. Operated by Israel, Brazil, Chile, Mexico, Azerbaijan, and European allies. Can carry EO/IR, SAR radar, SIGINT systems and guided munitions simultaneously."},
+    {"name": "IAI Heron 1 (Machatz-1)", "manufacturer": "Israel Aerospace Industries", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "16.6 m", "payload": "250 kg", "ceiling": "30,000 ft", "endurance": "52 h", "max_speed": "180 km/h", "range": "200 km (LOS) / satellite link available"},
+     "materials": ["Composite Airframe", "Carbon Fiber"], "status": "active",
+     "description": "IAI's most widely exported MALE UAV, operated by 20+ countries including India (leased for Himalayas border surveillance), Canada, Turkey, Germany (leased for Afghanistan), Singapore, and Australia. The Heron became the benchmark for medium-altitude persistent ISR after extensive operational use in Afghanistan."},
+    {"name": "IAI Eitan (Heron 10)", "manufacturer": "Israel Aerospace Industries", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "26 m", "payload": "2,700 kg (MTOW 4,650 kg)", "ceiling": "45,000 ft", "endurance": "70 h", "max_speed": "370 km/h", "mtow": "4,650 kg"},
+     "materials": ["Carbon Fiber Composites", "High-Strength Titanium Frames", "Low-Observable Coatings"], "status": "active",
+     "description": "IAI's largest and most capable HALE UAV, comparable in class to the US RQ-4 Global Hawk. Eitan is used exclusively by the Israeli Air Force for deep-penetration ISR missions, SIGINT, and maritime patrol in the Mediterranean and beyond. Equipped with a large ventral radome for multi-intelligence payloads. A certified civil-airspace version (Heron TP civil) has flown in European airspace."},
+
+    # China — AVIC / CASC
+    {"name": "CH-4B Rainbow (Caihong-4B)", "manufacturer": "CASC (China Academy of Aerospace Aerodynamics)", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "18 m", "payload": "345 kg", "ceiling": "27,000 ft", "endurance": "40 h", "max_speed": "235 km/h", "mtow": "1,330 kg"},
+     "materials": ["Carbon Fiber Reinforced Polymer", "Fiberglass"], "status": "active",
+     "description": "China's most commercially successful MALE UCAV export, sold to Iraq, Saudi Arabia, Jordan, Egypt, UAE, Pakistan, and Turkmenistan. Visually similar to the MQ-9 Reaper, the CH-4B carries AR-1 (HJ-10) anti-tank missiles and AR-2 laser-guided bombs. Its price advantage over Western equivalents has made it the dominant MALE in the Middle East."},
+    {"name": "GJ-11 'Sharp Sword'", "manufacturer": "AVIC / Hongdu Aviation Industry Group", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "14 m (est.)", "payload": "classified — 2 internal bays est.", "ceiling": "classified", "max_speed": "transonic (est.)", "mtow": "10,000 kg (est.)"},
+     "materials": ["Low-Observable Composite Materials", "Carbon Fiber", "Radar-Absorbing Materials"], "status": "development",
+     "description": "China's first indigenous stealth UCAV, a flying-wing design publicly displayed at Zhuhai 2019. Analogous to the US X-47B in concept — a carrier-capable stealth strike drone. The GJ-11 is believed to be in limited operational use with the PLAAF/PLAN, representing the leading edge of China's fourth-generation unmanned combat aviation capability."},
+    {"name": "Wing Loong III (翼龙-3)", "manufacturer": "AVIC Chengdu Aircraft Design Institute", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "20.5 m", "payload": "900 kg", "ceiling": "30,000 ft", "endurance": "40 h", "max_speed": "300 km/h", "mtow": "3,200 kg"},
+     "materials": ["Carbon Fiber Composites", "Aluminum Alloys"], "status": "active",
+     "description": "AVIC's latest-generation MALE UCAV, with doubled payload capacity versus the Wing Loong II. Launched 2023, capable of simultaneous multi-target engagement with 6+ hardpoints for AR-2 precision bombs, AR-1 ATGMs, and CM-502KG cruise missiles. Positioned to replace Wing Loong II in Chinese export markets."},
+
+    # USA — additional drones
+    {"name": "MQ-25 Stingray", "manufacturer": "Boeing Defense", "category": "aircraft", "product_type": "uav",
+     "specifications": {"range_offload": "690 km (fuel transfer range)", "ceiling": "40,000 ft (est.)", "endurance": "8 h ISR", "carrier_compatible": "yes — CATOBAR"},
+     "materials": ["Carbon Fiber Composites", "Aluminum Alloys", "Titanium"], "status": "active",
+     "description": "The US Navy's first operational carrier-based unmanned aircraft, the MQ-25 Stingray serves as an aerial refueler to extend the combat radius of F/A-18, F-35C, and E-2D aircraft by 40–50%. First flight 2019; carrier deck trials 2021. The MQ-25 frees Super Hornets from tanker duty, dramatically increasing carrier air wing strike mass. Secondary ISR capability with EO/IR and signals sensors."},
+    {"name": "RQ-170 Sentinel", "manufacturer": "Lockheed Martin (Skunk Works)", "category": "aircraft", "product_type": "uav",
+     "specifications": {"ceiling": "50,000 ft (est.)", "range": "classified", "endurance": "classified", "stealth": "low-observable flying wing"},
+     "materials": ["Radar-Absorbing Materials", "Carbon Fiber Composites", "Classified Coatings"], "status": "active",
+     "description": "Lockheed Martin's classified stealth ISR UAV, nicknamed the 'Beast of Kandahar' after its first public sighting in Afghanistan. The RQ-170 is known to have conducted ISR missions over Iran and Pakistan (famously crashed in 2011 near Kashmar). It is believed to provide SIGINT and EO/IR collection against the most heavily defended targets, including during the 2011 Bin Laden raid. Operated by USAF/CIA."},
+    {"name": "Northrop Grumman MQ-8C Fire Scout", "manufacturer": "Northrop Grumman", "category": "aircraft", "product_type": "uav",
+     "specifications": {"max_speed": "204 km/h", "ceiling": "19,000 ft", "endurance": "11 h", "payload": "272 kg", "rotor_diameter": "10.7 m"},
+     "materials": ["Aluminum Alloy Fuselage", "Composite Rotor Blades"], "status": "active",
+     "description": "Northrop Grumman's autonomous helicopter UAV based on the Bell 407 airframe, deployed on US Navy Littoral Combat Ships and frigates for ISR, targeting, and communications relay. The MQ-8C provides over-the-horizon targeting for surface ships and proved critical in developing US Navy organic UAV operations concepts."},
+
+    # Russia
+    {"name": "Sukhoi S-70 Okhotnik-B", "manufacturer": "Sukhoi / UAC (United Aircraft Corporation)", "category": "aircraft", "product_type": "uav",
+     "specifications": {"mtow": "20,000 kg (est.)", "payload": "2,800 kg (internal bays, est.)", "max_speed": "1,000 km/h (est.)", "ceiling": "40,000 ft (est.)", "wingspan": "19 m"},
+     "materials": ["Radar-Absorbing Composites", "Titanium Structures", "Low-Observable Coatings"], "status": "development",
+     "description": "Russia's stealthy heavy UCAV demonstrator, a flying-wing design weighing ~20 tonnes that first flew in 2019. The S-70 is designed to operate as a loyal wingman alongside the Su-57 Felon, providing deep-strike and SEAD (suppression of enemy air defenses) capability. It carries weapons in internal bays and is equipped with an AESA radar. At least three prototypes are believed to exist; series production timeline remains unclear."},
+    {"name": "Kronshtadt Altius-RU", "manufacturer": "Kronshtadt Group", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "28.5 m", "payload": "1,000 kg sensors + weapons", "ceiling": "40,000 ft", "endurance": "48 h", "max_speed": "250 km/h", "mtow": "6,000 kg"},
+     "materials": ["Carbon Fiber Composites", "Aluminum Alloys"], "status": "development",
+     "description": "Russia's largest indigenous HALE UAV, developed by Kronshtadt Group. Altius is intended to replace the aging Tu-143 and Tu-243 reconnaissance UAV fleet with a modern long-endurance platform capable of satellite datalink, armed reconnaissance, and SIGINT. First flight 2019; delivery to Russian MoD expected from 2024 pending serial production issues."},
+
+    # Iran
+    {"name": "Shahed-129", "manufacturer": "HESA (Iran Aircraft Manufacturing Industries)", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "16 m", "payload": "400 kg", "ceiling": "24,000 ft", "endurance": "24 h", "max_speed": "290 km/h", "range": "1,700 km"},
+     "materials": ["Fiberglass", "Steel Structures", "Composite Wings"], "status": "active",
+     "description": "Iran's primary medium-altitude armed MALE UAV, externally resembling the US MQ-1 Predator. The Shahed-129 has been deployed in Syria by Iranian forces and supplied to Syrian, Hezbollah, and proxy forces. It carries Sadid-1 anti-tank guided missiles and has been involved in strikes against opposition forces in Syria. Widely assessed as Iran's most capable domestically-produced armed drone before the Shahed-149 Gaza."},
+    {"name": "Mohajer-6", "manufacturer": "Qods Aeronautics Industries (QODS)", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "10 m", "payload": "40 kg", "ceiling": "15,000 ft", "endurance": "12 h", "max_speed": "210 km/h", "range": "200 km (LOS)"},
+     "materials": ["Fiberglass Composites", "Steel Frame"], "status": "active",
+     "description": "A compact Iranian tactical UAV used for ISR and light strike missions. The Mohajer-6 carries two Qaem smart bombs (laser or INS/GPS guided) and has been extensively used in the Middle East. It is supplied to Hezbollah, the Houthis, and various Iranian proxy groups, playing a significant role in the ongoing conflict in Yemen."},
+
+    # Europe
+    {"name": "Airbus Zephyr S", "manufacturer": "Airbus Defence & Space", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "25 m", "ceiling": "76,100 ft (record)", "endurance": "25 days+ (record)", "propulsion": "solar electric (thin-film PV)", "payload": "5 kg (sensors)"},
+     "materials": ["Ultra-lightweight Carbon Fiber", "Thin-Film Solar Cells", "High-Density Lithium Batteries"], "status": "active",
+     "description": "The world's longest-endurance solar-powered HALE UAV, holding the absolute endurance record of 25 days, 23 hours (set 2022). Zephyr S flies in the stratosphere (above commercial aviation), effectively acting as a pseudo-satellite with persistent ISR coverage of an area up to 600 km across. Acquired by the UK MoD for Intelligence requirements. Supports both military and humanitarian observation missions at near-zero operating cost once airborne."},
+    {"name": "Leonardo Falco EVO", "manufacturer": "Leonardo", "category": "aircraft", "product_type": "uav",
+     "specifications": {"wingspan": "7.2 m", "payload": "100 kg", "ceiling": "24,000 ft", "endurance": "24 h", "max_speed": "220 km/h", "range": "200 km (LOS)"},
+     "materials": ["Carbon Fiber Composites", "Kevlar Structures"], "status": "active",
+     "description": "Leonardo's medium-altitude multi-role UAV, optimised for ISR and maritime patrol missions. The Falco EVO is operated by Italy, Pakistan, and UAE, and is notably used for UN peacekeeping surveillance missions in Lebanon (UNIFIL) and Mali (MINUSMA). It serves as the Italian Army and Navy's primary tactical surveillance UAV."},
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # MISSILES — Critical gaps: Russia, China, Japan, UK naval SAMs
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    # Russia
+    {"name": "9M723 Iskander-M", "manufacturer": "KB Mashinostroyeniya (KBM)", "category": "missile", "product_type": "precision_strike",
+     "specifications": {"range": "500 km", "accuracy": "2–7 m CEP", "warhead": "480 kg conventional / nuclear", "speed": "Mach 6–7 (terminal)", "guidance": "INS + GLONASS + optical correlation"},
+     "materials": ["High-Strength Steel Casing", "Solid-Fuel Propellant", "Manoeuvrable Re-entry Vehicle"], "status": "active",
+     "description": "Russia's primary short-range quasi-ballistic missile system, replacing the Soviet Scud. The Iskander-M follows a non-ballistic flight path with inflight manoeuvring and decoys, making interception by Patriot PAC-3 extremely difficult. Deployed in Kaliningrad and extensively used against Ukraine since 2022 to strike fixed infrastructure. Also comes in cruise missile variant (9M728 Iskander-K/Cruise)."},
+    {"name": "3M-54 Kalibr (Club)", "manufacturer": "Novator Design Bureau (OKB-8)", "category": "missile", "product_type": "cruise_missile",
+     "specifications": {"range": "2,500 km (land attack) / 300 km (anti-ship)", "accuracy": "3 m CEP", "warhead": "400–500 kg", "terminal_speed": "Mach 2.9 (anti-ship variant)", "guidance": "TERCOM + GLONASS + active radar (terminal)"},
+     "materials": ["Aluminium-Lithium Alloy Airframe", "Solid+Liquid Fueled Sustainer", "Low-RCS Airframe Design"], "status": "active",
+     "description": "Russia's primary long-range cruise missile, fired from surface ships and submarines. The Kalibr's global debut was the 2015 Caspian Sea strikes into Syria — 26 missiles over 1,500 km. Extensively used against Ukraine since 2022 from Black Sea ships and submarines. The anti-ship 3M-54T variant has a Mach 2.9 terminal sprint to defeat ship-based close-in weapon systems."},
+    {"name": "3M22 Zircon (Tsirkon)", "manufacturer": "NPO Mashinostroyenia", "category": "missile", "product_type": "hypersonic",
+     "specifications": {"range": "1,000 km+", "speed": "Mach 8–9", "warhead": "300–400 kg", "guidance": "INS + active radar (terminal)", "launch_platform": "surface ships / submarines (3S-14 VLS)"},
+     "materials": ["High-Temperature Titanium Alloys", "Ablative Heat Shield", "Scramjet Components"], "status": "active",
+     "description": "Russia's first deployed hypersonic anti-ship cruise missile, powered by a scramjet engine and flying at Mach 8–9. The Zircon entered operational service with the Russian Navy in 2023 on Admiral Gorshkov-class frigates. Its combination of speed, maneuverability and range is designed to defeat US CBG air defense systems. Successfully tested from frigate and submarine platforms in the Barents Sea."},
+    {"name": "Kh-101 / Kh-102", "manufacturer": "MKB Raduga (Tactical Missiles Corporation)", "category": "missile", "product_type": "cruise_missile",
+     "specifications": {"range": "5,500 km", "accuracy": "5–10 m CEP", "warhead": "400 kg conventional (Kh-101) / nuclear (Kh-102)", "speed": "Mach 0.77", "stealth": "Low-RCS shaping + RAM coatings"},
+     "materials": ["Low-Observable Composite Airframe", "Radar-Absorbing Coatings", "Turbofan-Powered Sustained Flight"], "status": "active",
+     "description": "Russia's premier air-launched strategic cruise missile, carried by the Tu-95MS and Tu-160 strategic bombers. The Kh-101 features a stealthy airframe with a radar cross-section reportedly below 0.01 m², pop-out wings, and optically-correlated terminal guidance for 5 m precision. Extensively used against Ukraine since 2022, fired from Tu-95MS over the Caspian and Volga regions. The nuclear-armed Kh-102 variant provides Russia's airborne leg of the nuclear triad a stand-off reach of 5,500 km."},
+
+    # China
+    {"name": "DF-17 (Dong Feng-17)", "manufacturer": "CASIC (China Aerospace Science and Industry Corp.)", "category": "missile", "product_type": "hypersonic",
+     "specifications": {"range": "1,800–2,500 km", "speed": "Mach 5–10+ (HGV phase)", "warhead": "conventional / nuclear capable", "guidance": "INS + terminal manoeuvring", "glide_vehicle": "DF-ZF Hypersonic Glide Vehicle (HGV)"},
+     "materials": ["High-Temperature Carbon-Carbon Composites", "Ablative TPS", "Titanium Structural Elements"], "status": "active",
+     "description": "China's first operational medium-range ballistic missile with a hypersonic glide vehicle (HGV) warhead, publicly unveiled at the 2019 National Day parade. The DF-17's DF-ZF HGV glides at Mach 5–10 in the upper atmosphere, following a flattened trajectory that evades traditional ballistic missile defense interceptors (THAAD, SM-3). Primarily designed to strike US military bases in the Pacific (Guam, Okinawa, Japan) and aircraft carriers. The DF-17 represents the first deployment of an HGV by any nation."},
+    {"name": "DF-21D (Dong Feng-21D)", "manufacturer": "CASIC", "category": "missile", "product_type": "anti_ship",
+     "specifications": {"range": "1,500 km", "warhead": "600 kg maneuvering re-entry vehicle", "speed": "Mach 10+ (terminal)", "guidance": "INS + over-the-horizon radar/satellite targeting"},
+     "materials": ["Composite Airframe Shroud", "Manoeuvring RV Heat Shield", "Solid-Fuel Rocket Motor"], "status": "active",
+     "description": "The world's first operational anti-ship ballistic missile (ASBM), designed specifically to target US aircraft carrier battle groups. The DF-21D's maneuvering warhead is guided by a network of OTH radars, reconnaissance satellites, and ship-tracking systems to achieve terminal precision against a moving carrier. Its existence has forced a re-evaluation of US carrier-centric Pacific strategy and accelerated US investment in long-range missile defense."},
+    {"name": "PL-15 / PL-15E", "manufacturer": "AVIC / CASIC Luoyang Electro-Optics Technology Development Center", "category": "missile", "product_type": "air_to_air",
+     "specifications": {"range": "200–300 km", "speed": "Mach 5+", "guidance": "dual-mode active/passive AESA seeker + INS/datalink", "warhead": "~20 kg fragmentation"},
+     "materials": ["High-Strength Aluminium Alloy Body", "Dual-Pulse Solid Rocket Motor"], "status": "active",
+     "description": "China's primary long-range beyond-visual-range air-to-air missile, the J-20's principal armament. The PL-15 features an active electronically scanned array (AESA) seeker that resists jamming, dual-pulse motor for range and terminal sprint, and a range estimated at 200–300 km — comparable to or exceeding the US AIM-120D AMRAAM. The export variant PL-15E (limited range 150 km) is offered to Pakistan. Its introduction has fundamentally altered the air combat calculus in the Indo-Pacific."},
+    {"name": "YJ-12B (Yingji-12)", "manufacturer": "CASIC Third Academy (CHETA)", "category": "missile", "product_type": "anti_ship",
+     "specifications": {"range": "400 km (air-launched)", "speed": "Mach 3 (terminal)", "warhead": "500 kg", "guidance": "INS + active radar seeker", "launch_platform": "H-6K/J bomber, DF-21D ground variant"},
+     "materials": ["Titanium Alloy Airframe", "Ramjet Propulsion", "Blast Fragmentation Warhead"], "status": "active",
+     "description": "China's supersonic air-launched anti-ship missile, analogous to the Russian Kh-31 but longer-ranged. The YJ-12 is carried by H-6K bombers threatening US carrier groups in the Western Pacific with 400 km standoff range. Its Mach 3 terminal approach substantially reduces reaction time for ship-based close-in weapon systems. An extended range variant (YJ-12B) can reach Guam from Chinese territory, challenging US Pacific basing strategy."},
+
+    # Japan
+    {"name": "Type 12 SSM (Extended)", "manufacturer": "Mitsubishi Heavy Industries", "category": "missile", "product_type": "anti_ship",
+     "specifications": {"range": "1,000–1,500 km (extended, from 2025+)", "speed": "Mach 0.9 (subsonic)", "warhead": "200 kg", "guidance": "INS + GNSS + terrain-following + active radar (terminal)", "launch_platform": "ground vehicle / ship / air (F-2 / F-35)"},
+     "materials": ["Composite Airframe", "Turbofan Engine", "Radar-Guided Terminal Seeker"], "status": "active",
+     "description": "Japan's primary anti-ship missile family, originally ground-launched with 200 km range, undergoing a stand-off conversion to 1,000–1,500 km range as part of Japan's counter-strike capability acquisition. The extended Type 12 will be Japan's first true offensive strike weapon, capable of hitting Chinese bases from Japanese home islands. Air- and ship-launched variants planned from 2025–2028. A centerpiece of Japan's historic 2022 National Security Strategy — the most significant strategic shift since 1945."},
+    {"name": "JNAAM (Joint New Air-to-Air Missile)", "manufacturer": "Mitsubishi Heavy Industries / MBDA (collaborative)", "category": "missile", "product_type": "air_to_air",
+     "specifications": {"range": ">150 km (est.)", "propulsion": "ramjet", "guidance": "dual-mode active/passive seeker + datalink", "platform": "F-35A (Japan) / F-35 (UK)"},
+     "materials": ["High-Strength Alloys", "Ramjet Combustion Chamber", "Advanced Seeker Components"], "status": "development",
+     "description": "A Japan-UK joint development programme combining Japanese active seeker technology with MBDA's Meteor ramjet airframe, aimed at producing a next-generation BVR missile superior to both AMRAAM and Meteor individually. The JNAAM is specifically designed for the F-35's narrow internal weapons bay. A flagship example of UK-Japan defence industrial cooperation under the 2023 Hiroshima Accord, with IOC targeted for the early 2030s."},
+
+    # UK — Naval SAM
+    {"name": "Sea Ceptor (CAMM)", "manufacturer": "MBDA", "category": "missile", "product_type": "sam",
+     "specifications": {"range": "25 km", "altitude": "10 km", "speed": "Mach 3+", "guidance": "active RF seeker + datalink", "warhead": "fragmentation proximity fuse"},
+     "materials": ["Carbon Fibre Body", "Soft-Launch Canister", "Composite Fins"], "status": "active",
+     "description": "The UK Royal Navy's primary short-to-medium range naval air defence missile, replacing the Sea Wolf. Sea Ceptor uses a soft-launch canister (no blast deflector required), enabling installation on frigates without structural modification. Integrated into Type 23 frigates and standard for the new Type 26 and Type 31 frigates. Also procured as a land-based system by Finland, New Zealand, and Chile. The Common Anti-Air Modular Missile (CAMM) family includes CAMM-ER (land) and CAMM-MM (maritime, medium range)."},
+
+    # Russia SAM
+    {"name": "S-350E Vityaz", "manufacturer": "Almaz-Antey", "category": "missile", "product_type": "sam",
+     "specifications": {"range": "120 km", "altitude": "30 km", "simultaneous_targets": "16", "missiles_per_launcher": "12", "radar": "50N6A AESA active phased array"},
+     "materials": ["High-explosive Directed Fragmentation Warhead", "Solid-Fuel Propulsion", "Active Radar Seeker"], "status": "active",
+     "description": "Russia's newest medium-range surface-to-air missile system, introduced to partially replace older S-300PS systems. The Vityaz uses an AESA radar for detection and engagement, carrying twelve 9M96E2 missiles per launcher (the same interceptor used in S-400). It provides the 'medium layer' in Russian integrated air defense, bridging the Pantsir SHORAD and S-400 long-range tiers. Deployed with Russian air defense brigades from 2020."},
+
+    # China ATGM
+    {"name": "HJ-12 (Red Arrow 12)", "manufacturer": "NORINCO (China North Industries Group)", "category": "missile", "product_type": "atgm",
+     "specifications": {"range": "4 km", "warhead": "tandem HEAT (800 mm RHA penetration) + top-attack", "guidance": "dual-mode imaging IR + uncooled IIR seeker (fire-and-forget)", "weight": "22 kg (missile + launcher)"},
+     "materials": ["Steel Casing", "Tandem HEAT Warhead", "Imaging Infrared Seeker"], "status": "active",
+     "description": "China's most advanced man-portable anti-tank guided missile, comparable to the US Javelin in capability but significantly lighter. The HJ-12 uses a dual-mode infrared seeker for fire-and-forget engagement, with selectable direct and top-attack flight modes. It has been exported to Pakistan and several Middle East customers, and observed in Yemen (Houthi forces). Its performance parameters broadly match or exceed Russia's 9M133 Kornet."},
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # LAND SYSTEMS — Gaps: Russia, China, Europe, Australia
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    # Russia
+    {"name": "BMP-3M", "manufacturer": "Kurganmashzavod", "category": "land", "product_type": "ifv",
+     "specifications": {"weight": "18.7 t", "crew": "3 + 7 troops", "main_armament": "100mm 2A70 gun + 30mm 2A72 autocannon + 7.62mm PKT", "speed_road": "70 km/h", "amphibious": "yes (10 km/h water)", "protection": "STANAG 4569 Level 4 (upgraded)"},
+     "materials": ["Welded Aluminium Alloy Hull", "Add-on Steel/ERA Modules", "Composite Side Screens"], "status": "active",
+     "description": "Russia's primary IFV, broadly deployed across the Russian Ground Forces and exported to UAE, Kuwait, South Korea, Indonesia, Cyprus, and Yemen. The BMP-3M modernization adds improved ERA, air-conditioning, and digital fire control. The 100mm low-pressure gun fires both conventional HE-FRAG shells and 9M117 Bastion anti-tank guided missiles through the barrel. Extensively used in the 2022–present Ukraine conflict, where survivability limitations against modern ATGMs have been exposed."},
+    {"name": "BTR-82AM", "manufacturer": "Military Industrial Company (MIC) / Arzamas Machine Building Plant", "category": "land", "product_type": "apc",
+     "specifications": {"weight": "15.4 t", "crew": "3 + 7 troops", "main_armament": "30mm 2A72 autocannon + 7.62mm PKT", "speed_road": "80 km/h", "amphibious": "yes (9 km/h)", "protection": "improved mine blast protection vs BTR-80"},
+     "materials": ["Welded Steel Hull (14 mm)", "Kevlar Anti-spall Liner", "Amphibious Hull Seals"], "status": "active",
+     "description": "Russia's most numerous wheeled APC, an upgrade of the Soviet-era BTR-80 with a stabilized 30mm autocannon. Produced in large quantities for the Russian Ground Forces and widely exported. The BTR-82AM is the primary infantry carrier for Russian motorized rifle units and has seen extensive combat in Ukraine, where its thin armor makes it vulnerable to small arms, RPGs, and anti-tank missiles."},
+    {"name": "T-15 Armata (Object 149)", "manufacturer": "Uralvagonzavod", "category": "land", "product_type": "ifv",
+     "specifications": {"weight": "48–50 t", "crew": "3 (remote turret) + 9 troops", "main_armament": "57mm AU-220M unmanned turret (planned) / 12.7mm current", "speed_road": "70 km/h", "protection": "Afganit APS + Malachit ERA + composite hull"},
+     "materials": ["High-Hardness Steel Hull", "Composite Armour Arrays", "Explosive Reactive Armour (Malachit)"], "status": "development",
+     "description": "Russia's next-generation super-heavy IFV on the Armata platform, sharing its hull with the T-14 Armata MBT. The T-15 features an unmanned remote-controlled turret (isolating the crew from gun gases and ammunition), the Afganit hard-kill active protection system, and Malachit ERA. Despite multiple defense ministry announcements, serial production has stalled due to sanctions and industrial capacity limits. The T-15 was prominently displayed at the 2015 Victory Day parade but remains in limited pre-production."},
+    {"name": "Kurganets-25", "manufacturer": "Kurganmashzavod", "category": "land", "product_type": "ifv",
+     "specifications": {"weight": "25 t", "crew": "3 + 9 troops", "main_armament": "30mm 2A42 autocannon + Kornet-EM ATGMs", "speed_road": "80 km/h", "amphibious": "yes", "protection": "STANAG 4569 Level 6 (claimed)"},
+     "materials": ["Steel-Aluminium Composite Hull", "ERA Side Screens", "Ballistic Glass Viewports"], "status": "development",
+     "description": "Russia's new medium-weight IFV intended to replace the BMP-2 and eventually BMP-3. First shown at the 2015 parade, the Kurganets-25 uses a modular hull for IFV and APC variants and features a stabilized remote turret with Kornet-EM ATGMs. Production has been repeatedly delayed — Russia ordered limited pre-serial batches for field trials in 2022–2023. Its amphibious capability and modernized protection philosophy are well-matched to European theater conditions."},
+
+    # China
+    {"name": "Type 99A (ZTZ-99A)", "manufacturer": "Inner Mongolia First Machinery Group (IMFMG) / NORINCO", "category": "land", "product_type": "tank",
+     "specifications": {"weight": "58 t", "crew": "3", "main_armament": "125mm ZPT-98A smoothbore (auto-loader)", "speed_road": "80 km/h", "protection": "integrated composite + NERA + active protection", "engine": "1,500 hp diesel"},
+     "materials": ["High-Hardness Steel/Composite Turret", "Non-Explosive Reactive Armour (NERA)", "Laser Warning Receivers"], "status": "active",
+     "description": "China's most advanced main battle tank, forming the PLA Ground Forces' primary armored strike force. The Type 99A incorporates a laser dazzler/blinder system (unusual among peer competitors), NERA composite armor comparable to Leopard 2A6, and a digital fire control system enabling hunter-killer capability. Fielded in significant numbers across Northern and Eastern Theater Commands, it is the principal adversary tank system faced by Taiwan and potential Indo-Pacific contingencies."},
+    {"name": "Type 15 (ZTQ-15)", "manufacturer": "NORINCO", "category": "land", "product_type": "tank",
+     "specifications": {"weight": "33–35 t", "crew": "3", "main_armament": "105mm rifled gun (auto-loader)", "speed_road": "70 km/h", "amphibious": "yes (with flotation screen)", "air_transportable": "yes (Y-20, IL-76)"},
+     "materials": ["High-Hardness Steel Hull", "Add-on Composite Armour Tiles", "Lightweight Titanium Components"], "status": "active",
+     "description": "China's lightweight tank developed for mountain and high-altitude warfare, deployed on the Tibetan Plateau and Sino-Indian border in response to the Galwan Valley clash (2020). The Type 15 can operate at altitudes where Type 99A suffers severe engine performance degradation, and is air-portable by China's largest transport aircraft. It is also offered for export as the VT-5, highlighting China's growing competitiveness in the light armor segment."},
+    {"name": "ZBD-04A IFV", "manufacturer": "NORINCO / China South Industries Group Corporation", "category": "land", "product_type": "ifv",
+     "specifications": {"weight": "23 t", "crew": "3 + 7 troops", "main_armament": "100mm low-pressure gun + 30mm autocannon + HJ-73C ATGMs", "speed_road": "65 km/h", "amphibious": "yes"},
+     "materials": ["All-Welded Steel Hull", "Applique Armour Panels", "Anti-spall Liner"], "status": "active",
+     "description": "China's primary IFV, resembling the Russian BMP-3 concept in its 100mm + 30mm dual-caliber armament. The ZBD-04A modernization (2010s) added improved fire control, a new engine, and digital systems. It equips China's mechanised infantry divisions and amphibious assault brigades — the primary vehicle for any PLA amphibious operation against Taiwan."},
+
+    # Germany / Europe
+    {"name": "Dingo II MRAP", "manufacturer": "Krauss-Maffei Wegmann (KMW)", "category": "land", "product_type": "armored_vehicle",
+     "specifications": {"weight": "12.5–14.5 t", "crew": "2 + 6 troops", "main_armament": "12.7mm or 40mm AGL (remote or ring mount)", "mine_protection": "mine/IED blast (belly and side)", "speed_road": "90 km/h"},
+     "materials": ["Ballistic Steel Monocoque", "Polyethylene Anti-fragment Liner", "Mine-Blast Resistant V-Hull", "Shock-Dampening Crew Seats"], "status": "active",
+     "description": "Germany's primary MRAP (Mine-Resistant Ambush Protected) vehicle, based on the Unimog U5000 chassis. The Dingo II provides STANAG 4569 Level 4 ballistic protection and STANAG AEP-55 mine blast protection, making it one of the most survivable patrol vehicles in NATO service. Widely used by the Bundeswehr in Afghanistan (ISAF), Mali (MINUSMA), and Kosovo (KFOR), with over 1,000 produced for Germany, Belgium, Austria, Luxembourg, and the Czech Republic."},
+    {"name": "Fennek (Spähpanzer)", "manufacturer": "Krauss-Maffei Wegmann / Dutch Defence Vehicle Systems (SP Aerospace)", "category": "land", "product_type": "reconnaissance",
+     "specifications": {"weight": "9.5 t", "crew": "3–4", "main_armament": "12.7mm M2HB or 40mm AGL (optional)", "sensor_mast": "retractable 4.5 m mast, EO/IR + laser rangefinder", "speed_road": "115 km/h"},
+     "materials": ["High-Hardness Steel Hull", "STANAG 4569 Level 2 Armour", "Thermal-Signature Management"], "status": "active",
+     "description": "Germany and the Netherlands' primary wheeled armored reconnaissance vehicle, developed as a joint German-Dutch program. The Fennek's signature feature is its retractable sensor mast providing 360° surveillance without exposing the vehicle, enabling observation from concealed positions at ranges of 7+ km day/night. Operators include Germany (240 units), Netherlands (202 units) and Luxembourg. Widely regarded as one of NATO's most effective dedicated reconnaissance platforms."},
+
+    # Australia
+    {"name": "Bushmaster PMV (Protected Mobility Vehicle)", "manufacturer": "Thales Australia", "category": "land", "product_type": "apc",
+     "specifications": {"weight": "12.4–14.6 t", "crew": "2 + 9 troops", "main_armament": "12.7mm M2HB or 7.62mm FN MAG (ring/protected mount)", "protection": "STANAG 4569 Level 3B + mine blast", "speed_road": "100 km/h"},
+     "materials": ["Welded Steel Monocoque Hull", "V-shaped Mine Blast Resistant Floor", "Integrated Energy-Absorbing Crew Seats"], "status": "active",
+     "description": "Australia's signature protected mobility vehicle, developed by Thales Australia and manufactured in Bendigo, Victoria. The Bushmaster became globally prominent after Ukraine requested and received over 100 vehicles in 2022, citing its exceptional mine protection. Operated by Australia, Netherlands (346 units, largest foreign buyer), Jamaica, UK, Indonesia, Fiji, New Zealand, and Japan. The Bushmaster has been tested in combat in East Timor, Afghanistan, Iraq, and Ukraine with exceptionally few casualties."},
+
+    # Italy
+    {"name": "CENTAURO II B2 (VBC-120)", "manufacturer": "CIO (IVECO DV + Leonardo/OTO Melara)", "category": "land", "product_type": "tank",
+     "specifications": {"weight": "30 t", "crew": "4", "main_armament": "120mm smoothbore OTO Melara (NATO standard)", "speed_road": "110 km/h", "configuration": "8×8 wheeled", "amphibious": "amphibious capability (with kit)"},
+     "materials": ["Aluminium-Steel Composite Hull", "Modular Armour Packages", "Antikumulation ERA Option"], "status": "active",
+     "description": "Italy's second-generation wheeled tank destroyer, the CENTAURO II mounts a 120mm NATO-standard gun (capable of firing DM63 and M829A2 rounds) on an 8×8 wheeled platform. It delivers MBT firepower at dramatically lower weight and logistic cost, ideal for rapid deployment and expeditionary operations. The CENTAURO concept — now copied by many nations — allows motorized forces to engage enemy armor without the supply burden of tracked MBTs."},
+    {"name": "VCC-80 Dardo IFV", "manufacturer": "OTO Melara / IVECO Defence Vehicles (now Leonardo/CIO)", "category": "land", "product_type": "ifv",
+     "specifications": {"weight": "22.5 t", "crew": "3 + 6 troops", "main_armament": "25mm Oerlikon KBA autocannon + TOW-2 ATGMs", "speed_road": "70 km/h", "amphibious": "yes (with screens)"},
+     "materials": ["Welded Aluminium Hull", "Composite Add-on Armour", "Spall Liner"], "status": "active",
+     "description": "Italy's primary tracked IFV, the VCC-80 Dardo equips the Italian Army's mechanised infantry brigades. The Dardo features a stabilised two-man turret with a 25mm autocannon and TOW-2A anti-tank missile launcher for engaging armoured threats. Around 200 are in Italian Army service. Its successor (the Lynx KF41) was selected by Italy in 2022 for the CIO programme — the largest Italian land vehicle procurement in 30 years."},
+
+    # Loitering Munitions / Autonomous (key additions)
+    {"name": "WB Group Warmate", "manufacturer": "WB Electronics / WB Group (Poland)", "category": "missile", "product_type": "loitering_munition",
+     "specifications": {"range": "30 km", "endurance": "30–50 min", "warhead": "1.4 kg shaped charge or thermobaric", "speed": "150 km/h", "wingspan": "1.2 m"},
+     "materials": ["Fiberglass Composite Body", "Electric Propulsion", "EO/IR Seeker"], "status": "active",
+     "description": "Poland's indigenously developed loitering munition, one of the first NATO-produced one-way attack drones. The Warmate was supplied to Ukraine in 2022 and has been combat-proven in the Donbas. It can loiter for reconnaissance, then attack with a shaped charge or thermobaric warhead. Operated by Poland, Ukraine, and UAE. A larger Warmate 2 variant with extended range is in development. The Warmate represents Poland's entry into the precision strike loitering munition market."},
+    {"name": "UVision Hero-120", "manufacturer": "UVision Air (Israel)", "category": "missile", "product_type": "loitering_munition",
+     "specifications": {"range": "60 km (LOS) / 150 km (datalink)", "warhead": "8 kg anti-tank (HEAT) or anti-personnel", "endurance": "60 min", "speed": "185 km/h", "launch": "canister-launched (vehicle / ground / vessel)"},
+     "materials": ["Composite Airframe", "EO/IR + Active Radar Seeker", "Shaped Charge Warhead"], "status": "active",
+     "description": "Israel's medium-class loitering munition, optimised for defeating armored vehicles. The Hero-120's 8 kg tandem HEAT warhead can penetrate the top armor of most IFVs and APCs. It is canister-launched from ground vehicles, ships, or static positions, and used by Israel, US (SOCOM), and European allies. The Hero family ranges from the 4.5 kg Hero-30 (anti-personnel) to the 50 kg Hero-400 (anti-ship/heavy armor)."},
+
 ]
 
 # ── Company profile enrichments (Crunchbase-style) ────────────────────────
