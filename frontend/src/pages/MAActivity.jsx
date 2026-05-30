@@ -502,29 +502,32 @@ function getLogoDomain(activity, side) {
 //   3. Initiales colorées déterministes     — dernier recours, pas d'appel réseau
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  const [failed, setFailed] = useState(false);
+  const [level, setLevel] = useState(1); // 1=clearbit 2=google favicon 3=initials
 
   const name   = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const domain = getLogoDomain(activity, side);
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
   const textSize  = size === "sm" ? "text-[9px]" : "text-[11px]";
 
-  useEffect(() => { setFailed(false); }, [domain, name]);
+  useEffect(() => { setLevel(1); }, [domain, name]);
 
-  if (!failed && domain) {
+  function logoBox(src) {
     return (
       <div className="relative shrink-0">
         <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
           <img
-            src={`https://logo.clearbit.com/${domain}?size=128`}
+            src={src}
             alt={name}
             className="w-full h-full object-contain p-1"
-            onError={() => setFailed(true)}
+            onError={() => setLevel(l => l + 1)}
           />
         </div>
       </div>
     );
   }
+
+  if (level === 1 && domain) return logoBox(`https://logo.clearbit.com/${domain}?size=128`);
+  if (level === 2 && domain) return logoBox(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
 
   return (
     <div className="relative shrink-0">
@@ -1149,17 +1152,19 @@ const JV_EU_PROGRAMS = [
 // ── JV Programs table view ────────────────────────────────────────────────────
 
 function PartyLogoSmall({ name, iso }) {
-  const [failed, setFailed] = useState(false);
+  const [level, setLevel] = useState(1);
   const domain = LOGO_FALLBACK[name];
-  useEffect(() => { setFailed(false); }, [name]);
+  useEffect(() => { setLevel(1); }, [name]);
 
-  if (!failed && domain) {
+  function box(src) {
     return (
       <div className="w-7 h-7 rounded-lg bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center shrink-0">
-        <img src={`https://logo.clearbit.com/${domain}?size=64`} alt={name} className="w-full h-full object-contain p-0.5" onError={() => setFailed(true)} />
+        <img src={src} alt={name} className="w-full h-full object-contain p-0.5" onError={() => setLevel(l => l + 1)} />
       </div>
     );
   }
+  if (level === 1 && domain) return box(`https://logo.clearbit.com/${domain}?size=64`);
+  if (level === 2 && domain) return box(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
   return (
     <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${avatarColor(name)}`}>
       <span className="text-[8px] font-bold text-white">{initials(name)}</span>
