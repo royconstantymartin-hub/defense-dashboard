@@ -191,6 +191,24 @@ const MANUFACTURERS = [
   { value: "Tupolev", label: "Tupolev" },
   { value: "United Aircraft Corporation", label: "United Aircraft Corporation" },
   { value: "Uralvagonzavod", label: "Uralvagonzavod" },
+  // Rising / emerging companies
+  { value: "Archer Defense / Archer Aviation", label: "Archer Defense" },
+  { value: "CASC (China Academy of Aerospace Aerodynamics)", label: "CASC (China)" },
+  { value: "Delair", label: "Delair" },
+  { value: "DeltaQuad", label: "DeltaQuad" },
+  { value: "Defendtex", label: "Defendtex" },
+  { value: "Dragoon / Teledyne FLIR OEM", label: "Dragoon / Teledyne FLIR" },
+  { value: "Elroy Air", label: "Elroy Air" },
+  { value: "Firestorm Labs", label: "Firestorm Labs" },
+  { value: "IdeaForge Technology", label: "IdeaForge Technology" },
+  { value: "Red Cat Holdings / Teal Drones", label: "Red Cat / Teal Drones" },
+  { value: "Schiebel", label: "Schiebel" },
+  { value: "Skydio", label: "Skydio" },
+  { value: "Skydweller Aero", label: "Skydweller Aero" },
+  { value: "Sky-Watch", label: "Sky-Watch" },
+  { value: "SYPAQ Systems", label: "SYPAQ Systems" },
+  { value: "Tekever", label: "Tekever" },
+  { value: "Vanilla Aircraft", label: "Vanilla Aircraft" },
 ];
 
 // Stable Wikimedia Commons image URLs for flagship products.
