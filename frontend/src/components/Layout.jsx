@@ -32,7 +32,7 @@ const navItems = [
   { path: "/announcements", icon: Activity, label: "Announcements" },
   { path: "/ma-activity", icon: Handshake, label: "M&A Activity", inProgress: true },
   { path: "/market-data", icon: TrendingUp, label: "Market Data" },
-  { path: "/private-players", icon: Lock, label: "Private Players" },
+  { path: "/private-players", icon: Lock, label: "Defense Players" },
   { path: "/expenditures", icon: Globe, label: "Countries" },
   { path: "/products", icon: Package, label: "Products" },
   { path: "/follow", icon: Rss, label: "Sources" },
