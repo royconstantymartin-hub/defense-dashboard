@@ -35,7 +35,7 @@ const navItems = [
   { path: "/private-players", icon: Lock, label: "Private Players" },
   { path: "/expenditures", icon: Globe, label: "Countries" },
   { path: "/products", icon: Package, label: "Products" },
-  { path: "/follow", icon: Rss, label: "Sources", inProgress: true },
+  { path: "/follow", icon: Rss, label: "Sources" },
   { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
 ];
 
