@@ -17,6 +17,7 @@ import {
   TrendingUp,
   Lock,
   Unlock,
+  BookMarked,
 } from "lucide-react";
 
 // ─── Recent Studies ──────────────────────────────────────────────────────────
@@ -26,83 +27,101 @@ const RECENT_STUDIES = [
     title: "SIPRI Yearbook 2024",
     subtitle: "Armaments, Disarmament and International Security",
     source: "SIPRI",
-    sourceId: "sipri",
+    sourceUrl: "https://www.sipri.org",
     date: "2024-06-17",
     url: "https://www.sipri.org/yearbook/2024",
+    coverUrl: "https://www.sipri.org/sites/default/files/2024-06/sipri_yearbook_2024_cover_0.jpg",
     type: "Annual Report",
+    pages: 612,
     tags: ["spending", "nuclear", "arms transfers"],
     highlight: "Global military spending reached $2,443 billion in 2023 — an all-time high.",
+    accentColor: "#1e3a5f",
   },
   {
     id: "iiss-military-balance-2024",
     title: "The Military Balance 2024",
     subtitle: "Global forces, capabilities and defence economics",
     source: "IISS",
-    sourceId: "iiss",
+    sourceUrl: "https://www.iiss.org",
     date: "2024-02-13",
     url: "https://www.iiss.org/publications/the-military-balance/",
+    coverUrl: "https://www.iiss.org/-/media/images/publications/the-military-balance/tmb2024.jpg",
     type: "Annual Report",
+    pages: 504,
     tags: ["capabilities", "forces", "expenditure"],
     highlight: "European defence spending rose 16% in real terms since Russia's invasion of Ukraine.",
+    accentColor: "#7c1c1c",
   },
   {
     id: "rand-ai-autonomous-2024",
     title: "Autonomous Weapons and the Future of War",
     subtitle: "Legal, ethical, and strategic implications of lethal autonomous systems",
     source: "RAND Corporation",
-    sourceId: "rand",
+    sourceUrl: "https://www.rand.org",
     date: "2024-03-05",
     url: "https://www.rand.org/topics/autonomous-weapons.html",
+    coverUrl: "https://www.rand.org/content/dam/rand/pubs/research_reports/RRA2900/RRA2977-1/RAND_RRA2977-1.cover.jpg",
     type: "Research Report",
-    tags: ["AI", "autonomous", "ethics"],
+    pages: 148,
+    tags: ["AI", "autonomous systems", "ethics"],
     highlight: "Assesses risk escalation pathways from autonomous engagement systems.",
+    accentColor: "#1a4731",
   },
   {
     id: "csis-defense-industrial-2024",
-    title: "U.S. Defense Industrial Base Capacity",
+    title: "Rebuilding the U.S. Defense Industrial Base",
     subtitle: "Assessment of munitions production surge capacity post-Ukraine",
     source: "CSIS",
-    sourceId: "csis",
+    sourceUrl: "https://www.csis.org",
     date: "2024-01-22",
     url: "https://www.csis.org/programs/defense-industrial-initiatives-group",
+    coverUrl: "https://csis-website-prod.s3.amazonaws.com/s3fs-public/2024-01/240116_Cancian_DefenseIndustrial.jpg",
     type: "Policy Brief",
+    pages: 56,
     tags: ["USA", "industry", "munitions"],
     highlight: "155mm shell production ramped 4× but still below NATO stockpile targets.",
-  },
-  {
-    id: "irsem-europe-defence-2024",
-    title: "L'industrie européenne de défense à l'heure de la guerre de haute intensité",
-    subtitle: "Capacités industrielles face au retour des conflits majeurs en Europe",
-    source: "IRSEM",
-    sourceId: "irsem",
-    date: "2024-04-10",
-    url: "https://www.irsem.fr",
-    type: "Étude stratégique",
-    tags: ["Europe", "industrie", "haute intensité"],
-    highlight: "La BITD européenne doit doubler sa capacité de production de munitions d'ici 2026.",
+    accentColor: "#1e3a5f",
   },
   {
     id: "eda-defence-data-2023",
     title: "Defence Data 2022–2023",
     subtitle: "Key figures on European defence expenditure and investment",
     source: "EDA",
-    sourceId: "eda",
+    sourceUrl: "https://eda.europa.eu",
     date: "2023-11-28",
     url: "https://eda.europa.eu/publications-and-data/defence-data",
+    coverUrl: "https://eda.europa.eu/webzine/issue23/cover/images/cover.jpg",
     type: "Statistical Report",
+    pages: 88,
     tags: ["Europe", "spending", "R&D"],
     highlight: "EU27 defence spending hit €214 billion — up 6% year-on-year in real terms.",
+    accentColor: "#003399",
+  },
+  {
+    id: "nato-defence-investment-2024",
+    title: "Defence Expenditure of NATO Members",
+    subtitle: "Annual data on defence spending across all 32 Alliance members",
+    source: "NATO",
+    sourceUrl: "https://www.nato.int",
+    date: "2024-02-14",
+    url: "https://www.nato.int/cps/en/natohq/topics_49198.htm",
+    coverUrl: "https://www.nato.int/nato_static_fl2014/assets/pictures/images_mfu/2024/2/s24-0011-dc-defence-expenditure/s24-0011-dc-defence-expenditure-001.jpg",
+    type: "Statistical Report",
+    pages: 32,
+    tags: ["NATO", "budget", "2%"],
+    highlight: "18 of 32 NATO allies met or exceeded the 2% GDP defence spending target in 2024.",
+    accentColor: "#003478",
   },
 ];
 
 // ─── Curated source catalogue ──────────────────────────────────────────────
 const CATEGORIES = [
-  { id: "all",         label: "Toutes",           icon: Globe2 },
-  { id: "press",       label: "Presse spécialisée", icon: Newspaper },
+  { id: "all",         label: "All",              icon: Globe2 },
+  { id: "press",       label: "Specialty Press",   icon: Newspaper },
   { id: "institution", label: "Institutions",      icon: ShieldCheck },
   { id: "thinktank",   label: "Think Tanks",       icon: BookOpen },
-  { id: "market",      label: "Données marché",    icon: BarChart3 },
-  { id: "industry",    label: "Industrie",         icon: Building2 },
+  { id: "market",      label: "Market Data",       icon: BarChart3 },
+  { id: "industry",    label: "Industry",          icon: Building2 },
 ];
 
 const SOURCES = [
@@ -773,7 +792,6 @@ const TYPE_COLORS = {
   "Annual Report":     "bg-blue-50 text-blue-700 border-blue-200",
   "Research Report":   "bg-violet-50 text-violet-700 border-violet-200",
   "Policy Brief":      "bg-emerald-50 text-emerald-700 border-emerald-200",
-  "Étude stratégique": "bg-indigo-50 text-indigo-700 border-indigo-200",
   "Statistical Report":"bg-amber-50 text-amber-700 border-amber-200",
 };
 
@@ -792,8 +810,53 @@ function SourceLogo({ url, size = "sm" }) {
   );
 }
 
+function SourceLogoLarge({ url, name }) {
+  const domain = url.replace(/^https?:\/\//, "").split("/")[0];
+  const [errored, setErrored] = useState(false);
+  if (errored) {
+    return (
+      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+        <Globe2 className="w-4 h-4 text-slate-400" />
+      </div>
+    );
+  }
+  return (
+    <img
+      src={`https://logo.clearbit.com/${domain}`}
+      alt={name}
+      className="w-8 h-8 object-contain rounded-md bg-white p-0.5 border border-slate-100"
+      onError={() => setErrored(true)}
+    />
+  );
+}
+
+function ReportCover({ coverUrl, title, accentColor }) {
+  const [errored, setErrored] = useState(false);
+  if (!errored && coverUrl) {
+    return (
+      <img
+        src={coverUrl}
+        alt={title}
+        className="w-full h-full object-cover"
+        onError={() => setErrored(true)}
+      />
+    );
+  }
+  return (
+    <div
+      className="w-full h-full flex flex-col items-center justify-center p-5 gap-3"
+      style={{ backgroundColor: accentColor || "#1e3a5f" }}
+    >
+      <BookMarked className="w-10 h-10 text-white/50" />
+      <p className="text-white text-xs font-semibold text-center leading-snug line-clamp-4 opacity-90">
+        {title}
+      </p>
+    </div>
+  );
+}
+
 function formatDate(iso) {
-  return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -826,15 +889,15 @@ export default function Follow() {
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
-            Sources de référence
+            Reference Sources
           </h1>
           <p className="text-slate-500 text-sm mt-1">
-            Catalogue curé : presse, institutions, think tanks, données de marché et industrie
+            Curated catalogue — press, institutions, think tanks, market data &amp; industry
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 max-w-sm">
           <span className="text-amber-500">ℹ</span>
-          <span>Liens directs vers les publications primaires. Aucun contenu n'est reproduit ici.</span>
+          <span>Direct links to primary publications. No content is reproduced here.</span>
         </div>
       </div>
 
@@ -842,11 +905,11 @@ export default function Follow() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col gap-1">
           <p className="text-2xl font-bold font-mono text-slate-900">{SOURCES.length}</p>
-          <p className="text-xs text-slate-500">Sources totales</p>
+          <p className="text-xs text-slate-500">Total sources</p>
         </div>
         <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col gap-1">
           <p className="text-2xl font-bold font-mono text-emerald-600">{totalFree}</p>
-          <p className="text-xs text-slate-500">Accès gratuit</p>
+          <p className="text-xs text-slate-500">Free access</p>
         </div>
         {CATEGORIES.slice(1).map(cat => (
           <div key={cat.id} className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col gap-1">
@@ -858,14 +921,16 @@ export default function Follow() {
 
       {/* ── Recent Studies ── */}
       <div>
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-5">
           <FileText className="w-4 h-4 text-blue-800" />
-          <h2 className="font-heading text-lg font-bold text-slate-900">Études & rapports récents</h2>
+          <h2 className="font-heading text-lg font-bold text-slate-900">Recent Studies &amp; Reports</h2>
           <Badge variant="secondary" className="text-xs bg-blue-50 text-blue-700 border-blue-200 ml-1">
             {RECENT_STUDIES.length} publications
           </Badge>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+        {/* Horizontal scroll on mobile, 3-col grid on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {RECENT_STUDIES.map(study => (
             <a
               key={study.id}
@@ -874,62 +939,74 @@ export default function Follow() {
               rel="noopener noreferrer"
               className="group block"
             >
-              <Card className="bg-white border-slate-200 shadow-sm h-full hover:border-blue-200 hover:shadow-lg transition-all duration-200">
-                <CardContent className="p-4 flex flex-col gap-3 h-full">
-                  {/* Top row */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
-                        <SourceLogo url={study.url} size="lg" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-blue-800 truncate">{study.source}</p>
-                        <div className="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
-                          <Calendar className="w-3 h-3 flex-shrink-0" />
-                          <span>{formatDate(study.date)}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded border flex-shrink-0 ${TYPE_COLORS[study.type] ?? "bg-slate-50 text-slate-600 border-slate-200"}`}>
+              <div className="flex flex-col gap-0 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-200 h-full">
+
+                {/* Cover image — portrait format like a real report */}
+                <div className="relative w-full aspect-[3/4] overflow-hidden bg-slate-100 flex-shrink-0">
+                  <ReportCover
+                    coverUrl={study.coverUrl}
+                    title={study.title}
+                    accentColor={study.accentColor}
+                  />
+                  {/* Type badge overlay */}
+                  <div className="absolute top-2 left-2">
+                    <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded border backdrop-blur-sm ${TYPE_COLORS[study.type] ?? "bg-white/80 text-slate-700 border-slate-200"}`}>
                       {study.type}
                     </span>
                   </div>
+                  {/* Pages badge overlay */}
+                  <div className="absolute top-2 right-2">
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/50 text-white/90 border border-white/10">
+                      {study.pages}p
+                    </span>
+                  </div>
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-blue-900/0 group-hover:bg-blue-900/10 transition-colors duration-200 flex items-end justify-end p-2 opacity-0 group-hover:opacity-100">
+                    <ArrowUpRight className="w-5 h-5 text-white drop-shadow" />
+                  </div>
+                </div>
+
+                {/* Info below cover */}
+                <div className="p-3 flex flex-col gap-2 flex-1">
+                  {/* Source logo + name */}
+                  <div className="flex items-center gap-1.5">
+                    <SourceLogoLarge url={study.sourceUrl} name={study.source} />
+                    <p className="text-[10px] font-bold text-blue-800 truncate">{study.source}</p>
+                  </div>
 
                   {/* Title */}
-                  <div className="flex-1">
-                    <p className="font-semibold text-sm text-slate-900 group-hover:text-blue-800 transition-colors leading-snug">
-                      {study.title}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{study.subtitle}</p>
+                  <p className="text-xs font-semibold text-slate-900 group-hover:text-blue-800 transition-colors leading-snug line-clamp-2">
+                    {study.title}
+                  </p>
+
+                  {/* Date */}
+                  <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                    <Calendar className="w-3 h-3 flex-shrink-0" />
+                    <span>{formatDate(study.date)}</span>
                   </div>
 
-                  {/* Highlight */}
-                  <div className="bg-slate-50 border border-slate-100 rounded-lg px-3 py-2">
-                    <div className="flex items-start gap-1.5">
-                      <TrendingUp className="w-3 h-3 text-blue-700 flex-shrink-0 mt-0.5" />
-                      <p className="text-xs text-slate-700 leading-relaxed">{study.highlight}</p>
+                  {/* Highlight callout */}
+                  <div className="mt-auto bg-slate-50 border border-slate-100 rounded-lg px-2 py-1.5">
+                    <div className="flex items-start gap-1">
+                      <TrendingUp className="w-3 h-3 text-blue-700 flex-shrink-0 mt-0.5 shrink-0" />
+                      <p className="text-[10px] text-slate-600 leading-relaxed line-clamp-3">{study.highlight}</p>
                     </div>
                   </div>
 
-                  {/* Footer */}
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-100">
-                    <div className="flex gap-1 flex-wrap">
-                      {study.tags.slice(0, 2).map(tag => (
-                        <Badge
-                          key={tag}
-                          variant="secondary"
-                          className="text-[10px] px-1.5 py-0 bg-slate-50 text-slate-500 border border-slate-100 font-normal"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-blue-700 font-medium group-hover:underline">
-                      Lire <ArrowUpRight className="w-3 h-3" />
-                    </div>
+                  {/* Tags */}
+                  <div className="flex gap-1 flex-wrap">
+                    {study.tags.slice(0, 2).map(tag => (
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className="text-[9px] px-1 py-0 bg-slate-50 text-slate-500 border border-slate-100 font-normal"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </a>
           ))}
         </div>
@@ -943,7 +1020,7 @@ export default function Follow() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
-            placeholder="Rechercher une source, un tag..."
+            placeholder="Search a source, tag..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="pl-9 border-slate-200 text-sm"
@@ -976,7 +1053,7 @@ export default function Follow() {
 
       {/* Results count */}
       <p className="text-xs text-slate-400 -mt-4">
-        {filtered.length} source{filtered.length > 1 ? "s" : ""} affichée{filtered.length > 1 ? "s" : ""}
+        {filtered.length} source{filtered.length > 1 ? "s" : ""} shown
       </p>
 
       {/* ── Source grid ── */}
@@ -997,7 +1074,7 @@ export default function Follow() {
                   {/* Top row */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-2.5 flex-1 min-w-0">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden">
                         <SourceLogo url={source.url} size="lg" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -1025,7 +1102,6 @@ export default function Follow() {
 
                   {/* Footer */}
                   <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
-                    {/* Languages */}
                     <div className="flex gap-1 flex-wrap">
                       {source.lang.map(l => (
                         <span
@@ -1036,15 +1112,14 @@ export default function Follow() {
                         </span>
                       ))}
                     </div>
-                    {/* Tags + paywall */}
                     <div className="flex items-center gap-1 flex-wrap justify-end">
                       {source.paywall ? (
                         <span className="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 font-medium">
-                          <Lock className="w-2.5 h-2.5" /> Payant
+                          <Lock className="w-2.5 h-2.5" /> Paid
                         </span>
                       ) : (
                         <span className="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
-                          <Unlock className="w-2.5 h-2.5" /> Gratuit
+                          <Unlock className="w-2.5 h-2.5" /> Free
                         </span>
                       )}
                       {source.tags.slice(0, 1).map(tag => (
@@ -1068,7 +1143,7 @@ export default function Follow() {
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-slate-400">
           <Search className="w-8 h-8 mb-3 opacity-40" />
-          <p className="text-sm">Aucune source ne correspond à cette recherche.</p>
+          <p className="text-sm">No sources match this search.</p>
         </div>
       )}
     </div>
