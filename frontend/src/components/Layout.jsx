@@ -5,7 +5,6 @@ import {
   Activity,
   Globe,
   Package,
-  LayoutDashboard,
   Handshake,
   TrendingUp,
   Settings,
@@ -28,10 +27,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const navItems = [
-  { path: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { path: "/", icon: TrendingUp, label: "Market Activity" },
   { path: "/announcements", icon: Activity, label: "Announcements" },
   { path: "/ma-activity", icon: Handshake, label: "M&A Activity", inProgress: true },
-  { path: "/market-data", icon: TrendingUp, label: "Market Data" },
   { path: "/private-players", icon: Lock, label: "Defense Players" },
   { path: "/expenditures", icon: Globe, label: "Countries" },
   { path: "/products", icon: Package, label: "Products" },

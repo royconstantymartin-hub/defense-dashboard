@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/sonner";
 
 // Pages
 import Layout from "@/components/Layout";
-import Dashboard from "@/pages/Dashboard";
 import Announcements from "@/pages/Announcements";
 import MAActivity from "@/pages/MAActivity";
 import MarketData from "@/pages/MarketData";
@@ -117,10 +116,9 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
+            <Route index element={<MarketData />} />
             <Route path="announcements" element={<Announcements />} />
             <Route path="ma-activity" element={<MAActivity />} />
-            <Route path="market-data" element={<MarketData />} />
             <Route path="expenditures" element={<Expenditures />} />
             <Route path="products" element={<Products />} />
             <Route path="follow" element={<Follow />} />
