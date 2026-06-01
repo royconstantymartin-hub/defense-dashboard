@@ -3282,6 +3282,217 @@ function CountryProfileSection({ country, allExpenditures, onOpenContractsSheet 
   );
 }
 
+// ── Alliance Tracker ─────────────────────────────────────────────────────────
+
+const ALLIANCES = [
+  {
+    id: "nato",
+    name: "NATO",
+    fullName: "North Atlantic Treaty Organization",
+    members: NATO_MEMBERS,
+    accentBg: "bg-blue-700",
+    accentText: "text-white",
+    borderActive: "border-blue-300",
+    bgActive: "bg-blue-50",
+    dot: "bg-blue-700",
+    gdpTarget: 2,
+    founded: "1949",
+    hq: "Brussels, Belgium",
+  },
+  {
+    id: "aukus",
+    name: "AUKUS",
+    fullName: "Australia–UK–US Security Pact",
+    members: AUKUS_MEMBERS,
+    accentBg: "bg-indigo-600",
+    accentText: "text-white",
+    borderActive: "border-indigo-300",
+    bgActive: "bg-indigo-50",
+    dot: "bg-indigo-600",
+    founded: "2021",
+    hq: "No permanent HQ",
+  },
+  {
+    id: "quad",
+    name: "Quad",
+    fullName: "Quadrilateral Security Dialogue",
+    members: QUAD_MEMBERS,
+    accentBg: "bg-amber-600",
+    accentText: "text-white",
+    borderActive: "border-amber-300",
+    bgActive: "bg-amber-50",
+    dot: "bg-amber-600",
+    founded: "2007",
+    hq: "No permanent HQ",
+  },
+  {
+    id: "fiveeyes",
+    name: "Five Eyes",
+    fullName: "FVEY Intelligence Alliance",
+    members: FIVEEYES_MEMBERS,
+    accentBg: "bg-teal-700",
+    accentText: "text-white",
+    borderActive: "border-teal-300",
+    bgActive: "bg-teal-50",
+    dot: "bg-teal-700",
+    founded: "1946",
+    hq: "No permanent HQ",
+  },
+  {
+    id: "sco",
+    name: "SCO",
+    fullName: "Shanghai Cooperation Organisation",
+    members: SCO_MEMBERS,
+    accentBg: "bg-rose-700",
+    accentText: "text-white",
+    borderActive: "border-rose-300",
+    bgActive: "bg-rose-50",
+    dot: "bg-rose-700",
+    founded: "2001",
+    hq: "Beijing, China",
+  },
+];
+
+function AllianceTracker({ expenditures, onCountryClick }) {
+  const [activeId, setActiveId] = useState(null);
+
+  const spendByCode = useMemo(() => {
+    const m = {};
+    expenditures.forEach(e => { m[e.country_code] = e; });
+    return m;
+  }, [expenditures]);
+
+  const active = ALLIANCES.find(a => a.id === activeId);
+
+  const memberRows = useMemo(() => {
+    if (!active) return [];
+    return [...active.members]
+      .map(code => spendByCode[code])
+      .filter(Boolean)
+      .sort((a, b) => b.expenditure - a.expenditure);
+  }, [active, spendByCode]);
+
+  const totalBudget = useMemo(() =>
+    memberRows.reduce((s, e) => s + (e.expenditure || 0), 0).toFixed(0),
+    [memberRows]
+  );
+
+  const natoCompliance = useMemo(() => {
+    if (activeId !== "nato" || !memberRows.length) return null;
+    const meeting = memberRows.filter(e => e.gdp_percent >= 2);
+    return { meeting: meeting.length, total: memberRows.length };
+  }, [activeId, memberRows]);
+
+  return (
+    <div className="space-y-3">
+      {/* Alliance selector row */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+        {ALLIANCES.map(alliance => {
+          const inView = [...alliance.members].filter(c => spendByCode[c]).length;
+          const total = [...alliance.members].reduce((s, c) => s + (spendByCode[c]?.expenditure || 0), 0);
+          const isActive = activeId === alliance.id;
+          return (
+            <button
+              key={alliance.id}
+              onClick={() => setActiveId(isActive ? null : alliance.id)}
+              className={`relative text-left rounded-xl border p-3 transition-all hover:shadow-md ${
+                isActive
+                  ? `${alliance.borderActive} ${alliance.bgActive} shadow-sm`
+                  : "border-slate-200 bg-white hover:border-slate-300"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-1 mb-2">
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${alliance.accentBg} ${alliance.accentText} uppercase tracking-wide`}>
+                  {alliance.name}
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono whitespace-nowrap">{inView} tracked</span>
+              </div>
+              <p className="text-[10px] text-slate-500 leading-tight mb-2 line-clamp-1">{alliance.fullName}</p>
+              <p className="text-sm font-bold font-mono text-slate-900">
+                ${total >= 1000 ? `${(total / 1000).toFixed(1)}T` : `${Math.round(total)}B`}
+              </p>
+              <p className="text-[10px] text-slate-400">combined budget</p>
+              {isActive && (
+                <span className={`absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full ${alliance.dot}`} />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Expanded member panel */}
+      {active && memberRows.length > 0 && (
+        <Card className={`border ${active.borderActive} bg-white shadow-sm`}>
+          <CardHeader className="border-b border-slate-100 pb-3 pt-3 px-4">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${active.accentBg} ${active.accentText} uppercase tracking-wide`}>
+                  {active.name}
+                </span>
+                <span className="text-sm font-semibold text-slate-800">{active.fullName}</span>
+                <span className="text-xs text-slate-400">· est. {active.founded}</span>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-slate-500">
+                <span>{memberRows.length} of {active.members.size} members tracked</span>
+                <span className="font-mono font-semibold text-slate-700">
+                  ${totalBudget >= 1000 ? `${(totalBudget / 1000).toFixed(1)}T` : `${totalBudget}B`} total
+                </span>
+              </div>
+            </div>
+            {natoCompliance && (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="h-1.5 flex-1 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full transition-all"
+                    style={{ width: `${(natoCompliance.meeting / natoCompliance.total) * 100}%` }}
+                  />
+                </div>
+                <span className="text-[10px] text-slate-400 font-mono whitespace-nowrap">
+                  {natoCompliance.meeting}/{natoCompliance.total} meeting 2% GDP target
+                </span>
+              </div>
+            )}
+          </CardHeader>
+          <CardContent className="p-3">
+            <div className="flex flex-wrap gap-1.5">
+              {memberRows.map(e => {
+                const belowTarget = activeId === "nato" && e.gdp_percent < 2;
+                const meetsTarget = activeId === "nato" && e.gdp_percent >= 2;
+                return (
+                  <button
+                    key={e.country_code}
+                    onClick={() => onCountryClick(e)}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition-colors hover:shadow-sm ${
+                      meetsTarget
+                        ? "border-emerald-200 bg-emerald-50 hover:bg-emerald-100"
+                        : belowTarget
+                        ? "border-rose-200 bg-rose-50 hover:bg-rose-100"
+                        : `border-slate-200 bg-white ${active.bgActive.replace("bg-", "hover:bg-")}`
+                    }`}
+                  >
+                    <img
+                      src={getFlag(e.country_code)} alt=""
+                      className="w-5 h-3.5 object-cover rounded-sm shrink-0"
+                      onError={ev => { ev.target.style.display = 'none'; }}
+                    />
+                    <span className="text-xs font-medium text-slate-700">{e.country}</span>
+                    <span className="text-xs font-mono font-bold text-slate-500">${e.expenditure}B</span>
+                    {activeId === "nato" && (
+                      <span className={`text-[10px] font-mono font-semibold ${meetsTarget ? "text-emerald-600" : "text-rose-500"}`}>
+                        {e.gdp_percent}%
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export default function Expenditures() {
@@ -3713,92 +3924,8 @@ export default function Expenditures() {
         )}
       </div>
 
-      {/* ── NATO Compliance Tracker ── */}
-      {!focusCountry && (() => {
-        const natoInView = filteredExpenditures.filter(e => NATO_MEMBERS.has(e.country_code));
-        if (!natoInView.length) return null;
-        const meeting = natoInView.filter(e => e.gdp_percent >= 2).sort((a, b) => b.gdp_percent - a.gdp_percent);
-        const missing  = natoInView.filter(e => e.gdp_percent < 2).sort((a, b) => b.gdp_percent - a.gdp_percent);
-        return (
-          <Card className="bg-white border-slate-200 shadow-sm">
-            <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-700 text-white uppercase tracking-wide">NATO</span>
-                  <CardTitle className="font-heading text-base text-slate-900">2% GDP Burden-Sharing Tracker</CardTitle>
-                </div>
-                <span className="text-xs text-slate-400">
-                  {meeting.length}/{natoInView.length} tracked meeting target · 32 total members
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4 space-y-4">
-              {meeting.length > 0 && (
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
-                    <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block shrink-0" />
-                    Meeting ≥ 2% target ({meeting.length})
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {meeting.map(e => (
-                      <button
-                        key={e.country_code}
-                        onClick={() => handleRowClick(e)}
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors"
-                      >
-                        <img
-                          src={getFlag(e.country_code)} alt=""
-                          className="w-5 h-3.5 object-cover rounded-sm"
-                          onError={(ev) => { ev.target.style.display = 'none'; }}
-                        />
-                        <span className="text-xs font-medium text-slate-700">{e.country}</span>
-                        <span className="text-xs font-mono font-bold text-emerald-600">{e.gdp_percent}%</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {missing.length > 0 && (
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
-                    <span className="w-3.5 h-3.5 rounded-full bg-rose-400 inline-block shrink-0" />
-                    Below 2% target ({missing.length})
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {missing.map(e => (
-                      <button
-                        key={e.country_code}
-                        onClick={() => handleRowClick(e)}
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors"
-                      >
-                        <img
-                          src={getFlag(e.country_code)} alt=""
-                          className="w-5 h-3.5 object-cover rounded-sm"
-                          onError={(ev) => { ev.target.style.display = 'none'; }}
-                        />
-                        <span className="text-xs font-medium text-slate-700">{e.country}</span>
-                        <span className="text-xs font-mono font-bold text-rose-500">{e.gdp_percent}%</span>
-                        <span className="text-[9px] text-slate-400 font-mono">−{(2 - e.gdp_percent).toFixed(1)}%</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <div className="pt-1 border-t border-slate-100 flex items-center gap-2">
-                <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-emerald-500 rounded-full transition-all"
-                    style={{ width: `${(meeting.length / natoInView.length) * 100}%` }}
-                  />
-                </div>
-                <span className="text-xs text-slate-400 font-mono whitespace-nowrap">
-                  {Math.round((meeting.length / natoInView.length) * 100)}% compliance
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })()}
+      {/* ── Military Alliances ── */}
+      {!focusCountry && <AllianceTracker expenditures={filteredExpenditures} onCountryClick={handleRowClick} />}
 
       {/* ── Compare Panel ── */}
       {compareList.length >= 2 && (
