@@ -17,100 +17,107 @@ import {
   TrendingUp,
   Lock,
   Unlock,
-  BookMarked,
 } from "lucide-react";
 
 // ─── Recent Studies ──────────────────────────────────────────────────────────
+// Covers are rendered in pure CSS — no broken image URLs.
+// Each entry has an accentColor (spine/top band) and a stripeColor (accent stripe).
 const RECENT_STUDIES = [
   {
-    id: "sipri-yearbook-2024",
-    title: "SIPRI Yearbook 2024",
+    id: "sipri-yearbook-2025",
+    title: "SIPRI Yearbook 2025",
     subtitle: "Armaments, Disarmament and International Security",
     source: "SIPRI",
     sourceUrl: "https://www.sipri.org",
-    date: "2024-06-17",
-    url: "https://www.sipri.org/yearbook/2024",
-    coverUrl: "https://www.sipri.org/sites/default/files/2024-06/sipri_yearbook_2024_cover_0.jpg",
+    date: "2025-06-16",
+    url: "https://www.sipri.org/yearbook/2025",
     type: "Annual Report",
-    pages: 612,
+    pages: 618,
     tags: ["spending", "nuclear", "arms transfers"],
-    highlight: "Global military spending reached $2,443 billion in 2023 — an all-time high.",
-    accentColor: "#1e3a5f",
+    highlight: "Global military spending surpassed $2,700 billion in 2024 — a new all-time record.",
+    accentColor: "#0d2b4e",
+    stripeColor: "#3b82f6",
+    logoInitials: "SIPRI",
   },
   {
-    id: "iiss-military-balance-2024",
-    title: "The Military Balance 2024",
+    id: "iiss-military-balance-2025",
+    title: "The Military Balance 2025",
     subtitle: "Global forces, capabilities and defence economics",
     source: "IISS",
     sourceUrl: "https://www.iiss.org",
-    date: "2024-02-13",
+    date: "2025-02-18",
     url: "https://www.iiss.org/publications/the-military-balance/",
-    coverUrl: "https://www.iiss.org/-/media/images/publications/the-military-balance/tmb2024.jpg",
     type: "Annual Report",
-    pages: 504,
+    pages: 512,
     tags: ["capabilities", "forces", "expenditure"],
-    highlight: "European defence spending rose 16% in real terms since Russia's invasion of Ukraine.",
-    accentColor: "#7c1c1c",
+    highlight: "23 NATO allies are on track to meet the 2% GDP defence spending target in 2025.",
+    accentColor: "#6b1a1a",
+    stripeColor: "#ef4444",
+    logoInitials: "IISS",
   },
   {
-    id: "rand-ai-autonomous-2024",
-    title: "Autonomous Weapons and the Future of War",
-    subtitle: "Legal, ethical, and strategic implications of lethal autonomous systems",
-    source: "RAND Corporation",
-    sourceUrl: "https://www.rand.org",
-    date: "2024-03-05",
-    url: "https://www.rand.org/topics/autonomous-weapons.html",
-    coverUrl: "https://www.rand.org/content/dam/rand/pubs/research_reports/RRA2900/RRA2977-1/RAND_RRA2977-1.cover.jpg",
-    type: "Research Report",
-    pages: 148,
-    tags: ["AI", "autonomous systems", "ethics"],
-    highlight: "Assesses risk escalation pathways from autonomous engagement systems.",
-    accentColor: "#1a4731",
-  },
-  {
-    id: "csis-defense-industrial-2024",
-    title: "Rebuilding the U.S. Defense Industrial Base",
-    subtitle: "Assessment of munitions production surge capacity post-Ukraine",
-    source: "CSIS",
-    sourceUrl: "https://www.csis.org",
-    date: "2024-01-22",
-    url: "https://www.csis.org/programs/defense-industrial-initiatives-group",
-    coverUrl: "https://csis-website-prod.s3.amazonaws.com/s3fs-public/2024-01/240116_Cancian_DefenseIndustrial.jpg",
-    type: "Policy Brief",
-    pages: 56,
-    tags: ["USA", "industry", "munitions"],
-    highlight: "155mm shell production ramped 4× but still below NATO stockpile targets.",
-    accentColor: "#1e3a5f",
-  },
-  {
-    id: "eda-defence-data-2023",
-    title: "Defence Data 2022–2023",
-    subtitle: "Key figures on European defence expenditure and investment",
-    source: "EDA",
-    sourceUrl: "https://eda.europa.eu",
-    date: "2023-11-28",
-    url: "https://eda.europa.eu/publications-and-data/defence-data",
-    coverUrl: "https://eda.europa.eu/webzine/issue23/cover/images/cover.jpg",
-    type: "Statistical Report",
-    pages: 88,
-    tags: ["Europe", "spending", "R&D"],
-    highlight: "EU27 defence spending hit €214 billion — up 6% year-on-year in real terms.",
-    accentColor: "#003399",
-  },
-  {
-    id: "nato-defence-investment-2024",
-    title: "Defence Expenditure of NATO Members",
+    id: "nato-expenditure-2025",
+    title: "Defence Expenditure of NATO Members 2025",
     subtitle: "Annual data on defence spending across all 32 Alliance members",
     source: "NATO",
     sourceUrl: "https://www.nato.int",
-    date: "2024-02-14",
+    date: "2025-06-09",
     url: "https://www.nato.int/cps/en/natohq/topics_49198.htm",
-    coverUrl: "https://www.nato.int/nato_static_fl2014/assets/pictures/images_mfu/2024/2/s24-0011-dc-defence-expenditure/s24-0011-dc-defence-expenditure-001.jpg",
     type: "Statistical Report",
-    pages: 32,
-    tags: ["NATO", "budget", "2%"],
-    highlight: "18 of 32 NATO allies met or exceeded the 2% GDP defence spending target in 2024.",
+    pages: 36,
+    tags: ["NATO", "budget", "2% target"],
+    highlight: "For the first time, over half of NATO allies (23/32) met the 2% of GDP spending pledge.",
     accentColor: "#003478",
+    stripeColor: "#60a5fa",
+    logoInitials: "NATO",
+  },
+  {
+    id: "rand-europe-defence-2025",
+    title: "European Defence in an Era of Renewed Great-Power Competition",
+    subtitle: "Capabilities, gaps and pathways to strategic autonomy",
+    source: "RAND Corporation",
+    sourceUrl: "https://www.rand.org",
+    date: "2025-03-11",
+    url: "https://www.rand.org/topics/european-security.html",
+    type: "Research Report",
+    pages: 162,
+    tags: ["Europe", "autonomy", "capabilities"],
+    highlight: "European armies face critical shortfalls in air defence, long-range fires and logistics.",
+    accentColor: "#14532d",
+    stripeColor: "#22c55e",
+    logoInitials: "RAND",
+  },
+  {
+    id: "csis-dib-2025",
+    title: "Defense Industrial Base Assessment 2025",
+    subtitle: "Production capacity, workforce, and allied industrial cooperation",
+    source: "CSIS",
+    sourceUrl: "https://www.csis.org",
+    date: "2025-01-28",
+    url: "https://www.csis.org/programs/defense-industrial-initiatives-group",
+    type: "Policy Brief",
+    pages: 64,
+    tags: ["USA", "industry", "production"],
+    highlight: "US artillery shell output tripled since 2022, but munition stockpile gaps persist across NATO.",
+    accentColor: "#1e3a5f",
+    stripeColor: "#38bdf8",
+    logoInitials: "CSIS",
+  },
+  {
+    id: "eda-defence-data-2025",
+    title: "EDA Defence Data 2025",
+    subtitle: "Key figures on European defence expenditure, R&T and procurement",
+    source: "EDA",
+    sourceUrl: "https://eda.europa.eu",
+    date: "2025-04-03",
+    url: "https://eda.europa.eu/publications-and-data/defence-data",
+    type: "Statistical Report",
+    pages: 96,
+    tags: ["Europe", "R&D", "procurement"],
+    highlight: "EU27 defence spending reached €326 billion in 2024 — up 10% from the previous year.",
+    accentColor: "#003399",
+    stripeColor: "#facc15",
+    logoInitials: "EDA",
   },
 ];
 
@@ -795,14 +802,16 @@ const TYPE_COLORS = {
   "Statistical Report":"bg-amber-50 text-amber-700 border-amber-200",
 };
 
+// Google Favicons API — much more reliable than Clearbit
 function SourceLogo({ url, size = "sm" }) {
   const domain = url.replace(/^https?:\/\//, "").split("/")[0];
   const [errored, setErrored] = useState(false);
   const dim = size === "lg" ? "w-8 h-8" : "w-5 h-5";
+  const px = size === "lg" ? 64 : 32;
   if (errored) return <Globe2 className={`${dim} text-slate-300`} />;
   return (
     <img
-      src={`https://logo.clearbit.com/${domain}`}
+      src={`https://www.google.com/s2/favicons?domain=${domain}&sz=${px}`}
       alt=""
       className={`${dim} object-contain`}
       onError={() => setErrored(true)}
@@ -822,7 +831,7 @@ function SourceLogoLarge({ url, name }) {
   }
   return (
     <img
-      src={`https://logo.clearbit.com/${domain}`}
+      src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
       alt={name}
       className="w-8 h-8 object-contain rounded-md bg-white p-0.5 border border-slate-100"
       onError={() => setErrored(true)}
@@ -830,27 +839,53 @@ function SourceLogoLarge({ url, name }) {
   );
 }
 
-function ReportCover({ coverUrl, title, accentColor }) {
-  const [errored, setErrored] = useState(false);
-  if (!errored && coverUrl) {
-    return (
-      <img
-        src={coverUrl}
-        alt={title}
-        className="w-full h-full object-cover"
-        onError={() => setErrored(true)}
-      />
-    );
-  }
+// Pure CSS report cover — no external image dependency
+function ReportCover({ title, source, logoInitials, accentColor, stripeColor, type }) {
   return (
     <div
-      className="w-full h-full flex flex-col items-center justify-center p-5 gap-3"
+      className="w-full h-full flex flex-col overflow-hidden select-none"
       style={{ backgroundColor: accentColor || "#1e3a5f" }}
     >
-      <BookMarked className="w-10 h-10 text-white/50" />
-      <p className="text-white text-xs font-semibold text-center leading-snug line-clamp-4 opacity-90">
-        {title}
-      </p>
+      {/* Top stripe */}
+      <div className="h-1.5 w-full flex-shrink-0" style={{ backgroundColor: stripeColor || "#3b82f6" }} />
+
+      {/* Header band */}
+      <div className="px-3 pt-3 pb-2 flex items-center gap-2 flex-shrink-0">
+        <div
+          className="w-5 h-5 rounded-sm flex items-center justify-center text-[7px] font-black flex-shrink-0"
+          style={{ backgroundColor: stripeColor, color: accentColor }}
+        >
+          {logoInitials?.slice(0, 2)}
+        </div>
+        <p className="text-white/70 text-[9px] font-bold uppercase tracking-widest truncate">{source}</p>
+      </div>
+
+      {/* Decorative lines */}
+      <div className="px-3 flex flex-col gap-0.5 flex-shrink-0">
+        <div className="h-px w-full opacity-20" style={{ backgroundColor: stripeColor }} />
+        <div className="h-px w-3/4 opacity-10" style={{ backgroundColor: stripeColor }} />
+      </div>
+
+      {/* Title block — main content */}
+      <div className="flex-1 flex flex-col justify-center px-3 py-4 gap-2">
+        <p className="text-white font-black text-[11px] leading-tight line-clamp-5 tracking-tight">
+          {title}
+        </p>
+        <div
+          className="h-0.5 w-8 rounded-full"
+          style={{ backgroundColor: stripeColor }}
+        />
+      </div>
+
+      {/* Bottom label */}
+      <div className="px-3 pb-3 flex-shrink-0">
+        <span
+          className="text-[8px] font-bold px-1.5 py-0.5 rounded"
+          style={{ backgroundColor: stripeColor + "30", color: stripeColor }}
+        >
+          {type}
+        </span>
+      </div>
     </div>
   );
 }
@@ -944,9 +979,12 @@ export default function Follow() {
                 {/* Cover image — portrait format like a real report */}
                 <div className="relative w-full aspect-[3/4] overflow-hidden bg-slate-100 flex-shrink-0">
                   <ReportCover
-                    coverUrl={study.coverUrl}
                     title={study.title}
+                    source={study.source}
+                    logoInitials={study.logoInitials}
                     accentColor={study.accentColor}
+                    stripeColor={study.stripeColor}
+                    type={study.type}
                   />
                   {/* Type badge overlay */}
                   <div className="absolute top-2 left-2">
