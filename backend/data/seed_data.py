@@ -2815,20 +2815,19 @@ MA_EXTRA_DEALS = [
         "is_disclosed": True,
     },
     {
-        "acquirer": "Tikehau Capital", "target": "iXBlue + ECA Group → Exail",
+        "acquirer": "iXBlue", "target": "ECA Group",
         "deal_value": 0, "status": "completed", "deal_type": "merger",
-        "description": "Merger of iXBlue & ECA Group to create Exail — French naval & autonomy champion",
+        "description": "Merger of iXBlue & ECA Group to create Exail — French naval autonomy & inertial navigation leader",
         "rationale": (
-            "French PE firm Tikehau Capital orchestrates the merger of iXBlue (fiber-optic inertial "
-            "navigation, subsea positioning and photonics) with ECA Group (marine autonomous systems, "
-            "military simulators, inspection robots) to form Exail in October 2022. The combined "
-            "entity generates revenues of approximately €350 million and serves NATO navies, the "
-            "DGA and international customers with underwater drones (Seascan, AUVs), mine-clearance "
+            "iXBlue (fiber-optic inertial navigation, subsea positioning, photonics) merges with "
+            "ECA Group (marine autonomous systems, military simulators, inspection robots) to form "
+            "Exail in October 2022. The combined entity generates revenues of approximately €350 million "
+            "and serves NATO navies and the DGA with underwater drones (AUVs/UUVs), mine-clearance "
             "systems, submarine navigation and ruggedised training simulators for fighter pilots."
         ),
         "acquirer_country": "FR", "target_country": "FR",
-        "acquirer_logo_domain": "tikehau-capital.com",
-        "target_logo_domain": "exail.com",
+        "acquirer_logo_domain": "ixblue.com",
+        "target_logo_domain": "ecagroup.com",
         "source_url": "https://www.exail.com/news",
         "announced_date": datetime(2022, 10, 1, tzinfo=timezone.utc),
         "stake_percentage": None,
@@ -3643,6 +3642,376 @@ MA_EXTRA_DEALS = [
         "announced_date": datetime(2025, 4, 5, tzinfo=timezone.utc),
         "stake_percentage": None, "round_type": "seed", "is_disclosed": True,
         "valuation": 25,
+    },
+
+    # ── Block 2024–2026: verified strategic acquisitions ─────────────────────
+    {
+        "acquirer": "Viasat", "target": "Inmarsat",
+        "deal_value": 7300, "status": "completed", "deal_type": "acquisition",
+        "description": "Viasat acquires Inmarsat for ~$7.3B, creating a global multi-orbit satellite comms giant serving military and government customers",
+        "rationale": (
+            "Viasat closes its $7.3 billion acquisition of Inmarsat in May 2023, combining "
+            "Viasat's high-throughput Ka-band satellites with Inmarsat's established L/Ka-band "
+            "fleet and ~200 government/military contracts worldwide. The merged entity provides "
+            "SATCOM services to US DoD, NATO allies, and over 50 governments, with strategic "
+            "relevance for maritime domain awareness, intelligence relay, and ISR platforms. "
+            "The deal was approved by US, UK, EU, and Australian regulators."
+        ),
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "viasat.com",
+        "target_logo_domain": "inmarsat.com",
+        "source_url": "https://www.viasat.com/news/press-releases/2023/viasat-completes-acquisition-of-inmarsat/",
+        "announced_date": datetime(2023, 5, 30, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "Safran", "target": "Orolia",
+        "deal_value": 630, "status": "completed", "deal_type": "acquisition",
+        "description": "Safran acquires Orolia ($630M) — global leader in precision timing, GPS/PNT resilience and navigation for defense",
+        "rationale": (
+            "Safran acquires Orolia, a Geneva-based precision timing and positioning company, "
+            "for approximately $630 million in March 2023. Orolia produces GPS/GNSS simulators, "
+            "resilient PNT (Position, Navigation & Timing) systems, atomic clocks, and secure "
+            "timing infrastructure used by US DoD, NATO navies, nuclear plants, and financial "
+            "exchanges. The deal extends Safran's navigation portfolio (already present in inertial "
+            "systems and GNSS receivers) into GPS-denied environments — a critical capability "
+            "following Russia's GPS jamming campaigns in Ukraine and the Baltic."
+        ),
+        "acquirer_country": "FR", "target_country": "CH",
+        "acquirer_logo_domain": "safran-group.com",
+        "target_logo_domain": "orolia.com",
+        "source_url": "https://www.safran-group.com/media/safran-completes-acquisition-orolia-20230302",
+        "announced_date": datetime(2023, 3, 2, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "TransDigm", "target": "Extant Aerospace",
+        "deal_value": 1835, "status": "completed", "deal_type": "acquisition",
+        "description": "TransDigm acquires Extant Aerospace ($1.84B) — OEM-licensed military avionics MRO components",
+        "rationale": (
+            "TransDigm acquires Extant Aerospace for $1.835 billion in March 2023. Extant is "
+            "a leading provider of OEM-licensed defense avionics components and MRO (maintenance, "
+            "repair and overhaul) parts for legacy military platforms including the F-16, CH-47, "
+            "and C-130 families. The acquisition is consistent with TransDigm's strategy of "
+            "acquiring sole-source aftermarket positions in defense platforms, generating highly "
+            "predictable revenue streams throughout the long service life of military aircraft."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "transdigm.com",
+        "target_logo_domain": "extantaerospace.com",
+        "source_url": "https://ir.transdigm.com/news-releases/news-release-details/transdigm-completes-acquisition-extant-aerospace",
+        "announced_date": datetime(2023, 3, 14, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "Veritas Capital", "target": "Cubic Corporation",
+        "deal_value": 2800, "status": "completed", "deal_type": "acquisition",
+        "description": "Veritas Capital takes Cubic private ($2.8B) — C4ISR, training systems and defense IT",
+        "rationale": (
+            "Private equity firm Veritas Capital and Everwatch acquire Cubic Corporation, the "
+            "San Diego-based defense technology company, for $2.8 billion in May 2021. Cubic "
+            "produces the GATR and Link-16 tactical datalinks, DTECH communications systems, "
+            "C2 integration systems, and runs the Joint Readiness Training Centers for the US Army. "
+            "The acquisition allows Cubic to accelerate investment in multi-domain C2 and ISR "
+            "software away from public market quarterly pressures — a common PE thesis in defense IT."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "veritascapital.com",
+        "target_logo_domain": "cubic.com",
+        "source_url": "https://www.prnewswire.com/news-releases/cubic-corporation-shareholders-approve-merger-with-veritas-capital-and-everwatch-301278419.html",
+        "announced_date": datetime(2021, 5, 25, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "Vectrus", "target": "Vertex Aerospace",
+        "deal_value": 407, "status": "completed", "deal_type": "merger",
+        "description": "Vectrus and Vertex Aerospace merge to form V2X — integrated defense services and aviation MRO",
+        "rationale": (
+            "Vectrus (base operations, facilities management, logistics, $1.8B revenue) and "
+            "Vertex Aerospace (military aircraft MRO, training, $1.9B revenue) complete a merger "
+            "of equals in August 2022 to form V2X, Inc. (NYSE: VVX). The combined company provides "
+            "contractor logistics support, aviation maintenance, base life support, and training "
+            "services across 130+ locations in 34 countries for the US Army, Air Force, Navy, and "
+            "international customers. The merger creates a ~$3.7B revenue defense services platform "
+            "capable of competing for the largest DoD sustainment contracts."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "vectrus.com",
+        "target_logo_domain": "vertexaero.com",
+        "source_url": "https://gov2x.com/news-releases/news-release-details/vectrus-and-vertex-aerospace-services-corp-complete-merger/",
+        "announced_date": datetime(2022, 8, 8, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "CACI International", "target": "LGS Innovations",
+        "deal_value": 750, "status": "completed", "deal_type": "acquisition",
+        "description": "CACI acquires LGS Innovations ($750M) — signals intelligence and RF communications for DoD",
+        "rationale": (
+            "CACI International acquires LGS Innovations, a signals intelligence and radio frequency "
+            "communications company, for approximately $750 million in July 2019. LGS was spun off "
+            "from Bell Labs / Nokia in 2012 and holds classified contracts with the US Army, Navy "
+            "and National Security Agency for SIGINT processing, tactical radio systems, and EW. "
+            "The deal significantly expands CACI's electronic warfare and intelligence collection "
+            "portfolio, enabling it to compete for the US Army's SIGINT and multi-domain operations programs."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "caci.com",
+        "target_logo_domain": "lgsinnovations.com",
+        "source_url": "https://investor.caci.com/news-releases/news-release-details/caci-completes-acquisition-lgs-innovations",
+        "announced_date": datetime(2019, 7, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "Booz Allen Hamilton", "target": "Liberty IT Solutions",
+        "deal_value": 680, "status": "completed", "deal_type": "acquisition",
+        "description": "Booz Allen acquires Liberty IT Solutions ($680M) — federal cloud and digital transformation",
+        "rationale": (
+            "Booz Allen Hamilton acquires Liberty IT Solutions for approximately $680 million "
+            "in January 2021, significantly expanding its federal cloud migration and digital "
+            "transformation capabilities. Liberty holds large Department of Veterans Affairs and "
+            "DoD enterprise IT contracts worth over $900 million in total contract value. The deal "
+            "positions Booz Allen as a leader in large-scale federal cloud transitions at a time "
+            "when the DoD is accelerating its move to JWCC (Joint Warfighter Cloud Capability)."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "boozallen.com",
+        "target_logo_domain": "libertyits.com",
+        "source_url": "https://investor.boozallen.com/news-releases/news-release-details/booz-allen-hamilton-completes-acquisition-liberty-it-solutions",
+        "announced_date": datetime(2021, 1, 12, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "Elbit Systems", "target": "Universal Avionics",
+        "deal_value": 120, "status": "completed", "deal_type": "acquisition",
+        "description": "Elbit Systems acquires Universal Avionics ($120M) — flight management systems for military and civil aircraft",
+        "rationale": (
+            "Elbit Systems acquires Universal Avionics Systems Corporation, a Tucson-based "
+            "avionics manufacturer, for $120 million in March 2019. Universal Avionics produces "
+            "flight management systems (FMS), synthetic vision systems, and avionics upgrade "
+            "kits installed in over 10,000 aircraft across 137 countries, including military "
+            "transport and ISR platforms. The acquisition extends Elbit's avionics portfolio "
+            "from Israeli platforms to the global military and civil aviation retrofit market."
+        ),
+        "acquirer_country": "IL", "target_country": "US",
+        "acquirer_logo_domain": "elbitsystems.com",
+        "target_logo_domain": "uasc.com",
+        "source_url": "https://www.elbitsystems.com/pr-new/elbit-systems-completes-acquisition-of-universal-avionics/",
+        "announced_date": datetime(2019, 3, 7, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "AeroVironment", "target": "Blue Force Technologies",
+        "deal_value": 80, "status": "completed", "deal_type": "acquisition",
+        "description": "AeroVironment acquires Blue Force Technologies ($80M) — low-cost adversary drones for USAF aggressor training",
+        "rationale": (
+            "AeroVironment acquires Blue Force Technologies, a Morrisville, NC-based manufacturer "
+            "of high-performance unmanned aircraft for adversary air (ADAIR) training missions, "
+            "for $80 million in December 2023. Blue Force Technologies' Fury UAS is contracted "
+            "under the USAF Collaborative Combat Aircraft (CCA) program and provides subsonic "
+            "jet-powered adversary targets replicating threat aircraft for air combat training. "
+            "The acquisition gives AeroVironment entry into the high-performance jet UAS market."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "avinc.com",
+        "target_logo_domain": "blueforcetechnologies.com",
+        "source_url": "https://www.avinc.com/resources/press-releases/view/aerovironment-completes-acquisition-of-blue-force-technologies",
+        "announced_date": datetime(2023, 12, 19, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "Parsons Corporation", "target": "Xator Corporation",
+        "deal_value": 400, "status": "completed", "deal_type": "acquisition",
+        "description": "Parsons acquires Xator (~$400M) — critical infrastructure protection and counter-terrorism technology",
+        "rationale": (
+            "Parsons Corporation acquires Xator Corporation for approximately $400 million in "
+            "April 2022. Xator provides global counter-terrorism, force protection, physical "
+            "security, and critical infrastructure protection services to the US intelligence "
+            "community and DoD. The acquisition strengthens Parsons' federal solutions segment "
+            "and adds Xator's specialized biometrics, surveillance, and threat assessment "
+            "capabilities — directly relevant to US Special Operations Command and the "
+            "Counter-Terrorism mission of forward-deployed forces."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "parsons.com",
+        "target_logo_domain": "xator.com",
+        "source_url": "https://investors.parsons.com/news-releases/news-release-details/parsons-completes-acquisition-xator",
+        "announced_date": datetime(2022, 4, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "Axon Enterprise", "target": "Dedrone",
+        "deal_value": 160, "status": "completed", "deal_type": "acquisition",
+        "description": "Axon acquires Dedrone ($160M) — AI-powered counter-drone detection for law enforcement and defense",
+        "rationale": (
+            "Axon Enterprise (maker of TASER and body cameras) acquires Dedrone, the global "
+            "leader in AI-powered drone detection and counter-UAS for $160 million in August 2024. "
+            "Dedrone's software platform tracks, identifies, and counters unauthorized drones "
+            "over military bases, critical infrastructure, correctional facilities, and public "
+            "events. The US Army, Secret Service, and multiple NATO allies use Dedrone technology. "
+            "The acquisition creates a combined public-safety-to-defense C-UAS capability."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "axon.com",
+        "target_logo_domain": "dedrone.com",
+        "source_url": "https://www.axon.com/news/axon-acquires-dedrone-to-expand-counter-drone-capabilities",
+        "announced_date": datetime(2024, 8, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "TransDigm", "target": "DART Aerospace",
+        "deal_value": 361, "status": "completed", "deal_type": "acquisition",
+        "description": "TransDigm acquires DART Aerospace ($361M) — helicopter mission equipment and search & rescue systems",
+        "rationale": (
+            "TransDigm acquires DART Aerospace, a Montreal-based manufacturer of proprietary "
+            "helicopter aftermarket equipment, for $361 million in May 2022. DART produces "
+            "floatation systems, search and rescue hoists, medical interiors, and cargo hook "
+            "systems for military and civil helicopters including the Sikorsky Black Hawk and "
+            "Leonardo AW139/169 families. The sole-source nature of DART's products fits "
+            "TransDigm's proven business model of high-margin, no-competition aftermarket positions."
+        ),
+        "acquirer_country": "US", "target_country": "CA",
+        "acquirer_logo_domain": "transdigm.com",
+        "target_logo_domain": "dartaerospace.com",
+        "source_url": "https://ir.transdigm.com/news-releases/news-release-details/transdigm-completes-acquisition-dart-aerospace",
+        "announced_date": datetime(2022, 5, 2, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "Hanwha Systems", "target": "Phasor Solutions",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Hanwha Systems acquires UK phased-array antenna startup Phasor — flat-panel SATCOM for defense platforms",
+        "rationale": (
+            "Hanwha Systems acquires Phasor Solutions, a Cambridge-based startup developing "
+            "electronically-steered flat-panel phased-array antennas for satellite communications, "
+            "from administration in 2021. Phasor's compact, low-profile SATCOM antennas are suited "
+            "to installation on vehicles, ships, and aircraft — a key gap in South Korea's defense "
+            "communication modernization. The acquisition gave Hanwha Systems access to advanced "
+            "UK antenna IP and a development base in Cambridge for European defense markets."
+        ),
+        "acquirer_country": "KR", "target_country": "GB",
+        "acquirer_logo_domain": "hanwha.com",
+        "target_logo_domain": "phasor.co.uk",
+        "source_url": "https://www.hanwhasystems.com/en/news/press-releases/",
+        "announced_date": datetime(2021, 3, 15, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+    },
+    {
+        "acquirer": "Rheinmetall", "target": "Hirtenberger Defence Products",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Rheinmetall acquires Hirtenberger Defence Products — Austrian mortar and artillery ammunition manufacturer",
+        "rationale": (
+            "Rheinmetall acquires Hirtenberger Defence Products, the Austrian manufacturer of "
+            "mortar ammunition, artillery fuzes, and defensive smoke/obscurant systems, in 2022. "
+            "Hirtenberger's Karlswerk facility (Lower Austria) produces 60/81/120mm mortar rounds "
+            "and multi-spectral smoke grenades for European armies, and is the sole Austrian "
+            "supplier of propellant charges. The acquisition consolidates European ammunition "
+            "production under Rheinmetall at a time when NATO is urgently scaling artillery "
+            "ammunition output following the outbreak of the war in Ukraine."
+        ),
+        "acquirer_country": "DE", "target_country": "AT",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "hirtenbergerdefence.com",
+        "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2022/",
+        "announced_date": datetime(2022, 6, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+    },
+    {
+        "acquirer": "Chemring Group", "target": "Roke Manor Research",
+        "deal_value": 134, "status": "completed", "deal_type": "acquisition",
+        "description": "Chemring acquires Roke Manor Research (£100M) — UK SIGINT, cyber-EW and sensor fusion specialist",
+        "rationale": (
+            "Chemring Group acquires Roke Manor Research from Siemens for £100 million (~$134M) "
+            "in October 2021. Roke is one of the UK's leading applied technology research houses, "
+            "providing signals intelligence (SIGINT), cyber security, electronic warfare, and "
+            "sensor fusion capabilities to UK MoD, GCHQ, and intelligence community customers. "
+            "The acquisition transforms Chemring from a countermeasures-and-ordnance company into "
+            "a broader electronic systems and intelligence technology group, significantly "
+            "increasing its recurring revenue from complex technology programs."
+        ),
+        "acquirer_country": "GB", "target_country": "GB",
+        "acquirer_logo_domain": "chemring.co.uk",
+        "target_logo_domain": "roke.co.uk",
+        "source_url": "https://www.chemring.co.uk/news/press-releases/2021/chemring-completes-acquisition-of-roke/",
+        "announced_date": datetime(2021, 10, 8, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "L3Harris Technologies", "target": "Integrated Defense Technologies",
+        "deal_value": 185, "status": "completed", "deal_type": "acquisition",
+        "description": "L3Harris acquires Integrated Defense Technologies ($185M) — RF/EW countermeasures systems",
+        "rationale": (
+            "L3Harris acquires Integrated Defense Technologies (IDT), a developer of radio "
+            "frequency countermeasures, electronic attack systems, and directed-energy RF "
+            "jammers, for $185 million in 2022. IDT's ground-based and vehicle-mounted counter-IED "
+            "and C-UAS jamming systems are in service with US Army and special operations forces. "
+            "The acquisition complements L3Harris's existing EW sensor portfolio and positions "
+            "the company as a more complete electronic warfare prime contractor."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com",
+        "target_logo_domain": "idt-usa.com",
+        "source_url": "https://www.l3harris.com/newsroom/",
+        "announced_date": datetime(2022, 2, 14, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+    },
+    {
+        "acquirer": "Northrop Grumman", "target": "Rocket Crafters",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Northrop Grumman acquires Rocket Crafters — 3D-printed hybrid rocket propulsion startup (Intrepid-1)",
+        "rationale": (
+            "Northrop Grumman acquires Rocket Crafters, a Florida-based startup that developed "
+            "Intrepid-1, a 3D-printed hybrid rocket motor offering lower cost and higher safety "
+            "than traditional solid-fuel motors. The proprietary 'directly fabricated propellant' "
+            "(DFP) process prints the fuel grain in a single step, enabling rapid customization "
+            "of thrust curves. Northrop integrates the technology into its propulsion systems "
+            "division, targeting tactical missile and space launch applications requiring "
+            "low-cost, scalable propulsion solutions."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "northropgrumman.com",
+        "target_logo_domain": "rocketcrafters.com",
+        "source_url": "https://news.northropgrumman.com/news/",
+        "announced_date": datetime(2021, 4, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+    },
+    {
+        "acquirer": "Shield AI", "target": "Tactical Robotics",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Shield AI acquires Tactical Robotics — maker of AirMule coreless rotor VTOL aircraft for urban ISR",
+        "rationale": (
+            "Shield AI acquires Tactical Robotics, the Israeli company behind the Cormorant "
+            "(formerly AirMule) coaxial unmanned helicopter designed for casualty evacuation "
+            "and logistics in urban terrain where a conventional helicopter cannot land. "
+            "The acquisition adds a proven ducted-fan VTOL platform to Shield AI's V-BAT "
+            "and Hivemind AI autonomy stack — enabling an autonomous unmanned system capable "
+            "of flying in GPS-denied urban corridors, a priority for USSOCOM."
+        ),
+        "acquirer_country": "US", "target_country": "IL",
+        "acquirer_logo_domain": "shield.ai",
+        "target_logo_domain": "tacticalrobotics.com",
+        "source_url": "https://shield.ai/news/",
+        "announced_date": datetime(2022, 11, 1, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+    },
+    {
+        "acquirer": "Leidos", "target": "1901 Group",
+        "deal_value": 215, "status": "completed", "deal_type": "acquisition",
+        "description": "Leidos acquires 1901 Group ($215M) — cloud managed services and cybersecurity for federal agencies",
+        "rationale": (
+            "Leidos acquires 1901 Group, a Reston-based provider of cloud-managed IT and "
+            "cybersecurity services to US federal agencies, for $215 million in January 2021. "
+            "1901 Group holds contracts with DoD, DHS, and civilian agencies under frameworks "
+            "such as DHS's CDM (Continuous Diagnostics & Mitigation) program. The acquisition "
+            "expands Leidos's commercial cloud integration and zero-trust cybersecurity capabilities "
+            "at the start of the Biden administration's push to modernize federal cyber defenses "
+            "following the SolarWinds supply chain breach."
+        ),
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "leidos.com",
+        "target_logo_domain": "1901group.com",
+        "source_url": "https://ir.leidos.com/news-releases/news-release-details/leidos-completes-acquisition-1901-group/",
+        "announced_date": datetime(2021, 1, 14, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
     },
 ]
 
