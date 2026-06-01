@@ -209,6 +209,20 @@ const MANUFACTURERS = [
   { value: "SYPAQ Systems", label: "SYPAQ Systems" },
   { value: "Tekever", label: "Tekever" },
   { value: "Vanilla Aircraft", label: "Vanilla Aircraft" },
+  // Expanded coverage — country-specific programmes
+  { value: "ZALA Aero Group (Kalashnikov Concern)", label: "ZALA Aero (Russia)" },
+  { value: "Special Technology Centre (STC)", label: "STC (Russia)" },
+  { value: "CETC (China Electronics Technology Group Corp.)", label: "CETC (China)" },
+  { value: "HBZK / Harbin Aircraft Industry Group", label: "HBZK / Harbin Aircraft (China)" },
+  { value: "Malloy Aeronautics", label: "Malloy Aeronautics (UK)" },
+  { value: "Evolve Dynamics", label: "Evolve Dynamics (UK)" },
+  { value: "DRDO / HAL (Hindustan Aeronautics Limited)", label: "DRDO / HAL (India)" },
+  { value: "LIG Nex1", label: "LIG Nex1 (South Korea)" },
+  { value: "Aeronautics Ltd.", label: "Aeronautics Ltd. (Israel)" },
+  { value: "Threod Systems", label: "Threod Systems (Estonia)" },
+  { value: "Unmanned Defence Systems (UDS)", label: "UDS (Lithuania)" },
+  { value: "Insitu (Boeing subsidiary)", label: "Insitu / Boeing" },
+  { value: "Nordic Unmanned", label: "Nordic Unmanned (Norway)" },
 ];
 
 // Stable Wikimedia Commons image URLs for flagship products.
