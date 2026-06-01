@@ -683,28 +683,6 @@ const CAP_CATEGORIES = [
     iconColor: "text-slate-500",
   },
   {
-    key: "drones",
-    label: "Drones & UAS",
-    sublabel: "Operational UAS Fleet (MALE / HALE / Tactical)",
-    Icon: ({ className }) => (
-      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/>
-        <path d="M5 12H2M22 12h-3M12 5V2M12 22v-3M7.05 7.05L5 5M19 5l-2.05 2.05M7.05 16.95L5 19M19 19l-2.05-2.05"/>
-        <path d="M4 12h2a6 6 0 0 0 12 0h2"/>
-      </svg>
-    ),
-    scale: 5,
-    scaleLabel: "5 UAS",
-    bg: "bg-white",
-    border: "border-slate-200",
-    labelColor: "text-slate-500",
-    countColor: "text-slate-700",
-    dotColor: "text-slate-400",
-    progressColor: "bg-slate-700",
-    iconBadgeBg: "bg-slate-50",
-    iconColor: "text-slate-500",
-  },
-  {
     key: "land_vehicles",
     label: "Land Forces",
     sublabel: "MBTs, IFVs, APCs & Armour",
@@ -1620,7 +1598,7 @@ function getCapabilitySummary(countryCode) {
   const details = CAPABILITY_DETAILS[countryCode];
   if (details) {
     const result = { _sourced: true };
-    ['fighters', 'helicopters', 'drones', 'land_vehicles', 'surface_combatants', 'submarines'].forEach(key => {
+    ['fighters', 'helicopters', 'land_vehicles', 'surface_combatants', 'submarines'].forEach(key => {
       result[key] = (details[key] || [])
         .filter(item => !item.is_trainer && !item.is_expendable)
         .reduce((s, item) => s + (item.count ?? 0), 0);
@@ -3863,7 +3841,6 @@ export default function Expenditures() {
                     : <span className="text-slate-300">—</span> },
                   { label: 'Fighters', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.fighters ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
                   { label: 'Helicopters', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.helicopters ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
-                  { label: 'Drones', render: e => { const cap = getCapabilitySummary(e.country_code); return cap?.drones != null ? <span className="font-mono text-slate-700">{cap.drones.toLocaleString()}</span> : <span className="text-slate-300 text-xs">N/D</span>; } },
                   { label: 'Land Vehicles', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.land_vehicles ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
                   { label: 'Warships', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.surface_combatants ?? 0)}</span> : <span className="text-slate-300">—</span>; } },
                   { label: 'Submarines', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.submarines ?? 0)}</span> : <span className="text-slate-300">—</span>; } },
