@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { API, useAuth } from "@/App";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,6 +58,43 @@ const PERIOD_OPTIONS = [
   { value: "90", label: "90D" },
   { value: "0",  label: "All" },
 ];
+
+const SECTOR_OPTIONS = [
+  { value: "all",                label: "All Sectors" },
+  { value: "cyber",              label: "Cyber" },
+  { value: "space",              label: "Space" },
+  { value: "uas_drones",         label: "UAS / Drones" },
+  { value: "missiles_munitions", label: "Missiles & Munitions" },
+  { value: "naval",              label: "Naval" },
+  { value: "land_systems",       label: "Land Systems" },
+  { value: "c2_electronics",     label: "C2 & Electronics" },
+  { value: "aircraft",           label: "Aircraft" },
+  { value: "services_it",        label: "Services & IT" },
+  { value: "other",              label: "Other" },
+];
+
+const COMPANY_TICKER_MAP = {
+  "Lockheed Martin":            "LMT",
+  "Raytheon Technologies":      "RTX",
+  "Northrop Grumman":           "NOC",
+  "General Dynamics":           "GD",
+  "Boeing Defense":             "BA",
+  "L3Harris Technologies":      "LHX",
+  "BAE Systems":                "BA.L",
+  "Thales":                     "HO.PA",
+  "Airbus Defence & Space":     "AIR.PA",
+  "Rheinmetall":                "RHM.DE",
+  "Safran":                     "SAF.PA",
+  "Leonardo":                   "LDO.MI",
+  "Dassault Aviation":          "AM.PA",
+  "HEICO Corporation":          "HEI",
+  "TransDigm":                  "TDG",
+  "Mercury Systems":            "MRCY",
+  "Teledyne Technologies":      "TDY",
+  "Leidos Holdings":            "LDOS",
+  "SAIC":                       "SAIC",
+  "Booz Allen Hamilton":        "BAH",
+};
 
 const LOGO_FALLBACK = {
   // ── US Primes ────────────────────────────────────────────────────────────────
@@ -869,6 +907,24 @@ function MACard({ activity, onOpenProfile }) {
                   {activity.regulatory_status === "cleared" ? "Reg. Cleared" : activity.regulatory_status === "blocked" ? "Reg. Blocked" : "Reg. Review"}
                 </span>
               )}
+              {/* Sector badge */}
+              {activity.sector && (
+                <span className="text-[10px] bg-slate-100 text-slate-500 border border-slate-200 px-2 py-0.5 rounded-full capitalize">
+                  {SECTOR_OPTIONS.find(s => s.value === activity.sector)?.label ?? activity.sector.replaceAll("_", " ")}
+                </span>
+              )}
+              {/* Market data ticker links */}
+              {[activity.acquirer, activity.target].map(name => COMPANY_TICKER_MAP[name] ? (
+                <Link
+                  key={name}
+                  to="/market-data"
+                  onClick={e => e.stopPropagation()}
+                  className="text-[10px] font-mono text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-blue-100"
+                  title={`View ${name} on Market Data`}
+                >
+                  {COMPANY_TICKER_MAP[name]}
+                </Link>
+              ) : null)}
             </div>
 
             {/* Source + details */}
@@ -1821,6 +1877,28 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
         {activity.round_type && (
           <div className="mt-0.5"><RoundBadge roundType={activity.round_type} /></div>
         )}
+        {/* Sector badge */}
+        {activity.sector && (
+          <div className="mt-0.5">
+            <span className="text-[10px] bg-slate-100 text-slate-500 border border-slate-200 px-1.5 py-0.5 rounded-full capitalize">
+              {SECTOR_OPTIONS.find(s => s.value === activity.sector)?.label ?? activity.sector.replaceAll("_", " ")}
+            </span>
+          </div>
+        )}
+        {/* Ticker links */}
+        <div className="flex flex-wrap gap-1 mt-0.5">
+          {[activity.acquirer, activity.target].map(name => COMPANY_TICKER_MAP[name] ? (
+            <Link
+              key={name}
+              to="/market-data"
+              onClick={e => e.stopPropagation()}
+              className="text-[10px] font-mono text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-blue-100"
+              title={`View ${name} on Market Data`}
+            >
+              {COMPANY_TICKER_MAP[name]}
+            </Link>
+          ) : null)}
+        </div>
       </td>
 
       {/* Value */}
@@ -2373,6 +2451,103 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
   );
 }
 
+// ── Deal Pipeline View (Kanban by status) ──────────────────────────────────
+
+const PIPELINE_COLUMNS = [
+  { status: "announced",    label: "Announced" },
+  { status: "pending",      label: "Pending" },
+  { status: "under_review", label: "Under Review" },
+  { status: "completed",    label: "Completed" },
+  { status: "cancelled",    label: "Cancelled" },
+];
+
+function getStatusHeaderBg(status) {
+  switch (status) {
+    case "completed":    return "bg-emerald-50 border-emerald-200 text-emerald-700";
+    case "pending":
+    case "under_review": return "bg-amber-50 border-amber-200 text-amber-700";
+    case "announced":    return "bg-blue-50 border-blue-200 text-blue-700";
+    case "cancelled":    return "bg-rose-50 border-rose-200 text-rose-700";
+    default:             return "bg-slate-50 border-slate-200 text-slate-600";
+  }
+}
+
+function PipelineMiniCard({ activity, onSelectDeal }) {
+  const acquirerDomain = getLogoDomain(activity, "acquirer");
+  const targetDomain   = getLogoDomain(activity, "target");
+  const labels         = getDealLabels(activity.deal_type);
+
+  return (
+    <button
+      className="w-full text-left bg-white border border-slate-200 rounded-lg p-2.5 shadow-sm hover:shadow-md hover:border-blue-200 transition-all space-y-1.5"
+      onClick={() => onSelectDeal(activity)}
+    >
+      {/* Logos + arrow */}
+      <div className="flex items-center gap-1.5">
+        <CompanyLogo activity={activity} side="acquirer" size="sm" />
+        <ArrowRight className="w-2.5 h-2.5 text-slate-300 shrink-0" />
+        <CompanyLogo activity={activity} side="target" size="sm" />
+        <span className="text-[10px] text-slate-500 truncate flex-1 ml-0.5 leading-snug">
+          {activity.acquirer.split(/[\s,]/)[0]} → {activity.target.split(/[\s,]/)[0]}
+        </span>
+      </div>
+      {/* Value */}
+      <p className="text-[11px] font-mono font-bold text-slate-800">
+        {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
+      </p>
+      {/* Date + type */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <span className="text-[9px] text-slate-400 whitespace-nowrap">
+          {format(new Date(activity.announced_date), "MMM yyyy")}
+        </span>
+        <span className="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded capitalize leading-none">
+          {activity.deal_type.replaceAll("_", " ")}
+        </span>
+        {activity.sector && (
+          <span className="text-[9px] bg-slate-100 text-slate-400 border border-slate-200 px-1.5 py-0.5 rounded-full capitalize leading-none">
+            {SECTOR_OPTIONS.find(s => s.value === activity.sector)?.label ?? activity.sector.replaceAll("_", " ")}
+          </span>
+        )}
+      </div>
+    </button>
+  );
+}
+
+function DealPipelineView({ deals, onSelectDeal }) {
+  const columns = PIPELINE_COLUMNS.map(col => ({
+    ...col,
+    deals: deals.filter(a => a.status === col.status),
+  }));
+
+  return (
+    <div className="overflow-x-auto pb-2">
+      <div className="flex gap-3 min-w-[700px]">
+        {columns.map(col => (
+          <div key={col.status} className="flex-1 min-w-[160px]">
+            {/* Column header */}
+            <div className={`flex items-center justify-between px-3 py-2 rounded-t-lg border ${getStatusHeaderBg(col.status)}`}>
+              <span className="text-[11px] font-semibold uppercase tracking-wider">{col.label}</span>
+              <span className="text-[10px] font-mono font-bold bg-white/60 px-1.5 py-0.5 rounded-full border">
+                {col.deals.length}
+              </span>
+            </div>
+            {/* Cards */}
+            <div className="bg-slate-50 border border-t-0 border-slate-200 rounded-b-lg p-2 space-y-2 min-h-[120px]">
+              {col.deals.length === 0 ? (
+                <p className="text-[10px] text-slate-300 text-center pt-6">No deals</p>
+              ) : (
+                col.deals.map(a => (
+                  <PipelineMiniCard key={a.id} activity={a} onSelectDeal={onSelectDeal} />
+                ))
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────────────────
 
 export default function MAActivity() {
@@ -2397,6 +2572,8 @@ export default function MAActivity() {
   const [metaLastScraped, setMetaLastScraped]  = useState(null);
   const [selectedCountry, setSelectedCountry]  = useState("all");
   const [minValue,       setMinValue]          = useState(0);
+  const [selectedSector, setSelectedSector]    = useState("all");
+  const [viewMode,       setViewMode]          = useState("table"); // "table" | "pipeline"
 
   const fetchRecent = async () => {
     setLoading(true);
@@ -2502,6 +2679,9 @@ export default function MAActivity() {
     if (minValue > 0) {
       list = list.filter(a => (a.is_disclosed ?? true) && (a.deal_value || 0) >= minValue);
     }
+    if (selectedSector !== "all") {
+      list = list.filter(a => a.sector === selectedSector);
+    }
     if (searchTerm) {
       const t = searchTerm.toLowerCase();
       list = list.filter(a =>
@@ -2515,7 +2695,7 @@ export default function MAActivity() {
       const vb = sortField === "deal_value" ? (b.deal_value || 0) : new Date(b.announced_date).getTime();
       return sortDir === "asc" ? va - vb : vb - va;
     });
-  }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir, selectedCountry, minValue]);
+  }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir, selectedCountry, minValue, selectedSector]);
 
   // "Data as of" badge — max announced_date across all loaded deals
   const dataAsOf = useMemo(() => {
@@ -2527,7 +2707,7 @@ export default function MAActivity() {
   }, [allDeals]);
 
   // Reset page on filter change
-  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir, minValue]);
+  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir, minValue, selectedSector]);
 
   const pageDeals  = filteredDeals.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(filteredDeals.length / PAGE_SIZE);
@@ -2535,7 +2715,7 @@ export default function MAActivity() {
   const rangeEnd   = Math.min((page + 1) * PAGE_SIZE, filteredDeals.length);
 
   const totalValue = filteredDeals.filter(a => a.is_disclosed ?? true).reduce((s, a) => s + (a.deal_value || 0), 0);
-  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all", minValue > 0].filter(Boolean).length;
+  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all", minValue > 0, selectedSector !== "all"].filter(Boolean).length;
 
   // Quarterly chart — uses the same tab filter as the deal list, but ignores
   // the sidebar filters (status/year/country/value) so the chart always shows
@@ -2741,7 +2921,7 @@ export default function MAActivity() {
               </span>
               {activeFilterCount > 0 && (
                 <button
-                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); }}
+                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); setSelectedSector("all"); }}
                   className="text-[11px] text-rose-500 hover:text-rose-700 font-medium"
                 >
                   Clear
@@ -2824,6 +3004,20 @@ export default function MAActivity() {
               </div>
             </div>
 
+            {/* Sector */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Sector</p>
+              <select
+                value={selectedSector}
+                onChange={e => setSelectedSector(e.target.value)}
+                className="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {SECTOR_OPTIONS.map(o => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+
             {/* Country */}
             <CountryFilter
               allDeals={allDeals}
@@ -2859,35 +3053,110 @@ export default function MAActivity() {
             </div>
           )}
 
+          {/* Active filter pills */}
+          {activeFilterCount > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              {searchTerm && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  Search: "{searchTerm}"
+                  <button onClick={() => setSearchTerm("")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {selectedStatus !== "all" && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  {STATUS_OPTIONS.find(o => o.value === selectedStatus)?.label ?? selectedStatus}
+                  <button onClick={() => setSelectedStatus("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {selectedYear !== "all" && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  {selectedYear}
+                  <button onClick={() => setSelectedYear("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {minValue > 0 && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  {MIN_VALUE_OPTIONS.find(o => o.value === minValue)?.label ?? `≥$${minValue}M`}
+                  <button onClick={() => setMinValue(0)} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {selectedSector !== "all" && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  {SECTOR_OPTIONS.find(o => o.value === selectedSector)?.label ?? selectedSector}
+                  <button onClick={() => setSelectedSector("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {selectedCountry !== "all" && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  Country: {selectedCountry.toUpperCase()}
+                  <button onClick={() => setSelectedCountry("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              <button
+                onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); setSelectedSector("all"); }}
+                className="text-xs text-slate-500 hover:text-slate-700 underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
+
           {/* Toolbar */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-slate-500">
-              {totalPages > 1 && (
+              {viewMode === "table" && totalPages > 1 && (
                 <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
                   className="p-1 rounded hover:bg-slate-100 disabled:opacity-30 transition-colors">
                   <ChevronLeft className="w-4 h-4" />
                 </button>
               )}
               <span className="font-mono text-slate-600">
-                {rangeStart}–{rangeEnd} <span className="text-slate-400">of</span> <span className="font-semibold text-slate-700">{filteredDeals.length}</span> results
+                {viewMode === "table"
+                  ? <>{rangeStart}–{rangeEnd} <span className="text-slate-400">of</span> <span className="font-semibold text-slate-700">{filteredDeals.length}</span> results</>
+                  : <><span className="font-semibold text-slate-700">{filteredDeals.length}</span> deals</>
+                }
               </span>
-              {totalPages > 1 && (
+              {viewMode === "table" && totalPages > 1 && (
                 <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
                   className="p-1 rounded hover:bg-slate-100 disabled:opacity-30 transition-colors">
                   <ChevronRight className="w-4 h-4" />
                 </button>
               )}
             </div>
-            <button
-              onClick={() => exportCSV(filteredDeals)}
-              disabled={filteredDeals.length === 0}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900 transition-colors disabled:opacity-40"
-            >
-              <Download className="w-3.5 h-3.5" /> Export CSV
-            </button>
+            <div className="flex items-center gap-2">
+              {/* View mode toggle */}
+              <div className="flex items-center bg-slate-100 rounded-lg p-0.5 gap-0.5">
+                <button
+                  onClick={() => setViewMode("table")}
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${viewMode === "table" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                  Table
+                </button>
+                <button
+                  onClick={() => setViewMode("pipeline")}
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${viewMode === "pipeline" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                  Pipeline
+                </button>
+              </div>
+              <button
+                onClick={() => exportCSV(filteredDeals)}
+                disabled={filteredDeals.length === 0}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900 transition-colors disabled:opacity-40"
+              >
+                <Download className="w-3.5 h-3.5" /> Export CSV
+              </button>
+            </div>
           </div>
 
-          {/* Table */}
+          {/* Table or Pipeline */}
+          {viewMode === "pipeline" ? (
+            filteredDeals.length === 0 ? (
+              <div className="text-center py-16 text-slate-500 text-sm">No deals match the selected filters.</div>
+            ) : (
+              <DealPipelineView deals={filteredDeals} onSelectDeal={setSelectedDeal} />
+            )
+          ) : (
           <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden" data-testid="ma-activities-list">
             {(histLoading && allDeals.length === 0) ? (
               <div className="flex items-center justify-center h-40">
@@ -2938,6 +3207,7 @@ export default function MAActivity() {
               </div>
             )}
           </div>
+          )}
 
           {/* Bottom pagination */}
           {totalPages > 1 && (

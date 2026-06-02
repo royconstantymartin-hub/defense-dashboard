@@ -108,6 +108,8 @@ class MAActivityCreate(BaseModel):
     regulatory_status: Optional[str] = None
     regulatory_body: Optional[str] = None
     regulatory_notes: Optional[str] = None
+    # Sector classification
+    sector: Optional[str] = None  # cyber, space, uas_drones, missiles_munitions, naval, land_systems, c2_electronics, aircraft, services_it, other
 
 class MAActivity(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -137,6 +139,8 @@ class MAActivity(BaseModel):
     regulatory_status: Optional[str] = None    # pending_cfius, pending_eu_comp, pending_uk_cma, cleared, blocked, not_required
     regulatory_body: Optional[str] = None      # CFIUS, EU DG COMP, UK CMA, Multiple
     regulatory_notes: Optional[str] = None
+    # Sector classification
+    sector: Optional[str] = None  # cyber, space, uas_drones, missiles_munitions, naval, land_systems, c2_electronics, aircraft, services_it, other
 
 # JV Program Model
 class JVProgram(BaseModel):
