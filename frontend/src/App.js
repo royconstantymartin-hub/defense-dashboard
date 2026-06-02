@@ -16,6 +16,7 @@ import Bookmarks from "@/pages/Bookmarks";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 import PrivatePlayers from "@/pages/PrivatePlayers";
+import WorldMonitor from "@/pages/WorldMonitor";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -124,6 +125,7 @@ function App() {
             <Route path="follow" element={<Follow />} />
             <Route path="bookmarks" element={<Bookmarks />} />
             <Route path="private-players" element={<PrivatePlayers />} />
+            <Route path="world-monitor" element={<WorldMonitor />} />
             <Route path="admin" element={<Admin />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
