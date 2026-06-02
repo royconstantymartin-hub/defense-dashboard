@@ -860,19 +860,40 @@ function MACard({ activity, onOpenProfile }) {
                   {sizeBadge.label}
                 </span>
               )}
+              {activity.regulatory_status && activity.regulatory_status !== "not_required" && (
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${
+                  activity.regulatory_status === "cleared" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                  activity.regulatory_status === "blocked" ? "bg-rose-50 text-rose-700 border-rose-200" :
+                  "bg-amber-50 text-amber-700 border-amber-200"
+                }`}>
+                  {activity.regulatory_status === "cleared" ? "Reg. Cleared" : activity.regulatory_status === "blocked" ? "Reg. Blocked" : "Reg. Review"}
+                </span>
+              )}
             </div>
 
             {/* Source + details */}
             <div className="flex flex-col items-start gap-1">
               {activity.source_url && (
-                <a
-                  href={activity.source_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-[9px] font-semibold text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors"
-                >
-                  <ExternalLink className="w-2.5 h-2.5" /> Source
-                </a>
+                <div className="flex items-center gap-1">
+                  <a
+                    href={activity.source_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-[9px] font-semibold text-blue-800 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors"
+                  >
+                    <ExternalLink className="w-2.5 h-2.5" /> Source
+                  </a>
+                  {!SPECIFIC_URL_RE.test(activity.source_url) && (
+                    <TooltipProvider>
+                      <UITooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-default"><AlertTriangle className="w-3 h-3 text-amber-500" /></span>
+                        </TooltipTrigger>
+                        <TooltipContent className="text-xs max-w-[180px]">Link may point to homepage only</TooltipContent>
+                      </UITooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
               )}
               {(activity.rationale || activity.description) && (
                 <button
@@ -936,6 +957,26 @@ function MACard({ activity, onOpenProfile }) {
                     View official press release
                   </a>
                 )}
+              </div>
+            )}
+
+            {activity.regulatory_status && activity.regulatory_status !== "not_required" && (
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-1">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Regulatory Review</p>
+                <div className="flex flex-wrap gap-x-6 gap-y-1">
+                  {activity.regulatory_body && (
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Body</p>
+                      <p className="text-xs font-medium text-slate-700">{activity.regulatory_body}</p>
+                    </div>
+                  )}
+                  {activity.regulatory_notes && (
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Notes</p>
+                      <p className="text-xs text-slate-600">{activity.regulatory_notes}</p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
@@ -1099,9 +1140,9 @@ function exportCSV(data) {
   URL.revokeObjectURL(url);
 }
 
-// ── European JV Programs data (static, sourced from public filings) ───────────
+// ── European JV Programs data (static fallback, sourced from public filings) ──
 
-const JV_EU_PROGRAMS = [
+const JV_EU_PROGRAMS_FALLBACK = [
   // 2026 ──────────────────────────────────────────────────────────────────────
   { id: 1,  party1: "Auterion",          p1_iso: "DE", party2: "Airlogix",                p2_iso: "DE", products: "AI strike drones",             year: 2026,
     description: "Auterion, the software platform behind the open-source Skynode flight controller, partners with strike drone startup Airlogix to develop AI-guided autonomous drone systems. The JV targets procurement bids from German and European armed forces under the accelerated post-2022 rearmament drive." },
@@ -1205,11 +1246,24 @@ function JVProgramsView() {
   const [search, setSearch] = useState("");
   const [expandedId, setExpandedId] = useState(null);
   const [profileName, setProfileName] = useState(null);
+  const [jvData, setJvData] = useState(JV_EU_PROGRAMS_FALLBACK);
 
-  const years = [...new Set(JV_EU_PROGRAMS.map(r => r.year))].sort((a, b) => b - a);
+  useEffect(() => {
+    axios.get(`${API}/jv-programs`)
+      .then(res => { if (res.data && res.data.length > 0) setJvData(res.data); })
+      .catch(() => { /* keep fallback */ });
+  }, []);
+
+  const jvDataAsOf = useMemo(() => {
+    const max = Math.max(...jvData.map(r => r.year || 0));
+    if (!max || max === -Infinity) return null;
+    return `Data as of ${max}`;
+  }, [jvData]);
+
+  const years = [...new Set(jvData.map(r => r.year))].sort((a, b) => b - a);
 
   const rows = useMemo(() => {
-    let list = JV_EU_PROGRAMS.filter(r => {
+    let list = jvData.filter(r => {
       if (filterYear !== "all" && String(r.year) !== filterYear) return false;
       if (search) {
         const q = search.toLowerCase();
@@ -1223,7 +1277,7 @@ function JVProgramsView() {
     });
     list = [...list].sort((a, b) => sortYear === "desc" ? b.year - a.year : a.year - b.year);
     return list;
-  }, [filterYear, search, sortYear]);
+  }, [jvData, filterYear, search, sortYear]);
 
   function yearColor(y) {
     return y >= 2025 ? "text-slate-900 font-semibold" : "text-slate-500";
@@ -1259,7 +1313,12 @@ function JVProgramsView() {
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
           <p className="text-[10px] font-semibold tracking-[0.18em] text-slate-400 uppercase mb-0.5">Aerospace &amp; Defense</p>
           <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase">Joint Ventures — Europe</h2>
-          <p className="text-[10px] text-slate-400 mt-1">Sources: company press releases, regulatory filings, Breaking Defense, Defense News, Reuters, Bloomberg</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-[10px] text-slate-400">Sources: company press releases, regulatory filings, Breaking Defense, Defense News, Reuters, Bloomberg</p>
+            {jvDataAsOf && (
+              <span className="text-[10px] text-slate-400 font-mono bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">{jvDataAsOf}</span>
+            )}
+          </div>
         </div>
 
         {/* Filters bar */}
@@ -1777,6 +1836,19 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
         <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap ${getStatusStyle(activity.status)}`}>
           {formatStatus(activity.status)}
         </span>
+      </td>
+
+      {/* Reg. */}
+      <td className="px-3 py-2">
+        {activity.regulatory_status && activity.regulatory_status !== "not_required" && (
+          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border whitespace-nowrap ${
+            activity.regulatory_status === "cleared" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+            activity.regulatory_status === "blocked" ? "bg-rose-50 text-rose-700 border-rose-200" :
+            "bg-amber-50 text-amber-700 border-amber-200"
+          }`}>
+            {activity.regulatory_status === "cleared" ? "Reg. Cleared" : activity.regulatory_status === "blocked" ? "Reg. Blocked" : "Reg. Review"}
+          </span>
+        )}
       </td>
 
       {/* Date */}
@@ -2445,6 +2517,15 @@ export default function MAActivity() {
     });
   }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir, selectedCountry, minValue]);
 
+  // "Data as of" badge — max announced_date across all loaded deals
+  const dataAsOf = useMemo(() => {
+    if (allDeals.length === 0) return null;
+    const max = Math.max(...allDeals.map(a => new Date(a.announced_date).getTime()));
+    if (!isFinite(max)) return null;
+    const d = new Date(max);
+    return `Data as of ${d.toLocaleString("en-US", { month: "short", year: "numeric" })}`;
+  }, [allDeals]);
+
   // Reset page on filter change
   useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir, minValue]);
 
@@ -2554,7 +2635,7 @@ export default function MAActivity() {
             <span className={`ml-1.5 text-[10px] font-mono px-1.5 py-0.5 rounded-full ${
               dealTypeTab === t.value ? "bg-slate-200 text-slate-900" : "bg-slate-100 text-slate-500"
             }`}>
-              {t.value === "jv" ? JV_EU_PROGRAMS.length : (tabCounts[t.value] || 0)}
+              {t.value === "jv" ? JV_EU_PROGRAMS_FALLBACK.length : (tabCounts[t.value] || 0)}
             </span>
           </button>
         ))}
@@ -2756,15 +2837,27 @@ export default function MAActivity() {
         <div className="flex-1 min-w-0 space-y-3">
 
           {/* ── Investment consolidated view ── */}
-          {dealTypeTab === "investments" && (
+          {dealTypeTab === "investments" && (<>
+            {dataAsOf && (
+              <div className="flex justify-end">
+                <span className="text-[10px] text-slate-400 font-mono bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">{dataAsOf}</span>
+              </div>
+            )}
             <InvestmentConsolidatedView deals={filteredDeals} onOpenProfile={setProfileName} onSelectDeal={setSelectedDeal} />
-          )}
+          </>)}
 
           {/* ── JV Programs table ── */}
           {dealTypeTab === "jv" && <JVProgramsView />}
 
           {/* ── Normal deal table (Acquisitions, Mergers) ── */}
           {!["investments", "jv"].includes(dealTypeTab) && <>
+
+          {/* Data as of badge */}
+          {dataAsOf && (
+            <div className="flex justify-end">
+              <span className="text-[10px] text-slate-400 font-mono bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">{dataAsOf}</span>
+            </div>
+          )}
 
           {/* Toolbar */}
           <div className="flex items-center justify-between">
@@ -2819,6 +2912,7 @@ export default function MAActivity() {
                         Value {sortField === "deal_value" ? (sortDir === "asc" ? "↑" : "↓") : <span className="text-slate-300">↕</span>}
                       </th>
                       <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                      <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Reg.</th>
                       <th
                         onClick={() => handleSort("announced_date")}
                         className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 select-none whitespace-nowrap"
