@@ -132,6 +132,14 @@ GDELT_DOC_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
 RELIEFWEB_URL = "https://api.reliefweb.int/v1/reports"
 
 
+def _is_latin(text: str) -> bool:
+    """Return True if the text is predominantly Latin-script (English, French, etc.)."""
+    if not text:
+        return False
+    latin = sum(1 for c in text if ord(c) < 0x500)
+    return latin / len(text) > 0.85
+
+
 def _gdelt_fetch_zone(zone: dict) -> list[dict]:
     """Fetch recent GDELT articles for one conflict zone."""
     try:
@@ -140,7 +148,7 @@ def _gdelt_fetch_zone(zone: dict) -> list[dict]:
             params={
                 "query": zone["query"],
                 "mode": "artlist",
-                "maxrecords": "5",
+                "maxrecords": "10",
                 "timespan": "3d",
                 "format": "JSON",
                 "sourcelang": "english",
@@ -151,16 +159,18 @@ def _gdelt_fetch_zone(zone: dict) -> list[dict]:
         data = resp.json()
         articles = data.get("articles", [])
         incidents = []
-        for i, art in enumerate(articles[:3]):
+        kept = 0
+        for art in articles:
+            if kept >= 3:
+                break
             title = art.get("title", "").strip()
-            if not title:
+            if not title or not _is_latin(title):
                 continue
-            # crude intensity: more recent = slightly higher
-            intensity = 6 + (i == 0)
+            intensity = 6 + (kept == 0)
             incidents.append({
-                "id": f"gdelt-{zone['country']}-{i}",
-                "lat": zone["lat"] + (i * 0.15),   # slight offset to avoid stacking
-                "lng": zone["lng"] + (i * 0.15),
+                "id": f"gdelt-{zone['country']}-{kept}",
+                "lat": zone["lat"] + (kept * 0.15),
+                "lng": zone["lng"] + (kept * 0.15),
                 "type": zone["type"],
                 "label": title[:120],
                 "region": zone["region"],
@@ -169,6 +179,7 @@ def _gdelt_fetch_zone(zone: dict) -> list[dict]:
                 "source": art.get("domain", "GDELT"),
                 "url": art.get("url", ""),
             })
+            kept += 1
         return incidents
     except Exception as e:
         logger.warning("GDELT fetch failed for %s: %s", zone["region"], e)
