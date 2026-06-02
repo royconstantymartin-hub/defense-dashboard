@@ -3053,6 +3053,54 @@ export default function MAActivity() {
             </div>
           )}
 
+          {/* Active filter pills */}
+          {activeFilterCount > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              {searchTerm && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  Search: "{searchTerm}"
+                  <button onClick={() => setSearchTerm("")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {selectedStatus !== "all" && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  {STATUS_OPTIONS.find(o => o.value === selectedStatus)?.label ?? selectedStatus}
+                  <button onClick={() => setSelectedStatus("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {selectedYear !== "all" && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  {selectedYear}
+                  <button onClick={() => setSelectedYear("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {minValue > 0 && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  {MIN_VALUE_OPTIONS.find(o => o.value === minValue)?.label ?? `≥$${minValue}M`}
+                  <button onClick={() => setMinValue(0)} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {selectedSector !== "all" && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  {SECTOR_OPTIONS.find(o => o.value === selectedSector)?.label ?? selectedSector}
+                  <button onClick={() => setSelectedSector("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {selectedCountry !== "all" && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  Country: {selectedCountry.toUpperCase()}
+                  <button onClick={() => setSelectedCountry("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              <button
+                onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); setSelectedSector("all"); }}
+                className="text-xs text-slate-500 hover:text-slate-700 underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
+
           {/* Toolbar */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-slate-500">
