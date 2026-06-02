@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { API, useAuth } from "@/App";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,6 +58,43 @@ const PERIOD_OPTIONS = [
   { value: "90", label: "90D" },
   { value: "0",  label: "All" },
 ];
+
+const SECTOR_OPTIONS = [
+  { value: "all",                label: "All Sectors" },
+  { value: "cyber",              label: "Cyber" },
+  { value: "space",              label: "Space" },
+  { value: "uas_drones",         label: "UAS / Drones" },
+  { value: "missiles_munitions", label: "Missiles & Munitions" },
+  { value: "naval",              label: "Naval" },
+  { value: "land_systems",       label: "Land Systems" },
+  { value: "c2_electronics",     label: "C2 & Electronics" },
+  { value: "aircraft",           label: "Aircraft" },
+  { value: "services_it",        label: "Services & IT" },
+  { value: "other",              label: "Other" },
+];
+
+const COMPANY_TICKER_MAP = {
+  "Lockheed Martin":            "LMT",
+  "Raytheon Technologies":      "RTX",
+  "Northrop Grumman":           "NOC",
+  "General Dynamics":           "GD",
+  "Boeing Defense":             "BA",
+  "L3Harris Technologies":      "LHX",
+  "BAE Systems":                "BA.L",
+  "Thales":                     "HO.PA",
+  "Airbus Defence & Space":     "AIR.PA",
+  "Rheinmetall":                "RHM.DE",
+  "Safran":                     "SAF.PA",
+  "Leonardo":                   "LDO.MI",
+  "Dassault Aviation":          "AM.PA",
+  "HEICO Corporation":          "HEI",
+  "TransDigm":                  "TDG",
+  "Mercury Systems":            "MRCY",
+  "Teledyne Technologies":      "TDY",
+  "Leidos Holdings":            "LDOS",
+  "SAIC":                       "SAIC",
+  "Booz Allen Hamilton":        "BAH",
+};
 
 const LOGO_FALLBACK = {
   // ── US Primes ────────────────────────────────────────────────────────────────
@@ -869,6 +907,24 @@ function MACard({ activity, onOpenProfile }) {
                   {activity.regulatory_status === "cleared" ? "Reg. Cleared" : activity.regulatory_status === "blocked" ? "Reg. Blocked" : "Reg. Review"}
                 </span>
               )}
+              {/* Sector badge */}
+              {activity.sector && (
+                <span className="text-[10px] bg-slate-100 text-slate-500 border border-slate-200 px-2 py-0.5 rounded-full capitalize">
+                  {SECTOR_OPTIONS.find(s => s.value === activity.sector)?.label ?? activity.sector.replaceAll("_", " ")}
+                </span>
+              )}
+              {/* Market data ticker links */}
+              {[activity.acquirer, activity.target].map(name => COMPANY_TICKER_MAP[name] ? (
+                <Link
+                  key={name}
+                  to="/market-data"
+                  onClick={e => e.stopPropagation()}
+                  className="text-[10px] font-mono text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-blue-100"
+                  title={`View ${name} on Market Data`}
+                >
+                  {COMPANY_TICKER_MAP[name]}
+                </Link>
+              ) : null)}
             </div>
 
             {/* Source + details */}
@@ -1821,6 +1877,28 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
         {activity.round_type && (
           <div className="mt-0.5"><RoundBadge roundType={activity.round_type} /></div>
         )}
+        {/* Sector badge */}
+        {activity.sector && (
+          <div className="mt-0.5">
+            <span className="text-[10px] bg-slate-100 text-slate-500 border border-slate-200 px-1.5 py-0.5 rounded-full capitalize">
+              {SECTOR_OPTIONS.find(s => s.value === activity.sector)?.label ?? activity.sector.replaceAll("_", " ")}
+            </span>
+          </div>
+        )}
+        {/* Ticker links */}
+        <div className="flex flex-wrap gap-1 mt-0.5">
+          {[activity.acquirer, activity.target].map(name => COMPANY_TICKER_MAP[name] ? (
+            <Link
+              key={name}
+              to="/market-data"
+              onClick={e => e.stopPropagation()}
+              className="text-[10px] font-mono text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-blue-100"
+              title={`View ${name} on Market Data`}
+            >
+              {COMPANY_TICKER_MAP[name]}
+            </Link>
+          ) : null)}
+        </div>
       </td>
 
       {/* Value */}
@@ -2397,6 +2475,7 @@ export default function MAActivity() {
   const [metaLastScraped, setMetaLastScraped]  = useState(null);
   const [selectedCountry, setSelectedCountry]  = useState("all");
   const [minValue,       setMinValue]          = useState(0);
+  const [selectedSector, setSelectedSector]    = useState("all");
 
   const fetchRecent = async () => {
     setLoading(true);
@@ -2502,6 +2581,9 @@ export default function MAActivity() {
     if (minValue > 0) {
       list = list.filter(a => (a.is_disclosed ?? true) && (a.deal_value || 0) >= minValue);
     }
+    if (selectedSector !== "all") {
+      list = list.filter(a => a.sector === selectedSector);
+    }
     if (searchTerm) {
       const t = searchTerm.toLowerCase();
       list = list.filter(a =>
@@ -2515,7 +2597,7 @@ export default function MAActivity() {
       const vb = sortField === "deal_value" ? (b.deal_value || 0) : new Date(b.announced_date).getTime();
       return sortDir === "asc" ? va - vb : vb - va;
     });
-  }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir, selectedCountry, minValue]);
+  }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir, selectedCountry, minValue, selectedSector]);
 
   // "Data as of" badge — max announced_date across all loaded deals
   const dataAsOf = useMemo(() => {
@@ -2527,7 +2609,7 @@ export default function MAActivity() {
   }, [allDeals]);
 
   // Reset page on filter change
-  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir, minValue]);
+  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir, minValue, selectedSector]);
 
   const pageDeals  = filteredDeals.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(filteredDeals.length / PAGE_SIZE);
@@ -2535,7 +2617,7 @@ export default function MAActivity() {
   const rangeEnd   = Math.min((page + 1) * PAGE_SIZE, filteredDeals.length);
 
   const totalValue = filteredDeals.filter(a => a.is_disclosed ?? true).reduce((s, a) => s + (a.deal_value || 0), 0);
-  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all", minValue > 0].filter(Boolean).length;
+  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all", minValue > 0, selectedSector !== "all"].filter(Boolean).length;
 
   // Quarterly chart — uses the same tab filter as the deal list, but ignores
   // the sidebar filters (status/year/country/value) so the chart always shows
@@ -2741,7 +2823,7 @@ export default function MAActivity() {
               </span>
               {activeFilterCount > 0 && (
                 <button
-                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); }}
+                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); setSelectedSector("all"); }}
                   className="text-[11px] text-rose-500 hover:text-rose-700 font-medium"
                 >
                   Clear
@@ -2822,6 +2904,20 @@ export default function MAActivity() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Sector */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Sector</p>
+              <select
+                value={selectedSector}
+                onChange={e => setSelectedSector(e.target.value)}
+                className="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {SECTOR_OPTIONS.map(o => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
             </div>
 
             {/* Country */}
