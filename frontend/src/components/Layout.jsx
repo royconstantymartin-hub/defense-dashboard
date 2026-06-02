@@ -15,7 +15,8 @@ import {
   Rss,
   Bell,
   Bookmark,
-  Lock
+  Lock,
+  Radar
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ const navItems = [
   { path: "/products", icon: Package, label: "Products" },
   { path: "/follow", icon: Rss, label: "Sources" },
   { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
+  { path: "/world-monitor", icon: Radar, label: "World Monitor", inProgress: true },
 ];
 
 export default function Layout() {
