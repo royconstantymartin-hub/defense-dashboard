@@ -2451,6 +2451,103 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
   );
 }
 
+// ── Deal Pipeline View (Kanban by status) ──────────────────────────────────
+
+const PIPELINE_COLUMNS = [
+  { status: "announced",    label: "Announced" },
+  { status: "pending",      label: "Pending" },
+  { status: "under_review", label: "Under Review" },
+  { status: "completed",    label: "Completed" },
+  { status: "cancelled",    label: "Cancelled" },
+];
+
+function getStatusHeaderBg(status) {
+  switch (status) {
+    case "completed":    return "bg-emerald-50 border-emerald-200 text-emerald-700";
+    case "pending":
+    case "under_review": return "bg-amber-50 border-amber-200 text-amber-700";
+    case "announced":    return "bg-blue-50 border-blue-200 text-blue-700";
+    case "cancelled":    return "bg-rose-50 border-rose-200 text-rose-700";
+    default:             return "bg-slate-50 border-slate-200 text-slate-600";
+  }
+}
+
+function PipelineMiniCard({ activity, onSelectDeal }) {
+  const acquirerDomain = getLogoDomain(activity, "acquirer");
+  const targetDomain   = getLogoDomain(activity, "target");
+  const labels         = getDealLabels(activity.deal_type);
+
+  return (
+    <button
+      className="w-full text-left bg-white border border-slate-200 rounded-lg p-2.5 shadow-sm hover:shadow-md hover:border-blue-200 transition-all space-y-1.5"
+      onClick={() => onSelectDeal(activity)}
+    >
+      {/* Logos + arrow */}
+      <div className="flex items-center gap-1.5">
+        <CompanyLogo activity={activity} side="acquirer" size="sm" />
+        <ArrowRight className="w-2.5 h-2.5 text-slate-300 shrink-0" />
+        <CompanyLogo activity={activity} side="target" size="sm" />
+        <span className="text-[10px] text-slate-500 truncate flex-1 ml-0.5 leading-snug">
+          {activity.acquirer.split(/[\s,]/)[0]} → {activity.target.split(/[\s,]/)[0]}
+        </span>
+      </div>
+      {/* Value */}
+      <p className="text-[11px] font-mono font-bold text-slate-800">
+        {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
+      </p>
+      {/* Date + type */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <span className="text-[9px] text-slate-400 whitespace-nowrap">
+          {format(new Date(activity.announced_date), "MMM yyyy")}
+        </span>
+        <span className="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded capitalize leading-none">
+          {activity.deal_type.replaceAll("_", " ")}
+        </span>
+        {activity.sector && (
+          <span className="text-[9px] bg-slate-100 text-slate-400 border border-slate-200 px-1.5 py-0.5 rounded-full capitalize leading-none">
+            {SECTOR_OPTIONS.find(s => s.value === activity.sector)?.label ?? activity.sector.replaceAll("_", " ")}
+          </span>
+        )}
+      </div>
+    </button>
+  );
+}
+
+function DealPipelineView({ deals, onSelectDeal }) {
+  const columns = PIPELINE_COLUMNS.map(col => ({
+    ...col,
+    deals: deals.filter(a => a.status === col.status),
+  }));
+
+  return (
+    <div className="overflow-x-auto pb-2">
+      <div className="flex gap-3 min-w-[700px]">
+        {columns.map(col => (
+          <div key={col.status} className="flex-1 min-w-[160px]">
+            {/* Column header */}
+            <div className={`flex items-center justify-between px-3 py-2 rounded-t-lg border ${getStatusHeaderBg(col.status)}`}>
+              <span className="text-[11px] font-semibold uppercase tracking-wider">{col.label}</span>
+              <span className="text-[10px] font-mono font-bold bg-white/60 px-1.5 py-0.5 rounded-full border">
+                {col.deals.length}
+              </span>
+            </div>
+            {/* Cards */}
+            <div className="bg-slate-50 border border-t-0 border-slate-200 rounded-b-lg p-2 space-y-2 min-h-[120px]">
+              {col.deals.length === 0 ? (
+                <p className="text-[10px] text-slate-300 text-center pt-6">No deals</p>
+              ) : (
+                col.deals.map(a => (
+                  <PipelineMiniCard key={a.id} activity={a} onSelectDeal={onSelectDeal} />
+                ))
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────────────────
 
 export default function MAActivity() {
@@ -2476,6 +2573,7 @@ export default function MAActivity() {
   const [selectedCountry, setSelectedCountry]  = useState("all");
   const [minValue,       setMinValue]          = useState(0);
   const [selectedSector, setSelectedSector]    = useState("all");
+  const [viewMode,       setViewMode]          = useState("table"); // "table" | "pipeline"
 
   const fetchRecent = async () => {
     setLoading(true);
@@ -2958,32 +3056,59 @@ export default function MAActivity() {
           {/* Toolbar */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-slate-500">
-              {totalPages > 1 && (
+              {viewMode === "table" && totalPages > 1 && (
                 <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
                   className="p-1 rounded hover:bg-slate-100 disabled:opacity-30 transition-colors">
                   <ChevronLeft className="w-4 h-4" />
                 </button>
               )}
               <span className="font-mono text-slate-600">
-                {rangeStart}–{rangeEnd} <span className="text-slate-400">of</span> <span className="font-semibold text-slate-700">{filteredDeals.length}</span> results
+                {viewMode === "table"
+                  ? <>{rangeStart}–{rangeEnd} <span className="text-slate-400">of</span> <span className="font-semibold text-slate-700">{filteredDeals.length}</span> results</>
+                  : <><span className="font-semibold text-slate-700">{filteredDeals.length}</span> deals</>
+                }
               </span>
-              {totalPages > 1 && (
+              {viewMode === "table" && totalPages > 1 && (
                 <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
                   className="p-1 rounded hover:bg-slate-100 disabled:opacity-30 transition-colors">
                   <ChevronRight className="w-4 h-4" />
                 </button>
               )}
             </div>
-            <button
-              onClick={() => exportCSV(filteredDeals)}
-              disabled={filteredDeals.length === 0}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900 transition-colors disabled:opacity-40"
-            >
-              <Download className="w-3.5 h-3.5" /> Export CSV
-            </button>
+            <div className="flex items-center gap-2">
+              {/* View mode toggle */}
+              <div className="flex items-center bg-slate-100 rounded-lg p-0.5 gap-0.5">
+                <button
+                  onClick={() => setViewMode("table")}
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${viewMode === "table" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                  Table
+                </button>
+                <button
+                  onClick={() => setViewMode("pipeline")}
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${viewMode === "pipeline" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                >
+                  Pipeline
+                </button>
+              </div>
+              <button
+                onClick={() => exportCSV(filteredDeals)}
+                disabled={filteredDeals.length === 0}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900 transition-colors disabled:opacity-40"
+              >
+                <Download className="w-3.5 h-3.5" /> Export CSV
+              </button>
+            </div>
           </div>
 
-          {/* Table */}
+          {/* Table or Pipeline */}
+          {viewMode === "pipeline" ? (
+            filteredDeals.length === 0 ? (
+              <div className="text-center py-16 text-slate-500 text-sm">No deals match the selected filters.</div>
+            ) : (
+              <DealPipelineView deals={filteredDeals} onSelectDeal={setSelectedDeal} />
+            )
+          ) : (
           <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden" data-testid="ma-activities-list">
             {(histLoading && allDeals.length === 0) ? (
               <div className="flex items-center justify-center h-40">
@@ -3034,6 +3159,7 @@ export default function MAActivity() {
               </div>
             )}
           </div>
+          )}
 
           {/* Bottom pagination */}
           {totalPages > 1 && (
