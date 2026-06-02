@@ -104,6 +104,10 @@ class MAActivityCreate(BaseModel):
     round_type: Optional[str] = None            # seed / series_a / series_b / series_c / growth / buyout
     is_disclosed: bool = True                   # False when deal value is undisclosed
     valuation: Optional[float] = None           # Post-money valuation in millions USD
+    # Regulatory fields
+    regulatory_status: Optional[str] = None
+    regulatory_body: Optional[str] = None
+    regulatory_notes: Optional[str] = None
 
 class MAActivity(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -129,6 +133,24 @@ class MAActivity(BaseModel):
     round_type: Optional[str] = None
     is_disclosed: bool = True
     valuation: Optional[float] = None           # Post-money valuation in millions USD
+    # Regulatory fields
+    regulatory_status: Optional[str] = None    # pending_cfius, pending_eu_comp, pending_uk_cma, cleared, blocked, not_required
+    regulatory_body: Optional[str] = None      # CFIUS, EU DG COMP, UK CMA, Multiple
+    regulatory_notes: Optional[str] = None
+
+# JV Program Model
+class JVProgram(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    party1: str
+    p1_iso: str
+    party2: str
+    p2_iso: str
+    party3: Optional[str] = None
+    p3_iso: Optional[str] = None
+    products: str
+    year: int
+    description: Optional[str] = None
 
 # Defense Player Model
 class DefensePlayerCreate(BaseModel):
@@ -512,6 +534,18 @@ async def get_ma_historical(
             a['announced_date'] = datetime.fromisoformat(a['announced_date'])
     return activities
 
+def is_specific_article_url(url: str) -> bool:
+    """Return True if the URL appears to point to a specific article/press-release (not just a homepage)."""
+    if not url:
+        return False
+    ARTICLE_RE = re.compile(
+        r"/20\d{2}[/-]|press-release|news-release|newsroom/20|mediaroom|"
+        r"prnewswire\.com|businesswire\.com|reuters\.com/|bloomberg\.com/news|"
+        r"breakingdefense|defensenews|janes\.com|aviationweek|spaceflightnow",
+        re.IGNORECASE,
+    )
+    return bool(ARTICLE_RE.search(url))
+
 @api_router.post("/ma-activities", response_model=MAActivity)
 async def create_ma_activity(data: MAActivityCreate, current_user: dict = Depends(get_current_user)):
     dump = data.model_dump()
@@ -522,7 +556,11 @@ async def create_ma_activity(data: MAActivityCreate, current_user: dict = Depend
     doc = activity.model_dump()
     doc['announced_date'] = doc['announced_date'].isoformat()
     await db.ma_activities.insert_one(doc)
-    return activity
+    result = activity.model_dump()
+    # Warn if source_url doesn't look like a specific article
+    if dump.get("source_url") and not is_specific_article_url(dump["source_url"]):
+        result["source_url_warning"] = "URL may not point to a specific article"
+    return result
 
 @api_router.delete("/ma-activities/{activity_id}")
 async def delete_ma_activity(activity_id: str, current_user: dict = Depends(get_current_user)):
@@ -652,6 +690,14 @@ async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
 
     count = await db.ma_activities.count_documents({})
     return {"status": "Pilot seeded", "deals": count, "message": f"{count} deals chargés — scraper ignoré"}
+
+# ============= JV PROGRAMS ROUTES =============
+
+@api_router.get("/jv-programs")
+async def get_jv_programs():
+    """Return all JV programs sorted by year descending."""
+    programs = await db.jv_programs.find({}, {"_id": 0}).sort("year", -1).to_list(None)
+    return programs
 
 # ============= DEFENSE PLAYERS ROUTES =============
 
@@ -1423,10 +1469,21 @@ async def _run_seed() -> dict:
             match = {"contracting_authority": c["contracting_authority"], "category": c["category"]}
         await db.contracts.replace_one(match, doc, upsert=True)
 
+    # Seed JV Programs — check by party1+party2+year to avoid duplicates
+    from data.jv_programs_data import JV_EU_PROGRAMS_DATA
+    for jv in JV_EU_PROGRAMS_DATA:
+        existing = await db.jv_programs.find_one({
+            "party1": jv["party1"], "party2": jv["party2"], "year": jv["year"]
+        })
+        if not existing:
+            program = JVProgram(**jv)
+            await db.jv_programs.insert_one(program.model_dump())
+
     players_count = await db.defense_players.count_documents({})
     announcements_count = await db.announcements.count_documents({})
     contracts_count = await db.contracts.count_documents({})
-    return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count, "contracts": contracts_count}
+    jv_count = await db.jv_programs.count_documents({})
+    return {"status": "Data seeded successfully", "companies": players_count, "announcements": announcements_count, "contracts": contracts_count, "jv_programs": jv_count}
 
 
 @api_router.post("/seed-data")
