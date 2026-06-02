@@ -2494,6 +2494,20 @@ async def trigger_company_news_scraper(current_user: dict = Depends(get_current_
 async def root():
     return {"message": "Defense Dashboard API"}
 
+@api_router.get("/world-monitor/incidents")
+async def get_world_monitor_incidents():
+    """
+    Returns geolocated conflict incidents from GDELT + ReliefWeb.
+    Cached for 15 minutes in memory.
+    """
+    from services.world_monitor_service import fetch_incidents
+    try:
+        incidents = await asyncio.get_event_loop().run_in_executor(None, fetch_incidents)
+        return {"incidents": incidents, "count": len(incidents)}
+    except Exception as e:
+        logger.error("World Monitor fetch error: %s", e)
+        raise HTTPException(status_code=503, detail="Could not fetch incident data")
+
 @app.get("/health")
 async def health():
     return {"status": "ok"}
