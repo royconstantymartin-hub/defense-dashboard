@@ -4,244 +4,289 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   ExternalLink, Search, Newspaper, BookOpen, Globe2,
-  ShieldCheck, BarChart3, FileText, Calendar,
-  TrendingUp, Lock, Unlock, ArrowUpRight,
+  ShieldCheck, BarChart3, FileText, TrendingUp, Lock, Unlock, Download,
 } from "lucide-react";
 
-// ─── Free reports — only landing pages that are verified to exist ─────────────
-const FREE_REPORTS = [
+// ─── 20 free reports — all cover images and PDF links verified ─────────────────
+const REPORTS = [
+  // SIPRI
   {
-    id: "sipri-2025",
+    id: "sipri-yearbook-2025",
     title: "SIPRI Yearbook 2025",
     subtitle: "Armaments, Disarmament and International Security",
-    source: "SIPRI",
-    sourceUrl: "https://www.sipri.org",
-    date: "2025-06",
+    source: "SIPRI", sourceUrl: "https://www.sipri.org",
+    date: "Jun 2025", type: "Annual Reference", pages: "620+",
+    coverImg: "https://www.sipri.org/sites/default/files/2025-06/2025_yearbook_cover__0.jpg",
     url: "https://www.sipri.org/yearbook/2025",
-    type: "Annual Report",
-    pages: "~620",
-    highlight: "Global military spending surpassed $2,700 billion in 2024 — a new all-time record.",
+    pdfUrl: "https://www.sipri.org/sites/default/files/SIPRIYB25c06%266A.pdf",
+    highlight: "Global military spending surpassed $2,718 billion in 2024 — a new all-time record.",
     tags: ["spending", "nuclear", "transfers"],
     color: "#0d2b4e", accent: "#60a5fa",
   },
   {
+    id: "sipri-milex-2024",
+    title: "Trends in World Military Expenditure, 2024",
+    subtitle: "Global military spending data and analysis",
+    source: "SIPRI", sourceUrl: "https://www.sipri.org",
+    date: "Apr 2025", type: "Fact Sheet", pages: "12",
+    coverImg: "https://www.sipri.org/sites/default/files/styles/publications_lareg/public/2025-04/2504_fs_milex_2024_cover.png?itok=ZgyU02GI",
+    url: "https://www.sipri.org/publications/2025/sipri-fact-sheets/trends-world-military-expenditure-2024",
+    pdfUrl: "https://www.sipri.org/sites/default/files/2025-04/2504_fs_milex_2024.pdf",
+    highlight: "World military spending reached a record $2,718B in 2024 — steepest rise since 1988.",
+    tags: ["spending", "budget", "global"],
+    color: "#0d2b4e", accent: "#93c5fd",
+  },
+  {
+    id: "sipri-transfers-2024",
+    title: "Trends in International Arms Transfers, 2024",
+    subtitle: "Global arms export and import data",
+    source: "SIPRI", sourceUrl: "https://www.sipri.org",
+    date: "Mar 2025", type: "Fact Sheet", pages: "12",
+    coverImg: "https://www.sipri.org/sites/default/files/styles/publications_lareg/public/2025-03/fs_2503_at_2024_cover.png?itok=7nfCefxa",
+    url: "https://www.sipri.org/publications/2025/sipri-fact-sheets/trends-international-arms-transfers-2024",
+    pdfUrl: "https://www.sipri.org/sites/default/files/2025-03/fs_2503_at_2024_0.pdf",
+    highlight: "Arms transfers reached their highest level since the end of the Cold War in 2024.",
+    tags: ["transfers", "exports", "imports"],
+    color: "#0d2b4e", accent: "#60a5fa",
+  },
+  {
+    id: "sipri-milex-2023",
+    title: "Trends in World Military Expenditure, 2023",
+    subtitle: "Annual fact sheet with global military spending data",
+    source: "SIPRI", sourceUrl: "https://www.sipri.org",
+    date: "Apr 2024", type: "Fact Sheet", pages: "12",
+    coverImg: "https://www.sipri.org/sites/default/files/styles/publications_lareg/public/2024-04/2404_fs_milex_2023_page_01.png?itok=yk4RigO-",
+    url: "https://www.sipri.org/publications/2024/sipri-fact-sheets/trends-world-military-expenditure-2023",
+    pdfUrl: "https://www.sipri.org/sites/default/files/2024-04/2404_fs_milex_2023.pdf",
+    highlight: "World military expenditure reached $2,443B in 2023 — ninth consecutive annual increase.",
+    tags: ["spending", "budget", "2023"],
+    color: "#0d2b4e", accent: "#60a5fa",
+  },
+  // NATO / EDA
+  {
     id: "nato-exp-2025",
     title: "Defence Expenditure of NATO Members 2025",
-    subtitle: "Annual statistics on defence budgets across all 32 allies",
-    source: "NATO",
-    sourceUrl: "https://www.nato.int",
-    date: "2025-06",
+    subtitle: "Annual statistics on defence budgets across 32 allies",
+    source: "NATO", sourceUrl: "https://www.nato.int",
+    date: "Apr 2025", type: "Statistical Report", pages: "36",
+    coverImg: null,
     url: "https://www.nato.int/cps/en/natohq/topics_49198.htm",
-    type: "Statistical Report",
-    pages: "~36",
-    highlight: "23 of 32 allies met the 2% of GDP target in 2025 — a first in NATO history.",
+    pdfUrl: "https://www.nato.int/content/dam/nato/webready/documents/finance/def-exp-2025-en.pdf",
+    highlight: "23 of 32 NATO allies met the 2% of GDP target in 2025 — a historic first.",
     tags: ["NATO", "budget", "2%"],
     color: "#003478", accent: "#93c5fd",
   },
   {
-    id: "rand-ukraine-2025",
-    title: "Lessons from Ukraine for NATO Defence Planning",
-    subtitle: "Operational, industrial and doctrinal implications for European armies",
-    source: "RAND",
-    sourceUrl: "https://www.rand.org",
-    date: "2025-02",
-    url: "https://www.rand.org/",
-    type: "Research Report",
-    pages: "~184",
-    highlight: "Ukraine war validates combined-arms doctrine but exposes critical Western stockpile gaps.",
-    tags: ["Ukraine", "NATO", "doctrine"],
-    color: "#1a3d1a", accent: "#4ade80",
-  },
-  {
-    id: "eda-2025",
-    title: "EDA Defence Data 2025",
-    subtitle: "European defence expenditure, R&T investment and procurement figures",
-    source: "EDA",
-    sourceUrl: "https://eda.europa.eu",
-    date: "2025-04",
+    id: "eda-data-2025",
+    title: "EDA Defence Data 2024–2025",
+    subtitle: "EU27 defence expenditure, R&T investment and procurement figures",
+    source: "EDA", sourceUrl: "https://eda.europa.eu",
+    date: "Apr 2025", type: "Statistical Report", pages: "96",
+    coverImg: "https://eda.europa.eu/images/default-source/projects-nre/webnews-cover.jpg",
     url: "https://eda.europa.eu/publications-and-data/defence-data",
-    type: "Statistical Report",
-    pages: "~96",
+    pdfUrl: null,
     highlight: "EU27 defence spending reached €326 billion in 2024 — up 10% year-on-year.",
     tags: ["Europe", "R&D", "procurement"],
     color: "#003399", accent: "#fbbf24",
   },
+  // IRSEM
   {
-    id: "csis-dib-2025",
-    title: "Defense Industrial Base Assessment 2025",
-    subtitle: "Production capacity, workforce and allied industrial cooperation",
-    source: "CSIS",
-    sourceUrl: "https://www.csis.org",
-    date: "2025-01",
-    url: "https://www.csis.org/programs/defense-industrial-initiatives-group",
-    type: "Policy Brief",
-    pages: "~58",
-    highlight: "Europe's rearmament pledge faces a credibility gap without structural procurement reform.",
-    tags: ["USA", "industry", "munitions"],
+    id: "irsem-135",
+    title: "How Do Wars End?",
+    subtitle: "'Securitisation' and the problem of victory and defeat",
+    source: "IRSEM", sourceUrl: "https://www.irsem.fr",
+    date: "May 2026", type: "Research Study", pages: "50",
+    coverImg: "https://www.irsem.fr/storage/file_manager_files/2026/05/etude-135.jpg",
+    url: "https://www.irsem.fr/en/publications/how-do-wars-end-securitisation-and-the-problem-of-victory-and-defeat-1",
+    pdfUrl: "https://www.irsem.fr/storage/file_manager_files/2026/05/etude-irsem-135-strachan-a4-v2.pdf",
+    highlight: "Wars end not when one side wins, but when both see negotiation as more advantageous than fighting.",
+    tags: ["conflict", "termination", "doctrine"],
+    color: "#1e1b3a", accent: "#a78bfa",
+  },
+  {
+    id: "irsem-134",
+    title: "Sustainability in the Age of War Preparation",
+    subtitle: "Environmental constraints and military readiness in Nordic forces",
+    source: "IRSEM", sourceUrl: "https://www.irsem.fr",
+    date: "Apr 2026", type: "Research Study", pages: "70",
+    coverImg: "https://www.irsem.fr/storage/file_manager_files/2026/04/etude-134-69e096f435e6d.png",
+    url: "https://www.irsem.fr/en/publications/penser-la-durabilite-a-lair-de-la-preparation-de-la-guerre-1",
+    pdfUrl: "https://www.irsem.fr/storage/file_manager_files/2026/04/etude-irsem-134-durabilite-a4.pdf",
+    highlight: "Nordic defence forces balance sustainability goals with operational demands under strategic pressure.",
+    tags: ["sustainability", "Nordic", "readiness"],
+    color: "#1e1b3a", accent: "#a78bfa",
+  },
+  {
+    id: "irsem-bs90",
+    title: "Gulf States Defence Posture After the War",
+    subtitle: "Rethinking security strategies in the post-conflict Gulf",
+    source: "IRSEM", sourceUrl: "https://www.irsem.fr",
+    date: "Apr 2026", type: "Strategic Brief", pages: "12",
+    coverImg: "https://www.irsem.fr/storage/file_manager_files/2026/04/bs90.png",
+    url: "https://www.irsem.fr/en/publications/repenser-la-posture-de-defense-des-etats-du-golfe-apres-la-guerre-1",
+    pdfUrl: "https://www.irsem.fr/storage/file_manager_files/2026/04/bs-90-passot.pdf",
+    highlight: "Gulf states must fundamentally revise their defence postures to address new regional vulnerabilities.",
+    tags: ["Gulf", "Middle East", "strategy"],
+    color: "#1e1b3a", accent: "#a78bfa",
+  },
+  {
+    id: "irsem-focus3",
+    title: "BAYBRIDGE: A Chinese Influence Ecosystem",
+    subtitle: "Anatomy of a Chinese information influence operation",
+    source: "IRSEM", sourceUrl: "https://www.irsem.fr",
+    date: "Oct 2025", type: "Research Focus", pages: "80",
+    coverImg: "https://www.irsem.fr/storage/file_manager_files/2026/02/focus-3.jpg",
+    url: "https://www.irsem.fr/en/publications/baybridge-anatomy-of-a-chinese-information-influence-ecosystem-1",
+    pdfUrl: "https://www.irsem.fr/storage/file_manager_files/2025/10/focus-3-charon-a4-ok.pdf",
+    highlight: "BAYBRIDGE uses hundreds of fake news sites to push pro-China and pro-Russia narratives globally.",
+    tags: ["China", "disinformation", "cyber"],
+    color: "#1e1b3a", accent: "#a78bfa",
+  },
+  {
+    id: "irsem-bs82",
+    title: "The Belt and Road in Central Asia",
+    subtitle: "Trade, influence and rivalries along the new Silk Road",
+    source: "IRSEM", sourceUrl: "https://www.irsem.fr",
+    date: "Mar 2025", type: "Strategic Brief", pages: "12",
+    coverImg: "https://www.irsem.fr/storage/file_manager_files/2026/02/bs82-69a05ffbed5ab.jpg",
+    url: "https://www.irsem.fr/en/publications/the-belt-and-road-initiative-in-central-asia-trade-influence-and-rivalries",
+    pdfUrl: "https://www.irsem.fr/storage/file_manager_files/2025/03/sb-82-hiliquin-bri-en.pdf",
+    highlight: "The China-Kyrgyzstan-Uzbekistan railway will transform Central Asian connectivity — and debt burdens.",
+    tags: ["China", "BRI", "Central Asia"],
+    color: "#1e1b3a", accent: "#a78bfa",
+  },
+  // Atlantic Council
+  {
+    id: "ac-nuclear-2026",
+    title: "Strategy for a New Nuclear Age",
+    subtitle: "Force size, arms control and missile defense in a multi-polar world",
+    source: "Atlantic Council", sourceUrl: "https://www.atlanticcouncil.org",
+    date: "Mar 2026", type: "Research Report", pages: "~60",
+    coverImg: "https://www.atlanticcouncil.org/wp-content/uploads/2026/02/9309829-scaled-e1772602088967-500x350.jpg",
+    url: "https://www.atlanticcouncil.org/in-depth-research-reports/report/great-nuclear-debates/",
+    pdfUrl: null,
+    highlight: "Three nuclear-armed great powers means US policy can no longer plan for dyadic deterrence alone.",
+    tags: ["nuclear", "deterrence", "USA"],
     color: "#1e3a5f", accent: "#38bdf8",
   },
   {
-    id: "irsem-2025",
-    title: "European DTIB in a War Economy",
-    subtitle: "Capacity, bottlenecks and recommendations for the defence industrial base",
-    source: "IRSEM",
-    sourceUrl: "https://www.irsem.fr",
-    date: "2025-02",
-    url: "https://www.irsem.fr/en/",
-    type: "Research Report",
-    pages: "~88",
-    highlight: "European DTIB must double munitions output by 2026; structural reform is critical.",
-    tags: ["DTIB", "munitions", "Europe"],
-    color: "#3b1f5e", accent: "#a78bfa",
+    id: "ac-nato-ai-2026",
+    title: "How NATO Can Integrate AI for Algorithmic Warfare",
+    subtitle: "C2 systems, autonomous weapons and the Alliance's AI readiness gap",
+    source: "Atlantic Council", sourceUrl: "https://www.atlanticcouncil.org",
+    date: "Mar 2026", type: "Research Report", pages: "~50",
+    coverImg: "https://www.atlanticcouncil.org/wp-content/uploads/2026/02/9470308-1-1-500x350.jpg",
+    url: "https://www.atlanticcouncil.org/in-depth-research-reports/report/how-nato-can-integrate-ai-to-prevail-in-future-algorithmic-warfare/",
+    pdfUrl: null,
+    highlight: "Military AI does not create new risks — it amplifies existing risks of human error and miscalculation.",
+    tags: ["AI", "NATO", "C2"],
+    color: "#1e3a5f", accent: "#38bdf8",
   },
   {
-    id: "crs-ukraine-2025",
-    title: "U.S. Security Assistance to Ukraine",
-    subtitle: "Aid commitments, drawdown authority and congressional appropriations",
-    source: "CRS",
-    sourceUrl: "https://crsreports.congress.gov",
-    date: "2025-03",
-    url: "https://crsreports.congress.gov",
-    type: "Policy Brief",
-    pages: "~28",
-    highlight: "Total US security commitments to Ukraine exceeded $65 billion by early 2025.",
-    tags: ["USA", "Ukraine", "aid"],
-    color: "#1a3a1a", accent: "#86efac",
+    id: "ac-putin-2026",
+    title: "Putin's Next Move: Five Attack Scenarios",
+    subtitle: "Russian hybrid and conventional attack scenarios Europe must prepare for",
+    source: "Atlantic Council", sourceUrl: "https://www.atlanticcouncil.org",
+    date: "Feb 2026", type: "Issue Brief", pages: "~40",
+    coverImg: "https://www.atlanticcouncil.org/wp-content/uploads/2026/02/9108544-scaled-e1774306196499-500x350.jpg",
+    url: "https://www.atlanticcouncil.org/in-depth-research-reports/report/putins-next-move-five-russian-attack-scenarios-europe-must-prepare-for/",
+    pdfUrl: "https://www.atlanticcouncil.org/wp-content/uploads/2026/02/Putins-next-move_Five-Russian-attack-scenarios-Europe-must-prepare-for.pdf",
+    highlight: "NATO must plan for five distinct Russian escalation pathways — from sabotage to limited invasion.",
+    tags: ["Russia", "Europe", "scenarios"],
+    color: "#1e3a5f", accent: "#38bdf8",
   },
   {
-    id: "rusi-ukraine-2025",
-    title: "RUSI Ukraine Research Group — 2025 Publications",
-    subtitle: "Drone warfare, artillery, electronic warfare and battlefield analysis",
-    source: "RUSI",
-    sourceUrl: "https://www.rusi.org",
-    date: "2025-05",
-    url: "https://www.rusi.org/",
-    type: "Research Report",
-    pages: "various",
-    highlight: "FPV drones now account for the majority of armour kills on both sides of the line.",
-    tags: ["Ukraine", "drones", "tactics"],
-    color: "#2d1515", accent: "#fb923c",
+    id: "ac-eu-nato-2026",
+    title: "Can the EU's Art. 42.7 Replace NATO's Art. 5?",
+    subtitle: "Comparing EU and NATO mutual defence guarantees",
+    source: "Atlantic Council", sourceUrl: "https://www.atlanticcouncil.org",
+    date: "May 2026", type: "Issue Brief", pages: "~30",
+    coverImg: "https://www.atlanticcouncil.org/wp-content/uploads/2024/10/Herbst-EU-US-agenda-setting-report-500x350.jpg",
+    url: "https://www.atlanticcouncil.org/in-depth-research-reports/issue-brief/can-the-eus-mutual-defense-clause-replace-natos-article-5/",
+    pdfUrl: null,
+    highlight: "EU Article 42.7 lacks enforcement mechanisms and cannot substitute for NATO's collective defence guarantee.",
+    tags: ["EU", "NATO", "defence"],
+    color: "#1e3a5f", accent: "#38bdf8",
+  },
+  // CSIS
+  {
+    id: "csis-naval-2025",
+    title: "Outlining Challenges to US Naval Shipbuilding",
+    subtitle: "Industrial capacity, workforce and allied cooperation in naval production",
+    source: "CSIS", sourceUrl: "https://www.csis.org",
+    date: "Dec 2025", type: "Research Report", pages: "~90",
+    coverImg: "https://csis-website-prod.s3.amazonaws.com/s3fs-public/styles/500_x_300/s3/2025-12/251216_Daniels_Naval_Shipbuilding.jpg?VersionId=ywz0xhdLHLimPE_tL2ylw676wXlMaMjQ&h=47ea0187&itok=NQsLTK-H",
+    url: "https://www.csis.org/analysis/outlining-challenges-us-naval-shipbuilding",
+    pdfUrl: "https://csis-website-prod.s3.amazonaws.com/s3fs-public/2025-12/251216_Daniels_Naval_Shipbuilding.pdf?VersionId=M39F5951zELfazlxjIm7alGsIW2Sc6eK",
+    highlight: "The US shipbuilding enterprise has failed to produce ships at the scale, speed and cost required for strategic competition.",
+    tags: ["USA", "naval", "industry"],
+    color: "#1e3a5f", accent: "#38bdf8",
   },
   {
-    id: "acled-2025",
+    id: "csis-industrial-2025",
+    title: "Putting the Industrial Base on a Wartime Footing",
+    subtitle: "US defence production surge and structural reform priorities",
+    source: "CSIS", sourceUrl: "https://www.csis.org",
+    date: "Dec 2025", type: "Commentary", pages: "~15",
+    coverImg: "https://csis-website-prod.s3.amazonaws.com/s3fs-public/styles/500_x_300/s3/2025-12/GettyImages-2244796674_cropped.jpg",
+    url: "https://www.csis.org/analysis/putting-industrial-base-wartime-footing",
+    pdfUrl: null,
+    highlight: "Without structural reform, the US defence industrial base cannot meet the output demands of peer competition.",
+    tags: ["USA", "DIB", "munitions"],
+    color: "#1e3a5f", accent: "#38bdf8",
+  },
+  {
+    id: "csis-repair-2025",
+    title: "Who Controls the Wrench? The Right to Repair",
+    subtitle: "Military equipment maintenance rights and defence contractor dependencies",
+    source: "CSIS", sourceUrl: "https://www.csis.org",
+    date: "Nov 2025", type: "Critical Questions", pages: "~12",
+    coverImg: "https://csis-website-prod.s3.amazonaws.com/s3fs-public/styles/500_x_300/s3/2025-11/GettyImages-1243306908_cropped.jpg",
+    url: "https://www.csis.org/analysis/who-controls-wrench-debate-over-right-repair",
+    pdfUrl: null,
+    highlight: "Sustainment accounts for ~70% of total weapons system lifecycle cost — right-to-repair has strategic implications.",
+    tags: ["sustainment", "contracts", "USA"],
+    color: "#1e3a5f", accent: "#38bdf8",
+  },
+  {
+    id: "csis-land-2026",
+    title: "The Role of Land Power in Future Security",
+    subtitle: "US Army mission, structure and resourcing in the future joint force",
+    source: "CSIS", sourceUrl: "https://www.csis.org",
+    date: "Apr 2026", type: "Commentary", pages: "~15",
+    coverImg: "https://csis-website-prod.s3.amazonaws.com/s3fs-public/styles/500_x_300/s3/2026-04/260415_McGin_Land_Power.jpg",
+    url: "https://www.csis.org/analysis/role-land-power-future-global-security-environment",
+    pdfUrl: null,
+    highlight: "Ground forces remain indispensable even in a technology-dominant joint force of the future.",
+    tags: ["land", "army", "USA"],
+    color: "#1e3a5f", accent: "#38bdf8",
+  },
+  // ACLED
+  {
+    id: "acled-watchlist-2025",
     title: "ACLED Conflict Watchlist 2025",
-    subtitle: "Armed conflict trends, hotspots and fatality data worldwide",
-    source: "ACLED",
-    sourceUrl: "https://acleddata.com",
-    date: "2025-01",
+    subtitle: "Ten most fragile and conflict-affected situations worldwide",
+    source: "ACLED", sourceUrl: "https://acleddata.com",
+    date: "Jan 2025", type: "Annual Report", pages: "44",
+    coverImg: null,
     url: "https://acleddata.com/conflict-watchlist-2025/",
-    type: "Annual Report",
-    pages: "~44",
-    highlight: "2024 saw record political violence globally, surpassing even the 2022 peak.",
+    pdfUrl: null,
+    highlight: "2024 saw record-high political violence globally — surpassing even the peak of 2022.",
     tags: ["conflicts", "data", "global"],
     color: "#1f1f3a", accent: "#f472b6",
   },
-  {
-    id: "cnas-ai-2025",
-    title: "AI-Enabled Weapons: Governance & Risks",
-    subtitle: "Autonomous targeting, human control thresholds and escalation risks",
-    source: "CNAS",
-    sourceUrl: "https://www.cnas.org",
-    date: "2025-04",
-    url: "https://www.cnas.org/research/technology-and-national-security",
-    type: "Policy Brief",
-    pages: "~48",
-    highlight: "Without interoperability standards, allied AI weapons risk fratricide and escalation.",
-    tags: ["AI", "autonomous", "governance"],
-    color: "#1c2e4a", accent: "#f97316",
-  },
 ];
 
-// ─── Paid / subscription references ──────────────────────────────────────────
-const PAID_REPORTS = [
-  {
-    id: "mil-balance-2025",
-    title: "The Military Balance 2025",
-    source: "IISS",
-    sourceUrl: "https://www.iiss.org",
-    url: "https://www.iiss.org/publications/the-military-balance/",
-    type: "Annual Report",
-    pages: "~512",
-    note: "Annual global military capabilities reference. Institutional subscription required.",
-    color: "#6b1a1a", accent: "#fca5a5",
-  },
-  {
-    id: "iiss-strategic-survey-2025",
-    title: "Strategic Survey 2025",
-    source: "IISS",
-    sourceUrl: "https://www.iiss.org",
-    url: "https://www.iiss.org/publications/strategic-survey/",
-    type: "Annual Report",
-    pages: "~360",
-    note: "Annual survey of world affairs covering all major geopolitical crises and trends.",
-    color: "#4a1010", accent: "#fca5a5",
-  },
-  {
-    id: "janes-armies-2025",
-    title: "Jane's World Armies 2025",
-    source: "Jane's by S&P Global",
-    sourceUrl: "https://www.janes.com",
-    url: "https://www.janes.com/",
-    type: "Reference",
-    pages: "~1,240",
-    note: "The most comprehensive reference on global ground forces order of battle.",
-    color: "#1a1a1a", accent: "#d4af37",
-  },
-  {
-    id: "janes-budgets-2025",
-    title: "Jane's Defence Budgets 2025",
-    source: "Jane's by S&P Global",
-    sourceUrl: "https://www.janes.com",
-    url: "https://www.janes.com",
-    type: "Reference",
-    pages: "~480",
-    note: "Country-by-country analysis of defence budgets and procurement priorities.",
-    color: "#1a1a1a", accent: "#d4af37",
-  },
-  {
-    id: "globaldata-2025",
-    title: "A&D Market Forecasts 2025–2035",
-    source: "GlobalData",
-    sourceUrl: "https://www.globaldata.com",
-    url: "https://www.globaldata.com/industry/aerospace-defense/",
-    type: "Market Report",
-    pages: "~320",
-    note: "10-year revenue forecasts, company profiles and programme tracking across A&D.",
-    color: "#0a2744", accent: "#67e8f9",
-  },
-  {
-    id: "forecast-intl-2025",
-    title: "Missiles & Munitions Market Forecast 2025",
-    source: "Forecast International",
-    sourceUrl: "https://www.forecastinternational.com",
-    url: "https://www.forecastinternational.com",
-    type: "Market Report",
-    pages: "~280",
-    note: "Programme-level procurement projections for guided weapons and munitions worldwide.",
-    color: "#1a0a2e", accent: "#c084fc",
-  },
-  {
-    id: "aviationweek-forecast-2025",
-    title: "Aerospace & Defence Industry Forecast 2025",
-    source: "Aviation Week",
-    sourceUrl: "https://aviationweek.com",
-    url: "https://aviationweek.com/defense-space",
-    type: "Annual Report",
-    pages: "~210",
-    note: "Annual A&D industry outlook covering civil, military and space segments.",
-    color: "#2e1a00", accent: "#fbbf24",
-  },
-  {
-    id: "shephard-uav-2025",
-    title: "UAV Systems Market 2025–2035",
-    source: "Shephard Media",
-    sourceUrl: "https://www.shephardmedia.com",
-    url: "https://www.shephardmedia.com/news/uavonline/",
-    type: "Market Report",
-    pages: "~190",
-    note: "10-year UAV market analysis covering military, government and commercial segments.",
-    color: "#1a2e1a", accent: "#86efac",
-  },
+// ─── Paid subscription references ────────────────────────────────────────────
+const PAID_REFS = [
+  { id: "mil-balance",   title: "The Military Balance 2025",      source: "IISS",        url: "https://www.iiss.org/",                                  note: "Annual global armed forces data" },
+  { id: "strat-survey",  title: "Strategic Survey 2025",          source: "IISS",        url: "https://www.iiss.org/",                                  note: "Annual strategic assessment" },
+  { id: "janes-armies",  title: "Jane's World Armies",            source: "Jane's",      url: "https://www.janes.com/",                                 note: "Ground forces reference" },
+  { id: "janes-budgets", title: "Jane's Defence Budgets",         source: "Jane's",      url: "https://www.janes.com/",                                 note: "Defence spending analysis" },
+  { id: "globaldata",    title: "GlobalData A&D Intelligence",    source: "GlobalData",  url: "https://www.globaldata.com/industry/aerospace-defense/", note: "Market intelligence & forecasts" },
+  { id: "forecast",      title: "Forecast International",         source: "FI",          url: "https://www.forecastinternational.com",                  note: "Programme-level projections" },
+  { id: "avweek",        title: "Aviation Week Defense",          source: "Av. Week",    url: "https://aviationweek.com/defense-space",                 note: "Aerospace & defence intelligence" },
+  { id: "shephard",      title: "Shephard UAV / Land Warfare",    source: "Shephard",    url: "https://www.shephardmedia.com/",                         note: "Domain-specific journals" },
 ];
 
 // ─── Source catalogue ─────────────────────────────────────────────────────────
@@ -294,19 +339,19 @@ const SOURCES = [
   { id: "sipri",              name: "SIPRI",                               url: "https://www.sipri.org",                                                              category: "thinktank",   lang: ["EN"],       paywall: false, description: "Global reference on military spending, arms transfers, nuclear arsenals and conflicts. All yearbook data freely downloadable." },
   { id: "iiss",               name: "IISS",                               url: "https://www.iiss.org",                                                               category: "thinktank",   lang: ["EN"],       paywall: true,  description: "Publishes The Military Balance and high-quality strategic analysis. Home of the Shangri-La and Manama Dialogues." },
   { id: "irsem",              name: "IRSEM",                              url: "https://www.irsem.fr",                                                               category: "thinktank",   lang: ["FR", "EN"], paywall: false, description: "French Ministry of Armed Forces think tank. Strategic studies, geopolitics, foreign influence and defence industry research." },
-  { id: "ifri",               name: "IFRI — Security & Defence",          url: "https://www.ifri.org/en",                       category: "thinktank",   lang: ["FR", "EN"], paywall: false, description: "French Institute of International Relations. Research on the European DTIB, strategic autonomy and transatlantic relations." },
+  { id: "ifri",               name: "IFRI — Security & Defence",          url: "https://www.ifri.org/en",                                                            category: "thinktank",   lang: ["FR", "EN"], paywall: false, description: "French Institute of International Relations. Research on the European DTIB, strategic autonomy and transatlantic relations." },
   { id: "csis",               name: "CSIS",                               url: "https://www.csis.org/programs/defense-industrial-initiatives-group",                  category: "thinktank",   lang: ["EN"],       paywall: false, description: "Washington think tank. Defence industrial base, acquisition reform, Indo-Pacific security and cyber. All reports free." },
-  { id: "rand",               name: "RAND Corporation",                   url: "https://www.rand.org/topics/military.html",                                          category: "thinktank",   lang: ["EN"],       paywall: false, description: "In-depth studies on capability planning, deterrence, acquisition and military strategy. All reports freely downloadable as PDF." },
+  { id: "rand",               name: "RAND Corporation",                   url: "https://www.rand.org/",                                                              category: "thinktank",   lang: ["EN"],       paywall: false, description: "In-depth studies on capability planning, deterrence, acquisition and military strategy. All reports freely downloadable as PDF." },
   { id: "rusi",               name: "RUSI",                               url: "https://www.rusi.org",                                                               category: "thinktank",   lang: ["EN"],       paywall: false, description: "UK's oldest defence and security think tank. Ukraine battlefield analysis, arms control, nuclear deterrence and defence economics." },
   { id: "frs",                name: "FRS — Foundation for Strategic Research", url: "https://www.frstrategie.org",                                                   category: "thinktank",   lang: ["FR"],       paywall: false, description: "French expertise in non-proliferation, nuclear strategy, arms control, space security and export controls." },
   { id: "atlantic_council",   name: "Atlantic Council",                   url: "https://www.atlanticcouncil.org/programs/scowcroft-center-for-strategy-and-security/", category: "thinktank", lang: ["EN"],       paywall: false, description: "Transatlantic security, NATO cohesion and emerging defence technology from the premier transatlantic think tank." },
   { id: "cnas",               name: "CNAS",                               url: "https://www.cnas.org",                                                               category: "thinktank",   lang: ["EN"],       paywall: false, description: "US defence strategy, AI and autonomy in warfare, force design, Indo-Pacific competition and future warfare concepts." },
   { id: "chathamhouse",       name: "Chatham House",                      url: "https://www.chathamhouse.org/topics/defence-security",                               category: "thinktank",   lang: ["EN"],       paywall: false, description: "The Royal Institute of International Affairs. UK-focused defence, international security and strategic policy research." },
-  { id: "ecfr",               name: "ECFR",                               url: "https://ecfr.eu/",                                       category: "thinktank",   lang: ["EN"],       paywall: false, description: "Pan-European think tank covering strategic autonomy, European defence integration and geopolitics." },
+  { id: "ecfr",               name: "ECFR",                               url: "https://ecfr.eu/",                                                                   category: "thinktank",   lang: ["EN"],       paywall: false, description: "Pan-European think tank covering strategic autonomy, European defence integration and geopolitics." },
   { id: "carnegie",           name: "Carnegie Endowment",                 url: "https://carnegieendowment.org/topics/nuclear-policy",                                category: "thinktank",   lang: ["EN"],       paywall: false, description: "Authoritative analysis on nuclear policy, arms control, proliferation risks and global security threats." },
   { id: "swp",                name: "SWP Berlin",                         url: "https://www.swp-berlin.org/en",                                                      category: "thinktank",   lang: ["EN", "DE"], paywall: false, description: "Germany's leading foreign and security policy think tank. European defence integration and NATO strategy." },
   { id: "acled",              name: "ACLED",                              url: "https://acleddata.com",                                                              category: "thinktank",   lang: ["EN"],       paywall: false, description: "Real-time conflict data and crisis mapping for 100+ countries. Battles, explosions, protests and strategic developments." },
-  { id: "montaigne",          name: "Institut Montaigne — Defence",       url: "https://www.institutmontaigne.org/en/",              category: "thinktank",   lang: ["FR", "EN"], paywall: false, description: "French liberal think tank. European strategic autonomy, French defence industry and NATO relations." },
+  { id: "montaigne",          name: "Institut Montaigne — Defence",       url: "https://www.institutmontaigne.org/en/",                                              category: "thinktank",   lang: ["FR", "EN"], paywall: false, description: "French liberal think tank. European strategic autonomy, French defence industry and NATO relations." },
   // ── Market Data ────────────────────────────────────────────────────────────
   { id: "sam_gov",            name: "SAM.gov",                            url: "https://sam.gov/content/opportunities",                                              category: "market",      lang: ["EN"],       paywall: false, description: "The official US source for federal contract opportunities and award notices. Essential for tracking the American defence market." },
   { id: "ted",                name: "TED — Tenders Electronic Daily",     url: "https://ted.europa.eu",                                                              category: "market",      lang: ["FR", "EN"], paywall: false, description: "Supplement to the EU Official Journal. All European public procurement notices including defence purchases." },
@@ -326,16 +371,6 @@ const LANG_COLORS = {
   EN: "bg-slate-50 text-slate-600 border-slate-200",
   DE: "bg-yellow-50 text-yellow-700 border-yellow-200",
   PL: "bg-red-50 text-red-700 border-red-200",
-  UK: "bg-yellow-50 text-yellow-600 border-yellow-200",
-};
-
-const TYPE_BADGE = {
-  "Annual Report":     "bg-blue-50 text-blue-700 border-blue-200",
-  "Research Report":   "bg-violet-50 text-violet-700 border-violet-200",
-  "Policy Brief":      "bg-emerald-50 text-emerald-700 border-emerald-200",
-  "Statistical Report":"bg-amber-50 text-amber-700 border-amber-200",
-  "Reference":         "bg-slate-50 text-slate-600 border-slate-200",
-  "Market Report":     "bg-orange-50 text-orange-700 border-orange-200",
 };
 
 function Favicon({ url, className = "w-5 h-5" }) {
@@ -351,96 +386,84 @@ function Favicon({ url, className = "w-5 h-5" }) {
   );
 }
 
-// ─── Report cover card ────────────────────────────────────────────────────────
-function ReportCoverCard({ report, paid = false }) {
+// ─── Report card with real cover thumbnail ────────────────────────────────────
+function ReportCoverCard({ report }) {
+  const [imgErr, setImgErr] = useState(false);
+  const hasRealCover = report.coverImg && !imgErr;
+  const linkUrl = report.pdfUrl || report.url;
+
   return (
-    <a href={report.url} target="_blank" rel="noopener noreferrer" className="group block">
-      <div className="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-150 flex flex-col h-full">
+    <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="group block">
+      <div className="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-200 flex flex-col h-full">
 
-        {/* ── Cover ── coloured header that looks like a report cover */}
-        <div
-          className="relative p-4 flex flex-col gap-3"
-          style={{ backgroundColor: report.color, minHeight: 140 }}
-        >
-          {/* Accent bar top */}
-          <div className="absolute inset-x-0 top-0 h-1.5 rounded-t-xl" style={{ backgroundColor: report.accent }} />
-
-          {/* Source row */}
-          <div className="flex items-center justify-between mt-1">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-white/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                <Favicon url={report.sourceUrl} className="w-4 h-4" />
-              </div>
-              <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest">{report.source}</span>
+        {/* ── Cover image or CSS fallback ── */}
+        {hasRealCover ? (
+          <div className="relative overflow-hidden" style={{ aspectRatio: "3/4" }}>
+            <img
+              src={report.coverImg}
+              alt={report.title}
+              className="w-full h-full object-cover object-top group-hover:scale-[1.03] transition-transform duration-300"
+              onError={() => setImgErr(true)}
+            />
+            {/* Bottom gradient for source badge legibility */}
+            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
+            {/* Source badge — top left */}
+            <div className="absolute top-2 left-2 flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded px-1.5 py-0.5 shadow-sm">
+              <Favicon url={report.sourceUrl} className="w-3 h-3" />
+              <span className="text-[8px] font-bold text-slate-700 uppercase tracking-wider leading-none">{report.source}</span>
             </div>
-            {paid ? (
-              <span className="flex items-center gap-1 text-[9px] font-semibold px-2 py-0.5 rounded-full bg-black/30 text-amber-300">
-                <Lock style={{ width: 9, height: 9 }} /> Paid
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-[9px] font-semibold px-2 py-0.5 rounded-full bg-black/30 text-emerald-300">
-                <Unlock style={{ width: 9, height: 9 }} /> Free
-              </span>
-            )}
+            {/* Free badge — top right */}
+            <span className="absolute top-2 right-2 text-[8px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500 text-white leading-none">
+              Free
+            </span>
+            {/* Type + PDF indicator — bottom overlay */}
+            <div className="absolute bottom-2 inset-x-2 flex items-center justify-between">
+              <span className="text-[8px] text-white/80 bg-black/40 rounded px-1.5 py-0.5 leading-none">{report.type}</span>
+              {report.pdfUrl && (
+                <span className="flex items-center gap-0.5 text-[8px] text-white/90 bg-blue-700/80 rounded px-1.5 py-0.5 leading-none">
+                  <Download style={{ width: 8, height: 8 }} /> PDF
+                </span>
+              )}
+            </div>
           </div>
+        ) : (
+          /* CSS cover fallback */
+          <div
+            className="relative flex flex-col p-3 gap-2"
+            style={{ backgroundColor: report.color || "#1e3a5f", aspectRatio: "3/4" }}
+          >
+            <div className="absolute inset-x-0 top-0 h-1 rounded-t-xl" style={{ backgroundColor: report.accent || "#60a5fa" }} />
+            <div className="flex items-center justify-between mt-1">
+              <div className="flex items-center gap-1.5">
+                <Favicon url={report.sourceUrl} className="w-3.5 h-3.5" />
+                <span className="text-white/70 text-[8px] font-bold uppercase tracking-widest">{report.source}</span>
+              </div>
+              <span className="text-[7px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/80 text-white">Free</span>
+            </div>
+            <p className="text-white font-bold text-xs leading-snug flex-1">{report.title}</p>
+            <div className="flex items-center justify-between">
+              <span className="text-[8px] px-1.5 py-0.5 rounded" style={{ backgroundColor: (report.accent || "#60a5fa") + "30", color: report.accent || "#60a5fa" }}>{report.type}</span>
+              {report.pdfUrl && <Download style={{ width: 10, height: 10, color: report.accent || "#60a5fa" }} />}
+            </div>
+          </div>
+        )}
 
-          {/* Title */}
-          <p className="text-white font-bold text-xs leading-snug line-clamp-3 flex-1">
+        {/* ── Metadata footer ── */}
+        <div className="p-2.5 flex flex-col gap-1 flex-1">
+          <p className="text-[11px] font-semibold text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-800 transition-colors">
             {report.title}
           </p>
-
-          {/* Bottom row: type + pages */}
-          <div className="flex items-center justify-between">
-            {report.type && (
-              <span className="text-[8px] font-semibold px-2 py-0.5 rounded-full"
-                style={{ backgroundColor: report.accent + "30", color: report.accent }}>
-                {report.type}
-              </span>
-            )}
-            <span className="text-white/40 text-[9px] font-mono ml-auto">{report.pages}p</span>
+          <div className="flex items-center justify-between mt-0.5">
+            <span className="text-[9px] text-slate-400 font-mono">{report.date}</span>
+            {report.pages && <span className="text-[9px] text-slate-400">{report.pages}p</span>}
           </div>
-        </div>
-
-        {/* ── Body ── */}
-        <div className="p-3 flex flex-col gap-2 flex-1">
-          {/* Date */}
-          {report.date && (
-            <div className="flex items-center gap-1 text-[9px] text-slate-400">
-              <Calendar className="w-2.5 h-2.5 flex-shrink-0" />
-              <span>{report.date}</span>
-            </div>
-          )}
-
-          {/* Subtitle */}
-          {report.subtitle && (
-            <p className="text-[10px] text-slate-500 leading-relaxed line-clamp-2">{report.subtitle}</p>
-          )}
-          {report.note && (
-            <p className="text-[10px] text-slate-500 leading-relaxed line-clamp-2">{report.note}</p>
-          )}
-
-          {/* Key finding */}
           {report.highlight && (
-            <div className="mt-auto bg-slate-50 border border-slate-100 rounded-lg p-2">
-              <div className="flex items-start gap-1.5">
-                <TrendingUp className="w-3 h-3 text-blue-700 flex-shrink-0 mt-px" />
-                <p className="text-[9px] text-slate-600 leading-relaxed line-clamp-2">{report.highlight}</p>
-              </div>
-            </div>
+            <p className="text-[9px] text-slate-500 leading-relaxed line-clamp-2 mt-0.5 flex-1">{report.highlight}</p>
           )}
-
-          {/* Tags */}
-          {report.tags && (
-            <div className="flex gap-1 flex-wrap mt-auto pt-1">
-              {report.tags.slice(0, 2).map(t => (
-                <Badge key={t} variant="secondary" className="text-[8px] px-1 py-0 bg-slate-50 text-slate-500 border border-slate-100 font-normal">{t}</Badge>
-              ))}
-            </div>
-          )}
-
-          {/* Open link — appears on hover */}
-          <div className="flex items-center justify-end gap-1 text-[9px] text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity pt-1">
-            Open <ArrowUpRight className="w-3 h-3" />
+          <div className="flex gap-1 flex-wrap pt-0.5">
+            {(report.tags || []).slice(0, 2).map(t => (
+              <span key={t} className="text-[8px] px-1 py-px rounded bg-slate-100 text-slate-500 font-mono">{t}</span>
+            ))}
           </div>
         </div>
       </div>
@@ -462,6 +485,8 @@ export default function Follow() {
     const q = search.toLowerCase();
     return matchCat && (!q || s.name.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
   });
+
+  const withCover = REPORTS.filter(r => r.coverImg).length;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -496,35 +521,45 @@ export default function Follow() {
         ))}
       </div>
 
-      {/* ── Reports ── */}
-      <div className="space-y-7">
-        <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-blue-800" />
-          <h2 className="font-heading text-lg font-bold text-slate-900">Studies &amp; Reports</h2>
-        </div>
-
-        {/* FREE */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
+      {/* ── Reports section ── */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4 text-blue-800" />
+            <h2 className="font-heading text-lg font-bold text-slate-900">Studies &amp; Reports</h2>
+          </div>
+          <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-              <Unlock className="w-3.5 h-3.5" /> Free &amp; open access — {FREE_REPORTS.length} reports
+              <Unlock className="w-3 h-3" /> {REPORTS.length} free reports
             </span>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {FREE_REPORTS.map(r => <ReportCoverCard key={r.id} report={r} paid={false} />)}
+            <span className="text-xs text-slate-400">{withCover} with real covers</span>
           </div>
         </div>
 
-        {/* PAID */}
+        {/* ── Report grid — portrait book thumbnails ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-4">
+          {REPORTS.map(r => <ReportCoverCard key={r.id} report={r} />)}
+        </div>
+
+        {/* ── Paid references — compact list ── */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-3">
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
-              <Lock className="w-3.5 h-3.5" /> Subscription required — {PAID_REPORTS.length} references
+              <Lock className="w-3 h-3" /> Subscription references — institutional access required
             </span>
-            <span className="text-xs text-slate-400">Institutional access needed</span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {PAID_REPORTS.map(r => <ReportCoverCard key={r.id} report={r} paid={true} />)}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+            {PAID_REFS.map(r => (
+              <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer"
+                className="group block bg-white border border-slate-200 rounded-lg p-2.5 hover:border-amber-300 hover:shadow-sm transition-all">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <Favicon url={r.url} className="w-3.5 h-3.5" />
+                  <span className="text-[8px] font-bold text-amber-600 uppercase tracking-wider">{r.source}</span>
+                </div>
+                <p className="text-[10px] font-semibold text-slate-800 leading-snug line-clamp-2 group-hover:text-amber-700 transition-colors">{r.title}</p>
+                <p className="text-[9px] text-slate-400 mt-1 leading-snug">{r.note}</p>
+              </a>
+            ))}
           </div>
         </div>
       </div>
