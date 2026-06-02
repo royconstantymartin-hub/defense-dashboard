@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   ExternalLink, Search, Newspaper, BookOpen, Globe2,
-  ShieldCheck, BarChart3, FileText, TrendingUp, Lock, Unlock, Download,
+  ShieldCheck, BarChart3, FileText, Lock, Unlock, Download, ChevronLeft, ChevronRight,
 } from "lucide-react";
 
 // ─── 20 free reports — all cover images and PDF links verified ─────────────────
@@ -475,6 +475,7 @@ function ReportCoverCard({ report }) {
 export default function Follow() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const carouselRef = useRef(null);
 
   const totalFree = SOURCES.filter(s => !s.paywall).length;
   const countByCategory = Object.fromEntries(
@@ -485,8 +486,6 @@ export default function Follow() {
     const q = search.toLowerCase();
     return matchCat && (!q || s.name.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
   });
-
-  const withCover = REPORTS.filter(r => r.coverImg).length;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -522,23 +521,38 @@ export default function Follow() {
       </div>
 
       {/* ── Reports section ── */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FileText className="w-4 h-4 text-blue-800" />
             <h2 className="font-heading text-lg font-bold text-slate-900">Studies &amp; Reports</h2>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-              <Unlock className="w-3 h-3" /> {REPORTS.length} free reports
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+              <Unlock className="w-3 h-3" /> {REPORTS.length} free
             </span>
-            <span className="text-xs text-slate-400">{withCover} with real covers</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button onClick={() => { carouselRef.current.scrollBy({ left: -carouselRef.current.offsetWidth * 0.7, behavior: "smooth" }); }}
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-colors shadow-sm">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button onClick={() => { carouselRef.current.scrollBy({ left: carouselRef.current.offsetWidth * 0.7, behavior: "smooth" }); }}
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-colors shadow-sm">
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* ── Report grid — portrait book thumbnails ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-4">
-          {REPORTS.map(r => <ReportCoverCard key={r.id} report={r} />)}
+        {/* ── Horizontal carousel ── */}
+        <div
+          ref={carouselRef}
+          className="flex gap-4 overflow-x-auto pb-3 scroll-smooth"
+          style={{ scrollbarWidth: "thin", scrollbarColor: "#cbd5e1 transparent" }}
+        >
+          {REPORTS.map(r => (
+            <div key={r.id} className="flex-none w-44">
+              <ReportCoverCard report={r} />
+            </div>
+          ))}
         </div>
 
         {/* ── Paid references — compact list ── */}
