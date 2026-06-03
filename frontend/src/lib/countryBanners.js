@@ -19,7 +19,7 @@ const COUNTRY_WIKI_ARTICLE = {
   "Israel":               "Lockheed_Martin_F-35_Lightning_II",
   "Turkey":               "Baykar_Bayraktar_TB2",
   "Poland":               "Leopard_2A5",
-  "Ukraine":              "Baykar_Bayraktar_TB2",
+  "Ukraine":              "T-64BM_Bulat",
   "Canada":               "CF-18_Hornet",
 
   // ── Europe — NATO Western ──────────────────────────────────────────────────
