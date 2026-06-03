@@ -468,6 +468,33 @@ export const COMPANY_LOGOS = {
   "Destini Berhad": "destini.com.my",
   // Vietnam
   "Viettel Military Industry": "viettel.com.vn",
+  // Indonesia — additional
+  "PT LEN Industri": "len.co.id",
+  // China — additional
+  "CASC": "spacechina.com",
+  "CSIC": "csic.com.cn",
+  "AVIC Helicopter": "avic.com.cn",
+  "China Electronics Technology Group": "cetc.com.cn",
+  "NORINCO International": "norinco.com",
+  "Poly Technologies": "polytechnologies.com",
+  "DJI Defense": "dji.com",
+  // Poland — additional
+  "ZM Mesko": "mesko.com.pl",
+  "Bumar-Łabędy": "bumarlabedy.pl",
+  "ZM Tarnów": "zmtarnow.pl",
+  "RADMOR": "radmor.com.pl",
+  "OBRUM": "obrum.pl",
+  "Hertz Systems": "hertzsystems.pl",
+  // Australia — additional
+  "EOS Defence Systems": "eos-aus.com",
+  // AI / Defense Tech startups
+  "Tycho.AI": "tycho.ai",
+  // Italy — additional
+  "Acciai Speciali Terni": "arvedi.it",
+  // France/Germany — KNDS
+  "KNDS France (Nexter)": "knds.com",
+  // Finland — additional
+  "Patria Finland": "patriagroup.com",
   // Canada — additional
   "Kraken Robotics": "krakenrobotics.com",
   // UAE — additional
@@ -757,6 +784,21 @@ export const COMPANY_WIKI_LOGOS = {
   "AEL Sistemas":               WP + "AEL_Sistemas_logo.svg",
   // Japan
   "Japan Marine United":        WP + "Japan_Marine_United_logo.svg",
+  // New companies added June 2026
+  "PT LEN Industri":            WP + "Logo_PT_LEN_Industri.svg",
+  "CASC":                       WP + "China_Aerospace_Science_and_Technology_Corporation_logo.svg",
+  "CSIC":                       WP + "China_Shipbuilding_Industry_Corporation_logo.svg",
+  "AVIC Helicopter":            WP + "Aviation_Industry_Corporation_of_China_logo.svg",
+  "NORINCO International":      WP + "Norinco_logo.svg",
+  "Poly Technologies":          WP + "Poly_Technologies_logo.svg",
+  "DJI Defense":                WP + "DJI_logo.svg",
+  "ZM Mesko":                   WP + "Mesko_logo.svg",
+  "Bumar-Łabędy":               WP + "Bumar_Labedy_logo.svg",
+  "ZM Tarnów":                  WP + "ZM_Tarnow_logo.svg",
+  "RADMOR":                     WP + "RADMOR_logo.svg",
+  "EOS Defence Systems":        WP + "EOS_Defence_Systems_logo.svg",
+  "KNDS France (Nexter)":       WP + "KNDS_logo.svg",
+  "Patria Finland":             WP + "Patria_(Finnish_company)_logo.svg",
   // Additional missing companies
   "Aerojet Rocketdyne":         WP + "Aerojet_Rocketdyne_logo.svg",
   "Hanwha Systems":             WP + "Hanwha_logo.svg",
