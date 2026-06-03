@@ -1077,16 +1077,6 @@ function MACard({ activity, onOpenProfile }) {
               )}
             </div>
 
-            {/* Type */}
-            <div>
-              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Type</p>
-              <span className="text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded capitalize font-medium">
-                {["strategic_investment", "minority_stake", "funding_round"].includes(activity.deal_type)
-                  ? "Invest. & Funding"
-                  : activity.deal_type.replaceAll("_", " ")}
-              </span>
-            </div>
-
             {/* Date */}
             <div>
               <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Date</p>
