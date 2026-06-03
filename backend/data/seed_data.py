@@ -1612,30 +1612,7 @@ ANNOUNCEMENTS_DATA = [
 #   Example: SES/Intelsat → deal_value=3100 (equity), notes documents EV ~$5.0B with debt.
 #
 MA_DATA = [
-    # ── 2026 (recent / active) ────────────────────────────────────────────────
-    {
-        "acquirer": "AE Industrial Partners", "target": "Rocketdyne (L3Harris Space Propulsion)",
-        "deal_value": 845, "status": "pending", "deal_type": "acquisition",
-        "description": "L3Harris divests majority of Rocketdyne to AE Industrial for $845M — PE carve-out, H2 2026 closing",
-        "rationale": (
-            "L3Harris Technologies announces a $845 million agreement in January 2026 to sell the "
-            "majority of its Aerojet Rocketdyne business (Space Propulsion and Power Systems — RL10, "
-            "RS-68A, electric propulsion) to AE Industrial Partners, a defense-focused PE firm. "
-            "L3Harris retains the RS-25 programme (sole supplier for NASA SLS) and certain "
-            "tactical-missile propulsion lines. The divestiture reflects L3Harris's perimeter "
-            "rationalisation strategy: the RS-25 retention preserves a strategically irreplaceable "
-            "government contract; the remainder is monetised at ~12× EBITDA, consistent with space "
-            "propulsion sector comps. Closing expected H2 2026 pending regulatory approvals."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "aerojet.com",
-        "target_logo_domain": "l3harris.com",
-        "source_url": "https://spaceflightnow.com/2026/01/09/l3harris-announces-845-million-majority-sale-of-space-propulsion-and-power-systems-business/",
-        "announced_date": datetime(2026, 1, 9, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": True,
-    },
+    # ── Non-acquisition entries (JVs, mergers) ─────────────────────────────────
     {
         "acquirer": "Shark Robotics", "target": "Tencore",
         "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
@@ -1678,24 +1655,6 @@ MA_DATA = [
         "announced_date": datetime(2026, 4, 20, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "Safran", "target": "Collins Aerospace Actuation",
-        "deal_value": 1800, "status": "announced", "deal_type": "acquisition",
-        "description": "Acquisition of RTX's actuation & flight-control systems business",
-        "rationale": (
-            "Safran signs a deal to acquire Collins Aerospace's (RTX subsidiary) actuation "
-            "and flight-control systems business for approximately $1.8 billion, announced "
-            "December 2024. The transaction would make Safran the world's second-largest "
-            "actuation supplier, adding landing-gear, flight-control and electromechanical "
-            "actuation lines. Regulatory reviews are running in parallel in the US, EU, and UK; "
-            "closing is expected in the second half of 2025."
-        ),
-        "acquirer_country": "FR", "target_country": "US",
-        "acquirer_logo_domain": "safran-group.com",
-        "target_logo_domain": "collinsaerospace.com",
-        "source_url": "https://www.safran-group.com/en/newsroom",
-        "announced_date": datetime(2024, 12, 5, tzinfo=timezone.utc),
-    },
-    {
         "acquirer": "Rheinmetall", "target": "American Rheinmetall Vehicles",
         "deal_value": 950, "status": "pending", "deal_type": "joint_venture",
         "description": "US Army OMFV bid joint venture (Lynx KF41)",
@@ -1713,305 +1672,6 @@ MA_DATA = [
         "source_url": "https://www.rheinmetall.com/en/investor-relations",
         "announced_date": datetime(2022, 9, 14, tzinfo=timezone.utc),
     },
-    # ── 2024–2025 ─────────────────────────────────────────────────────────────
-    {
-        "acquirer": "Lockheed Martin", "target": "Terran Orbital",
-        "deal_value": 450, "status": "completed", "deal_type": "acquisition",
-        "description": "Expansion into small satellite manufacturing",
-        "rationale": (
-            "Lockheed Martin completes its acquisition of Terran Orbital, a "
-            "manufacturer of small satellites and satellite components. The deal "
-            "expands Lockheed's commercial and government satellite production capacity "
-            "and strengthens its position in the proliferated LEO constellation market."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "lockheedmartin.com",
-        "target_logo_domain": "terranorbital.com",
-        "source_url": "https://www.lockheedmartin.com/en-us/news/news-releases/2024/lockheed-martin-completes-acquisition-of-terran-orbital.html",
-        "announced_date": datetime(2024, 9, 5, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Blackstone (Nightwing)", "target": "Raytheon Cybersecurity Services",
-        "deal_value": 320, "status": "completed", "deal_type": "acquisition",
-        "description": "Blackstone carve-out of Raytheon cyber & intelligence unit → Nightwing Group",
-        "rationale": (
-            "Blackstone acquires Raytheon Technologies' (RTX) cybersecurity and intelligence "
-            "services division in a $320 million carve-out, rebranding the standalone entity as "
-            "Nightwing Group. RTX was the seller, retaining a minority strategic stake. Nightwing "
-            "provides cyber, signals intelligence and mission-support services primarily to US "
-            "government and DoD clients. The transaction closed July 2024."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "blackstone.com",
-        "target_logo_domain": "rtx.com",
-        "source_url": "https://www.rtx.com/news/news-center/2024/07/18/rtx-completes-separation-of-nightwing",
-        "announced_date": datetime(2024, 7, 18, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "BAE Systems", "target": "Ball Aerospace",
-        "deal_value": 5550, "status": "completed", "deal_type": "acquisition",
-        "description": "Space and defense electronics expansion",
-        "rationale": (
-            "BAE Systems closes its $5.55 billion acquisition of Ball Aerospace, a "
-            "leading provider of space systems, spacecraft components, and defense "
-            "electronics. The deal significantly expands BAE's space sensor and "
-            "satellite portfolio and roughly doubles its US space workforce."
-        ),
-        "acquirer_country": "GB", "target_country": "US",
-        "acquirer_logo_domain": "baesystems.com",
-        "target_logo_domain": "ball.com",
-                "source_url": "https://www.baesystems.com/en/our-company/news-and-events/bae-systems-investor-news",
-        "announced_date": datetime(2023, 8, 28, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Boeing", "target": "Spirit AeroSystems",
-        "deal_value": 4700, "status": "pending", "deal_type": "acquisition",
-        "description": "Boeing reacquisition of Spirit AeroSystems fuselage unit — announced Jul 2024, closing expected mid-2025",
-        "rationale": (
-            "Boeing announces in July 2024 a $4.7 billion agreement to reacquire Spirit AeroSystems, "
-            "the fuselage and nacelle manufacturer it originally spun off in 2005, following "
-            "quality-control crises on the 737 MAX programme. The deal, pending shareholder and "
-            "regulatory approvals, is expected to close in mid-2025 and would bring Spirit's "
-            "Wichita and Tulsa facilities back in-house to restore direct production oversight."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "boeing.com",
-        "target_logo_domain": "spiritaero.com",
-        "source_url": "https://boeing.mediaroom.com/2024-07-01-Boeing-Signs-Agreement-to-Reacquire-Spirit-AeroSystems",
-        "announced_date": datetime(2024, 7, 1, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    # ── 2022–2023 ─────────────────────────────────────────────────────────────
-    {
-        "acquirer": "L3Harris Technologies", "target": "Aerojet Rocketdyne",
-        "deal_value": 4700, "status": "completed", "deal_type": "acquisition",
-        "description": "L3Harris acquires Aerojet Rocketdyne for $4.7B — closed Jul 28 2023",
-        "rationale": (
-            "L3Harris Technologies announces a $4.7 billion all-cash acquisition of Aerojet Rocketdyne "
-            "on 18 December 2022 ($58/share, including net debt). The Federal Trade Commission filed suit "
-            "in January 2023 to block the deal; L3Harris successfully contested and completed the "
-            "acquisition on 28 July 2023, forming a fourth business segment (Aerojet Rocketdyne). "
-            "The deal gives L3Harris full vertical integration in solid-rocket-motor propulsion "
-            "(RS-25, RL10, JASSM/LRASM propulsion), complementing its EW and C2 systems portfolio. "
-            "Advisors — L3Harris: Barclays Capital, Goldman Sachs (financial), Simpson Thacher & Bartlett (legal); "
-            "Aerojet: Citi, Evercore (financial), Wachtell Lipton (legal)."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "l3harris.com",
-        "target_logo_domain": "aerojet.com",
-        "source_url": "https://www.l3harris.com/newsroom/press-release/2023/07/l3harris-completes-aerojet-rocketdyne-acquisition",
-        "announced_date": datetime(2022, 12, 18, tzinfo=timezone.utc),
-        "stake_percentage": 100.0,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    {
-        "acquirer": "Rheinmetall", "target": "Expal Systems",
-        "deal_value": 1200, "status": "completed", "deal_type": "acquisition",
-        "description": "Spanish ammunition manufacturer acquisition",
-        "rationale": (
-            "Rheinmetall acquires Expal Systems, Spain's largest ammunition and "
-            "energetics manufacturer, from Maxamcorp. The deal enhances Rheinmetall's "
-            "artillery ammunition capacity at a time of surging European demand driven "
-            "by the Ukraine conflict. Production facilities in Burgos continue to "
-            "serve NATO customers."
-        ),
-        "acquirer_country": "DE", "target_country": "ES",
-        "acquirer_logo_domain": "rheinmetall.com",
-        "target_logo_domain": "maxamcorp.com",
-        "source_url": "https://www.rheinmetall.com/en/media/news/press-releases/2022/rheinmetall-acquires-expal-systems",
-        "announced_date": datetime(2022, 10, 12, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Hanwha Group", "target": "Daewoo Shipbuilding & Marine Engineering",
-        "deal_value": 2000, "status": "completed", "deal_type": "acquisition",
-        "description": "Hanwha acquires DSME → rebranded Hanwha Ocean, completed May 2023",
-        "rationale": (
-            "Hanwha Group's consortium wins the competitive bid to acquire Daewoo Shipbuilding "
-            "and Marine Engineering (DSME) in February 2022. The transaction closes in May 2023 "
-            "following Korean financial regulator approval; DSME is subsequently rebranded as "
-            "Hanwha Ocean, creating one of the world's largest shipbuilders with a dominant "
-            "position in submarine and naval surface vessel construction for South Korea and "
-            "allied navies including Australia (Attack-class successor programme)."
-        ),
-        "acquirer_country": "KR", "target_country": "KR",
-        "acquirer_logo_domain": "hanwha.com",
-        "target_logo_domain": "hanwha.com",
-        "source_url": "https://www.reuters.com/business/hanwha-completes-acquisition-daewoo-shipbuilding-2023-05/",
-        "announced_date": datetime(2023, 5, 15, tzinfo=timezone.utc),
-        "stake_percentage": None,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    {
-        "acquirer": "Thales", "target": "Imperva",
-        "deal_value": 3600, "status": "completed", "deal_type": "acquisition",
-        "description": "Cybersecurity leader acquisition to expand data protection",
-        "rationale": (
-            "Thales acquires Imperva, a leading US cybersecurity firm specialising in "
-            "data and application security, for $3.6 billion. The deal significantly "
-            "strengthens Thales's cyber-security revenue stream and adds WAF, database "
-            "activity monitoring, and DDoS protection products to its portfolio."
-        ),
-        "acquirer_country": "FR", "target_country": "US",
-        "acquirer_logo_domain": "thalesgroup.com",
-        "target_logo_domain": "imperva.com",
-                "source_url": "https://www.thalesgroup.com/en/worldwide/digital-identity-and-security/press-release/thales-completes-acquisition-imperva",
-        "announced_date": datetime(2022, 12, 8, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "BAE Systems", "target": "Bohemia Interactive Simulations",
-        "deal_value": 200, "status": "completed", "deal_type": "acquisition",
-        "description": "Military simulation and training software acquisition",
-        "rationale": (
-            "BAE Systems acquires Bohemia Interactive Simulations (BISim), developer "
-            "of the VBS (Virtual Battlespace) military simulation platform used by over "
-            "50 NATO and partner armed forces. The deal adds a European software "
-            "development centre and expands BAE's training and simulation portfolio."
-        ),
-        "acquirer_country": "GB", "target_country": "CZ",
-        "acquirer_logo_domain": "baesystems.com",
-        "target_logo_domain": "bisimulations.com",
-        "source_url": "https://www.businesswire.com/news/home/20220406005280/en/BAE-Systems-completes-acquisition-of-Bohemia-Interactive-Simulations",
-        "announced_date": datetime(2022, 4, 6, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Parker Hannifin", "target": "Meggitt",
-        "deal_value": 8800, "status": "completed", "deal_type": "acquisition",
-        "description": "UK aerospace and defense components champion acquired",
-        "rationale": (
-            "Parker Hannifin closes its £6.3 billion (~$8.8 billion) acquisition of "
-            "Meggitt, a British aerospace components maker producing thermal "
-            "management, braking systems and sensing equipment. The deal faced UK "
-            "government scrutiny over defence supply-chain sovereignty and a rival "
-            "bid from TransDigm before regulatory clearance was granted."
-        ),
-        "acquirer_country": "US", "target_country": "GB",
-        "acquirer_logo_domain": "parker.com",
-        "target_logo_domain": "meggitt.com",
-                "source_url": "https://ir.parker.com/news-releases/news-release-details/parker-hannifin-completes-acquisition-meggitt-plc",
-        "announced_date": datetime(2021, 8, 2, tzinfo=timezone.utc),
-    },
-    # ── 2021 ──────────────────────────────────────────────────────────────────
-    {
-        "acquirer": "Teledyne Technologies", "target": "FLIR Systems",
-        "deal_value": 8000, "status": "completed", "deal_type": "acquisition",
-        "description": "Thermal imaging and sensing leader acquisition",
-        "rationale": (
-            "Teledyne Technologies acquires FLIR Systems for approximately $8 billion, "
-            "creating a diversified industrial technology company with deep defense "
-            "imaging, sensing and analytics capabilities. FLIR's thermal cameras are "
-            "widely used across US and allied military platforms for ISR, targeting "
-            "and force protection."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "teledyne.com",
-        "target_logo_domain": "flir.com",
-        "source_url": "https://www.businesswire.com/news/home/20210513005310/en/Teledyne-Technologies-Completes-Acquisition-of-FLIR-Systems",
-        "announced_date": datetime(2021, 1, 4, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Cobham", "target": "Ultra Electronics",
-        "deal_value": 3500, "status": "completed", "deal_type": "acquisition",
-        "description": "UK defence electronics consolidation",
-        "rationale": (
-            "Cobham (owned by Advent International) acquires Ultra Electronics, a "
-            "UK defence electronics group specialising in sonar, communications and "
-            "naval systems, for £2.57 billion. The UK government accepted binding "
-            "security undertakings protecting sensitive technology before approving "
-            "the deal."
-        ),
-        "acquirer_country": "GB", "target_country": "GB",
-        "acquirer_logo_domain": "cobham.com",
-        "target_logo_domain": "ultra.group",
-                "source_url": "https://www.gov.uk/government/organisations/competition-and-markets-authority",
-        "announced_date": datetime(2021, 7, 16, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Leonardo", "target": "Hensoldt stake",
-        "deal_value": 606, "status": "completed", "deal_type": "acquisition",
-        "description": "25.1% stake in German sensor specialist Hensoldt",
-        "rationale": (
-            "Leonardo acquires a 25.1% strategic stake in Hensoldt AG, Germany's "
-            "leading defence electronics and sensor company, for €606 million. "
-            "The investment deepens the European defence industrial partnership "
-            "between Italy and Germany, and supports joint development of the EUMET "
-            "next-generation electronic warfare programme."
-        ),
-        "acquirer_country": "IT", "target_country": "DE",
-        "acquirer_logo_domain": "leonardo.com",
-        "target_logo_domain": "hensoldt.net",
-                "source_url": "https://www.leonardo.com/en/news-and-stories-detail/-/detail/leonardo-acquires-a-25-1-per-cent-stake-in-hensoldt",
-        "announced_date": datetime(2020, 12, 10, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Mercury Systems", "target": "Physical Optics Corporation",
-        "deal_value": 385, "status": "completed", "deal_type": "acquisition",
-        "description": "Defense photonics and sensor technology acquisition",
-        "rationale": (
-            "Mercury Systems acquires Physical Optics Corporation (POC), a developer "
-            "of advanced photonics and sensor systems for defense applications, for "
-            "$385 million. POC's products serve electronic warfare, directed energy, "
-            "night vision and counter-IED programmes."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "mrcy.com",
-        "target_logo_domain": "mrcy.com",
-                "source_url": "https://www.mrcy.com/company/news",
-        "announced_date": datetime(2021, 2, 23, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Shield AI", "target": "Heron Systems",
-        "deal_value": 35, "status": "completed", "deal_type": "acquisition",
-        "description": "AI autonomous air combat capability acquisition",
-        "rationale": (
-            "Shield AI acquires Heron Systems, whose AI pilot defeated a human F-16 "
-            "pilot 5-0 in DARPA's AlphaDogfight Trials, to accelerate its autonomous "
-            "air combat mission AI programme. The combined team develops the V-BAT "
-            "and Hivemind platforms for US Air Force and Navy programmes."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "shield.ai",
-        "target_logo_domain": "shield.ai",
-                "source_url": "https://shield.ai/newsroom",
-        "announced_date": datetime(2021, 3, 25, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "SAIC", "target": "Halfaker and Associates",
-        "deal_value": 250, "status": "completed", "deal_type": "acquisition",
-        "description": "Federal health IT and analytics acquisition",
-        "rationale": (
-            "SAIC acquires Halfaker and Associates, a federal IT services firm "
-            "specialising in health and veterans' affairs technology, for $250 million. "
-            "The deal bolsters SAIC's presence at the Department of Veterans Affairs "
-            "and Department of Defense healthcare programmes."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "saic.com",
-        "target_logo_domain": "saic.com",
-                "source_url": "https://www.saic.com/news",
-        "announced_date": datetime(2021, 10, 1, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "AeroVironment", "target": "Telerob GmbH",
-        "deal_value": 44, "status": "completed", "deal_type": "acquisition",
-        "description": "German EOD and inspection robot manufacturer",
-        "rationale": (
-            "AeroVironment acquires Telerob, a German manufacturer of ground robots "
-            "used for explosive ordnance disposal and industrial inspection, for "
-            "€38 million (~$44 million). The deal adds a European manufacturing "
-            "footprint and NATO-certified ground robotics capability to AeroVironment's "
-            "small UAS portfolio."
-        ),
-        "acquirer_country": "US", "target_country": "DE",
-        "acquirer_logo_domain": "avinc.com",
-        "target_logo_domain": "telerob.com",
-                "source_url": "https://www.avinc.com/company/news",
-        "announced_date": datetime(2021, 8, 16, tzinfo=timezone.utc),
-    },
-    # ── 2020 ──────────────────────────────────────────────────────────────────
     {
         "acquirer": "RTX", "target": "United Technologies Corporation",
         "deal_value": 121000, "status": "completed", "deal_type": "merger",
@@ -2030,41 +1690,6 @@ MA_DATA = [
         "announced_date": datetime(2020, 4, 3, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "Advent International", "target": "Cobham PLC",
-        "deal_value": 4000, "status": "completed", "deal_type": "acquisition",
-        "description": "Private equity takeover of UK defense electronics group",
-        "rationale": (
-            "Advent International, a US private equity firm, completes its £4 billion "
-            "acquisition of Cobham PLC, a UK defense and aerospace electronics group. "
-            "The deal was initially contested by the UK government on national security "
-            "grounds before binding undertakings on technology protection were accepted. "
-            "Advent subsequently divested several Cobham divisions to other buyers."
-        ),
-        "acquirer_country": "US", "target_country": "GB",
-        "acquirer_logo_domain": "adventinternational.com",
-        "target_logo_domain": "cobham.com",
-                "source_url": "https://www.gov.uk/government/organisations/competition-and-markets-authority",
-        "announced_date": datetime(2019, 7, 25, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "TransDigm", "target": "Cobham Advanced Electronic Systems",
-        "deal_value": 1385, "status": "completed", "deal_type": "acquisition",
-        "description": "RF and microwave defense electronics division acquisition",
-        "rationale": (
-            "TransDigm acquires Cobham's Advanced Electronic Systems (CAES) division, "
-            "a manufacturer of microwave, radio frequency and power electronics used "
-            "in radar, electronic warfare and satellite communications systems. "
-            "The acquisition from Advent International (Cobham's PE owner) adds "
-            "proprietary defense RF components to TransDigm's portfolio."
-        ),
-        "acquirer_country": "US", "target_country": "GB",
-        "acquirer_logo_domain": "transdigm.com",
-        "target_logo_domain": "transdigm.com",
-                "source_url": "https://www.transdigm.com/news",
-        "announced_date": datetime(2020, 11, 4, tzinfo=timezone.utc),
-    },
-    # ── 2019 ──────────────────────────────────────────────────────────────────
-    {
         "acquirer": "Harris Corporation", "target": "L3 Technologies",
         "deal_value": 33500, "status": "completed", "deal_type": "merger",
         "description": "Merger of equals creating L3Harris Technologies — sixth-largest US defense prime",
@@ -2079,39 +1704,6 @@ MA_DATA = [
         "target_logo_domain": "l3harris.com",
         "source_url": "https://www.l3harris.com/newsroom/news-article/2019/06/l3-technologies-and-harris-corporation-complete-merger",
         "announced_date": datetime(2019, 6, 29, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Thales", "target": "Gemalto",
-        "deal_value": 5430, "status": "completed", "deal_type": "acquisition",
-        "description": "Digital security and identity management leader acquired",
-        "rationale": (
-            "Thales completes its €4.8 billion acquisition of Gemalto, the world's "
-            "largest digital security company, creating a global leader in "
-            "cybersecurity, identity and data protection. The deal adds SIM cards, "
-            "PKI, HSM and web application security products to Thales's defence "
-            "and government security portfolio."
-        ),
-        "acquirer_country": "FR", "target_country": "NL",
-        "acquirer_logo_domain": "thalesgroup.com",
-        "target_logo_domain": "thalesgroup.com",
-                "source_url": "https://www.prnewswire.com/news-releases/thales-finalizes-the-acquisition-of-gemalto-300820244.html",
-        "announced_date": datetime(2017, 12, 17, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "SAIC", "target": "Engility Holdings",
-        "deal_value": 2500, "status": "completed", "deal_type": "acquisition",
-        "description": "US government services consolidation",
-        "rationale": (
-            "SAIC acquires Engility Holdings, a US government IT and engineering "
-            "services company, for approximately $2.5 billion. The combination "
-            "creates one of the largest pure-play government IT services businesses, "
-            "serving defence, intelligence and federal civilian agencies."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "saic.com",
-        "target_logo_domain": "saic.com",
-        "source_url": "https://www.prnewswire.com/news-releases/saic-completes-acquisition-of-engility-300760082.html",
-        "announced_date": datetime(2018, 9, 10, tzinfo=timezone.utc),
     },
     {
         "acquirer": "EDGE Group", "target": "Multiple UAE defense companies",
@@ -2130,75 +1722,6 @@ MA_DATA = [
                 "source_url": "https://www.edgegroup.ae/en",
         "announced_date": datetime(2019, 11, 6, tzinfo=timezone.utc),
     },
-    # ── 2018 ──────────────────────────────────────────────────────────────────
-    {
-        "acquirer": "Northrop Grumman", "target": "Orbital ATK",
-        "deal_value": 9200, "status": "completed", "deal_type": "acquisition",
-        "description": "Space and missile systems consolidation",
-        "rationale": (
-            "Northrop Grumman acquires Orbital ATK for $9.2 billion, transforming "
-            "itself into a vertically integrated space and missile systems company. "
-            "Orbital ATK becomes Northrop Grumman Innovation Systems, adding solid "
-            "rocket motors, satellite propulsion, ammunition and launch vehicles."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "northropgrumman.com",
-        "target_logo_domain": "northropgrumman.com",
-                "source_url": "https://news.northropgrumman.com/news/releases",
-        "announced_date": datetime(2018, 6, 6, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "General Dynamics", "target": "CSRA",
-        "deal_value": 9600, "status": "completed", "deal_type": "acquisition",
-        "description": "IT services and government contracting expansion",
-        "rationale": (
-            "General Dynamics acquires CSRA, a US government IT and digital services "
-            "company, for $9.6 billion. The deal makes General Dynamics one of the "
-            "largest federal IT contractors, combining CSRA's civilian agency work "
-            "with GDIT's existing defence and intelligence customer base."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "gd.com",
-        "target_logo_domain": "gd.com",
-        "source_url": "https://www.businesswire.com/news/home/20180402005568/en/General-Dynamics-Completes-Acquisition-CSRA",
-        "announced_date": datetime(2018, 4, 2, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "TransDigm", "target": "Esterline Technologies",
-        "deal_value": 4000, "status": "completed", "deal_type": "acquisition",
-        "description": "Avionics and cockpit systems portfolio expansion",
-        "rationale": (
-            "TransDigm Group acquires Esterline Technologies, a manufacturer of "
-            "advanced avionics, cockpit displays, sensors and connectors used in "
-            "military and commercial aircraft, for approximately $4 billion. The "
-            "deal adds more than 5,000 proprietary defence aerospace products and "
-            "manufacturing facilities across North America and Europe."
-        ),
-        "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "transdigm.com",
-        "target_logo_domain": "transdigm.com",
-        "source_url": "https://www.businesswire.com/news/home/20190206005455/en/TransDigm-Completes-Acquisition-Esterline-Technologies-Corporation",
-        "announced_date": datetime(2018, 10, 10, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Airbus", "target": "Bombardier C Series",
-        "deal_value": 500, "status": "completed", "deal_type": "acquisition",
-        "description": "Airbus acquires 50.01% majority stake in Bombardier's C Series programme (later renamed A220) — Bombardier the company was NOT acquired",
-        "rationale": (
-            "Airbus takes a 50.01% majority stake in the C Series Limited Partnership, "
-            "Bombardier's C Series aircraft programme entity, after Bombardier faced severe "
-            "financial pressure and US trade tariffs imposed by a Boeing petition. "
-            "Bombardier the company remained fully independent. Airbus's involvement provided "
-            "marketing, manufacturing and supply-chain support that saved the programme. "
-            "The C Series was rebranded Airbus A220 in July 2018."
-        ),
-        "acquirer_country": "FR", "target_country": "CA",
-        "acquirer_logo_domain": "airbus.com",
-        "target_logo_domain": "bombardier.com",
-        "source_url": "https://www.reuters.com/article/us-airbus-bombardier-cseries/airbus-takes-majority-stake-in-bombardier-cseries-idUSKCN1C32YC",
-        "announced_date": datetime(2017, 10, 16, tzinfo=timezone.utc),
-    },
-    # ── Historical context ────────────────────────────────────────────────────
     {
         "acquirer": "KNDS", "target": "Nexter + KMW",
         "deal_value": 0, "status": "completed", "deal_type": "merger",
@@ -2216,11 +1739,729 @@ MA_DATA = [
         "source_url": "https://www.knds.com/en",
         "announced_date": datetime(2015, 7, 1, tzinfo=timezone.utc),
     },
+    # ── 2025–2026 Acquisitions (source: Janes, DefenseNews, press releases) ─────
+    {
+        "acquirer": "Teledyne Technologies", "target": "Excelitas Defence Electronics",
+        "deal_value": 710, "status": "completed", "deal_type": "acquisition",
+        "description": "Teledyne acquires selected Excelitas aerospace and defence electronics businesses for $710M",
+        "rationale": "Teledyne Technologies closes a $710M deal to acquire the aerospace and defence electronics divisions of Excelitas Technologies, adding optoelectronics, detectors and imaging sensors to its portfolio. The acquisition strengthens Teledyne's position in defence EO/IR and space sensor markets.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "teledyne.com", "target_logo_domain": "excelitas.com",
+        "source_url": "https://www.teledyne.com/en-us/news",
+        "announced_date": datetime(2025, 1, 15, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "MBDA Holdings", "target": "ROXEL",
+        "deal_value": 0, "status": "completed", "deal_type": "strategic_investment",
+        "description": "MBDA takes strategic stake in ROXEL — missile propulsion specialist",
+        "rationale": "MBDA Holdings acquires a strategic stake in ROXEL, the French solid-propulsion specialist that supplies motors for MICA, Mistral and ASRAAM missiles. The deal verticalises MBDA's propulsion supply chain ahead of accelerated European missile production ramp-ups.",
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "mbda-systems.com", "target_logo_domain": "roxel-group.com",
+        "source_url": "https://www.mbda-systems.com/press-releases/",
+        "announced_date": datetime(2025, 1, 20, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "sector": "missiles_munitions",
+    },
+    {
+        "acquirer": "Redwire", "target": "Edge Autonomy",
+        "deal_value": 925, "status": "completed", "deal_type": "acquisition",
+        "description": "Redwire acquires Edge Autonomy for $925M — unmanned systems and space defence",
+        "rationale": "Redwire Space acquires Edge Autonomy, a maker of autonomous UAS platforms and ruggedised computing, for $925M. The deal combines Redwire's space infrastructure expertise with Edge Autonomy's unmanned systems portfolio, creating a multi-domain autonomous systems player.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "redwirespace.com", "target_logo_domain": "edgeautonomy.io",
+        "source_url": "https://redwirespace.com/newsroom/",
+        "announced_date": datetime(2025, 1, 28, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "uas_drones",
+    },
+    {
+        "acquirer": "Warburg Pincus + Berkshire Partners", "target": "Triumph Group",
+        "deal_value": 3000, "status": "completed", "deal_type": "acquisition",
+        "description": "Warburg Pincus and Berkshire Partners take Triumph Group private for $3.0B",
+        "rationale": "Private equity firms Warburg Pincus and Berkshire Partners complete a $3.0B take-private of Triumph Group, a major aerospace systems supplier. The transaction removes Triumph from public markets to allow operational restructuring and portfolio rationalisation under private ownership.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "warburgpincus.com", "target_logo_domain": "triumphgroup.com",
+        "source_url": "https://www.triumphgroup.com/investors/",
+        "announced_date": datetime(2025, 2, 15, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "Quantum-Systems", "target": "AirRobot",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Quantum-Systems acquires AirRobot to expand UAS portfolio",
+        "rationale": "German drone maker Quantum-Systems acquires AirRobot GmbH, expanding its tactical UAS portfolio for reconnaissance and surveillance missions. The deal combines Quantum-Systems\'s Vector VTOL platform with AirRobot\'s rotary-wing expertise for European defence customers.",
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "quantum-systems.com", "target_logo_domain": "airrobot.de",
+        "source_url": "https://www.quantum-systems.com/news/",
+        "announced_date": datetime(2025, 3, 10, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "uas_drones",
+    },
+    {
+        "acquirer": "Frontgrade Technologies", "target": "Crescend Technologies Defence Division",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Frontgrade acquires Crescend Technologies defence solutions division — RF and microwave electronics",
+        "rationale": "Frontgrade Technologies acquires the defence solutions division of Crescend Technologies, adding RF and microwave electronic components for missile guidance, electronic warfare and radar applications to its space-grade electronics portfolio.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "frontgrade.com", "target_logo_domain": "crescend.com",
+        "source_url": "https://www.frontgrade.com/news/",
+        "announced_date": datetime(2025, 3, 12, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "T2S Solutions", "target": "Blue Marble Communications",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "T2S Solutions acquires Blue Marble Communications — SATCOM and defence electronics",
+        "rationale": "T2S Solutions acquires Blue Marble Communications, a provider of SATCOM terminals and defence electronics integration services. The deal expands T2S\'s satellite communications capabilities for government and military customers.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "t2ssolutions.com", "target_logo_domain": "bluemarble.com",
+        "source_url": "https://www.t2ssolutions.com/",
+        "announced_date": datetime(2025, 3, 18, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "space",
+    },
+    {
+        "acquirer": "Destinus", "target": "Aerialtronics",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Destinus acquires Dutch drone maker Aerialtronics — unmanned systems expansion",
+        "rationale": "Swiss-based Destinus acquires Aerialtronics, a Dutch UAV manufacturer known for ruggedised multi-rotor platforms for inspection and surveillance. The deal adds production capabilities in the Netherlands and broadens Destinus\'s unmanned systems offering alongside its hypersonic vehicle development.",
+        "acquirer_country": "CH", "target_country": "NL",
+        "acquirer_logo_domain": "destinus.ch", "target_logo_domain": "aerialtronics.com",
+        "source_url": "https://www.destinus.ch/news/",
+        "announced_date": datetime(2025, 3, 20, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "uas_drones",
+    },
+    {
+        "acquirer": "De Havilland Canada", "target": "Fleet Canada",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "De Havilland Canada acquires Fleet Canada — aerospace manufacturing",
+        "rationale": "De Havilland Canada acquires Fleet Canada, a Canadian aerospace components manufacturer, to strengthen its domestic supply chain and support production ramp-up of the DHC-6 Twin Otter and Dash 8 programmes.",
+        "acquirer_country": "CA", "target_country": "CA",
+        "acquirer_logo_domain": "dehavilland.ca", "target_logo_domain": "fleetcanada.com",
+        "source_url": "https://www.dehavilland.ca/news/",
+        "announced_date": datetime(2025, 4, 5, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "Repkon USA", "target": "General Dynamics Ordnance Garland Operations",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Repkon USA acquires General Dynamics Ordnance and Tactical Systems Garland facility",
+        "rationale": "Repkon USA acquires the Garland, Texas ordnance manufacturing operations of General Dynamics Ordnance and Tactical Systems, gaining US-based artillery shell and munitions production capacity amid surging NATO ammunition demand.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "repkon.com.tr", "target_logo_domain": "gd.com",
+        "source_url": "https://www.repkon.com/en/news/",
+        "announced_date": datetime(2025, 4, 8, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "missiles_munitions",
+    },
+    {
+        "acquirer": "Tinicum", "target": "Leggett and Platt Aerospace Products Group",
+        "deal_value": 285, "status": "completed", "deal_type": "acquisition",
+        "description": "Tinicum acquires Leggett and Platt Aerospace Products Group for $285M",
+        "rationale": "PE firm Tinicum acquires the Aerospace Products Group of Leggett & Platt for $285M, separating the aerospace components business (aircraft rod ends, bearings, mechanical hardware) from L&P\'s consumer products operations.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "tinicuminc.com", "target_logo_domain": "leggett.com",
+        "source_url": "https://www.leggett.com/investors/",
+        "announced_date": datetime(2025, 4, 10, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "Karman Space and Defence", "target": "Metal Technologies",
+        "deal_value": 90, "status": "completed", "deal_type": "acquisition",
+        "description": "Karman Space and Defence acquires Metal Technologies for $90M — space and defence components",
+        "rationale": "Karman Space and Defence acquires Metal Technologies, a manufacturer of precision metal components for space launch vehicles and defence systems, for $90M. The deal strengthens Karman\'s vertically integrated manufacturing capabilities.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "karman.com", "target_logo_domain": "metaltechnologies.com",
+        "source_url": "https://karman.com/news/",
+        "announced_date": datetime(2025, 4, 14, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "space",
+    },
+    {
+        "acquirer": "Lockmasters", "target": "Signals Defense",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Lockmasters acquires Signals Defense — countermeasure and security systems",
+        "rationale": "Lockmasters acquires Signals Defense, a provider of RF shielding and signal security solutions for government facilities and sensitive compartmented information facilities (SCIFs), expanding its physical and electronic security portfolio.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "lockmasters.com", "target_logo_domain": "signalsdefense.com",
+        "source_url": "https://www.lockmasters.com/news/",
+        "announced_date": datetime(2025, 4, 15, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Cicor Group", "target": "MADES",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Cicor Group acquires MADES — Spanish defence electronics manufacturer",
+        "rationale": "Swiss electronics manufacturer Cicor Group acquires MADES, a Spanish defence electronics manufacturing services provider. The deal expands Cicor\'s European defence EMS footprint and adds Spanish defence customer relationships.",
+        "acquirer_country": "CH", "target_country": "ES",
+        "acquirer_logo_domain": "cicor.com", "target_logo_domain": "mades.es",
+        "source_url": "https://www.cicor.com/en/media/news/",
+        "announced_date": datetime(2025, 4, 16, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "J.F. Taylor", "target": "Bugeye Technologies",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "J.F. Taylor acquires Bugeye Technologies — simulation and training",
+        "rationale": "J.F. Taylor acquires Bugeye Technologies, a defence simulation and training solutions provider, adding synthetic training environment capabilities to its portfolio of modelling and simulation services for US Navy and DoD customers.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "jftaylorinc.com", "target_logo_domain": "bugeye-tech.com",
+        "source_url": "https://www.jftaylorinc.com/news/",
+        "announced_date": datetime(2025, 4, 17, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "services_it",
+    },
+    {
+        "acquirer": "Rheinmetall Project Solutions", "target": "Stascheit Kampfmittelraeumung",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Rheinmetall acquires Stascheit Kampfmittelräumung — explosive ordnance disposal specialist",
+        "rationale": "Rheinmetall Project Solutions acquires Stascheit Kampfmittelräumung GmbH, a German explosive ordnance disposal and demining specialist. The deal strengthens Rheinmetall\'s force protection and EOD capabilities for the Bundeswehr and export markets.",
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "rheinmetall.com", "target_logo_domain": "stascheit.de",
+        "source_url": "https://www.rheinmetall.com/en/press/",
+        "announced_date": datetime(2025, 4, 22, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "missiles_munitions",
+    },
+    {
+        "acquirer": "Thoma Bravo", "target": "Boeing Digital Aviation Solutions",
+        "deal_value": 10600, "status": "completed", "deal_type": "acquisition",
+        "description": "Thoma Bravo acquires Boeing Digital Aviation Solutions in $10.6B carve-out",
+        "rationale": "Private equity firm Thoma Bravo completes a $10.6B carve-out acquisition of Boeing\'s Digital Aviation Solutions division, which includes Jeppesen navigation data, ForeFlight and aviation analytics software. The deal is one of the largest PE carve-outs in aerospace software history.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "thomabravo.com", "target_logo_domain": "boeing.com",
+        "source_url": "https://www.thomabravo.com/press-releases/",
+        "announced_date": datetime(2025, 4, 24, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "services_it",
+    },
+    {
+        "acquirer": "Safran Aircraft Engines", "target": "Aero Sud Ouest",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Safran Aircraft Engines acquires Aero Sud Ouest — aerospace engine components",
+        "rationale": "Safran Aircraft Engines acquires Aero Sud Ouest, a French SME manufacturing precision engine components (turbine blades, seals, fuel system parts) for military and civil aero engines. The deal supports Safran\'s supply chain sovereignty strategy for the M88 and CFM LEAP.",
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "safran-group.com", "target_logo_domain": "aero-sud-ouest.fr",
+        "source_url": "https://www.safran-group.com/media/press-releases/",
+        "announced_date": datetime(2025, 4, 28, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "VSE Corporation", "target": "Turbine Weld Industries",
+        "deal_value": 48, "status": "completed", "deal_type": "acquisition",
+        "description": "VSE Corporation acquires Turbine Weld Industries for EUR 44M — aerospace repair",
+        "rationale": "VSE Corporation acquires Turbine Weld Industries, a European aerospace repair and overhaul company specialising in turbine component restoration, for approximately EUR 44 million. The deal expands VSE\'s aviation MRO international footprint.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "vsecorp.com", "target_logo_domain": "turbineweld.com",
+        "source_url": "https://www.vsecorp.com/investors/",
+        "announced_date": datetime(2025, 5, 5, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "AeroVironment", "target": "BlueHalo",
+        "deal_value": 4100, "status": "completed", "deal_type": "acquisition",
+        "description": "AeroVironment acquires BlueHalo for $4.1B — counter-drone, EW and space",
+        "rationale": "AeroVironment closes a transformative $4.1B acquisition of BlueHalo, a technology company specialising in counter-drone systems, directed energy, electronic warfare and space mission software. The deal creates a full-spectrum unmanned systems and EW platform company.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "avinc.com", "target_logo_domain": "bluehalo.com",
+        "source_url": "https://www.avinc.com/news/",
+        "announced_date": datetime(2025, 5, 8, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "uas_drones",
+    },
+    {
+        "acquirer": "RBC Bearings", "target": "VACCO Industries",
+        "deal_value": 300, "status": "completed", "deal_type": "acquisition",
+        "description": "RBC Bearings acquires VACCO Industries for EUR 275M — aerospace and defence components",
+        "rationale": "RBC Bearings acquires VACCO Industries, a manufacturer of precision fluid control components for space propulsion and defence applications, for approximately EUR 275 million. VACCO\'s propellant management systems serve NASA, DoD and commercial space customers.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "rbcbearings.com", "target_logo_domain": "vacco.com",
+        "source_url": "https://www.rbcbearings.com/news/",
+        "announced_date": datetime(2025, 5, 12, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "Motorola Solutions", "target": "Silvus Technologies",
+        "deal_value": 5000, "status": "completed", "deal_type": "acquisition",
+        "description": "Motorola Solutions acquires Silvus Technologies for up to $5.0B — tactical communications",
+        "rationale": "Motorola Solutions acquires Silvus Technologies, a leading maker of MIMO mesh radio tactical communications systems used by US Army, SOCOM and NATO allies, for up to $5.0B. Silvus\'s StreamCaster radios provide beyond-line-of-sight waveforms for dismounted and vehicle-mounted forces.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "motorolasolutions.com", "target_logo_domain": "silvustechnologies.com",
+        "source_url": "https://www.motorolasolutions.com/en_us/about/news-features/press-releases/",
+        "announced_date": datetime(2025, 5, 15, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Fjord Defence Group", "target": "Fjord Defence",
+        "deal_value": 16, "status": "completed", "deal_type": "acquisition",
+        "description": "Fjord Defence Group acquires Fjord Defence for EUR 15M — maritime defence",
+        "rationale": "Fjord Defence Group consolidates its maritime defence portfolio by fully acquiring Fjord Defence, a Norwegian maritime systems and vessel protection specialist, for EUR 15 million. The transaction strengthens Norway\'s domestic naval industrial base.",
+        "acquirer_country": "NO", "target_country": "NO",
+        "acquirer_logo_domain": "fjorddefencegroup.com", "target_logo_domain": "fjorddefencegroup.com",
+        "source_url": "https://www.fjorddefencegroup.com/news/",
+        "announced_date": datetime(2025, 5, 20, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "naval",
+    },
+    {
+        "acquirer": "Diehl Stiftung", "target": "e.sigma systems",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Diehl Stiftung acquires e.sigma systems — simulation and training",
+        "rationale": "German defence group Diehl Stiftung acquires e.sigma systems, a specialist in simulation and training systems for artillery and munitions. The deal complements Diehl\'s munitions business by adding integrated training solutions for its artillery systems customers.",
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "diehl.com", "target_logo_domain": "esigma.de",
+        "source_url": "https://www.diehl.com/en/press/",
+        "announced_date": datetime(2025, 6, 5, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "services_it",
+    },
+    {
+        "acquirer": "Helsing", "target": "Grob Aircraft",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Helsing acquires Grob Aircraft — aircraft and AI defence integration",
+        "rationale": "Defense AI company Helsing acquires Grob Aircraft, a German manufacturer of military trainer and utility aircraft. The acquisition gives Helsing a hardware production platform to embed its AI sensing and decision software into fielded aircraft systems, closing the gap between AI software and airborne deployment.",
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "helsing.ai", "target_logo_domain": "grob-aircraft.com",
+        "source_url": "https://helsing.ai/news/",
+        "announced_date": datetime(2025, 6, 10, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "Crane Company", "target": "Baker Hughes PSI Product Line",
+        "deal_value": 1200, "status": "completed", "deal_type": "acquisition",
+        "description": "Crane Company acquires Baker Hughes PSI product line for $1.2B — sensors and pressure systems",
+        "rationale": "Crane Company acquires the Pressure & Temperature Solutions (PSI) product line from Baker Hughes for $1.2B, adding industrial and defence-grade sensors, pressure instruments and measurement systems to Crane\'s portfolio for critical infrastructure and defence applications.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "craneco.com", "target_logo_domain": "bakerhughes.com",
+        "source_url": "https://www.craneco.com/news/",
+        "announced_date": datetime(2025, 6, 16, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Eaton", "target": "Ultra PCS",
+        "deal_value": 1550, "status": "completed", "deal_type": "acquisition",
+        "description": "Eaton acquires Ultra PCS for $1.55B — flight controls and actuation",
+        "rationale": "Eaton acquires Ultra Electronics Power and Control Systems (Ultra PCS) from Cobham for $1.55B. Ultra PCS supplies advanced power management and actuation systems for military platforms including Typhoon, F-35, Chinook and Ajax. The deal makes Eaton a major player in defence power systems.",
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "eaton.com", "target_logo_domain": "ultra.group",
+        "source_url": "https://www.eaton.com/us/en-us/company/news-insights/news/",
+        "announced_date": datetime(2025, 6, 20, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "TransDigm", "target": "Simmonds Precision Products",
+        "deal_value": 765, "status": "completed", "deal_type": "acquisition",
+        "description": "TransDigm acquires Simmonds Precision Products for $765M — sensors and aerospace systems",
+        "rationale": "TransDigm Group acquires Simmonds Precision Products, a manufacturer of aerospace sensors, fuel quantity measurement systems and structural monitoring equipment, for $765M. The acquisition follows TransDigm\'s systematic strategy of acquiring proprietary aerospace components with sole-source content.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "transdigm.com", "target_logo_domain": "simmondsprecision.com",
+        "source_url": "https://www.transdigm.com/news/",
+        "announced_date": datetime(2025, 6, 25, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "Parsons", "target": "Chesapeake Technology International",
+        "deal_value": 89, "status": "completed", "deal_type": "acquisition",
+        "description": "Parsons acquires Chesapeake Technology International for $89M — signals intelligence",
+        "rationale": "Parsons Corporation acquires Chesapeake Technology International (CTI) for $89M, adding signals intelligence, RF collection and mission software capabilities to Parsons\' federal intelligence and defence portfolio serving NSA, DIA and SOCOM customers.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "parsons.com", "target_logo_domain": "chesapeaketechnology.com",
+        "source_url": "https://www.parsons.com/news/",
+        "announced_date": datetime(2025, 7, 7, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "services_it",
+    },
+    {
+        "acquirer": "Moog", "target": "COTSWORKS",
+        "deal_value": 63, "status": "completed", "deal_type": "acquisition",
+        "description": "Moog acquires COTSWORKS for $63M — rugged optical and electronic components",
+        "rationale": "Moog Inc. acquires COTSWORKS, a supplier of ruggedised commercial off-the-shelf optics and electronic components for defence systems, for $63M. The deal adds hardened optics manufacturing to Moog\'s precision motion control portfolio.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "moog.com", "target_logo_domain": "cotsworks.com",
+        "source_url": "https://www.moog.com/news/",
+        "announced_date": datetime(2025, 7, 9, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Scanfil", "target": "MB Elettronica",
+        "deal_value": 143, "status": "completed", "deal_type": "acquisition",
+        "description": "Scanfil acquires MB Elettronica for $143.4M — defence electronics manufacturing in Italy",
+        "rationale": "Finnish electronics manufacturer Scanfil acquires MB Elettronica, an Italian defence EMS specialist producing electronics for radar, avionics and military communications, for $143.4M. The deal is Scanfil\'s largest acquisition and establishes a major Italian defence manufacturing hub.",
+        "acquirer_country": "FI", "target_country": "IT",
+        "acquirer_logo_domain": "scanfil.com", "target_logo_domain": "mbelettronica.com",
+        "source_url": "https://www.scanfil.com/news/",
+        "announced_date": datetime(2025, 7, 14, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Eaton", "target": "Resilient Power Systems",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Eaton acquires Resilient Power Systems — power electronics for defence",
+        "rationale": "Eaton acquires Resilient Power Systems, a US provider of ruggedised power conversion and distribution systems for military vehicles and mobile command posts. The deal extends Eaton\'s defence power portfolio to ground vehicle and expeditionary power markets.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "eaton.com", "target_logo_domain": "rpsi.com",
+        "source_url": "https://www.eaton.com/us/en-us/company/news-insights/news/",
+        "announced_date": datetime(2025, 7, 16, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Safran", "target": "Collins Aerospace Flight Control Business",
+        "deal_value": 1800, "status": "completed", "deal_type": "acquisition",
+        "description": "Safran acquires Collins Aerospace flight control and actuation business for $1.8B",
+        "rationale": "Safran completes the acquisition of Collins Aerospace\'s flight control and actuation business from RTX for $1.8B, becoming the world\'s second-largest actuation systems supplier. The deal covers hydraulic, electromechanical and fly-by-wire actuation for commercial and military platforms.",
+        "acquirer_country": "FR", "target_country": "US",
+        "acquirer_logo_domain": "safran-group.com", "target_logo_domain": "collinsaerospace.com",
+        "source_url": "https://www.safran-group.com/media/press-releases/",
+        "announced_date": datetime(2025, 7, 18, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "Leonardo", "target": "Iveco Defence Vehicles and ASTRA",
+        "deal_value": 1870, "status": "completed", "deal_type": "acquisition",
+        "description": "Leonardo acquires Iveco Defence Vehicles and ASTRA for EUR 1.7B — military vehicles",
+        "rationale": "Leonardo acquires Iveco Defence Vehicles (wheeled armoured vehicles: Lynx, Super AV, VTMM) and ASTRA (heavy trucks) from CNH Industrial for EUR 1.7B. The deal makes Leonardo a full-spectrum Italian defence prime with land vehicle capabilities to complement its naval, aerospace and electronics businesses.",
+        "acquirer_country": "IT", "target_country": "IT",
+        "acquirer_logo_domain": "leonardo.com", "target_logo_domain": "ivecodefence.com",
+        "source_url": "https://www.leonardo.com/en/press-release-detail/-/detail/2025/",
+        "announced_date": datetime(2025, 7, 21, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "land_systems",
+    },
+    {
+        "acquirer": "Wakeb", "target": "Woot Tech Aerospace",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Saudi Wakeb acquires Woot Tech Aerospace — aerospace technology",
+        "rationale": "Saudi Arabian technology group Wakeb acquires Woot Tech Aerospace, an aerospace technology company, as part of Saudi Arabia\'s strategy to build domestic aerospace and defence industrial capabilities under Vision 2030.",
+        "acquirer_country": "SA", "target_country": "SA",
+        "acquirer_logo_domain": "wakeb.sa", "target_logo_domain": "woottech.com",
+        "source_url": "https://www.wakeb.tech/en/media/",
+        "announced_date": datetime(2025, 7, 23, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "Scandinavian Astor Group", "target": "Nordic Shield Group",
+        "deal_value": 2, "status": "completed", "deal_type": "minority_stake",
+        "description": "Scandinavian Astor Group takes EUR 2.05M minority stake in Nordic Shield Group",
+        "rationale": "Scandinavian Astor Group acquires a minority stake in Nordic Shield Group, a Nordic defence equipment and personal protection systems company, for EUR 2.05M. The investment supports Nordic Shield\'s expansion into Scandinavian military procurement programmes.",
+        "acquirer_country": "SE", "target_country": "NO",
+        "acquirer_logo_domain": "astor-group.no", "target_logo_domain": "nordicshieldgroup.com",
+        "source_url": "https://www.astor-group.no/news/",
+        "announced_date": datetime(2025, 8, 5, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+        "sector": "other",
+    },
+    {
+        "acquirer": "Rheinmetall", "target": "Naval Vessels Lurssen",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Rheinmetall acquires Naval Vessels Lürssen — German naval shipbuilding",
+        "rationale": "Rheinmetall acquires Naval Vessels Lürssen, the defence shipbuilding division of Lürssen Werft, Germany\'s largest shipbuilder. The acquisition positions Rheinmetall as a comprehensive land, air and sea defence systems integrator, adding naval vessel production to its armaments portfolio.",
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "rheinmetall.com", "target_logo_domain": "lurssen.com",
+        "source_url": "https://www.rheinmetall.com/en/press/",
+        "announced_date": datetime(2025, 8, 12, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "naval",
+    },
+    {
+        "acquirer": "Teledyne FLIR", "target": "Saab TransponderTech",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Teledyne FLIR acquires Saab TransponderTech — maritime electronics and AIS",
+        "rationale": "Teledyne FLIR acquires Saab TransponderTech, a Swedish manufacturer of AIS transponders and maritime electronics for vessel tracking and identification. The deal expands Teledyne\'s maritime domain awareness capabilities for coast guard and naval patrol applications.",
+        "acquirer_country": "US", "target_country": "SE",
+        "acquirer_logo_domain": "teledyne.com", "target_logo_domain": "saabgroup.com",
+        "source_url": "https://www.flir.com/news-releases/",
+        "announced_date": datetime(2025, 8, 18, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "naval",
+    },
+    {
+        "acquirer": "Cogenuity", "target": "Interconnect Solutions Company",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Cogenuity acquires Interconnect Solutions Company — defence interconnect systems",
+        "rationale": "Cogenuity acquires Interconnect Solutions Company (ISC), a manufacturer of mission-critical connectors and wiring harnesses for defence and aerospace applications. The deal expands Cogenuity\'s ruggedised interconnect portfolio for military electronics customers.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "cogenuity.com", "target_logo_domain": "iscco.com",
+        "source_url": "https://www.cogenuity.com/news/",
+        "announced_date": datetime(2025, 9, 5, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Safran Defense and Space", "target": "Attollo Engineering",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Safran Defense and Space acquires Attollo Engineering — infrared sensors",
+        "rationale": "Safran Defense and Space acquires Attollo Engineering, a US specialist in infrared sensors and EO/IR system engineering for missile seekers, targeting pods and space surveillance. The deal adds US-based IR sensor design capability to Safran\'s optronic portfolio.",
+        "acquirer_country": "FR", "target_country": "US",
+        "acquirer_logo_domain": "safran-group.com", "target_logo_domain": "attollo.com",
+        "source_url": "https://www.safran-group.com/media/press-releases/",
+        "announced_date": datetime(2025, 9, 8, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "AEVEX Aerospace", "target": "RapidFlight",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "AEVEX Aerospace acquires RapidFlight — unmanned systems",
+        "rationale": "AEVEX Aerospace acquires RapidFlight, a developer of rapidly deployable UAV platforms for ISR and cargo missions. The deal combines AEVEX\'s manned ISR aircraft operations with RapidFlight\'s unmanned platforms to serve DoD and special operations customers.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "aevex.com", "target_logo_domain": "rapidflight.com",
+        "source_url": "https://www.aevex.com/news/",
+        "announced_date": datetime(2025, 9, 12, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "uas_drones",
+    },
+    {
+        "acquirer": "IonQ", "target": "Vector Atomic",
+        "deal_value": 390, "status": "completed", "deal_type": "acquisition",
+        "description": "IonQ acquires Vector Atomic for $390M — quantum sensing and timing",
+        "rationale": "Quantum computing company IonQ acquires Vector Atomic, a pioneer in quantum-based atomic clocks and inertial navigation sensors for GPS-denied defence environments, for $390M. The deal accelerates IonQ\'s entry into defence quantum sensing alongside its quantum computing business.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "ionq.com", "target_logo_domain": "vectoratomic.com",
+        "source_url": "https://ionq.com/news/",
+        "announced_date": datetime(2025, 9, 18, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Firefly Aerospace", "target": "SciTec",
+        "deal_value": 855, "status": "completed", "deal_type": "acquisition",
+        "description": "Firefly Aerospace acquires SciTec for $855M — missile warning and space ISR",
+        "rationale": "Firefly Aerospace acquires SciTec, a company specialising in infrared data processing algorithms for missile warning satellites (SBIRS, Next-Gen OPIR) and space ISR, for $855M. The deal positions Firefly as a vertically integrated space launch-and-payload company for national security space missions.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "firefly.com", "target_logo_domain": "scitec.com",
+        "source_url": "https://firefly.com/news/",
+        "announced_date": datetime(2025, 10, 7, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "space",
+    },
+    {
+        "acquirer": "NFM Holding", "target": "Paul Boye Technologies",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "NFM Holding acquires Paul Boyé Technologies — soldier protection systems",
+        "rationale": "Norwegian defence group NFM Holding acquires Paul Boyé Technologies, a French manufacturer of CBRN protective suits, ballistic vests and individual soldier protection equipment. The deal creates a Nordic-French soldier systems champion with combined NATO procurement reach.",
+        "acquirer_country": "NO", "target_country": "FR",
+        "acquirer_logo_domain": "nfm.no", "target_logo_domain": "paul-boye.com",
+        "source_url": "https://www.nfm.no/news/",
+        "announced_date": datetime(2025, 10, 9, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "land_systems",
+    },
+    {
+        "acquirer": "Theon International", "target": "Exosens",
+        "deal_value": 295, "status": "completed", "deal_type": "strategic_investment",
+        "description": "Theon International takes EUR 269M strategic stake in Exosens — night vision and photonics",
+        "rationale": "Greek night vision specialist Theon International acquires a strategic stake in Exosens (formerly Photonis), a French manufacturer of image intensifier tubes and photomultiplier tubes for night vision goggles and starlight cameras, for EUR 269M. The deal creates a European night vision champion.",
+        "acquirer_country": "GR", "target_country": "FR",
+        "acquirer_logo_domain": "theon.com", "target_logo_domain": "exosens.com",
+        "source_url": "https://www.theon.com/press-releases/",
+        "announced_date": datetime(2025, 10, 14, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "OHB", "target": "MT Aerospace",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "OHB acquires MT Aerospace — space launch systems and structural components",
+        "rationale": "German space company OHB acquires MT Aerospace, a manufacturer of space launch vehicle structures (Ariane 5/6 fuel tanks, payload adapters) and propulsion components. The deal verticalises OHB\'s space manufacturing value chain ahead of the Ariane 6 production ramp.",
+        "acquirer_country": "DE", "target_country": "DE",
+        "acquirer_logo_domain": "ohb.de", "target_logo_domain": "mt-aerospace.de",
+        "source_url": "https://www.ohb.de/en/press-releases/",
+        "announced_date": datetime(2025, 10, 20, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "space",
+    },
+    {
+        "acquirer": "Intuitive Machines", "target": "Lanteris Space Systems",
+        "deal_value": 800, "status": "completed", "deal_type": "acquisition",
+        "description": "Intuitive Machines acquires Lanteris Space Systems for $800M — satellite manufacturing",
+        "rationale": "Intuitive Machines acquires Lanteris Space Systems, a satellite manufacturer and system integrator for government and commercial constellations, for $800M. The deal combines Intuitive Machines\' lunar delivery capabilities with Lanteris\'s cislunar and LEO satellite production expertise.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "intuitivemachines.com", "target_logo_domain": "lanteris.com",
+        "source_url": "https://www.intuitivemachines.com/news/",
+        "announced_date": datetime(2025, 11, 5, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "space",
+    },
+    {
+        "acquirer": "Palladyne AI", "target": "GuideTech",
+        "deal_value": 44, "status": "completed", "deal_type": "acquisition",
+        "description": "Palladyne AI acquires GuideTech for EUR 40M — AI and autonomous systems",
+        "rationale": "Palladyne AI acquires GuideTech, a developer of AI-guided autonomous systems for defence and security applications, for EUR 40 million. The deal adds guidance algorithm and autonomous mission planning capabilities to Palladyne\'s AI platform.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "palladyne.ai", "target_logo_domain": "guidetech.com",
+        "source_url": "https://palladyne.ai/news/",
+        "announced_date": datetime(2025, 11, 10, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "services_it",
+    },
+    {
+        "acquirer": "Flowing River Capital Partners", "target": "Marshall Land Systems",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Flowing River Capital Partners acquires Marshall Land Systems — UK land systems",
+        "rationale": "PE firm Flowing River Capital Partners acquires Marshall Land Systems, a UK manufacturer of specialist military shelters, command vehicle conversions and deployable infrastructure for the British Army and NATO allies.",
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "flowingrivercapital.com", "target_logo_domain": "marshalllanddefence.com",
+        "source_url": "https://www.marshallgroup.co.uk/news/",
+        "announced_date": datetime(2025, 11, 14, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "land_systems",
+    },
+    {
+        "acquirer": "Terma", "target": "Operational Solutions",
+        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
+        "description": "Terma acquires Operational Solutions — counter-drone systems",
+        "rationale": "Danish defence electronics company Terma acquires Operational Solutions, a UK specialist in counter-UAS and airspace management systems. The deal adds C-UAS software and operational expertise to Terma\'s radar and sensor product line.",
+        "acquirer_country": "DK", "target_country": "GB",
+        "acquirer_logo_domain": "terma.com", "target_logo_domain": "operationalsolutions.co.uk",
+        "source_url": "https://www.terma.com/news/",
+        "announced_date": datetime(2025, 11, 18, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "uas_drones",
+    },
+    {
+        "acquirer": "SAIC", "target": "SilverEdge Government Solutions",
+        "deal_value": 205, "status": "completed", "deal_type": "acquisition",
+        "description": "SAIC acquires SilverEdge Government Solutions for $205M — intelligence and cyber",
+        "rationale": "SAIC acquires SilverEdge Government Solutions, an intelligence community IT and cyber services firm, for $205M. The deal expands SAIC\'s classified intelligence customer base and adds cyber operations and cloud migration capabilities for IC customers.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "saic.com", "target_logo_domain": "silveredge.us",
+        "source_url": "https://www.saic.com/news/",
+        "announced_date": datetime(2025, 11, 20, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "cyber",
+    },
+    {
+        "acquirer": "Boeing", "target": "Spirit AeroSystems",
+        "deal_value": 4700, "status": "completed", "deal_type": "acquisition",
+        "description": "Boeing reacquires Spirit AeroSystems for $4.7B equity value — aerostructures",
+        "rationale": "Boeing reacquires Spirit AeroSystems, its former fuselage and aerostructure manufacturing division spun off in 2005, for $4.7B equity value. The move follows quality and safety concerns on 737 MAX production, with Boeing bringing Spirit back in-house to exert direct manufacturing control over its largest aerostructure supplier.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "boeing.com", "target_logo_domain": "spiritaero.com",
+        "source_url": "https://investors.boeing.com/investors/news/press-release-details/2025/",
+        "announced_date": datetime(2025, 12, 5, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "Howmet Aerospace", "target": "Consolidated Aerospace Manufacturing",
+        "deal_value": 1800, "status": "completed", "deal_type": "acquisition",
+        "description": "Howmet Aerospace acquires Consolidated Aerospace Manufacturing for $1.8B — fasteners",
+        "rationale": "Howmet Aerospace acquires Consolidated Aerospace Manufacturing (CAM), the largest independent manufacturer of aerospace fasteners, blind bolts and engineered components, for $1.8B. The deal significantly expands Howmet\'s fastener portfolio for commercial and defence aircraft programmes.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "howmet.com", "target_logo_domain": "camdistributors.com",
+        "source_url": "https://www.howmet.com/news/",
+        "announced_date": datetime(2025, 12, 10, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "aircraft",
+    },
+    {
+        "acquirer": "TransDigm", "target": "Stellant Systems",
+        "deal_value": 960, "status": "completed", "deal_type": "acquisition",
+        "description": "TransDigm acquires Stellant Systems for $960M — RF and microwave defence electronics",
+        "rationale": "TransDigm Group acquires Stellant Systems, a manufacturer of travelling wave tubes (TWTs) and microwave power modules (MPMs) for electronic warfare, radar jamming and satellite communications, for $960M. Stellant\'s products are sole-source content on numerous US defence platforms.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "transdigm.com", "target_logo_domain": "stellant.com",
+        "source_url": "https://www.transdigm.com/news/",
+        "announced_date": datetime(2025, 12, 15, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Karman Space and Defence", "target": "Seemann Composites and MSC",
+        "deal_value": 220, "status": "announced", "deal_type": "acquisition",
+        "description": "Karman Space and Defence acquires Seemann Composites and MSC for $220M — naval and aerospace composites",
+        "rationale": "Karman Space and Defence acquires Seemann Composites and Marine Systems Composites (MSC), manufacturers of advanced composite structures for naval vessels, submarines and launch vehicles, for $220M. The deal adds composites manufacturing to Karman\'s metal and machined components portfolio.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "karman.com", "target_logo_domain": "seemanncomposites.com",
+        "source_url": "https://karman.com/news/",
+        "announced_date": datetime(2026, 1, 15, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "naval",
+    },
+    {
+        "acquirer": "Kratos Defense", "target": "Orbit Technologies",
+        "deal_value": 353, "status": "announced", "deal_type": "acquisition",
+        "description": "Kratos Defense acquires Israeli Orbit Technologies for $353M — SATCOM and telemetry",
+        "rationale": "Kratos Defense acquires Orbit Technologies, an Israeli developer of SATCOM ground systems, telemetry tracking and command (TT&C) systems and satellite testing equipment, for $353M. The deal expands Kratos\'s satellite communications ground segment capabilities for US and allied customers.",
+        "acquirer_country": "US", "target_country": "IL",
+        "acquirer_logo_domain": "kratosdefense.com", "target_logo_domain": "orbit.co.il",
+        "source_url": "https://www.kratosdefense.com/news/",
+        "announced_date": datetime(2026, 1, 20, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "space",
+    },
+    {
+        "acquirer": "CACI International", "target": "ARKA Group",
+        "deal_value": 2600, "status": "announced", "deal_type": "acquisition",
+        "description": "CACI International acquires ARKA Group for $2.6B — space, C5ISR and mission systems",
+        "rationale": "CACI International acquires ARKA Group, a defence technology company specialising in space systems, C5ISR (command, control, communications, computers, cyber, intelligence, surveillance and reconnaissance) and mission software for the intelligence community and DoD, for $2.6B.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "caci.com", "target_logo_domain": "arkagroup.com",
+        "source_url": "https://www.caci.com/news/",
+        "announced_date": datetime(2026, 2, 10, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "space",
+    },
+    {
+        "acquirer": "Shield AI", "target": "Aechelon Technology",
+        "deal_value": 0, "status": "announced", "deal_type": "acquisition",
+        "description": "Shield AI acquires Aechelon Technology — simulation and defence software",
+        "rationale": "Shield AI acquires Aechelon Technology, a developer of AI-powered simulation and synthetic training environments for autonomous systems testing. The deal adds high-fidelity simulation capabilities to Shield AI\'s Hivemind autonomous pilot technology stack.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "shield.ai", "target_logo_domain": "aechelon.com",
+        "source_url": "https://shield.ai/news/",
+        "announced_date": datetime(2026, 2, 15, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "services_it",
+    },
+    {
+        "acquirer": "Anduril Industries", "target": "ExoAnalytic Solutions",
+        "deal_value": 0, "status": "announced", "deal_type": "acquisition",
+        "description": "Anduril Industries acquires ExoAnalytic Solutions — space domain awareness",
+        "rationale": "Anduril Industries acquires ExoAnalytic Solutions, a space domain awareness company operating a global commercial telescope network for tracking satellites and space debris, as part of Anduril\'s multi-domain sensing and autonomy strategy for DoD Space Command missions.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "anduril.com", "target_logo_domain": "exoanalytic.com",
+        "source_url": "https://www.anduril.com/news/",
+        "announced_date": datetime(2026, 2, 20, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
+        "sector": "space",
+    },
+    {
+        "acquirer": "AeroVironment", "target": "Empirical Systems Aerospace",
+        "deal_value": 200, "status": "announced", "deal_type": "acquisition",
+        "description": "AeroVironment acquires Empirical Systems Aerospace for $200M — autonomous aircraft R&D",
+        "rationale": "AeroVironment acquires Empirical Systems Aerospace (ESAero), a California R&D company specialising in hybrid-electric propulsion and advanced autonomous aircraft designs for DARPA and AFRL programmes, for $200M. The deal strengthens AeroVironment\'s next-generation autonomous systems pipeline.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "avinc.com", "target_logo_domain": "empiricalsystems.com",
+        "source_url": "https://www.avinc.com/news/",
+        "announced_date": datetime(2026, 3, 10, tzinfo=timezone.utc),
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "uas_drones",
+    },
 ]
 
-# ── Participations, minority stakes, strategic investments and JVs ─────────
-# Includes corporate venture investments, equity stakes and bilateral JVs
-# that do not constitute full acquisitions.
 MA_EXTRA_DEALS = [
     {
         "acquirer": "Dassault Aviation", "target": "Harmattan AI",
