@@ -1676,6 +1676,14 @@ export const CAPABILITY_DETAILS = {
       { model: "Khordad-15 (medium-range, domestic)", count: 6, manufacturer: "Iran Electronics Industries" },
       { model: "Tor-M1 (9K331) SHORAD", count: 29, manufacturer: "Almaz-Antey (Russia)" },
     ],
+    missiles: [
+      { model: "Shahab-3 MRBM (~1,300 km)", count: 50, manufacturer: "Aerospace Industries Org." },
+      { model: "Khorramshahr-4 MRBM (~2,000 km)", count: 30, manufacturer: "Aerospace Industries Org." },
+      { model: "Kheibar Shekan MRBM (solid-fuel)", count: 30, manufacturer: "Aerospace Industries Org." },
+      { model: "Fateh-110 / Fateh-313 SRBM", count: 200, manufacturer: "Aerospace Industries Org." },
+      { model: "Zolfaghar / Dezful SRBM (~700 km)", count: 100, manufacturer: "Aerospace Industries Org." },
+      { model: "Soumar / Hoveyzeh land-attack cruise missile", count: 50, manufacturer: "Aerospace Industries Org." },
+    ],
   },
   DZ: {
     fighters: [
@@ -1710,6 +1718,16 @@ export const CAPABILITY_DETAILS = {
     ],
     submarines: [
       { model: "Kilo-class (Project 877/636.1) SSK", count: 6, manufacturer: "Admiralty Shipyards (Russia)" },
+    ],
+    air_defense: [
+      { model: "S-300PMU-2 Favorit (long-range)", count: 8, manufacturer: "Almaz-Antey (Russia)" },
+      { model: "Buk-M2E (medium-range)", count: 12, manufacturer: "Almaz-Antey (Russia)" },
+      { model: "Pantsir-S1 (gun/missile SHORAD)", count: 24, manufacturer: "KBP Tula (Russia)" },
+      { model: "S-125 Pechora-2M (legacy, upgraded)", count: 20, manufacturer: "Almaz-Antey (Russia)" },
+    ],
+    missiles: [
+      { model: "P-800 Oniks / Bastion-P coastal defense", count: 4, manufacturer: "NPO Mashinostroyeniya (Russia)" },
+      { model: "Kh-31 / Kh-35 anti-ship (Su-30 / corvettes)", count: 100, manufacturer: "Tactical Missiles Corp (Russia)" },
     ],
   },
   TH: {
@@ -1796,6 +1814,11 @@ export const CAPABILITY_DETAILS = {
       { model: "Musherib-class OPV", count: 2, manufacturer: "Fincantieri (Italy)" },
     ],
     submarines: [],
+    air_defense: [
+      { model: "Patriot PAC-3 batteries", count: 11, manufacturer: "Raytheon Technologies" },
+      { model: "NASAMS (medium-range)", count: 10, manufacturer: "Kongsberg / Raytheon" },
+      { model: "Roland / Mistral SHORAD", count: 24, manufacturer: "MBDA" },
+    ],
   },
   KW: {
     fighters: [
@@ -1819,6 +1842,11 @@ export const CAPABILITY_DETAILS = {
       { model: "Um Almaradim-class (P-37BRL) missile boat", count: 8, manufacturer: "CMN Cherbourg (France)" },
     ],
     submarines: [],
+    air_defense: [
+      { model: "Patriot PAC-2 / PAC-3 batteries", count: 7, manufacturer: "Raytheon Technologies" },
+      { model: "Skyguard / Aspide SHORAD", count: 12, manufacturer: "Rheinmetall / MBDA" },
+      { model: "Starburst MANPADS", count: 48, manufacturer: "Thales / Shorts" },
+    ],
   },
   MA: {
     fighters: [
