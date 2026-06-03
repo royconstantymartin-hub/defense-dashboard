@@ -645,6 +645,7 @@ const CAP_CATEGORIES = [
     progressColor: "bg-slate-700",
     iconBadgeBg: "bg-slate-50",
     iconColor: "text-slate-500",
+    hideCount: true,
   },
   {
     key: "land_vehicles",
@@ -763,23 +764,29 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
 
       {/* Body */}
       <div className="bg-white p-3 flex flex-col gap-2">
-        <p className={`text-3xl font-mono font-bold ${cat.countColor} tabular-nums leading-none`}>
-          {count === null
-            ? <span className="text-xl text-slate-300 font-mono">N/D</span>
-            : count === 0 ? "—"
-            : animated.toLocaleString()}
-        </p>
+        {!cat.hideCount && (
+          <p className={`text-3xl font-mono font-bold ${cat.countColor} tabular-nums leading-none`}>
+            {count === null
+              ? <span className="text-xl text-slate-300 font-mono">N/D</span>
+              : count === 0 ? "—"
+              : animated.toLocaleString()}
+          </p>
+        )}
 
-        {count === null && (
+        {cat.hideCount && count != null && count > 0 && (
+          <p className={`text-sm font-semibold ${cat.countColor}`}>See breakdown</p>
+        )}
+
+        {!cat.hideCount && count === null && (
           <p className="text-[10px] text-slate-400">Not documented</p>
         )}
 
-        {count === 0 && (
+        {!cat.hideCount && count === 0 && (
           <p className="text-[10px] text-slate-400">No data / not applicable</p>
         )}
 
         {/* Progress bar vs world leader */}
-        {count > 0 && (
+        {!cat.hideCount && count > 0 && (
           <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full ${cat.progressColor} transition-all duration-700`}
@@ -788,7 +795,7 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
           </div>
         )}
 
-        {count > 0 && (
+        {!cat.hideCount && count > 0 && (
           <p className="text-[10px] text-slate-400">
             vs world leader ({Math.round(pct)}%)
           </p>
@@ -1046,7 +1053,7 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
         <span className={`text-xs font-semibold text-slate-800 leading-snug line-clamp-2 ${item.on_order ? "opacity-60" : ""}`}>
           {item.model}
           {item.on_order && (
-            <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">En commande</span>
+            <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">On Order</span>
           )}
         </span>
 
