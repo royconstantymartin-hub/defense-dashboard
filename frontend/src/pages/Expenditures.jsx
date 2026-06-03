@@ -18,7 +18,7 @@ import {
   ArrowUpDown, Globe2, BarChart2, Percent, Shield,
   Anchor, Plane, Satellite, Zap, Lock, Flag, ExternalLink,
   FileText, Building2, Newspaper, Users, Globe, Crosshair,
-  Target, Gauge, Download, FileCheck,
+  Target, Gauge, Download, FileCheck, Radar, ChevronDown, ChevronRight,
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { CAPABILITY_DETAILS, PLATFORM_WIKI_TITLES, WKP, STATIC_PLATFORM_IMAGES, DEFENSE_CAPABILITIES, getCapabilitySummary } from "@/data/defenseCapabilities";
@@ -56,6 +56,30 @@ function SubmarineIcon({ className }) {
       <rect x="9" y="8" width="5" height="4" rx="1" />
       <path d="M19 12.5 L22 11 L22 17 L19 15.5" />
       <circle cx="5.5" cy="14" r="1" fill="white" />
+    </svg>
+  );
+}
+// Wheeled/tracked armoured fighting vehicle (IFV/APC) — distinct from a tank
+function ArmoredVehicleIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M2 14 L4 10 L9 10 L11 8 L20 8 L22 12 L22 14 Z" />
+      <rect x="13" y="9" width="6" height="2.5" rx="0.5" fill="white" opacity="0.35" />
+      <circle cx="7" cy="15.5" r="2.2" />
+      <circle cx="17" cy="15.5" r="2.2" />
+      <circle cx="7" cy="15.5" r="0.9" fill="white" />
+      <circle cx="17" cy="15.5" r="0.9" fill="white" />
+    </svg>
+  );
+}
+// Aircraft carrier — flat-top flight deck with island
+function CarrierIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M2 14 L4 17 L20 17 L22 14 Z" />
+      <rect x="3" y="11.5" width="18" height="2.5" rx="0.5" />
+      <rect x="13" y="6.5" width="3" height="5" rx="0.5" />
+      <path d="M5 10.5 L9 8.5 L9 10.5 Z" opacity="0.7" />
     </svg>
   );
 }
@@ -648,12 +672,44 @@ const CAP_CATEGORIES = [
     hideCount: true,
   },
   {
-    key: "land_vehicles",
-    label: "Land Forces",
-    sublabel: "MBTs, IFVs, APCs & Armour",
+    key: "tanks",
+    label: "Main Battle Tanks",
+    sublabel: "MBTs & Light Tanks",
     Icon: TankIcon,
     scale: 500,
-    scaleLabel: "500 vehicles",
+    scaleLabel: "500 tanks",
+    bg: "bg-white",
+    border: "border-slate-200",
+    labelColor: "text-slate-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
+  },
+  {
+    key: "armored_vehicles",
+    label: "Armored Vehicles",
+    sublabel: "IFVs, APCs, MRAPs & Recon",
+    Icon: ArmoredVehicleIcon,
+    scale: 1000,
+    scaleLabel: "1,000 vehicles",
+    bg: "bg-white",
+    border: "border-slate-200",
+    labelColor: "text-slate-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
+  },
+  {
+    key: "aircraft_carriers",
+    label: "Aircraft Carriers",
+    sublabel: "CVN / CV / Light Carriers & LHDs",
+    Icon: CarrierIcon,
+    scale: 2,
+    scaleLabel: "2 carriers",
     bg: "bg-white",
     border: "border-slate-200",
     labelColor: "text-slate-500",
@@ -695,6 +751,58 @@ const CAP_CATEGORIES = [
     iconBadgeBg: "bg-slate-50",
     iconColor: "text-slate-500",
   },
+  {
+    key: "air_defense",
+    label: "Air Defense",
+    sublabel: "SAM Batteries, BMD & SHORAD",
+    Icon: ({ className }) => (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2 L12 8" />
+        <path d="M8 5 Q12 3 16 5" />
+        <path d="M4 12 Q12 6 20 12" />
+        <path d="M2 16 Q12 9 22 16" />
+        <line x1="12" y1="8" x2="7" y2="16" />
+        <line x1="12" y1="8" x2="17" y2="16" />
+        <rect x="9" y="16" width="6" height="4" rx="1" />
+      </svg>
+    ),
+    scale: 20,
+    scaleLabel: "20 systems",
+    bg: "bg-white",
+    border: "border-slate-200",
+    labelColor: "text-slate-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
+    hideCount: true,
+  },
+  {
+    key: "missiles",
+    label: "Missiles",
+    sublabel: "Cruise, Ballistic & Strike",
+    Icon: ({ className }) => (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2 L12 14" />
+        <path d="M9 5 L12 2 L15 5" />
+        <path d="M10 14 L8 18 L12 16 L16 18 L14 14" />
+        <line x1="7" y1="9" x2="10" y2="9" />
+        <line x1="14" y1="9" x2="17" y2="9" />
+      </svg>
+    ),
+    scale: 500,
+    scaleLabel: "500 missiles",
+    bg: "bg-white",
+    border: "border-slate-200",
+    labelColor: "text-slate-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
+    hideCount: true,
+  },
 ];
 
 // Pre-computed world ranks and max values for capability tiles
@@ -707,6 +815,34 @@ CAP_CATEGORIES.forEach(({ key }) => {
   CAP_MAX[key] = sorted[0]?.[1][key] ?? 0;
   CAP_RANKS[key] = sorted.map(([code]) => code);
 });
+
+// Group categories into macro sections for display
+const CAP_GROUPS = [
+  {
+    label: "Air Power", Icon: Plane, categoryKeys: ["fighters", "helicopters", "drones"],
+    accent: "blue", headlineKeys: ["fighters", "helicopters", "drones"], headlineLabel: "aircraft & UAVs",
+  },
+  {
+    label: "Land Forces", Icon: TankIcon, categoryKeys: ["tanks", "armored_vehicles"],
+    accent: "amber", headlineKeys: ["tanks", "armored_vehicles"], headlineLabel: "armoured units",
+  },
+  {
+    label: "Naval Forces", Icon: Anchor, categoryKeys: ["aircraft_carriers", "surface_combatants", "submarines"],
+    accent: "cyan", headlineKeys: ["aircraft_carriers", "surface_combatants", "submarines"], headlineLabel: "warships",
+  },
+  {
+    label: "Strategic & Air Defense", Icon: Radar, categoryKeys: ["air_defense", "missiles"],
+    accent: "emerald", headlineKeys: ["air_defense", "missiles"], headlineLabel: "systems & missiles",
+  },
+];
+
+// Accent palette for the domain (tier-1) cards — coherent with ProductIllustration
+const GROUP_ACCENT = {
+  blue:    { ring: "ring-blue-200",    border: "border-blue-200",    bg: "bg-blue-50",    text: "text-blue-700",    iconBg: "bg-blue-100",    bar: "bg-blue-600" },
+  amber:   { ring: "ring-amber-200",   border: "border-amber-200",   bg: "bg-amber-50",   text: "text-amber-700",   iconBg: "bg-amber-100",   bar: "bg-amber-600" },
+  cyan:    { ring: "ring-cyan-200",    border: "border-cyan-200",    bg: "bg-cyan-50",    text: "text-cyan-700",    iconBg: "bg-cyan-100",    bar: "bg-cyan-600" },
+  emerald: { ring: "ring-emerald-200", border: "border-emerald-200", bg: "bg-emerald-50", text: "text-emerald-700", iconBg: "bg-emerald-100", bar: "bg-emerald-600" },
+};
 
 
 function useCountUp(target, duration = 900) {
@@ -1170,11 +1306,53 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
   );
 }
 
+// Tier-1 domain card (Air / Land / Naval / Strategic) — opens a drawer of sub-categories
+function CapabilityDomainCard({ group, cap, countryCode, isOpen, onToggle }) {
+  const a = GROUP_ACCENT[group.accent] || GROUP_ACCENT.blue;
+  const total = group.headlineKeys.reduce((s, k) => s + (cap[k] ?? 0), 0);
+  // Best (lowest) world rank across this domain's categories
+  const bestRank = group.categoryKeys.reduce((best, key) => {
+    if (!(cap[key] > 0)) return best;
+    const r = (CAP_RANKS[key]?.indexOf(countryCode) ?? -1) + 1;
+    return r > 0 && (best === null || r < best) ? r : best;
+  }, null);
+  return (
+    <button
+      onClick={onToggle}
+      className={`text-left rounded-xl border p-3 transition-all ${
+        isOpen ? `${a.bg} ${a.border} ring-2 ${a.ring}` : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
+      }`}
+    >
+      <div className="flex items-center justify-between">
+        <span className={`p-1.5 rounded-lg ${isOpen ? a.iconBg : "bg-slate-100"}`}>
+          <group.Icon className={`w-4 h-4 ${isOpen ? a.text : "text-slate-500"}`} />
+        </span>
+        <div className="flex items-center gap-1">
+          {bestRank && bestRank <= 5 && (
+            <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md border ${
+              bestRank === 1 ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-white text-slate-500 border-slate-200"
+            }`}>
+              #{bestRank} world
+            </span>
+          )}
+          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        </div>
+      </div>
+      <p className={`mt-2 text-[13px] font-bold leading-tight ${isOpen ? a.text : "text-slate-800"}`}>{group.label}</p>
+      <p className="text-[10px] text-slate-400 mt-0.5">
+        <span className="font-mono font-semibold text-slate-600">{total.toLocaleString()}</span> {group.headlineLabel}
+      </p>
+    </button>
+  );
+}
+
 function DefenseCapabilitiesCard({ countryCode }) {
   const cap = getCapabilitySummary(countryCode);
+  const [openGroup, setOpenGroup] = useState(null);
   const [openCat, setOpenCat] = useState(null);
 
   const hasDetails = !!CAPABILITY_DETAILS[countryCode];
+  const activeGroup = CAP_GROUPS.find(g => g.label === openGroup) || null;
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm">
@@ -1189,7 +1367,7 @@ function DefenseCapabilitiesCard({ countryCode }) {
           </span>
         </div>
       </CardHeader>
-      <CardContent className="p-4 space-y-4">
+      <CardContent className="p-4 space-y-3">
         {!cap ? (
           <div className="flex items-center justify-center py-8 text-slate-400 text-sm gap-2">
             <Target className="w-4 h-4" />
@@ -1197,31 +1375,73 @@ function DefenseCapabilitiesCard({ countryCode }) {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {CAP_CATEGORIES.map((cat) => {
-                const rank = CAP_RANKS[cat.key].indexOf(countryCode) + 1;
-                const isClickable = hasDetails && (cap[cat.key] ?? 0) > 0;
-                return (
-                  <CapabilityTile
-                    key={cat.key}
-                    cat={cat}
-                    count={cap[cat.key] ?? null}
-                    rank={rank > 0 ? rank : null}
-                    maxCount={CAP_MAX[cat.key]}
-                    isClickable={isClickable}
-                    isSelected={openCat === cat.key}
-                    onClick={() => setOpenCat(prev => prev === cat.key ? null : cat.key)}
-                  />
-                );
-              })}
+            {/* Tier 1 — domains */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+              {CAP_GROUPS.map(group => (
+                <CapabilityDomainCard
+                  key={group.label}
+                  group={group}
+                  cap={cap}
+                  countryCode={countryCode}
+                  isOpen={openGroup === group.label}
+                  onToggle={() => {
+                    setOpenGroup(prev => (prev === group.label ? null : group.label));
+                    setOpenCat(null);
+                  }}
+                />
+              ))}
             </div>
 
-            {openCat && hasDetails && (
-              <CapabilityDetailPanel
-                cat={CAP_CATEGORIES.find(c => c.key === openCat)}
-                countryCode={countryCode}
-                onClose={() => setOpenCat(null)}
-              />
+            {/* Tier 2 + 3 — sub-categories and platform breakdown */}
+            {activeGroup && (
+              <div className="rounded-xl border border-slate-200 bg-slate-50/40 p-3 space-y-3">
+                {/* Breadcrumb */}
+                <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-500">
+                  <activeGroup.Icon className="w-3.5 h-3.5" />
+                  <span>{activeGroup.label}</span>
+                  {openCat && (
+                    <>
+                      <ChevronRight className="w-3 h-3 text-slate-300" />
+                      <span className="text-slate-700">{CAP_CATEGORIES.find(c => c.key === openCat)?.label}</span>
+                    </>
+                  )}
+                  {!hasDetails && (
+                    <span className="ml-auto text-[10px] font-normal text-slate-400">aggregate estimates only</span>
+                  )}
+                </div>
+
+                {/* Sub-category tiles */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {activeGroup.categoryKeys.map(key => {
+                    const cat = CAP_CATEGORIES.find(c => c.key === key);
+                    if (!cat) return null;
+                    const rank = CAP_RANKS[cat.key].indexOf(countryCode) + 1;
+                    const detailCount = (CAPABILITY_DETAILS[countryCode]?.[cat.key] || []).length;
+                    const isClickable = detailCount > 0;
+                    return (
+                      <CapabilityTile
+                        key={cat.key}
+                        cat={cat}
+                        count={cap[cat.key] ?? null}
+                        rank={rank > 0 ? rank : null}
+                        maxCount={CAP_MAX[cat.key]}
+                        isClickable={isClickable}
+                        isSelected={openCat === cat.key}
+                        onClick={() => setOpenCat(prev => (prev === cat.key ? null : cat.key))}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Platform breakdown */}
+                {openCat && (CAPABILITY_DETAILS[countryCode]?.[openCat] || []).length > 0 && (
+                  <CapabilityDetailPanel
+                    cat={CAP_CATEGORIES.find(c => c.key === openCat)}
+                    countryCode={countryCode}
+                    onClose={() => setOpenCat(null)}
+                  />
+                )}
+              </div>
             )}
           </>
         )}
@@ -2562,7 +2782,9 @@ export default function Expenditures() {
                     : <span className="text-slate-300">—</span> },
                   { label: 'Fighters', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.fighters ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
                   { label: 'Helicopters', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.helicopters ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
-                  { label: 'Land Vehicles', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.land_vehicles ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Tanks', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.tanks ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Armored', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.armored_vehicles ?? 0).toLocaleString()}</span> : <span className="text-slate-300">—</span>; } },
+                  { label: 'Carriers', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.aircraft_carriers ?? 0)}</span> : <span className="text-slate-300">—</span>; } },
                   { label: 'Warships', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.surface_combatants ?? 0)}</span> : <span className="text-slate-300">—</span>; } },
                   { label: 'Submarines', render: e => { const cap = getCapabilitySummary(e.country_code); return cap ? <span className="font-mono text-slate-700">{(cap.submarines ?? 0)}</span> : <span className="text-slate-300">—</span>; } },
                 ].map((row, i) => (
