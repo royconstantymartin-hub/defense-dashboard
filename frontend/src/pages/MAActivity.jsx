@@ -850,13 +850,29 @@ function CompanyLogo({ activity, side, size = "md" }) {
 // ── Recent Deals Spotlight — same visual pattern as MarketCatalysts ───────────
 
 const DEAL_TYPE_CFG = {
-  acquisition:          { label: "ACQUISITION",  bg: "bg-orange-50",  text: "text-orange-700", bar: "bg-orange-500" },
-  merger:               { label: "MERGER",        bg: "bg-orange-50",  text: "text-orange-700", bar: "bg-orange-500" },
+  acquisition:          { label: "ACQUISITION",  bg: "bg-indigo-50",  text: "text-indigo-800", bar: "bg-indigo-700" },
+  merger:               { label: "MERGER",        bg: "bg-indigo-50",  text: "text-indigo-800", bar: "bg-indigo-700" },
   joint_venture:        { label: "JV",            bg: "bg-emerald-50", text: "text-emerald-700",bar: "bg-emerald-600" },
   minority_stake:       { label: "INVESTMENT",    bg: "bg-blue-50",    text: "text-blue-800",   bar: "bg-blue-800" },
   strategic_investment: { label: "INVESTMENT",    bg: "bg-blue-50",    text: "text-blue-800",   bar: "bg-blue-800" },
   funding_round:        { label: "FUNDING",       bg: "bg-violet-50",  text: "text-violet-700", bar: "bg-violet-600" },
 };
+
+// PE / financial firms — acquirer is a fund, not an operating defense company
+const PE_FUND_KEYWORDS = [
+  "capital","fund","equity","ventures","venture","partners","investments",
+  "holdings","group","advisors","asset","management","financial",
+  "kkr","carlyle","warburg","bain","advent","blackstone","bridgepoint",
+  "apollo","ardian","eurazeo","sofinnova","bpifrance","novacap",
+  "lux capital","general catalyst","andreessen","founders fund","sequoia",
+  "3i","ancala","cdf","effen","early game","fjord","flowing river",
+  "godspeed","windjammer","hadean","iq capital","keen","uvc","ventura",
+  "pmv","rtx ventures","aismia","balderton","hv capital",
+];
+function isFundAcquirer(name = "") {
+  const n = name.toLowerCase();
+  return PE_FUND_KEYWORDS.some(k => n.includes(k));
+}
 
 function dealRelativeTime(isoStr) {
   if (!isoStr) return "recent";
@@ -895,107 +911,171 @@ function SpotlightLogo({ activity, side }) {
   );
 }
 
+const SPOTLIGHT_TABS = [
+  { value: "all",     label: "Tous les deals" },
+  { value: "defense", label: "Défense → Défense" },
+  { value: "fund",    label: "Fonds → Défense" },
+];
+
 function RecentDealsSpotlight({ activities }) {
-  // Top 4 most recent acquisitions / mergers (exclude JV/funding for relevance)
+  const [tab, setTab] = useState("all");
+
   const spots = useMemo(() => {
-    return [...activities]
-      .filter(a => ["acquisition", "merger", "minority_stake", "strategic_investment"].includes(a.deal_type))
+    // Only company-level acquisitions/mergers — exclude product-line / program deals
+    // (those tend to have targets that are programme names, not company names)
+    const base = [...activities]
+      .filter(a => ["acquisition", "merger"].includes(a.deal_type));
+
+    const filtered = base.filter(a => {
+      const fund = isFundAcquirer(a.acquirer);
+      if (tab === "defense") return !fund;
+      if (tab === "fund")    return fund;
+      return true;
+    });
+
+    return filtered
       .sort((a, b) => new Date(b.announced_date) - new Date(a.announced_date))
       .slice(0, 4);
+  }, [activities, tab]);
+
+  const totalByTab = useMemo(() => {
+    const base = activities.filter(a => ["acquisition", "merger"].includes(a.deal_type));
+    return {
+      all:     base.length,
+      defense: base.filter(a => !isFundAcquirer(a.acquirer)).length,
+      fund:    base.filter(a => isFundAcquirer(a.acquirer)).length,
+    };
   }, [activities]);
 
-  if (!spots.length) return null;
+  if (!activities.length) return null;
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm">
-      <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-3">
-        <Zap className="w-4 h-4 text-orange-500" />
-        <span className="font-heading text-base font-semibold text-slate-900">Recent Deals Spotlight</span>
-        <span className="flex items-center gap-1.5 text-xs text-slate-400">
-          <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-          latest M&amp;A · {spots.length} deals
-        </span>
+      <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-3">
+          <Zap className="w-4 h-4 text-indigo-700" />
+          <span className="font-heading text-base font-semibold text-slate-900">Recent Deals Spotlight</span>
+          <span className="flex items-center gap-1.5 text-xs text-slate-400">
+            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+            dernières acquisitions
+          </span>
+        </div>
+        {/* Toggle filter */}
+        <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+          {SPOTLIGHT_TABS.map(t => (
+            <button
+              key={t.value}
+              onClick={() => setTab(t.value)}
+              className={`px-3 py-1 text-[11px] font-medium rounded-md transition-all whitespace-nowrap ${
+                tab === t.value
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              {t.label}
+              <span className={`ml-1 font-mono text-[10px] ${tab === t.value ? "text-indigo-700" : "text-slate-400"}`}>
+                {totalByTab[t.value]}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
       <CardContent className="pt-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {spots.map((deal, i) => {
-            const cfg = DEAL_TYPE_CFG[deal.deal_type] ?? DEAL_TYPE_CFG.acquisition;
-            const acqFlag = deal.acquirer_country
-              ? `https://flagcdn.com/w20/${deal.acquirer_country.toLowerCase()}.png` : null;
-            const tgtFlag = deal.target_country
-              ? `https://flagcdn.com/w20/${deal.target_country.toLowerCase()}.png` : null;
-            const value = deal.deal_value > 0 && deal.is_disclosed !== false
-              ? (deal.deal_value >= 1000
-                  ? `$${(deal.deal_value / 1000).toFixed(1)}B`
-                  : `$${deal.deal_value}M`)
-              : "N/D";
+        {spots.length === 0 ? (
+          <p className="text-center py-8 text-sm text-slate-400">Aucun deal dans cette catégorie.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {spots.map((deal, i) => {
+              const cfg = DEAL_TYPE_CFG[deal.deal_type] ?? DEAL_TYPE_CFG.acquisition;
+              const isFund = isFundAcquirer(deal.acquirer);
+              const acqFlag = deal.acquirer_country
+                ? `https://flagcdn.com/w20/${deal.acquirer_country.toLowerCase()}.png` : null;
+              const tgtFlag = deal.target_country
+                ? `https://flagcdn.com/w20/${deal.target_country.toLowerCase()}.png` : null;
+              const value = deal.deal_value > 0 && deal.is_disclosed !== false
+                ? (deal.deal_value >= 1000
+                    ? `$${(deal.deal_value / 1000).toFixed(1)}B`
+                    : `$${deal.deal_value}M`)
+                : "N/D";
 
-            return (
-              <div
-                key={deal.id ?? i}
-                className="relative rounded-xl border border-slate-100 overflow-hidden hover:shadow-md hover:border-slate-200 transition-all cursor-pointer group"
-                onClick={() => deal.source_url && window.open(deal.source_url, "_blank", "noopener")}
-              >
-                {/* Colour bar */}
-                <div className={`h-1 w-full ${cfg.bar}`} />
+              return (
+                <div
+                  key={deal.id ?? i}
+                  className="relative rounded-xl border border-slate-100 overflow-hidden hover:shadow-md hover:border-slate-200 transition-all cursor-pointer group"
+                  onClick={() => deal.source_url && window.open(deal.source_url, "_blank", "noopener")}
+                >
+                  {/* Colour bar */}
+                  <div className={`h-1 w-full ${cfg.bar}`} />
 
-                <div className="p-4">
-                  {/* Badge */}
-                  <span className={`inline-block text-[10px] font-bold tracking-widest px-2.5 py-0.5 rounded-full mb-3 ${cfg.bg} ${cfg.text}`}>
-                    {cfg.label}
-                  </span>
+                  <div className="p-4">
+                    {/* Badges row */}
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <span className={`text-[10px] font-bold tracking-widest px-2.5 py-0.5 rounded-full ${cfg.bg} ${cfg.text}`}>
+                        {cfg.label}
+                      </span>
+                      {isFund ? (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
+                          FONDS
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">
+                          DÉFENSE
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Acquirer → Target row */}
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                      <SpotlightLogo activity={deal} side="acquirer" />
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight">{deal.acquirer}</p>
-                        {acqFlag && (
-                          <img src={acqFlag} alt={deal.acquirer_country}
-                            className="w-4 h-3 object-cover rounded-sm mt-0.5"
-                            onError={e => e.currentTarget.style.display="none"} />
-                        )}
+                    {/* Acquirer → Target row */}
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <SpotlightLogo activity={deal} side="acquirer" />
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight">{deal.acquirer}</p>
+                          {acqFlag && (
+                            <img src={acqFlag} alt={deal.acquirer_country}
+                              className="w-4 h-3 object-cover rounded-sm mt-0.5"
+                              onError={e => e.currentTarget.style.display="none"} />
+                          )}
+                        </div>
+                      </div>
+
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <SpotlightLogo activity={deal} side="target" />
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight">{deal.target}</p>
+                          {tgtFlag && (
+                            <img src={tgtFlag} alt={deal.target_country}
+                              className="w-4 h-3 object-cover rounded-sm mt-0.5"
+                              onError={e => e.currentTarget.style.display="none"} />
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-
-                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                      <SpotlightLogo activity={deal} side="target" />
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight">{deal.target}</p>
-                        {tgtFlag && (
-                          <img src={tgtFlag} alt={deal.target_country}
-                            className="w-4 h-3 object-cover rounded-sm mt-0.5"
-                            onError={e => e.currentTarget.style.display="none"} />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Headline */}
-                  <p className="text-sm font-medium text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-800 transition-colors">
-                    {deal.description ?? `${deal.acquirer} acquires ${deal.target}`}
-                  </p>
-
-                  {/* Meta row */}
-                  <div className="flex items-center justify-between mt-2.5">
-                    <span className="font-mono text-[11px] font-bold text-slate-700">{value}</span>
-                    <span className="text-[10px] text-slate-400">{dealRelativeTime(deal.announced_date)}</span>
-                  </div>
-
-                  {deal.source_url && (
-                    <p className="text-[10px] text-blue-700 mt-1.5 flex items-center gap-1 truncate group-hover:underline">
-                      <ExternalLink className="w-2.5 h-2.5 shrink-0" />
-                      Source article
+                    {/* Headline */}
+                    <p className="text-sm font-medium text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-800 transition-colors">
+                      {deal.description ?? `${deal.acquirer} acquires ${deal.target}`}
                     </p>
-                  )}
+
+                    {/* Meta row */}
+                    <div className="flex items-center justify-between mt-2.5">
+                      <span className="font-mono text-[11px] font-bold text-slate-700">{value}</span>
+                      <span className="text-[10px] text-slate-400">{dealRelativeTime(deal.announced_date)}</span>
+                    </div>
+
+                    {deal.source_url && (
+                      <p className="text-[10px] text-blue-700 mt-1.5 flex items-center gap-1 truncate group-hover:underline">
+                        <ExternalLink className="w-2.5 h-2.5 shrink-0" />
+                        Source article
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -2902,146 +2982,6 @@ function DealPipelineView({ deals, onSelectDeal }) {
   );
 }
 
-// ── Recent Deals Spotlight ─────────────────────────────────────────────────
-const DEAL_ACCENT = {
-  announced: { bar: "bg-blue-600",    badge: "bg-blue-50 text-blue-700",   dot: "bg-blue-500"    },
-  pending:   { bar: "bg-amber-500",   badge: "bg-amber-50 text-amber-700", dot: "bg-amber-500"   },
-  completed: { bar: "bg-emerald-600", badge: "bg-emerald-50 text-emerald-700", dot: "bg-emerald-500" },
-};
-
-function RecentDealsSpotlight({ activities }) {
-  const top3 = activities
-    .filter(a => ["acquisition","strategic_investment","minority_stake"].includes(a.deal_type))
-    .sort((a, b) => new Date(b.announced_date) - new Date(a.announced_date))
-    .slice(0, 3);
-
-  if (!top3.length) return null;
-
-  const rankLabel = ["LATEST", "#2", "#3"];
-  const rankStyle = [
-    "bg-slate-900 text-white",
-    "bg-slate-100 text-slate-600",
-    "bg-slate-100 text-slate-600",
-  ];
-
-  return (
-    <Card className="bg-white border-slate-200 shadow-sm">
-      <CardHeader className="border-b border-slate-100 pb-3">
-        <div className="flex items-center gap-3">
-          <Zap className="w-4 h-4 text-blue-800" />
-          <CardTitle className="font-heading text-lg text-slate-900">Recent Deals</CardTitle>
-          <span className="flex items-center gap-1.5 text-xs text-slate-400">
-            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-            Latest acquisitions &amp; investments
-          </span>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {top3.map((deal, i) => {
-            const cfg = DEAL_ACCENT[deal.status] ?? DEAL_ACCENT.announced;
-            const dateStr   = deal.announced_date
-              ? format(new Date(deal.announced_date), "MMM d, yyyy")
-              : "";
-            const acqCountry = (deal.acquirer_country || "").toLowerCase();
-            const tgtCountry = (deal.target_country   || "").toLowerCase();
-            const valueStr = deal.deal_value && deal.is_disclosed !== false
-              ? formatValue(deal.deal_value)
-              : "N/D";
-
-            return (
-              <div
-                key={deal.id ?? i}
-                className="relative rounded-xl border border-slate-100 overflow-hidden hover:shadow-md hover:border-slate-200 transition-all group"
-              >
-                {/* Top colour bar */}
-                <div className={`h-1 w-full ${cfg.bar}`} />
-
-                <div className="p-4">
-                  {/* Rank badge + status */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className={`text-[10px] font-bold tracking-widest px-2.5 py-0.5 rounded-full ${rankStyle[i]}`}>
-                      {rankLabel[i]}
-                    </span>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${cfg.badge}`}>
-                      {deal.status}
-                    </span>
-                  </div>
-
-                  {/* Acquirer → Target logos row */}
-                  <div className="flex items-center gap-2 mb-3">
-                    {/* Acquirer */}
-                    <div className="flex flex-col items-center gap-1 min-w-0">
-                      <CompanyLogo activity={deal} side="acquirer" size="sm" />
-                      <div className="flex items-center gap-1">
-                        {acqCountry && (
-                          <img
-                            src={`https://flagcdn.com/w20/${acqCountry}.png`}
-                            alt={acqCountry}
-                            className="w-3.5 h-2.5 object-cover rounded-sm shrink-0"
-                            onError={e => { e.target.style.display = "none"; }}
-                          />
-                        )}
-                        <p className="text-[10px] text-slate-500 truncate max-w-[70px] leading-none">{deal.acquirer}</p>
-                      </div>
-                    </div>
-
-                    {/* Arrow */}
-                    <ArrowRight className="w-4 h-4 text-slate-300 shrink-0 mx-1" />
-
-                    {/* Target */}
-                    <div className="flex flex-col items-center gap-1 min-w-0 flex-1">
-                      <CompanyLogo activity={deal} side="target" size="sm" />
-                      <div className="flex items-center gap-1">
-                        {tgtCountry && (
-                          <img
-                            src={`https://flagcdn.com/w20/${tgtCountry}.png`}
-                            alt={tgtCountry}
-                            className="w-3.5 h-2.5 object-cover rounded-sm shrink-0"
-                            onError={e => { e.target.style.display = "none"; }}
-                          />
-                        )}
-                        <p className="text-[10px] text-slate-500 truncate max-w-[80px] leading-none">{deal.target}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Deal description */}
-                  <p className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-800 transition-colors mb-2">
-                    {deal.acquirer} acquires {deal.target}
-                  </p>
-                  {deal.description && (
-                    <p className="text-[11px] text-slate-500 leading-snug line-clamp-2 mb-3">
-                      {deal.description}
-                    </p>
-                  )}
-
-                  {/* Value + date + source */}
-                  <div className="flex items-center justify-between mt-auto pt-2 border-t border-slate-50">
-                    <span className="font-mono text-xs font-bold text-slate-700">{valueStr}</span>
-                    <span className="text-[10px] text-slate-400">{dateStr}</span>
-                  </div>
-                  {deal.source_url && (
-                    <a
-                      href={deal.source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-2 flex items-center gap-1 text-[10px] text-blue-600 hover:text-blue-800 transition-colors"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      <ExternalLink className="w-2.5 h-2.5 shrink-0" />
-                      <span className="truncate">{new URL(deal.source_url).hostname.replace("www.","")}</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 // ── Main page ──────────────────────────────────────────────────────────────
 
@@ -3292,11 +3232,6 @@ export default function MAActivity() {
           <AlertTriangle className="w-4 h-4 shrink-0" /><span>{error}</span>
           <button onClick={fetchRecent} className="ml-auto text-xs font-medium underline">Retry</button>
         </div>
-      )}
-
-      {/* ── Recent Deals Spotlight ── */}
-      {!loading && activities.length > 0 && (
-        <RecentDealsSpotlight activities={activities} />
       )}
 
       {/* ── Recent Deals Spotlight ── */}
