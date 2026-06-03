@@ -488,7 +488,7 @@ export default function Follow() {
   });
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in min-w-0 overflow-x-hidden">
 
       {/* ── Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
@@ -543,16 +543,18 @@ export default function Follow() {
         </div>
 
         {/* ── Horizontal carousel ── */}
-        <div
-          ref={carouselRef}
-          className="flex gap-4 overflow-x-auto pb-3 scroll-smooth"
-          style={{ scrollbarWidth: "thin", scrollbarColor: "#cbd5e1 transparent" }}
-        >
-          {REPORTS.map(r => (
-            <div key={r.id} className="flex-none w-44">
-              <ReportCoverCard report={r} />
-            </div>
-          ))}
+        <div className="overflow-hidden">
+          <div
+            ref={carouselRef}
+            className="flex gap-3 overflow-x-auto pb-3"
+            style={{ scrollbarWidth: "thin", scrollbarColor: "#cbd5e1 transparent" }}
+          >
+            {REPORTS.map(r => (
+              <div key={r.id} className="flex-none w-44">
+                <ReportCoverCard report={r} />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* ── Paid references — compact list ── */}
