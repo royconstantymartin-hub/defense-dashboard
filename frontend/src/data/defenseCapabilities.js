@@ -4,7 +4,7 @@ export const DEFENSE_CAPABILITIES = {
   CN: { fighters: 1571, helicopters: 900, drones: 276, tanks: 4800, armored_vehicles: 6900, aircraft_carriers: 3, surface_combatants: 83, submarines: 60, air_defense: 300, missiles: 3000 },
   RU: { fighters: 780, helicopters: 900, drones: 552, tanks: 3000, armored_vehicles: 9000, aircraft_carriers: 1, surface_combatants: 54, submarines: 65, air_defense: 600, missiles: 5000 },
   IN: { fighters: 559, helicopters: 632, drones: 87, tanks: 4400, armored_vehicles: 1814, aircraft_carriers: 2, surface_combatants: 30, submarines: 17, air_defense: 72, missiles: 400 },
-  SA: { fighters: 306, helicopters: 262, drones: 30, tanks: 900, armored_vehicles: 3013, aircraft_carriers: 0, surface_combatants: 15, submarines: 0, air_defense: 88, missiles: 400 },
+  SA: { fighters: 306, helicopters: 286, drones: 30, tanks: 1113, armored_vehicles: 3787, aircraft_carriers: 0, surface_combatants: 15, submarines: 0, air_defense: 88, missiles: 400 },
   GB: { fighters: 155, helicopters: 256, drones: 80, tanks: 213, armored_vehicles: 1680, aircraft_carriers: 2, surface_combatants: 19, submarines: 10, air_defense: 48, missiles: 500 },
   DE: { fighters: 110, helicopters: 220, drones: 83, tanks: 320, armored_vehicles: 2373, aircraft_carriers: 0, surface_combatants: 12, submarines: 6, air_defense: 36, missiles: 300 },
   FR: { fighters: 225, helicopters: 353, drones: 46, tanks: 222, armored_vehicles: 6054, aircraft_carriers: 1, surface_combatants: 24, submarines: 10, air_defense: 32, missiles: 600 },
@@ -363,7 +363,7 @@ export const CAPABILITY_DETAILS = {
       { model: "Eurofighter Typhoon (air defense)", count: 72, manufacturer: "BAE Systems / Eurofighter" },
     ],
     helicopters: [
-      { model: "AH-64D Apache", count: 12, manufacturer: "Boeing" },
+      { model: "AH-64D/E Apache (Land Forces & National Guard)", count: 36, manufacturer: "Boeing" },
       { model: "UH-60 Black Hawk", count: 72, manufacturer: "Sikorsky" },
       { model: "AS-532 Cougar", count: 22, manufacturer: "Airbus Helicopters" },
       { model: "MD 530F (light attack)", count: 36, manufacturer: "MD Helicopters" },
@@ -380,9 +380,10 @@ export const CAPABILITY_DETAILS = {
       { model: "AMX-30 MBT (reserve)", count: 290, manufacturer: "GIAT Industries" },
     ],
     armored_vehicles: [
-      { model: "M2A2 Bradley IFV", count: 400, manufacturer: "BAE Systems" },
-      { model: "LAV-25 / LAV-III APC", count: 600, manufacturer: "General Dynamics Canada" },
-      { model: "M113A1/A3 APC", count: 1800, manufacturer: "BAE Systems" },
+      { model: "AMX-10P IFV", count: 570, manufacturer: "GIAT / Nexter (France)" },
+      { model: "LAV-25 / LAV III 8×8 (National Guard)", count: 1117, manufacturer: "General Dynamics Land Systems Canada" },
+      { model: "M113A1/A3 APC (variants)", count: 1700, manufacturer: "BAE Systems (US)" },
+      { model: "Al-Fahd IFV / Aravis & various MRAP", count: 400, manufacturer: "Abdallah Al Faris / Arquus" },
     ],
     surface_combatants: [
       { model: "Madinah FFG (F2000)", count: 4, manufacturer: "Thomson-CSF / France" },
