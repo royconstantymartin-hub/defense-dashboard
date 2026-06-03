@@ -1371,7 +1371,7 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
 
       {open && hasDetail && (
         <tr className="bg-slate-50">
-          <td colSpan={8} className="px-6 py-4">
+          <td colSpan={10} className="px-6 py-4">
             {activity.rationale && (
               <p className="text-slate-600 text-sm leading-relaxed mb-2">{activity.rationale}</p>
             )}
@@ -2099,38 +2099,6 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
           ? <CompanyCellNoLogo activity={activity} side="target" onOpenProfile={onOpenProfile} />
           : <CompanyCell activity={activity} side="target" onOpenProfile={onOpenProfile} />
         }
-      </td>
-
-      {/* Type */}
-      <td className="px-3 py-2">
-        <span className="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium capitalize whitespace-nowrap">
-          {activity.deal_type.replaceAll("_", " ")}
-        </span>
-        {activity.round_type && (
-          <div className="mt-0.5"><RoundBadge roundType={activity.round_type} /></div>
-        )}
-        {/* Sector badge */}
-        {activity.sector && (
-          <div className="mt-0.5">
-            <span className="text-[10px] bg-slate-100 text-slate-500 border border-slate-200 px-1.5 py-0.5 rounded-full capitalize">
-              {SECTOR_OPTIONS.find(s => s.value === activity.sector)?.label ?? activity.sector.replaceAll("_", " ")}
-            </span>
-          </div>
-        )}
-        {/* Ticker links */}
-        <div className="flex flex-wrap gap-1 mt-0.5">
-          {[activity.acquirer, activity.target].map(name => COMPANY_TICKER_MAP[name] ? (
-            <Link
-              key={name}
-              to="/market-data"
-              onClick={e => e.stopPropagation()}
-              className="text-[10px] font-mono text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-blue-100"
-              title={`View ${name} on Market Data`}
-            >
-              {COMPANY_TICKER_MAP[name]}
-            </Link>
-          ) : null)}
-        </div>
       </td>
 
       {/* Value */}
@@ -3551,7 +3519,6 @@ export default function MAActivity() {
                       <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Acquirer / Investor</th>
                       <th className="px-1 py-2.5 w-4" />
                       <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Target / Portfolio Co.</th>
-                      <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Type</th>
                       <th
                         onClick={() => handleSort("deal_value")}
                         className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 select-none whitespace-nowrap"
