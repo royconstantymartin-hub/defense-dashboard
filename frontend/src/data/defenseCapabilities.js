@@ -1,63 +1,63 @@
 // ── Defense Capabilities Data (IISS Military Balance 2024 / Global Firepower) ─
 export const DEFENSE_CAPABILITIES = {
-  US: { fighters: 2790, helicopters: 4222, drones: 632,  land_vehicles: 60300, surface_combatants: 107, submarines: 68 },
-  CN: { fighters: 1571, helicopters: 900,  drones: 276,  land_vehicles: 11700, surface_combatants: 83,  submarines: 60 },
-  RU: { fighters: 780,  helicopters: 900,  drones: 552,  land_vehicles: 12000, surface_combatants: 54,  submarines: 65 },
-  IN: { fighters: 559,  helicopters: 632,  drones: 87,   land_vehicles: 6214,  surface_combatants: 30,  submarines: 17 },
-  SA: { fighters: 306,  helicopters: 262,  drones: 30,   land_vehicles: 3913,  surface_combatants: 15,  submarines: 0  },
-  GB: { fighters: 155,  helicopters: 256,  drones: 80,   land_vehicles: 1893,  surface_combatants: 19,  submarines: 10 },
-  DE: { fighters: 110,  helicopters: 220,  drones: 83,   land_vehicles: 2693,  surface_combatants: 12,  submarines: 6  },
-  FR: { fighters: 225,  helicopters: 353,  drones: 46,   land_vehicles: 6276,  surface_combatants: 24,  submarines: 10 },
-  JP: { fighters: 320,  helicopters: 388,  drones: 66,   land_vehicles: 1668,  surface_combatants: 32,  submarines: 22 },
-  KR: { fighters: 406,  helicopters: 620,  drones: 80,  land_vehicles: 7500,  surface_combatants: 28,  submarines: 22 },
-  AU: { fighters: 100,  helicopters: 96,   drones: 8,   land_vehicles: 2416,  surface_combatants: 13,  submarines: 6  },
-  IT: { fighters: 202,  helicopters: 250,  drones: 10,  land_vehicles: 2549,  surface_combatants: 22,  submarines: 8  },
-  BR: { fighters: 122,  helicopters: 280,  drones: 6,   land_vehicles: 2200,  surface_combatants: 16,  submarines: 5  },
-  CA: { fighters: 77,   helicopters: 132,  drones: 18,  land_vehicles: 1392,  surface_combatants: 12,  submarines: 4  },
-  IL: { fighters: 354,  helicopters: 150,  drones: 132, land_vehicles: 4800,  surface_combatants: 21,  submarines: 5  },
-  TR: { fighters: 207,  helicopters: 342,  drones: 120, land_vehicles: 8000,  surface_combatants: 24,  submarines: 12 },
-  ES: { fighters: 142,  helicopters: 189,  drones: 6,   land_vehicles: 1211,  surface_combatants: 10,  submarines: 4  },
-  PL: { fighters: 120,  helicopters: 120,  drones: 64,  land_vehicles: 2054,  surface_combatants: 5,   submarines: 1  },
-  NL: { fighters: 61,   helicopters: 75,   drones: 8,   land_vehicles: 613,   surface_combatants: 5,   submarines: 4  },
-  TW: { fighters: 422,  helicopters: 240,  drones: 20,  land_vehicles: 3200,  surface_combatants: 32,  submarines: 4  },
-  SG: { fighters: 100,  helicopters: 80,   drones: 10,  land_vehicles: 800,   surface_combatants: 8,   submarines: 4  },
-  GR: { fighters: 191,  helicopters: 225,  drones: 8,   land_vehicles: 3500,  surface_combatants: 21,  submarines: 11 },
-  NO: { fighters: 57,   helicopters: 70,   drones: 6,   land_vehicles: 600,   surface_combatants: 6,   submarines: 6  },
-  SE: { fighters: 60,   helicopters: 80,   drones: 6,   land_vehicles: 600,   surface_combatants: 7,   submarines: 5  },
-  FI: { fighters: 55,   helicopters: 70,   drones: null,land_vehicles: 1400,  surface_combatants: 4,   submarines: 0  },
-  AE: { fighters: 206,  helicopters: 144,  drones: 30,  land_vehicles: 1966,  surface_combatants: 8,   submarines: 0  },
-  PK: { fighters: 371,  helicopters: 203,  drones: 69,  land_vehicles: 5470,  surface_combatants: 9,   submarines: 8  },
-  ID: { fighters: 93,   helicopters: 165,  drones: 6,   land_vehicles: 2000,  surface_combatants: 22,  submarines: 4  },
-  VN: { fighters: 189,  helicopters: 180,  drones: null,land_vehicles: 3200,  surface_combatants: 12,  submarines: 6  },
-  EG: { fighters: 380,  helicopters: 300,  drones: 20,  land_vehicles: 10000, surface_combatants: 28,  submarines: 8  },
-  UA: { fighters: 118,  helicopters: 154,  drones: 335, land_vehicles: 3084,  surface_combatants: 4,   submarines: 0  }, // Drone count includes non-expendable ISR only; FPV expendable production ~8M/yr excluded
-  IR: { fighters: 372,  helicopters: 350,  drones: 350, land_vehicles: 7000,  surface_combatants: 21,  submarines: 29 },
-  QA: { fighters: 96,   helicopters: 28,   drones: 8,   land_vehicles: 400,   surface_combatants: 4,   submarines: 0  },
-  KW: { fighters: 52,   helicopters: 40,   drones: 2,   land_vehicles: 800,   surface_combatants: 5,   submarines: 0  },
-  DZ: { fighters: 237,  helicopters: 200,  drones: 10,  land_vehicles: 4500,  surface_combatants: 14,  submarines: 6  },
-  MA: { fighters: 89,   helicopters: 90,   drones: 8,   land_vehicles: 2200,  surface_combatants: 14,  submarines: 3  },
-  TH: { fighters: 162,  helicopters: 180,  drones: null,land_vehicles: 1500,  surface_combatants: 14,  submarines: 0  },
-  MY: { fighters: 65,   helicopters: 70,   drones: null,land_vehicles: 700,   surface_combatants: 20,  submarines: 2  },
-  PH: { fighters: 49,   helicopters: 80,   drones: null,land_vehicles: 400,   surface_combatants: 12,  submarines: 0  },
-  NZ: { fighters: 0,    helicopters: 60,   drones: null,land_vehicles: 600,   surface_combatants: 6,   submarines: 0  },
-  ZA: { fighters: 49,   helicopters: 90,   drones: 6,   land_vehicles: 1400,  surface_combatants: 6,   submarines: 3  },
-  NG: { fighters: 78,   helicopters: 60,   drones: null,land_vehicles: 600,   surface_combatants: 3,   submarines: 0  },
-  AR: { fighters: 99,   helicopters: 100,  drones: null,land_vehicles: 1200,  surface_combatants: 14,  submarines: 3  },
-  CL: { fighters: 74,   helicopters: 80,   drones: null,land_vehicles: 700,   surface_combatants: 10,  submarines: 4  },
-  PT: { fighters: 30,   helicopters: 50,   drones: null,land_vehicles: 400,   surface_combatants: 8,   submarines: 2  },
-  RO: { fighters: 40,   helicopters: 90,   drones: null,land_vehicles: 2200,  surface_combatants: 6,   submarines: 1  },
-  CZ: { fighters: 24,   helicopters: 50,   drones: null,land_vehicles: 600,   surface_combatants: 0,   submarines: 0  },
-  HU: { fighters: 12,   helicopters: 30,   drones: 2,   land_vehicles: 300,   surface_combatants: 0,   submarines: 0  },
-  JO: { fighters: 79,   helicopters: 50,   drones: null,land_vehicles: 2000,  surface_combatants: 0,   submarines: 0  },
-  IQ: { fighters: 83,   helicopters: 80,   drones: null,land_vehicles: 1500,  surface_combatants: 0,   submarines: 0  },
-  AZ: { fighters: 64,   helicopters: 60,   drones: 30,  land_vehicles: 1800,  surface_combatants: 4,   submarines: 0  },
-  BD: { fighters: 109,  helicopters: 80,   drones: null,land_vehicles: 1200,  surface_combatants: 12,  submarines: 2  },
-  MM: { fighters: 146,  helicopters: 90,   drones: null,land_vehicles: 1000,  surface_combatants: 8,   submarines: 0  },
-  PE: { fighters: 76,   helicopters: 80,   drones: null,land_vehicles: 800,   surface_combatants: 8,   submarines: 6  },
-  BE: { fighters: 54,   helicopters: 48,   drones: 8,   land_vehicles: 852,   surface_combatants: 4,   submarines: 0  },
-  CH: { fighters: 25,   helicopters: 55,   drones: 6,   land_vehicles: 780,   surface_combatants: 0,   submarines: 0  },
-  DK: { fighters: 27,   helicopters: 14,   drones: 6,   land_vehicles: 450,   surface_combatants: 5,   submarines: 0  },
-  OM: { fighters: 37,   helicopters: 56,   drones: 4,   land_vehicles: 1300,  surface_combatants: 5,   submarines: 0  },
+  US: { fighters: 2790, helicopters: 4222, drones: 632,  land_vehicles: 60300, surface_combatants: 107, submarines: 68,  air_defense: 161,  missiles: 8600 },
+  CN: { fighters: 1571, helicopters: 900,  drones: 276,  land_vehicles: 11700, surface_combatants: 83,  submarines: 60,  air_defense: 300,  missiles: 3000 },
+  RU: { fighters: 780,  helicopters: 900,  drones: 552,  land_vehicles: 12000, surface_combatants: 54,  submarines: 65,  air_defense: 600,  missiles: 5000 },
+  IN: { fighters: 559,  helicopters: 632,  drones: 87,   land_vehicles: 6214,  surface_combatants: 30,  submarines: 17,  air_defense: 72,   missiles: 400  },
+  SA: { fighters: 306,  helicopters: 262,  drones: 30,   land_vehicles: 3913,  surface_combatants: 15,  submarines: 0,   air_defense: 88,   missiles: 400  },
+  GB: { fighters: 155,  helicopters: 256,  drones: 80,   land_vehicles: 1893,  surface_combatants: 19,  submarines: 10,  air_defense: 48,   missiles: 500  },
+  DE: { fighters: 110,  helicopters: 220,  drones: 83,   land_vehicles: 2693,  surface_combatants: 12,  submarines: 6,   air_defense: 36,   missiles: 300  },
+  FR: { fighters: 225,  helicopters: 353,  drones: 46,   land_vehicles: 6276,  surface_combatants: 24,  submarines: 10,  air_defense: 32,   missiles: 600  },
+  JP: { fighters: 320,  helicopters: 388,  drones: 66,   land_vehicles: 1668,  surface_combatants: 32,  submarines: 22,  air_defense: 48,   missiles: 400  },
+  KR: { fighters: 406,  helicopters: 620,  drones: 80,  land_vehicles: 7500,  surface_combatants: 28,  submarines: 22,  air_defense: 80,   missiles: 600  },
+  AU: { fighters: 100,  helicopters: 96,   drones: 8,   land_vehicles: 2416,  surface_combatants: 13,  submarines: 6,   air_defense: 12,   missiles: 200  },
+  IT: { fighters: 202,  helicopters: 250,  drones: 10,  land_vehicles: 2549,  surface_combatants: 22,  submarines: 8,   air_defense: 16,   missiles: 200  },
+  BR: { fighters: 122,  helicopters: 280,  drones: 6,   land_vehicles: 2200,  surface_combatants: 16,  submarines: 5,   air_defense: 8,    missiles: 100  },
+  CA: { fighters: 77,   helicopters: 132,  drones: 18,  land_vehicles: 1392,  surface_combatants: 12,  submarines: 4,   air_defense: 6,    missiles: 200  },
+  IL: { fighters: 354,  helicopters: 150,  drones: 132, land_vehicles: 4800,  surface_combatants: 21,  submarines: 5,   air_defense: 12,   missiles: 400  },
+  TR: { fighters: 207,  helicopters: 342,  drones: 120, land_vehicles: 8000,  surface_combatants: 24,  submarines: 12,  air_defense: 24,   missiles: 350  },
+  ES: { fighters: 142,  helicopters: 189,  drones: 6,   land_vehicles: 1211,  surface_combatants: 10,  submarines: 4,   air_defense: 12,   missiles: 100  },
+  PL: { fighters: 120,  helicopters: 120,  drones: 64,  land_vehicles: 2054,  surface_combatants: 5,   submarines: 1,   air_defense: 20,   missiles: 200  },
+  NL: { fighters: 61,   helicopters: 75,   drones: 8,   land_vehicles: 613,   surface_combatants: 5,   submarines: 4,   air_defense: 8,    missiles: 100  },
+  TW: { fighters: 422,  helicopters: 240,  drones: 20,  land_vehicles: 3200,  surface_combatants: 32,  submarines: 4,   air_defense: 60,   missiles: 500  },
+  SG: { fighters: 100,  helicopters: 80,   drones: 10,  land_vehicles: 800,   surface_combatants: 8,   submarines: 4,   air_defense: 8,    missiles: 100  },
+  GR: { fighters: 191,  helicopters: 225,  drones: 8,   land_vehicles: 3500,  surface_combatants: 21,  submarines: 11,  air_defense: 24,   missiles: 200  },
+  NO: { fighters: 57,   helicopters: 70,   drones: 6,   land_vehicles: 600,   surface_combatants: 6,   submarines: 6,   air_defense: 6,    missiles: 100  },
+  SE: { fighters: 60,   helicopters: 80,   drones: 6,   land_vehicles: 600,   surface_combatants: 7,   submarines: 5,   air_defense: 8,    missiles: 100  },
+  FI: { fighters: 55,   helicopters: 70,   drones: null,land_vehicles: 1400,  surface_combatants: 4,   submarines: 0,   air_defense: 8,    missiles: 100  },
+  AE: { fighters: 206,  helicopters: 144,  drones: 30,  land_vehicles: 1966,  surface_combatants: 8,   submarines: 0,   air_defense: 20,   missiles: 300  },
+  PK: { fighters: 371,  helicopters: 203,  drones: 69,  land_vehicles: 5470,  surface_combatants: 9,   submarines: 8,   air_defense: 48,   missiles: 300  },
+  ID: { fighters: 93,   helicopters: 165,  drones: 6,   land_vehicles: 2000,  surface_combatants: 22,  submarines: 4,   air_defense: 8,    missiles: 100  },
+  VN: { fighters: 189,  helicopters: 180,  drones: null,land_vehicles: 3200,  surface_combatants: 12,  submarines: 6,   air_defense: 16,   missiles: 150  },
+  EG: { fighters: 380,  helicopters: 300,  drones: 20,  land_vehicles: 10000, surface_combatants: 28,  submarines: 8,   air_defense: 40,   missiles: 300  },
+  UA: { fighters: 118,  helicopters: 154,  drones: 335, land_vehicles: 3084,  surface_combatants: 4,   submarines: 0,   air_defense: 24,   missiles: 200  }, // Drone count includes non-expendable ISR only; FPV expendable production ~8M/yr excluded
+  IR: { fighters: 372,  helicopters: 350,  drones: 350, land_vehicles: 7000,  surface_combatants: 21,  submarines: 29,  air_defense: 100,  missiles: 3000 },
+  QA: { fighters: 96,   helicopters: 28,   drones: 8,   land_vehicles: 400,   surface_combatants: 4,   submarines: 0,   air_defense: 6,    missiles: 50   },
+  KW: { fighters: 52,   helicopters: 40,   drones: 2,   land_vehicles: 800,   surface_combatants: 5,   submarines: 0,   air_defense: 6,    missiles: 50   },
+  DZ: { fighters: 237,  helicopters: 200,  drones: 10,  land_vehicles: 4500,  surface_combatants: 14,  submarines: 6,   air_defense: 30,   missiles: 200  },
+  MA: { fighters: 89,   helicopters: 90,   drones: 8,   land_vehicles: 2200,  surface_combatants: 14,  submarines: 3,   air_defense: 12,   missiles: 100  },
+  TH: { fighters: 162,  helicopters: 180,  drones: null,land_vehicles: 1500,  surface_combatants: 14,  submarines: 0,   air_defense: 8,    missiles: 100  },
+  MY: { fighters: 65,   helicopters: 70,   drones: null,land_vehicles: 700,   surface_combatants: 20,  submarines: 2,   air_defense: 6,    missiles: 50   },
+  PH: { fighters: 49,   helicopters: 80,   drones: null,land_vehicles: 400,   surface_combatants: 12,  submarines: 0,   air_defense: 4,    missiles: 50   },
+  NZ: { fighters: 0,    helicopters: 60,   drones: null,land_vehicles: 600,   surface_combatants: 6,   submarines: 0,   air_defense: 2,    missiles: 20   },
+  ZA: { fighters: 49,   helicopters: 90,   drones: 6,   land_vehicles: 1400,  surface_combatants: 6,   submarines: 3,   air_defense: 4,    missiles: 50   },
+  NG: { fighters: 78,   helicopters: 60,   drones: null,land_vehicles: 600,   surface_combatants: 3,   submarines: 0,   air_defense: 4,    missiles: 30   },
+  AR: { fighters: 99,   helicopters: 100,  drones: null,land_vehicles: 1200,  surface_combatants: 14,  submarines: 3,   air_defense: 6,    missiles: 80   },
+  CL: { fighters: 74,   helicopters: 80,   drones: null,land_vehicles: 700,   surface_combatants: 10,  submarines: 4,   air_defense: 4,    missiles: 60   },
+  PT: { fighters: 30,   helicopters: 50,   drones: null,land_vehicles: 400,   surface_combatants: 8,   submarines: 2,   air_defense: 4,    missiles: 50   },
+  RO: { fighters: 40,   helicopters: 90,   drones: null,land_vehicles: 2200,  surface_combatants: 6,   submarines: 1,   air_defense: 8,    missiles: 100  },
+  CZ: { fighters: 24,   helicopters: 50,   drones: null,land_vehicles: 600,   surface_combatants: 0,   submarines: 0,   air_defense: 4,    missiles: 50   },
+  HU: { fighters: 12,   helicopters: 30,   drones: 2,   land_vehicles: 300,   surface_combatants: 0,   submarines: 0,   air_defense: 4,    missiles: 30   },
+  JO: { fighters: 79,   helicopters: 50,   drones: null,land_vehicles: 2000,  surface_combatants: 0,   submarines: 0,   air_defense: 6,    missiles: 60   },
+  IQ: { fighters: 83,   helicopters: 80,   drones: null,land_vehicles: 1500,  surface_combatants: 0,   submarines: 0,   air_defense: 4,    missiles: 50   },
+  AZ: { fighters: 64,   helicopters: 60,   drones: 30,  land_vehicles: 1800,  surface_combatants: 4,   submarines: 0,   air_defense: 10,   missiles: 80   },
+  BD: { fighters: 109,  helicopters: 80,   drones: null,land_vehicles: 1200,  surface_combatants: 12,  submarines: 2,   air_defense: 6,    missiles: 50   },
+  MM: { fighters: 146,  helicopters: 90,   drones: null,land_vehicles: 1000,  surface_combatants: 8,   submarines: 0,   air_defense: 4,    missiles: 40   },
+  PE: { fighters: 76,   helicopters: 80,   drones: null,land_vehicles: 800,   surface_combatants: 8,   submarines: 6,   air_defense: 4,    missiles: 60   },
+  BE: { fighters: 54,   helicopters: 48,   drones: 8,   land_vehicles: 852,   surface_combatants: 4,   submarines: 0,   air_defense: 4,    missiles: 80   },
+  CH: { fighters: 25,   helicopters: 55,   drones: 6,   land_vehicles: 780,   surface_combatants: 0,   submarines: 0,   air_defense: 6,    missiles: 60   },
+  DK: { fighters: 27,   helicopters: 14,   drones: 6,   land_vehicles: 450,   surface_combatants: 5,   submarines: 0,   air_defense: 4,    missiles: 50   },
+  OM: { fighters: 37,   helicopters: 56,   drones: 4,   land_vehicles: 1300,  surface_combatants: 5,   submarines: 0,   air_defense: 6,    missiles: 60   },
 };
 
 // Equipment breakdown — pilot for top 10 spenders
@@ -113,6 +113,21 @@ export const CAPABILITY_DETAILS = {
       { model: "Virginia-class SSN", count: 26, manufacturer: "General Dynamics / Huntington Ingalls" },
       { model: "Los Angeles-class SSN", count: 22, manufacturer: "General Dynamics / Newport News" },
     ],
+    air_defense: [
+      { model: "Patriot PAC-3 MSE batteries", count: 60, manufacturer: "Raytheon Technologies" },
+      { model: "THAAD (Terminal High Altitude Area Defense) batteries", count: 7, manufacturer: "Lockheed Martin" },
+      { model: "Aegis BMD-equipped ships (Arleigh Burke / Ticonderoga)", count: 60, manufacturer: "Lockheed Martin" },
+      { model: "SHORAD Stinger (FIM-92) launcher units", count: 1200, manufacturer: "Raytheon Technologies" },
+      { model: "M-SHORAD Avenger system (Stinger/Hellfire)", count: 200, manufacturer: "Boeing Defense" },
+    ],
+    missiles: [
+      { model: "BGM-109 Tomahawk cruise missile (stockpile)", count: 4000, manufacturer: "Raytheon Technologies" },
+      { model: "AGM-158 JASSM / JASSM-ER", count: 3500, manufacturer: "Lockheed Martin" },
+      { model: "RIM-161 SM-3 Block IIA (BMD)", count: 600, manufacturer: "Raytheon Technologies" },
+      { model: "B61-12 / B61 nuclear gravity bomb (deployed+reserve)", count: 500, manufacturer: "Sandia National Laboratories" },
+      { model: "LGM-30G Minuteman III ICBM (silo-based)", count: 400, manufacturer: "Boeing Defense" },
+      { model: "AGM-88 HARM / AARGM-ER (anti-radiation)", count: 1500, manufacturer: "Alliant Techsystems / Northrop Grumman" },
+    ],
   },
   CN: {
     fighters: [
@@ -164,6 +179,21 @@ export const CAPABILITY_DETAILS = {
       { model: "Type 041 Yuan-class SSK", count: 12, manufacturer: "Jiangnan Shipyard" },
       { model: "Type 035 Ming-class SSK", count: 14, manufacturer: "Wuchang Shipyard" },
       { model: "Type 091 Han-class SSN", count: 2, manufacturer: "Huludao Shipyard" },
+    ],
+    air_defense: [
+      { model: "HQ-9B long-range SAM (S-300 equiv, ~120 batteries)", count: 120, manufacturer: "CPMIEC / China Aerospace" },
+      { model: "HQ-16 medium-range SAM (Buk derivative)", count: 80, manufacturer: "CASIC" },
+      { model: "HQ-22 medium-range SAM", count: 30, manufacturer: "CASIC" },
+      { model: "HQ-17A short-range SAM (Tor-M2 derivative)", count: 40, manufacturer: "CASIC" },
+      { model: "S-400 Triumf (imported from Russia, 6 battalions)", count: 6, manufacturer: "Almaz-Antey (Russia)" },
+    ],
+    missiles: [
+      { model: "DF-41 ICBM (road-mobile / silo)", count: 150, manufacturer: "CALT / China Aerospace" },
+      { model: "DF-31AG ICBM (road-mobile)", count: 72, manufacturer: "CALT" },
+      { model: "DF-5B ICBM (silo-based, MIRV)", count: 20, manufacturer: "CALT" },
+      { model: "DF-21D ASBM (carrier killer)", count: 100, manufacturer: "CASIC" },
+      { model: "DF-26 IRBM (dual-capable)", count: 200, manufacturer: "CASIC" },
+      { model: "CJ-10 / CJ-100 cruise missile", count: 500, manufacturer: "CASIC" },
     ],
   },
   RU: {
@@ -223,6 +253,22 @@ export const CAPABILITY_DETAILS = {
       { model: "Oscar II SSGN (Pr.949A)", count: 4, manufacturer: "Sevmash" },
       { model: "Borei-A SSBN (Pr.955A)", count: 3, manufacturer: "Sevmash" },
     ],
+    air_defense: [
+      { model: "S-400 Triumf (battalion sets, ~40 bn)", count: 40, manufacturer: "Almaz-Antey" },
+      { model: "S-300V4 / S-300PM2 (strategic area defense)", count: 80, manufacturer: "Almaz-Antey" },
+      { model: "S-350E Poliment-Redut (medium-range)", count: 12, manufacturer: "Almaz-Antey" },
+      { model: "Buk-M3 (medium-range, mobile)", count: 100, manufacturer: "Fakel MKB" },
+      { model: "Pantsir-S1/S2 (SHORAD / point defense)", count: 350, manufacturer: "KBP Instrument Design Bureau" },
+      { model: "Tor-M2 (short-range tactical)", count: 120, manufacturer: "Fakel MKB" },
+    ],
+    missiles: [
+      { model: "RS-28 Sarmat ICBM (silo-based, MIRV)", count: 10, manufacturer: "Makeyev Rocket Design Bureau" },
+      { model: "RS-24 Yars ICBM (road-mobile/silo)", count: 185, manufacturer: "MIT / Votkinsk Plant" },
+      { model: "R-36M2 Voevoda ICBM (silo, heavy)", count: 46, manufacturer: "Yuzhnoye Design Office" },
+      { model: "Kh-101 / Kh-102 cruise missile (air-launched)", count: 500, manufacturer: "Raduga Design Bureau" },
+      { model: "3M-14 Kalibr cruise missile (sea/sub-launched)", count: 800, manufacturer: "Novator Design Bureau" },
+      { model: "Iskander-M SRBM (theater strike)", count: 200, manufacturer: "KBM Kolomna" },
+    ],
   },
   IN: {
     fighters: [
@@ -271,6 +317,19 @@ export const CAPABILITY_DETAILS = {
       { model: "Arihant-class SSBN", count: 2, manufacturer: "Ship Building Centre Visakhapatnam" },
       { model: "Shishumar-class SSK (Type 209)", count: 2, manufacturer: "HDW / Mazagon Dock" },
     ],
+    air_defense: [
+      { model: "S-400 Triumf (squadrons, delivery 2021-)", count: 5, manufacturer: "Almaz-Antey (Russia)" },
+      { model: "Akash SAM (medium-range, domestic)", count: 25, manufacturer: "DRDO / BDL" },
+      { model: "Barak-8 / MRSAM (Indian Navy / Air Force)", count: 18, manufacturer: "IAI (Israel) / DRDO" },
+      { model: "Spyder QR SAM (short-range, IAF)", count: 8, manufacturer: "Rafael / IAI (Israel)" },
+    ],
+    missiles: [
+      { model: "Agni-V ICBM (road-mobile)", count: 50, manufacturer: "DRDO / BrahMos Aerospace" },
+      { model: "Agni-IV IRBM", count: 20, manufacturer: "DRDO" },
+      { model: "BrahMos supersonic cruise missile (all variants)", count: 250, manufacturer: "BrahMos Aerospace" },
+      { model: "Nirbhay cruise missile (subsonic)", count: 50, manufacturer: "DRDO / ADE" },
+      { model: "K-15 Sagarika SLBM (submarine-launched)", count: 24, manufacturer: "DRDO" },
+    ],
   },
   SA: {
     fighters: [
@@ -306,6 +365,17 @@ export const CAPABILITY_DETAILS = {
       { model: "Badr-class corvette", count: 4, manufacturer: "Tacoma Boatbuilding" },
     ],
     submarines: [],
+    air_defense: [
+      { model: "Patriot PAC-2/PAC-3 batteries", count: 18, manufacturer: "Raytheon Technologies" },
+      { model: "Hawk XXI medium-range SAM", count: 16, manufacturer: "Raytheon Technologies" },
+      { model: "Skyguard Aspide SHORAD", count: 30, manufacturer: "MBDA / OTO Melara" },
+      { model: "THAAD (US FMS, undisclosed batteries)", count: 2, manufacturer: "Lockheed Martin" },
+    ],
+    missiles: [
+      { model: "AGM-65D Maverick (air-to-surface)", count: 300, manufacturer: "Raytheon Technologies" },
+      { model: "Storm Shadow / SCALP-EG (on order via UK/FR)", count: 30, manufacturer: "MBDA", on_order: true },
+      { model: "CSS-5 DF-21 MRBM (reported acquisition via China)", count: 60, manufacturer: "CASIC (China)" },
+    ],
   },
   GB: {
     fighters: [
@@ -342,6 +412,18 @@ export const CAPABILITY_DETAILS = {
       { model: "Vanguard-class SSBN", count: 4, manufacturer: "BAE Systems Barrow" },
       { model: "Astute-class SSN", count: 5, manufacturer: "BAE Systems Barrow" },
     ],
+    air_defense: [
+      { model: "Rapier FSC SHORAD (being replaced by Sky Sabre)", count: 0, manufacturer: "MBDA / BAE Systems" },
+      { model: "Sky Sabre (CAMM / Land Ceptor) batteries", count: 4, manufacturer: "MBDA" },
+      { model: "Starstreak HVM (VSHORAD launcher units)", count: 40, manufacturer: "Thales Air Defence UK" },
+      { model: "Type 45 Daring DDG Aster-30 (naval area defence)", count: 6, manufacturer: "MBDA" },
+    ],
+    missiles: [
+      { model: "Trident II D5 SLBM (submarine-launched nuclear)", count: 160, manufacturer: "Lockheed Martin" },
+      { model: "Storm Shadow (SCALP-EG) cruise missile (air-launched)", count: 300, manufacturer: "MBDA" },
+      { model: "Brimstone 3 (air-launched precision)", count: 600, manufacturer: "MBDA" },
+      { model: "Harpoon Block II anti-ship missile", count: 60, manufacturer: "Boeing Defense" },
+    ],
   },
   DE: {
     fighters: [
@@ -374,6 +456,18 @@ export const CAPABILITY_DETAILS = {
     ],
     submarines: [
       { model: "Type 212A SSK", count: 6, manufacturer: "TKMS / Howaldtswerke-Deutsche Werft" },
+    ],
+    air_defense: [
+      { model: "IRIS-T SLM (medium-range, 4 batteries)", count: 4, manufacturer: "Diehl Defence" },
+      { model: "Patriot PAC-2/PAC-3 batteries", count: 12, manufacturer: "Raytheon Technologies" },
+      { model: "MANTIS C-RAM (counter-rockets, artillery, mortars)", count: 6, manufacturer: "Rheinmetall Air Defence" },
+      { model: "Skyshield (AHEAD) SHORAD system", count: 6, manufacturer: "Rheinmetall Air Defence" },
+    ],
+    missiles: [
+      { model: "Taurus KEPD-350 cruise missile (air-launched)", count: 600, manufacturer: "MBDA / Saab" },
+      { model: "AGM-88 HARM / AARGM (anti-radiation)", count: 200, manufacturer: "Alliant Techsystems" },
+      { model: "RBS-15 Mk.3 anti-ship missile", count: 60, manufacturer: "Saab Dynamics" },
+      { model: "SCALP-EG Storm Shadow (under evaluation for order)", count: 0, manufacturer: "MBDA", on_order: true },
     ],
   },
   FR: {
@@ -423,6 +517,19 @@ export const CAPABILITY_DETAILS = {
       { model: "Suffren-class SSN (Barracuda programme)", count: 4, manufacturer: "Naval Group" },
       { model: "Rubis-class SSN", count: 3, manufacturer: "Naval Group" },
     ],
+    air_defense: [
+      { model: "SAMP/T Mamba (Aster-30 land-based, 4 batteries)", count: 4, manufacturer: "MBDA" },
+      { model: "Crotale NG (short-range, Air Force)", count: 12, manufacturer: "Thales" },
+      { model: "Mistral SHORAD (manportable/vehicle)", count: 200, manufacturer: "MBDA" },
+      { model: "VL MICA (ship-based, naval air defense)", count: 24, manufacturer: "MBDA" },
+    ],
+    missiles: [
+      { model: "M51.2 SLBM (submarine-launched nuclear, MIRV)", count: 240, manufacturer: "ArianeGroup" },
+      { model: "ASMP-A nuclear standoff missile (air-launched)", count: 60, manufacturer: "MBDA" },
+      { model: "SCALP-EG / Storm Shadow (air-launched precision strike)", count: 400, manufacturer: "MBDA" },
+      { model: "Exocet AM39 / MM40 Block 3 anti-ship missile", count: 150, manufacturer: "MBDA" },
+      { model: "MdCN naval cruise missile (ship/sub-launched)", count: 100, manufacturer: "MBDA" },
+    ],
   },
   JP: {
     fighters: [
@@ -470,6 +577,18 @@ export const CAPABILITY_DETAILS = {
       { model: "Sōryū-class SSK", count: 9, manufacturer: "Mitsubishi HI / Kawasaki" },
       { model: "Taigei-class SSK", count: 4, manufacturer: "Mitsubishi HI / Kawasaki" },
     ],
+    air_defense: [
+      { model: "Patriot PAC-3 batteries (24 fire units)", count: 24, manufacturer: "Raytheon Technologies" },
+      { model: "Type 03 Chū-SAM (medium-range, JASDF)", count: 12, manufacturer: "Mitsubishi Electric / Toshiba" },
+      { model: "Type 11 Tan-SAM (short-range, JGSDF)", count: 12, manufacturer: "Mitsubishi Electric" },
+      { model: "Aegis BMD-equipped destroyers (Maya, Atago, Kongo)", count: 8, manufacturer: "Mitsubishi HI / Lockheed Martin" },
+    ],
+    missiles: [
+      { model: "Type 12 surface-to-ship missile (shore-based)", count: 100, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "ASM-3 air-to-ship missile (supersonic)", count: 50, manufacturer: "Mitsubishi Heavy Industries" },
+      { model: "Tomahawk cruise missile (FMS order, delivery 2025+)", count: 400, manufacturer: "Raytheon Technologies", on_order: true },
+      { model: "Type 88 surface-to-ship missile (coastal defense)", count: 150, manufacturer: "Mitsubishi Heavy Industries" },
+    ],
   },
   KR: {
     fighters: [
@@ -512,6 +631,19 @@ export const CAPABILITY_DETAILS = {
       { model: "Jangbogo-I (Type 209/1200) SSK", count: 10, manufacturer: "HDW / Daewoo" },
       { model: "Jangbogo-II (Type 214) SSK", count: 9, manufacturer: "HDW / DSME" },
       { model: "Jangbogo-III (KSS-III) SSK", count: 3, manufacturer: "Daewoo Shipbuilding (DSME)" },
+    ],
+    air_defense: [
+      { model: "Patriot PAC-3 batteries", count: 8, manufacturer: "Raytheon Technologies" },
+      { model: "Cheolmae-2 M-SAM (medium-range, domestic)", count: 24, manufacturer: "LIG Nex1" },
+      { model: "L-SAM (long-range, under development)", count: 0, manufacturer: "LIG Nex1", on_order: true },
+      { model: "Mistral / Chiron SHORAD units", count: 40, manufacturer: "MBDA / Hanwha" },
+      { model: "Aegis BMD KDX-III destroyers", count: 3, manufacturer: "Hyundai HI / Lockheed Martin" },
+    ],
+    missiles: [
+      { model: "Hyunmoo-2 SRBM (short-range ballistic)", count: 200, manufacturer: "Agency for Defense Development" },
+      { model: "Hyunmoo-3 cruise missile (C/D variants)", count: 300, manufacturer: "LIG Nex1" },
+      { model: "Hyunmoo-4 / KTSSM ballistic missile", count: 100, manufacturer: "Agency for Defense Development" },
+      { model: "Harpoon / Harpoon Block II anti-ship", count: 200, manufacturer: "Boeing Defense" },
     ],
   },
   TR: {
@@ -561,6 +693,18 @@ export const CAPABILITY_DETAILS = {
       { model: "Gür-class SSK (Type 209/1200)", count: 4, manufacturer: "HDW / Gölcük Shipyard" },
       { model: "Ay-class SSK (Type 209/1200)", count: 4, manufacturer: "HDW / Gölcük Shipyard" },
     ],
+    air_defense: [
+      { model: "S-400 Triumf (4 batteries, Turkish acquisition 2019)", count: 4, manufacturer: "Almaz-Antey (Russia)" },
+      { model: "Hisar-A+ / Hisar-O+ (domestic short/medium SAM)", count: 12, manufacturer: "Aselsan / Roketsan" },
+      { model: "Patriot PAC-2 (returned after S-400 controversy)", count: 0, manufacturer: "Raytheon Technologies" },
+      { model: "Siper (long-range, domestic, under development)", count: 0, manufacturer: "Aselsan / Roketsan", on_order: true },
+    ],
+    missiles: [
+      { model: "SOM-B2 cruise missile (air-launched)", count: 100, manufacturer: "Roketsan" },
+      { model: "Bora / J-600T SRBM (theater ballistic)", count: 100, manufacturer: "Roketsan" },
+      { model: "Cirit 2.75″ precision guided rocket", count: 500, manufacturer: "Roketsan" },
+      { model: "L-UMTAS long-range anti-tank missile", count: 200, manufacturer: "Roketsan" },
+    ],
   },
   IL: {
     fighters: [
@@ -600,6 +744,18 @@ export const CAPABILITY_DETAILS = {
       { model: "Dolphin II-class SSK", count: 3, manufacturer: "ThyssenKrupp Marine Systems" },
       { model: "Dolphin-class SSK", count: 2, manufacturer: "HDW / ThyssenKrupp" },
     ],
+    air_defense: [
+      { model: "Arrow 3 exo-atmospheric interceptor (batteries)", count: 2, manufacturer: "IAI / Boeing" },
+      { model: "Arrow 2 endo-atmospheric interceptor (batteries)", count: 3, manufacturer: "IAI / Boeing" },
+      { model: "David's Sling (Stunner) medium-range interceptor", count: 2, manufacturer: "Rafael / Raytheon" },
+      { model: "Iron Dome mobile batteries (deployed)", count: 10, manufacturer: "Rafael Advanced Defense Systems" },
+    ],
+    missiles: [
+      { model: "Jericho III ICBM (assumed nuclear-capable, silo)", count: 50, manufacturer: "Israel Aerospace Industries" },
+      { model: "Popeye Turbo ALCM (nuclear-capable, air-launched)", count: 100, manufacturer: "Rafael Advanced Defense Systems" },
+      { model: "Delilah cruise missile (air/ground-launched)", count: 200, manufacturer: "IAI" },
+      { model: "Rampage supersonic air-to-surface missile", count: 150, manufacturer: "IAI / Elbit Systems" },
+    ],
   },
   AU: {
     fighters: [
@@ -632,6 +788,17 @@ export const CAPABILITY_DETAILS = {
     ],
     submarines: [
       { model: "Collins-class SSK", count: 6, manufacturer: "ASC / Kockums" },
+    ],
+    air_defense: [
+      { model: "RIM-116 RAM (Rolling Airframe Missile, naval)", count: 4, manufacturer: "Raytheon / Diehl BGT" },
+      { model: "RIM-7 Sea Sparrow / ESSM (ship-based)", count: 12, manufacturer: "Raytheon Technologies" },
+      { model: "Buk-M1 (legacy, RAAF ground-based)", count: 0, manufacturer: "Fakel MKB (Russia)" },
+      { model: "NASAMS (on order, as of 2024)", count: 2, manufacturer: "Kongsberg / Raytheon", on_order: true },
+    ],
+    missiles: [
+      { model: "AGM-158B JASSM-ER (F-35A delivered)", count: 200, manufacturer: "Lockheed Martin" },
+      { model: "Harpoon Block II anti-ship missile", count: 60, manufacturer: "Boeing Defense" },
+      { model: "JSM (Joint Strike Missile, F-35A compatible)", count: 100, manufacturer: "Kongsberg Defence & Aerospace" },
     ],
   },
   IT: {
@@ -673,6 +840,17 @@ export const CAPABILITY_DETAILS = {
     submarines: [
       { model: "Todaro / Type 212A SSK", count: 4, manufacturer: "TKMS / Fincantieri" },
       { model: "Sauro class SSK (phasing out)", count: 4, manufacturer: "Fincantieri" },
+    ],
+    air_defense: [
+      { model: "CAMM / Sky Sabre SHORAD (replacing Aspide)", count: 4, manufacturer: "MBDA" },
+      { model: "Aspide 2000 SHORAD (legacy)", count: 8, manufacturer: "MBDA / Selex" },
+      { model: "SAMP/T (Aster-30 land-based)", count: 2, manufacturer: "MBDA" },
+      { model: "Stinger MANPADS (man-portable)", count: 100, manufacturer: "Raytheon Technologies" },
+    ],
+    missiles: [
+      { model: "Storm Shadow SCALP-EG (air-launched)", count: 200, manufacturer: "MBDA" },
+      { model: "OTOMAT Mk2 / Teseo anti-ship missile", count: 100, manufacturer: "MBDA / Leonardo" },
+      { model: "Meteor BVRAAM (Eurofighter equipped)", count: 100, manufacturer: "MBDA" },
     ],
   },
   CA: {
@@ -740,6 +918,17 @@ export const CAPABILITY_DETAILS = {
       { model: "ORP Orzeł SSK (Kilo-derived, refit)", count: 1, manufacturer: "Stocznia Gdańska (1980s)" },
       { model: "ORKA class SSK (programme 2025+)", count: 3, manufacturer: "TBD", on_order: true },
     ],
+    air_defense: [
+      { model: "Patriot PAC-3 (4 batteries, delivery 2024)", count: 4, manufacturer: "Raytheon Technologies" },
+      { model: "SHORAD Piorun / Grom MANPADS", count: 500, manufacturer: "Mesko / PGZ" },
+      { model: "S-200 Wegiel / S-200 Newa (legacy Soviet)", count: 8, manufacturer: "Almaz-Antey (Russia)" },
+      { model: "NASAMS (on order)", count: 2, manufacturer: "Kongsberg / Raytheon", on_order: true },
+    ],
+    missiles: [
+      { model: "AGM-158 JASSM (with F-16, order placed)", count: 40, manufacturer: "Lockheed Martin" },
+      { model: "Harpoon anti-ship missile", count: 100, manufacturer: "Boeing Defense" },
+      { model: "HIMARS / MLRS (US-supplied)", count: 100, manufacturer: "Lockheed Martin" },
+    ],
   },
   UA: {
     fighters: [
@@ -776,6 +965,19 @@ export const CAPABILITY_DETAILS = {
       { model: "Katran / Gyurza-M gunboat", count: 3, manufacturer: "Kuznya na Rybalskomu" },
     ],
     submarines: [],
+    air_defense: [
+      { model: "S-300 batteries (legacy, war attrition)", count: 6, manufacturer: "Almaz-Antey (Russia)" },
+      { model: "Patriot PAC-3 (US-supplied)", count: 2, manufacturer: "Raytheon Technologies" },
+      { model: "NASAMS (Norwegian / US supply)", count: 4, manufacturer: "Kongsberg / Raytheon" },
+      { model: "IRIS-T SLM batteries (German supply)", count: 4, manufacturer: "Diehl Defence" },
+      { model: "Buk-M1 (legacy inventory, depleted)", count: 8, manufacturer: "Fakel MKB (Russia)" },
+    ],
+    missiles: [
+      { model: "Neptune R-360 anti-ship cruise missile (sank Moskva)", count: 80, manufacturer: "Luch Design Bureau (Ukraine)" },
+      { model: "Hrim-2 / Grom-2 SRBM (in development)", count: 0, manufacturer: "Yuzhnoye Design Bureau", on_order: true },
+      { model: "HIMARS (M31/M57 rockets, US supply)", count: 200, manufacturer: "Lockheed Martin" },
+      { model: "Storm Shadow / SCALP-EG (UK/FR supply)", count: 80, manufacturer: "MBDA" },
+    ],
   },
   AE: {
     fighters: [
@@ -843,6 +1045,17 @@ export const CAPABILITY_DETAILS = {
       { model: "Agosta 90B Khalid-class SSK", count: 3, manufacturer: "DCNS / Karachi Shipyard" },
       { model: "Agosta 70 Hashmat-class SSK", count: 2, manufacturer: "DCNS (France)" },
       { model: "Hangor II / S-20 class SSK (on order)", count: 3, manufacturer: "CSSC (China)", on_order: true },
+    ],
+    air_defense: [
+      { model: "LY-80 / HQ-16 (Chinese medium-range SAM)", count: 12, manufacturer: "CPMIEC (China)" },
+      { model: "Spada SHORAD (Aspide-based)", count: 8, manufacturer: "MBDA / OTO Melara (Italy)" },
+      { model: "Anza Mk.III MANPADS (domestic)", count: 200, manufacturer: "NESCOM / POF (Pakistan)" },
+    ],
+    missiles: [
+      { model: "Shaheen-3 MRBM (nuclear-capable)", count: 50, manufacturer: "NESCOM (Pakistan)" },
+      { model: "Babur cruise missile (ground/air-launched)", count: 150, manufacturer: "NESCOM (Pakistan)" },
+      { model: "Ra'ad ALCM (air-launched nuclear cruise missile)", count: 60, manufacturer: "NESCOM (Pakistan)" },
+      { model: "Nasr / Hatf-IX tactical battlefield missile", count: 100, manufacturer: "NESCOM (Pakistan)" },
     ],
   },
   ES: {
@@ -950,6 +1163,18 @@ export const CAPABILITY_DETAILS = {
       { model: "Hai Kun (Indigenous Defense Submarine, IDS)", count: 1, manufacturer: "CSBC Corporation" },
       { model: "Tench-class SS (training only)", count: 2, manufacturer: "Portsmouth Naval Shipyard", is_trainer: true },
     ],
+    air_defense: [
+      { model: "Patriot PAC-3 batteries (6 batteries)", count: 6, manufacturer: "Raytheon Technologies" },
+      { model: "Sky Bow III / Tien Kung III (indigenous long-range)", count: 10, manufacturer: "NCSIST (Taiwan)" },
+      { model: "Sky Bow II / Tien Kung II (medium-range)", count: 20, manufacturer: "NCSIST (Taiwan)" },
+      { model: "Antelope / Sky Sword II (SHORAD)", count: 24, manufacturer: "NCSIST" },
+    ],
+    missiles: [
+      { model: "Hsiung Feng IIE cruise missile (land-attack)", count: 250, manufacturer: "NCSIST (Taiwan)" },
+      { model: "Hsiung Feng III supersonic anti-ship missile", count: 150, manufacturer: "NCSIST (Taiwan)" },
+      { model: "Wan Chien stand-off cluster (air-launched)", count: 100, manufacturer: "NCSIST (Taiwan)" },
+      { model: "AGM-88 HARM (anti-radiation)", count: 50, manufacturer: "Alliant Techsystems" },
+    ],
   },
 
   EG: {
@@ -1038,6 +1263,17 @@ export const CAPABILITY_DETAILS = {
       { model: "Type 214 AIP SSK (Papanikolis-class)", count: 4, manufacturer: "HDW / Hellenic Shipyards" },
       { model: "Type 209/1200 SSK (Glaukos-class)", count: 4, manufacturer: "Howaldtswerke (Germany)" },
       { model: "Type 209/1100 SSK (Poseidon-class, reserve)", count: 3, manufacturer: "Howaldtswerke (Germany)" },
+    ],
+    air_defense: [
+      { model: "Patriot PAC-3 batteries", count: 4, manufacturer: "Raytheon Technologies" },
+      { model: "S-300PMU1 (Russian system, 4 batteries)", count: 4, manufacturer: "Almaz-Antey (Russia)" },
+      { model: "SHORAD Stinger / Mistral MANPADS", count: 100, manufacturer: "Raytheon / MBDA" },
+      { model: "Tor-M1 (short-range, 4 batteries)", count: 4, manufacturer: "Fakel MKB (Russia)" },
+    ],
+    missiles: [
+      { model: "Harpoon Block II anti-ship missile", count: 100, manufacturer: "Boeing Defense" },
+      { model: "AGM-88 HARM (anti-radiation, F-16 armed)", count: 100, manufacturer: "Alliant Techsystems" },
+      { model: "Storm Shadow (on order, delivery TBD)", count: 18, manufacturer: "MBDA", on_order: true },
     ],
   },
 
@@ -1286,16 +1522,21 @@ export const CAPABILITY_DETAILS = {
 // match the detail breakdown, eliminating dual-maintenance drift.
 export function getCapabilitySummary(countryCode) {
   const details = CAPABILITY_DETAILS[countryCode];
+  const estimated = DEFENSE_CAPABILITIES[countryCode];
   if (details) {
     const result = { _sourced: true };
-    ['fighters', 'helicopters', 'land_vehicles', 'surface_combatants', 'submarines'].forEach(key => {
-      result[key] = (details[key] || [])
-        .filter(item => !item.is_trainer && !item.is_expendable)
-        .reduce((s, item) => s + (item.count ?? 0), 0);
+    ['fighters', 'helicopters', 'drones', 'land_vehicles', 'surface_combatants', 'submarines', 'air_defense', 'missiles'].forEach(key => {
+      if (details[key] !== undefined) {
+        result[key] = (details[key] || [])
+          .filter(item => !item.is_trainer && !item.is_expendable)
+          .reduce((s, item) => s + (item.count ?? 0), 0);
+      } else if (estimated && estimated[key] !== undefined) {
+        // Fall back to DEFENSE_CAPABILITIES for keys not in details (e.g. air_defense, missiles)
+        result[key] = estimated[key];
+      }
     });
     return result;
   }
-  const estimated = DEFENSE_CAPABILITIES[countryCode];
   return estimated ? { ...estimated, _sourced: false } : null;
 }
 

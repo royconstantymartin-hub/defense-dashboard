@@ -18,7 +18,7 @@ import {
   ArrowUpDown, Globe2, BarChart2, Percent, Shield,
   Anchor, Plane, Satellite, Zap, Lock, Flag, ExternalLink,
   FileText, Building2, Newspaper, Users, Globe, Crosshair,
-  Target, Gauge, Download, FileCheck,
+  Target, Gauge, Download, FileCheck, Radar,
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { CAPABILITY_DETAILS, PLATFORM_WIKI_TITLES, WKP, STATIC_PLATFORM_IMAGES, DEFENSE_CAPABILITIES, getCapabilitySummary } from "@/data/defenseCapabilities";
@@ -649,7 +649,7 @@ const CAP_CATEGORIES = [
   },
   {
     key: "land_vehicles",
-    label: "Land Forces",
+    label: "Armored Vehicles",
     sublabel: "MBTs, IFVs, APCs & Armour",
     Icon: TankIcon,
     scale: 500,
@@ -695,6 +695,58 @@ const CAP_CATEGORIES = [
     iconBadgeBg: "bg-slate-50",
     iconColor: "text-slate-500",
   },
+  {
+    key: "air_defense",
+    label: "Air Defense",
+    sublabel: "SAM Batteries, BMD & SHORAD",
+    Icon: ({ className }) => (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2 L12 8" />
+        <path d="M8 5 Q12 3 16 5" />
+        <path d="M4 12 Q12 6 20 12" />
+        <path d="M2 16 Q12 9 22 16" />
+        <line x1="12" y1="8" x2="7" y2="16" />
+        <line x1="12" y1="8" x2="17" y2="16" />
+        <rect x="9" y="16" width="6" height="4" rx="1" />
+      </svg>
+    ),
+    scale: 20,
+    scaleLabel: "20 systems",
+    bg: "bg-white",
+    border: "border-slate-200",
+    labelColor: "text-slate-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
+    hideCount: true,
+  },
+  {
+    key: "missiles",
+    label: "Missiles",
+    sublabel: "Cruise, Ballistic & Strike",
+    Icon: ({ className }) => (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2 L12 14" />
+        <path d="M9 5 L12 2 L15 5" />
+        <path d="M10 14 L8 18 L12 16 L16 18 L14 14" />
+        <line x1="7" y1="9" x2="10" y2="9" />
+        <line x1="14" y1="9" x2="17" y2="9" />
+      </svg>
+    ),
+    scale: 500,
+    scaleLabel: "500 missiles",
+    bg: "bg-white",
+    border: "border-slate-200",
+    labelColor: "text-slate-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
+    hideCount: true,
+  },
 ];
 
 // Pre-computed world ranks and max values for capability tiles
@@ -707,6 +759,14 @@ CAP_CATEGORIES.forEach(({ key }) => {
   CAP_MAX[key] = sorted[0]?.[1][key] ?? 0;
   CAP_RANKS[key] = sorted.map(([code]) => code);
 });
+
+// Group categories into macro sections for display
+const CAP_GROUPS = [
+  { label: "Air Power",        Icon: Plane,   categoryKeys: ["fighters", "helicopters", "drones"] },
+  { label: "Land Forces",      Icon: Shield,  categoryKeys: ["land_vehicles"] },
+  { label: "Naval",            Icon: Anchor,  categoryKeys: ["surface_combatants", "submarines"] },
+  { label: "Defense Systems",  Icon: Radar,   categoryKeys: ["air_defense", "missiles"] },
+];
 
 
 function useCountUp(target, duration = 900) {
@@ -1197,23 +1257,35 @@ function DefenseCapabilitiesCard({ countryCode }) {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {CAP_CATEGORIES.map((cat) => {
-                const rank = CAP_RANKS[cat.key].indexOf(countryCode) + 1;
-                const isClickable = hasDetails && (cap[cat.key] ?? 0) > 0;
-                return (
-                  <CapabilityTile
-                    key={cat.key}
-                    cat={cat}
-                    count={cap[cat.key] ?? null}
-                    rank={rank > 0 ? rank : null}
-                    maxCount={CAP_MAX[cat.key]}
-                    isClickable={isClickable}
-                    isSelected={openCat === cat.key}
-                    onClick={() => setOpenCat(prev => prev === cat.key ? null : cat.key)}
-                  />
-                );
-              })}
+            <div className="space-y-4">
+              {CAP_GROUPS.map(group => (
+                <div key={group.label}>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <group.Icon className="w-3.5 h-3.5 text-slate-400" />
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{group.label}</span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                    {group.categoryKeys.map(key => {
+                      const cat = CAP_CATEGORIES.find(c => c.key === key);
+                      if (!cat) return null;
+                      const rank = CAP_RANKS[cat.key].indexOf(countryCode) + 1;
+                      const isClickable = hasDetails && (cap[cat.key] ?? 0) > 0;
+                      return (
+                        <CapabilityTile
+                          key={cat.key}
+                          cat={cat}
+                          count={cap[cat.key] ?? null}
+                          rank={rank > 0 ? rank : null}
+                          maxCount={CAP_MAX[cat.key]}
+                          isClickable={isClickable}
+                          isSelected={openCat === cat.key}
+                          onClick={() => setOpenCat(prev => prev === cat.key ? null : cat.key)}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
 
             {openCat && hasDetails && (
