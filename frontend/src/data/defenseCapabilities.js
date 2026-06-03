@@ -17,7 +17,7 @@ export const DEFENSE_CAPABILITIES = {
   IL: { fighters: 354,  helicopters: 150,  drones: 132, land_vehicles: 4800,  surface_combatants: 21,  submarines: 5  },
   TR: { fighters: 207,  helicopters: 342,  drones: 120, land_vehicles: 8000,  surface_combatants: 24,  submarines: 12 },
   ES: { fighters: 142,  helicopters: 189,  drones: 6,   land_vehicles: 1211,  surface_combatants: 10,  submarines: 4  },
-  PL: { fighters: 120,  helicopters: 120,  drones: 64,  land_vehicles: 2054,  surface_combatants: 5,   submarines: 4  },
+  PL: { fighters: 120,  helicopters: 120,  drones: 64,  land_vehicles: 2054,  surface_combatants: 5,   submarines: 1  },
   NL: { fighters: 61,   helicopters: 75,   drones: 8,   land_vehicles: 613,   surface_combatants: 5,   submarines: 4  },
   TW: { fighters: 422,  helicopters: 240,  drones: 20,  land_vehicles: 3200,  surface_combatants: 32,  submarines: 4  },
   SG: { fighters: 100,  helicopters: 80,   drones: 10,  land_vehicles: 800,   surface_combatants: 8,   submarines: 4  },
@@ -498,7 +498,7 @@ export const CAPABILITY_DETAILS = {
       { model: "K2 Black Panther MBT", count: 260, manufacturer: "Hyundai Rotem" },
       { model: "T-80U MBT (reserve)", count: 42, manufacturer: "Uralvagonzavod (Russia)" },
       { model: "K21 IFV", count: 900, manufacturer: "Hanwha Defense" },
-      { model: "AS21 Redback IFV (on order)", count: 100, manufacturer: "Hanwha Defense" },
+      { model: "AS21 Redback IFV (on order)", count: 100, manufacturer: "Hanwha Defense", on_order: true },
       { model: "K200 KAAV APC", count: 2400, manufacturer: "Hanwha Defense" },
     ],
     surface_combatants: [
@@ -517,7 +517,7 @@ export const CAPABILITY_DETAILS = {
   TR: {
     fighters: [
       { model: "F-16C/D Block 40/50 Fighting Falcon", count: 157, manufacturer: "Lockheed Martin / TAI" },
-      { model: "F-16C/D Block 70 (on order; deliveries from 2026)", count: 8, manufacturer: "Lockheed Martin" },
+      { model: "F-16C/D Block 70 (on order; deliveries from 2026)", count: 8, manufacturer: "Lockheed Martin", on_order: true },
       { model: "F-4E/2020 Terminator (multi-role, phasing)", count: 10, manufacturer: "IAI / TAI" },
     ],
     helicopters: [
@@ -529,7 +529,7 @@ export const CAPABILITY_DETAILS = {
       { model: "AH-1W Super Cobra (attack, ageing)", count: 28, manufacturer: "Bell Helicopter" },
       { model: "S-70A Black Hawk (land forces)", count: 50, manufacturer: "Sikorsky / TAI" },
       { model: "AB205 / UH-1H Iroquois (utility, phasing)", count: 40, manufacturer: "Bell / TAI" },
-      { model: "NH90 TTH (army transport, ordered)", count: 8, manufacturer: "NHIndustries / TAI" },
+      { model: "NH90 TTH (army transport, ordered)", count: 8, manufacturer: "NHIndustries / TAI", on_order: true },
     ],
     drones: [
       { model: "Bayraktar TB2 MALE", count: 60, manufacturer: "Baykar" },
@@ -568,7 +568,7 @@ export const CAPABILITY_DETAILS = {
       { model: "F-15I Ra'am (long-range strike)", count: 25, manufacturer: "Boeing" },
       { model: "F-15C/D Baz (air superiority)", count: 50, manufacturer: "Boeing" },
       { model: "F-16D Brakeet / F-16I Sufa (multi-role)", count: 243, manufacturer: "Lockheed Martin / IAI" },
-      { model: "F-15IA Advanced Eagle (25 on order, deliveries from 2026)", count: 0, manufacturer: "Boeing" },
+      { model: "F-15IA Advanced Eagle (25 on order, deliveries from 2026)", count: 0, manufacturer: "Boeing", on_order: true },
     ],
     helicopters: [
       { model: "AH-64D/E Apache Saraf (attack)", count: 50, manufacturer: "Boeing" },
@@ -678,7 +678,7 @@ export const CAPABILITY_DETAILS = {
   CA: {
     fighters: [
       { model: "CF-18A/B Hornet (legacy, mid-life upgrade)", count: 77, manufacturer: "Boeing / CAE" },
-      { model: "F-35A Lightning II (ordered 2023, delivery 2026+)", count: 88, manufacturer: "Lockheed Martin" },
+      { model: "F-35A Lightning II (ordered 2023, delivery 2026+)", count: 88, manufacturer: "Lockheed Martin", on_order: true },
     ],
     helicopters: [
       { model: "CH-146 Griffon (utility / medevac)", count: 75, manufacturer: "Bell Textron" },
@@ -708,8 +708,8 @@ export const CAPABILITY_DETAILS = {
     fighters: [
       { model: "F-16C/D Block 52+ Jastrząb", count: 48, manufacturer: "Lockheed Martin" },
       { model: "MiG-29A/UB (14 transferred to Ukraine 2023; ~6-8 remaining in storage)", count: 6, manufacturer: "Mikoyan (Russia)" },
-      { model: "FA-50GF (ordered, delivery 2023+)", count: 48, manufacturer: "Korea Aerospace Industries" },
-      { model: "F-35A Lightning II (on order, 2030+)", count: 32, manufacturer: "Lockheed Martin" },
+      { model: "FA-50GF (ordered, delivery 2023+)", count: 48, manufacturer: "Korea Aerospace Industries", on_order: true },
+      { model: "F-35A Lightning II (on order, 2030+)", count: 32, manufacturer: "Lockheed Martin", on_order: true },
     ],
     helicopters: [
       { model: "Mi-8 / Mi-17 Hip (transport)", count: 56, manufacturer: "Russian Helicopters" },
@@ -727,9 +727,9 @@ export const CAPABILITY_DETAILS = {
       { model: "Leopard 2A5 MBT", count: 119, manufacturer: "Krauss-Maffei Wegmann" },
       { model: "Leopard 2A4 MBT", count: 142, manufacturer: "Krauss-Maffei Wegmann" },
       { model: "T-72M1 MBT (reserve / Ukraine aid)", count: 453, manufacturer: "Uralvagonzavod" },
-      { model: "K2PL Black Panther MBT (on order)", count: 180, manufacturer: "Hyundai Rotem / PGZ" },
+      { model: "K2PL Black Panther MBT (on order)", count: 180, manufacturer: "Hyundai Rotem / PGZ", on_order: true },
       { model: "Rosomak 8×8 IFV/APC", count: 780, manufacturer: "Patria / PGZ (Siemianowice)" },
-      { model: "K21PL IFV (on order)", count: 180, manufacturer: "Hanwha Defense / PGZ" },
+      { model: "K21PL IFV (on order)", count: 180, manufacturer: "Hanwha Defense / PGZ", on_order: true },
       { model: "Anders MGCS (demonstrator)", count: 2, manufacturer: "PGZ" },
     ],
     surface_combatants: [
@@ -738,7 +738,7 @@ export const CAPABILITY_DETAILS = {
     ],
     submarines: [
       { model: "ORP Orzeł SSK (Kilo-derived, refit)", count: 1, manufacturer: "Stocznia Gdańska (1980s)" },
-      { model: "ORP Kondor / Sęp (Type 207 Kobben)", count: 3, manufacturer: "Nordseewerke (Norway)" },
+      { model: "ORKA class SSK (programme 2025+)", count: 3, manufacturer: "TBD", on_order: true },
     ],
   },
   UA: {
@@ -781,7 +781,7 @@ export const CAPABILITY_DETAILS = {
     fighters: [
       { model: "F-16E/F Block 60 Desert Falcon", count: 72, manufacturer: "Lockheed Martin" },
       { model: "Mirage 2000-9 / 2000-9D EAD", count: 54, manufacturer: "Dassault Aviation" },
-      { model: "Rafale F4 (on order, delivery 2025+)", count: 80, manufacturer: "Dassault Aviation" },
+      { model: "Rafale F4 (on order, delivery 2025+)", count: 80, manufacturer: "Dassault Aviation", on_order: true },
     ],
     helicopters: [
       { model: "AH-64D/E Apache Guardian (attack)", count: 30, manufacturer: "Boeing" },
@@ -842,7 +842,7 @@ export const CAPABILITY_DETAILS = {
     submarines: [
       { model: "Agosta 90B Khalid-class SSK", count: 3, manufacturer: "DCNS / Karachi Shipyard" },
       { model: "Agosta 70 Hashmat-class SSK", count: 2, manufacturer: "DCNS (France)" },
-      { model: "Hangor II / S-20 class SSK (on order)", count: 3, manufacturer: "CSSC (China)" },
+      { model: "Hangor II / S-20 class SSK (on order)", count: 3, manufacturer: "CSSC (China)", on_order: true },
     ],
   },
   ES: {
@@ -1082,7 +1082,7 @@ export const CAPABILITY_DETAILS = {
       { model: "Su-30MK/MK2 Flanker-H", count: 11, manufacturer: "Sukhoi" },
       { model: "Hawk 100/200 (advanced jet trainer / light attack)", count: 40, manufacturer: "BAE Systems", is_trainer: true },
       { model: "T-50i Golden Eagle (lead-in fighter trainer)", count: 16, manufacturer: "KAI / LIG Nex1", is_trainer: true },
-      { model: "Rafale EI (on order, first deliveries 2023-2024)", count: 6, manufacturer: "Dassault Aviation" },
+      { model: "Rafale EI (on order, first deliveries 2023-2024)", count: 6, manufacturer: "Dassault Aviation", on_order: true },
     ],
     helicopters: [
       { model: "AH-64E Apache Guardian (attack)", count: 8, manufacturer: "Boeing" },
@@ -1256,7 +1256,7 @@ export const CAPABILITY_DETAILS = {
   FI: {
     fighters: [
       { model: "F/A-18C/D Hornet (retiring, replaced by F-35A)", count: 55, manufacturer: "Boeing / Patria" },
-      { model: "F-35A Lightning II (on order, IOC 2026+)", count: 6, manufacturer: "Lockheed Martin" },
+      { model: "F-35A Lightning II (on order, IOC 2026+)", count: 6, manufacturer: "Lockheed Martin", on_order: true },
     ],
     helicopters: [
       { model: "NH90 TTH (tactical transport)", count: 20, manufacturer: "NHIndustries / Airbus" },

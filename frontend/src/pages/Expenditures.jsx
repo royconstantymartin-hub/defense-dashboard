@@ -627,6 +627,26 @@ const CAP_CATEGORIES = [
     iconColor: "text-slate-500",
   },
   {
+    key: "drones",
+    label: "Drones & UAVs",
+    sublabel: "MALE, HALE, Loitering Munitions",
+    Icon: ({ className }) => (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 0a2 2 0 100-4 2 2 0 000 4zm0 0v2m-6 4H4m0 0a2 2 0 100-4 2 2 0 000 4zm0 0h2m12-4h-2m0 0a2 2 0 100-4 2 2 0 000 4zm0 0h2M6 12l-2 2m14-2l2 2M6 12l2 2m10-2l-2 2M8 14l4 4 4-4" />
+      </svg>
+    ),
+    scale: 50,
+    scaleLabel: "50 UAVs",
+    bg: "bg-white",
+    border: "border-slate-200",
+    labelColor: "text-slate-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
+  },
+  {
     key: "land_vehicles",
     label: "Land Forces",
     sublabel: "MBTs, IFVs, APCs & Armour",
@@ -1023,7 +1043,12 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
 
       {/* Info */}
       <div className="p-3 flex flex-col gap-1.5 flex-1">
-        <p className="text-xs font-semibold text-slate-800 leading-snug line-clamp-2">{item.model}</p>
+        <span className={`text-xs font-semibold text-slate-800 leading-snug line-clamp-2 ${item.on_order ? "opacity-60" : ""}`}>
+          {item.model}
+          {item.on_order && (
+            <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">En commande</span>
+          )}
+        </span>
 
         {/* Bar */}
         <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
