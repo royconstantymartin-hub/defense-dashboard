@@ -802,39 +802,47 @@ function getLogoDomain(activity, side) {
   return null;
 }
 
-// ── Logo component — Clearbit → Google Favicon → coloured initials ───────────
-// Stratégie :
-//   1. Clearbit logo.clearbit.com/{domain}  — logo HD, échec silencieux via onError
-//   2. Google Favicon V2 (sz=128)           — instantané, fiable pour 100% des domaines
-//   3. Initiales colorées déterministes     — dernier recours, pas d'appel réseau
+// ── Logo source chain — multiple real-logo providers, then coloured initials ──
+// Clearbit was deprecated end-2025 and now often returns a grey 200 placeholder
+// that never triggers onError, so we no longer lead with it. The chain favours
+// providers that return the real favicon/logo and 404 cleanly when unknown:
+//   1. Google Favicon V2 (sz=128)  — real favicon, reliable, clean 404
+//   2. DuckDuckGo icons (ip3)       — independent real-logo source
+//   3. Clearbit                     — HD wordmark when still alive
+//   4. Coloured initials            — deterministic last resort, no network
+function buildLogoUrls(domain) {
+  if (!domain) return [];
+  return [
+    `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+    `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+    `https://logo.clearbit.com/${domain}?size=128`,
+  ];
+}
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  const [level, setLevel] = useState(1); // 1=clearbit 2=google favicon 3=initials
-
   const name   = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const domain = getLogoDomain(activity, side);
+  const urls   = buildLogoUrls(domain);
+  const [idx, setIdx] = useState(0);
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
   const textSize  = size === "sm" ? "text-[9px]" : "text-[11px]";
 
-  useEffect(() => { setLevel(1); }, [domain, name]);
+  useEffect(() => { setIdx(0); }, [domain, name]);
 
-  function logoBox(src) {
+  if (idx < urls.length) {
     return (
       <div className="relative shrink-0">
         <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
           <img
-            src={src}
+            src={urls[idx]}
             alt={name}
             className="w-full h-full object-contain p-1"
-            onError={() => setLevel(l => l + 1)}
+            onError={() => setIdx(i => i + 1)}
           />
         </div>
       </div>
     );
   }
-
-  if (level === 1 && domain) return logoBox(`https://logo.clearbit.com/${domain}?size=128`);
-  if (level === 2 && domain) return logoBox(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
 
   return (
     <div className="relative shrink-0">
@@ -850,13 +858,29 @@ function CompanyLogo({ activity, side, size = "md" }) {
 // ── Recent Deals Spotlight — same visual pattern as MarketCatalysts ───────────
 
 const DEAL_TYPE_CFG = {
-  acquisition:          { label: "ACQUISITION",  bg: "bg-orange-50",  text: "text-orange-700", bar: "bg-orange-500" },
-  merger:               { label: "MERGER",        bg: "bg-orange-50",  text: "text-orange-700", bar: "bg-orange-500" },
+  acquisition:          { label: "ACQUISITION",  bg: "bg-indigo-50",  text: "text-indigo-800", bar: "bg-indigo-700" },
+  merger:               { label: "MERGER",        bg: "bg-indigo-50",  text: "text-indigo-800", bar: "bg-indigo-700" },
   joint_venture:        { label: "JV",            bg: "bg-emerald-50", text: "text-emerald-700",bar: "bg-emerald-600" },
   minority_stake:       { label: "INVESTMENT",    bg: "bg-blue-50",    text: "text-blue-800",   bar: "bg-blue-800" },
   strategic_investment: { label: "INVESTMENT",    bg: "bg-blue-50",    text: "text-blue-800",   bar: "bg-blue-800" },
   funding_round:        { label: "FUNDING",       bg: "bg-violet-50",  text: "text-violet-700", bar: "bg-violet-600" },
 };
+
+// PE / financial firms — acquirer is a fund, not an operating defense company
+const PE_FUND_KEYWORDS = [
+  "capital","fund","equity","ventures","venture","partners","investments",
+  "holdings","group","advisors","asset","management","financial",
+  "kkr","carlyle","warburg","bain","advent","blackstone","bridgepoint",
+  "apollo","ardian","eurazeo","sofinnova","bpifrance","novacap",
+  "lux capital","general catalyst","andreessen","founders fund","sequoia",
+  "3i","ancala","cdf","effen","early game","fjord","flowing river",
+  "godspeed","windjammer","hadean","iq capital","keen","uvc","ventura",
+  "pmv","rtx ventures","aismia","balderton","hv capital",
+];
+function isFundAcquirer(name = "") {
+  const n = name.toLowerCase();
+  return PE_FUND_KEYWORDS.some(k => n.includes(k));
+}
 
 function dealRelativeTime(isoStr) {
   if (!isoStr) return "recent";
@@ -871,23 +895,22 @@ function dealRelativeTime(isoStr) {
 }
 
 function SpotlightLogo({ activity, side }) {
-  const [level, setLevel] = useState(1);
   const name   = activity[side] ?? "";
   const domain = getLogoDomain(activity, side);
-  useEffect(() => { setLevel(1); }, [domain, name]);
+  const urls   = buildLogoUrls(domain);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => { setIdx(0); }, [domain, name]);
 
-  function img(src) {
+  if (idx < urls.length) {
     return (
       <img
-        src={src}
+        src={urls[idx]}
         alt={name}
         className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 p-0.5 shrink-0"
-        onError={() => setLevel(l => l + 1)}
+        onError={() => setIdx(i => i + 1)}
       />
     );
   }
-  if (level === 1 && domain) return img(`https://logo.clearbit.com/${domain}?size=64`);
-  if (level === 2 && domain) return img(`https://www.google.com/s2/favicons?domain=${domain}&sz=64`);
   return (
     <div className={`w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200/60 shrink-0 ${avatarColor(name)}`}>
       <span className="text-[9px] font-bold text-white tracking-tight">{initials(name)}</span>
@@ -895,107 +918,171 @@ function SpotlightLogo({ activity, side }) {
   );
 }
 
+const SPOTLIGHT_TABS = [
+  { value: "all",     label: "All deals" },
+  { value: "defense", label: "Defense → Defense" },
+  { value: "fund",    label: "Fund → Defense" },
+];
+
 function RecentDealsSpotlight({ activities }) {
-  // Top 4 most recent acquisitions / mergers (exclude JV/funding for relevance)
+  const [tab, setTab] = useState("all");
+
   const spots = useMemo(() => {
-    return [...activities]
-      .filter(a => ["acquisition", "merger", "minority_stake", "strategic_investment"].includes(a.deal_type))
+    // Only company-level acquisitions/mergers — exclude product-line / program deals
+    // (those tend to have targets that are programme names, not company names)
+    const base = [...activities]
+      .filter(a => ["acquisition", "merger"].includes(a.deal_type));
+
+    const filtered = base.filter(a => {
+      const fund = isFundAcquirer(a.acquirer);
+      if (tab === "defense") return !fund;
+      if (tab === "fund")    return fund;
+      return true;
+    });
+
+    return filtered
       .sort((a, b) => new Date(b.announced_date) - new Date(a.announced_date))
       .slice(0, 4);
+  }, [activities, tab]);
+
+  const totalByTab = useMemo(() => {
+    const base = activities.filter(a => ["acquisition", "merger"].includes(a.deal_type));
+    return {
+      all:     base.length,
+      defense: base.filter(a => !isFundAcquirer(a.acquirer)).length,
+      fund:    base.filter(a => isFundAcquirer(a.acquirer)).length,
+    };
   }, [activities]);
 
-  if (!spots.length) return null;
+  if (!activities.length) return null;
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm">
-      <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-3">
-        <Zap className="w-4 h-4 text-orange-500" />
-        <span className="font-heading text-base font-semibold text-slate-900">Recent Deals Spotlight</span>
-        <span className="flex items-center gap-1.5 text-xs text-slate-400">
-          <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-          latest M&amp;A · {spots.length} deals
-        </span>
+      <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-3">
+          <Zap className="w-4 h-4 text-indigo-700" />
+          <span className="font-heading text-base font-semibold text-slate-900">Recent Deals Spotlight</span>
+          <span className="flex items-center gap-1.5 text-xs text-slate-400">
+            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+            latest acquisitions
+          </span>
+        </div>
+        {/* Toggle filter */}
+        <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+          {SPOTLIGHT_TABS.map(t => (
+            <button
+              key={t.value}
+              onClick={() => setTab(t.value)}
+              className={`px-3 py-1 text-[11px] font-medium rounded-md transition-all whitespace-nowrap ${
+                tab === t.value
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              {t.label}
+              <span className={`ml-1 font-mono text-[10px] ${tab === t.value ? "text-indigo-700" : "text-slate-400"}`}>
+                {totalByTab[t.value]}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
       <CardContent className="pt-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {spots.map((deal, i) => {
-            const cfg = DEAL_TYPE_CFG[deal.deal_type] ?? DEAL_TYPE_CFG.acquisition;
-            const acqFlag = deal.acquirer_country
-              ? `https://flagcdn.com/w20/${deal.acquirer_country.toLowerCase()}.png` : null;
-            const tgtFlag = deal.target_country
-              ? `https://flagcdn.com/w20/${deal.target_country.toLowerCase()}.png` : null;
-            const value = deal.deal_value > 0 && deal.is_disclosed !== false
-              ? (deal.deal_value >= 1000
-                  ? `$${(deal.deal_value / 1000).toFixed(1)}B`
-                  : `$${deal.deal_value}M`)
-              : "N/D";
+        {spots.length === 0 ? (
+          <p className="text-center py-8 text-sm text-slate-400">No deals in this category.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {spots.map((deal, i) => {
+              const cfg = DEAL_TYPE_CFG[deal.deal_type] ?? DEAL_TYPE_CFG.acquisition;
+              const isFund = isFundAcquirer(deal.acquirer);
+              const acqFlag = deal.acquirer_country
+                ? `https://flagcdn.com/w20/${deal.acquirer_country.toLowerCase()}.png` : null;
+              const tgtFlag = deal.target_country
+                ? `https://flagcdn.com/w20/${deal.target_country.toLowerCase()}.png` : null;
+              const value = deal.deal_value > 0 && deal.is_disclosed !== false
+                ? (deal.deal_value >= 1000
+                    ? `$${(deal.deal_value / 1000).toFixed(1)}B`
+                    : `$${deal.deal_value}M`)
+                : "N/D";
 
-            return (
-              <div
-                key={deal.id ?? i}
-                className="relative rounded-xl border border-slate-100 overflow-hidden hover:shadow-md hover:border-slate-200 transition-all cursor-pointer group"
-                onClick={() => deal.source_url && window.open(deal.source_url, "_blank", "noopener")}
-              >
-                {/* Colour bar */}
-                <div className={`h-1 w-full ${cfg.bar}`} />
+              return (
+                <div
+                  key={deal.id ?? i}
+                  className="relative rounded-xl border border-slate-100 overflow-hidden hover:shadow-md hover:border-slate-200 transition-all cursor-pointer group"
+                  onClick={() => deal.source_url && window.open(deal.source_url, "_blank", "noopener")}
+                >
+                  {/* Colour bar */}
+                  <div className={`h-1 w-full ${cfg.bar}`} />
 
-                <div className="p-4">
-                  {/* Badge */}
-                  <span className={`inline-block text-[10px] font-bold tracking-widest px-2.5 py-0.5 rounded-full mb-3 ${cfg.bg} ${cfg.text}`}>
-                    {cfg.label}
-                  </span>
+                  <div className="p-4">
+                    {/* Badges row */}
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <span className={`text-[10px] font-bold tracking-widest px-2.5 py-0.5 rounded-full ${cfg.bg} ${cfg.text}`}>
+                        {cfg.label}
+                      </span>
+                      {isFund ? (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
+                          FUND
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">
+                          DEFENSE
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Acquirer → Target row */}
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                      <SpotlightLogo activity={deal} side="acquirer" />
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight">{deal.acquirer}</p>
-                        {acqFlag && (
-                          <img src={acqFlag} alt={deal.acquirer_country}
-                            className="w-4 h-3 object-cover rounded-sm mt-0.5"
-                            onError={e => e.currentTarget.style.display="none"} />
-                        )}
+                    {/* Acquirer → Target row */}
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <SpotlightLogo activity={deal} side="acquirer" />
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight">{deal.acquirer}</p>
+                          {acqFlag && (
+                            <img src={acqFlag} alt={deal.acquirer_country}
+                              className="w-4 h-3 object-cover rounded-sm mt-0.5"
+                              onError={e => e.currentTarget.style.display="none"} />
+                          )}
+                        </div>
+                      </div>
+
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <SpotlightLogo activity={deal} side="target" />
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight">{deal.target}</p>
+                          {tgtFlag && (
+                            <img src={tgtFlag} alt={deal.target_country}
+                              className="w-4 h-3 object-cover rounded-sm mt-0.5"
+                              onError={e => e.currentTarget.style.display="none"} />
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-
-                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                      <SpotlightLogo activity={deal} side="target" />
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight">{deal.target}</p>
-                        {tgtFlag && (
-                          <img src={tgtFlag} alt={deal.target_country}
-                            className="w-4 h-3 object-cover rounded-sm mt-0.5"
-                            onError={e => e.currentTarget.style.display="none"} />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Headline */}
-                  <p className="text-sm font-medium text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-800 transition-colors">
-                    {deal.description ?? `${deal.acquirer} acquires ${deal.target}`}
-                  </p>
-
-                  {/* Meta row */}
-                  <div className="flex items-center justify-between mt-2.5">
-                    <span className="font-mono text-[11px] font-bold text-slate-700">{value}</span>
-                    <span className="text-[10px] text-slate-400">{dealRelativeTime(deal.announced_date)}</span>
-                  </div>
-
-                  {deal.source_url && (
-                    <p className="text-[10px] text-blue-700 mt-1.5 flex items-center gap-1 truncate group-hover:underline">
-                      <ExternalLink className="w-2.5 h-2.5 shrink-0" />
-                      Source article
+                    {/* Headline */}
+                    <p className="text-sm font-medium text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-800 transition-colors">
+                      {deal.description ?? `${deal.acquirer} acquires ${deal.target}`}
                     </p>
-                  )}
+
+                    {/* Meta row */}
+                    <div className="flex items-center justify-between mt-2.5">
+                      <span className="font-mono text-[11px] font-bold text-slate-700">{value}</span>
+                      <span className="text-[10px] text-slate-400">{dealRelativeTime(deal.announced_date)}</span>
+                    </div>
+
+                    {deal.source_url && (
+                      <p className="text-[10px] text-blue-700 mt-1.5 flex items-center gap-1 truncate group-hover:underline">
+                        <ExternalLink className="w-2.5 h-2.5 shrink-0" />
+                        Source article
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -1662,19 +1749,30 @@ const JV_EU_PROGRAMS_FALLBACK = [
 // ── JV Programs table view ────────────────────────────────────────────────────
 
 function PartyLogoSmall({ name, iso }) {
-  const [level, setLevel] = useState(1);
-  const domain = LOGO_FALLBACK[name];
-  useEffect(() => { setLevel(1); }, [name]);
+  // Resolve a domain by exact then fuzzy match against LOGO_FALLBACK
+  const domain = useMemo(() => {
+    if (LOGO_FALLBACK[name]) return LOGO_FALLBACK[name];
+    const nn = normalizeName(name ?? "");
+    for (const [k, d] of Object.entries(LOGO_FALLBACK)) {
+      if (normalizeName(k) === nn) return d;
+    }
+    for (const [k, d] of Object.entries(LOGO_FALLBACK)) {
+      const nk = normalizeName(k);
+      if (nk.length >= 4 && nn.startsWith(nk)) return d;
+    }
+    return null;
+  }, [name]);
+  const urls = buildLogoUrls(domain);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => { setIdx(0); }, [name]);
 
-  function box(src) {
+  if (idx < urls.length) {
     return (
       <div className="w-7 h-7 rounded-lg bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center shrink-0">
-        <img src={src} alt={name} className="w-full h-full object-contain p-0.5" onError={() => setLevel(l => l + 1)} />
+        <img src={urls[idx]} alt={name} className="w-full h-full object-contain p-0.5" onError={() => setIdx(i => i + 1)} />
       </div>
     );
   }
-  if (level === 1 && domain) return box(`https://logo.clearbit.com/${domain}?size=64`);
-  if (level === 2 && domain) return box(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
   return (
     <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${avatarColor(name)}`}>
       <span className="text-[8px] font-bold text-white">{initials(name)}</span>
@@ -2901,6 +2999,7 @@ function DealPipelineView({ deals, onSelectDeal }) {
     </div>
   );
 }
+
 
 // ── Main page ──────────────────────────────────────────────────────────────
 
