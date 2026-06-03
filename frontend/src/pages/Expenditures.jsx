@@ -836,12 +836,13 @@ const CAP_GROUPS = [
   },
 ];
 
-// Accent palette for the domain (tier-1) cards — coherent with ProductIllustration
+// Accent palette for the domain (tier-1) cards — sober, single subdued Intel-Blue
+// tint for the open state (no bright/fluo colours), per the light design system.
 const GROUP_ACCENT = {
-  blue:    { ring: "ring-blue-200",    border: "border-blue-200",    bg: "bg-blue-50",    text: "text-blue-700",    iconBg: "bg-blue-100",    bar: "bg-blue-600" },
-  amber:   { ring: "ring-amber-200",   border: "border-amber-200",   bg: "bg-amber-50",   text: "text-amber-700",   iconBg: "bg-amber-100",   bar: "bg-amber-600" },
-  cyan:    { ring: "ring-cyan-200",    border: "border-cyan-200",    bg: "bg-cyan-50",    text: "text-cyan-700",    iconBg: "bg-cyan-100",    bar: "bg-cyan-600" },
-  emerald: { ring: "ring-emerald-200", border: "border-emerald-200", bg: "bg-emerald-50", text: "text-emerald-700", iconBg: "bg-emerald-100", bar: "bg-emerald-600" },
+  blue:    { ring: "ring-slate-200", border: "border-slate-300", bg: "bg-slate-50", text: "text-slate-800", iconBg: "bg-white", bar: "bg-slate-700" },
+  amber:   { ring: "ring-slate-200", border: "border-slate-300", bg: "bg-slate-50", text: "text-slate-800", iconBg: "bg-white", bar: "bg-slate-700" },
+  cyan:    { ring: "ring-slate-200", border: "border-slate-300", bg: "bg-slate-50", text: "text-slate-800", iconBg: "bg-white", bar: "bg-slate-700" },
+  emerald: { ring: "ring-slate-200", border: "border-slate-300", bg: "bg-slate-50", text: "text-slate-800", iconBg: "bg-white", bar: "bg-slate-700" },
 };
 
 
