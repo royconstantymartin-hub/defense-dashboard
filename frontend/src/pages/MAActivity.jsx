@@ -376,6 +376,53 @@ const LOGO_FALLBACK = {
   "PGZ":                                 "pgzsa.pl",
   "Bullet":                              "bullet.fi",
   "Remtecnology":                        "remtecnology.com",
+  // ── Missing single companies ─────────────────────────────────────────────────
+  "Arquus":                              "arquus-defense.com",
+  "Atlas Elektronik":                    "atlas-elektronik.com",
+  "Austal":                              "austal.com",
+  "Bharat Forge":                        "bharatforge.com",
+  "Blackstone":                          "blackstone.com",
+  "BlueBear Systems Research":           "blue-bear.com",
+  "Bohemia Interactive Simulations":     "bisimulations.com",
+  "CACI International":                  "caci.com",
+  "CSRA":                                "csra.com",
+  "Cobham Advanced Electronic Systems":  "cobham.com",
+  "Cobham PLC":                          "cobham.com",
+  "Daewoo Shipbuilding & Marine Engineering": "dsme.co.kr",
+  "Engility Holdings":                   "engility.com",
+  "Engility":                            "engility.com",
+  "Esterline Technologies":              "esterline.com",
+  "Gemalto":                             "gemalto.com",
+  "Halfaker and Associates":             "halfaker.com",
+  "Hanwha Aerospace":                    "hanwha.com",
+  "Hanwha Group":                        "hanwha.com",
+  "Heron Systems":                       "heronsystems.com",
+  "John Cockerill Defense":              "john-cockerill.com",
+  "John Cockerill":                      "john-cockerill.com",
+  "Kinetic Group":                       "vistaoutdoor.com",
+  "Naviris":                             "naviris.eu",
+  "Nexter":                              "nexter-group.fr",
+  "KMW":                                 "kmweg.com",
+  "Orbital ATK":                         "orbitalatk.com",
+  "Physical Optics Corporation":         "poc.com",
+  "RADMOR":                              "radmor.com.pl",
+  "RBSL":                                "rbsl.co.uk",
+  "Renk":                                "renk-group.com",
+  "Rocketdyne":                          "aerojetrocketdyne.com",
+  "Telerob":                             "telerob.com",
+  "Telerob GmbH":                        "telerob.com",
+  "ThyssenKrupp Marine Systems":         "thyssenkrupp-marinesystems.com",
+  "Advent International":                "adventinternational.com",
+  "AAM Defence":                         "aam-defence.fr",
+  "Raytheon Cybersecurity Services":     "rtx.com",
+  "American Rheinmetall Vehicles":       "rheinmetall.com",
+  "NVL":                                 "nvl-group.de",
+  "Kraken Technology":                   "krakenrobotics.com",
+  "Nord Drone Group":                    "norddrone.no",
+  "HDAT":                                "heidelberger-druckmaschinen.com",
+  "S21sec":                              "s21sec.com",
+  "Excellium":                           "excellium-services.com",
+  "Vista Outdoor":                       "vistaoutdoor.com",
 };
 
 // Initials avatar colour palette (deterministic by name)
@@ -528,7 +575,11 @@ function RoundBadge({ roundType }) {
 const CORP_SUFFIX_RE = /\s+(se|ag|gmbh|kg|nv|bv|sa|sas|plc|ltd|llc|inc|corp|co\.|group|international|industries|technologies|systems|solutions|defense|defence|aerospace|aviation|naval|digital|ventures|federal|division|holding|holdings)\b.*/gi;
 
 function normalizeName(name) {
-  return name.toLowerCase().replace(CORP_SUFFIX_RE, "").trim();
+  return name
+    .toLowerCase()
+    .replace(/\s*\([^)]*\)/g, "") // strip parenthetical descriptions e.g. "RBSL (Rheinmetall BAE Systems Land)"
+    .replace(CORP_SUFFIX_RE, "")
+    .trim();
 }
 
 function getLogoDomain(activity, side) {
