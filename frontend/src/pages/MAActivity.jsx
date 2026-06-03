@@ -802,39 +802,47 @@ function getLogoDomain(activity, side) {
   return null;
 }
 
-// ── Logo component — Clearbit → Google Favicon → coloured initials ───────────
-// Stratégie :
-//   1. Clearbit logo.clearbit.com/{domain}  — logo HD, échec silencieux via onError
-//   2. Google Favicon V2 (sz=128)           — instantané, fiable pour 100% des domaines
-//   3. Initiales colorées déterministes     — dernier recours, pas d'appel réseau
+// ── Logo source chain — multiple real-logo providers, then coloured initials ──
+// Clearbit was deprecated end-2025 and now often returns a grey 200 placeholder
+// that never triggers onError, so we no longer lead with it. The chain favours
+// providers that return the real favicon/logo and 404 cleanly when unknown:
+//   1. Google Favicon V2 (sz=128)  — real favicon, reliable, clean 404
+//   2. DuckDuckGo icons (ip3)       — independent real-logo source
+//   3. Clearbit                     — HD wordmark when still alive
+//   4. Coloured initials            — deterministic last resort, no network
+function buildLogoUrls(domain) {
+  if (!domain) return [];
+  return [
+    `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+    `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+    `https://logo.clearbit.com/${domain}?size=128`,
+  ];
+}
 
 function CompanyLogo({ activity, side, size = "md" }) {
-  const [level, setLevel] = useState(1); // 1=clearbit 2=google favicon 3=initials
-
   const name   = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const domain = getLogoDomain(activity, side);
+  const urls   = buildLogoUrls(domain);
+  const [idx, setIdx] = useState(0);
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
   const textSize  = size === "sm" ? "text-[9px]" : "text-[11px]";
 
-  useEffect(() => { setLevel(1); }, [domain, name]);
+  useEffect(() => { setIdx(0); }, [domain, name]);
 
-  function logoBox(src) {
+  if (idx < urls.length) {
     return (
       <div className="relative shrink-0">
         <div className={`${sizeClass} rounded-xl bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center`}>
           <img
-            src={src}
+            src={urls[idx]}
             alt={name}
             className="w-full h-full object-contain p-1"
-            onError={() => setLevel(l => l + 1)}
+            onError={() => setIdx(i => i + 1)}
           />
         </div>
       </div>
     );
   }
-
-  if (level === 1 && domain) return logoBox(`https://logo.clearbit.com/${domain}?size=128`);
-  if (level === 2 && domain) return logoBox(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
 
   return (
     <div className="relative shrink-0">
@@ -887,23 +895,22 @@ function dealRelativeTime(isoStr) {
 }
 
 function SpotlightLogo({ activity, side }) {
-  const [level, setLevel] = useState(1);
   const name   = activity[side] ?? "";
   const domain = getLogoDomain(activity, side);
-  useEffect(() => { setLevel(1); }, [domain, name]);
+  const urls   = buildLogoUrls(domain);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => { setIdx(0); }, [domain, name]);
 
-  function img(src) {
+  if (idx < urls.length) {
     return (
       <img
-        src={src}
+        src={urls[idx]}
         alt={name}
         className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 p-0.5 shrink-0"
-        onError={() => setLevel(l => l + 1)}
+        onError={() => setIdx(i => i + 1)}
       />
     );
   }
-  if (level === 1 && domain) return img(`https://logo.clearbit.com/${domain}?size=64`);
-  if (level === 2 && domain) return img(`https://www.google.com/s2/favicons?domain=${domain}&sz=64`);
   return (
     <div className={`w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200/60 shrink-0 ${avatarColor(name)}`}>
       <span className="text-[9px] font-bold text-white tracking-tight">{initials(name)}</span>
@@ -912,9 +919,9 @@ function SpotlightLogo({ activity, side }) {
 }
 
 const SPOTLIGHT_TABS = [
-  { value: "all",     label: "Tous les deals" },
-  { value: "defense", label: "Défense → Défense" },
-  { value: "fund",    label: "Fonds → Défense" },
+  { value: "all",     label: "All deals" },
+  { value: "defense", label: "Defense → Defense" },
+  { value: "fund",    label: "Fund → Defense" },
 ];
 
 function RecentDealsSpotlight({ activities }) {
@@ -957,7 +964,7 @@ function RecentDealsSpotlight({ activities }) {
           <span className="font-heading text-base font-semibold text-slate-900">Recent Deals Spotlight</span>
           <span className="flex items-center gap-1.5 text-xs text-slate-400">
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-            dernières acquisitions
+            latest acquisitions
           </span>
         </div>
         {/* Toggle filter */}
@@ -982,7 +989,7 @@ function RecentDealsSpotlight({ activities }) {
       </div>
       <CardContent className="pt-4">
         {spots.length === 0 ? (
-          <p className="text-center py-8 text-sm text-slate-400">Aucun deal dans cette catégorie.</p>
+          <p className="text-center py-8 text-sm text-slate-400">No deals in this category.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {spots.map((deal, i) => {
@@ -1015,11 +1022,11 @@ function RecentDealsSpotlight({ activities }) {
                       </span>
                       {isFund ? (
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
-                          FONDS
+                          FUND
                         </span>
                       ) : (
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">
-                          DÉFENSE
+                          DEFENSE
                         </span>
                       )}
                     </div>
@@ -1742,19 +1749,30 @@ const JV_EU_PROGRAMS_FALLBACK = [
 // ── JV Programs table view ────────────────────────────────────────────────────
 
 function PartyLogoSmall({ name, iso }) {
-  const [level, setLevel] = useState(1);
-  const domain = LOGO_FALLBACK[name];
-  useEffect(() => { setLevel(1); }, [name]);
+  // Resolve a domain by exact then fuzzy match against LOGO_FALLBACK
+  const domain = useMemo(() => {
+    if (LOGO_FALLBACK[name]) return LOGO_FALLBACK[name];
+    const nn = normalizeName(name ?? "");
+    for (const [k, d] of Object.entries(LOGO_FALLBACK)) {
+      if (normalizeName(k) === nn) return d;
+    }
+    for (const [k, d] of Object.entries(LOGO_FALLBACK)) {
+      const nk = normalizeName(k);
+      if (nk.length >= 4 && nn.startsWith(nk)) return d;
+    }
+    return null;
+  }, [name]);
+  const urls = buildLogoUrls(domain);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => { setIdx(0); }, [name]);
 
-  function box(src) {
+  if (idx < urls.length) {
     return (
       <div className="w-7 h-7 rounded-lg bg-white border border-slate-100 shadow-sm overflow-hidden flex items-center justify-center shrink-0">
-        <img src={src} alt={name} className="w-full h-full object-contain p-0.5" onError={() => setLevel(l => l + 1)} />
+        <img src={urls[idx]} alt={name} className="w-full h-full object-contain p-0.5" onError={() => setIdx(i => i + 1)} />
       </div>
     );
   }
-  if (level === 1 && domain) return box(`https://logo.clearbit.com/${domain}?size=64`);
-  if (level === 2 && domain) return box(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
   return (
     <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${avatarColor(name)}`}>
       <span className="text-[8px] font-bold text-white">{initials(name)}</span>
