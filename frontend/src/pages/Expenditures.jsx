@@ -1158,8 +1158,10 @@ function getProductBrowseLink(model, manufacturer) {
 }
 
 function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
-  const barPct = maxCount > 0 ? Math.round(((item.count ?? 0) / maxCount) * 100) : 0;
+  const hasCount = item.count != null;
+  const barPct = hasCount && maxCount > 0 ? Math.round((item.count / maxCount) * 100) : 0;
   const primaryMfr = item.manufacturer.split(' / ')[0].split(' (')[0];
+  const dimmed = item.on_order || item.is_dev;
 
   return (
     <div className="bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-slate-300 hover:shadow-lg transition-all duration-200 group flex flex-col">
@@ -1177,30 +1179,46 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
             <cat.Icon className={`w-14 h-14 ${cat.iconColor} opacity-15`} />
           </div>
         )}
-        {/* Count badge overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-2">
-          <span className={`font-mono font-bold text-lg text-white tabular-nums`}>
-            {item.count != null ? item.count.toLocaleString() : "—"}
+        {/* Count badge overlay — only when a count is provided */}
+        {hasCount && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-2">
+            <span className={`font-mono font-bold text-lg text-white tabular-nums`}>
+              {item.count.toLocaleString()}
+            </span>
+          </div>
+        )}
+        {/* Origin tag (top-left) when supplied/foreign */}
+        {item.origin && (
+          <span className="absolute top-1.5 left-1.5 text-[9px] font-semibold bg-white/85 text-slate-600 border border-white/40 px-1.5 py-0.5 rounded">
+            {item.origin}
           </span>
-        </div>
+        )}
       </div>
 
       {/* Info */}
       <div className="p-3 flex flex-col gap-1.5 flex-1">
-        <span className={`text-xs font-semibold text-slate-800 leading-snug line-clamp-2 ${item.on_order ? "opacity-60" : ""}`}>
+        <span className={`text-xs font-semibold text-slate-800 leading-snug line-clamp-2 ${dimmed ? "opacity-60" : ""}`}>
           {item.model}
           {item.on_order && (
-            <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">On Order</span>
+            <span className="ml-2 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium align-middle">On Order</span>
+          )}
+          {item.is_dev && (
+            <span className="ml-2 text-[10px] bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded font-medium align-middle">In Development</span>
+          )}
+          {item.is_expendable && (
+            <span className="ml-2 text-[10px] bg-rose-50 text-rose-600 border border-rose-100 px-1.5 py-0.5 rounded font-medium align-middle">Expendable</span>
           )}
         </span>
 
-        {/* Bar */}
-        <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
-          <div
-            className={`h-full rounded-full ${cat.progressColor} transition-all duration-700`}
-            style={{ width: `${barPct}%` }}
-          />
-        </div>
+        {/* Bar — only when a count is provided */}
+        {hasCount && (
+          <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full ${cat.progressColor} transition-all duration-700`}
+              style={{ width: `${barPct}%` }}
+            />
+          </div>
+        )}
 
         <p className="text-[10px] text-slate-400 truncate mt-0.5">{primaryMfr}</p>
 

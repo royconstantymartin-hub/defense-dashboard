@@ -2029,7 +2029,7 @@ export function getCapabilitySummary(countryCode) {
     ['fighters', 'helicopters', 'drones', 'tanks', 'armored_vehicles', 'aircraft_carriers', 'surface_combatants', 'submarines', 'air_defense', 'missiles'].forEach(key => {
       if (details[key] !== undefined) {
         result[key] = (details[key] || [])
-          .filter(item => !item.is_trainer && !item.is_expendable)
+          .filter(item => !item.is_trainer && !item.is_expendable && !item.is_dev)
           .reduce((s, item) => s + (item.count ?? 0), 0);
       } else if (estimated && estimated[key] !== undefined) {
         // Fall back to DEFENSE_CAPABILITIES for keys not in details (e.g. air_defense, missiles)
