@@ -607,7 +607,7 @@ export default function Follow() {
         </div>
         <p className="text-xs text-slate-400 mb-4">{filtered.length} source{filtered.length > 1 ? "s" : ""} shown</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map(source => {
             const catDef = CATEGORIES.find(c => c.id === source.category);
             const CatIcon = catDef?.icon ?? Globe2;
