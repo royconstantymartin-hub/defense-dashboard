@@ -607,47 +607,34 @@ export default function Follow() {
         </div>
         <p className="text-xs text-slate-400 mb-4">{filtered.length} source{filtered.length > 1 ? "s" : ""} shown</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {filtered.map(source => {
             const catDef = CATEGORIES.find(c => c.id === source.category);
             const CatIcon = catDef?.icon ?? Globe2;
             return (
               <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group block">
-                <Card className="bg-white border-slate-200 shadow-sm h-full hover:border-blue-200 hover:shadow-lg transition-all duration-200">
-                  <CardContent className="p-4 flex flex-col gap-3 h-full">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-start gap-2.5 flex-1 min-w-0">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden">
-                          <Favicon url={source.url} className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm text-slate-900 group-hover:text-blue-800 transition-colors leading-tight">{source.name}</p>
-                          <p className="text-[10px] text-slate-400 mt-0.5 font-mono truncate">{source.url.replace(/^https?:\/\//, "").split("/")[0]}</p>
-                        </div>
-                      </div>
-                      <ExternalLink className="w-4 h-4 text-slate-300 group-hover:text-blue-500 flex-shrink-0 mt-0.5 transition-colors" />
+                <Card className="bg-white border-slate-200 shadow-sm hover:border-blue-200 hover:shadow-lg transition-all duration-200 aspect-square flex flex-col">
+                  <CardContent className="p-3 flex flex-col items-center justify-center text-center h-full gap-2">
+                    <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      <Favicon url={source.url} className="w-8 h-8" />
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <CatIcon className="w-3 h-3 text-slate-400" />
-                      <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">{catDef?.label}</span>
+                    <div className="flex-1 flex flex-col justify-center min-w-0">
+                      <p className="font-semibold text-xs text-slate-900 group-hover:text-blue-800 transition-colors line-clamp-2">{source.name}</p>
+                      <p className="text-[10px] text-slate-400 mt-1 font-mono truncate">{source.url.replace(/^https?:\/\//, "").split("/")[0]}</p>
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed flex-1">{source.description}</p>
-                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
-                      <div className="flex gap-1 flex-wrap">
-                        {source.lang.map(l => (
-                          <span key={l} className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${LANG_COLORS[l] ?? "bg-slate-50 text-slate-600 border-slate-200"}`}>{l}</span>
-                        ))}
-                      </div>
-                      {source.paywall ? (
-                        <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-medium">
-                          <Lock className="w-2.5 h-2.5" /> Paid
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
-                          <Unlock className="w-2.5 h-2.5" /> Free
-                        </span>
-                      )}
+                    <div className="flex items-center gap-1 pt-1">
+                      <CatIcon className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                      <span className="text-[8px] text-slate-400 font-medium uppercase tracking-wide truncate">{catDef?.label}</span>
                     </div>
+                    {source.paywall ? (
+                      <span className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-medium mt-1">
+                        <Lock className="w-2.5 h-2.5" /> Paid
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium mt-1">
+                        <Unlock className="w-2.5 h-2.5" /> Free
+                      </span>
+                    )}
                   </CardContent>
                 </Card>
               </a>
