@@ -608,19 +608,49 @@ export default function Follow() {
         <p className="text-xs text-slate-400 mb-4">{filtered.length} source{filtered.length > 1 ? "s" : ""} shown</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map(source => (
-            <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group">
-              <div className="bg-white border border-slate-200 rounded-lg p-4 hover:border-blue-200 hover:shadow-md transition-all">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
-                    <Favicon url={source.url} className="w-7 h-7" />
+          {filtered.map(source => {
+            const catDef = CATEGORIES.find(c => c.id === source.category);
+            const colors = {
+              press: "#3b82f6",
+              institution: "#10b981",
+              thinktank: "#8b5cf6",
+              market: "#f59e0b"
+            };
+            const barColor = colors[source.category] || "#6b7280";
+            return (
+              <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group">
+                <div className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-blue-200 hover:shadow-lg transition-all">
+                  <div className="h-1" style={{ backgroundColor: barColor }} />
+                  <div className="p-4 flex flex-col gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
+                        <Favicon url={source.url} className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm text-slate-900 group-hover:text-blue-800 truncate">{source.name}</h3>
+                        <p className="text-xs text-slate-400 truncate">{source.url.replace(/^https?:\/\//, "").split("/")[0]}</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-600 line-clamp-2">{source.description}</p>
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: barColor + "20", color: barColor }}>
+                        {catDef?.label}
+                      </span>
+                      {source.paywall ? (
+                        <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 font-medium">
+                          <Lock className="w-2.5 h-2.5" /> Paid
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
+                          <Unlock className="w-2.5 h-2.5" /> Free
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <h3 className="font-semibold text-sm text-slate-900 group-hover:text-blue-800">{source.name}</h3>
                 </div>
-                <p className="text-xs text-slate-500 line-clamp-2">{source.description}</p>
-              </div>
-            </a>
-          ))}
+              </a>
+            );
+          })}
         </div>
 
         {filtered.length === 0 && (
