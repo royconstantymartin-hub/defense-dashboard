@@ -607,39 +607,15 @@ export default function Follow() {
         </div>
         <p className="text-xs text-slate-400 mb-4">{filtered.length} source{filtered.length > 1 ? "s" : ""} shown</p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {filtered.map(source => {
-            const catDef = CATEGORIES.find(c => c.id === source.category);
-            const CatIcon = catDef?.icon ?? Globe2;
-            return (
-              <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group block">
-                <Card className="bg-white border-slate-200 shadow-sm hover:border-blue-200 hover:shadow-lg transition-all duration-200 aspect-square flex flex-col">
-                  <CardContent className="p-3 flex flex-col items-center justify-center text-center h-full gap-2">
-                    <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
-                      <Favicon url={source.url} className="w-8 h-8" />
-                    </div>
-                    <div className="flex-1 flex flex-col justify-center min-w-0">
-                      <p className="font-semibold text-xs text-slate-900 group-hover:text-blue-800 transition-colors line-clamp-2">{source.name}</p>
-                      <p className="text-[10px] text-slate-400 mt-1 font-mono truncate">{source.url.replace(/^https?:\/\//, "").split("/")[0]}</p>
-                    </div>
-                    <div className="flex items-center gap-1 pt-1">
-                      <CatIcon className="w-3 h-3 text-slate-400 flex-shrink-0" />
-                      <span className="text-[8px] text-slate-400 font-medium uppercase tracking-wide truncate">{catDef?.label}</span>
-                    </div>
-                    {source.paywall ? (
-                      <span className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-medium mt-1">
-                        <Lock className="w-2.5 h-2.5" /> Paid
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium mt-1">
-                        <Unlock className="w-2.5 h-2.5" /> Free
-                      </span>
-                    )}
-                  </CardContent>
-                </Card>
-              </a>
-            );
-          })}
+        <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-2">
+          {filtered.map(source => (
+            <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-1">
+              <div className="w-16 h-16 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden hover:border-blue-200 hover:shadow-md transition-all">
+                <Favicon url={source.url} className="w-10 h-10" />
+              </div>
+              <p className="text-[10px] text-slate-600 text-center line-clamp-2 group-hover:text-blue-800">{source.name}</p>
+            </a>
+          ))}
         </div>
 
         {filtered.length === 0 && (
