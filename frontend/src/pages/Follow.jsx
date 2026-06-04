@@ -546,11 +546,11 @@ export default function Follow() {
         <div className="overflow-hidden rounded-lg">
           <div
             ref={carouselRef}
-            className="flex gap-1.5 overflow-x-auto pb-2 snap-x snap-mandatory"
+            className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory"
             style={{ scrollbarWidth: "none" }}
           >
             {REPORTS.map(r => (
-              <div key={r.id} className="flex-none w-28 snap-start">
+              <div key={r.id} className="flex-none w-52 snap-start">
                 <ReportCoverCard report={r} />
               </div>
             ))}
@@ -607,13 +607,18 @@ export default function Follow() {
         </div>
         <p className="text-xs text-slate-400 mb-4">{filtered.length} source{filtered.length > 1 ? "s" : ""} shown</p>
 
-        <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filtered.map(source => (
-            <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-1">
-              <div className="w-16 h-16 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden hover:border-blue-200 hover:shadow-md transition-all">
-                <Favicon url={source.url} className="w-10 h-10" />
+            <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group block">
+              <div className="bg-white border border-slate-200 rounded-lg p-3 hover:border-blue-200 hover:shadow-md transition-all h-full flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
+                    <Favicon url={source.url} className="w-6 h-6" />
+                  </div>
+                  <p className="font-semibold text-sm text-slate-900 group-hover:text-blue-800 flex-1">{source.name}</p>
+                </div>
+                <p className="text-xs text-slate-600 line-clamp-1">{source.description}</p>
               </div>
-              <p className="text-[10px] text-slate-600 text-center line-clamp-2 group-hover:text-blue-800">{source.name}</p>
             </a>
           ))}
         </div>
