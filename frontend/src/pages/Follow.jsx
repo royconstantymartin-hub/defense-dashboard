@@ -607,17 +607,17 @@ export default function Follow() {
         </div>
         <p className="text-xs text-slate-400 mb-4">{filtered.length} source{filtered.length > 1 ? "s" : ""} shown</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map(source => (
-            <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group block">
-              <div className="bg-white border border-slate-200 rounded-lg p-3 hover:border-blue-200 hover:shadow-md transition-all h-full flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
-                    <Favicon url={source.url} className="w-6 h-6" />
+            <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group">
+              <div className="bg-white border border-slate-200 rounded-lg p-4 hover:border-blue-200 hover:shadow-md transition-all">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
+                    <Favicon url={source.url} className="w-7 h-7" />
                   </div>
-                  <p className="font-semibold text-sm text-slate-900 group-hover:text-blue-800 flex-1">{source.name}</p>
+                  <h3 className="font-semibold text-sm text-slate-900 group-hover:text-blue-800">{source.name}</h3>
                 </div>
-                <p className="text-xs text-slate-600 line-clamp-1">{source.description}</p>
+                <p className="text-xs text-slate-500 line-clamp-2">{source.description}</p>
               </div>
             </a>
           ))}
