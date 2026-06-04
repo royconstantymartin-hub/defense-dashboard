@@ -543,14 +543,14 @@ export default function Follow() {
         </div>
 
         {/* ── Horizontal carousel ── */}
-        <div className="overflow-hidden">
+        <div className="overflow-hidden rounded-lg">
           <div
             ref={carouselRef}
-            className="flex gap-3 overflow-x-auto pb-3"
-            style={{ scrollbarWidth: "thin", scrollbarColor: "#cbd5e1 transparent" }}
+            className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory"
+            style={{ scrollbarWidth: "none" }}
           >
             {REPORTS.map(r => (
-              <div key={r.id} className="flex-none w-44">
+              <div key={r.id} className="flex-none w-36 snap-start">
                 <ReportCoverCard report={r} />
               </div>
             ))}
