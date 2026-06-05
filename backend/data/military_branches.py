@@ -139,6 +139,243 @@ MILITARY_BRANCHES = {
         {"name": "Republic of China Navy", "role": "Naval Forces",         "type": "navy",      "personnel": 45000,  "website": "https://www.mnd.gov.tw"},
         {"name": "Republic of China Air Force", "role": "Air Forces",      "type": "air",       "personnel": 45000,  "website": "https://www.mnd.gov.tw"},
     ],
+    "Indonesia": [
+        {"name": "Indonesian Army (TNI-AD)",      "role": "Land Forces",   "type": "army",      "personnel": 300000, "website": "https://www.tniad.mil.id"},
+        {"name": "Indonesian Navy (TNI-AL)",      "role": "Naval Forces",  "type": "navy",      "personnel": 75000,  "website": "https://www.tnial.mil.id"},
+        {"name": "Indonesian Air Force (TNI-AU)", "role": "Air Forces",    "type": "air",       "personnel": 30000,  "website": "https://www.tni-au.mil.id"},
+        {"name": "Marine Corps (Korps Marinir)",  "role": "Amphibious Forces", "type": "special","personnel": 20000, "website": "https://www.marinir.tnial.mil.id"},
+    ],
+    "Morocco": [
+        {"name": "Royal Moroccan Army",           "role": "Land Forces",   "type": "army",      "personnel": 175000, "website": "https://www.far-maroc.ma"},
+        {"name": "Royal Moroccan Navy",           "role": "Naval Forces",  "type": "navy",      "personnel": 9000,   "website": "https://www.far-maroc.ma"},
+        {"name": "Royal Moroccan Air Force",      "role": "Air Forces",    "type": "air",       "personnel": 13000,  "website": "https://www.far-maroc.ma"},
+        {"name": "Royal Gendarmerie",             "role": "Military Police","type": "gendarmerie","personnel": 20000, "website": "https://www.gendarmerie.ma"},
+    ],
+    "Egypt": [
+        {"name": "Egyptian Army",                 "role": "Land Forces",   "type": "army",      "personnel": 310000, "website": "https://www.mod.gov.eg"},
+        {"name": "Egyptian Navy",                 "role": "Naval Forces",  "type": "navy",      "personnel": 18500,  "website": "https://www.mod.gov.eg"},
+        {"name": "Egyptian Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 30000,  "website": "https://www.mod.gov.eg"},
+        {"name": "Egyptian Air Defense Forces",   "role": "Air Defense",   "type": "strategic", "personnel": 80000,  "website": "https://www.mod.gov.eg"},
+    ],
+    "UAE": [
+        {"name": "UAE Land Forces",               "role": "Land Forces",   "type": "army",      "personnel": 44000,  "website": "https://www.mod.gov.ae"},
+        {"name": "UAE Navy",                      "role": "Naval Forces",  "type": "navy",      "personnel": 2500,   "website": "https://www.mod.gov.ae"},
+        {"name": "UAE Air Force & Air Defence",   "role": "Air Forces",    "type": "air",       "personnel": 4500,   "website": "https://www.mod.gov.ae"},
+        {"name": "Presidential Guard",            "role": "Elite Forces",  "type": "special",   "personnel": 12000,  "website": "https://www.mod.gov.ae"},
+    ],
+    "Pakistan": [
+        {"name": "Pakistan Army",                 "role": "Land Forces",   "type": "army",      "personnel": 560000, "website": "https://www.pakistanarmy.gov.pk"},
+        {"name": "Pakistan Navy",                 "role": "Naval Forces",  "type": "navy",      "personnel": 30000,  "website": "https://www.paknavy.gov.pk"},
+        {"name": "Pakistan Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 70000,  "website": "https://www.paf.gov.pk"},
+        {"name": "Strategic Plans Division",      "role": "Nuclear Deterrence", "type": "strategic","personnel": 25000,"website": "https://www.ispr.gov.pk"},
+    ],
+    "Vietnam": [
+        {"name": "Vietnam People's Ground Forces","role": "Land Forces",   "type": "army",      "personnel": 412000, "website": "https://mod.gov.vn"},
+        {"name": "Vietnam People's Navy",         "role": "Naval Forces",  "type": "navy",      "personnel": 50000,  "website": "https://mod.gov.vn"},
+        {"name": "Vietnam People's Air Force",    "role": "Air Forces",    "type": "air",       "personnel": 30000,  "website": "https://mod.gov.vn"},
+    ],
+    "Iran": [
+        {"name": "Islamic Republic of Iran Army (Artesh)", "role": "Land Forces", "type": "army","personnel": 350000,"website": "https://www.aja.ir"},
+        {"name": "Islamic Republic of Iran Navy", "role": "Naval Forces", "type": "navy",       "personnel": 18000,  "website": "https://www.aja.ir"},
+        {"name": "Islamic Republic of Iran Air Force", "role": "Air Forces", "type": "air",     "personnel": 37000,  "website": "https://www.aja.ir"},
+        {"name": "Revolutionary Guard Corps (IRGC)", "role": "Ideological Forces", "type": "special","personnel": 190000,"website": "https://sepahnews.ir"},
+        {"name": "IRGC Aerospace Force",          "role": "Missiles & Space", "type": "strategic","personnel": 15000, "website": "https://sepahnews.ir"},
+    ],
+    "Algeria": [
+        {"name": "Algerian Land Forces",          "role": "Land Forces",   "type": "army",      "personnel": 130000, "website": "https://www.mdn.dz"},
+        {"name": "Algerian National Navy",        "role": "Naval Forces",  "type": "navy",      "personnel": 6000,   "website": "https://www.mdn.dz"},
+        {"name": "Algerian Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 14000,  "website": "https://www.mdn.dz"},
+    ],
+    "Thailand": [
+        {"name": "Royal Thai Army",               "role": "Land Forces",   "type": "army",      "personnel": 245000, "website": "https://www.rta.mi.th"},
+        {"name": "Royal Thai Navy",               "role": "Naval Forces",  "type": "navy",      "personnel": 69850,  "website": "https://www.navy.mi.th"},
+        {"name": "Royal Thai Air Force",          "role": "Air Forces",    "type": "air",       "personnel": 46000,  "website": "https://www.rtaf.mi.th"},
+    ],
+    "Malaysia": [
+        {"name": "Malaysian Army",                "role": "Land Forces",   "type": "army",      "personnel": 80000,  "website": "https://army.mod.gov.my"},
+        {"name": "Royal Malaysian Navy",          "role": "Naval Forces",  "type": "navy",      "personnel": 18000,  "website": "https://www.navy.mil.my"},
+        {"name": "Royal Malaysian Air Force",     "role": "Air Forces",    "type": "air",       "personnel": 15000,  "website": "https://www.airforce.mil.my"},
+    ],
+    "Philippines": [
+        {"name": "Philippine Army",               "role": "Land Forces",   "type": "army",      "personnel": 100000, "website": "https://www.army.mil.ph"},
+        {"name": "Philippine Navy",               "role": "Naval Forces",  "type": "navy",      "personnel": 24500,  "website": "https://www.navy.mil.ph"},
+        {"name": "Philippine Air Force",          "role": "Air Forces",    "type": "air",       "personnel": 17000,  "website": "https://www.paf.mil.ph"},
+    ],
+    "Singapore": [
+        {"name": "Singapore Army",                "role": "Land Forces",   "type": "army",      "personnel": 50000,  "website": "https://www.mindef.gov.sg/army"},
+        {"name": "Republic of Singapore Navy",    "role": "Naval Forces",  "type": "navy",      "personnel": 9000,   "website": "https://www.mindef.gov.sg/navy"},
+        {"name": "Republic of Singapore Air Force","role": "Air Forces",   "type": "air",       "personnel": 13500,  "website": "https://www.mindef.gov.sg/air-force"},
+    ],
+    "Qatar": [
+        {"name": "Qatari Emiri Land Force",       "role": "Land Forces",   "type": "army",      "personnel": 12000,  "website": "https://www.mod.gov.qa"},
+        {"name": "Qatari Emiri Navy",             "role": "Naval Forces",  "type": "navy",      "personnel": 3000,   "website": "https://www.mod.gov.qa"},
+        {"name": "Qatari Emiri Air Force",        "role": "Air Forces",    "type": "air",       "personnel": 3000,   "website": "https://www.mod.gov.qa"},
+    ],
+    "Kuwait": [
+        {"name": "Kuwait Land Forces",            "role": "Land Forces",   "type": "army",      "personnel": 22000,  "website": "https://www.mod.gov.kw"},
+        {"name": "Kuwait Naval Force",            "role": "Naval Forces",  "type": "navy",      "personnel": 2000,   "website": "https://www.mod.gov.kw"},
+        {"name": "Kuwait Air Force",              "role": "Air Forces",    "type": "air",       "personnel": 2500,   "website": "https://www.mod.gov.kw"},
+        {"name": "Kuwait National Guard",         "role": "Internal Security","type": "national_guard","personnel": 7500,"website": "https://www.kng.gov.kw"},
+    ],
+    "Jordan": [
+        {"name": "Royal Jordanian Army",          "role": "Land Forces",   "type": "army",      "personnel": 74000,  "website": "https://www.jaf.mil.jo"},
+        {"name": "Royal Jordanian Navy",          "role": "Naval Forces",  "type": "navy",      "personnel": 500,    "website": "https://www.jaf.mil.jo"},
+        {"name": "Royal Jordanian Air Force",     "role": "Air Forces",    "type": "air",       "personnel": 14000,  "website": "https://www.jaf.mil.jo"},
+    ],
+    "Iraq": [
+        {"name": "Iraqi Army",                    "role": "Land Forces",   "type": "army",      "personnel": 180000, "website": "https://www.mod.mil.iq"},
+        {"name": "Iraqi Navy",                    "role": "Naval Forces",  "type": "navy",      "personnel": 3500,   "website": "https://www.mod.mil.iq"},
+        {"name": "Iraqi Air Force",               "role": "Air Forces",    "type": "air",       "personnel": 5000,   "website": "https://www.mod.mil.iq"},
+        {"name": "Popular Mobilization Forces",   "role": "Paramilitary",  "type": "special",   "personnel": 122000, "website": "https://www.al-hashed.net"},
+    ],
+    "Bangladesh": [
+        {"name": "Bangladesh Army",               "role": "Land Forces",   "type": "army",      "personnel": 160000, "website": "https://www.army.mil.bd"},
+        {"name": "Bangladesh Navy",               "role": "Naval Forces",  "type": "navy",      "personnel": 25000,  "website": "https://www.navy.mil.bd"},
+        {"name": "Bangladesh Air Force",          "role": "Air Forces",    "type": "air",       "personnel": 14000,  "website": "https://www.baf.mil.bd"},
+    ],
+    "Myanmar": [
+        {"name": "Myanmar Army (Tatmadaw Kyi)",   "role": "Land Forces",   "type": "army",      "personnel": 300000, "website": "https://www.mod.gov.mm"},
+        {"name": "Myanmar Navy",                  "role": "Naval Forces",  "type": "navy",      "personnel": 16000,  "website": "https://www.mod.gov.mm"},
+        {"name": "Myanmar Air Force",             "role": "Air Forces",    "type": "air",       "personnel": 15000,  "website": "https://www.mod.gov.mm"},
+    ],
+    "Azerbaijan": [
+        {"name": "Azerbaijani Land Forces",       "role": "Land Forces",   "type": "army",      "personnel": 65000,  "website": "https://www.mod.gov.az"},
+        {"name": "Azerbaijani Navy",              "role": "Naval Forces",  "type": "navy",      "personnel": 5000,   "website": "https://www.mod.gov.az"},
+        {"name": "Azerbaijani Air Force",         "role": "Air Forces",    "type": "air",       "personnel": 8000,   "website": "https://www.mod.gov.az"},
+    ],
+    "South Africa": [
+        {"name": "South African Army",            "role": "Land Forces",   "type": "army",      "personnel": 40000,  "website": "https://www.dod.mil.za"},
+        {"name": "South African Navy",            "role": "Naval Forces",  "type": "navy",      "personnel": 7000,   "website": "https://www.dod.mil.za"},
+        {"name": "South African Air Force",       "role": "Air Forces",    "type": "air",       "personnel": 10000,  "website": "https://www.dod.mil.za"},
+    ],
+    "Nigeria": [
+        {"name": "Nigerian Army",                 "role": "Land Forces",   "type": "army",      "personnel": 150000, "website": "https://www.army.mil.ng"},
+        {"name": "Nigerian Navy",                 "role": "Naval Forces",  "type": "navy",      "personnel": 25000,  "website": "https://www.navy.mil.ng"},
+        {"name": "Nigerian Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 18000,  "website": "https://www.airforce.mil.ng"},
+    ],
+    "Argentina": [
+        {"name": "Argentine Army",                "role": "Land Forces",   "type": "army",      "personnel": 45000,  "website": "https://www.argentina.gob.ar/ejercito"},
+        {"name": "Argentine Navy",                "role": "Naval Forces",  "type": "navy",      "personnel": 18000,  "website": "https://www.argentina.gob.ar/armada"},
+        {"name": "Argentine Air Force",           "role": "Air Forces",    "type": "air",       "personnel": 14000,  "website": "https://www.argentina.gob.ar/fuerzaaerea"},
+    ],
+    "Chile": [
+        {"name": "Chilean Army",                  "role": "Land Forces",   "type": "army",      "personnel": 46000,  "website": "https://www.ejercito.cl"},
+        {"name": "Chilean Navy",                  "role": "Naval Forces",  "type": "navy",      "personnel": 19000,  "website": "https://www.armada.cl"},
+        {"name": "Chilean Air Force",             "role": "Air Forces",    "type": "air",       "personnel": 11000,  "website": "https://www.fach.mil.cl"},
+    ],
+    "Peru": [
+        {"name": "Peruvian Army",                 "role": "Land Forces",   "type": "army",      "personnel": 75000,  "website": "https://www.ejercito.mil.pe"},
+        {"name": "Peruvian Navy",                 "role": "Naval Forces",  "type": "navy",      "personnel": 24000,  "website": "https://www.marina.mil.pe"},
+        {"name": "Peruvian Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 17000,  "website": "https://www.fap.mil.pe"},
+    ],
+    "Colombia": [
+        {"name": "Colombian National Army",       "role": "Land Forces",   "type": "army",      "personnel": 237000, "website": "https://www.ejercito.mil.co"},
+        {"name": "Colombian Navy",                "role": "Naval Forces",  "type": "navy",      "personnel": 56000,  "website": "https://www.armada.mil.co"},
+        {"name": "Colombian Air Force",           "role": "Air Forces",    "type": "air",       "personnel": 14000,  "website": "https://www.fac.mil.co"},
+        {"name": "National Police of Colombia",   "role": "Military Police","type": "gendarmerie","personnel": 160000,"website": "https://www.policia.gov.co"},
+    ],
+    "Mexico": [
+        {"name": "Mexican Army",                  "role": "Land Forces",   "type": "army",      "personnel": 220000, "website": "https://www.gob.mx/sedena"},
+        {"name": "Mexican Navy (SEMAR)",          "role": "Naval Forces",  "type": "navy",      "personnel": 70000,  "website": "https://www.gob.mx/semar"},
+        {"name": "Mexican Air Force",             "role": "Air Forces",    "type": "air",       "personnel": 19000,  "website": "https://www.gob.mx/sedena"},
+        {"name": "National Guard",                "role": "Internal Security","type": "national_guard","personnel": 110000,"website": "https://www.gob.mx/guardianacional"},
+    ],
+    "Belgium": [
+        {"name": "Belgian Land Component",        "role": "Land Forces",   "type": "army",      "personnel": 10000,  "website": "https://www.mil.be"},
+        {"name": "Belgian Naval Component",       "role": "Naval Forces",  "type": "navy",      "personnel": 1500,   "website": "https://www.mil.be"},
+        {"name": "Belgian Air Component",         "role": "Air Forces",    "type": "air",       "personnel": 5500,   "website": "https://www.mil.be"},
+    ],
+    "Switzerland": [
+        {"name": "Swiss Land Forces",             "role": "Land Forces",   "type": "army",      "personnel": 100000, "website": "https://www.vtg.admin.ch"},
+        {"name": "Swiss Air Force",               "role": "Air Forces",    "type": "air",       "personnel": 20000,  "website": "https://www.vtg.admin.ch/de/organisation/luftwaffe.html"},
+    ],
+    "Denmark": [
+        {"name": "Royal Danish Army",             "role": "Land Forces",   "type": "army",      "personnel": 15000,  "website": "https://www.forsvaret.dk"},
+        {"name": "Royal Danish Navy",             "role": "Naval Forces",  "type": "navy",      "personnel": 3500,   "website": "https://www.forsvaret.dk"},
+        {"name": "Royal Danish Air Force",        "role": "Air Forces",    "type": "air",       "personnel": 3500,   "website": "https://www.forsvaret.dk"},
+    ],
+    "Finland": [
+        {"name": "Finnish Army",                  "role": "Land Forces",   "type": "army",      "personnel": 19000,  "website": "https://maavoimat.fi"},
+        {"name": "Finnish Navy",                  "role": "Naval Forces",  "type": "navy",      "personnel": 3500,   "website": "https://merivoimat.fi"},
+        {"name": "Finnish Air Force",             "role": "Air Forces",    "type": "air",       "personnel": 3000,   "website": "https://ilmavoimat.fi"},
+    ],
+    "Portugal": [
+        {"name": "Portuguese Army",               "role": "Land Forces",   "type": "army",      "personnel": 17000,  "website": "https://www.exercito.pt"},
+        {"name": "Portuguese Navy",               "role": "Naval Forces",  "type": "navy",      "personnel": 9000,   "website": "https://www.marinha.pt"},
+        {"name": "Portuguese Air Force",          "role": "Air Forces",    "type": "air",       "personnel": 6000,   "website": "https://www.emfa.pt"},
+        {"name": "National Republican Guard (GNR)","role": "Military Police","type": "gendarmerie","personnel": 22000,"website": "https://www.gnr.pt"},
+    ],
+    "Czech Republic": [
+        {"name": "Czech Land Forces",             "role": "Land Forces",   "type": "army",      "personnel": 13000,  "website": "https://www.army.cz"},
+        {"name": "Czech Air Force",               "role": "Air Forces",    "type": "air",       "personnel": 6000,   "website": "https://www.army.cz"},
+    ],
+    "Austria": [
+        {"name": "Austrian Land Forces",          "role": "Land Forces",   "type": "army",      "personnel": 14000,  "website": "https://www.bundesheer.at"},
+        {"name": "Austrian Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 3000,   "website": "https://www.bundesheer.at"},
+    ],
+    "Romania": [
+        {"name": "Romanian Land Forces",          "role": "Land Forces",   "type": "army",      "personnel": 35000,  "website": "https://www.forter.ro"},
+        {"name": "Romanian Naval Forces",         "role": "Naval Forces",  "type": "navy",      "personnel": 6500,   "website": "https://www.navy.ro"},
+        {"name": "Romanian Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 11000,  "website": "https://www.roaf.ro"},
+    ],
+    "Hungary": [
+        {"name": "Hungarian Land Forces",         "role": "Land Forces",   "type": "army",      "personnel": 19000,  "website": "https://www.honvedelem.hu"},
+        {"name": "Hungarian Air Force",           "role": "Air Forces",    "type": "air",       "personnel": 6000,   "website": "https://www.honvedelem.hu"},
+    ],
+    "New Zealand": [
+        {"name": "New Zealand Army",              "role": "Land Forces",   "type": "army",      "personnel": 4500,   "website": "https://www.nzdf.mil.nz/army"},
+        {"name": "Royal New Zealand Navy",        "role": "Naval Forces",  "type": "navy",      "personnel": 2200,   "website": "https://www.nzdf.mil.nz/navy"},
+        {"name": "Royal New Zealand Air Force",   "role": "Air Forces",    "type": "air",       "personnel": 2400,   "website": "https://www.nzdf.mil.nz/air-force"},
+    ],
+    "Estonia": [
+        {"name": "Estonian Land Forces",          "role": "Land Forces",   "type": "army",      "personnel": 6000,   "website": "https://mil.ee"},
+        {"name": "Estonian Navy",                 "role": "Naval Forces",  "type": "navy",      "personnel": 300,    "website": "https://mil.ee"},
+        {"name": "Estonian Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 300,    "website": "https://mil.ee"},
+    ],
+    "Latvia": [
+        {"name": "Latvian Land Forces",           "role": "Land Forces",   "type": "army",      "personnel": 5000,   "website": "https://www.mod.gov.lv"},
+        {"name": "Latvian Naval Forces",          "role": "Naval Forces",  "type": "navy",      "personnel": 600,    "website": "https://www.mod.gov.lv"},
+        {"name": "Latvian Air Force",             "role": "Air Forces",    "type": "air",       "personnel": 300,    "website": "https://www.mod.gov.lv"},
+    ],
+    "Lithuania": [
+        {"name": "Lithuanian Land Forces",        "role": "Land Forces",   "type": "army",      "personnel": 12000,  "website": "https://kariuomene.lt"},
+        {"name": "Lithuanian Naval Force",        "role": "Naval Forces",  "type": "navy",      "personnel": 600,    "website": "https://kariuomene.lt"},
+        {"name": "Lithuanian Air Force",          "role": "Air Forces",    "type": "air",       "personnel": 1000,   "website": "https://kariuomene.lt"},
+    ],
+    "Bulgaria": [
+        {"name": "Bulgarian Land Forces",         "role": "Land Forces",   "type": "army",      "personnel": 19000,  "website": "https://www.mod.bg"},
+        {"name": "Bulgarian Navy",                "role": "Naval Forces",  "type": "navy",      "personnel": 3500,   "website": "https://www.navy.mod.bg"},
+        {"name": "Bulgarian Air Force",           "role": "Air Forces",    "type": "air",       "personnel": 6500,   "website": "https://www.af.mod.bg"},
+    ],
+    "Slovakia": [
+        {"name": "Slovak Land Forces",            "role": "Land Forces",   "type": "army",      "personnel": 10000,  "website": "https://www.mosr.sk"},
+        {"name": "Slovak Air Force",              "role": "Air Forces",    "type": "air",       "personnel": 4000,   "website": "https://www.mosr.sk"},
+    ],
+    "Croatia": [
+        {"name": "Croatian Army",                 "role": "Land Forces",   "type": "army",      "personnel": 11000,  "website": "https://www.morh.hr"},
+        {"name": "Croatian Navy",                 "role": "Naval Forces",  "type": "navy",      "personnel": 1500,   "website": "https://www.morh.hr"},
+        {"name": "Croatian Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 1500,   "website": "https://www.morh.hr"},
+    ],
+    "Slovenia": [
+        {"name": "Slovenian Armed Forces",        "role": "Unified Armed Forces", "type": "army","personnel": 6000,  "website": "https://www.slovenskavojska.si"},
+    ],
+    "North Macedonia": [
+        {"name": "Army of North Macedonia",       "role": "Land Forces",   "type": "army",      "personnel": 8000,   "website": "https://www.mod.gov.mk"},
+    ],
+    "Albania": [
+        {"name": "Albanian Land Force",           "role": "Land Forces",   "type": "army",      "personnel": 6500,   "website": "https://www.aaf.mil.al"},
+        {"name": "Albanian Naval Force",          "role": "Naval Forces",  "type": "navy",      "personnel": 1000,   "website": "https://www.aaf.mil.al"},
+        {"name": "Albanian Air Force",            "role": "Air Forces",    "type": "air",       "personnel": 1000,   "website": "https://www.aaf.mil.al"},
+    ],
+    "Montenegro": [
+        {"name": "Armed Forces of Montenegro",    "role": "Unified Armed Forces", "type": "army","personnel": 1600,  "website": "https://www.gov.me/mod"},
+    ],
+    "Luxembourg": [
+        {"name": "Luxembourg Army",               "role": "Land Forces",   "type": "army",      "personnel": 900,    "website": "https://armee.lu"},
+    ],
+    "Iceland": [
+        {"name": "Icelandic Coast Guard",         "role": "Maritime Defence & SAR", "type": "coast_guard","personnel": 250,"website": "https://www.lhg.is"},
+    ],
 }
 
 # Maps expenditure country name → defense_players "country" field value(s)
