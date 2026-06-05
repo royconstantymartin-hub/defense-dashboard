@@ -411,6 +411,7 @@ export const CAPABILITY_DETAILS = {
       { model: "Panavia Tornado IDS", count: 81, manufacturer: "Panavia" },
       { model: "Eurofighter Typhoon", count: 72, manufacturer: "Eurofighter GmbH" },
       { model: "Boeing E-3 Sentry (AWACS)", count: 5, manufacturer: "Boeing" },
+      { model: "Eurofighter Typhoon (additional, on order)", count: 54, manufacturer: "Eurofighter GmbH / BAE Systems", origin: "Europe", on_order: true },
     ],
     helicopters: [
       { model: "UH-60 Black Hawk", count: 100, manufacturer: "Sikorsky" },
@@ -1119,6 +1120,7 @@ export const CAPABILITY_DETAILS = {
       { model: "Su-24M Fencer", count: 12, manufacturer: "Sukhoi" },
       { model: "F-16 Fighting Falcon", count: 20, manufacturer: "General Dynamics" },
       { model: "Mirage 2000-5", count: 6, manufacturer: "Dassault Aviation" },
+      { model: "F-16 Fighting Falcon (pledged)", count: 85, manufacturer: "General Dynamics / Lockheed Martin", origin: "NATO partners", on_order: true },
     ],
     helicopters: [
       { model: "Mi-8/Mi-17 Hip", count: 80, manufacturer: "Mil" },
@@ -1340,6 +1342,7 @@ export const CAPABILITY_DETAILS = {
     fighters: [
       { model: "F-35A Lightning II", count: 40, manufacturer: "Lockheed Martin" },
       { model: "F-16AM/BM Fighting Falcon", count: 24, manufacturer: "General Dynamics / Lockheed Martin" },
+      { model: "F-35A Lightning II (on order)", count: 12, manufacturer: "Lockheed Martin", origin: "USA", on_order: true },
     ],
     helicopters: [
       { model: "AH-64E Apache Guardian", count: 28, manufacturer: "Boeing" },
@@ -1642,6 +1645,7 @@ export const CAPABILITY_DETAILS = {
       { model: "Su-25 Frogfoot", count: 19, manufacturer: "Sukhoi" },
       { model: "MiG-25 Foxbat (reserve)", count: 12, manufacturer: "Mikoyan" },
       { model: "JF-17C Thunder Block 3", count: 4, manufacturer: "PAC / Chengdu" },
+      { model: "JF-17C Block III (on order)", count: 12, manufacturer: "PAC / Chengdu", origin: "Pakistan / China", on_order: true },
     ],
     helicopters: [
       { model: "Mi-8/Mi-17 Hip", count: 60, manufacturer: "Mil" },
@@ -1857,6 +1861,7 @@ export const CAPABILITY_DETAILS = {
       { model: "Su-24 Fencer", count: 21, manufacturer: "Sukhoi" },
       { model: "MiG-29", count: 24, manufacturer: "Mikoyan" },
       { model: "Su-22 Fitter", count: 30, manufacturer: "Sukhoi" },
+      { model: "Sukhoi Su-35 (on order)", count: 24, manufacturer: "Sukhoi", origin: "Russia", on_order: true },
     ],
     helicopters: [
       { model: "Bell 214", count: 50, manufacturer: "Bell Helicopter" },
@@ -2113,6 +2118,7 @@ export const CAPABILITY_DETAILS = {
       { model: "F-16C/D Block 52+ Fighting Falcon", count: 23, manufacturer: "Lockheed Martin" },
       { model: "Mirage F1", count: 25, manufacturer: "Dassault Aviation" },
       { model: "F-5E/F Tiger II", count: 22, manufacturer: "Northrop" },
+      { model: "F-16V Block 72 (on order)", count: 23, manufacturer: "Lockheed Martin", origin: "USA", on_order: true },
     ],
     helicopters: [
       { model: "SA 342 Gazelle", count: 19, manufacturer: "Aérospatiale" },
@@ -2127,6 +2133,7 @@ export const CAPABILITY_DETAILS = {
     ],
     tanks: [
       { model: "M1A1 SA Abrams", count: 222, manufacturer: "General Dynamics" },
+      { model: "M1A2 SEPv3 Abrams (on order)", count: 162, manufacturer: "General Dynamics", origin: "USA", on_order: true },
       { model: "M60A3 Patton", count: 427, manufacturer: "Chrysler Defense" },
       { model: "T-72B", count: 148, manufacturer: "Uralvagonzavod" },
       { model: "VT-1A Al-Khalid", count: 54, manufacturer: "Norinco" },
@@ -2204,6 +2211,7 @@ export const CAPABILITY_DETAILS = {
       { model: "KAI FA-50PH", count: 11, manufacturer: "Korea Aerospace Industries" },
       { model: "Embraer A-29 Super Tucano", count: 6, manufacturer: "Embraer" },
       { model: "North American OV-10 Bronco", count: 8, manufacturer: "North American Rockwell" },
+      { model: "F-16 Block 70 (on order)", count: 20, manufacturer: "Lockheed Martin", origin: "USA", on_order: true },
     ],
     helicopters: [
       { model: "Bell UH-1 Iroquois", count: 30, manufacturer: "Bell Helicopter" },
@@ -2308,6 +2316,22 @@ export const PLATFORM_WIKI_TITLES = {
   "Hunter-class frigate (on order)":    "Hunter-class frigate",
   "River-class destroyer (CSC)":        "River-class destroyer",
   "AH-64E Apache Guardian (on order)":  "Boeing AH-64 Apache",
+  "Sukhoi Su-35 (on order)":            "Sukhoi Su-35",
+  "M1A2 SEPv3 Abrams (on order)":       "M1 Abrams",
+  "F-16 Fighting Falcon (pledged)":     "General Dynamics F-16 Fighting Falcon",
+  "F-16V Block 72 (on order)":          "General Dynamics F-16 Fighting Falcon",
+  "F-16 Block 70 (on order)":           "General Dynamics F-16 Fighting Falcon",
+  "Eurofighter Typhoon (additional, on order)": "Eurofighter Typhoon",
+  "JF-17C Block III (on order)":        "CAC/PAC JF-17 Thunder",
+  "Sukhoi Su-57 (reported order)":      "Sukhoi Su-57",
+  "Shenyang J-35A (on order)":          "Shenyang J-35",
+  "Shenyang J-35A (reported order)":    "Shenyang J-35",
+  "Saab JAS 39E Gripen (on order)":     "Saab JAS 39 Gripen",
+  "Saab JAS 39E/F Gripen (selected, on order)": "Saab JAS 39 Gripen",
+  "F-39E/F Gripen (on order)":          "Saab JAS 39 Gripen",
+  "KAI FA-50M (on order)":              "KAI T-50 Golden Eagle",
+  "Eurofighter Typhoon (on order)":     "Eurofighter Typhoon",
+  "Eurofighter Typhoon (Halcón, on order)": "Eurofighter Typhoon",
   // ── Fighters / Bombers ───────────────────────────────────────────────────
   "F-35A/B/C Lightning II":             "Lockheed Martin F-35 Lightning II",
   "F-35A Lightning II":                 "Lockheed Martin F-35 Lightning II",
@@ -4298,6 +4322,11 @@ export const STATIC_PLATFORM_IMAGES = {
   "Álvaro Alberto (SN-BR, nuclear)":       "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/SSN_Alvaro_Alberto.jpg/500px-SSN_Alvaro_Alberto.jpg",
   "Sukhoi Su-57 (reported order)":         "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Sukhoi_Design_Bureau%2C_054%2C_Sukhoi_T-50_%28Su-57_prototype%29_%2849581303977%29.jpg/500px-Sukhoi_Design_Bureau%2C_054%2C_Sukhoi_T-50_%28Su-57_prototype%29_%2849581303977%29.jpg",
   "KAI FA-50M (on order)":                 "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Phillipine_Air_Force_FA-50PH.jpg/500px-Phillipine_Air_Force_FA-50PH.jpg",
+  "Eurofighter Typhoon (additional, on order)": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/RAF_Eurofighter_EF-2000_Typhoon_F2_Lofting-1.jpg/500px-RAF_Eurofighter_EF-2000_Typhoon_F2_Lofting-1.jpg",
+  "F-16 Fighting Falcon (pledged)":        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_June_2008.jpg/500px-F-16_June_2008.jpg",
+  "F-16V Block 72 (on order)":             "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_June_2008.jpg/500px-F-16_June_2008.jpg",
+  "F-16 Block 70 (on order)":              "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_June_2008.jpg/500px-F-16_June_2008.jpg",
+  "JF-17C Block III (on order)":           "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Pakistan_Air_Force_Chengdu_JF-17_Gu.jpg/500px-Pakistan_Air_Force_Chengdu_JF-17_Gu.jpg",
   // ── Drones / UAVs ─────────────────────────────────────────────────────────
   "MQ-9A Reaper MALE (ISR / strike)":                         WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
   "MQ-9A/B Reaper (MALE / strike)":                           WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
