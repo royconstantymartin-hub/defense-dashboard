@@ -210,7 +210,8 @@ const LOGO_FALLBACK = {
   "ArianeGroup":                         "arianegroup.com",
   "MBDA":                                "mbda-systems.com",
   "RADA Electronic Industries":          "rada.com",
-  "Nightwing Group":                     "nightwinggroup.com",
+  "Nightwing Group":                     "nightwing.com",
+  "Nightwing":                           "nightwing.com",
   "Rebellion Defense":                   "rebelliondefense.com",
   "EDGE Group":                          "edgegroup.ae",
   "Texelis":                             "texelis.com",
@@ -300,7 +301,7 @@ const LOGO_FALLBACK = {
   "Ancala Partners":                     "ancalapartners.com",
   "Avincis":                             "avincis.com",
   "S21sec":                              "s21sec.com",
-  "Roboteam":                            "roboteam.com",
+  "Roboteam":                            "robo-team.com",
   "Paragon Solutions":                   "paragon-solutions.co.uk",
   // ── European Defense Startups (2025 funding cohort) ──────────────────────────
   "TEKEVER":                             "tekever.com",
@@ -531,7 +532,7 @@ const LOGO_FALLBACK = {
   "Stellant Systems":                     "stellant.com",
   "Seemann Composites and MSC":           "seemanncomposites.com",
   "Seemann Composites":                   "seemanncomposites.com",
-  "Orbit Technologies":                   "orbit.co.il",
+  "Orbit Technologies":                   "orbit-cs.com",
   "ARKA Group":                           "arkagroup.com",
   "Aechelon Technology":                  "aechelon.com",
   "ExoAnalytic Solutions":                "exoanalytic.com",
@@ -605,13 +606,13 @@ const LOGO_FALLBACK = {
   "Windjammer Capital":                  "windjammercapital.com",
   "PrecisionX Group":                    "precisionxgroup.com",
   "Talica":                              "talica.com",
-  "AeroDynamics Metal Finishing":        "aerodynamicsfinishing.com",
+  "AeroDynamics Metal Finishing":        "aerodynamicsmetalfinishing.com",
   "Solestra Group":                      "solestragroup.com",
   "Aerofab":                             "aerofab.com",
-  "Aeromax Industries":                  "aeromaxindustries.com",
-  "The Ely Company":                     "elycompany.com",
+  "Aeromax Industries":                  "aeromax.com",
+  "The Ely Company":                     "elyco.com",
   "DCS Corporation":                     "dcscorp.com",
-  "ARCTOS Technology Solutions":         "arctos.com",
+  "ARCTOS Technology Solutions":         "arctos-us.com",
   "Trident Systems":                     "tridsys.com",
   "Ibeos":                               "ibeos.com",
 };
@@ -802,20 +803,20 @@ function getLogoDomain(activity, side) {
   return null;
 }
 
-// ── Logo source chain — multiple real-logo providers, then coloured initials ──
-// Clearbit was deprecated end-2025 and now often returns a grey 200 placeholder
-// that never triggers onError, so we no longer lead with it. The chain favours
-// providers that return the real favicon/logo and 404 cleanly when unknown:
+// ── Logo source chain — live favicon providers, then coloured initials ──
+// Clearbit shut down end-2025 and now serves a grey placeholder image at HTTP 200
+// that never triggers onError. Left in the chain it stuck on every unknown domain
+// and produced the "grey globe" — so it has been removed entirely. Both remaining
+// providers return a clean HTTP 404 for domains that don't resolve, so onError
+// fires and we fall through to the coloured initials avatar:
 //   1. Google Favicon V2 (sz=128)  — real favicon, reliable, clean 404
 //   2. DuckDuckGo icons (ip3)       — independent real-logo source
-//   3. Clearbit                     — HD wordmark when still alive
-//   4. Coloured initials            — deterministic last resort, no network
+//   3. Coloured initials            — deterministic last resort, no network
 function buildLogoUrls(domain) {
   if (!domain) return [];
   return [
     `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
     `https://icons.duckduckgo.com/ip3/${domain}.ico`,
-    `https://logo.clearbit.com/${domain}?size=128`,
   ];
 }
 

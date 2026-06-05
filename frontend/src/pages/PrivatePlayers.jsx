@@ -63,8 +63,11 @@ function LogoWithFallback({ name, website, size = 40 }) {
     if (website) {
       const domain = website.replace(/^https?:\/\//, "").split("/")[0].toLowerCase();
       const skipFavicon = FAVICON_SKIP_TLDS.some((tld) => domain.endsWith(tld));
-      const fallback = [`https://logo.clearbit.com/${domain}`];
-      if (!skipFavicon) fallback.push(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
+      const fallback = [];
+      if (!skipFavicon) {
+        fallback.push(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
+        fallback.push(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
+      }
       return fallback;
     }
     return [];

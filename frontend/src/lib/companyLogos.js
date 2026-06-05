@@ -393,7 +393,7 @@ export const COMPANY_LOGOS = {
   "ARX Robotics": "arx-robotics.com",
   "Stark Defence": "stark-defence.com",
   // Baltics
-  "Origin Robotics": "originrobotics.ai",
+  "Origin Robotics": "origin-robotics.com",
   "Farsight Vision": "farsightvision.com",
   "Defendec": "defendec.com",
   "Frankenburg Technologies": "frankenburgtech.com",
@@ -825,29 +825,36 @@ export function getLogoUrl(name) {
   return COMPANY_WIKI_LOGOS[name] ?? null;
 }
 
-// Returns Wikipedia logo if available, then clearbit fallback, then null
+// Returns Wikipedia logo if available, then a live favicon source, then null.
+// NOTE: Clearbit (logo.clearbit.com) was shut down end-2025 and now serves a
+// generic grey placeholder image at HTTP 200 — it never triggers onError, so it
+// would mask every real logo behind it. We no longer use it anywhere.
 export function getClearbitUrl(name) {
   if (COMPANY_WIKI_LOGOS[name]) return COMPANY_WIKI_LOGOS[name];
   const domain = COMPANY_LOGOS[name];
-  if (domain) return `https://logo.clearbit.com/${domain}`;
+  if (domain) return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
   return null;
 }
 
-// TLDs where even DuckDuckGo returns a generic placeholder favicon.
+// TLDs where the favicon services return a generic placeholder (or are blocked).
+// Companies on these TLDs rely on their hardcoded COMPANY_WIKI_LOGOS entry.
 export const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in", ".gov.ua", ".org.tw", ".com.tw"];
 
-// Returns ordered list of logo URLs to try: [wikipedia?, clearbit?, ddg-favicon?]
-// DuckDuckGo favicon returns a real 404 for sites without a custom favicon,
-// so onError fires correctly and falls through to the letter avatar.
-// (Google Favicon was removed: it returns HTTP 200 + a generic globe for unknown sites.)
+// Returns ordered list of logo URLs to try: [wikipedia?, google-favicon?, ddg-favicon?]
+// Both favicon services return a clean HTTP 404 for domains that do not resolve,
+// so onError fires correctly and we fall through to the coloured letter avatar.
+// Clearbit was removed: now that it is dead it only ever served a grey globe that
+// stuck (HTTP 200) and hid the real logo underneath.
 export function getLogoUrls(name) {
   const urls = [];
   if (COMPANY_WIKI_LOGOS[name]) urls.push(COMPANY_WIKI_LOGOS[name]);
   const domain = COMPANY_LOGOS[name];
   if (domain) {
-    urls.push(`https://logo.clearbit.com/${domain}`);
     const skipFavicon = FAVICON_SKIP_TLDS.some((tld) => domain.endsWith(tld));
-    if (!skipFavicon) urls.push(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
+    if (!skipFavicon) {
+      urls.push(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
+      urls.push(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
+    }
   }
   return urls;
 }
