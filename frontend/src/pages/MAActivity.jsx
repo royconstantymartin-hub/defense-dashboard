@@ -23,6 +23,12 @@ import {
 const PAGE_SIZE      = 50;
 const HIST_PAGE_SIZE = 100;
 
+// Auto-refresh: re-fetch deals on this interval so newly-scraped acquisitions show
+// up in the spotlight + table without a manual refresh. The backend scrapes new
+// deals on its own schedule; the page just re-reads them. We also refresh whenever
+// the tab regains focus, which is the practical trigger for most visits.
+const AUTO_REFRESH_MS = 6 * 60 * 60 * 1000; // 6 hours
+
 const MIN_VALUE_OPTIONS = [
   { value: 0,    label: "All" },
   { value: 100,  label: "≥$100M" },
@@ -882,6 +888,32 @@ function isFundAcquirer(name = "") {
   return PE_FUND_KEYWORDS.some(k => n.includes(k));
 }
 
+// ── Non-M&A guard ─────────────────────────────────────────────────────────────
+// A real M&A deal is one COMPANY acquiring another COMPANY. A sovereign state
+// buying equipment (e.g. "Italy buys six Airbus-made A330 MRTT tankers") is
+// procurement, NOT M&A — those entries must never appear in the table or spotlight.
+const STATE_BUYERS = new Set([
+  "united states","usa","u.s.","u.s","america","uk","united kingdom","britain",
+  "italy","france","germany","spain","poland","netherlands","belgium","sweden",
+  "norway","finland","denmark","greece","turkey","türkiye","india","japan",
+  "south korea","korea","north korea","australia","canada","israel","saudi arabia",
+  "uae","qatar","egypt","brazil","ukraine","russia","china","taiwan","nato",
+  "european union","eu","pentagon","switzerland","austria","portugal","romania",
+  "czech republic","czechia","hungary","slovakia","croatia","indonesia","philippines",
+]);
+const GOV_BUYER_RE = /\b(ministry of defen[cs]e|department of defen[cs]e|\bdod\b|\bmod\b|armed forces|air force|\bnavy\b|\barmy\b|government|military)\b/i;
+// A target that reads like a QUANTITY of military hardware (e.g. "six A330 MRTT
+// tankers", "12 F-35 jets") is a procurement order, not a company being bought.
+const PROCUREMENT_RE = /\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|dozens?|fleet|squadron)\b.*\b(tankers?|fighters?|jets?|aircraft|helicopters?|drones?|uavs?|missiles?|frigates?|destroyers?|submarines?|corvettes?|warships?|vehicles?|tanks?|howitzers?|radars?|satellites?|units?)\b/i;
+
+function isStateOrProcurement(activity) {
+  const acq = (activity?.acquirer || "").trim().toLowerCase().replace(/^the\s+/, "");
+  if (STATE_BUYERS.has(acq)) return true;
+  if (GOV_BUYER_RE.test(activity?.acquirer || "")) return true;
+  if (PROCUREMENT_RE.test(activity?.target || "")) return true;
+  return false;
+}
+
 function dealRelativeTime(isoStr) {
   if (!isoStr) return "recent";
   const diff = Date.now() - new Date(isoStr).getTime();
@@ -924,34 +956,14 @@ const SPOTLIGHT_TABS = [
   { value: "fund",    label: "Fund → Defense" },
 ];
 
-function RecentDealsSpotlight({ activities }) {
-  const [tab, setTab] = useState("all");
-
+function RecentDealsSpotlight({ activities, sourceFilter, onSourceFilter, sourceCounts }) {
   const spots = useMemo(() => {
-    // Only company-level acquisitions/mergers — exclude product-line / program deals
-    // (those tend to have targets that are programme names, not company names)
-    const base = [...activities]
-      .filter(a => ["acquisition", "merger"].includes(a.deal_type));
-
-    const filtered = base.filter(a => {
-      const fund = isFundAcquirer(a.acquirer);
-      if (tab === "defense") return !fund;
-      if (tab === "fund")    return fund;
-      return true;
-    });
-
-    return filtered
+    // Spotlight always shows the LATEST company-level acquisitions/mergers.
+    // The Defense/Fund toggle below filters the TABLE, not these cards ("news").
+    return [...activities]
+      .filter(a => ["acquisition", "merger"].includes(a.deal_type))
       .sort((a, b) => new Date(b.announced_date) - new Date(a.announced_date))
       .slice(0, 4);
-  }, [activities, tab]);
-
-  const totalByTab = useMemo(() => {
-    const base = activities.filter(a => ["acquisition", "merger"].includes(a.deal_type));
-    return {
-      all:     base.length,
-      defense: base.filter(a => !isFundAcquirer(a.acquirer)).length,
-      fund:    base.filter(a => isFundAcquirer(a.acquirer)).length,
-    };
   }, [activities]);
 
   if (!activities.length) return null;
@@ -967,24 +979,27 @@ function RecentDealsSpotlight({ activities }) {
             latest acquisitions
           </span>
         </div>
-        {/* Toggle filter */}
-        <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
-          {SPOTLIGHT_TABS.map(t => (
-            <button
-              key={t.value}
-              onClick={() => setTab(t.value)}
-              className={`px-3 py-1 text-[11px] font-medium rounded-md transition-all whitespace-nowrap ${
-                tab === t.value
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              {t.label}
-              <span className={`ml-1 font-mono text-[10px] ${tab === t.value ? "text-indigo-700" : "text-slate-400"}`}>
-                {totalByTab[t.value]}
-              </span>
-            </button>
-          ))}
+        {/* Toggle filter — drives the deals TABLE below, not the spotlight cards */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] uppercase tracking-wider text-slate-400 hidden sm:inline">Filter table ↓</span>
+          <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+            {SPOTLIGHT_TABS.map(t => (
+              <button
+                key={t.value}
+                onClick={() => onSourceFilter(t.value)}
+                className={`px-3 py-1 text-[11px] font-medium rounded-md transition-all whitespace-nowrap ${
+                  sourceFilter === t.value
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                {t.label}
+                <span className={`ml-1 font-mono text-[10px] ${sourceFilter === t.value ? "text-indigo-700" : "text-slate-400"}`}>
+                  {sourceCounts?.[t.value] ?? 0}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
       <CardContent className="pt-4">
@@ -3027,17 +3042,18 @@ export default function MAActivity() {
   const [minValue,       setMinValue]          = useState(0);
   const [selectedSector, setSelectedSector]    = useState("all");
   const [viewMode,       setViewMode]          = useState("table"); // "table" | "pipeline"
+  const [dealSource,     setDealSource]        = useState("all");   // "all" | "defense" | "fund" — filters the table
 
-  const fetchRecent = async () => {
-    setLoading(true);
+  const fetchRecent = async ({ silent = false } = {}) => {
+    if (!silent) setLoading(true);
     setError(null);
     try {
       const res = await axios.get(`${API}/ma-activities`, { params: { limit: 200, offset: 0, days: 0 } });
       setActivities(res.data);
     } catch {
-      setError("Failed to load M&A deals.");
+      if (!silent) setError("Failed to load M&A deals.");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -3079,6 +3095,16 @@ export default function MAActivity() {
     axios.get(`${API}/defense-players`).then(r => setPlayers(r.data)).catch(() => {});
   }, []);
 
+  // Auto-refresh: pull newly-scraped deals on an interval + when the tab is refocused.
+  // Each new deal flows straight into the spotlight and as a new row in the table.
+  useEffect(() => {
+    const refresh = () => { fetchRecent({ silent: true }); fetchHist(); fetchMeta(); };
+    const timer = setInterval(refresh, AUTO_REFRESH_MS);
+    const onVisible = () => { if (document.visibilityState === "visible") refresh(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => { clearInterval(timer); document.removeEventListener("visibilitychange", onVisible); };
+  }, []);
+
   // Merge + deduplicate recent and historical.
   // Dedup by id first; also dedup by (acquirer_first_word, target_first_word) to catch
   // near-duplicate scraper entries like "Bombardier" vs "Bombardier C Series".
@@ -3088,6 +3114,8 @@ export default function MAActivity() {
     return [...activities, ...historical].filter(a => {
       // Drop scraper artifacts before dedup so they don't consume a seen-key slot
       if (!isValidCompanyName(a.acquirer) || !isValidCompanyName(a.target)) return false;
+      // Drop state procurement (e.g. "Italy buys six A330 MRTT tankers") — not real M&A
+      if (isStateOrProcurement(a)) return false;
       if (seenId.has(a.id)) return false;
       const normKey = `${(a.acquirer||'').toLowerCase().trim().split(/\s+/)[0]}|${(a.target||'').toLowerCase().trim().split(/\s+/)[0]}`;
       if (seenKey.has(normKey)) return false;
@@ -3135,6 +3163,8 @@ export default function MAActivity() {
     if (selectedSector !== "all") {
       list = list.filter(a => a.sector === selectedSector);
     }
+    if (dealSource === "defense") list = list.filter(a => !isFundAcquirer(a.acquirer));
+    if (dealSource === "fund")    list = list.filter(a => isFundAcquirer(a.acquirer));
     if (searchTerm) {
       const t = searchTerm.toLowerCase();
       list = list.filter(a =>
@@ -3148,7 +3178,14 @@ export default function MAActivity() {
       const vb = sortField === "deal_value" ? (b.deal_value || 0) : new Date(b.announced_date).getTime();
       return sortDir === "asc" ? va - vb : vb - va;
     });
-  }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir, selectedCountry, minValue, selectedSector]);
+  }, [allDeals, dealTypeTab, selectedStatus, selectedYear, searchTerm, sortField, sortDir, selectedCountry, minValue, selectedSector, dealSource]);
+
+  // Counts for the Defense/Fund toggle (drives the table). Computed over all deals.
+  const sourceCounts = useMemo(() => ({
+    all:     allDeals.length,
+    defense: allDeals.filter(a => !isFundAcquirer(a.acquirer)).length,
+    fund:    allDeals.filter(a => isFundAcquirer(a.acquirer)).length,
+  }), [allDeals]);
 
   // "Data as of" badge — max announced_date across all loaded deals
   const dataAsOf = useMemo(() => {
@@ -3160,7 +3197,7 @@ export default function MAActivity() {
   }, [allDeals]);
 
   // Reset page on filter change
-  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir, minValue, selectedSector]);
+  useEffect(() => setPage(0), [dealTypeTab, selectedStatus, selectedYear, searchTerm, selectedCountry, sortField, sortDir, minValue, selectedSector, dealSource]);
 
   const pageDeals  = filteredDeals.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(filteredDeals.length / PAGE_SIZE);
@@ -3168,7 +3205,7 @@ export default function MAActivity() {
   const rangeEnd   = Math.min((page + 1) * PAGE_SIZE, filteredDeals.length);
 
   const totalValue = filteredDeals.filter(a => a.is_disclosed ?? true).reduce((s, a) => s + (a.deal_value || 0), 0);
-  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all", minValue > 0, selectedSector !== "all"].filter(Boolean).length;
+  const activeFilterCount = [selectedStatus !== "all", selectedYear !== "all", searchTerm.length > 0, selectedCountry !== "all", minValue > 0, selectedSector !== "all", dealSource !== "all"].filter(Boolean).length;
 
   // Quarterly chart — uses the same tab filter as the deal list, but ignores
   // the sidebar filters (status/year/country/value) so the chart always shows
@@ -3254,7 +3291,12 @@ export default function MAActivity() {
 
       {/* ── Recent Deals Spotlight ── */}
       {!loading && activities.length > 0 && (
-        <RecentDealsSpotlight activities={activities} />
+        <RecentDealsSpotlight
+          activities={activities.filter(a => !isStateOrProcurement(a))}
+          sourceFilter={dealSource}
+          onSourceFilter={setDealSource}
+          sourceCounts={sourceCounts}
+        />
       )}
 
       {/* ── Deal-type tabs ── */}
@@ -3379,7 +3421,7 @@ export default function MAActivity() {
               </span>
               {activeFilterCount > 0 && (
                 <button
-                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); setSelectedSector("all"); }}
+                  onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); setSelectedSector("all"); setDealSource("all"); }}
                   className="text-[11px] text-rose-500 hover:text-rose-700 font-medium"
                 >
                   Clear
@@ -3548,6 +3590,12 @@ export default function MAActivity() {
                 <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
                   Country: {selectedCountry.toUpperCase()}
                   <button onClick={() => setSelectedCountry("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
+                </span>
+              )}
+              {dealSource !== "all" && (
+                <span className="text-xs bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-medium">
+                  {SPOTLIGHT_TABS.find(o => o.value === dealSource)?.label ?? dealSource}
+                  <button onClick={() => setDealSource("all")} className="hover:text-blue-900 font-bold leading-none">×</button>
                 </span>
               )}
               <button
