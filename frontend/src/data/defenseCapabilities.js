@@ -71,6 +71,7 @@ export const CAPABILITY_DETAILS = {
       { model: "F-15E/EX Strike Eagle", count: 220, manufacturer: "Boeing" },
       { model: "F-22 Raptor", count: 180, manufacturer: "Lockheed Martin" },
       { model: "F-15C/D Eagle", count: 150, manufacturer: "McDonnell Douglas" },
+      { model: "F-47 (NGAD — chasseur 6e gén.)", manufacturer: "Boeing", origin: "USA", is_dev: true },
     ],
     helicopters: [
       { model: "UH-60 Black Hawk", count: 2100, manufacturer: "Sikorsky" },
@@ -334,6 +335,8 @@ export const CAPABILITY_DETAILS = {
       { model: "Mirage 2000", count: 48, manufacturer: "Dassault Aviation" },
       { model: "Rafale", count: 36, manufacturer: "Dassault Aviation" },
       { model: "HAL Tejas", count: 38, manufacturer: "HAL" },
+      { model: "Rafale M (Marine — commande 2025)", count: 26, manufacturer: "Dassault Aviation", origin: "France", on_order: true },
+      { model: "HAL Tejas Mk1A (commande)", count: 83, manufacturer: "HAL", origin: "India", on_order: true },
     ],
     helicopters: [
       { model: "Mi-17 / Mi-17V-5", count: 222, manufacturer: "Mil" },
@@ -454,6 +457,7 @@ export const CAPABILITY_DETAILS = {
     fighters: [
       { model: "Eurofighter Typhoon FGR4", count: 107, manufacturer: "BAE Systems / Eurofighter GmbH" },
       { model: "F-35B Lightning II", count: 34, manufacturer: "Lockheed Martin" },
+      { model: "GCAP / Tempest (chasseur 6e gén.)", manufacturer: "BAE Systems / Leonardo / Mitsubishi", origin: "United Kingdom", is_dev: true },
     ],
     helicopters: [
       { model: "AW159 Wildcat", count: 62, manufacturer: "Leonardo Helicopters" },
@@ -498,6 +502,8 @@ export const CAPABILITY_DETAILS = {
     submarines: [
       { model: "Astute-class SSN", count: 5, manufacturer: "BAE Systems Submarines" },
       { model: "Vanguard-class SSBN", count: 4, manufacturer: "Vickers Shipbuilding" },
+      { model: "Dreadnought-class SSBN (commande)", count: 4, manufacturer: "BAE Systems Submarines", origin: "United Kingdom", on_order: true },
+      { model: "SSN-AUKUS (futur SNA)", manufacturer: "BAE Systems / Rolls-Royce", origin: "United Kingdom", is_dev: true },
     ],
     air_defense: [
       { model: "Sky Sabre (CAMM/Land Ceptor)", count: 24, manufacturer: "MBDA" },
@@ -514,6 +520,7 @@ export const CAPABILITY_DETAILS = {
     fighters: [
       { model: "Eurofighter Typhoon", count: 138, manufacturer: "Airbus / Eurofighter GmbH" },
       { model: "Panavia Tornado IDS/ECR", count: 78, manufacturer: "Panavia Aircraft" },
+      { model: "F-35A Lightning II (commande)", count: 35, manufacturer: "Lockheed Martin", origin: "USA", on_order: true },
     ],
     helicopters: [
       { model: "NHIndustries NH90", count: 100, manufacturer: "NHIndustries" },
@@ -555,6 +562,7 @@ export const CAPABILITY_DETAILS = {
     ],
     submarines: [
       { model: "Type 212A", count: 6, manufacturer: "ThyssenKrupp Marine Systems" },
+      { model: "Type 212CD (commande)", count: 6, manufacturer: "ThyssenKrupp Marine Systems", origin: "Germany", on_order: true },
     ],
     air_defense: [
       { model: "IRIS-T SLM", count: 6, manufacturer: "Diehl Defence" },
@@ -570,6 +578,8 @@ export const CAPABILITY_DETAILS = {
     fighters: [
       { model: "Dassault Rafale", count: 102, manufacturer: "Dassault Aviation" },
       { model: "Dassault Mirage 2000", count: 86, manufacturer: "Dassault Aviation" },
+      { model: "Dassault Rafale F4 (commande)", count: 42, manufacturer: "Dassault Aviation", origin: "France", on_order: true },
+      { model: "SCAF / NGF (avion de combat du futur)", manufacturer: "Dassault / Airbus / Indra", origin: "Europe", is_dev: true },
     ],
     helicopters: [
       { model: "Aerospatiale SA 342 Gazelle", count: 110, manufacturer: "Aerospatiale / Airbus" },
@@ -628,6 +638,7 @@ export const CAPABILITY_DETAILS = {
     ],
     aircraft_carriers: [
       { model: "Charles de Gaulle", count: 1, manufacturer: "DCN / Naval Group" },
+      { model: "PA-Ng (Porte-avions de nouvelle génération)", manufacturer: "Naval Group / Chantiers de l'Atlantique", origin: "France", is_dev: true },
     ],
     surface_combatants: [
       { model: "FREMM multipurpose frigate (Aquitaine-class)", count: 8, manufacturer: "Naval Group" },
@@ -639,6 +650,7 @@ export const CAPABILITY_DETAILS = {
     submarines: [
       { model: "Suffren-class SSN (Barracuda)", count: 6, manufacturer: "Naval Group" },
       { model: "Triomphant-class SSBN", count: 4, manufacturer: "Naval Group" },
+      { model: "SNLE 3G (futur sous-marin lanceur d'engins)", manufacturer: "Naval Group", origin: "France", is_dev: true },
     ],
     air_defense: [
       { model: "SAMP/T (Aster 30)", count: 10, manufacturer: "Eurosam (MBDA / Thales)" },
@@ -658,6 +670,7 @@ export const CAPABILITY_DETAILS = {
       { model: "Mitsubishi F-2", count: 90, manufacturer: "Mitsubishi Heavy Industries" },
       { model: "F-35A", count: 40, manufacturer: "Lockheed Martin" },
       { model: "F-35B", count: 6, manufacturer: "Lockheed Martin" },
+      { model: "GCAP (chasseur 6e gén.)", manufacturer: "Mitsubishi Heavy Industries / BAE / Leonardo", origin: "Japan", is_dev: true },
     ],
     helicopters: [
       { model: "AH-1S Cobra", count: 48, manufacturer: "Bell / Fuji Heavy Industries" },
@@ -716,6 +729,7 @@ export const CAPABILITY_DETAILS = {
       { model: "FA-50 Fighting Eagle", count: 60, manufacturer: "Korea Aerospace Industries" },
       { model: "F-35A", count: 40, manufacturer: "Lockheed Martin" },
       { model: "F-5E/F Tiger II", count: 60, manufacturer: "Northrop / KAI" },
+      { model: "KAI KF-21 Boramae (commande Bloc I)", count: 20, manufacturer: "Korea Aerospace Industries", origin: "South Korea", on_order: true },
     ],
     helicopters: [
       { model: "KUH-1 Surion", count: 200, manufacturer: "Korea Aerospace Industries" },
@@ -908,9 +922,11 @@ export const CAPABILITY_DETAILS = {
     surface_combatants: [
       { model: "Anzac-class frigate", count: 8, manufacturer: "Tenix Defence" },
       { model: "Hobart-class destroyer", count: 3, manufacturer: "ASC Shipbuilding" },
+      { model: "Hunter-class frigate (commande)", count: 6, manufacturer: "BAE Systems Australia", origin: "Australia", on_order: true },
     ],
     submarines: [
       { model: "Collins-class", count: 6, manufacturer: "ASC" },
+      { model: "SSN-AUKUS / Virginia-class (AUKUS)", manufacturer: "ASC / BAE Systems / General Dynamics EB", origin: "Australia / UK / USA", is_dev: true },
     ],
     air_defense: [
       { model: "NASAMS", count: 4, manufacturer: "Kongsberg" },
@@ -928,6 +944,7 @@ export const CAPABILITY_DETAILS = {
       { model: "F-35A/B Lightning II", count: 28, manufacturer: "Lockheed Martin / Leonardo" },
       { model: "Panavia Tornado IDS", count: 43, manufacturer: "Panavia Aircraft" },
       { model: "AMX International AMX", count: 24, manufacturer: "AMX International" },
+      { model: "GCAP (chasseur 6e gén.)", manufacturer: "Leonardo / BAE / Mitsubishi", origin: "Italy", is_dev: true },
     ],
     helicopters: [
       { model: "AgustaWestland AW129 Mangusta", count: 48, manufacturer: "Leonardo Helicopters" },
@@ -988,6 +1005,7 @@ export const CAPABILITY_DETAILS = {
   CA: {
     fighters: [
       { model: "CF-18 Hornet", count: 75, manufacturer: "McDonnell Douglas" },
+      { model: "F-35A Lightning II (commande)", count: 88, manufacturer: "Lockheed Martin", origin: "USA", on_order: true },
     ],
     helicopters: [
       { model: "CH-146 Griffon", count: 82, manufacturer: "Bell" },
@@ -1017,6 +1035,7 @@ export const CAPABILITY_DETAILS = {
     ],
     surface_combatants: [
       { model: "Halifax-class frigate", count: 12, manufacturer: "Irving Shipbuilding" },
+      { model: "River-class destroyer (CSC)", manufacturer: "Irving Shipbuilding / Lockheed Martin", origin: "Canada", is_dev: true },
     ],
     submarines: [
       { model: "Victoria-class", count: 4, manufacturer: "Vickers Shipbuilding" },
@@ -1040,6 +1059,7 @@ export const CAPABILITY_DETAILS = {
       { model: "Mi-24 Hind", count: 24, manufacturer: "Mil" },
       { model: "AW101 Merlin", count: 4, manufacturer: "Leonardo" },
       { model: "AH-64E Apache", count: 8, manufacturer: "Boeing" },
+      { model: "AH-64E Apache Guardian (commande)", count: 96, manufacturer: "Boeing", origin: "USA", on_order: true },
     ],
     drones: [
       { model: "Bayraktar TB2", manufacturer: "Baykar", origin: "Turkey" },
@@ -1549,6 +1569,8 @@ export const CAPABILITY_DETAILS = {
       { model: "Sukhoi Su-30MK2", count: 11, manufacturer: "Sukhoi" },
       { model: "Sukhoi Su-27", count: 5, manufacturer: "Sukhoi" },
       { model: "KAI T-50 Golden Eagle", count: 14, manufacturer: "Korea Aerospace Industries" },
+      { model: "Dassault Rafale (commande 42)", count: 42, manufacturer: "Dassault Aviation", origin: "France", on_order: true },
+      { model: "KAI KF-21 Boramae (programme conjoint)", manufacturer: "Korea Aerospace Industries / PTDI", origin: "South Korea / Indonesia", is_dev: true },
     ],
     helicopters: [
       { model: "Bell 412", count: 35, manufacturer: "Bell Helicopter" },
@@ -1585,6 +1607,7 @@ export const CAPABILITY_DETAILS = {
     submarines: [
       { model: "Nagapasa-class submarine", count: 3, manufacturer: "Daewoo Shipbuilding" },
       { model: "Cakra-class submarine", count: 1, manufacturer: "Howaldtswerke" },
+      { model: "Scorpène Evolved (commande 2024)", count: 2, manufacturer: "Naval Group / PT PAL", origin: "France", on_order: true },
     ],
     air_defense: [
       { model: "NASAMS", count: 2, manufacturer: "Kongsberg" },
@@ -2227,7 +2250,7 @@ export function getCapabilitySummary(countryCode) {
     ['fighters', 'helicopters', 'drones', 'tanks', 'armored_vehicles', 'aircraft_carriers', 'surface_combatants', 'submarines', 'air_defense', 'missiles'].forEach(key => {
       if (details[key] !== undefined) {
         result[key] = (details[key] || [])
-          .filter(item => !item.is_trainer && !item.is_expendable && !item.is_dev)
+          .filter(item => !item.is_trainer && !item.is_expendable && !item.is_dev && !item.on_order)
           .reduce((s, item) => s + (item.count ?? 0), 0);
       } else if (estimated && estimated[key] !== undefined) {
         // Fall back to DEFENSE_CAPABILITIES for keys not in details (e.g. air_defense, missiles)

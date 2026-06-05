@@ -1159,12 +1159,15 @@ function getProductBrowseLink(model, manufacturer) {
 
 function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
   const hasCount = item.count != null;
-  const barPct = hasCount && maxCount > 0 ? Math.round((item.count / maxCount) * 100) : 0;
-  const primaryMfr = item.manufacturer.split(' / ')[0].split(' (')[0];
   const dimmed = item.on_order || item.is_dev;
+  // Bars compare the *operational* fleet, so ordered / in-development platforms
+  // get no comparison bar (they aren't part of the in-service scale).
+  const showBar = hasCount && !dimmed && maxCount > 0;
+  const barPct = showBar ? Math.min(100, Math.round((item.count / maxCount) * 100)) : 0;
+  const primaryMfr = item.manufacturer.split(' / ')[0].split(' (')[0];
 
   return (
-    <div className="bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-slate-300 hover:shadow-lg transition-all duration-200 group flex flex-col">
+    <div className={`rounded-xl overflow-hidden border transition-all duration-200 group flex flex-col ${dimmed ? "bg-slate-100 border-dashed border-slate-300 hover:border-slate-400" : "bg-white border-slate-100 hover:border-slate-300 hover:shadow-lg"}`}>
       {/* Image */}
       <div className={`h-32 ${cat.bg} relative overflow-hidden shrink-0`}>
         {imgSrc ? (
@@ -1210,8 +1213,8 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
           )}
         </span>
 
-        {/* Bar — only when a count is provided */}
-        {hasCount && (
+        {/* Bar — only for operational platforms (not ordered / in-development) */}
+        {showBar && (
           <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full ${cat.progressColor} transition-all duration-700`}
@@ -1240,10 +1243,13 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
     () => CAPABILITY_DETAILS[countryCode]?.[cat.key] || [],
     [countryCode, cat.key]
   );
-  const total = details.reduce((s, d) => s + (d.count ?? 0), 0);
-  // Exclude expendable items from scale so bars are meaningful
-  const nonExpendable = details.filter(d => !d.is_expendable);
-  const maxCount = nonExpendable.length > 0 ? Math.max(...nonExpendable.map(d => d.count ?? 0)) : 0;
+  // Operational = in-service only. Ordered, in-development, expendable and
+  // trainer platforms are shown but never counted in the headline total.
+  const operational = details.filter(d => !d.is_expendable && !d.is_dev && !d.on_order && !d.is_trainer);
+  const total = operational.reduce((s, d) => s + (d.count ?? 0), 0);
+  const pendingCount = details.filter(d => d.is_dev || d.on_order).length;
+  // Scale bars on the operational fleet so they stay meaningful.
+  const maxCount = operational.length > 0 ? Math.max(...operational.map(d => d.count ?? 0)) : 0;
 
   const [platformImages, setPlatformImages] = useState({});
   const [imgErrors, setImgErrors] = useState({});
@@ -1293,7 +1299,10 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
           <div>
             <p className={`text-sm font-bold ${cat.labelColor}`}>{cat.label} — Equipment Breakdown</p>
             <p className="text-[10px] text-slate-500">
-              {cat.sublabel} · <span className="font-semibold">{total.toLocaleString()}</span> total · IISS Military Balance 2024
+              {cat.sublabel} · <span className="font-semibold">{total.toLocaleString()}</span> in service · IISS Military Balance 2024
+              {pendingCount > 0 && (
+                <span className="text-slate-400"> · +{pendingCount} on order / in development (not counted)</span>
+              )}
             </p>
           </div>
         </div>
