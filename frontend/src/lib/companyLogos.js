@@ -195,13 +195,13 @@ export const COMPANY_LOGOS = {
   "Milrem Robotics": "milremrobotics.com",
   "Terma A/S": "terma.com",
   "Dynamit Nobel Defence": "dynamit-nobel-defence.de",
-  "Theon Sensors": "theonsensors.com",
+  "Theon Sensors": "theon.com",
   "PZL Mielec": "pzlmielec.pl",
   // Private players — previously missing
   "Helsing": "helsing.ai",
   "STM Savunma": "stm.com.tr",
-  "Blue Bear Systems": "bluebear.aero",
-  "Basecamp Research": "basecampresearch.com",
+  "Blue Bear Systems": "bbsr.co.uk",
+  "Basecamp Research": "basecamp-research.com",
   // France — additional entries
   "Exail Technologies": "exail.com",
   "Eutelsat": "eutelsat.com",
@@ -214,7 +214,7 @@ export const COMPANY_LOGOS = {
   "Skyeton": "skyeton.com",
   "Kvertus": "kvertus.com",
   "LUCH Design Bureau": "luch.gov.ua",
-  "Infozahyst": "infozahyst.com.ua",
+  "Infozahyst": "infozahyst.com",
   "Motor Sich": "motorsich.com",
   "Tencore": "tencore.com.ua",
   "Ukrainian Armor": "ukrainianarmor.com",
@@ -296,7 +296,12 @@ export const COMPANY_LOGOS = {
   // Japan
   "Japan Marine United": "jmuc.co.jp",
   // French JV
-  "Roxel": "roxel-group.com",
+  "Roxel": "roxelgroup.com",
+  // Companies surfaced from M&A activity (added June 2026)
+  "Firefly Aerospace": "fireflyspace.com",
+  "Colt CZ Group": "cz-group.eu",
+  "Meloche Group": "melocheinc.com",
+  "A&B Aerospace": "abaerospace.com",
   // Switzerland (General Dynamics acquisition)
   "MOWAG": "gd.com",
   // Missing companies — case variants and subsidiaries
@@ -396,7 +401,7 @@ export const COMPANY_LOGOS = {
   "Origin Robotics": "origin-robotics.com",
   "Farsight Vision": "farsightvision.com",
   "Defendec": "defendec.com",
-  "Frankenburg Technologies": "frankenburgtech.com",
+  "Frankenburg Technologies": "frankenburg.tech",
   // Southern Europe
   "Tekever": "tekever.com",
   "Sateliot": "sateliot.space",
@@ -409,28 +414,28 @@ export const COMPANY_LOGOS = {
   "Orca AI": "orca.ai",
   // India — new
   "NewSpace Research and Technologies": "newspace.co.in",
-  "Raphe mPhibr": "raphemphibr.com",
+  "Raphe mPhibr": "mphibr.com",
   "Tonbo Imaging": "tonboimaging.com",
   // Canada
   "Kraken Robotics": "krakenrobotics.com",
   // UAE — new
-  "Aerodrome Group": "aerodromegroup.com",
+  "Aerodrome Group": "aerodrome-group.com",
   "Calidus": "calidus.ae",
   // South Korea — new
   "Nearthlab": "nearthlab.com",
-  "Hancom InSpace": "hancom-inspace.com",
+  "Hancom InSpace": "inspace.co.kr",
   // Singapore
   "ShieldWorks AI": "shieldworks.ai",
   // Australia — new
-  "Athena AI": "athena-ai.com",
+  "Athena AI": "sightlineintelligence.com",
   "High Earth Orbit Robotics": "heorobotics.com",
   "SYPAQ Systems": "sypaq.com.au",
   "Advanced Navigation": "advancednavigation.com",
   "DroneShield": "droneshield.com",
   // Baltic states
   "SAF Tehnika": "saftehnika.com",
-  "Dati Group": "dati.lv",
-  "Brolis Semiconductors": "brolissemi.com",
+  "Dati Group": "datigroup.com",
+  "Brolis Semiconductors": "brolis-semicon.com",
   "Teltonika Networks": "teltonika-networks.com",
   // Poland — additional
   "HSW": "hsw.pl",
@@ -586,7 +591,7 @@ export const COMPANY_WIKI_LOGOS = {
   "Rostec":                        WP + "Rostec_logo.svg",
   "United Shipbuilding Corporation": WP + "United_Shipbuilding_Corporation_logo.svg",
   // Singapore
-  "ST Engineering":                WP + "Singapore_Technologies_Engineering_logo.svg",
+  "ST Engineering":                "https://upload.wikimedia.org/wikipedia/en/7/7b/ST_Engineering_Logo.svg",
   // Turkey
   "Turkish Aerospace Industries":  WP + "Turkish_Aerospace_Industries_logo.svg",
   "Aselsan":                       WP + "ASELSAN_logo.svg",
@@ -627,13 +632,13 @@ export const COMPANY_WIKI_LOGOS = {
   "BWX Technologies":              WP + "BWX_Technologies_logo.svg",
   "TransDigm":                     WP + "TransDigm_Group_logo.svg",
   // Japan — additional
-  "IHI Corporation":               WP + "IHI_Corporation_logo.svg",
+  "IHI Corporation":               "https://upload.wikimedia.org/wikipedia/commons/0/0d/IHI_logo.svg",
   "NEC Corporation":               WP + "NEC_logo.svg",
   "Fujitsu Defense":               WP + "Fujitsu_logo.svg",
   // South Korea — additional
   "Hyundai Rotem":                 WP + "Hyundai Rotem logo.svg",
   // India — additional
-  "Cochin Shipyard":               WP + "Cochin_Shipyard_logo.svg",
+  "Cochin Shipyard":               "https://upload.wikimedia.org/wikipedia/en/2/22/Cochin_Shipyard_SVG_Logo.svg",
   // Scandinavia
   "Nammo":                         WP + "Nammo_logo.svg",
   // Germany — additional
@@ -669,7 +674,7 @@ export const COMPANY_WIKI_LOGOS = {
   "RUAG":                          WP + "RUAG AG logo.svg",
   // Poland
   "Polska Grupa Zbrojeniowa":      WP + "PGZ_logo.svg",
-  "WB Electronics":                WP + "WB_Electronics_logo.svg",
+  "WB Electronics":                "https://upload.wikimedia.org/wikipedia/en/4/49/WB_Group_corporate_logo.png",
   "Mesko":                         WP + "Mesko_logo.svg",
   // Czech Republic / Slovakia
   "Aero Vodochody":                WP + "Aero_Vodochody_logo.svg",
@@ -729,14 +734,14 @@ export const COMPANY_WIKI_LOGOS = {
   "United Shipbuilding Corporation": WP + "United_Shipbuilding_Corporation_logo.svg",
   "Almaz-Antey":                   WP + "Almaz-Antey_Logo.svg",
   // Saudi Arabia
-  "SAMI":                          WP + "SAMI_logo.svg",
+  "SAMI":                          "https://upload.wikimedia.org/wikipedia/commons/1/1f/SAMI_Logo.svg",
   "Military Industries Corporation": WP + "MIC_Saudi_logo.svg",
   // Italy — additional
   "Beretta Defence":            WP + "Beretta_logo.svg",
   // Germany — additional
   "Helsing":                    WP + "Helsing_logo.svg",
   // Taiwan
-  "AIDC":                       WP + "Aerospace_Industrial_Development_Corporation_logo.svg",
+  "AIDC":                       "https://upload.wikimedia.org/wikipedia/en/a/a8/Aerospace_Industrial_Development_Corporation_logo.png",
   // Indonesia
   "PT Dirgantara Indonesia":    WP + "Indonesian_Aerospace.svg",
   "Pindad":                     WP + "Logo_PT_Pindad.svg",
@@ -756,8 +761,8 @@ export const COMPANY_WIKI_LOGOS = {
   // Italy — Beretta group
   "Beretta Group":              WP + "Beretta_logo.svg",
   // UK — Cobham
-  "Cobham":                     WP + "Cobham_Group_logo.svg",
-  "Cobham Advanced Electronics": WP + "Cobham_Group_logo.svg",
+  "Cobham":                     "https://upload.wikimedia.org/wikipedia/commons/8/8d/Cobham_plc_logo.svg",
+  "Cobham Advanced Electronics": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Cobham_plc_logo.svg",
   // USA — Cubic
   "Cubic Corporation":          WP + "Cubic_Corporation_logo.svg",
   // Thales subsidiaries — use parent logo
@@ -773,8 +778,8 @@ export const COMPANY_WIKI_LOGOS = {
   // Netherlands
   "Fokker Technologies":        WP + "Fokker_logo.svg",
   // India — private groups
-  "Larsen & Toubro Defence":    WP + "Larsen_%26_Toubro_logo.svg",
-  "Adani Defence and Aerospace": WP + "Adani_Group_Logo.svg",
+  "Larsen & Toubro Defence":    "https://upload.wikimedia.org/wikipedia/en/a/a1/Larsen%26Toubro_logo.svg",
+  "Adani Defence and Aerospace": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Adani_logo_2012.svg",
   "Tata Advanced Systems":      WP + "Tata_logo.svg",
   // Israel
   "Israel Military Industries": WP + "Elbit_Systems_logo.svg",
@@ -783,7 +788,7 @@ export const COMPANY_WIKI_LOGOS = {
   // Brazil
   "AEL Sistemas":               WP + "AEL_Sistemas_logo.svg",
   // Japan
-  "Japan Marine United":        WP + "Japan_Marine_United_logo.svg",
+  "Japan Marine United":        "https://upload.wikimedia.org/wikipedia/commons/e/e2/Japan_Marine_United_logo.gif",
   // New companies added June 2026
   "PT LEN Industri":            WP + "Logo_PT_LEN_Industri.svg",
   "CASC":                       WP + "China_Aerospace_Science_and_Technology_Corporation_logo.svg",
@@ -810,6 +815,21 @@ export const COMPANY_WIKI_LOGOS = {
   "Sabca":                      WP + "SABCA_logo.svg",
   "Bharat Forge":               WP + "Bharat_Forge_logo.svg",
   "ideaForge Technology":       WP + "IdeasForge_logo.svg",
+  // ── Verified direct logo URLs (curl-checked 200 + image/*, June 2026) ──────
+  // These take priority over the favicon chain and are used when a company has
+  // no reliable Wikipedia Commons file and no favicon at its domain.
+  "Raphe mPhibr":               "https://cdn.prod.website-files.com/64cb501935377f51369fa3c5/650029b2207c106cc4696201_raphe.svg",
+  "Kvertus":                    "https://kvertus.com/wp-content/uploads/2025/09/Kvertus.svg",
+  "NewSpace Research and Technologies": "https://newspace.co.in/wp-content/uploads/2024/05/NewSpace-Logo-200x37.png",
+  "Frankenburg Technologies":   "https://frankenburg.tech/wp-content/uploads/2026/02/Frankenburg-Tech-Logo-Black_Transparent-163x79.png",
+  "Theon Sensors":              "https://media.theon.com/zksgumfy/transparentlogo.svg",
+  "Infozahyst":                 "https://infozahyst.com/wp-content/themes/infoz/design/img/logo.svg",
+  "Dati Group":                 "https://cdn.prod.website-files.com/6012e786f1a69fda9a85c413/66fa5594e44a93083c51886a_DatiGroup_Logotips_RGB_tumsi_zals.svg",
+  "Brolis Semiconductors":      "https://brolis-semicon.com/wp-content/themes/brolis-defence/img/logo.png",
+  "Steyr Arms":                 "https://upload.wikimedia.org/wikipedia/en/4/4c/Steyr_Mannlicher.svg",
+  "Ultra Electronics":          "https://upload.wikimedia.org/wikipedia/en/0/08/Ultra_Electronics_logo.jpg",
+  "Avibras":                    "https://upload.wikimedia.org/wikipedia/commons/4/4d/Avibras_logo.png",
+  "Piaggio Aerospace":          "https://upload.wikimedia.org/wikipedia/commons/9/9c/Piaggio_Aerospace_Logo.svg",
 };
 
 export function getLogoDomain(name) {

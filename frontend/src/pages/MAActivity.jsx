@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { API, useAuth } from "@/App";
+import { getLogoUrl } from "@/lib/companyLogos";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -239,7 +240,7 @@ const LOGO_FALLBACK = {
   "Babcock International":               "babcock.com",
   "Frazer-Nash Consultancy":             "fnc.co.uk",
   "Elbit Systems":                       "elbitsystems.com",
-  "IMI Systems":                         "imi-israel.com",
+  "IMI Systems":                         "elbitsystems.com",
   "HEICO":                               "heico.com",
   "HEICO Corporation":                   "heico.com",
   "Wencor Group":                        "wencorgroup.com",
@@ -293,7 +294,7 @@ const LOGO_FALLBACK = {
   "RUAG Ammotec":                        "ruag.com",
   "Kratos Defense":                      "kratosdefense.com",
   "Orbit Intelligence":                  "orbitgt.com",
-  "Ondas Holdings":                      "ondasholdings.com",
+  "Ondas Holdings":                      "ondas.com",
   "Sentrycs":                            "sentrycs.com",
   "Destinus":                            "destinus.ch",
   "Daedalean":                           "daedalean.ai",
@@ -302,7 +303,7 @@ const LOGO_FALLBACK = {
   "Avincis":                             "avincis.com",
   "S21sec":                              "s21sec.com",
   "Roboteam":                            "robo-team.com",
-  "Paragon Solutions":                   "paragon-solutions.co.uk",
+  "Paragon Solutions":                   "paragonsolutions.io",
   // ── European Defense Startups (2025 funding cohort) ──────────────────────────
   "TEKEVER":                             "tekever.com",
   "Roark Aerospace":                     "roarkaerospace.com",
@@ -404,7 +405,7 @@ const LOGO_FALLBACK = {
   "Naviris":                             "naviris.eu",
   "Nexter":                              "nexter-group.fr",
   "KMW":                                 "kmweg.com",
-  "Orbital ATK":                         "orbitalatk.com",
+  "Orbital ATK":                         "northropgrumman.com",
   "Physical Optics Corporation":         "poc.com",
   "RADMOR":                              "radmor.com.pl",
   "RBSL":                                "rbsl.co.uk",
@@ -454,12 +455,12 @@ const LOGO_FALLBACK = {
   "Crane":                                "craneco.com",
   "Moog":                                 "moog.com",
   "Scanfil":                              "scanfil.com",
-  "Wakeb":                                "wakeb.sa",
+  "Wakeb":                                "wakeb.tech",
   "Scandinavian Astor Group":             "astor-group.no",
   "Cogenuity":                            "cogenuity.com",
   "AEVEX Aerospace":                      "aevex.com",
   "IonQ":                                 "ionq.com",
-  "Firefly Aerospace":                    "firefly.com",
+  "Firefly Aerospace":                    "fireflyspace.com",
   "NFM Holding":                          "nfm.no",
   "NFM":                                  "nfm.no",
   "Theon International":                  "theon.com",
@@ -473,7 +474,7 @@ const LOGO_FALLBACK = {
   // ── New 2025-2026 targets ───────────────────────────────────────────────────
   "Excelitas":                            "excelitas.com",
   "Excelitas Defence Electronics":        "excelitas.com",
-  "ROXEL":                                "roxel-group.com",
+  "ROXEL":                                "roxelgroup.com",
   "Edge Autonomy":                        "edgeautonomy.io",
   "Triumph Group":                        "triumphgroup.com",
   "AirRobot":                             "airrobot.de",
@@ -525,7 +526,7 @@ const LOGO_FALLBACK = {
   "Exosens":                              "exosens.com",
   "Lanteris Space Systems":               "lanteris.com",
   "GuideTech":                            "guidetech.com",
-  "Marshall Land Systems":                "marshalllanddefence.com",
+  "Marshall Land Systems":                "marshalllandsystems.com",
   "Operational Solutions":                "operationalsolutions.co.uk",
   "SilverEdge Government Solutions":      "silveredge.us",
   "Consolidated Aerospace Manufacturing": "camdistributors.com",
@@ -533,24 +534,24 @@ const LOGO_FALLBACK = {
   "Seemann Composites and MSC":           "seemanncomposites.com",
   "Seemann Composites":                   "seemanncomposites.com",
   "Orbit Technologies":                   "orbit-cs.com",
-  "ARKA Group":                           "arkagroup.com",
+  "ARKA Group":                           "arka.org",
   "Aechelon Technology":                  "aechelon.com",
   "ExoAnalytic Solutions":                "exoanalytic.com",
-  "Empirical Systems Aerospace":          "empiricalsystems.com",
+  "Empirical Systems Aerospace":          "esaero.com",
   // ── 2025-2026 additional acquirers ───────────────────────────────────────────
   "FCDE":                                 "fcde.fr",
-  "D-Wave Quantum":                       "dwavesys.com",
+  "D-Wave Quantum":                       "dwavequantum.com",
   "Electro Optic Systems":                "eos-aus.com",
   "Bridgepoint":                          "bridgepoint.eu",
   "Kongsberg Defence":                    "kongsberg.com",
   "Indra":                                "indracompany.com",
-  "Ondas":                                "ondasholdings.com",
-  "Ondas Holdings":                       "ondasholdings.com",
+  "Ondas":                                "ondas.com",
+  "Ondas Holdings":                       "ondas.com",
   "Amphenol":                             "amphenol.com",
   "Gleason":                              "gleason.com",
   "Novaria Group":                        "novariagroup.com",
   "PrecisionX Group":                     "precisionxgroup.com",
-  "ELTA North America":                   "elta-systems.com",
+  "ELTA North America":                   "eltanorthamerica.com",
   "Mercury Systems":                      "mrcy.com",
   "Piasecki Aircraft":                    "piasecki.com",
   "AMETEK":                               "ametek.com",
@@ -563,14 +564,14 @@ const LOGO_FALLBACK = {
   "MARSS":                                "marss.com",
   "Altamira Technologies":                "altamiratechnologies.com",
   "Comrod":                               "comrod.com",
-  "Zone 5 Technologies":                  "zone5technologies.com",
+  "Zone 5 Technologies":                  "zone5tech.com",
   "WAKE Engineering UAS Portfolio":       "wake-eng.com",
   "Sentrycs":                             "sentrycs.com",
   "Kappa Optronics":                      "kappa-optronics.com",
   "Coherent Aerospace and Defence Business": "coherent.com",
   "Coherent":                             "coherent.com",
   "Trexon":                               "trexon.com",
-  "Apeiro":                               "apeiro.ai",
+  "Apeiro":                               "apeiro-motion.com",
   "Intra":                                "intra.co.uk",
   "Tube Methods and Tech Tube":           "tubemethods.com",
   "Precision Aerospace Corporation":      "precisionaerospace.com",
@@ -591,13 +592,13 @@ const LOGO_FALLBACK = {
   "CIRCOR":                              "circor.com",
   "CIRCOR Commercial and Defense Aerospace business": "circor.com",
   "PMGC Holdings":                       "pmgcholdings.com",
-  "A&B Aerospace":                       "ab-aerospace.com",
+  "A&B Aerospace":                       "abaerospace.com",
   "Meloche Group":                       "melocheinc.com",
   "Groupe Rossi Aéro":                   "rossiaero.com",
   "Precinmac":                           "precinmac.com",
   "Precision Aerospace Holdings":        "precisionaerospaceholdings.com",
   "Godspeed Capital":                    "godspeedcapital.com",
-  "GALT Aerospace":                      "galtaerospace.com",
+  "GALT Aerospace":                      "galt.aero",
   "Sensofusion":                         "sensofusion.com",
   "Atol Aviation":                       "atolaviation.com",
   "Southwest Antennas":                  "southwestantennas.com",
@@ -608,7 +609,7 @@ const LOGO_FALLBACK = {
   "Talica":                              "talica.com",
   "AeroDynamics Metal Finishing":        "aerodynamicsmetalfinishing.com",
   "Solestra Group":                      "solestragroup.com",
-  "Aerofab":                             "aerofab.com",
+  "Aerofab":                             "aerofab-corp.com",
   "Aeromax Industries":                  "aeromax.com",
   "The Ely Company":                     "elyco.com",
   "DCS Corporation":                     "dcscorp.com",
@@ -820,10 +821,18 @@ function buildLogoUrls(domain) {
   ];
 }
 
+// Full ordered logo source list for a company: a curated direct logo URL
+// (Wikipedia Commons / verified image, shared with the Private Players page via
+// companyLogos.js) takes priority, then the domain favicon chain, then initials.
+function logoUrlsFor(name, domain) {
+  const curated = name ? getLogoUrl(name) : null;
+  return curated ? [curated, ...buildLogoUrls(domain)] : buildLogoUrls(domain);
+}
+
 function CompanyLogo({ activity, side, size = "md" }) {
   const name   = activity[side === "acquirer" ? "acquirer" : "target"] ?? "";
   const domain = getLogoDomain(activity, side);
-  const urls   = buildLogoUrls(domain);
+  const urls   = logoUrlsFor(name, domain);
   const [idx, setIdx] = useState(0);
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-12 h-12";
   const textSize  = size === "sm" ? "text-[9px]" : "text-[11px]";
@@ -898,7 +907,7 @@ function dealRelativeTime(isoStr) {
 function SpotlightLogo({ activity, side }) {
   const name   = activity[side] ?? "";
   const domain = getLogoDomain(activity, side);
-  const urls   = buildLogoUrls(domain);
+  const urls   = logoUrlsFor(name, domain);
   const [idx, setIdx] = useState(0);
   useEffect(() => { setIdx(0); }, [domain, name]);
 
@@ -1763,7 +1772,7 @@ function PartyLogoSmall({ name, iso }) {
     }
     return null;
   }, [name]);
-  const urls = buildLogoUrls(domain);
+  const urls = logoUrlsFor(name, domain);
   const [idx, setIdx] = useState(0);
   useEffect(() => { setIdx(0); }, [name]);
 
