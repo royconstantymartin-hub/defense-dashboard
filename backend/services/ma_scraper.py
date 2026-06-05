@@ -103,7 +103,7 @@ KNOWN_COMPANIES: Dict[str, Tuple[str, str]] = {
     "saildrone":                 ("US", "saildrone.com"),
     "xwing":                     ("US", "xwing.com"),
     "kitty hawk":                ("US", "kittyhawk.aero"),
-    "nightwing":                 ("US", "nightwinggroup.com"),
+    "nightwing":                 ("US", "nightwing.com"),
     # ── European Defense Tech ─────────────────────────────────────────────────
     "helsing":                   ("DE", "helsing.ai"),
     "milrem robotics":           ("EE", "milremrobotics.com"),

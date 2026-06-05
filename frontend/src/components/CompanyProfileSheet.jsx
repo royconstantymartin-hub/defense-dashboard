@@ -206,9 +206,9 @@ function CompanyLogo({ name, domain, size = "lg" }) {
     if (curated.length > 0) return curated;
     if (domain) {
       const skipFavicon = FAVICON_SKIP_TLDS.some((tld) => domain.endsWith(tld));
-      return [
-        `https://logo.clearbit.com/${domain}`,
-        ...(!skipFavicon ? [`https://icons.duckduckgo.com/ip3/${domain}.ico`] : []),
+      return skipFavicon ? [] : [
+        `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+        `https://icons.duckduckgo.com/ip3/${domain}.ico`,
       ];
     }
     return [];
