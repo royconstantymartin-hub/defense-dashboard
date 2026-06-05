@@ -4238,6 +4238,22 @@ export const PLATFORM_WIKI_TITLES = {
 // Uses Special:FilePath redirects (survive file renames on Commons).
 export const WKP = "https://commons.wikimedia.org/wiki/Special:FilePath/";
 export const STATIC_PLATFORM_IMAGES = {
+  // ── On-order / in-development platforms (direct thumbnails so they always load) ─
+  "Dassault Rafale F4 (on order)":         "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Rafale_-_RIAT_2009_%283751416421%29.jpg/500px-Rafale_-_RIAT_2009_%283751416421%29.jpg",
+  "Rafale M (Navy, on order)":             "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Rafale_-_RIAT_2009_%283751416421%29.jpg/500px-Rafale_-_RIAT_2009_%283751416421%29.jpg",
+  "Dassault Rafale (on order)":            "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Rafale_-_RIAT_2009_%283751416421%29.jpg/500px-Rafale_-_RIAT_2009_%283751416421%29.jpg",
+  "FCAS / Next-Gen Fighter":               "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/SCAF_-_Le_Bourget_2019.jpg/500px-SCAF_-_Le_Bourget_2019.jpg",
+  "PA-Ng (Next-Generation Carrier)":       "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/PANG_illustration_003.jpg/500px-PANG_illustration_003.jpg",
+  "SNLE 3G (next-gen SSBN)":               "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/SNLE-3G-210221105752293576.png/500px-SNLE-3G-210221105752293576.png",
+  "HAL Tejas Mk1A (on order)":             "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/HAL_Tejas_%28LA-5018%29_of_Squadron_18_Flying_Bullets.jpg/500px-HAL_Tejas_%28LA-5018%29_of_Squadron_18_Flying_Bullets.jpg",
+  "KAI KF-21 Boramae (joint program)":     "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/KF-21_Boramae_First_Production.jpg/500px-KF-21_Boramae_First_Production.jpg",
+  "KAI KF-21 Boramae (Block I, on order)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/KF-21_Boramae_First_Production.jpg/500px-KF-21_Boramae_First_Production.jpg",
+  "GCAP / Tempest (6th-gen fighter)":      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/GCAP_concept_model_%28delta_wing_type%29_left_rear_top_view_in_GCAP_booth_of_JA2024_at_Tokyo_Big_Sight_October_19%2C_2024_02.jpg/500px-GCAP_concept_model_%28delta_wing_type%29_left_rear_top_view_in_GCAP_booth_of_JA2024_at_Tokyo_Big_Sight_October_19%2C_2024_02.jpg",
+  "GCAP (6th-gen fighter)":                "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/GCAP_concept_model_%28delta_wing_type%29_left_rear_top_view_in_GCAP_booth_of_JA2024_at_Tokyo_Big_Sight_October_19%2C_2024_02.jpg/500px-GCAP_concept_model_%28delta_wing_type%29_left_rear_top_view_in_GCAP_booth_of_JA2024_at_Tokyo_Big_Sight_October_19%2C_2024_02.jpg",
+  "Dreadnought-class SSBN (on order)":     "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Rendering_of_Dreadnought-class_submarine.webp/500px-Rendering_of_Dreadnought-class_submarine.webp.png",
+  "SSN-AUKUS (future SSN)":                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/SSN-AUKUS_submarine.jpg/500px-SSN-AUKUS_submarine.jpg",
+  "SSN-AUKUS / Virginia-class (AUKUS)":    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/SSN-AUKUS_submarine.jpg/500px-SSN-AUKUS_submarine.jpg",
+  "F-47 (NGAD, 6th-gen fighter)":          "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/F-47-artist-rendition_%28cropped%29.jpg/500px-F-47-artist-rendition_%28cropped%29.jpg",
   // ── On-order ships whose class article has no lead image (use a sister boat) ─
   "Scorpène Evolved (on order)":   WKP + "INS_Kalvari_(S21)_at_sea.jpg",
   "Type 212CD (on order)":         WKP + "U_34_in_Fahrt.jpg",

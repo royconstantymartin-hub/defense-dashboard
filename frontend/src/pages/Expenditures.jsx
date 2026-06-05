@@ -1196,22 +1196,39 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
             {item.origin}
           </span>
         )}
+        {/* Status ribbon (top-right) so on-order / in-development is obvious at a glance */}
+        {item.is_dev && (
+          <span className="absolute top-1.5 right-1.5 text-[9px] font-bold uppercase tracking-wide bg-slate-700/90 text-white px-1.5 py-0.5 rounded shadow-sm">
+            In Development
+          </span>
+        )}
+        {item.on_order && !item.is_dev && (
+          <span className="absolute top-1.5 right-1.5 text-[9px] font-bold uppercase tracking-wide bg-amber-500/95 text-white px-1.5 py-0.5 rounded shadow-sm">
+            On Order
+          </span>
+        )}
       </div>
 
       {/* Info */}
       <div className="p-3 flex flex-col gap-1.5 flex-1">
-        <span className={`text-xs font-semibold text-slate-800 leading-snug line-clamp-2 ${dimmed ? "opacity-60" : ""}`}>
+        <span className={`text-xs font-semibold text-slate-800 leading-snug line-clamp-2 ${dimmed ? "opacity-70" : ""}`}>
           {item.model}
-          {item.on_order && (
-            <span className="ml-2 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium align-middle">On Order</span>
-          )}
-          {item.is_dev && (
-            <span className="ml-2 text-[10px] bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded font-medium align-middle">In Development</span>
-          )}
-          {item.is_expendable && (
-            <span className="ml-2 text-[10px] bg-rose-50 text-rose-600 border border-rose-100 px-1.5 py-0.5 rounded font-medium align-middle">Expendable</span>
-          )}
         </span>
+
+        {/* Status badges — kept OUTSIDE the clamped title so they are never clipped */}
+        {(item.on_order || item.is_dev || item.is_expendable) && (
+          <div className="flex flex-wrap gap-1">
+            {item.on_order && (
+              <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-semibold">On Order</span>
+            )}
+            {item.is_dev && (
+              <span className="text-[10px] bg-slate-200 text-slate-700 border border-slate-300 px-1.5 py-0.5 rounded font-semibold">In Development</span>
+            )}
+            {item.is_expendable && (
+              <span className="text-[10px] bg-rose-50 text-rose-600 border border-rose-100 px-1.5 py-0.5 rounded font-semibold">Expendable</span>
+            )}
+          </div>
+        )}
 
         {/* Bar — only for operational platforms (not ordered / in-development) */}
         {showBar && (
