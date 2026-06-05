@@ -530,23 +530,23 @@ export default function Follow() {
           </span>
         </div>
 
-        {/* ── Carousel : 5 visibles, flèches sur les côtés ── */}
-        <div className="relative flex items-center gap-2">
+        {/* ── Carousel : 7 visibles, flèches sur les côtés ── */}
+        <div className="relative flex items-center gap-2 min-w-0 w-full">
           <button
             onClick={() => carouselRef.current.scrollBy({ left: -carouselRef.current.clientWidth, behavior: "smooth" })}
-            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-md text-slate-600 hover:text-slate-900 transition-all z-10"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-md text-slate-600 hover:text-slate-900 transition-all z-10"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <div className="overflow-hidden flex-1">
+          <div className="overflow-hidden flex-1 min-w-0">
             <div
               ref={carouselRef}
-              className="flex gap-3 overflow-x-auto w-full pb-1"
-              style={{ scrollbarWidth: "none" }}
+              className="flex gap-2 overflow-x-auto w-full pb-1"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {REPORTS.map(r => (
-                <div key={r.id} className="flex-none" style={{ width: "calc(20% - 0.6rem)" }}>
+                <div key={r.id} className="flex-none" style={{ width: "calc((100% - 7 * 0.5rem) / 7)" }}>
                   <ReportCoverCard report={r} />
                 </div>
               ))}
@@ -555,7 +555,7 @@ export default function Follow() {
 
           <button
             onClick={() => carouselRef.current.scrollBy({ left: carouselRef.current.clientWidth, behavior: "smooth" })}
-            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-md text-slate-600 hover:text-slate-900 transition-all z-10"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-md text-slate-600 hover:text-slate-900 transition-all z-10"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -611,17 +611,23 @@ export default function Follow() {
         </div>
         <p className="text-xs text-slate-400 mb-4">{filtered.length} source{filtered.length > 1 ? "s" : ""} shown</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {filtered.map(source => (
             <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="group">
-              <div className="bg-white border border-slate-200 rounded-lg p-3 flex items-center gap-3 hover:border-blue-200 hover:shadow-md transition-all">
-                <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
-                  <Favicon url={source.url} className="w-5 h-5" />
+              <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col gap-2 hover:border-blue-200 hover:shadow-md transition-all h-full">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
+                    <Favicon url={source.url} className="w-4 h-4" />
+                  </div>
+                  <div className="flex gap-1 flex-wrap">
+                    {source.lang.map(l => (
+                      <span key={l} className={`text-[8px] px-1 py-px rounded border font-mono ${LANG_COLORS[l] || "bg-slate-50 text-slate-500 border-slate-200"}`}>{l}</span>
+                    ))}
+                  </div>
+                  {source.paywall && <Lock className="w-3 h-3 text-amber-500 ml-auto flex-shrink-0" />}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm text-slate-900 group-hover:text-blue-800 truncate">{source.name}</p>
-                  <p className="text-xs text-slate-500 truncate line-clamp-1">{source.description}</p>
-                </div>
+                <p className="font-bold text-xs text-slate-900 group-hover:text-blue-800 leading-snug line-clamp-2">{source.name}</p>
+                <p className="text-[10px] text-slate-500 leading-snug line-clamp-3 flex-1">{source.description}</p>
               </div>
             </a>
           ))}
