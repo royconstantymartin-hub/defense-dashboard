@@ -8,7 +8,7 @@ import re
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import feedparser
 import requests
@@ -76,19 +76,14 @@ HEADERS = {
 }
 
 # ── Category keyword matching ────────────────────────────────────────────────
-# Order matters: first match wins. CONFLICT and M&A are checked before TECHNOLOGY
-# so that "drone strike" → CONFLICT (not TECHNOLOGY) and "acquires" → M&A.
+# Only three categories are kept (the rest collapse into the INDUSTRY default):
+#   • CONFLICT — actual kinetic events / ongoing armed conflict
+#   • CONTRACT — procurement, awards, arms deals, acquisition programs
+#   • INDUSTRY — everything else (industry players, policy, tech, M&A, earnings…)
+# Order matters: first match wins. CONFLICT is checked before CONTRACT so that a
+# "missile strike" story is tagged CONFLICT even if it mentions a weapons deal.
 
 CATEGORY_KEYWORDS: Dict[str, List[str]] = {
-    # EARNINGS: quarterly/annual financial results for defense companies.
-    "EARNINGS":    ["earnings", "quarterly results", "annual results", "revenue beat",
-                    "eps beat", "earnings per share", "q1 results", "q2 results",
-                    "q3 results", "q4 results", "full-year results", "fiscal year",
-                    "net income", "operating income", "guidance raised", "guidance lowered",
-                    "raises guidance", "beats expectations", "misses expectations",
-                    "beats estimates", "misses estimates", "revenue grew", "revenue growth",
-                    "résultats trimestriels", "résultats annuels", "chiffre d'affaires",
-                    "bénéfice net", "résultat opérationnel", "prévisions relevées"],
     # CONFLICT: actual ongoing armed conflict, casualties, kinetic events.
     # Deliberately narrow to avoid misclassifying technology/doctrine articles.
     "CONFLICT":    ["war crimes", "killed in action", "troops killed", "soldiers killed",
@@ -108,17 +103,6 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "conflit armé", "guerre en ", "offensive terrestre", "cessez-le-feu",
                     "victimes civiles", "soldats tués", "bombardement de", "frappe sur",
                     "pertes au combat", "soldats blessés", "opération militaire en"],
-    "M&A":         ["merger", "acquires", "acquis", "buys", "takeover",
-                    "company acquisition", "hostile acquisition", "corporate acquisition",
-                    "joint venture", "agrees to buy", "agrees to acquire", "strategic investment",
-                    "stake in", "minority stake", "majority stake", "divests", "divestiture",
-                    "spin-off", "completes purchase", "signs agreement to acquire",
-                    "investment round", "series a", "series b", "ipo", "goes public",
-                    "raises funding", "raises $", "valuation", "private equity",
-                    "letter of intent",
-                    "fusion", "rachat", "cession", "cède", "prise de participation",
-                    "investissement stratégique", "cession d'actifs", "levée de fonds",
-                    "tour de table", "accord de partenariat stratégique"],
     "CONTRACT":    ["contract", "award", "procurement", "tender", "bid",
                     "arms deal", "defense deal", "weapons deal", "military deal",
                     "purchase agreement", "firm order", "delivery order", "work order",
@@ -136,40 +120,6 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                     "foreign military sale", "foreign military sales", "fms",
                     "contrat", "marché", "appel d'offres", "commande", "livraison",
                     "attribut", "remporté"],
-    "GEOPOLITICS": ["sanctions", "diplomacy", "talks", "summit", "alliance", "tensions",
-                    "treaty", "bilateral", "multilateral", "cooperation agreement",
-                    "foreign policy", "arms embargo", "export control",
-                    "military aid", "security assistance", "defense assistance",
-                    "arms delivery", "weapon delivery", "weapons delivery",
-                    "lethal aid", "military package", "arms transfer",
-                    "weapon shipment", "weapons shipment", "aid package",
-                    "weapons to ukraine", "arms to ukraine", "weapons reaching",
-                    "memorandum of understanding", "mou signed", "strategic mou",
-                    "diplomatie", "sommet", "accord bilatéral", "partenariat stratégique",
-                    "contrôle des exportations", "embargo", "protocole d'accord",
-                    "aide militaire", "livraison d'armes", "assistance sécuritaire"],
-    "POLICY":      ["nato", "eu ", "law", "regulation", "policy", "spending", "gdp",
-                    "budget", "legislation", "congress", "parliament", "defence review",
-                    "white paper", "national strategy", "defence white paper",
-                    "military spending", "defence budget", "lpm", "programmation militaire",
-                    "otan", "loi de programmation", "politique de défense",
-                    "effort de défense", "milliards pour",
-                    "watchdog", "oversight", "inspector general", "ig report",
-                    "accountability", "evaluating military", "gao report",
-                    "contrôle parlementaire", "rapport d'inspection"],
-    "TECHNOLOGY":  ["ai ", "artificial intelligence", "cyber", "satellite", "hypersonic",
-                    "autonomous", "robot", "electronic warfare", "directed energy",
-                    "space launch", "quantum", "radar", "stealth", "sensor",
-                    "drone", "uav", "ugv", "usv", "unmanned", "loitering munition",
-                    "missile defense", "c2 system", "command and control",
-                    # Missile defense programs
-                    "golden dome", "iron dome", "aegis", "thaad", "patriot missile",
-                    "interceptor missile", "layered defense", "missile shield",
-                    "ground-based midcourse", "hypersonic defense", "space-based interceptor",
-                    "high energy laser", "directed energy weapon", "counter-drone",
-                    "intelligence artificielle", "cyberattaque", "spatial",
-                    "guerre électronique", "énergie dirigée", "système d'arme",
-                    "drone de combat", "véhicule autonome", "capteur", "détection"],
 }
 
 
@@ -403,6 +353,95 @@ def detect_region_from_text(title: str, summary: str = "") -> Optional[str]:
         if any(p in text for p in patterns):
             return region
     return None
+
+
+# ── Geographic / conflict zone classification (display tag) ──────────────────
+# A coarser, conflict-aware geography shown as a badge on each news card.
+# ORDER MATTERS: the first zone whose keywords match wins, so the most specific
+# conflict theatres (Ukraine, Iran-Israel) are checked before broad blocks.
+# The two active-war zones are intentionally distinct from "Middle East" /
+# "Europe" so the feed separates "a war is happening here" from "this region".
+
+_ZONE_PATTERNS: List[Tuple[str, List[str]]] = [
+    ("Ukraine-Russia War", [
+        "ukraine", "ukrainian", "russia", "russian", "kyiv", "kiev", "moscow",
+        "kremlin", "putin", "zelensky", "zelenskyy", "donbas", "donetsk",
+        "luhansk", "crimea", "kharkiv", "zaporizhzhia", "wagner",
+        "guerre en ukraine", "russie", "ukrainien", "ukrainienne",
+    ]),
+    ("Iran-Israel War", [
+        "israel", "israeli", " idf ", "gaza", "hamas", "hezbollah", "hizbollah",
+        "lebanon", "lebanese", "beirut", "tel aviv", "west bank", "netanyahu",
+        "iran", "iranian", "tehran", "teheran", "houthi", "irgc",
+        "israël", "israélien", "liban", "iranien", "le hamas", "le hezbollah",
+    ]),
+    ("Middle East", [
+        "saudi", "saudi arabia", "riyadh", "yemen", "iraq", "baghdad",
+        "syria", "syrian", "damascus", "gulf state", "persian gulf", "qatar",
+        "uae", "emirates", "abu dhabi", "dubai", "jordan", "egypt", "cairo",
+        "bahrain", "kuwait", "oman", "middle east",
+        "arabie saoudite", "moyen-orient", "syrie", "irak",
+    ]),
+    ("China", [
+        "china", "chinese", "beijing", "pla ", "people's liberation army",
+        "xi jinping", "taiwan", "taipei", "taiwan strait", "south china sea",
+        "chine", "chinois", "pékin",
+    ]),
+    ("APAC", [
+        "japan", "japanese", "tokyo", "south korea", "korean", "seoul",
+        "north korea", "dprk", "pyongyang", "india", "indian", "new delhi",
+        "pakistan", "australia", "australian", "canberra", "aukus",
+        "philippines", "vietnam", "indonesia", "singapore", "malaysia",
+        "thailand", "indo-pacific", "asia-pacific", "asia pacific",
+        "japon", "corée", "inde", "pacifique",
+    ]),
+    ("US", [
+        "united states", "u.s.", "us army", "us navy", "us air force",
+        "us marine", "pentagon", "white house", "washington", "congress",
+        "senate", "capitol hill", "american", "america", "space force",
+        "états-unis", "etats-unis", "américain", "pentagone",
+    ]),
+    ("Europe", [
+        "europe", "european", "nato", "eu ", "european union", "brussels",
+        "france", "french", "paris", "germany", "german", "berlin",
+        "britain", "british", " uk ", "united kingdom", "london",
+        "poland", "polish", "warsaw", "finland", "sweden", "norway",
+        "italy", "italian", "rome", "spain", "spanish", "madrid",
+        "netherlands", "dutch", "baltic", "balkans",
+        "macron", "scholz", "merz", "starmer",
+        "otan", "allemagne", "royaume-uni", "espagne", "italie",
+    ]),
+    ("Africa", [
+        "africa", "african", "sahel", "nigeria", "somalia", "mali", "senegal",
+        "ethiopia", "sudan", "burkina", "niger", "libya", "chad", "congo",
+        "mozambique", "afrique",
+    ]),
+]
+
+# Fallback: map the coarse source-default region codes to display zones when no
+# keyword in the article text matches any zone above.
+_REGION_CODE_TO_ZONE: Dict[str, str] = {
+    "us":           "US",
+    "europe":       "Europe",
+    "asia-pacific": "APAC",
+    "middle-east":  "Middle East",
+    "africa":       "Africa",
+}
+
+
+def detect_zone(title: str, summary: str = "", fallback_region: Optional[str] = None) -> str:
+    """
+    Return a coarse geographic/conflict zone for display on news cards.
+    Tries keyword matching on title+summary first (most specific zones win),
+    then falls back to the source's default region code, then "Global".
+    """
+    text = (" " + title + " " + summary + " ").lower()
+    for zone, patterns in _ZONE_PATTERNS:
+        if any(p in text for p in patterns):
+            return zone
+    if fallback_region:
+        return _REGION_CODE_TO_ZONE.get(fallback_region, "Global")
+    return "Global"
 
 
 # ── Defense relevance scoring ────────────────────────────────────────────────
@@ -756,6 +795,7 @@ def _fetch_rss(source: Dict) -> List[Dict]:
                 "relevanceScore": int(raw_score * weight),
                 "language":       src_lang,
                 "region":         region,
+                "zone":           detect_zone(title, summary, region),
                 "companies":      detect_companies(title, summary),
             })
 
@@ -813,6 +853,7 @@ def _scrape_nato() -> List[Dict]:
                 "relevanceScore": compute_relevance_score(title, ""),
                 "language":       "en",
                 "region":         "europe",
+                "zone":           detect_zone(title, "", "europe"),
                 "companies":      detect_companies(title, ""),
             })
 
@@ -870,6 +911,7 @@ def _scrape_janes() -> List[Dict]:
                 "relevanceScore": compute_relevance_score(title, ""),
                 "language":       "en",
                 "region":         region,
+                "zone":           detect_zone(title, "", region),
                 "companies":      detect_companies(title, ""),
             })
 
@@ -951,6 +993,7 @@ def _scrape_defensepost() -> List[Dict]:
                     "relevanceScore": compute_relevance_score(title, summary),
                     "language":       "en",
                     "region":         region,
+                    "zone":           detect_zone(title, summary, region),
                     "companies":      detect_companies(title, summary),
                 })
 
@@ -1232,6 +1275,7 @@ def _fetch_google_news(query: str, region: str = "global", max_items: int = 20) 
                 "relevanceScore": score,
                 "language":       "en",
                 "region":         region_det,
+                "zone":           detect_zone(title, summary, region_det),
                 "companies":      detect_companies(title, summary),
             })
 

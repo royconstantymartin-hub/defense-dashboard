@@ -804,9 +804,10 @@ export default function Dashboard() {
                         )}
                         {/* Solid bottom overlay for text readability */}
                         <div className="absolute bottom-0 left-0 right-0 h-28 bg-black/65" />
-                        {/* Category badge top-left */}
-                        <div className="absolute top-3 left-3">
+                        {/* Category + zone badges top-left */}
+                        <div className="absolute top-3 left-3 flex items-center gap-1.5">
                           <IntelCategoryBadge category={item.category} />
+                          <ZoneBadge zone={item.zone} />
                         </div>
                         {item.source_count > 1 && (
                           <div className="absolute top-3 right-3">
@@ -881,6 +882,7 @@ export default function Dashboard() {
                           </p>
                           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                             <IntelCategoryBadge category={item.category} small />
+                            <ZoneBadge zone={item.zone} small />
                             <div className="flex items-center gap-1">
                               {host && (
                                 <img
@@ -944,6 +946,28 @@ function IntelCategoryBadge({ category, small = false }) {
   return (
     <span className={`border font-medium rounded-full ${small ? "text-[9px] px-1.5 py-px" : "text-xs px-2 py-0.5"} ${cls}`}>
       {category || "INDUSTRY"}
+    </span>
+  );
+}
+
+// Subtle color per geographic / conflict zone (light theme only)
+const ZONE_STYLES = {
+  "US":                 "bg-blue-50    text-blue-700    border-blue-200",
+  "Europe":             "bg-indigo-50  text-indigo-700  border-indigo-200",
+  "Ukraine-Russia War": "bg-amber-50   text-amber-700   border-amber-200",
+  "Iran-Israel War":    "bg-rose-50    text-rose-700    border-rose-200",
+  "Middle East":        "bg-orange-50  text-orange-700  border-orange-200",
+  "China":              "bg-red-50     text-red-700     border-red-200",
+  "APAC":               "bg-teal-50    text-teal-700    border-teal-200",
+  "Africa":             "bg-lime-50    text-lime-700    border-lime-200",
+};
+
+function ZoneBadge({ zone, small = false }) {
+  if (!zone || zone === "Global") return null;
+  const cls = ZONE_STYLES[zone] || "bg-slate-50 text-slate-500 border-slate-200";
+  return (
+    <span className={`border font-medium rounded-full whitespace-nowrap ${small ? "text-[9px] px-1.5 py-px" : "text-xs px-2 py-0.5"} ${cls}`}>
+      {zone}
     </span>
   );
 }
