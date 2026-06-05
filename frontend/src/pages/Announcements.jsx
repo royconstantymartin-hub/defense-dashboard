@@ -18,15 +18,10 @@ import { useAuth } from "@/App";
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 const NEWS_CATEGORIES = [
-  { value: "all",         label: "All" },
-  { value: "CONTRACT",    label: "Contracts" },
-  { value: "TECHNOLOGY",  label: "Technology" },
-  { value: "CONFLICT",    label: "Conflict" },
-  { value: "POLICY",      label: "Policy" },
-  { value: "GEOPOLITICS", label: "Geopolitics" },
-  { value: "M&A",         label: "M&A" },
-  { value: "EARNINGS",    label: "Earnings" },
-  { value: "INDUSTRY",    label: "Industry" },
+  { value: "all",      label: "All" },
+  { value: "INDUSTRY", label: "Industry" },
+  { value: "CONTRACT", label: "Contracts" },
+  { value: "CONFLICT", label: "Conflict" },
 ];
 
 const ARTICLES_PER_PAGE = 12;
@@ -80,15 +75,26 @@ const CATEGORY_STOCK_PHOTOS = {
 
 function getCategoryStyle(category) {
   switch (category) {
-    case "CONTRACT":    return "bg-emerald-50 text-emerald-700 border-emerald-200";
-    case "POLICY":      return "bg-amber-50   text-amber-700   border-amber-200";
-    case "M&A":         return "bg-blue-50    text-blue-700    border-blue-200";
-    case "TECHNOLOGY":  return "bg-slate-100  text-slate-700   border-slate-200";
-    case "CONFLICT":    return "bg-red-50     text-red-700     border-red-200";
-    case "GEOPOLITICS": return "bg-sky-50     text-sky-700     border-sky-200";
-    case "EARNINGS":    return "bg-teal-50    text-teal-700    border-teal-200";
-    default:            return "bg-slate-100  text-slate-600   border-slate-200";
+    case "CONTRACT": return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    case "CONFLICT": return "bg-red-50     text-red-700     border-red-200";
+    default:         return "bg-slate-100  text-slate-600   border-slate-200"; // INDUSTRY
   }
+}
+
+// Subtle color per geographic / conflict zone (light theme only)
+const ZONE_STYLES = {
+  "US":                 "bg-blue-50    text-blue-700    border-blue-200",
+  "Europe":             "bg-indigo-50  text-indigo-700  border-indigo-200",
+  "Ukraine-Russia War": "bg-amber-50   text-amber-700   border-amber-200",
+  "Iran-Israel War":    "bg-rose-50    text-rose-700    border-rose-200",
+  "Middle East":        "bg-orange-50  text-orange-700  border-orange-200",
+  "China":              "bg-red-50     text-red-700     border-red-200",
+  "APAC":               "bg-teal-50    text-teal-700    border-teal-200",
+  "Africa":             "bg-lime-50    text-lime-700    border-lime-200",
+};
+
+function getZoneStyle(zone) {
+  return ZONE_STYLES[zone] || "bg-slate-50 text-slate-500 border-slate-200";
 }
 
 function relativeTime(dateStr) {
@@ -167,9 +173,16 @@ function ArticleCard({ article, isBookmarked, onBookmark }) {
 
       {/* Content */}
       <div className="flex flex-col gap-2 p-4 flex-1">
-        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider w-fit ${getCategoryStyle(article.category)}`}>
-          {article.category || "INDUSTRY"}
-        </span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider w-fit ${getCategoryStyle(article.category)}`}>
+            {article.category || "INDUSTRY"}
+          </span>
+          {article.zone && article.zone !== "Global" && (
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider w-fit ${getZoneStyle(article.zone)}`}>
+              {article.zone}
+            </span>
+          )}
+        </div>
 
         <a href={article.url} target="_blank" rel="noopener noreferrer" className="flex-1">
           <h3 className="font-bold text-[14px] leading-snug line-clamp-2 text-slate-800 group-hover:text-blue-800 transition-colors">

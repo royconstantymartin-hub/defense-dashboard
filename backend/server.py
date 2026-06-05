@@ -1532,7 +1532,7 @@ async def reindex_company_tags(current_user: dict = Depends(get_current_user)):
 
 async def run_news_scraper_job() -> dict:
     """Run the scraper pipeline, deduplicate, and upsert results into MongoDB."""
-    from services.news_scraper import scrape_all_sources, cluster_articles
+    from services.news_scraper import scrape_all_sources, cluster_articles, detect_zone
 
     # Sources whose content is defence-focused — no minimum score required
     _SPECIALTY_SOURCES = {
@@ -1631,6 +1631,9 @@ async def run_news_scraper_job() -> dict:
                 src    = article.get("source", "")
                 lang   = article.get("language") or ("fr" if src in _FR_SOURCES else "en")
                 region = article.get("region")   or _SOURCE_REGION.get(src, "global")
+                zone   = article.get("zone") or detect_zone(
+                    article.get("title", ""), article.get("summary", ""), region
+                )
                 doc = {
                     "title":          article.get("title", ""),
                     "url":            article.get("url", ""),
@@ -1643,6 +1646,7 @@ async def run_news_scraper_job() -> dict:
                     "relevanceScore": article.get("relevanceScore", 0),
                     "language":       lang,
                     "region":         region,
+                    "zone":           zone,
                     "source_count":   article.get("source_count", 1),
                     "covered_by":     article.get("covered_by", [src]),
                     "companies":      article.get("companies", []),
@@ -1825,6 +1829,14 @@ def _normalise_article(a: dict) -> dict:
     # Derive region from source name when the field is absent
     if not a.get("region"):
         a["region"] = _SOURCE_REGION_MAP.get(src, "global")
+    # Backfill the display zone and collapse legacy categories on old articles
+    # so the feed always shows the simplified INDUSTRY/CONFLICT/CONTRACT taxonomy
+    # plus a geographic/conflict zone, even before the next scrape re-tags them.
+    from services.news_scraper import detect_zone, assign_category
+    if not a.get("zone"):
+        a["zone"] = detect_zone(a.get("title", ""), a.get("summary", ""), a.get("region"))
+    if a.get("category") not in ("INDUSTRY", "CONFLICT", "CONTRACT"):
+        a["category"] = assign_category(a.get("title", ""), a.get("summary", ""))
     return a
 
 
