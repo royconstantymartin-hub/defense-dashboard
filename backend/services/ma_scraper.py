@@ -301,6 +301,46 @@ def _extract_companies(title: str, summary: str) -> Tuple[Optional[str], Optiona
                         return acquirer, target
     return None, None
 
+# ── Non-M&A guard ─────────────────────────────────────────────────────────────
+# A real M&A deal is one COMPANY acquiring another COMPANY. A sovereign state
+# buying equipment ("Italy buys six Airbus-made A330 MRTT tankers") is procurement,
+# NOT M&A — such signals must never be stored.
+
+STATE_BUYERS = {
+    "united states", "usa", "u.s.", "u.s", "america", "uk", "united kingdom",
+    "britain", "italy", "france", "germany", "spain", "poland", "netherlands",
+    "belgium", "sweden", "norway", "finland", "denmark", "greece", "turkey",
+    "türkiye", "india", "japan", "south korea", "korea", "north korea",
+    "australia", "canada", "israel", "saudi arabia", "uae", "qatar", "egypt",
+    "brazil", "ukraine", "russia", "china", "taiwan", "nato", "european union",
+    "eu", "pentagon", "switzerland", "austria", "portugal", "romania",
+    "czech republic", "czechia", "hungary", "slovakia", "croatia", "indonesia",
+    "philippines",
+}
+_GOV_BUYER_RE = re.compile(
+    r"\b(ministry of defen[cs]e|department of defen[cs]e|\bdod\b|\bmod\b|"
+    r"armed forces|air force|\bnavy\b|\barmy\b|government|military)\b",
+    re.IGNORECASE,
+)
+_PROCUREMENT_RE = re.compile(
+    r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|dozens?|fleet|squadron)\b.*"
+    r"\b(tankers?|fighters?|jets?|aircraft|helicopters?|drones?|uavs?|missiles?|"
+    r"frigates?|destroyers?|submarines?|corvettes?|warships?|vehicles?|tanks?|"
+    r"howitzers?|radars?|satellites?|units?)\b",
+    re.IGNORECASE,
+)
+
+def _is_state_or_procurement(acquirer: str, target: str) -> bool:
+    """True if the signal is a state/government procurement rather than corporate M&A."""
+    a = re.sub(r"^the\s+", "", acquirer.strip().lower())
+    if a in STATE_BUYERS:
+        return True
+    if _GOV_BUYER_RE.search(acquirer):
+        return True
+    if _PROCUREMENT_RE.search(target):
+        return True
+    return False
+
 def _lookup_company(name: str) -> Tuple[Optional[str], Optional[str]]:
     """Return (country_iso2, logo_domain) for a company name, or (None, None)."""
     n = name.lower()
@@ -387,6 +427,13 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
             acquirer, target = _extract_companies(title, summary)
             if not acquirer or not target:
                 continue  # discard — no reliable extraction
+
+            # Safeguard: only real company → company acquisitions. Drop state
+            # procurement (e.g. "Italy buys six A330 MRTT tankers").
+            if _is_state_or_procurement(acquirer, target):
+                logger.info("[%s] Skipping non-M&A procurement/state signal: %s → %s",
+                            source_name, acquirer, target)
+                continue
 
             acq_country, acq_logo = _lookup_company(acquirer)
             tgt_country, tgt_logo = _lookup_company(target)
