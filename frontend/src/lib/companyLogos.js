@@ -844,6 +844,10 @@ export const COMPANY_WIKI_LOGOS = {
   "Diehl":                      "https://upload.wikimedia.org/wikipedia/commons/f/f0/Diehl_Logo.svg",
   "Diehl Stiftung":             "https://upload.wikimedia.org/wikipedia/commons/f/f0/Diehl_Logo.svg",
   "ThyssenKrupp Marine Systems": "https://upload.wikimedia.org/wikipedia/commons/1/13/Thyssenkrupp_AG_Logo_2015.svg",
+  "Renk Group":                 "https://upload.wikimedia.org/wikipedia/commons/b/ba/RENK_Logo_RGB.svg",
+  "Dynamit Nobel Defence":      "https://upload.wikimedia.org/wikipedia/commons/e/ee/Logo_Dynamit_Nobel.svg",
+  "Arab Organization for Industrialization": "https://upload.wikimedia.org/wikipedia/en/c/c0/Arab_Organization_for_Industrialization_logo.png",
+  "Pakistan Aeronautical Complex": "https://upload.wikimedia.org/wikipedia/en/c/c4/Pakistan_Aeronautical_Complex_%28emblem%29.png",
 };
 
 export function getLogoDomain(name) {
