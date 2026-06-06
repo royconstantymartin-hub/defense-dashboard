@@ -556,9 +556,9 @@ export const COMPANY_WIKI_LOGOS = {
   "Texelis":                       WP + "Logo_Texelis.svg",
   // Germany
   "Rheinmetall":                   WP + "Rheinmetall_Logo_2021.svg",
-  "Diehl Defence":                 WP + "Diehl_Defence_Logo.svg",
+  "Diehl Defence":                 "https://upload.wikimedia.org/wikipedia/commons/f/f0/Diehl_Logo.svg",
   "Hensoldt":                      WP + "Hensoldt_Logo_2020.svg",
-  "ThyssenKrupp Marine":           WP + "Thyssenkrupp_Logo.svg",
+  "ThyssenKrupp Marine":           "https://upload.wikimedia.org/wikipedia/commons/1/13/Thyssenkrupp_AG_Logo_2015.svg",
   // Italy
   "Leonardo":                      WP + "Logo_Leonardo.svg",
   "Fincantieri":                   WP + "Fincantieri_logo.svg",
@@ -575,7 +575,7 @@ export const COMPANY_WIKI_LOGOS = {
   // Switzerland
   "Pilatus Aircraft":              WP + "Pilatus_Aircraft_logo.svg",
   // Israel
-  "Elbit Systems":                 WP + "Elbit_Systems_logo.svg",
+  "Elbit Systems":                 "https://upload.wikimedia.org/wikipedia/en/7/74/Elbit_Systems_logo-en.svg",
   "Israel Aerospace Industries":   WP + "IAI_Corporation_Logo.svg",
   "Rafael Advanced Defense":       WP + "RAFAEL_logo.png",
   // Japan
@@ -644,7 +644,7 @@ export const COMPANY_WIKI_LOGOS = {
   // Germany — additional
   "MTU Aero Engines":              WP + "MTU_Aero_Engines_Logo.svg",
   "Renk Group":                    WP + "RENK_AG_logo.svg",
-  "ThyssenKrupp Marine":           WP + "Thyssenkrupp_AG_logo.svg",
+  "ThyssenKrupp Marine":           "https://upload.wikimedia.org/wikipedia/commons/1/13/Thyssenkrupp_AG_Logo_2015.svg",
   // Middle East — falls through to Clearbit for SAMI/Paramount (no confirmed Wikipedia logos)
   // Ukraine — falls through to Clearbit for smaller entities
   "Ukroboronprom":                 WP + "Ukroboronprom_logo.svg",
@@ -830,6 +830,20 @@ export const COMPANY_WIKI_LOGOS = {
   "Ultra Electronics":          "https://upload.wikimedia.org/wikipedia/en/0/08/Ultra_Electronics_logo.jpg",
   "Avibras":                    "https://upload.wikimedia.org/wikipedia/commons/4/4d/Avibras_logo.png",
   "Piaggio Aerospace":          "https://upload.wikimedia.org/wikipedia/commons/9/9c/Piaggio_Aerospace_Logo.svg",
+  "Diamond Aircraft":           "https://upload.wikimedia.org/wikipedia/commons/0/0d/Diamond_Aircraft_logo.svg",
+  "Reaction Engines":           "https://upload.wikimedia.org/wikipedia/en/1/12/Reaction_Engines_logo_2019.svg",
+  "Japan Steel Works":          "https://upload.wikimedia.org/wikipedia/commons/7/73/JSW.svg",
+  "Mahindra Defence Systems":   "https://upload.wikimedia.org/wikipedia/commons/8/89/Mahindra_logo.svg",
+  "CEA Technologies":           "https://upload.wikimedia.org/wikipedia/en/b/b1/CEA_Technologies_transparent_logo.gif",
+  "Elettronica":                "https://upload.wikimedia.org/wikipedia/commons/d/de/ELT_Group_Logo.svg",
+  "OGMA":                       "https://upload.wikimedia.org/wikipedia/commons/1/1b/Logo_OGMA.jpg",
+  // Names that also appear on the M&A page (shared via logoUrlsFor)
+  "Bombardier":                 "https://upload.wikimedia.org/wikipedia/commons/9/98/Bombardier_2024.svg",
+  "Hispasat":                   "https://upload.wikimedia.org/wikipedia/commons/9/93/Hispasat_logo_2022.svg",
+  "De Havilland Canada":        "https://upload.wikimedia.org/wikipedia/en/2/26/De_Havilland_Canada_logo.svg",
+  "Diehl":                      "https://upload.wikimedia.org/wikipedia/commons/f/f0/Diehl_Logo.svg",
+  "Diehl Stiftung":             "https://upload.wikimedia.org/wikipedia/commons/f/f0/Diehl_Logo.svg",
+  "ThyssenKrupp Marine Systems": "https://upload.wikimedia.org/wikipedia/commons/1/13/Thyssenkrupp_AG_Logo_2015.svg",
 };
 
 export function getLogoDomain(name) {
