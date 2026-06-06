@@ -1805,9 +1805,11 @@ export const CAPABILITY_DETAILS = {
     surface_combatants: [
       { model: "Fridtjof Nansen-class frigate", count: 4, manufacturer: "Navantia" },
       { model: "Skjold-class corvette", count: 6, manufacturer: "Umoe Mandal" },
+      { model: "Type 26 frigate (on order)", count: 5, manufacturer: "BAE Systems", origin: "United Kingdom", on_order: true },
     ],
     submarines: [
       { model: "Ula-class", count: 6, manufacturer: "ThyssenKrupp / Nordseewerke" },
+      { model: "Type 212CD submarine (on order)", count: 4, manufacturer: "thyssenkrupp Marine Systems", origin: "Germany / Norway", on_order: true },
     ],
     air_defense: [
       { model: "NASAMS III", count: 9, manufacturer: "Kongsberg / Raytheon" },
@@ -4327,6 +4329,8 @@ export const STATIC_PLATFORM_IMAGES = {
   "F-16V Block 72 (on order)":             "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_June_2008.jpg/500px-F-16_June_2008.jpg",
   "F-16 Block 70 (on order)":              "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/F-16_June_2008.jpg/500px-F-16_June_2008.jpg",
   "JF-17C Block III (on order)":           "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Pakistan_Air_Force_Chengdu_JF-17_Gu.jpg/500px-Pakistan_Air_Force_Chengdu_JF-17_Gu.jpg",
+  "Type 26 frigate (on order)":            "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/HMS_Glasgow_%2852567292390%29.jpg/500px-HMS_Glasgow_%2852567292390%29.jpg",
+  "Type 212CD submarine (on order)":       "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/U_34_in_Fahrt.jpg/500px-U_34_in_Fahrt.jpg",
   // ── Drones / UAVs ─────────────────────────────────────────────────────────
   "MQ-9A Reaper MALE (ISR / strike)":                         WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
   "MQ-9A/B Reaper (MALE / strike)":                           WKP + "MQ-9_Reaper_in_flight_(disheveled).jpg",
