@@ -293,10 +293,10 @@ export default function Dashboard() {
           <p className="text-slate-500 text-sm mt-1">Global Defense Intelligence Overview</p>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           {/* Search bar */}
           <div className="relative" ref={searchRef}>
-            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 transition-all w-64">
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 transition-all w-full sm:w-64">
               <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               <input
                 type="text"
@@ -352,7 +352,7 @@ export default function Dashboard() {
           </div>
 
           {/* Timestamp badge */}
-          <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+          <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
             <Clock className="w-3.5 h-3.5" />
             <span>
               {fetchedAt
