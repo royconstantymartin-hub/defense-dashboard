@@ -3053,6 +3053,7 @@ export default function MAActivity() {
   const [selectedSector, setSelectedSector]    = useState("all");
   const [viewMode,       setViewMode]          = useState("table"); // "table" | "pipeline"
   const [dealSource,     setDealSource]        = useState("all");   // "all" | "defense" | "fund" — filters the table
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const fetchRecent = async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
@@ -3249,7 +3250,7 @@ export default function MAActivity() {
   return (
     <div data-testid="ma-activity-page" className="space-y-5 animate-fade-in">
       {/* ── Header ── */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">M&amp;A Activity</h1>
           <p className="text-slate-500 text-sm mt-1">
@@ -3417,18 +3418,24 @@ export default function MAActivity() {
       )}
 
       {/* ── Two-column layout ── */}
-      <div className="flex gap-5 items-start">
+      <div className="flex flex-col lg:flex-row gap-5 items-start">
 
         {/* Left sidebar — filters */}
-        <div className="w-52 shrink-0 space-y-3 sticky top-4">
+        <div className="w-full lg:w-52 shrink-0 space-y-3 lg:sticky lg:top-4">
           <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                <Filter className="w-3.5 h-3.5" /> Filters
-                {activeFilterCount > 0 && (
-                  <span className="bg-slate-200 text-slate-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full">{activeFilterCount}</span>
-                )}
-              </span>
+              <button
+                className="flex items-center gap-1.5 lg:cursor-default"
+                onClick={() => setMobileFiltersOpen(o => !o)}
+              >
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <Filter className="w-3.5 h-3.5" /> Filters
+                  {activeFilterCount > 0 && (
+                    <span className="bg-slate-200 text-slate-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full">{activeFilterCount}</span>
+                  )}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 lg:hidden transition-transform ${mobileFiltersOpen ? "rotate-180" : ""}`} />
+              </button>
               {activeFilterCount > 0 && (
                 <button
                   onClick={() => { setSelectedStatus("all"); setSelectedYear("all"); setSearchTerm(""); setSelectedCountry("all"); setMinValue(0); setSelectedSector("all"); setDealSource("all"); }}
@@ -3438,6 +3445,7 @@ export default function MAActivity() {
                 </button>
               )}
             </div>
+            <div className={`${mobileFiltersOpen ? "block" : "hidden"} lg:block space-y-4`}>
 
             {/* Search */}
             <div className="relative">
@@ -3534,6 +3542,7 @@ export default function MAActivity() {
               selected={selectedCountry}
               onSelect={setSelectedCountry}
             />
+            </div>{/* end collapsible filters */}
           </div>
         </div>
 

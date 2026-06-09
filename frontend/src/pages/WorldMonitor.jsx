@@ -57,7 +57,7 @@ export default function WorldMonitor() {
         <span className="px-1.5 py-0.5 bg-amber-500/15 text-amber-400 text-[10px] font-mono rounded border border-amber-500/25">WIP</span>
 
         {/* Inline stats */}
-        <div className="flex items-center gap-3 ml-2 text-xs font-mono">
+        <div className="hidden sm:flex items-center gap-3 ml-2 text-xs font-mono">
           <span className="text-slate-400">{loading ? "—" : incidents.length} <span className="text-slate-600">incidents</span></span>
           <span className="text-rose-400">{loading ? "—" : incidents.filter(i => i.intensity >= 8).length} <span className="text-slate-600">critical</span></span>
           <span className="text-blue-400">{loading ? "—" : new Set(incidents.map(i => i.region)).size} <span className="text-slate-600">regions</span></span>
@@ -145,7 +145,7 @@ export default function WorldMonitor() {
         </div>
 
         {/* ── Right panel — compact ── */}
-        <div className="w-52 border-l border-slate-800 flex flex-col shrink-0 overflow-hidden">
+        <div className="hidden md:flex md:w-52 border-l border-slate-800 flex-col shrink-0 overflow-hidden">
 
           {/* Selected detail — only shown when something is selected */}
           {selected && (

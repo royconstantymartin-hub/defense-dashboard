@@ -1098,7 +1098,7 @@ export default function Products() {
           </h1>
           <p className="text-slate-500 text-sm mt-1">Defense Systems & Equipment Catalog</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
+        <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
           <Clock className="w-3.5 h-3.5" />
           <span>Last updated: {new Date().toLocaleDateString()}</span>
           <span className="text-slate-300">|</span>
