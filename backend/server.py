@@ -2882,19 +2882,13 @@ async def _purge_scraper_junk():
         def _norm(s: str) -> str:
             return _re.sub(r"\s+", " ", s.lower().strip())
 
-        # Build lookup: first word of acquirer → set of first words of targets
+        # Build lookup: (first word of acquirer, first word of target) pairs
         seed_pairs: set = set()
-        seed_tgt_words: set = set()
-        seed_acq_first: set = set()
         for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10:
             aw = _norm(m["acquirer"]).split()
             tw = _norm(m["target"]).split()
             if aw and tw:
                 seed_pairs.add((aw[0], tw[0]))
-                seed_acq_first.add(aw[0])
-            for w in tw:
-                if len(w) > 3:
-                    seed_tgt_words.add(w)
 
         scraped = await db.ma_activities.find(
             {"scraped_at": {"$exists": True}},
@@ -2908,9 +2902,7 @@ async def _purge_scraper_junk():
             if not aw or not tw:
                 await db.ma_activities.delete_one({"id": e["id"]}); r3 += 1; continue
             exact = (aw[0], tw[0]) in seed_pairs
-            acq_known = aw[0] in seed_acq_first
-            tgt_dup = any(w in seed_tgt_words for w in tw if len(w) > 3)
-            if exact or (acq_known and tgt_dup):
+            if exact:
                 await db.ma_activities.delete_one({"id": e["id"]}); r3 += 1
 
         logger.info(
