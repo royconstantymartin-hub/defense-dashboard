@@ -1017,7 +1017,13 @@ export default function MarketData() {
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-mono font-bold text-emerald-600">+{p._change.toFixed(2)}%</p>
+                    <button
+                      className="text-sm font-mono font-bold text-emerald-600 hover:underline cursor-pointer"
+                      onClick={(e) => { e.stopPropagation(); setChartPlayer(p); }}
+                      title="Click to view price chart"
+                    >
+                      +{p._change.toFixed(2)}%
+                    </button>
                     <p className="text-[10px] font-mono text-slate-400 mt-0.5">${price > 0 ? price.toFixed(2) : "—"}</p>
                   </div>
                 </div>
@@ -1063,7 +1069,13 @@ export default function MarketData() {
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-mono font-bold text-rose-600">{p._change.toFixed(2)}%</p>
+                    <button
+                      className="text-sm font-mono font-bold text-rose-600 hover:underline cursor-pointer"
+                      onClick={(e) => { e.stopPropagation(); setChartPlayer(p); }}
+                      title="Click to view price chart"
+                    >
+                      {p._change.toFixed(2)}%
+                    </button>
                     <p className="text-[10px] font-mono text-slate-400 mt-0.5">${price > 0 ? price.toFixed(2) : "—"}</p>
                   </div>
                 </div>
