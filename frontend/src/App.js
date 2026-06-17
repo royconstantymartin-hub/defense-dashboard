@@ -17,6 +17,8 @@ import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 import PrivatePlayers from "@/pages/PrivatePlayers";
 import WorldMonitor from "@/pages/WorldMonitor";
+import Lexicon from "@/pages/Lexicon";
+import LexiconTerm from "@/pages/LexiconTerm";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -126,6 +128,8 @@ function App() {
             <Route path="bookmarks" element={<Bookmarks />} />
             <Route path="private-players" element={<PrivatePlayers />} />
             <Route path="world-monitor" element={<WorldMonitor />} />
+            <Route path="lexicon" element={<Lexicon />} />
+            <Route path="lexicon/:slug" element={<LexiconTerm />} />
             <Route path="admin" element={<Admin />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
