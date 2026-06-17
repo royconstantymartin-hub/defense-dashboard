@@ -695,6 +695,51 @@ async def seed_ma_pilot(current_user: dict = Depends(get_current_user)):
     count = await db.ma_activities.count_documents({})
     return {"status": "Pilot seeded", "deals": count, "message": f"{count} deals chargés — scraper ignoré"}
 
+@api_router.post("/ma-activities/seed-eurosatory")
+async def seed_ma_eurosatory(current_user: dict = Depends(get_current_user)):
+    """Idempotently upsert the hand-curated Eurosatory 2026 M&A / JV deals.
+
+    Unlike seed-pilot, this does NOT wipe the collection — it only adds (or
+    refreshes) the Eurosatory deals, matched by (acquirer_norm, target_norm).
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    from data.seed_data import MA_EUROSATORY_2026
+    import re as _re
+
+    def _norm(s: str) -> str:
+        return _re.sub(r"\s+", " ", s.lower().strip())
+
+    inserted, updated = 0, 0
+    for m in MA_EUROSATORY_2026:
+        activity = MAActivity(**m)
+        doc = activity.model_dump()
+        doc["announced_date"] = doc["announced_date"].isoformat()
+        if doc.get("closed_date"):
+            doc["closed_date"] = doc["closed_date"].isoformat()
+        doc["acquirer_norm"] = _norm(m["acquirer"])
+        doc["target_norm"] = _norm(m["target"])
+
+        key = {"acquirer_norm": doc["acquirer_norm"], "target_norm": doc["target_norm"]}
+        existing = await db.ma_activities.find_one(key, {"_id": 0, "id": 1})
+        if existing:
+            # Preserve the existing id; refresh the curated fields.
+            doc["id"] = existing["id"]
+            await db.ma_activities.update_one(key, {"$set": doc})
+            updated += 1
+        else:
+            await db.ma_activities.insert_one(doc)
+            inserted += 1
+
+    total = await db.ma_activities.count_documents({})
+    return {
+        "status": "Eurosatory 2026 deals seeded",
+        "inserted": inserted,
+        "updated": updated,
+        "total": total,
+        "message": f"{inserted} ajoutés, {updated} mis à jour — {len(MA_EUROSATORY_2026)} deals Eurosatory 2026",
+    }
+
 # ============= JV PROGRAMS ROUTES =============
 
 @api_router.get("/jv-programs")

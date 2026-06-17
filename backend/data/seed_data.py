@@ -9647,3 +9647,149 @@ MA_EUROPE_DEALS = [
         "confidence": "high",
     },
 ]
+
+# ── Eurosatory 2026 (Paris, June 2026) ───────────────────────────────────────
+# Hand-curated M&A / joint-venture deals announced at the Eurosatory 2026 land
+# defence exhibition. Each entry is sourced from press coverage of the show.
+# These are seeded via POST /api/ma-activities/seed-eurosatory (idempotent upsert).
+MA_EUROSATORY_2026 = [
+    {
+        "acquirer": "Electro Optic Systems",
+        "target": "MARSS",
+        "deal_value": 0,
+        "status": "completed",
+        "deal_type": "acquisition",
+        "description": "EOS acquires counter-drone specialist MARSS at Eurosatory 2026 — MARSS becomes an independent C-UAS subsidiary",
+        "rationale": (
+            "Australian sensor and effector group Electro Optic Systems (EOS) announces on "
+            "15 June 2026, during Eurosatory 2026, the acquisition of MARSS (Marine and Remote "
+            "Sensing Solutions), a specialist in counter-unmanned-aerial-system (C-UAS) defence. "
+            "MARSS becomes an independent subsidiary within EOS. The deal pairs MARSS's NiDAR "
+            "command-and-control software and Interceptor effectors — recently used to down "
+            "Shahed-type drones in the Middle East — with EOS's remote weapon stations and "
+            "directed-energy systems, building a layered counter-drone offering. Financial terms "
+            "were not disclosed."
+        ),
+        "acquirer_country": "AU",
+        "target_country": "GB",
+        "acquirer_logo_domain": "eos-aus.com",
+        "target_logo_domain": "marss.com",
+        "source_url": "https://www.janes.com/defence-intelligence-insights/defence-news/weapons/eurosatory-2026-marss-now-part-of-eos-sees-middle-east-air-defence-success",
+        "announced_date": datetime(2026, 6, 15, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "uas_drones",
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "EDGE Group",
+        "target": "Safran",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "EDGE Group and Safran sign JV term sheet at Eurosatory 2026 for next-generation precision-guided weapons",
+        "rationale": (
+            "UAE defence champion EDGE Group and France's Safran sign a joint-venture term sheet "
+            "and a strategic cooperation agreement at Eurosatory 2026 (16 June 2026). The framework "
+            "establishes two proposed joint ventures — one in the United Arab Emirates and one in "
+            "France — to co-develop an extended-range precision-guided weapon derived from the "
+            "HAMMER (AASM) modular air-to-ground weapon family. The partnership deepens Franco-"
+            "Emirati industrial cooperation in guided munitions. Financial terms were not disclosed."
+        ),
+        "acquirer_country": "AE",
+        "target_country": "FR",
+        "acquirer_logo_domain": "edgegroup.ae",
+        "target_logo_domain": "safran-group.com",
+        "source_url": "https://www.safran-group.com/pressroom/edge-and-safran-sign-joint-venture-term-sheet-next-generation-missile-development-2026-06-16",
+        "announced_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "missiles_munitions",
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Rheinmetall",
+        "target": "LIG Nex1",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Rheinmetall and LIG Nex1 sign MoU at Eurosatory 2026 for a European air-defence joint venture",
+        "rationale": (
+            "Germany's Rheinmetall and South Korea's LIG Nex1 (LIG D&A) sign a memorandum of "
+            "understanding at Eurosatory 2026 (16 June 2026) to form an air-defence joint venture "
+            "for European and NATO customers, with Rheinmetall holding the majority stake. "
+            "Rheinmetall contributes very-short-range air-defence (VSHORAD) expertise while LIG "
+            "brings medium- and long-range missile capability, together offering a full air-defence "
+            "umbrella. As a first step the partners plan to co-develop a new short-range air-defence "
+            "(SHORAD) system. The agreement is at MoU stage; no binding JV or orders are yet signed."
+        ),
+        "acquirer_country": "DE",
+        "target_country": "KR",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "lignex1.com",
+        "source_url": "https://www.all-about-industries.com/rheinmetall-lig-joint-venture-defense-against-glide-bombs-a-2b180ca148a81e91f1115e72747aeb78/",
+        "announced_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "missiles_munitions",
+        "notes": "MoU stage — Rheinmetall to hold majority stake; binding JV not yet signed.",
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Eurenco",
+        "target": "Mesko",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Eurenco and Mesko (PGZ) form a Franco-Polish JV at Eurosatory 2026 for 155mm modular propellants",
+        "rationale": (
+            "French explosives and propellants manufacturer Eurenco and Mesko — a subsidiary of "
+            "Poland's state defence group PGZ (Polska Grupa Zbrojeniowa) — sign a strategic "
+            "agreement at Eurosatory 2026 to create a Franco-Polish joint venture. The JV will "
+            "advance production of modular propellant charges and tripropellant powders for "
+            "155 mm artillery ammunition, strengthening European propellant capacity amid surging "
+            "demand for artillery shells. Financial terms were not disclosed."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "PL",
+        "acquirer_logo_domain": "eurenco.com",
+        "target_logo_domain": "pgz.pl",
+        "source_url": "https://militaeraktuell.at/en/eurosatory-2026-eurenco-and-pgz-form-joint-venture/",
+        "announced_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "missiles_munitions",
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Czechoslovak Group",
+        "target": "FNSS",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "CSG and FNSS create 'Danube Defence Systems' JV at Eurosatory 2026 for armoured vehicles",
+        "rationale": (
+            "Czechoslovak Group (CSG) and Türkiye's FNSS sign an agreement at Eurosatory 2026 to "
+            "establish a Slovak-based armoured-vehicle joint venture named Danube Defence Systems. "
+            "The venture will manufacture and market a portfolio of tracked and wheeled armoured "
+            "vehicles — led by the KARPAT medium tank — combining FNSS's vehicle technologies with "
+            "CSG's European industrial and manufacturing footprint. Financial terms were not "
+            "disclosed."
+        ),
+        "acquirer_country": "CZ",
+        "target_country": "TR",
+        "acquirer_logo_domain": "csgroup.cz",
+        "target_logo_domain": "fnss.com.tr",
+        "source_url": "https://defensehere.com/en/csg-defence-fnss-sign-agreement/",
+        "announced_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "land_systems",
+        "confidence": "medium",
+    },
+]
