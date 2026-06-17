@@ -1234,7 +1234,78 @@ export default function MarketData() {
       {/* ── Players Table ── */}
       <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
         <CardContent className="p-0">
-          <div className="overflow-x-auto" data-testid="players-table">
+          {/* Mobile card list — shown below md, replaces the wide table */}
+          <div className="md:hidden divide-y divide-slate-100" data-testid="players-cards">
+            {paginatedPlayers.map((player, idx) => {
+              const flagUrl = getFlag(player.country);
+              const live = liveData[player.ticker];
+              const displayPrice = live?.price ?? player.stock_price;
+              const displayChange = live?.change_percent ?? null;
+              const isPos = (displayChange ?? 0) >= 0;
+              const priv = isPrivate(player.ticker);
+              return (
+                <div
+                  key={player.id}
+                  className="flex items-center gap-3 p-3 active:bg-slate-50 transition-colors cursor-pointer"
+                  onClick={() => setSelectedPlayer(player)}
+                  data-testid={`player-card-${player.id}`}
+                >
+                  <span className="text-xs font-mono text-slate-300 w-5 shrink-0 text-right">
+                    {(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}
+                  </span>
+                  <LogoWithFallback name={player.name} urls={getLogoUrls(player.name)} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-900 truncate leading-tight">{player.name}</p>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      {flagUrl && <img src={flagUrl} alt={player.country} className="w-3.5 h-2.5 object-cover rounded-sm" />}
+                      <span className="font-mono text-[10px] text-slate-500 bg-slate-100 px-1.5 py-px rounded">{player.ticker}</span>
+                      <span className="text-[10px] text-slate-400 font-mono">${player.market_cap}B cap</span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="font-mono text-sm font-semibold text-slate-900">
+                      {priv ? "Private" : displayPrice > 0 ? `$${displayPrice.toFixed(2)}` : "—"}
+                    </p>
+                    {priv ? (
+                      <span className="text-[11px] text-slate-400">—</span>
+                    ) : displayChange === null ? (
+                      liveLoading
+                        ? <span className="inline-block w-12 h-4 bg-slate-100 rounded-full animate-pulse mt-1" />
+                        : <span className="text-[11px] text-slate-400">—</span>
+                    ) : (
+                      <button
+                        className={`inline-flex items-center gap-0.5 font-mono text-xs px-1.5 py-0.5 rounded-full mt-1 ${
+                          isPos ? "text-emerald-700 bg-emerald-50" : "text-rose-700 bg-rose-50"
+                        }`}
+                        onClick={(e) => { e.stopPropagation(); setChartPlayer(player); }}
+                        title="View price chart"
+                      >
+                        {isPos ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+                        {isPos ? "+" : ""}{displayChange.toFixed(2)}%
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    onClick={(e) => togglePin(e, player.name)}
+                    title={pinnedCompanies.includes(player.name) ? "Unpin" : "Pin"}
+                    disabled={!pinnedCompanies.includes(player.name) && pinnedCompanies.length >= 3}
+                    className={`p-1.5 rounded shrink-0 transition-colors ${
+                      pinnedCompanies.includes(player.name)
+                        ? "text-slate-800"
+                        : pinnedCompanies.length >= 3
+                        ? "text-slate-200"
+                        : "text-slate-300"
+                    }`}
+                  >
+                    <Pin className={`w-4 h-4 ${pinnedCompanies.includes(player.name) ? "fill-slate-800" : ""}`} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop table — shown at md and up */}
+          <div className="hidden md:block overflow-x-auto" data-testid="players-table">
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
