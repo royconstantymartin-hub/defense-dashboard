@@ -16,7 +16,8 @@ import {
   Bell,
   Bookmark,
   Lock,
-  Radar
+  Radar,
+  BookOpen
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ const navItems = [
   { path: "/products", icon: Package, label: "Products" },
   { path: "/follow", icon: Rss, label: "Sources" },
   { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
+  { path: "/lexicon", icon: BookOpen, label: "Lexicon" },
   { path: "/world-monitor", icon: Radar, label: "World Monitor", inProgress: true },
 ];
 
