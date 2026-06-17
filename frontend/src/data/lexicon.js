@@ -14,6 +14,7 @@ export const LEXICON_CATEGORIES = [
   { value: "systems", label: "Systems & Sensors" },
   { value: "platforms", label: "Platforms" },
   { value: "doctrine", label: "Doctrine & Concepts" },
+  { value: "industry", label: "Industry & Programs" },
 ];
 
 export const LEXICON = [
@@ -1041,6 +1042,713 @@ export const LEXICON = [
     related: ["c4isr", "foreign-military-sales", "fifth-generation-fighter"],
     wiki: "NATO",
     imageAlt: "Allied forces operating together",
+  },
+
+  // ── More missiles & munitions ──────────────────────────────────────────────
+  {
+    slug: "atgm",
+    term: "Anti-Tank Guided Missile",
+    abbreviation: "ATGM",
+    category: "missiles",
+    tldr: "A missile a soldier or vehicle fires to destroy tanks — it's guided, so it actually steers into the target.",
+    summary:
+      "A guided missile designed to destroy armored vehicles, often portable and able to defeat heavy tank armor.",
+    definition: [
+      "An anti-tank guided missile (ATGM) is a guided weapon built to destroy tanks and other armored vehicles. Unlike an unguided rocket, it corrects its flight path on the way to the target, giving a single soldier or light vehicle a realistic chance of knocking out a vehicle that costs hundreds of times more. This has made the ATGM one of the great equalizers of the modern battlefield.",
+      "Guidance methods have evolved. Early missiles were steered manually by the operator through a wire; later types ride a laser beam or are guided by the operator keeping the sight on the target. The most advanced are 'fire-and-forget': the operator locks the seeker onto the target and the missile flies in on its own, freeing them to take cover immediately. Many modern ATGMs also use 'top-attack', climbing then diving onto the thin armor on a tank's roof, and tandem warheads to defeat reactive armor.",
+      "Cheap, portable ATGMs have repeatedly proven devastating against armor, forcing the development of active protection systems and changing how tanks are used. They are a central example of how relatively low-cost precision weapons can challenge expensive heavy platforms.",
+    ],
+    keyFacts: [
+      { label: "Target", value: "Tanks & armored vehicles" },
+      { label: "Guidance", value: "Wire, laser-beam, fire-and-forget" },
+      { label: "Tricks", value: "Top-attack, tandem warheads" },
+      { label: "Effect", value: "Cheap counter to expensive armor" },
+    ],
+    examples: [
+      {
+        title: "FGM-148 Javelin (USA)",
+        description:
+          "A fire-and-forget, top-attack ATGM a soldier can shoulder-fire, widely supplied to allies and proven against modern tanks.",
+      },
+      {
+        title: "Active protection in response",
+        description:
+          "The ATGM threat drove the spread of systems like Trophy that intercept incoming missiles before they strike a vehicle.",
+      },
+    ],
+    related: ["main-battle-tank", "active-protection-system", "precision-guided-munition", "manpads"],
+    wiki: "FGM-148 Javelin",
+    imageAlt: "A shoulder-fired anti-tank guided missile",
+  },
+  {
+    slug: "manpads",
+    term: "MANPADS",
+    abbreviation: "MANPADS",
+    category: "missiles",
+    tldr: "A shoulder-fired missile one soldier uses to shoot down low-flying aircraft and helicopters.",
+    summary:
+      "Man-Portable Air-Defense System — a shoulder-launched surface-to-air missile carried and fired by a single soldier.",
+    definition: [
+      "MANPADS stands for Man-Portable Air-Defense System: a lightweight, shoulder-fired surface-to-air missile that a single soldier can carry and launch. It exists to give ground troops their own protection against low-flying aircraft, helicopters, and drones, without relying on big, vehicle-mounted air-defense systems. Most use an infrared seeker that homes on the heat of an aircraft's engine, making them 'fire-and-forget'.",
+      "Their strengths are portability, low cost, and ease of use, which let small units threaten expensive aircraft and force pilots to fly higher or use countermeasures like flares. Because they are so portable and effective, they are also a serious proliferation and terrorism concern: a single MANPADS in the wrong hands can threaten a civilian airliner, which is why their export and stockpiles are tightly controlled.",
+      "MANPADS are the bottom, short-range layer of a broader air-defense network, complementing medium- and long-range surface-to-air missiles. Their widespread use in recent conflicts against helicopters and low-flying jets has reinforced both their battlefield value and the strict controls surrounding them.",
+    ],
+    keyFacts: [
+      { label: "Stands for", value: "Man-Portable Air-Defense System" },
+      { label: "Operated by", value: "A single soldier (shoulder-fired)" },
+      { label: "Guidance", value: "Usually infrared (heat-seeking)" },
+      { label: "Concern", value: "Proliferation / threat to airliners" },
+    ],
+    examples: [
+      {
+        title: "FIM-92 Stinger (USA)",
+        description:
+          "A widely used shoulder-fired infrared MANPADS effective against helicopters and low-flying aircraft.",
+      },
+      {
+        title: "Tight export controls",
+        description:
+          "Because a single unit could down an airliner, MANPADS transfers and stockpiles are among the most strictly regulated in the arms trade.",
+      },
+    ],
+    related: ["surface-to-air-missile", "atgm", "counter-uas", "end-user-certificate"],
+    wiki: "FIM-92 Stinger",
+    imageAlt: "A shoulder-fired man-portable air-defense missile",
+  },
+
+  // ── More systems & sensors ─────────────────────────────────────────────────
+  {
+    slug: "military-satellite",
+    term: "Military Satellite",
+    abbreviation: "MILSATCOM",
+    category: "systems",
+    tldr: "A spacecraft used by the military to spy, communicate, navigate, or give early warning of attacks.",
+    summary:
+      "A satellite used for defense purposes — reconnaissance, communications, navigation, missile warning, or surveillance.",
+    definition: [
+      "A military satellite is a spacecraft operated for defense and intelligence purposes. From orbit, satellites provide capabilities that nothing on the ground can match: a global view, communication across the planet, and precise timing and positioning. They have become so essential that space is now treated as a military domain in its own right, alongside land, sea, air, and cyber.",
+      "Military satellites fall into a few main roles. Reconnaissance (or 'spy') satellites image the ground and intercept signals. Communications satellites (MILSATCOM) link forces and headquarters worldwide, including secure, jam-resistant channels. Navigation satellites such as GPS provide the positioning and timing that guide precision weapons and synchronize networks. Early-warning satellites watch for the heat plume of a ballistic-missile launch, giving crucial minutes of warning.",
+      "Because so much modern warfare depends on space, satellites are also a vulnerability. Anti-satellite weapons, jamming, and cyber-attacks all aim to blind or disrupt an opponent's space systems, which is why resilience, redundancy, and large 'constellations' of smaller satellites are growing priorities.",
+    ],
+    keyFacts: [
+      { label: "Domain", value: "Space" },
+      { label: "Roles", value: "Recon, comms, navigation, warning" },
+      { label: "Enables", value: "GPS-guided weapons, global comms" },
+      { label: "Threats", value: "ASAT weapons, jamming, cyber" },
+    ],
+    examples: [
+      {
+        title: "GPS navigation satellites",
+        description:
+          "The U.S. GPS constellation provides the positioning and timing that guide precision weapons and synchronize military networks worldwide.",
+      },
+      {
+        title: "Missile early-warning satellites",
+        description:
+          "Infrared satellites detect the heat of a missile launch within seconds, providing vital warning for missile defense.",
+      },
+    ],
+    related: ["c4isr", "precision-guided-munition", "electronic-warfare", "data-link"],
+    wiki: "Reconnaissance satellite",
+    imageAlt: "A military reconnaissance satellite",
+  },
+  {
+    slug: "iff",
+    term: "Identification Friend or Foe",
+    abbreviation: "IFF",
+    category: "systems",
+    tldr: "A system that lets forces ask 'are you friendly?' and get an automatic coded answer, to avoid shooting their own side.",
+    summary:
+      "An electronic system that lets military forces quickly tell whether a detected aircraft or vehicle is friendly.",
+    definition: [
+      "Identification Friend or Foe (IFF) is an electronic system that helps forces tell allies from enemies. When a radar detects an aircraft, it can send a coded radio 'challenge'; a friendly aircraft carrying the right equipment automatically sends back a coded 'reply'. If the correct answer comes back, the contact is a friend. Crucially, the lack of a reply does NOT prove hostility — it may just be a malfunction or a civilian — so IFF identifies friends, not foes.",
+      "The system exists to solve one of warfare's deadliest problems: fratricide, or 'friendly fire'. In fast, confusing engagements where targets appear only as blips on a screen, IFF gives operators a quick, reliable way to avoid firing on their own side. It evolved from World War II and now underpins both military identification and, in a related civilian form, air-traffic control transponders.",
+      "Because the codes are secret and change regularly, IFF is also a target for spoofing and electronic warfare. Reliable identification remains a hard, high-stakes problem, and IFF is one layer in a broader process of 'combat identification' that also uses radar signatures, flight behavior, and human judgment.",
+    ],
+    keyFacts: [
+      { label: "Purpose", value: "Identify friendly contacts" },
+      { label: "How", value: "Coded radio challenge and reply" },
+      { label: "Key limit", value: "No reply ≠ confirmed enemy" },
+      { label: "Solves", value: "Friendly fire (fratricide)" },
+    ],
+    examples: [
+      {
+        title: "Combat aircraft transponders",
+        description:
+          "Fighters carry IFF transponders so allied radars and pilots can confirm them as friendly before engaging.",
+      },
+      {
+        title: "Air-traffic control link",
+        description:
+          "Civilian transponder systems used in air-traffic control descend directly from military IFF technology.",
+      },
+    ],
+    related: ["c4isr", "data-link", "rules-of-engagement", "beyond-visual-range"],
+  },
+  {
+    slug: "data-link",
+    term: "Tactical Data Link",
+    abbreviation: "Link 16",
+    category: "systems",
+    tldr: "A secure digital radio that lets aircraft, ships and command centers share what they see, instantly and automatically.",
+    summary:
+      "A secure, standardized digital network that lets military platforms exchange tactical data automatically in real time.",
+    definition: [
+      "A tactical data link is a secure digital network that lets military platforms share information automatically and in near real time. Instead of a pilot describing a contact over voice radio, the data link sends the target's position, speed, and identity straight from one aircraft's computer to another's display. This creates a shared, constantly updated picture of the battlefield across many platforms at once.",
+      "The best-known example is Link 16, a NATO-standard data link used by fighters, ships, ground units, and command aircraft. It is jam-resistant, encrypted, and lets dozens of participants exchange tracks, orders, and status messages simultaneously. The result is dramatically better situational awareness: every connected unit can 'see' what the others see, enabling coordinated tactics and sensor-to-shooter engagements where one platform fires on a target detected by another.",
+      "Tactical data links are a backbone of modern, network-centric warfare and a key enabler of interoperability between allied forces. Because they are so valuable, they are also a focus of electronic warfare and cybersecurity, and a major factor in whether different nations' equipment can actually fight together.",
+    ],
+    keyFacts: [
+      { label: "Function", value: "Auto-share tactical data in real time" },
+      { label: "Example", value: "Link 16 (NATO standard)" },
+      { label: "Traits", value: "Encrypted, jam-resistant" },
+      { label: "Enables", value: "Shared picture, sensor-to-shooter" },
+    ],
+    examples: [
+      {
+        title: "Link 16 networks",
+        description:
+          "Allied fighters, ships, and AWACS share a common air picture over Link 16, coordinating engagements without voice radio.",
+      },
+      {
+        title: "Sensor-to-shooter",
+        description:
+          "Data links let a sensor on one platform pass a target to a weapon on another, the essence of networked warfare.",
+      },
+    ],
+    related: ["c4isr", "interoperability", "iff", "electronic-warfare"],
+  },
+  {
+    slug: "active-protection-system",
+    term: "Active Protection System",
+    abbreviation: "APS",
+    category: "systems",
+    tldr: "A shield for tanks that spots an incoming missile and shoots it down before it hits.",
+    summary:
+      "A vehicle defense system that detects and intercepts incoming anti-tank threats before they strike the armor.",
+    definition: [
+      "An active protection system (APS) defends an armored vehicle by detecting an incoming threat — such as an anti-tank missile or rocket — and actively stopping it, rather than just relying on thick passive armor to absorb the hit. Small radars and sensors on the vehicle constantly scan for incoming projectiles; when one is detected, the system reacts in a fraction of a second.",
+      "There are two broad types. 'Soft-kill' systems try to defeat the threat without touching it — for example by jamming a missile's guidance or firing smoke and decoys to break its lock. 'Hard-kill' systems physically destroy the incoming projectile in mid-air, launching a small interceptor or a burst of fragments to knock it down just before impact. Some vehicles combine both.",
+      "APS has become increasingly important as cheap, lethal anti-tank missiles and loitering munitions proliferate. By giving tanks and other vehicles a way to survive hits they could not stop with armor alone, active protection is a direct response to the changing economics of the battlefield, where a low-cost weapon can threaten a multimillion-dollar vehicle.",
+    ],
+    keyFacts: [
+      { label: "Protects", value: "Tanks & armored vehicles" },
+      { label: "How", value: "Detect then intercept incoming threats" },
+      { label: "Types", value: "Soft-kill & hard-kill" },
+      { label: "Counters", value: "ATGMs, RPGs, loitering munitions" },
+    ],
+    examples: [
+      {
+        title: "Trophy (Israel)",
+        description:
+          "A widely adopted hard-kill APS that intercepts incoming anti-tank rockets and missiles before they reach the vehicle.",
+      },
+      {
+        title: "Response to drone threats",
+        description:
+          "Rising loitering-munition attacks have accelerated interest in active protection for ground vehicles.",
+      },
+    ],
+    related: ["main-battle-tank", "atgm", "loitering-munition", "counter-uas"],
+  },
+
+  // ── Doctrine & concepts ────────────────────────────────────────────────────
+  {
+    slug: "combined-arms",
+    term: "Combined Arms",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "Using tanks, infantry, artillery and aircraft together as a team, so each covers the others' weaknesses.",
+    summary:
+      "The coordinated use of different combat arms — infantry, armor, artillery, and air power — so their strengths reinforce each other.",
+    definition: [
+      "Combined arms is the principle of using different types of military forces together so that each compensates for the others' weaknesses. Tanks have firepower and protection but are vulnerable to infantry with anti-tank weapons in close terrain; infantry are flexible but fragile in the open; artillery and aircraft deliver heavy firepower but can't hold ground. Used together, they create a problem the enemy cannot easily solve.",
+      "The core idea is that countering one arm exposes you to another. If the enemy spreads out to avoid artillery, they become vulnerable to a massed tank thrust; if they bunch up to stop the tanks, the artillery is devastating. Coordinating armor, infantry, artillery, engineers, and air support in time and space is what turns separate units into a coherent, hard-to-beat force.",
+      "Combined arms is one of the most enduring concepts in land warfare and the reason armies organize into mixed formations rather than pure tank or pure infantry units. Modern versions extend the idea across all domains — adding cyber, electronic warfare, drones, and space — under the broader banner of 'joint' and 'multi-domain' operations.",
+    ],
+    keyFacts: [
+      { label: "Idea", value: "Different arms cover each other's gaps" },
+      { label: "Arms", value: "Infantry, armor, artillery, air" },
+      { label: "Logic", value: "Countering one arm exposes you to another" },
+      { label: "Modern form", value: "Joint / multi-domain operations" },
+    ],
+    examples: [
+      {
+        title: "Mechanized formations",
+        description:
+          "Armies field mixed brigades of tanks, infantry, artillery, and engineers precisely so they can fight as combined arms.",
+      },
+      {
+        title: "Failures when arms are split",
+        description:
+          "Tanks advancing without infantry or air cover have repeatedly suffered heavy losses, illustrating why combined arms matters.",
+      },
+    ],
+    related: ["main-battle-tank", "air-superiority", "force-multiplier", "interoperability"],
+  },
+  {
+    slug: "air-superiority",
+    term: "Air Superiority",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "Controlling the sky enough that your planes can operate freely while the enemy's can't.",
+    summary:
+      "The degree of control of the air that lets friendly forces operate without serious interference from enemy aircraft.",
+    definition: [
+      "Air superiority is the condition in which one side controls the skies enough that its own air and ground forces can operate without serious interference from the enemy's air power. It does not mean the enemy is completely gone, but that they are suppressed enough to be a manageable threat. The stronger condition, where the enemy is virtually unable to interfere at all, is called 'air supremacy'.",
+      "Winning control of the air typically means defeating both enemy fighters and their ground-based air defenses. This involves air-to-air combat, suppression of enemy air defenses (SEAD), and the use of stealth, electronic warfare, and beyond-visual-range missiles to dominate the airspace. Achieving it is usually the first priority of a campaign.",
+      "The reason it matters so much is that almost everything else depends on it. With control of the air, a force can conduct reconnaissance, strike ground targets, move troops and supplies, and protect its own forces, all while denying those same advantages to the enemy. Losing it leaves ground forces exposed to constant air attack, which is why air superiority is often described as the precondition for modern joint operations.",
+    ],
+    keyFacts: [
+      { label: "Meaning", value: "Usable control of the air" },
+      { label: "Stronger form", value: "Air supremacy" },
+      { label: "Won via", value: "Air combat, SEAD, stealth, EW" },
+      { label: "Why it matters", value: "Enables all other operations" },
+    ],
+    examples: [
+      {
+        title: "First priority in air campaigns",
+        description:
+          "Modern campaigns typically open by fighting for control of the air before shifting to sustained strikes on ground targets.",
+      },
+      {
+        title: "Contested skies",
+        description:
+          "When neither side can win air superiority, dense air defenses can keep both air forces at bay, shaping the whole conflict.",
+      },
+    ],
+    related: ["fifth-generation-fighter", "sead", "beyond-visual-range", "integrated-air-defense-system"],
+  },
+  {
+    slug: "sead",
+    term: "Suppression of Enemy Air Defenses",
+    abbreviation: "SEAD / DEAD",
+    category: "doctrine",
+    tldr: "Hunting and knocking out the enemy's radars and anti-air missiles so your own planes can fly safely.",
+    summary:
+      "Operations to neutralize enemy air defenses — temporarily suppressing (SEAD) or permanently destroying (DEAD) them.",
+    definition: [
+      "Suppression of Enemy Air Defenses (SEAD) is the mission of neutralizing an enemy's ground-based air defenses — their radars, surface-to-air missile batteries, and command posts — so friendly aircraft can operate more safely. A closely related term, DEAD (Destruction of Enemy Air Defenses), means physically destroying those systems rather than just temporarily silencing them. Together they are essential to opening up contested airspace.",
+      "SEAD uses a mix of methods. Specialized aircraft carry anti-radiation missiles that home in on the radio waves emitted by enemy radars, so that switching on a radar invites a missile in return. Electronic warfare jams and confuses the defenses, decoys bait them into revealing themselves, and stand-off weapons strike launchers and command nodes. The goal is to force defenders into a no-win choice: stay switched off and blind, or radiate and be destroyed.",
+      "Because a dense integrated air defense system can make airspace deadly, SEAD/DEAD is often the dangerous opening act of an air campaign, flown by crews historically nicknamed 'Wild Weasels'. Success unravels the enemy's air-defense network and clears the way for the strikes, reconnaissance, and support that air superiority makes possible.",
+    ],
+    keyFacts: [
+      { label: "SEAD", value: "Suppress (temporarily neutralize)" },
+      { label: "DEAD", value: "Destroy permanently" },
+      { label: "Tools", value: "Anti-radiation missiles, EW, decoys" },
+      { label: "Targets", value: "Radars, SAM batteries, command nodes" },
+    ],
+    examples: [
+      {
+        title: "Anti-radiation missiles",
+        description:
+          "Weapons like the AGM-88 HARM home on the emissions of enemy radars, punishing air defenses for switching on.",
+      },
+      {
+        title: "Opening-night strikes",
+        description:
+          "Air campaigns often begin with SEAD/DEAD to tear apart the enemy's integrated air defenses before other missions proceed.",
+      },
+    ],
+    related: ["integrated-air-defense-system", "electronic-warfare", "air-superiority", "surface-to-air-missile"],
+  },
+  {
+    slug: "rules-of-engagement",
+    term: "Rules of Engagement",
+    abbreviation: "ROE",
+    category: "doctrine",
+    tldr: "The official rules telling soldiers when they are and aren't allowed to use force.",
+    summary:
+      "Directives that define when, where, and how military forces may use force during an operation.",
+    definition: [
+      "Rules of Engagement (ROE) are the orders that tell military forces when, where, and how they are permitted to use force. They translate political and legal limits into clear, practical instructions for the people actually pulling triggers — for example, whether troops may fire only in self-defense, what counts as a hostile act, and what approvals are needed before striking a target. ROE are how commanders keep the use of force aligned with the mission, the law, and policy.",
+      "ROE balance two pressures: giving forces enough freedom to protect themselves and accomplish the mission, while preventing unnecessary harm, escalation, or violations of the laws of armed conflict. They can be restrictive (requiring positive identification and higher approval before firing) or more permissive, and they often change as a situation evolves. Crucially, ROE never override the inherent right of self-defense.",
+      "Getting ROE right is both a legal and an operational matter. Rules that are too tight can leave troops exposed or let an enemy escape; rules that are too loose can cause civilian casualties and strategic damage. Clear, well-understood ROE are therefore central to discipline, accountability, and the legitimacy of any operation.",
+    ],
+    keyFacts: [
+      { label: "Define", value: "When/where/how force may be used" },
+      { label: "Balance", value: "Mission needs vs. restraint & law" },
+      { label: "Range", value: "Restrictive to permissive" },
+      { label: "Constant", value: "Right of self-defense preserved" },
+    ],
+    examples: [
+      {
+        title: "Positive identification requirements",
+        description:
+          "ROE may require confirming a target is hostile before firing, sometimes forcing aircraft closer despite long-range weapons.",
+      },
+      {
+        title: "Escalation of force",
+        description:
+          "Checkpoints often use graduated steps — signal, warn, then fire — defined by ROE to limit unnecessary casualties.",
+      },
+    ],
+    related: ["iff", "beyond-visual-range", "situational-awareness"],
+  },
+  {
+    slug: "force-multiplier",
+    term: "Force Multiplier",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "Something that makes your existing forces much more effective — like a small upgrade that punches way above its weight.",
+    summary:
+      "A capability that dramatically increases the effectiveness of a force without adding proportional numbers.",
+    definition: [
+      "A force multiplier is anything that makes a military force far more effective than its raw size would suggest. Rather than simply adding more troops or weapons, a force multiplier lets the forces you already have achieve much more. The term captures the idea that capability, not just quantity, wins battles — a smaller, better-enabled force can defeat a larger one.",
+      "Force multipliers come in many forms. Technology is a classic example: surveillance drones, GPS-guided weapons, night-vision, and secure data links all let the same number of soldiers see more, hit more accurately, and coordinate better. But force multipliers are not only hardware — superior training, morale, leadership, intelligence, logistics, and surprise can all multiply combat power dramatically.",
+      "The concept is central to how modern, technologically advanced militaries think about their advantage. They often accept smaller numbers in exchange for capabilities — stealth, networking, precision, ISR — that each multiply the punch of every platform. Understanding what truly multiplies force, versus what just adds cost, is a core challenge of defense planning and procurement.",
+    ],
+    keyFacts: [
+      { label: "Idea", value: "Boost effectiveness, not just numbers" },
+      { label: "Examples", value: "Drones, PGMs, training, ISR, surprise" },
+      { label: "Effect", value: "Smaller force punches above its weight" },
+      { label: "Relevance", value: "Core to capability-based planning" },
+    ],
+    examples: [
+      {
+        title: "ISR drones",
+        description:
+          "Persistent surveillance lets a commander use limited forces far more efficiently by striking only confirmed targets.",
+      },
+      {
+        title: "Precision weapons",
+        description:
+          "One precision-guided bomb can do the work that once took dozens, multiplying the effect of a single aircraft.",
+      },
+    ],
+    related: ["c4isr", "precision-guided-munition", "combined-arms", "situational-awareness"],
+  },
+  {
+    slug: "situational-awareness",
+    term: "Situational Awareness",
+    abbreviation: "SA",
+    category: "doctrine",
+    tldr: "Knowing what's going on around you — where everyone is and what they're doing — so you can make good, fast decisions.",
+    summary:
+      "An accurate, real-time understanding of the battlefield: where friendly, enemy, and neutral forces are and what they are doing.",
+    definition: [
+      "Situational awareness (SA) is the accurate, up-to-date understanding of what is happening around a force: where friendly, enemy, and neutral elements are, what they are doing, and what is likely to happen next. Good SA lets commanders and individual operators make the right decisions quickly; poor SA leads to surprise, mistakes, and friendly-fire incidents. It is often the difference between winning and losing an engagement.",
+      "Building SA means turning raw data from many sensors — radars, drones, satellites, reports from troops — into a clear, shared picture, and then understanding what that picture means. Modern systems like data links and C4ISR exist largely to create and distribute this shared awareness so that everyone, from a pilot to a headquarters, sees the same battlefield in real time.",
+      "Because awareness drives decisions, much of warfare is a contest to build your own SA while degrading the enemy's — through reconnaissance and networking on one side, and stealth, deception, and electronic warfare on the other. Speed matters too: a force that understands and acts faster than its opponent can stay perpetually a step ahead.",
+    ],
+    keyFacts: [
+      { label: "Meaning", value: "Real-time understanding of the situation" },
+      { label: "Built from", value: "Fused sensors + interpretation" },
+      { label: "Enabled by", value: "C4ISR, data links, ISR" },
+      { label: "Degraded by", value: "Stealth, deception, EW" },
+    ],
+    examples: [
+      {
+        title: "Sensor fusion in cockpits",
+        description:
+          "Fifth-generation fighters fuse many sensors into one display, giving the pilot superior situational awareness.",
+      },
+      {
+        title: "Common operating picture",
+        description:
+          "Command centers build a shared, real-time map so all units act on the same understanding of the battlefield.",
+      },
+    ],
+    related: ["c4isr", "data-link", "force-multiplier", "rules-of-engagement"],
+  },
+  {
+    slug: "asymmetric-warfare",
+    term: "Asymmetric Warfare",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "When a weaker side avoids a head-on fight and uses cheap, unconventional tactics to offset a stronger enemy.",
+    summary:
+      "Conflict between forces of very unequal strength, where the weaker side uses unconventional methods to offset the stronger's advantages.",
+    definition: [
+      "Asymmetric warfare describes conflict between opponents of very unequal strength, in which the weaker side avoids the stronger side's strengths and instead exploits its weaknesses with unconventional methods. Rather than meeting a powerful conventional army head-on, the weaker actor uses tactics like guerrilla warfare, ambushes, roadside bombs, terrorism, cyber-attacks, or cheap drones to make the conflict costly, long, and politically unsustainable for the stronger side.",
+      "The logic is to change the rules of the contest. A small force cannot win a tank battle against a superpower, but it can blend into the population, strike and disappear, target supply lines and morale, and turn the enemy's size and technology into burdens. Time and willpower, not battlefield victory, often become the decisive factors.",
+      "Asymmetric approaches have shaped many modern conflicts and force advanced militaries to adapt expensive, high-end forces to messy, drawn-out fights. The rise of cheap, capable technology — commercial drones, loitering munitions, encrypted communications — has further empowered weaker actors, blurring the line between conventional and unconventional war.",
+    ],
+    keyFacts: [
+      { label: "Definition", value: "Conflict between unequal forces" },
+      { label: "Weaker side", value: "Avoids strengths, exploits weaknesses" },
+      { label: "Methods", value: "Guerrilla, IEDs, terror, cyber, drones" },
+      { label: "Decisive factor", value: "Time, cost, and willpower" },
+    ],
+    examples: [
+      {
+        title: "Insurgency and IEDs",
+        description:
+          "Lightly armed groups have used roadside bombs and hit-and-run tactics to impose heavy costs on far stronger conventional forces.",
+      },
+      {
+        title: "Cheap drones vs. expensive systems",
+        description:
+          "Low-cost drones and loitering munitions let weaker actors threaten tanks, ships, and bases worth far more.",
+      },
+    ],
+    related: ["loitering-munition", "force-multiplier", "a2ad"],
+  },
+  {
+    slug: "logistics",
+    term: "Military Logistics",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "Getting troops everything they need — fuel, food, ammo, spare parts — to the right place at the right time.",
+    summary:
+      "The planning and movement of supplies, equipment, fuel, and personnel needed to sustain military forces in operations.",
+    definition: [
+      "Military logistics is the practical business of supplying and sustaining armed forces: moving and maintaining the fuel, ammunition, food, water, spare parts, and personnel that fighting forces need to keep operating. It is often summed up by the saying that 'amateurs talk tactics, professionals talk logistics' — because the most brilliant plan fails if the troops run out of fuel or bullets.",
+      "Logistics covers a vast chain: procurement, storage, transport by land, sea, and air, distribution to front-line units, and the maintenance and repair that keep equipment working. It must function across huge distances, under enemy attack, and at enormous scale — a single mechanized division can consume staggering quantities of fuel and supplies every day. Getting the right thing to the right place at the right time is a relentless, complex task.",
+      "Because logistics is the lifeline of any force, it is both a war-winning capability and a critical vulnerability. Cutting an enemy's supply lines can be more decisive than defeating them in battle, and the ability to project and sustain forces far from home is one of the clearest markers of a first-rank military power.",
+    ],
+    keyFacts: [
+      { label: "Covers", value: "Supply, transport, maintenance" },
+      { label: "Sustains", value: "Fuel, ammo, food, spares, troops" },
+      { label: "Challenge", value: "Scale, distance, under attack" },
+      { label: "Strategic value", value: "Lifeline and key vulnerability" },
+    ],
+    examples: [
+      {
+        title: "Aerial refueling & sealift",
+        description:
+          "Tanker aircraft and cargo ships let forces project power globally — a logistics capability few nations possess.",
+      },
+      {
+        title: "Cutting supply lines",
+        description:
+          "Targeting fuel and ammunition resupply has repeatedly stalled advances that looked unstoppable on a map.",
+      },
+    ],
+    related: ["mro", "interoperability", "force-multiplier"],
+  },
+
+  // ── Industry & Programs ────────────────────────────────────────────────────
+  {
+    slug: "mro",
+    term: "Maintenance, Repair & Overhaul",
+    abbreviation: "MRO",
+    category: "industry",
+    tldr: "All the work of keeping military gear running — servicing it, fixing it, and rebuilding it — for decades after it's bought.",
+    summary:
+      "The services that keep defense equipment operational over its life: routine maintenance, repair of faults, and major overhauls.",
+    definition: [
+      "Maintenance, Repair and Overhaul (MRO) is the work of keeping military equipment in working order throughout its service life. 'Maintenance' is the routine, scheduled care that prevents breakdowns; 'repair' fixes faults and battle damage; and 'overhaul' is the periodic, deep rebuild that restores a worn platform — an aircraft, ship, or vehicle — to like-new condition. Together they keep expensive systems available and safe to use, often for decades.",
+      "MRO is a huge and steady part of the defense business. Because military platforms are bought in small numbers but kept for thirty, forty, or more years, the cost of sustaining them over time usually dwarfs the original purchase price. This makes MRO a major, recurring revenue stream for manufacturers and specialist firms, and a key consideration in any procurement decision.",
+      "MRO is also strategically important. A nation that can maintain and overhaul its own equipment is far less dependent on a foreign supplier, which is why local MRO capability is a common goal of offset agreements and industrial policy. 'Readiness' — the share of a fleet actually available to fight at any moment — depends directly on how well MRO is organized and funded.",
+    ],
+    keyFacts: [
+      { label: "Stands for", value: "Maintenance, Repair & Overhaul" },
+      { label: "Parts", value: "Routine care, repairs, deep rebuilds" },
+      { label: "Cost", value: "Often exceeds the original price" },
+      { label: "Drives", value: "Fleet readiness & availability" },
+    ],
+    examples: [
+      {
+        title: "Sustainment over decades",
+        description:
+          "Platforms like the B-52 bomber stay in service for generations thanks to continuous maintenance and overhaul programs.",
+      },
+      {
+        title: "MRO as an offset goal",
+        description:
+          "Buyers often require local MRO facilities so they can service their own fleets and reduce dependence on the seller.",
+      },
+    ],
+    related: ["life-cycle-cost", "logistics", "offset", "defense-procurement"],
+  },
+  {
+    slug: "defense-procurement",
+    term: "Defense Procurement",
+    abbreviation: "Acquisition",
+    category: "industry",
+    tldr: "The whole process a government uses to decide what military equipment to buy, choose a supplier, and pay for it.",
+    summary:
+      "The government process of defining requirements, selecting suppliers, and buying defense equipment and services.",
+    definition: [
+      "Defense procurement (or 'acquisition') is the process by which a government decides what military equipment it needs, chooses who will build it, and manages the purchase through to delivery and support. It runs from identifying a capability gap, through writing detailed requirements and running a competition, to negotiating a contract and overseeing development and production. It is how defense budgets turn into actual ships, aircraft, and weapons.",
+      "The process is deliberately structured and heavily regulated, because it spends large amounts of public money on complex, long-lived systems. It typically involves formal requirements documents, competitive tenders (requests for proposals), evaluation of bids on cost and capability, and contracts with milestones and oversight. Programs pass through review 'gates' where they must prove progress before more money is committed.",
+      "Defense procurement is notoriously difficult. Programs are huge, technically risky, and politically sensitive, and cost overruns and delays are common. Balancing capability, cost, schedule, industrial-base health, and accountability — while avoiding waste and corruption — is one of the central challenges of defense management, and the reason acquisition reform is a perennial topic.",
+    ],
+    keyFacts: [
+      { label: "Covers", value: "Requirement → supplier → delivery" },
+      { label: "Tools", value: "RFPs, competitions, milestone gates" },
+      { label: "Tension", value: "Capability vs. cost vs. schedule" },
+      { label: "Risk", value: "Overruns, delays, complexity" },
+    ],
+    examples: [
+      {
+        title: "Major fighter competitions",
+        description:
+          "Nations run multi-year procurement contests to choose a new fighter, weighing cost, capability, offsets, and industrial benefits.",
+      },
+      {
+        title: "Cost overruns",
+        description:
+          "Large, complex programs frequently exceed their budgets and timelines, driving repeated acquisition-reform efforts.",
+      },
+    ],
+    related: ["request-for-proposal", "prime-contractor", "cost-plus-contract", "life-cycle-cost"],
+  },
+  {
+    slug: "prime-contractor",
+    term: "Prime Contractor",
+    abbreviation: "Prime",
+    category: "industry",
+    tldr: "The main company that wins a defense contract and is responsible for the whole project, managing all the smaller suppliers below it.",
+    summary:
+      "The lead company that holds the main contract for a defense program and integrates the work of subcontractors.",
+    definition: [
+      "A prime contractor (or 'prime') is the company that holds the main contract with the government for a defense program and bears overall responsibility for delivering it. Big systems — a fighter, a warship, a missile — are far too complex for one firm to build entirely, so the prime acts as the lead integrator: it designs the overall system and coordinates a pyramid of suppliers who provide engines, radars, electronics, and thousands of other parts.",
+      "Below the prime sit tiers of subcontractors. 'Tier 1' suppliers provide major subsystems directly to the prime; 'Tier 2' and below supply components and materials further down the chain. The prime manages this supply chain, integrates everything into a working system, and is accountable to the customer for cost, schedule, and performance. This integration role is itself a highly valuable capability.",
+      "Being a prime is the most prestigious and lucrative position in the defense industry, which is why a handful of large companies dominate as primes while many others compete for subcontractor work. Governments watch the health and competition among primes closely, since too few can reduce competition and innovation across the whole defense industrial base.",
+    ],
+    keyFacts: [
+      { label: "Role", value: "Lead contractor & system integrator" },
+      { label: "Manages", value: "Tiers of subcontractors" },
+      { label: "Accountable for", value: "Cost, schedule, performance" },
+      { label: "Position", value: "Top of the supply pyramid" },
+    ],
+    examples: [
+      {
+        title: "Fighter program primes",
+        description:
+          "A company like Lockheed Martin acts as prime on a fighter, integrating engines, radars, and systems from many suppliers.",
+      },
+      {
+        title: "Teaming for bids",
+        description:
+          "Firms often team up, with one acting as prime and others as major subcontractors, to win large competitions.",
+      },
+    ],
+    related: ["defense-industrial-base", "defense-procurement", "offset"],
+  },
+  {
+    slug: "defense-industrial-base",
+    term: "Defense Industrial Base",
+    abbreviation: "DIB",
+    category: "industry",
+    tldr: "All the companies and factories a country relies on to design, build, and maintain its weapons and military gear.",
+    summary:
+      "The network of companies, facilities, and workers that design, produce, and sustain a nation's defense equipment.",
+    definition: [
+      "The defense industrial base (DIB) is the whole network of companies, factories, laboratories, and skilled workers that a country relies on to design, manufacture, and maintain its military equipment. It spans the big prime contractors, the many tiers of suppliers beneath them, the raw materials and specialized components they need, and the workforce with the skills to build and sustain complex systems.",
+      "A healthy DIB is treated as a matter of national security, not just economics. A country that can produce its own weapons is less dependent on foreign suppliers who might cut it off, and can surge production in a crisis. Conversely, gaps — a sole supplier of a critical component, a lost skill, or reliance on a potential adversary for a key material — are strategic vulnerabilities that governments work hard to identify and fix.",
+      "Recent conflicts have sharply highlighted the DIB, especially the difficulty of rapidly increasing the production of munitions like artillery shells and missiles after years of low-rate output. This has driven renewed investment, attention to supply-chain resilience, and policies aimed at keeping critical defense-industrial capabilities at home or among trusted allies.",
+    ],
+    keyFacts: [
+      { label: "Includes", value: "Primes, suppliers, materials, workers" },
+      { label: "Why it matters", value: "Independence & surge capacity" },
+      { label: "Vulnerabilities", value: "Sole suppliers, lost skills" },
+      { label: "Hot topic", value: "Munitions production capacity" },
+    ],
+    examples: [
+      {
+        title: "Munitions surge",
+        description:
+          "Efforts to ramp up artillery-shell and missile production exposed the limits of an industrial base optimized for peacetime rates.",
+      },
+      {
+        title: "Supply-chain reshoring",
+        description:
+          "Governments push to keep critical components and materials within trusted countries to reduce strategic dependence.",
+      },
+    ],
+    related: ["prime-contractor", "defense-procurement", "dual-use", "mro"],
+  },
+  {
+    slug: "cost-plus-contract",
+    term: "Cost-Plus Contract",
+    abbreviation: "",
+    category: "industry",
+    tldr: "A deal where the government pays the supplier's actual costs plus an agreed profit — used when the work is too uncertain to price upfront.",
+    summary:
+      "A contract in which the government reimburses the contractor's allowable costs plus an additional fee for profit.",
+    definition: [
+      "A cost-plus contract is an agreement in which the government pays the contractor for its actual allowable costs of doing the work, plus an additional amount as profit (the 'plus'). It is used when a project is too uncertain or risky to price accurately in advance — typically cutting-edge research and development, where nobody yet knows exactly what the work will involve or cost.",
+      "The arrangement shifts cost risk onto the government rather than the contractor. Because the contractor is reimbursed for what it spends, it is protected from losing money on an unpredictable project, which encourages firms to take on ambitious, high-risk development. The trade-off is the obvious danger: with costs covered, there is less natural pressure to keep them down, so cost-plus contracts require careful government oversight and auditing.",
+      "Cost-plus sits at one end of a spectrum of contract types. At the other end is the firm-fixed-price contract, where the contractor agrees a set price and bears the risk of overruns — better suited to well-understood, mature products. Choosing the right contract type for the level of uncertainty is a key skill in defense procurement, balancing risk, incentive, and value for money.",
+    ],
+    keyFacts: [
+      { label: "Government pays", value: "Actual costs + a fee" },
+      { label: "Best for", value: "Risky R&D, high uncertainty" },
+      { label: "Risk sits with", value: "The government" },
+      { label: "Downside", value: "Weak incentive to cut costs" },
+    ],
+    examples: [
+      {
+        title: "Development programs",
+        description:
+          "New, technically risky systems are often developed under cost-plus contracts because the final cost can't be known in advance.",
+      },
+      {
+        title: "Oversight and audits",
+        description:
+          "Because costs are reimbursed, cost-plus contracts rely on close government auditing to prevent waste.",
+      },
+    ],
+    related: ["defense-procurement", "life-cycle-cost", "prime-contractor"],
+  },
+  {
+    slug: "life-cycle-cost",
+    term: "Life-Cycle Cost",
+    abbreviation: "LCC / TCO",
+    category: "industry",
+    tldr: "The true total cost of a weapon over its whole life — not just buying it, but fueling, maintaining and eventually retiring it.",
+    summary:
+      "The total cost of a system across its entire life: development, purchase, operation, maintenance, and disposal.",
+    definition: [
+      "Life-cycle cost (LCC), also called total cost of ownership, is the full cost of a military system across its entire life — not just the price tag to buy it. It adds up research and development, the purchase itself, and then the often much larger costs of operating it (fuel, crews), maintaining it (spare parts, repairs, overhauls), upgrading it, and finally disposing of it at the end of its service.",
+      "The key insight is that the purchase price is often only a fraction of the true cost. For many platforms, the money spent keeping them running over decades far exceeds what they cost to buy. A cheaper aircraft that is expensive to maintain can end up costing far more than a pricier one that is cheap to operate, so judging value on the sticker price alone is misleading.",
+      "Because of this, modern defense procurement increasingly evaluates bids on life-cycle cost rather than purchase price, and looks for designs that are reliable and cheap to sustain. Understanding LCC is essential for honest budgeting, since under-counting future support costs is a common way that programs end up unaffordable.",
+    ],
+    keyFacts: [
+      { label: "Covers", value: "R&D + buy + operate + maintain + dispose" },
+      { label: "Key point", value: "Purchase price is only part of it" },
+      { label: "Often largest", value: "Operation & support over decades" },
+      { label: "Used for", value: "Honest comparison of bids" },
+    ],
+    examples: [
+      {
+        title: "Operating cost per flight hour",
+        description:
+          "Aircraft are compared on cost per flight hour, since sustainment over decades can dwarf the original purchase price.",
+      },
+      {
+        title: "Designing for sustainment",
+        description:
+          "Programs increasingly favor reliable, easy-to-maintain designs to keep life-cycle costs affordable.",
+      },
+    ],
+    related: ["mro", "defense-procurement", "cost-plus-contract"],
+  },
+  {
+    slug: "request-for-proposal",
+    term: "Request for Proposal",
+    abbreviation: "RFP / Tender",
+    category: "industry",
+    tldr: "The official document a government publishes to ask companies to bid for a contract, describing exactly what it needs.",
+    summary:
+      "A formal solicitation inviting companies to submit competitive bids to meet a defined defense requirement.",
+    definition: [
+      "A Request for Proposal (RFP), often called a tender, is the formal document a government issues to invite companies to bid for a contract. It describes the requirement in detail — what capability is needed, the technical specifications, the timeline, the budget constraints, and the criteria on which bids will be judged — and asks interested firms to submit proposals explaining how they would meet it and at what price.",
+      "The RFP is the heart of competitive procurement. By setting out clear requirements and evaluation criteria in advance, it lets the government compare rival offers fairly on capability, cost, risk, and other factors, and creates a transparent, auditable basis for the decision. Companies invest heavily in preparing proposals, since winning a major defense RFP can mean decades of work.",
+      "RFPs are usually one step in a longer process. They may be preceded by a Request for Information (RFI) to survey the market, and followed by clarifications, negotiations, and sometimes prototype evaluations before a contract is finally awarded. Well-written requirements are crucial: vague or unrealistic RFPs lead to poor bids, disputes, and troubled programs down the line.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Formal invitation to bid" },
+      { label: "Specifies", value: "Requirements, criteria, timeline" },
+      { label: "Purpose", value: "Fair, transparent competition" },
+      { label: "Related", value: "RFI precedes; contract follows" },
+    ],
+    examples: [
+      {
+        title: "Major platform tenders",
+        description:
+          "Governments issue detailed RFPs for new fighters, ships, or vehicles, then evaluate competing bids against published criteria.",
+      },
+      {
+        title: "Requirements quality",
+        description:
+          "Clear, realistic RFP requirements are essential; vague ones lead to weak bids and troubled programs.",
+      },
+    ],
+    related: ["defense-procurement", "prime-contractor", "cost-plus-contract"],
   },
 ];
 

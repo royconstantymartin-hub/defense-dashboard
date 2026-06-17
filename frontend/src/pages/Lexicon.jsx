@@ -19,6 +19,7 @@ import {
   Radio,
   Plane,
   Brain,
+  Factory,
   Library,
 } from "lucide-react";
 import { LEXICON, LEXICON_CATEGORIES, CATEGORY_LABEL } from "@/data/lexicon";
@@ -30,6 +31,7 @@ const CATEGORY_STYLE = {
   systems:   { Icon: Radio,          cls: "text-emerald-600",bg: "bg-emerald-50 border-emerald-100" },
   platforms: { Icon: Plane,          cls: "text-amber-600",  bg: "bg-amber-50 border-amber-100" },
   doctrine:  { Icon: Brain,          cls: "text-slate-600",  bg: "bg-slate-100 border-slate-200" },
+  industry:  { Icon: Factory,        cls: "text-indigo-600", bg: "bg-indigo-50 border-indigo-100" },
 };
 
 const categoryStyle = (category) =>
