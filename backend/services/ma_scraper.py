@@ -160,6 +160,23 @@ KNOWN_COMPANIES: Dict[str, Tuple[str, str]] = {
     "edge group":                ("AE", "edgegroup.ae"),
     "arianegroup":               ("FR", "arianegroup.com"),
     "rbsl":                      ("GB", "rheinmetall.com"),
+    "lig nex1":                  ("KR", "lignex1.com"),
+    "fnss":                      ("TR", "fnss.com.tr"),
+    "otokar":                    ("TR", "otokar.com.tr"),
+    "aselsan":                   ("TR", "aselsan.com.tr"),
+    "roketsan":                  ("TR", "roketsan.com.tr"),
+    # ── Eurosatory / land-systems & munitions players ────────────────────────
+    "eurenco":                   ("FR", "eurenco.com"),
+    "mesko":                     ("PL", "pgz.pl"),
+    "pgz":                       ("PL", "pgz.pl"),
+    "czechoslovak group":        ("CZ", "csgroup.cz"),
+    "csg":                       ("CZ", "csgroup.cz"),
+    "electro optic systems":     ("AU", "eos-aus.com"),
+    "marss":                     ("GB", "marss.com"),
+    "roshel":                    ("CA", "roshel.com"),
+    "daimler truck":             ("DE", "daimlertruck.com"),
+    "patria":                    ("FI", "patriagroup.com"),
+    "nexter":                    ("FR", "knds.com"),
     # ── Canada ───────────────────────────────────────────────────────────────
     "bombardier":                ("CA", "bombardier.com"),
 }
@@ -171,6 +188,10 @@ MA_TITLE_KEYWORDS = [
     "acqui", "merger", "acquires", "acquire", "buys", "buy out",
     "takeover", "joint venture", "strategic partnership", "combines with",
     "merges with", "consolidat",
+    # Trade-show style deals (JV / teaming / MoU / partnerships)
+    "teaming agreement", "cooperation agreement", "memorandum of understanding",
+    "mou", "partners with", "teams up with", "teams with", "alliance",
+    "forms joint venture", "sign agreement to establish",
     # Venture / startup funding
     "series a", "series b", "series c", "series d",
     "funding round", "raises", "seed round", "growth round",
@@ -223,7 +244,12 @@ def _infer_status(text: str) -> str:
 
 def _infer_deal_type(text: str) -> str:
     t = text.lower()
-    if any(kw in t for kw in ["joint venture", "jv", "creates joint venture"]):
+    if any(kw in t for kw in [
+        "joint venture", "jv", "creates joint venture", "teaming agreement",
+        "cooperation agreement", "memorandum of understanding", "mou",
+        "strategic partnership", "partners with", "teams up with", "teams with",
+        "alliance", "consortium",
+    ]):
         return "joint_venture"
     if any(kw in t for kw in ["merger", "merges", "combines"]):
         return "merger"
@@ -277,6 +303,39 @@ _ACQ_PATTERNS = [
     re.compile(
         r"(?P<acquirer>[\w][\w\s\-&']+?)\s+(?:and|&)\s+"
         r"(?P<target>[\w][\w\s\-&']+?)\s+(?:merger|merge|to merge|combines?)",
+        re.IGNORECASE,
+    ),
+    # "X and Y form/sign/create ... joint venture | teaming agreement | partnership | MoU"
+    # Catches the deal types that dominate trade shows like Eurosatory, where most
+    # announcements are JVs, teaming agreements and MoUs rather than outright buyouts.
+    re.compile(
+        r"(?P<acquirer>[\w][\w\s\-&']+?)\s+(?:and|&|,)\s+"
+        r"(?P<target>[\w][\w\s\-&']+?)\s+"
+        r"(?:sign|signs|signed|form|forms|formed|create|creates|created|establish|establishes|"
+        r"established|launch|launches|to form|to create|to establish|to launch|agree to form|"
+        r"agree to establish|agree to create)\s+"
+        r"(?:a\s+|an\s+|the\s+|new\s+)*"
+        r"(?:joint venture|jv|teaming agreement|cooperation agreement|strategic partnership|"
+        r"memorandum of understanding|mou|partnership|alliance|consortium)",
+        re.IGNORECASE,
+    ),
+    # "X, Y sign agreement to establish/form/create ... (joint) venture"
+    re.compile(
+        r"(?P<acquirer>[\w][\w\s\-&']+?)\s*(?:and|&|,)\s+"
+        r"(?P<target>[\w][\w\s\-&']+?)\s+"
+        r"(?:sign|signs|signed|agree to sign|agree)\s+(?:an? )?agreement\s+to\s+"
+        r"(?:establish|form|create|launch|set up)\b",
+        re.IGNORECASE,
+    ),
+    # "X partners with / teams up with / signs partnership with / forms JV with Y"
+    re.compile(
+        r"(?P<acquirer>[\w][\w\s\-&']+?)\s+"
+        r"(?:partners with|partner with|teams up with|teams with|team up with|"
+        r"signs? (?:a |an )?(?:strategic )?partnership with|"
+        r"signs? (?:a |an )?(?:cooperation |teaming )?agreement with|"
+        r"forms? (?:a )?joint venture with|to form (?:a )?joint venture with|"
+        r"signs? (?:an? )?mou with|signs? (?:a )?memorandum of understanding with)\s+"
+        r"(?P<target>[\w][\w\s\-&']+?)(?:\s+for\b|\s+to\b|\s+at\b|\s+on\b|\.|\,|$)",
         re.IGNORECASE,
     ),
 ]
