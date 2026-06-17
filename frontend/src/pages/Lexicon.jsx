@@ -50,7 +50,8 @@ export default function Lexicon() {
         (e) =>
           e.term.toLowerCase().includes(q) ||
           (e.abbreviation || "").toLowerCase().includes(q) ||
-          e.summary.toLowerCase().includes(q)
+          e.tldr.toLowerCase().includes(q) ||
+          (e.summary || "").toLowerCase().includes(q)
       );
     }
     return [...list].sort((a, b) => a.term.localeCompare(b.term));
@@ -141,7 +142,7 @@ export default function Lexicon() {
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-slate-600 leading-relaxed flex-1">{entry.summary}</p>
+                    <p className="text-sm text-slate-600 leading-relaxed flex-1">{entry.tldr}</p>
                     <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
                       <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
                         {CATEGORY_LABEL[entry.category]}

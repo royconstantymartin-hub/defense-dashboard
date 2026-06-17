@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -7,15 +7,53 @@ import {
   BookOpen,
   CheckCircle2,
   Lightbulb,
+  Sparkles,
   Link as LinkIcon,
   ImageOff,
 } from "lucide-react";
 import { LEXICON_BY_SLUG, CATEGORY_LABEL } from "@/data/lexicon";
 
+// Fetch a representative image for the term from the public Wikipedia REST API.
+// This keeps images correct without hardcoding (and easily broken) file names.
+function useWikipediaImage(wikiTitle) {
+  const [src, setSrc] = useState(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setSrc(null);
+    setFailed(false);
+    if (!wikiTitle) {
+      setFailed(true);
+      return;
+    }
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`;
+    fetch(url)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("not ok"))))
+      .then((data) => {
+        if (!active) return;
+        // Prefer the thumbnail (smaller) but bump its width for a crisp hero.
+        const thumb = data?.thumbnail?.source;
+        const original = data?.originalimage?.source;
+        const chosen = thumb
+          ? thumb.replace(/\/\d+px-/, "/960px-")
+          : original;
+        if (chosen) setSrc(chosen);
+        else setFailed(true);
+      })
+      .catch(() => active && setFailed(true));
+    return () => {
+      active = false;
+    };
+  }, [wikiTitle]);
+
+  return { src, failed, setFailed };
+}
+
 export default function LexiconTerm() {
   const { slug } = useParams();
   const entry = LEXICON_BY_SLUG[slug];
-  const [imgFailed, setImgFailed] = useState(false);
+  const { src: imgSrc, failed: imgFailed, setFailed } = useWikipediaImage(entry?.wiki);
 
   // Unknown slug → send the user back to the lexicon index.
   if (!entry) {
@@ -35,21 +73,23 @@ export default function LexiconTerm() {
 
       {/* Hero image */}
       <div className="relative w-full h-56 sm:h-72 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-        {entry.image && !imgFailed ? (
+        {imgSrc && !imgFailed ? (
           <img
-            src={entry.image}
+            src={imgSrc}
             alt={entry.imageAlt || entry.term}
-            onError={() => setImgFailed(true)}
+            onError={() => setFailed(true)}
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-400">
-            <ImageOff className="w-8 h-8" />
-            <span className="text-xs">Image unavailable</span>
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-300">
+            {imgFailed ? <ImageOff className="w-8 h-8" /> : (
+              <div className="animate-spin w-7 h-7 border-2 border-slate-200 border-t-slate-400 rounded-full" />
+            )}
+            <span className="text-xs">{imgFailed ? "Image unavailable" : "Loading image…"}</span>
           </div>
         )}
         {/* Title overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 p-5">
           <span className="inline-block text-[10px] font-medium uppercase tracking-wider text-white/80 bg-white/15 backdrop-blur-sm rounded-full px-2.5 py-0.5 mb-2">
             {CATEGORY_LABEL[entry.category]}
@@ -63,8 +103,16 @@ export default function LexiconTerm() {
         </div>
       </div>
 
-      {/* Summary callout */}
-      <p className="text-lg text-slate-700 leading-relaxed font-medium">{entry.summary}</p>
+      {/* TLDR — plain-English, "explain like I'm 5" callout */}
+      <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-4">
+        <Sparkles className="w-5 h-5 text-blue-700 mt-0.5 flex-shrink-0" />
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-blue-700 mb-1">
+            In plain words
+          </p>
+          <p className="text-slate-700 leading-relaxed">{entry.tldr}</p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Definition (main column) */}
@@ -73,7 +121,7 @@ export default function LexiconTerm() {
             <CardContent className="p-6">
               <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 mb-4">
                 <BookOpen className="w-4 h-4 text-blue-800" />
-                Definition
+                Full Definition
               </h2>
               <div className="space-y-4">
                 {entry.definition.map((para, idx) => (
@@ -156,9 +204,9 @@ export default function LexiconTerm() {
       </div>
 
       {/* Image attribution */}
-      {entry.image && !imgFailed && (
+      {imgSrc && !imgFailed && (
         <p className="text-[11px] text-slate-400">
-          Image: Wikimedia Commons. Definitions are simplified for general understanding.
+          Image: Wikipedia / Wikimedia Commons. Definitions are simplified for general understanding.
         </p>
       )}
     </div>
