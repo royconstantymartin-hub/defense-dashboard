@@ -956,6 +956,8 @@ function MAAdmin({ authHeaders }) {
   const [items,       setItems]       = useState([]);
   const [piloting,    setPiloting]    = useState(false);
   const [pilotResult, setPilotResult] = useState(null);
+  const [euroSeeding, setEuroSeeding] = useState(false);
+  const [euroResult,  setEuroResult]  = useState(null);
   const [form,        setForm]        = useState(EMPTY_FORM);
 
   // ── AI extraction state ──────────────────────────────────────────────────
@@ -1062,6 +1064,23 @@ function MAAdmin({ authHeaders }) {
     }
   };
 
+  // ── Eurosatory 2026 seed (additive — does NOT wipe the collection) ──────────
+  const handleEurosatorySeed = async () => {
+    setEuroSeeding(true); setEuroResult(null);
+    try {
+      const res = await axios.post(`${API}/ma-activities/seed-eurosatory`, {}, { headers: authHeaders });
+      setEuroResult({ ok: true, data: res.data });
+      toast.success(`Eurosatory 2026 — ${res.data.inserted} ajoutés, ${res.data.updated} mis à jour`);
+      fetchItems();
+    } catch (err) {
+      const msg = err.response?.data?.detail || err.message;
+      setEuroResult({ ok: false, msg });
+      toast.error(msg);
+    } finally {
+      setEuroSeeding(false);
+    }
+  };
+
   // ── Submit ─────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -1113,6 +1132,32 @@ function MAAdmin({ authHeaders }) {
             <button onClick={handlePilotSeed} disabled={piloting}
               className="shrink-0 flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors">
               {piloting ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading…</> : <><Database className="w-4 h-4" /> Load Pilot 9</>}
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── Eurosatory 2026 Seed (additive) ── */}
+      <Card className="bg-white border-emerald-200">
+        <CardContent className="pt-4 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex-1">
+              <p className="text-slate-900 font-semibold text-sm">Eurosatory 2026 — 5 deals</p>
+              <p className="text-slate-500 text-xs mt-0.5">
+                Ajoute les 5 deals annoncés à Eurosatory 2026 (EOS/MARSS, EDGE/Safran,
+                Rheinmetall/LIG Nex1, Eurenco/Mesko, CSG/FNSS). N'efface rien.
+              </p>
+              {euroResult && (
+                <p className={`text-xs mt-1 font-medium ${euroResult.ok ? "text-emerald-600" : "text-rose-600"}`}>
+                  {euroResult.ok
+                    ? `✓ ${euroResult.data.inserted} ajoutés, ${euroResult.data.updated} mis à jour`
+                    : euroResult.msg}
+                </p>
+              )}
+            </div>
+            <button onClick={handleEurosatorySeed} disabled={euroSeeding}
+              className="shrink-0 flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors">
+              {euroSeeding ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading…</> : <><Database className="w-4 h-4" /> Seed Eurosatory 2026</>}
             </button>
           </div>
         </CardContent>
