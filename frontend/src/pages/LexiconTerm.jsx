@@ -11,9 +11,10 @@ import {
   Link as LinkIcon,
 } from "lucide-react";
 import { LEXICON_BY_SLUG, CATEGORY_LABEL } from "@/data/lexicon";
+import { getWikiImage } from "@/lib/wikiImage";
 
-// Fetch a representative image for the term from the public Wikipedia REST API.
-// This keeps images correct without hardcoding (and easily broken) file names.
+// Fetch a representative image for the term from Wikipedia (shared, cached
+// helper — so an image already loaded by a list card appears instantly here).
 function useWikipediaImage(wikiTitle) {
   const [src, setSrc] = useState(null);
   const [failed, setFailed] = useState(false);
@@ -26,21 +27,11 @@ function useWikipediaImage(wikiTitle) {
       setFailed(true);
       return;
     }
-    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`;
-    fetch(url)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("not ok"))))
-      .then((data) => {
-        if (!active) return;
-        // Prefer the thumbnail (smaller) but bump its width for a crisp hero.
-        const thumb = data?.thumbnail?.source;
-        const original = data?.originalimage?.source;
-        const chosen = thumb
-          ? thumb.replace(/\/\d+px-/, "/960px-")
-          : original;
-        if (chosen) setSrc(chosen);
-        else setFailed(true);
-      })
-      .catch(() => active && setFailed(true));
+    getWikiImage(wikiTitle, 960).then((url) => {
+      if (!active) return;
+      if (url) setSrc(url);
+      else setFailed(true);
+    });
     return () => {
       active = false;
     };

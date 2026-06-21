@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { getWikiImage } from "@/lib/wikiImage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,6 +37,66 @@ const CATEGORY_STYLE = {
 
 const categoryStyle = (category) =>
   CATEGORY_STYLE[category] || { Icon: BookOpen, cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
+
+// Mini thumbnail for a card: lazily fetches the term's Wikipedia photo (the same
+// image used as the detail-page hero) and shows it in place of the icon. Only
+// loads once the card scrolls near the viewport, and falls back to the category
+// icon when the term has no image.
+function CardThumb({ wiki, alt, Icon, cls, bg }) {
+  const ref = useRef(null);
+  const [src, setSrc] = useState(null);
+  const [failed, setFailed] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!visible || !wiki) return;
+    let active = true;
+    getWikiImage(wiki, 200).then((url) => {
+      if (!active) return;
+      if (url) setSrc(url);
+      else setFailed(true);
+    });
+    return () => { active = false; };
+  }, [visible, wiki]);
+
+  const showImage = src && !failed;
+
+  return (
+    <div
+      ref={ref}
+      className={`w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border ${showImage ? "border-slate-200" : bg}`}
+    >
+      {showImage ? (
+        <img
+          src={src}
+          alt={alt}
+          onError={() => setFailed(true)}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+          <Icon className={`w-5 h-5 ${cls}`} />
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Lexicon() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -132,9 +193,13 @@ export default function Lexicon() {
                 <Card className="bg-white border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] hover:shadow-lg hover:border-blue-200 transition-all duration-200 h-full">
                   <CardContent className="p-5 flex flex-col h-full">
                     <div className="flex items-start gap-3 mb-3">
-                      <div className={`w-10 h-10 ${bg} border rounded-xl flex items-center justify-center flex-shrink-0`}>
-                        <Icon className={`w-5 h-5 ${cls}`} />
-                      </div>
+                      <CardThumb
+                        wiki={entry.wiki}
+                        alt={entry.imageAlt || entry.term}
+                        Icon={Icon}
+                        cls={cls}
+                        bg={bg}
+                      />
                       <div className="min-w-0">
                         <h3 className="font-heading font-bold text-slate-900 leading-tight group-hover:text-blue-800 transition-colors">
                           {entry.term}

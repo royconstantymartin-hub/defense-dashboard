@@ -1184,6 +1184,8 @@ export const LEXICON = [
       },
     ],
     related: ["c4isr", "data-link", "rules-of-engagement", "beyond-visual-range"],
+    wiki: "Identification friend or foe",
+    imageAlt: "An IFF transponder / identification system",
   },
   {
     slug: "data-link",
@@ -1217,6 +1219,8 @@ export const LEXICON = [
       },
     ],
     related: ["c4isr", "interoperability", "iff", "electronic-warfare"],
+    wiki: "Link 16",
+    imageAlt: "A tactical data link display",
   },
   {
     slug: "active-protection-system",
@@ -1250,6 +1254,8 @@ export const LEXICON = [
       },
     ],
     related: ["main-battle-tank", "atgm", "loitering-munition", "counter-uas"],
+    wiki: "Trophy (countermeasure)",
+    imageAlt: "A tank fitted with an active protection system",
   },
 
   // ── Doctrine & concepts ────────────────────────────────────────────────────
@@ -1285,6 +1291,8 @@ export const LEXICON = [
       },
     ],
     related: ["main-battle-tank", "air-superiority", "force-multiplier", "interoperability"],
+    wiki: "Combined arms",
+    imageAlt: "Combined-arms forces operating together",
   },
   {
     slug: "air-superiority",
@@ -1318,6 +1326,8 @@ export const LEXICON = [
       },
     ],
     related: ["fifth-generation-fighter", "sead", "beyond-visual-range", "integrated-air-defense-system"],
+    wiki: "Air supremacy",
+    imageAlt: "Fighters establishing control of the air",
   },
   {
     slug: "sead",
@@ -1351,6 +1361,8 @@ export const LEXICON = [
       },
     ],
     related: ["integrated-air-defense-system", "electronic-warfare", "air-superiority", "surface-to-air-missile"],
+    wiki: "Wild Weasel",
+    imageAlt: "A Wild Weasel aircraft used for suppressing air defenses",
   },
   {
     slug: "rules-of-engagement",
@@ -1483,6 +1495,8 @@ export const LEXICON = [
       },
     ],
     related: ["loitering-munition", "force-multiplier", "a2ad"],
+    wiki: "Asymmetric warfare",
+    imageAlt: "Irregular forces in asymmetric warfare",
   },
   {
     slug: "logistics",
@@ -1516,6 +1530,8 @@ export const LEXICON = [
       },
     ],
     related: ["mro", "interoperability", "force-multiplier"],
+    wiki: "Military logistics",
+    imageAlt: "Military logistics and supply operations",
   },
 
   // ── Industry & Programs ────────────────────────────────────────────────────
@@ -1551,6 +1567,8 @@ export const LEXICON = [
       },
     ],
     related: ["life-cycle-cost", "logistics", "offset", "defense-procurement"],
+    wiki: "Aircraft maintenance",
+    imageAlt: "Maintenance and overhaul of military equipment",
   },
   {
     slug: "defense-procurement",
@@ -1650,6 +1668,8 @@ export const LEXICON = [
       },
     ],
     related: ["prime-contractor", "defense-procurement", "dual-use", "mro"],
+    wiki: "Arms industry",
+    imageAlt: "A defense manufacturing facility",
   },
   {
     slug: "cost-plus-contract",
@@ -1749,6 +1769,1720 @@ export const LEXICON = [
       },
     ],
     related: ["defense-procurement", "prime-contractor", "cost-plus-contract"],
+  },
+
+  // ── Naval platforms ────────────────────────────────────────────────────────
+  {
+    slug: "fremm",
+    term: "FREMM Frigate",
+    abbreviation: "FREMM",
+    category: "platforms",
+    tldr: "A modern French-Italian warship class — a multi-mission frigate that can fight submarines, ships, aircraft, and land targets.",
+    summary:
+      "A class of multipurpose frigates jointly developed by France and Italy for anti-submarine, anti-air, anti-ship, and land-attack missions.",
+    definition: [
+      "FREMM (from the French/Italian for 'European Multi-Mission Frigate') is a class of modern warships jointly developed by France and Italy and built in several variants. A frigate is a mid-sized warship, and the FREMM is designed to be a flexible workhorse: capable of hunting submarines, defending against aircraft and missiles, striking other ships, and even launching cruise missiles at land targets, all from one hull.",
+      "The program is a flagship example of European defense cooperation and of export success — variants have been sold to navies including Egypt, Morocco, and, in a derived design, the United States (the Constellation class). Its blend of advanced sonar, radar, vertical-launch missiles, and a helicopter makes it a benchmark for the multi-mission frigates many navies now favor over specialized single-role ships.",
+    ],
+    keyFacts: [
+      { label: "FREMM means", value: "European Multi-Mission Frigate" },
+      { label: "Built by", value: "France & Italy (Naval Group, Fincantieri)" },
+      { label: "Roles", value: "ASW, anti-air, anti-ship, land attack" },
+      { label: "Exported to", value: "Egypt, Morocco, US-derived design" },
+    ],
+    examples: [
+      {
+        title: "Aquitaine & Bergamini classes",
+        description:
+          "The French and Italian FREMM variants form the backbone of both navies' frigate fleets, tuned for different mission emphases.",
+      },
+      {
+        title: "US Constellation class",
+        description:
+          "The U.S. Navy selected a FREMM-derived design for its new guided-missile frigate, a major export and design win.",
+      },
+    ],
+    related: ["frigate", "vls", "sonar", "anti-submarine-warfare"],
+    wiki: "FREMM multipurpose frigate",
+    imageAlt: "A FREMM multi-mission frigate at sea",
+  },
+  {
+    slug: "frigate",
+    term: "Frigate",
+    abbreviation: "FFG",
+    category: "platforms",
+    tldr: "A mid-sized, do-a-bit-of-everything warship — smaller than a destroyer, used to escort and protect fleets.",
+    summary:
+      "A mid-sized, general-purpose warship used for escort, patrol, and multi-role combat duties.",
+    definition: [
+      "A frigate is a mid-sized warship that sits below a destroyer in size and firepower but is more capable than a small corvette. Frigates are the versatile workhorses of most navies, used to escort larger ships and convoys, patrol sea lanes, hunt submarines, and provide air defense for a task group. Their balance of capability and affordability means many navies field them in larger numbers than bigger warships.",
+      "Modern frigates carry a mix of sensors and weapons — radar, sonar, surface-to-air and anti-ship missiles, a gun, and usually a helicopter — packed into a hull cheaper to build and operate than a destroyer. The line between frigate and destroyer has blurred over time, with the labels often reflecting national tradition as much as size.",
+    ],
+    keyFacts: [
+      { label: "Size", value: "Below destroyer, above corvette" },
+      { label: "Roles", value: "Escort, patrol, ASW, air defense" },
+      { label: "Carries", value: "Missiles, gun, sonar, helicopter" },
+      { label: "Why common", value: "Capable yet affordable" },
+    ],
+    examples: [
+      {
+        title: "FREMM & Type 26",
+        description:
+          "Modern multi-mission frigates like the FREMM and Britain's Type 26 form the core of many Western surface fleets.",
+      },
+      {
+        title: "Fleet escorts",
+        description:
+          "Frigates routinely screen aircraft carriers and amphibious ships against submarine and air threats.",
+      },
+    ],
+    related: ["fremm", "destroyer", "corvette", "anti-submarine-warfare"],
+    wiki: "Frigate",
+    imageAlt: "A general-purpose naval frigate",
+  },
+  {
+    slug: "destroyer",
+    term: "Destroyer",
+    abbreviation: "DDG",
+    category: "platforms",
+    tldr: "A large, heavily armed warship that's the main muscle of a modern surface fleet, especially for air and missile defense.",
+    summary:
+      "A fast, heavily armed warship that provides a fleet's main surface combat power, especially air and missile defense.",
+    definition: [
+      "A destroyer is a large, fast, heavily armed warship that provides much of a modern fleet's combat power. Once small ships built to 'destroy' torpedo boats, destroyers have grown into the most powerful surface combatants in most navies, often bigger and better armed than frigates. Their signature role today is air and missile defense, shielding aircraft carriers and other ships from attack.",
+      "Top destroyers carry powerful radars, dozens of vertical-launch missile cells, and advanced combat systems like Aegis that can track and engage many targets at once. Many are multi-mission, also able to strike land targets with cruise missiles, hunt submarines, and increasingly intercept ballistic missiles, making them among the most expensive and capable non-carrier warships afloat.",
+    ],
+    keyFacts: [
+      { label: "Size", value: "Largest common surface combatant" },
+      { label: "Signature role", value: "Air & missile defense" },
+      { label: "Armament", value: "VLS cells, radar, guns, missiles" },
+      { label: "Combat system", value: "Often Aegis" },
+    ],
+    examples: [
+      {
+        title: "Arleigh Burke class (USA)",
+        description:
+          "Aegis-equipped destroyers that form the backbone of U.S. fleet air and missile defense, widely influential worldwide.",
+      },
+      {
+        title: "Ballistic-missile defense",
+        description:
+          "Some destroyers can intercept ballistic missiles, extending fleet defense into missile-shield duties.",
+      },
+    ],
+    related: ["frigate", "aegis", "vls", "ballistic-missile"],
+    wiki: "Destroyer",
+    imageAlt: "A guided-missile destroyer",
+  },
+  {
+    slug: "corvette",
+    term: "Corvette",
+    abbreviation: "",
+    category: "platforms",
+    tldr: "A small, agile warship for coastal patrol and defense — cheaper than a frigate but still able to pack a punch.",
+    summary:
+      "A small, fast warship used mainly for coastal patrol and defense, smaller than a frigate.",
+    definition: [
+      "A corvette is the smallest class of conventional warship, smaller and cheaper than a frigate. Corvettes are favored by navies that operate close to their own coasts, where their modest size, speed, and lower cost let them patrol, defend territorial waters, and carry out missions without the expense of larger ships. They are popular with smaller navies and for guarding economic zones.",
+      "Despite their size, modern corvettes can be heavily armed for their class, carrying anti-ship and surface-to-air missiles, a gun, and sometimes a helicopter or drones. The trade-off is limited endurance, seakeeping, and capability in open ocean compared with frigates and destroyers, so they are best suited to littoral (near-shore) operations.",
+    ],
+    keyFacts: [
+      { label: "Size", value: "Smallest conventional warship" },
+      { label: "Best for", value: "Coastal / littoral operations" },
+      { label: "Strength", value: "Low cost, agile, punchy" },
+      { label: "Limit", value: "Short range, open-ocean ability" },
+    ],
+    examples: [
+      {
+        title: "Coastal defense navies",
+        description:
+          "Smaller navies field corvettes to patrol and defend their waters affordably without large oceangoing fleets.",
+      },
+      {
+        title: "Missile corvettes",
+        description:
+          "Compact corvettes armed with anti-ship missiles can threaten far larger vessels in confined seas.",
+      },
+    ],
+    related: ["frigate", "littoral-combat-ship", "anti-ship-missile"],
+    wiki: "Corvette",
+    imageAlt: "A small naval corvette",
+  },
+  {
+    slug: "amphibious-assault-ship",
+    term: "Amphibious Assault Ship",
+    abbreviation: "LHD / LHA",
+    category: "platforms",
+    tldr: "A big warship that carries troops, helicopters and landing craft to put a force ashore — like a mini aircraft carrier for marines.",
+    summary:
+      "A large warship designed to land troops, vehicles, and aircraft on a hostile shore, resembling a small carrier.",
+    definition: [
+      "An amphibious assault ship is a large warship built to project a ground force from the sea onto a shore. Resembling a small aircraft carrier with a flat flight deck, it carries marines along with the helicopters, vertical-takeoff jets, landing craft, and vehicles needed to put them ashore and support them. It is the centerpiece of amphibious warfare — attacking from the sea — and of disaster-relief operations.",
+      "These ships combine an aviation deck for helicopters and sometimes STOVL fighters like the F-35B with a flooded internal 'well deck' from which landing craft and amphibious vehicles launch. Only a few navies operate them, as they are large, expensive, and complex, but they provide unmatched flexibility for crisis response, evacuations, and power projection.",
+    ],
+    keyFacts: [
+      { label: "Role", value: "Land troops & equipment from the sea" },
+      { label: "Carries", value: "Marines, helicopters, landing craft" },
+      { label: "Feature", value: "Flight deck + flooded well deck" },
+      { label: "Also used for", value: "Disaster relief, evacuation" },
+    ],
+    examples: [
+      {
+        title: "America & Wasp classes (USA)",
+        description:
+          "Large U.S. amphibious assault ships that can operate F-35B jets and helicopters alongside an embarked marine force.",
+      },
+      {
+        title: "Crisis response",
+        description:
+          "Their aviation and sealift capacity makes amphibious ships valuable for evacuations and humanitarian missions.",
+      },
+    ],
+    related: ["aircraft-carrier", "fifth-generation-fighter", "frigate"],
+    wiki: "Amphibious assault ship",
+    imageAlt: "An amphibious assault ship with a flight deck",
+  },
+  {
+    slug: "littoral-combat-ship",
+    term: "Littoral Combat Ship",
+    abbreviation: "LCS",
+    category: "platforms",
+    tldr: "A fast, shallow-water warship meant to fight close to shore, with swappable mission modules — though its real-world record has been rocky.",
+    summary:
+      "A fast U.S. warship class designed for near-shore operations using interchangeable mission modules.",
+    definition: [
+      "The Littoral Combat Ship (LCS) is a class of fast, relatively small U.S. Navy warships designed to operate in the 'littorals' — the shallow waters close to shore where larger ships are vulnerable. Its defining idea was modularity: instead of fixed equipment, the ship would swap interchangeable 'mission modules' to specialize in anti-submarine, mine-clearing, or surface warfare as needed.",
+      "In practice the LCS program became a cautionary tale in defense procurement, plagued by cost growth, reliability problems, delayed mission modules, and questions about its survivability in serious combat. It is often cited in discussions of acquisition risk and of the trade-offs between ambitious concepts and practical results, even as the ships remain in service.",
+    ],
+    keyFacts: [
+      { label: "Designed for", value: "Shallow, near-shore waters" },
+      { label: "Key idea", value: "Swappable mission modules" },
+      { label: "Operator", value: "U.S. Navy" },
+      { label: "Reputation", value: "Troubled, costly program" },
+    ],
+    examples: [
+      {
+        title: "Freedom & Independence variants",
+        description:
+          "Two very different hull designs were built under the LCS program, complicating support and training.",
+      },
+      {
+        title: "Acquisition lessons",
+        description:
+          "The LCS is frequently studied as an example of how modular ambitions can collide with cost and reliability realities.",
+      },
+    ],
+    related: ["corvette", "frigate", "defense-procurement", "anti-submarine-warfare"],
+    wiki: "Littoral combat ship",
+    imageAlt: "A Littoral Combat Ship underway",
+  },
+
+  // ── Air platforms ──────────────────────────────────────────────────────────
+  {
+    slug: "multirole-fighter",
+    term: "Multirole Fighter",
+    abbreviation: "",
+    category: "platforms",
+    tldr: "A fighter jet built to do many jobs — dogfighting, bombing, reconnaissance — instead of just one.",
+    summary:
+      "A combat aircraft designed to perform multiple missions, such as air-to-air combat and ground attack, in one platform.",
+    definition: [
+      "A multirole fighter is a combat aircraft designed to perform several different missions rather than specializing in just one. The same jet can switch between air-to-air combat, bombing ground targets, reconnaissance, and suppressing air defenses, often within a single sortie by changing its weapons load. This flexibility lets air forces buy one type of aircraft to cover many needs, simplifying training, logistics, and cost.",
+      "Most modern fighters are multirole, reflecting tight budgets and the value of versatility. The approach contrasts with earlier eras of dedicated interceptors, bombers, and attack aircraft. The trade-off is that a jack-of-all-trades may not match a specialized design in any single role, which is why some air forces still field a high-end air-superiority fighter alongside cheaper multirole types.",
+    ],
+    keyFacts: [
+      { label: "Idea", value: "One jet, many missions" },
+      { label: "Missions", value: "Air combat, strike, recon, SEAD" },
+      { label: "Benefit", value: "Cost, logistics, flexibility" },
+      { label: "Trade-off", value: "Less optimal than specialists" },
+    ],
+    examples: [
+      {
+        title: "F-16, Rafale, Typhoon",
+        description:
+          "Widely exported 4th/4.5-generation multirole fighters that can swing between air-to-air and ground-attack tasks.",
+      },
+      {
+        title: "High-low mix",
+        description:
+          "Air forces often pair a few high-end air-superiority jets with many cheaper multirole fighters.",
+      },
+    ],
+    related: ["fifth-generation-fighter", "air-to-air-missile", "precision-guided-munition", "air-superiority"],
+    wiki: "Multirole combat aircraft",
+    imageAlt: "A multirole fighter jet",
+  },
+  {
+    slug: "attack-helicopter",
+    term: "Attack Helicopter",
+    abbreviation: "",
+    category: "platforms",
+    tldr: "A heavily armed helicopter built to destroy tanks and support troops, flying low and slow over the battlefield.",
+    summary:
+      "An armed helicopter designed to attack ground targets, especially armor, and support ground forces.",
+    definition: [
+      "An attack helicopter is a military helicopter built specifically to attack ground targets — tanks, vehicles, fortifications, and troops — and to support friendly ground forces. Flying low and slow, it can hide behind terrain, hover, and deliver precise fire with anti-tank missiles, rockets, and cannons. Its ability to loiter over a battlefield and kill armor made it a feared anti-tank weapon.",
+      "Attack helicopters carry armor, redundant systems, and sensors for finding targets day or night. But flying low over the battlefield exposes them to man-portable air-defense missiles, anti-aircraft guns, and now cheap drones and loitering munitions, which have made their survivability a growing concern and prompted new tactics and defenses.",
+    ],
+    keyFacts: [
+      { label: "Role", value: "Anti-armor & close support" },
+      { label: "Weapons", value: "ATGMs, rockets, cannon" },
+      { label: "Strength", value: "Hover, hide, precise fire" },
+      { label: "Threats", value: "MANPADS, AAA, drones" },
+    ],
+    examples: [
+      {
+        title: "AH-64 Apache (USA)",
+        description:
+          "A heavily armed attack helicopter widely exported and used as the benchmark for anti-armor rotary firepower.",
+      },
+      {
+        title: "Survivability debate",
+        description:
+          "Losses to man-portable missiles and drones have sparked debate over how attack helicopters should be used.",
+      },
+    ],
+    related: ["atgm", "manpads", "combined-arms", "main-battle-tank"],
+    wiki: "Attack helicopter",
+    imageAlt: "An attack helicopter armed with missiles",
+  },
+  {
+    slug: "awacs",
+    term: "Airborne Early Warning & Control",
+    abbreviation: "AEW&C / AWACS",
+    category: "platforms",
+    tldr: "A plane with a big radar on its back that watches huge areas of sky and directs friendly fighters — a flying control tower.",
+    summary:
+      "An aircraft carrying a powerful radar and command systems to detect aircraft far away and direct friendly forces.",
+    definition: [
+      "Airborne Early Warning and Control (AEW&C, often called AWACS after a famous system) is an aircraft fitted with a powerful surveillance radar — usually in a large rotating dome — and a command center in the cabin. By flying high, it sees much farther than ground radars, which are limited by the horizon, detecting low-flying aircraft and missiles at great range and giving early warning of attack.",
+      "Beyond detection, the crew acts as airborne battle managers, tracking hundreds of targets and directing friendly fighters to intercept threats. This makes AWACS a force multiplier and a central C4ISR node: it extends a force's vision and coordination across a vast area. Because it is so valuable, it is also a priority target, and is usually kept well behind the front and heavily protected.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Flying radar & command post" },
+      { label: "Advantage", value: "Sees over the horizon" },
+      { label: "Roles", value: "Early warning + battle management" },
+      { label: "Value", value: "Force multiplier, key C4ISR node" },
+    ],
+    examples: [
+      {
+        title: "E-3 Sentry (AWACS)",
+        description:
+          "The classic rotating-dome AWACS used by the U.S. and NATO to detect threats and control air battles.",
+      },
+      {
+        title: "High-value target",
+        description:
+          "Because losing an AWACS blinds a force, both protecting and hunting them is a major focus of air warfare.",
+      },
+    ],
+    related: ["c4isr", "radar", "air-superiority", "force-multiplier"],
+    wiki: "Airborne early warning and control",
+    imageAlt: "An AWACS aircraft with a radar dome",
+  },
+  {
+    slug: "strategic-bomber",
+    term: "Strategic Bomber",
+    abbreviation: "",
+    category: "platforms",
+    tldr: "A big, long-range aircraft that can fly across the world to drop large amounts of bombs or missiles — including nuclear ones.",
+    summary:
+      "A long-range bomber able to strike distant strategic targets with heavy conventional or nuclear payloads.",
+    definition: [
+      "A strategic bomber is a large, long-range aircraft designed to fly great distances and deliver a heavy load of bombs or missiles against an enemy's strategic targets — cities, industry, command centers, and military bases — far from the front line. Distinguished from tactical aircraft that support troops in battle, strategic bombers project power across continents and form one leg of the nuclear triad.",
+      "These aircraft emphasize range, payload, and increasingly stealth or stand-off weapons to survive modern air defenses. Their flexibility — able to carry conventional precision weapons, cruise missiles, or nuclear arms — and their long endurance make them potent signaling and deterrence tools, able to be launched, recalled, or repositioned to demonstrate resolve.",
+    ],
+    keyFacts: [
+      { label: "Role", value: "Long-range strikes on strategic targets" },
+      { label: "Payload", value: "Heavy; conventional or nuclear" },
+      { label: "Triad leg", value: "The airborne leg" },
+      { label: "Edge", value: "Range, stealth, stand-off weapons" },
+    ],
+    examples: [
+      {
+        title: "B-52, B-2, B-21 (USA)",
+        description:
+          "From the long-serving B-52 to the stealthy B-2 and new B-21, strategic bombers anchor long-range strike and deterrence.",
+      },
+      {
+        title: "Deterrence signaling",
+        description:
+          "Bomber deployments are used as visible signals of resolve during crises.",
+      },
+    ],
+    related: ["stealth", "cruise-missile", "nuclear-deterrence", "precision-guided-munition"],
+    wiki: "Strategic bomber",
+    imageAlt: "A long-range strategic bomber",
+  },
+  {
+    slug: "military-transport-aircraft",
+    term: "Military Transport Aircraft",
+    abbreviation: "Airlift",
+    category: "platforms",
+    tldr: "A big cargo plane that flies troops, vehicles and supplies wherever they're needed — the moving van of an air force.",
+    summary:
+      "A cargo aircraft used to move troops, vehicles, equipment, and supplies — the backbone of military airlift.",
+    definition: [
+      "A military transport aircraft is a cargo plane built to move troops, vehicles, equipment, and supplies by air. Often called 'airlift', this capability lets a military rush forces to a crisis far faster than by sea and sustain them once there. Strategic transports fly intercontinental distances with heavy loads, while tactical transports operate into short, rough airstrips closer to the action.",
+      "These aircraft feature cavernous cargo holds, rear ramps for rolling vehicles on and off, and rugged landing gear. Some also serve as aerial refueling tankers or are converted into command, surveillance, or medical-evacuation platforms. The ability to project and sustain force by air is a hallmark of a global military power, since airlift is expensive and technically demanding.",
+    ],
+    keyFacts: [
+      { label: "Role", value: "Move troops, vehicles, supplies" },
+      { label: "Types", value: "Strategic (long-range) & tactical" },
+      { label: "Features", value: "Big hold, rear ramp, rugged gear" },
+      { label: "Strategic value", value: "Rapid force projection" },
+    ],
+    examples: [
+      {
+        title: "C-17 & C-130",
+        description:
+          "The strategic C-17 and tactical C-130 are workhorses that move outsized loads and operate from short fields.",
+      },
+      {
+        title: "Crisis airlift",
+        description:
+          "Transport fleets rush forces and aid worldwide, a capability few nations can match at scale.",
+      },
+    ],
+    related: ["logistics", "aerial-refueling", "force-multiplier"],
+    wiki: "Military transport aircraft",
+    imageAlt: "A military cargo transport aircraft",
+  },
+  {
+    slug: "ucav",
+    term: "Unmanned Combat Aerial Vehicle",
+    abbreviation: "UCAV",
+    category: "platforms",
+    tldr: "A combat drone built to fight like a jet — stealthier and faster than a surveillance drone, designed to strike defended targets.",
+    summary:
+      "A combat-oriented drone designed to carry weapons and operate in contested airspace, often stealthy and high-performance.",
+    definition: [
+      "An Unmanned Combat Aerial Vehicle (UCAV) is a drone designed primarily for combat in contested airspace, as opposed to slow surveillance drones that loiter over permissive skies. UCAVs emphasize performance and survivability — speed, stealth, and the ability to carry weapons internally — so they can penetrate enemy air defenses and strike, jam, or fight without risking a pilot.",
+      "UCAVs are seen as a key part of the future of air power. A major concept is 'loyal wingman' drones that fly alongside crewed fighters, extending their sensors and weapons and absorbing risk. By removing the pilot, designers can build cheaper, more expendable, and more maneuverable aircraft, though challenges remain in autonomy, control links, and the rules around lethal decisions.",
+    ],
+    keyFacts: [
+      { label: "Built for", value: "Combat in contested airspace" },
+      { label: "Traits", value: "Stealth, speed, internal weapons" },
+      { label: "Key concept", value: "'Loyal wingman' teaming" },
+      { label: "Edge", value: "No pilot risk; cheaper, expendable" },
+    ],
+    examples: [
+      {
+        title: "Loyal wingman programs",
+        description:
+          "Several nations are developing drones to fly with crewed fighters as teamed, semi-autonomous wingmen.",
+      },
+      {
+        title: "Stealthy strike drones",
+        description:
+          "Flying-wing UCAV demonstrators explore penetrating defended airspace without a pilot.",
+      },
+    ],
+    related: ["male-uav", "stealth", "drone-swarm", "fifth-generation-fighter"],
+    wiki: "Unmanned combat aerial vehicle",
+    imageAlt: "An unmanned combat aerial vehicle",
+  },
+
+  // ── Land platforms ─────────────────────────────────────────────────────────
+  {
+    slug: "ifv",
+    term: "Infantry Fighting Vehicle",
+    abbreviation: "IFV",
+    category: "platforms",
+    tldr: "An armored vehicle that carries soldiers into battle AND fights alongside them with its own cannon and missiles.",
+    summary:
+      "An armored vehicle that transports infantry and fights alongside them with a cannon and often anti-tank missiles.",
+    definition: [
+      "An Infantry Fighting Vehicle (IFV) carries a squad of soldiers into battle and then fights alongside them, unlike a simple armored 'battle taxi'. It combines troop transport with real combat power: a turret with an autocannon, often anti-tank missiles, and firing ports or supporting weapons, letting the infantry stay protected while the vehicle suppresses enemies and kills light armor.",
+      "The IFV emerged to keep mechanized infantry moving with tanks across a battlefield. It is a balance of compromises — more protected and lethal than an armored personnel carrier, but lighter and less survivable than a main battle tank. Modern conflicts have exposed IFVs to anti-tank missiles, mines, and drones, driving upgrades in armor, active protection, and tactics.",
+    ],
+    keyFacts: [
+      { label: "Carries", value: "An infantry squad + fights" },
+      { label: "Armament", value: "Autocannon, often ATGMs" },
+      { label: "Vs. APC", value: "More firepower & combat role" },
+      { label: "Threats", value: "ATGMs, mines, drones" },
+    ],
+    examples: [
+      {
+        title: "Bradley, Marder, BMP",
+        description:
+          "Classic IFVs designed to advance with tanks while carrying and supporting infantry.",
+      },
+      {
+        title: "Combined-arms role",
+        description:
+          "IFVs let infantry keep pace with armor, a core element of mechanized combined-arms warfare.",
+      },
+    ],
+    related: ["apc", "main-battle-tank", "combined-arms", "active-protection-system"],
+    wiki: "Infantry fighting vehicle",
+    imageAlt: "An infantry fighting vehicle",
+  },
+  {
+    slug: "apc",
+    term: "Armored Personnel Carrier",
+    abbreviation: "APC",
+    category: "platforms",
+    tldr: "An armored 'battle taxi' that protects soldiers as it carries them to the fight — lighter and less armed than a fighting vehicle.",
+    summary:
+      "An armored vehicle that transports infantry safely to the battlefield, with light defensive armament.",
+    definition: [
+      "An Armored Personnel Carrier (APC) is an armored vehicle whose main job is to carry infantry safely across a battlefield — often nicknamed a 'battle taxi'. Its armor protects the troops inside from small arms, shrapnel, and mines, but unlike an Infantry Fighting Vehicle, it is meant primarily for transport and self-defense rather than serious combat, usually carrying just a machine gun.",
+      "APCs are cheaper, lighter, and simpler than IFVs, making them widely used and easy to adapt into ambulances, command posts, and engineering vehicles. They come in tracked and wheeled forms, with wheeled APCs popular for their speed on roads and lower running costs, especially in peacekeeping and patrol roles.",
+    ],
+    keyFacts: [
+      { label: "Main job", value: "Transport infantry safely" },
+      { label: "Nickname", value: "Battle taxi" },
+      { label: "Armament", value: "Usually a machine gun" },
+      { label: "Vs. IFV", value: "Transport, not a fighting vehicle" },
+    ],
+    examples: [
+      {
+        title: "M113 & wheeled APCs",
+        description:
+          "Widely produced carriers that move infantry and serve as the basis for many specialized variants.",
+      },
+      {
+        title: "Peacekeeping use",
+        description:
+          "Wheeled APCs are common in patrol and peacekeeping roles for their mobility and lower cost.",
+      },
+    ],
+    related: ["ifv", "mrap", "main-battle-tank"],
+    wiki: "Armoured personnel carrier",
+    imageAlt: "An armored personnel carrier",
+  },
+  {
+    slug: "mrap",
+    term: "MRAP Vehicle",
+    abbreviation: "MRAP",
+    category: "platforms",
+    tldr: "A truck with a V-shaped armored hull built to protect troops from roadside bombs and mines.",
+    summary:
+      "A heavily armored wheeled vehicle designed to protect occupants from mines and improvised explosive devices.",
+    definition: [
+      "MRAP stands for Mine-Resistant Ambush Protected vehicle — a class of heavily armored trucks designed to keep troops alive against roadside bombs (IEDs) and mines. Their signature feature is a V-shaped hull that deflects the blast of an explosion outward and upward, away from the crew compartment, dramatically improving survivability compared with flat-bottomed vehicles.",
+      "MRAPs were produced in huge numbers during the Iraq and Afghanistan wars in direct response to devastating IED attacks, and they saved many lives. The trade-off is that they are heavy, tall, and less agile off-road, optimized for protection on roads rather than open-field maneuver. They illustrate how the IED threat reshaped vehicle design and procurement almost overnight.",
+    ],
+    keyFacts: [
+      { label: "MRAP means", value: "Mine-Resistant Ambush Protected" },
+      { label: "Key feature", value: "V-shaped blast-deflecting hull" },
+      { label: "Protects against", value: "IEDs and mines" },
+      { label: "Trade-off", value: "Heavy, tall, less agile" },
+    ],
+    examples: [
+      {
+        title: "Iraq & Afghanistan surge",
+        description:
+          "MRAPs were rushed into service to counter IEDs, a rapid-acquisition response that saved many lives.",
+      },
+      {
+        title: "Blast protection",
+        description:
+          "The V-hull design became a standard feature influencing later armored-vehicle development.",
+      },
+    ],
+    related: ["ied", "apc", "defense-procurement"],
+    wiki: "MRAP",
+    imageAlt: "An MRAP mine-resistant vehicle",
+  },
+  {
+    slug: "self-propelled-artillery",
+    term: "Self-Propelled Artillery",
+    abbreviation: "SPG",
+    category: "platforms",
+    tldr: "A big gun mounted on a tracked or wheeled vehicle so it can shoot, then quickly drive away before the enemy hits back.",
+    summary:
+      "Artillery mounted on a mobile chassis so it can move, fire, and reposition quickly.",
+    definition: [
+      "Self-propelled artillery is a large gun or howitzer mounted on its own motorized chassis — usually tracked, sometimes wheeled — so it can move, fire, and move again under its own power. This mobility is its great advantage over towed artillery: it can keep pace with armored forces, and it can 'shoot and scoot', firing a few rounds then quickly relocating before enemy counter-battery fire can hit back.",
+      "Often resembling a tank with a big gun, self-propelled guns provide the heavy, long-range indirect firepower that supports ground offensives. The growing threat of fast counter-battery radar and drones has made their mobility ever more important, as a gun that lingers in one place is increasingly likely to be found and destroyed.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Artillery on a mobile chassis" },
+      { label: "Advantage", value: "Mobility; 'shoot and scoot'" },
+      { label: "Vs. towed", value: "Faster to relocate, survivable" },
+      { label: "Threat", value: "Counter-battery radar & drones" },
+    ],
+    examples: [
+      {
+        title: "Modern howitzer systems",
+        description:
+          "Tracked and wheeled self-propelled howitzers provide mobile fire support that keeps up with mechanized forces.",
+      },
+      {
+        title: "Shoot and scoot",
+        description:
+          "Quickly relocating after firing has become essential to survive counter-battery fire and loitering munitions.",
+      },
+    ],
+    related: ["howitzer", "mlrs", "combined-arms"],
+    wiki: "Self-propelled artillery",
+    imageAlt: "A self-propelled howitzer",
+  },
+
+  // ── Missiles & munitions ───────────────────────────────────────────────────
+  {
+    slug: "mlrs",
+    term: "Multiple Launch Rocket System",
+    abbreviation: "MLRS",
+    category: "missiles",
+    tldr: "A vehicle that fires a barrage of rockets to blanket a target area, or precision rockets to hit specific points far away.",
+    summary:
+      "A vehicle-mounted system that launches salvos of rockets — area saturation or precision-guided long-range strikes.",
+    definition: [
+      "A Multiple Launch Rocket System (MLRS) is a vehicle carrying a pack of rocket tubes that can fire a rapid salvo to saturate a target area with explosive power. Traditionally used to blanket a zone — troop concentrations, artillery positions — with overwhelming firepower in seconds, modern versions also fire precision-guided rockets and missiles that strike specific targets at long range.",
+      "Systems like the wheeled HIMARS have shown how guided rockets let one launcher destroy high-value targets such as command posts and ammunition depots from dozens of kilometers away, then quickly move before being located. This blend of range, precision, and mobility has made rocket artillery a decisive capability in recent conflicts.",
+    ],
+    keyFacts: [
+      { label: "What it does", value: "Fires salvos of rockets" },
+      { label: "Modes", value: "Area saturation or precision strike" },
+      { label: "Range", value: "Tens to hundreds of km (guided)" },
+      { label: "Strength", value: "Range + precision + mobility" },
+    ],
+    examples: [
+      {
+        title: "HIMARS & M270",
+        description:
+          "Guided rocket-artillery systems used to strike command posts and depots precisely at long range, then relocate.",
+      },
+      {
+        title: "Deep precision fires",
+        description:
+          "Precision rockets let rocket artillery reach far behind the front line at high-value targets.",
+      },
+    ],
+    related: ["self-propelled-artillery", "howitzer", "precision-guided-munition"],
+    wiki: "Multiple rocket launcher",
+    imageAlt: "A multiple launch rocket system firing",
+  },
+  {
+    slug: "howitzer",
+    term: "Howitzer",
+    abbreviation: "",
+    category: "missiles",
+    tldr: "A big artillery gun that lobs heavy shells over long distances in a high arc to hit targets you can't even see.",
+    summary:
+      "An artillery piece that fires explosive shells over long distances, typically on a high, arcing trajectory.",
+    definition: [
+      "A howitzer is a type of artillery gun that fires heavy explosive shells over long distances, typically lobbing them on a high, arcing trajectory so they can drop onto targets behind hills or fortifications. Artillery has long been called the 'king of battle' because of the sheer destructive firepower it delivers, and the howitzer is its workhorse, providing indirect fire — striking targets the gun crew often cannot even see.",
+      "Howitzers come in towed and self-propelled forms and fire a range of shells, including precision-guided rounds that can hit within meters of a target. They depend on forward observers, drones, or radar to spot targets and adjust fire. Despite the age of the concept, artillery remains devastatingly effective, causing a large share of casualties in modern ground wars.",
+    ],
+    keyFacts: [
+      { label: "Fires", value: "Heavy shells, high arcing trajectory" },
+      { label: "Type", value: "Indirect fire (targets out of sight)" },
+      { label: "Forms", value: "Towed & self-propelled" },
+      { label: "Ammo", value: "Standard & precision-guided shells" },
+    ],
+    examples: [
+      {
+        title: "155mm howitzers",
+        description:
+          "The 155mm calibre is a NATO standard, with towed and self-propelled guns providing the bulk of Western artillery fire.",
+      },
+      {
+        title: "Precision shells",
+        description:
+          "Guided artillery rounds let a howitzer hit point targets, blending mass firepower with precision.",
+      },
+    ],
+    related: ["self-propelled-artillery", "mlrs", "precision-guided-munition"],
+    wiki: "Howitzer",
+    imageAlt: "An artillery howitzer",
+  },
+  {
+    slug: "icbm",
+    term: "Intercontinental Ballistic Missile",
+    abbreviation: "ICBM",
+    category: "missiles",
+    tldr: "The longest-range missile — it flies through space to strike targets on the other side of the planet, usually carrying nuclear warheads.",
+    summary:
+      "A ballistic missile with intercontinental range (over 5,500 km), the long-range backbone of nuclear forces.",
+    definition: [
+      "An Intercontinental Ballistic Missile (ICBM) is a ballistic missile with a range greater than 5,500 km — far enough to strike targets on another continent. Boosted by powerful rockets, it arcs out of the atmosphere and through space before its warheads plunge back down at hypersonic speed. ICBMs are the longest-range missiles and the land-based backbone of nuclear deterrence.",
+      "Because they can reach almost anywhere within about half an hour and are extremely hard to intercept, ICBMs are central to strategic stability. They are typically based in hardened underground silos or on road-mobile launchers for survivability, and many carry multiple independently targetable warheads (MIRVs). Their numbers and characteristics are tightly governed by arms-control treaties.",
+    ],
+    keyFacts: [
+      { label: "Range", value: "Over 5,500 km (intercontinental)" },
+      { label: "Flight", value: "Through space, hypersonic re-entry" },
+      { label: "Basing", value: "Silos or road-mobile launchers" },
+      { label: "Payload", value: "Often MIRVed nuclear warheads" },
+    ],
+    examples: [
+      {
+        title: "Minuteman III (USA)",
+        description:
+          "The silo-based ICBM forming the land leg of the U.S. nuclear triad.",
+      },
+      {
+        title: "Arms-control limits",
+        description:
+          "Treaties cap deployed ICBM warheads and launchers to maintain strategic stability.",
+      },
+    ],
+    related: ["ballistic-missile", "slbm", "mirv", "nuclear-deterrence"],
+    wiki: "Intercontinental ballistic missile",
+    imageAlt: "An intercontinental ballistic missile",
+  },
+  {
+    slug: "slbm",
+    term: "Submarine-Launched Ballistic Missile",
+    abbreviation: "SLBM",
+    category: "missiles",
+    tldr: "A long-range nuclear missile fired from a hidden submarine, making it almost impossible for an enemy to destroy first.",
+    summary:
+      "A ballistic missile launched from a submarine, prized for its survivability as a second-strike weapon.",
+    definition: [
+      "A Submarine-Launched Ballistic Missile (SLBM) is a long-range ballistic missile fired from beneath the sea by a ballistic-missile submarine. Its great strategic value is survivability: because a submarine hiding in the ocean is extremely hard to find and destroy, an enemy cannot be confident of wiping out these missiles in a surprise attack. This guarantees a country can strike back — the 'second strike' at the heart of deterrence.",
+      "SLBMs are launched from underwater, breaking the surface before their rocket motors ignite, then follow the same space-spanning trajectory as land-based ICBMs and often carry multiple warheads. The combination of long range and a near-invulnerable launch platform makes the submarine leg the most secure part of the nuclear triad.",
+    ],
+    keyFacts: [
+      { label: "Launched from", value: "Ballistic-missile submarines" },
+      { label: "Key virtue", value: "Survivability / second strike" },
+      { label: "Payload", value: "Often MIRVed nuclear warheads" },
+      { label: "Triad leg", value: "Most survivable leg" },
+    ],
+    examples: [
+      {
+        title: "Trident (USA/UK)",
+        description:
+          "A long-range SLBM carried by ballistic-missile submarines, central to U.S. and British deterrence.",
+      },
+      {
+        title: "Second-strike guarantee",
+        description:
+          "Hidden submarines ensure retaliation survives any first strike, stabilizing deterrence.",
+      },
+    ],
+    related: ["icbm", "submarine", "nuclear-deterrence", "mirv"],
+    wiki: "Submarine-launched ballistic missile",
+    imageAlt: "A submarine-launched ballistic missile",
+  },
+  {
+    slug: "mirv",
+    term: "MIRV",
+    abbreviation: "MIRV",
+    category: "missiles",
+    tldr: "One missile carrying several nuclear warheads, each able to hit a different target — like a shotgun blast across a map.",
+    summary:
+      "Multiple Independently targetable Re-entry Vehicles — several warheads on one missile, each aimed at a separate target.",
+    definition: [
+      "MIRV stands for Multiple Independently targetable Re-entry Vehicle. It means a single ballistic missile carries several nuclear warheads, each of which can be released to strike a different target. After the missile's boost phase, a 'bus' maneuvers and dispenses the warheads one by one onto separate trajectories, so one launch can hit many widely spaced targets at once.",
+      "MIRVs transformed the nuclear balance. They multiply the number of targets each missile threatens and complicate missile defense, since interceptors must deal with many warheads (and possible decoys) from one launch. This made them a major focus of arms-control treaties, which have at times limited or banned MIRVs on certain missiles to reduce first-strike incentives and the overall warhead count.",
+    ],
+    keyFacts: [
+      { label: "Stands for", value: "Multiple Independently targetable RVs" },
+      { label: "Meaning", value: "Many warheads, one missile" },
+      { label: "Effect", value: "More targets, harder to defend" },
+      { label: "Arms control", value: "A key treaty concern" },
+    ],
+    examples: [
+      {
+        title: "MIRVed ICBMs & SLBMs",
+        description:
+          "Major strategic missiles carry several independently targeted warheads, multiplying their reach.",
+      },
+      {
+        title: "Defense challenge",
+        description:
+          "MIRVs and decoys overwhelm missile defenses designed around single warheads.",
+      },
+    ],
+    related: ["ballistic-missile", "icbm", "slbm", "nuclear-deterrence"],
+    wiki: "Multiple independently targetable reentry vehicle",
+    imageAlt: "Diagram of MIRV warhead deployment",
+  },
+  {
+    slug: "anti-radiation-missile",
+    term: "Anti-Radiation Missile",
+    abbreviation: "ARM",
+    category: "missiles",
+    tldr: "A missile that homes in on the radio waves from an enemy radar — so switching on the radar invites a missile in return.",
+    summary:
+      "A missile that homes on the emissions of enemy radars to destroy them, central to suppressing air defenses.",
+    definition: [
+      "An anti-radiation missile (ARM) is a weapon that homes in on the radio-frequency energy emitted by an enemy radar. Rather than needing its own picture of the target, it simply follows the radar's own signal back to its source and destroys it. This makes ARMs the key weapon for suppressing enemy air defenses: it forces a hard choice on the defender — keep the radar on and risk a missile, or switch it off and go blind.",
+      "ARMs are central to SEAD/DEAD missions that clear the way for other aircraft. Defenders counter them by switching radars on and off, using decoy emitters, and networking sensors so the loss of one radar doesn't blind the system. The cat-and-mouse between radars and anti-radiation missiles is a core part of the battle for control of the air.",
+    ],
+    keyFacts: [
+      { label: "Homes on", value: "Enemy radar emissions" },
+      { label: "Main use", value: "Suppressing air defenses (SEAD)" },
+      { label: "Forces choice", value: "Radiate and die, or go blind" },
+      { label: "Countered by", value: "Switching off, decoys, networking" },
+    ],
+    examples: [
+      {
+        title: "AGM-88 HARM (USA)",
+        description:
+          "A widely used high-speed anti-radiation missile that punishes air-defense radars for switching on.",
+      },
+      {
+        title: "Opening-night SEAD",
+        description:
+          "ARMs are fired early in air campaigns to tear apart the enemy's radar-guided defenses.",
+      },
+    ],
+    related: ["sead", "electronic-warfare", "integrated-air-defense-system", "radar"],
+    wiki: "Anti-radiation missile",
+    imageAlt: "An anti-radiation missile",
+  },
+  {
+    slug: "torpedo",
+    term: "Torpedo",
+    abbreviation: "",
+    category: "missiles",
+    tldr: "An underwater missile that swims to a ship or submarine and explodes — often beneath the hull to break its back.",
+    summary:
+      "A self-propelled underwater weapon that travels to and detonates against ships or submarines.",
+    definition: [
+      "A torpedo is a self-propelled weapon that travels underwater to strike ships and submarines. Launched from submarines, surface ships, aircraft, or helicopters, it swims to its target and detonates — modern types often exploding beneath a ship's hull, where the shock and gas bubble can break the vessel's back, doing far more damage than a hit on the side.",
+      "Guidance has advanced from simple straight-running designs to homing torpedoes that use their own sonar to track targets, and wire-guided types steered from the launching submarine. Fast, hard to detect, and devastating, torpedoes remain a primary weapon of submarine and anti-submarine warfare, countered by decoys, evasive maneuvering, and anti-torpedo systems.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Self-propelled underwater weapon" },
+      { label: "Targets", value: "Ships and submarines" },
+      { label: "Lethal trick", value: "Detonate under the hull" },
+      { label: "Guidance", value: "Sonar homing, wire-guided" },
+    ],
+    examples: [
+      {
+        title: "Heavyweight submarine torpedoes",
+        description:
+          "Wire-guided homing torpedoes are a submarine's primary weapon against ships and other subs.",
+      },
+      {
+        title: "Air-dropped lightweight torpedoes",
+        description:
+          "Helicopters and aircraft drop homing torpedoes to attack submarines in anti-submarine warfare.",
+      },
+    ],
+    related: ["submarine", "anti-submarine-warfare", "naval-mine", "sonar"],
+    wiki: "Torpedo",
+    imageAlt: "A naval torpedo",
+  },
+  {
+    slug: "naval-mine",
+    term: "Naval Mine",
+    abbreviation: "",
+    category: "missiles",
+    tldr: "An explosive trap left in the water that detonates when a ship comes near — cheap to lay, expensive and slow to clear.",
+    summary:
+      "An explosive device placed in the water to damage or sink ships that come near it.",
+    definition: [
+      "A naval mine is an explosive device placed in the water and left to wait for a passing ship or submarine. Mines can float near the surface, sit anchored at depth, or rest on the seabed, and they detonate when a vessel touches them or when sensors detect its magnetic field, noise, or pressure wave. Cheap to produce and lay, they are a classic weapon of the weaker naval power.",
+      "Their real power is psychological and economic: a small number of mines, or even the mere suspicion of them, can close a strait or harbor and force the enemy into slow, dangerous, expensive mine-clearing operations. This asymmetry — easy to lay, hard to sweep — makes mines a persistent tool of sea denial and a constant concern for navies and merchant shipping alike.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Explosive trap in the water" },
+      { label: "Triggers", value: "Contact, magnetic, acoustic, pressure" },
+      { label: "Strength", value: "Cheap to lay, hard to clear" },
+      { label: "Effect", value: "Sea denial; closes straits/ports" },
+    ],
+    examples: [
+      {
+        title: "Mining of straits",
+        description:
+          "Even a few mines can shut a vital waterway, forcing costly mine-clearing before traffic resumes.",
+      },
+      {
+        title: "Mine countermeasures",
+        description:
+          "Navies field specialized minehunters and unmanned systems to find and neutralize mines.",
+      },
+    ],
+    related: ["torpedo", "anti-submarine-warfare", "a2ad"],
+    wiki: "Naval mine",
+    imageAlt: "A naval mine",
+  },
+  {
+    slug: "glide-bomb",
+    term: "Glide Bomb",
+    abbreviation: "",
+    category: "missiles",
+    tldr: "A bomb with pop-out wings and guidance, so an aircraft can drop it from far away and let it glide precisely to the target.",
+    summary:
+      "A bomb fitted with wings and guidance that lets it glide a long distance to strike a target precisely.",
+    definition: [
+      "A glide bomb is an ordinary bomb fitted with pop-out wings and a guidance kit, turning it into a stand-off weapon. Released from an aircraft, it doesn't just fall — it glides for tens of kilometers toward its target, steering itself with GPS or other guidance. This lets the launching aircraft stay well back, outside the range of many short-range air defenses, while still hitting precisely.",
+      "Glide bombs are attractive because they are far cheaper than powered cruise missiles yet provide useful range and precision, often by bolting kits onto existing bomb stockpiles. They have featured heavily in recent conflicts, where mass use of long-range glide bombs has let aircraft strike from relative safety, reshaping how air forces attack defended areas.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Bomb + wings + guidance" },
+      { label: "Benefit", value: "Stand-off range, low cost" },
+      { label: "Guidance", value: "Usually GPS/INS" },
+      { label: "Vs. cruise missile", value: "Cheaper, unpowered, shorter range" },
+    ],
+    examples: [
+      {
+        title: "Winged guidance kits",
+        description:
+          "Add-on kits give conventional bombs wings and guidance for long-range precision at low cost.",
+      },
+      {
+        title: "Mass stand-off strikes",
+        description:
+          "Large numbers of glide bombs let aircraft hit targets from beyond many air defenses.",
+      },
+    ],
+    related: ["precision-guided-munition", "cruise-missile", "air-superiority"],
+    wiki: "Glide bomb",
+    imageAlt: "A winged glide bomb",
+  },
+  {
+    slug: "cluster-munition",
+    term: "Cluster Munition",
+    abbreviation: "",
+    category: "missiles",
+    tldr: "A bomb or shell that bursts open in the air and scatters many small bomblets over a wide area — controversial because duds linger.",
+    summary:
+      "A weapon that disperses many small submunitions over an area; controversial due to unexploded remnants.",
+    definition: [
+      "A cluster munition is a bomb, shell, or rocket warhead that opens in the air and scatters dozens or hundreds of small 'submunitions' or bomblets over a wide area. The aim is to blanket a target zone — troops in the open, vehicles, runways — with many small explosions at once, covering far more ground than a single large warhead.",
+      "Cluster munitions are highly controversial because some bomblets fail to explode on impact and remain on the ground as de facto landmines, killing and maiming civilians long after a conflict ends. This humanitarian harm led many countries to ban them under the Convention on Cluster Munitions, though several major military powers have not signed and continue to use or stockpile them.",
+    ],
+    keyFacts: [
+      { label: "What it does", value: "Scatters many bomblets over an area" },
+      { label: "Purpose", value: "Saturate area targets" },
+      { label: "Problem", value: "Unexploded duds harm civilians" },
+      { label: "Treaty", value: "Convention on Cluster Munitions" },
+    ],
+    examples: [
+      {
+        title: "Area-saturation strikes",
+        description:
+          "Cluster warheads can blanket troop or vehicle concentrations across a wide footprint.",
+      },
+      {
+        title: "Post-conflict hazard",
+        description:
+          "Unexploded bomblets contaminate land for years, the core reason for the international ban.",
+      },
+    ],
+    related: ["howitzer", "mlrs", "precision-guided-munition", "end-user-certificate"],
+    wiki: "Cluster munition",
+    imageAlt: "A cluster munition and its submunitions",
+  },
+  {
+    slug: "shaped-charge",
+    term: "Shaped Charge",
+    abbreviation: "HEAT",
+    category: "missiles",
+    tldr: "A clever explosive shaped to focus its blast into a thin jet that punches through thick armor — the trick behind most anti-tank weapons.",
+    summary:
+      "An explosive shaped to focus its energy into a narrow, armor-piercing jet — the basis of most anti-tank warheads.",
+    definition: [
+      "A shaped charge is an explosive designed with a hollow, cone-shaped cavity lined with metal, so that when it detonates, its energy is focused into an intensely fast, narrow jet of metal. This jet concentrates enormous force on a tiny spot, letting a relatively small warhead punch through armor far thicker than a simple blast could defeat. It is the principle behind most anti-tank weapons, known as HEAT (High-Explosive Anti-Tank) rounds.",
+      "Because shaped charges defeat armor by focused penetration rather than sheer mass, they let infantry and light vehicles threaten heavy tanks. This drove an arms race in protection: reactive armor that disrupts the jet, spaced and composite armor, and 'tandem' warheads with two charges to defeat reactive armor. Understanding the shaped charge is key to understanding the long contest between anti-tank weapons and armor.",
+    ],
+    keyFacts: [
+      { label: "How it works", value: "Focuses blast into a metal jet" },
+      { label: "Used in", value: "HEAT anti-tank warheads" },
+      { label: "Why it matters", value: "Small warhead beats thick armor" },
+      { label: "Countered by", value: "Reactive & spaced armor" },
+    ],
+    examples: [
+      {
+        title: "RPGs & ATGMs",
+        description:
+          "Most rocket-propelled grenades and anti-tank guided missiles use shaped-charge warheads.",
+      },
+      {
+        title: "Tandem warheads",
+        description:
+          "Two stacked shaped charges defeat reactive armor — the first triggers it, the second penetrates.",
+      },
+    ],
+    related: ["atgm", "reactive-armor", "main-battle-tank"],
+    wiki: "Shaped charge",
+    imageAlt: "Diagram of a shaped-charge warhead",
+  },
+  {
+    slug: "ied",
+    term: "Improvised Explosive Device",
+    abbreviation: "IED",
+    category: "missiles",
+    tldr: "A homemade bomb, often hidden by a road, used by insurgents — cheap to make but deadly and hard to defend against.",
+    summary:
+      "A homemade bomb built from improvised components, widely used in insurgencies and asymmetric warfare.",
+    definition: [
+      "An Improvised Explosive Device (IED) is a homemade bomb assembled from whatever explosives and components are available, rather than a manufactured military munition. Often hidden along roads, in vehicles, or carried by a person, IEDs became the signature weapon of insurgents in conflicts like Iraq and Afghanistan, where they inflicted a large share of casualties on far better-equipped forces.",
+      "IEDs are devastating in asymmetric warfare precisely because they are cheap, easy to make, and hard to detect, yet can destroy armored vehicles and kill troops. Countering them spawned a whole field — better-armored vehicles like MRAPs, electronic jammers to block radio detonation, route-clearance teams, and intelligence efforts to find the networks that build and plant them.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Homemade / improvised bomb" },
+      { label: "Used in", value: "Insurgency, asymmetric warfare" },
+      { label: "Why effective", value: "Cheap, hidden, deadly" },
+      { label: "Countered by", value: "MRAPs, jammers, route clearance" },
+    ],
+    examples: [
+      {
+        title: "Roadside bombs",
+        description:
+          "Hidden IEDs targeting convoys caused heavy casualties and drove the rapid fielding of MRAP vehicles.",
+      },
+      {
+        title: "Counter-IED jamming",
+        description:
+          "Electronic jammers block the radio signals used to detonate some IEDs remotely.",
+      },
+    ],
+    related: ["mrap", "asymmetric-warfare", "electronic-warfare", "shaped-charge"],
+    wiki: "Improvised explosive device",
+    imageAlt: "Aftermath of an improvised explosive device",
+  },
+
+  // ── Systems & sensors ──────────────────────────────────────────────────────
+  {
+    slug: "vls",
+    term: "Vertical Launching System",
+    abbreviation: "VLS",
+    category: "systems",
+    tldr: "A grid of missile tubes built into a warship's deck that can fire many different missiles straight up, fast.",
+    summary:
+      "A shipboard array of vertical cells that store and launch missiles, allowing rapid fire of mixed missile types.",
+    definition: [
+      "A Vertical Launching System (VLS) is a grid of missile tubes, or 'cells', built flush into a warship's deck. Each cell holds a missile ready to fire straight upward, after which the missile tips over toward its target. Replacing older trainable launchers that loaded one or two missiles at a time, the VLS lets a ship store dozens of missiles and fire them in rapid succession in any direction.",
+      "Its great strength is flexibility: the same cells can hold a mix of weapons — surface-to-air missiles for defense, anti-ship missiles, cruise missiles for land attack, and anti-submarine weapons — so a captain can tailor the loadout to the mission. The number of VLS cells is a key measure of a modern warship's firepower, and reloading them typically requires returning to port.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Deck grid of missile cells" },
+      { label: "Strength", value: "Many missiles, mixed types, fast fire" },
+      { label: "Holds", value: "SAMs, anti-ship, cruise, ASW missiles" },
+      { label: "Measure of", value: "A warship's firepower" },
+    ],
+    examples: [
+      {
+        title: "Mk 41 VLS",
+        description:
+          "A widely used vertical launch system on Western warships, able to fire a broad mix of missiles.",
+      },
+      {
+        title: "Cell count as firepower",
+        description:
+          "Destroyers and frigates are often compared by their number of VLS cells.",
+      },
+    ],
+    related: ["destroyer", "frigate", "aegis", "surface-to-air-missile"],
+    wiki: "Vertical launching system",
+    imageAlt: "A warship vertical launching system firing",
+  },
+  {
+    slug: "aegis",
+    term: "Aegis Combat System",
+    abbreviation: "",
+    category: "systems",
+    tldr: "A warship's 'brain' — a powerful radar and computer system that tracks hundreds of threats and controls the ship's missiles automatically.",
+    summary:
+      "An integrated naval combat system combining a powerful radar and computers to detect, track, and engage many threats at once.",
+    definition: [
+      "The Aegis Combat System is an advanced naval combat system that ties together a ship's powerful radar, computers, and missile launchers into one automated whole. Named after the mythological shield, it was created to defend ships against saturation missile attacks by detecting, tracking, and prioritizing hundreds of targets simultaneously and guiding interceptor missiles to the most dangerous ones — faster than human operators could manage alone.",
+      "Aegis is the heart of many of the world's most capable destroyers and cruisers and has been extended to ballistic-missile defense, intercepting missiles in space, and even ashore in fixed installations. It is a prime example of how a combat 'system of systems' — sensors, software, and weapons integrated together — can be more decisive than any single piece of hardware.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Integrated naval combat system" },
+      { label: "Core", value: "Powerful radar + computers + missiles" },
+      { label: "Built for", value: "Defeating saturation attacks" },
+      { label: "Extended to", value: "Ballistic-missile defense, ashore" },
+    ],
+    examples: [
+      {
+        title: "Aegis destroyers & cruisers",
+        description:
+          "Aegis equips the most capable air-defense warships of the U.S. and several allied navies.",
+      },
+      {
+        title: "Aegis Ashore",
+        description:
+          "Land-based Aegis installations extend the system to defend territory against ballistic missiles.",
+      },
+    ],
+    related: ["destroyer", "vls", "radar", "ballistic-missile"],
+    wiki: "Aegis Combat System",
+    imageAlt: "An Aegis-equipped warship",
+  },
+  {
+    slug: "sonar",
+    term: "Sonar",
+    abbreviation: "",
+    category: "systems",
+    tldr: "Underwater 'radar' that uses sound to find submarines, ships, mines and torpedoes — since radio waves don't travel underwater.",
+    summary:
+      "A system that uses sound waves to detect and locate objects underwater, the primary undersea sensor.",
+    definition: [
+      "Sonar (SOund Navigation And Ranging) is the underwater equivalent of radar: because radio and light barely travel through water, sonar uses sound instead to detect and locate submarines, ships, mines, and torpedoes. 'Active' sonar sends out a sound pulse — the classic 'ping' — and listens for the echo, revealing a target's range and bearing, but also announcing the sonar's own presence. 'Passive' sonar simply listens for the noise a target makes, staying silent and hidden.",
+      "Sonar is the central sensor of undersea warfare. Submarines rely on quiet passive listening to hunt while staying undetected, and surface ships, helicopters, and seabed arrays use sonar to find them. The physics of sound in water — bending around temperature layers, carrying for huge distances or being trapped — makes sonar a subtle art and undersea detection one of the hardest problems in warfare.",
+    ],
+    keyFacts: [
+      { label: "Uses", value: "Sound waves underwater" },
+      { label: "Active", value: "'Ping' and listen for echo" },
+      { label: "Passive", value: "Silently listen for target noise" },
+      { label: "Central to", value: "Submarine & anti-submarine warfare" },
+    ],
+    examples: [
+      {
+        title: "Submarine passive sonar",
+        description:
+          "Submarines hunt by quietly listening, avoiding the giveaway of active pinging.",
+      },
+      {
+        title: "Dipping & towed sonar",
+        description:
+          "Helicopters lower sonar into the sea and ships tow sonar arrays to detect submarines.",
+      },
+    ],
+    related: ["submarine", "anti-submarine-warfare", "torpedo", "radar"],
+    wiki: "Sonar",
+    imageAlt: "A sonar display or dome",
+  },
+  {
+    slug: "ciws",
+    term: "Close-In Weapon System",
+    abbreviation: "CIWS",
+    category: "systems",
+    tldr: "A ship's last-ditch defense — a radar-guided rapid-fire gun that automatically shreds incoming missiles at very close range.",
+    summary:
+      "A ship's last-line defense: a radar-guided, rapid-firing gun (or short-range missiles) that destroys incoming threats.",
+    definition: [
+      "A Close-In Weapon System (CIWS) is a warship's last line of defense against missiles and aircraft that have slipped past its longer-range defenses. The classic CIWS is a radar-guided, rapid-firing rotary cannon that automatically detects an incoming threat, tracks it, and fires a stream of shells to shred it just seconds before impact. Some systems use short-range missiles instead of, or alongside, guns.",
+      "Because the threat is so close and fast, a CIWS is highly automated, reacting faster than a human could. It is the innermost layer of a ship's 'layered defense', behind long-range and medium-range surface-to-air missiles. As anti-ship missiles, drones, and saturation attacks grow more dangerous, close-in defenses — including new lasers and microwave weapons — are an active area of development.",
+    ],
+    keyFacts: [
+      { label: "Role", value: "Last-ditch ship self-defense" },
+      { label: "Weapon", value: "Rapid-fire gun and/or missiles" },
+      { label: "Trait", value: "Radar-guided, highly automated" },
+      { label: "Layer", value: "Innermost of layered defense" },
+    ],
+    examples: [
+      {
+        title: "Phalanx CIWS",
+        description:
+          "A self-contained radar-guided rotary cannon widely fitted as a ship's final defense against missiles.",
+      },
+      {
+        title: "Against drones",
+        description:
+          "Close-in systems increasingly engage cheap drones, spurring interest in laser and microwave options.",
+      },
+    ],
+    related: ["surface-to-air-missile", "anti-ship-missile", "directed-energy-weapon", "counter-uas"],
+    wiki: "Close-in weapon system",
+    imageAlt: "A close-in weapon system gun mount",
+  },
+  {
+    slug: "irst",
+    term: "Infrared Search & Track",
+    abbreviation: "IRST",
+    category: "systems",
+    tldr: "A sensor that spots aircraft by their heat instead of radar — so it can find even stealthy jets without giving itself away.",
+    summary:
+      "A passive sensor that detects and tracks aircraft by their infrared (heat) emissions rather than radar.",
+    definition: [
+      "Infrared Search and Track (IRST) is a sensor that finds and follows aircraft by detecting the heat they emit — from their engines, exhaust, and friction with the air — rather than by bouncing radar waves off them. Because it is 'passive', listening for heat instead of transmitting, an IRST gives away nothing about its own position, unlike a radar that can be detected and jammed.",
+      "IRST has become especially important against stealth aircraft, which are shaped to defeat radar but still radiate heat. It lets a fighter or ship detect and track targets silently, complementing radar and providing a backup when radar is jammed. Its limits are range, which can be reduced by weather, and that infrared alone gives less precise distance information than radar, so the two sensors are often fused together.",
+    ],
+    keyFacts: [
+      { label: "Detects", value: "Aircraft heat (infrared)" },
+      { label: "Type", value: "Passive — emits nothing" },
+      { label: "Advantage", value: "Stealthy; can spot stealth jets" },
+      { label: "Limit", value: "Range cut by weather; weak on range" },
+    ],
+    examples: [
+      {
+        title: "Fighter IRST pods",
+        description:
+          "Modern fighters carry IRST to detect targets silently and to help counter stealthy threats.",
+      },
+      {
+        title: "Sensor fusion",
+        description:
+          "IRST data is fused with radar to combine silent detection with precise ranging.",
+      },
+    ],
+    related: ["stealth", "radar", "aesa-radar", "situational-awareness"],
+    wiki: "Infrared search and track",
+    imageAlt: "An infrared search and track sensor",
+  },
+  {
+    slug: "radar",
+    term: "Radar",
+    abbreviation: "",
+    category: "systems",
+    tldr: "A system that sends out radio waves and listens for the echoes to find and track objects far away — the eyes of modern militaries.",
+    summary:
+      "A sensor that detects objects by transmitting radio waves and measuring the reflections that bounce back.",
+    definition: [
+      "Radar (RAdio Detection And Ranging) detects objects by sending out radio waves and listening for the echoes that bounce back off them. From the time delay and direction of the echo, it works out an object's distance, bearing, and speed. Invented before World War II, radar became the eyes of modern militaries, able to see aircraft, ships, missiles, and vehicles at great range, in darkness, and through cloud.",
+      "Radar underpins almost everything in modern warfare: air-defense early warning, fighter fire-control, missile guidance, naval search, and ground surveillance. Its central weakness is that, by transmitting, it can be detected, jammed, deceived, or attacked by anti-radiation missiles — which is why stealth (reducing the echo), electronic warfare, and passive sensors all revolve around defeating or avoiding radar.",
+    ],
+    keyFacts: [
+      { label: "How it works", value: "Transmit radio waves, read echoes" },
+      { label: "Measures", value: "Range, bearing, speed" },
+      { label: "Used for", value: "Warning, fire-control, guidance, search" },
+      { label: "Weakness", value: "Detectable, jammable, attackable" },
+    ],
+    examples: [
+      {
+        title: "Air-defense early warning",
+        description:
+          "Long-range radars detect incoming aircraft and missiles, the foundation of air defense.",
+      },
+      {
+        title: "Stealth vs. radar",
+        description:
+          "Stealth design and electronic warfare exist largely to defeat or evade radar detection.",
+      },
+    ],
+    related: ["aesa-radar", "stealth", "electronic-warfare", "anti-radiation-missile"],
+    wiki: "Radar",
+    imageAlt: "A military radar antenna",
+  },
+  {
+    slug: "gps",
+    term: "GPS / Satellite Navigation",
+    abbreviation: "GNSS / PNT",
+    category: "systems",
+    tldr: "Satellites that tell receivers exactly where and when they are — guiding weapons, troops and aircraft. Jam it and a lot stops working.",
+    summary:
+      "A satellite system providing precise position, navigation, and timing — essential to guided weapons and coordination.",
+    definition: [
+      "GPS (the Global Positioning System) is a constellation of satellites that lets a receiver anywhere on Earth work out its exact position and time by measuring signals from several satellites at once. Originally built by the U.S. military, it and similar systems (collectively called GNSS, providing 'PNT' — position, navigation, and timing) have become indispensable to modern forces and to civilian life alike.",
+      "In the military, satellite navigation guides precision weapons to their targets, lets troops and vehicles know exactly where they are, and provides the precise timing that synchronizes communications and networks. This dependence is also a vulnerability: GPS signals are weak and can be jammed (drowned out) or spoofed (faked), which has become a major feature of recent conflicts. Forces therefore add anti-jam antennas, backups, and inertial systems to keep working when satellite navigation is denied.",
+    ],
+    keyFacts: [
+      { label: "Provides", value: "Position, navigation, timing (PNT)" },
+      { label: "Origin", value: "U.S. military system (now global use)" },
+      { label: "Enables", value: "Guided weapons, coordination, timing" },
+      { label: "Vulnerable to", value: "Jamming and spoofing" },
+    ],
+    examples: [
+      {
+        title: "GPS-guided weapons",
+        description:
+          "Weapons like JDAM use GPS to strike coordinates precisely in any weather.",
+      },
+      {
+        title: "Jamming and spoofing",
+        description:
+          "Recent conflicts feature heavy interference with satellite navigation, degrading guided weapons and drones.",
+      },
+    ],
+    related: ["precision-guided-munition", "electronic-warfare", "military-satellite", "c4isr"],
+    wiki: "Global Positioning System",
+    imageAlt: "A GPS navigation satellite",
+  },
+  {
+    slug: "aerial-refueling",
+    term: "Aerial Refueling",
+    abbreviation: "AAR",
+    category: "systems",
+    tldr: "Refueling aircraft in mid-air from a flying tanker, so they can fly much farther and stay airborne for many more hours.",
+    summary:
+      "Transferring fuel from a tanker aircraft to another aircraft in flight, extending range and endurance.",
+    definition: [
+      "Aerial refueling is the transfer of fuel from a tanker aircraft to another aircraft while both are flying. By topping up in mid-air, combat and transport aircraft can fly intercontinental distances, carry heavier loads, and loiter over an area for many hours instead of being limited by their own fuel tanks. It quietly underpins almost all long-range air operations.",
+      "Two main methods exist: a rigid 'boom' that an operator flies into the receiving aircraft, and a flexible 'probe-and-drogue' hose that the receiver plugs into. Tanker aircraft are a scarce, high-value enabler — a force multiplier that turns short-legged fighters into global-reach assets — which is why tanker fleets are a strategic capability that only a few nations possess in quantity.",
+    ],
+    keyFacts: [
+      { label: "What it does", value: "Refuels aircraft in flight" },
+      { label: "Benefit", value: "Extends range & endurance" },
+      { label: "Methods", value: "Boom; probe-and-drogue" },
+      { label: "Value", value: "Scarce, high-value force multiplier" },
+    ],
+    examples: [
+      {
+        title: "Tanker aircraft",
+        description:
+          "Dedicated tankers extend the reach of fighters and bombers across oceans and long campaigns.",
+      },
+      {
+        title: "Global power projection",
+        description:
+          "Air-refueling capacity is a key marker of a military able to operate worldwide.",
+      },
+    ],
+    related: ["military-transport-aircraft", "logistics", "force-multiplier", "strategic-bomber"],
+    wiki: "Aerial refueling",
+    imageAlt: "Aircraft refueling in mid-air",
+  },
+  {
+    slug: "ejection-seat",
+    term: "Ejection Seat",
+    abbreviation: "",
+    category: "systems",
+    tldr: "A rocket-powered seat that blasts a pilot out of a doomed aircraft and parachutes them to safety in seconds.",
+    summary:
+      "A system that propels a pilot clear of a stricken aircraft and deploys a parachute to save their life.",
+    definition: [
+      "An ejection seat is a life-saving system that rapidly propels a pilot or crew member out of a stricken aircraft and lowers them safely to the ground by parachute. When the crew pulls the handle, the canopy is jettisoned, a rocket motor blasts the seat clear of the aircraft, and an automatic sequence stabilizes the seat, separates the occupant, and deploys their parachute — all within a few seconds.",
+      "Modern 'zero-zero' seats can save a crew member even at zero altitude and zero speed, such as a failed takeoff. Ejection is violent and not without risk of injury, but it has saved thousands of aircrew. It is a specialized, safety-critical product of the defense industry and a vivid example of the engineering that goes into protecting expensive, hard-to-train aircrew.",
+    ],
+    keyFacts: [
+      { label: "Purpose", value: "Save aircrew from a doomed aircraft" },
+      { label: "Sequence", value: "Canopy off, rocket out, parachute" },
+      { label: "'Zero-zero'", value: "Works at zero speed & altitude" },
+      { label: "Trade-off", value: "Violent; some injury risk" },
+    ],
+    examples: [
+      {
+        title: "Zero-zero ejection seats",
+        description:
+          "Modern seats can save a crew member even during a failed takeoff at ground level.",
+      },
+      {
+        title: "Specialized suppliers",
+        description:
+          "A few specialist firms dominate the design of ejection seats fitted across many fighter types.",
+      },
+    ],
+    related: ["multirole-fighter", "fifth-generation-fighter"],
+    wiki: "Ejection seat",
+    imageAlt: "An aircraft ejection seat",
+  },
+  {
+    slug: "thrust-vectoring",
+    term: "Thrust Vectoring",
+    abbreviation: "TVC",
+    category: "systems",
+    tldr: "Steering a jet by tilting where its engine exhaust points, giving incredible agility beyond what wings alone allow.",
+    summary:
+      "Directing an engine's exhaust to steer an aircraft or missile, improving maneuverability and control.",
+    definition: [
+      "Thrust vectoring is the ability to change the direction of the exhaust coming out of an engine, using it to help steer the aircraft or missile rather than relying only on wings and control surfaces. By tilting the nozzle, a jet can point its thrust up, down, or sideways, generating turning force directly. This gives dramatic agility, especially at low speeds and high angles where normal controls lose effectiveness.",
+      "On fighters, thrust vectoring enables spectacular maneuvers and tighter turns that can be an advantage in close combat, and it can also reduce reliance on large tail surfaces, helping stealth. It is also widely used on missiles and rockets for sharp, fast course changes. The trade-off is added weight, complexity, and cost, so designers weigh its benefits against simpler solutions.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Steering by aiming engine exhaust" },
+      { label: "Benefit", value: "Extreme agility, low-speed control" },
+      { label: "Used on", value: "Fighters, missiles, rockets" },
+      { label: "Trade-off", value: "Weight, complexity, cost" },
+    ],
+    examples: [
+      {
+        title: "Super-maneuverable fighters",
+        description:
+          "Some fighters use thrust vectoring for extreme agility and post-stall maneuvers.",
+      },
+      {
+        title: "Missile agility",
+        description:
+          "Thrust vectoring gives missiles the sharp turns needed to hit maneuvering targets.",
+      },
+    ],
+    related: ["supercruise", "fifth-generation-fighter", "air-to-air-missile"],
+    wiki: "Thrust vectoring",
+    imageAlt: "A jet engine nozzle vectoring thrust",
+  },
+  {
+    slug: "supercruise",
+    term: "Supercruise",
+    abbreviation: "",
+    category: "systems",
+    tldr: "Flying faster than sound without using fuel-guzzling afterburners — letting a jet stay supersonic for much longer.",
+    summary:
+      "The ability of an aircraft to fly at supersonic speed without using fuel-hungry afterburners.",
+    definition: [
+      "Supercruise is the ability of an aircraft to cruise at supersonic speed — faster than the speed of sound — without using its afterburners. Afterburners produce extra thrust by dumping raw fuel into the exhaust, which lets most fighters briefly go supersonic but burns fuel at an enormous rate, so it can only be used for short bursts. An aircraft that can sustain supersonic flight on dry thrust alone enjoys a major advantage.",
+      "Supercruise lets a fighter reach a fight faster, launch missiles with more energy (extending their range), and cover more sky, all while keeping better fuel endurance and a lower heat signature than one straining on afterburner. It is a hallmark capability of some advanced fighters, made possible by powerful, efficient engines and clean aerodynamic design.",
+    ],
+    keyFacts: [
+      { label: "Definition", value: "Supersonic without afterburner" },
+      { label: "Why afterburner is bad", value: "Huge fuel burn, short bursts" },
+      { label: "Benefits", value: "Speed, range, endurance, lower heat" },
+      { label: "Found on", value: "Some advanced fighters" },
+    ],
+    examples: [
+      {
+        title: "F-22 Raptor",
+        description:
+          "An air-superiority fighter able to supercruise, reaching and dominating fights with energy to spare.",
+      },
+      {
+        title: "Missile energy boost",
+        description:
+          "Launching from supersonic cruise adds range and energy to air-to-air missiles.",
+      },
+    ],
+    related: ["fifth-generation-fighter", "thrust-vectoring", "air-to-air-missile"],
+    wiki: "Supercruise",
+    imageAlt: "A supersonic fighter in flight",
+  },
+  {
+    slug: "reactive-armor",
+    term: "Reactive Armor",
+    abbreviation: "ERA",
+    category: "systems",
+    tldr: "Bricks of armor that explode outward when hit, disrupting an incoming warhead before it can punch through the tank.",
+    summary:
+      "Add-on armor that detonates outward when struck, defeating shaped-charge and other anti-tank warheads.",
+    definition: [
+      "Reactive armor is a protective add-on, usually a layer of explosive sandwiched between metal plates and fitted as 'bricks' over a vehicle. When an anti-tank warhead strikes, the reactive element detonates outward, disrupting the incoming jet or projectile before it can penetrate the main armor. The most common form, Explosive Reactive Armor (ERA), is especially effective against the focused jet of a shaped-charge warhead.",
+      "Reactive armor lets existing tanks survive threats that would defeat their base armor, and it can be added relatively cheaply. But it has limits: each brick works essentially once, the detonation can endanger nearby infantry, and attackers respond with 'tandem' warheads — two charges, the first to trigger the reactive armor and the second to penetrate. It is one move in the endless contest between armor and anti-armor weapons.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Explosive add-on armor 'bricks'" },
+      { label: "How", value: "Detonates outward to disrupt warhead" },
+      { label: "Best vs.", value: "Shaped-charge (HEAT) jets" },
+      { label: "Beaten by", value: "Tandem warheads" },
+    ],
+    examples: [
+      {
+        title: "Explosive reactive armor (ERA)",
+        description:
+          "ERA blocks fitted over tanks defeat many anti-tank rockets and missiles on the first hit.",
+      },
+      {
+        title: "Tandem-charge response",
+        description:
+          "Modern ATGMs use two charges to defeat reactive armor, continuing the armor arms race.",
+      },
+    ],
+    related: ["main-battle-tank", "shaped-charge", "atgm", "active-protection-system"],
+    wiki: "Reactive armour",
+    imageAlt: "A tank fitted with reactive armor bricks",
+  },
+
+  // ── Doctrine & concepts ────────────────────────────────────────────────────
+  {
+    slug: "anti-submarine-warfare",
+    term: "Anti-Submarine Warfare",
+    abbreviation: "ASW",
+    category: "doctrine",
+    tldr: "The cat-and-mouse hunt for enemy submarines using sonar, ships, aircraft and other subs — one of the hardest jobs at sea.",
+    summary:
+      "The branch of naval warfare focused on detecting, tracking, and destroying enemy submarines.",
+    definition: [
+      "Anti-Submarine Warfare (ASW) is the naval mission of finding and defeating enemy submarines. Because submarines hide underwater where they are extremely hard to detect, ASW is often called one of the most difficult tasks in warfare — a patient cat-and-mouse hunt across vast, opaque oceans. Failing at it can be catastrophic, since a single submarine can sink warships or threaten cities with missiles.",
+      "ASW uses many tools working together: sonar (active and passive), surface ships, helicopters dipping or dropping sensors, long-range patrol aircraft, seabed listening arrays, and other submarines acting as hunters. Once a submarine is found, it is attacked with homing torpedoes or depth charges. The whole effort blends sensors, platforms, and analysis into a layered search, and the contest between quieter submarines and better detection never ends.",
+    ],
+    keyFacts: [
+      { label: "Goal", value: "Detect & destroy submarines" },
+      { label: "Why hard", value: "Subs hide in a vast, opaque sea" },
+      { label: "Tools", value: "Sonar, ships, aircraft, subs" },
+      { label: "Weapons", value: "Homing torpedoes, depth charges" },
+    ],
+    examples: [
+      {
+        title: "Maritime patrol aircraft",
+        description:
+          "Long-range aircraft drop sonar buoys and torpedoes to hunt submarines over wide ocean areas.",
+      },
+      {
+        title: "Layered ASW screens",
+        description:
+          "Ships, helicopters, and submarines combine to protect high-value vessels from undersea attack.",
+      },
+    ],
+    related: ["submarine", "sonar", "torpedo", "frigate"],
+    wiki: "Anti-submarine warfare",
+    imageAlt: "An anti-submarine warfare aircraft or ship",
+  },
+  {
+    slug: "cyberwarfare",
+    term: "Cyberwarfare",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "Attacking or defending computers and networks as a weapon of war — disrupting an enemy's systems instead of bombing them.",
+    summary:
+      "The use of digital attacks to damage, disrupt, or spy on an adversary's computer systems and networks.",
+    definition: [
+      "Cyberwarfare is the use of digital attacks as an instrument of conflict — penetrating, disrupting, damaging, or spying on an enemy's computer systems and networks. Instead of (or alongside) physical force, a state can try to shut down power grids, corrupt military command systems, steal secrets, or sow confusion. Cyber is now recognized as a military domain in its own right, alongside land, sea, air, and space.",
+      "Cyber operations range from espionage (quietly stealing data) to sabotage (damaging systems or the physical equipment they control) to influence operations. Their appeal is deniability, low cost, and reach — an attack can come from anywhere, instantly, and be hard to attribute. Because modern militaries and societies depend so heavily on networked systems, both attacking and defending in cyberspace have become central to national security, blurring the line between war and peace.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Digital attacks as a weapon" },
+      { label: "Domain", value: "Cyberspace (5th warfare domain)" },
+      { label: "Forms", value: "Espionage, sabotage, influence" },
+      { label: "Appeal", value: "Cheap, deniable, global reach" },
+    ],
+    examples: [
+      {
+        title: "Attacks on infrastructure",
+        description:
+          "Cyber operations have targeted power grids and industrial systems, causing real-world disruption.",
+      },
+      {
+        title: "Espionage campaigns",
+        description:
+          "States use cyber intrusions to steal defense secrets and intellectual property at scale.",
+      },
+    ],
+    related: ["c4isr", "electronic-warfare", "network-centric-warfare", "anti-satellite-weapon"],
+    wiki: "Cyberwarfare",
+    imageAlt: "A cyberwarfare / network operations concept",
+  },
+  {
+    slug: "anti-satellite-weapon",
+    term: "Anti-Satellite Weapon",
+    abbreviation: "ASAT",
+    category: "doctrine",
+    tldr: "A weapon that destroys or disables satellites — blinding an enemy that relies on space for spying, navigation and communication.",
+    summary:
+      "A weapon designed to destroy or disable satellites, threatening the space systems modern militaries depend on.",
+    definition: [
+      "An anti-satellite (ASAT) weapon is designed to destroy or disable satellites in orbit. Because modern militaries depend heavily on satellites for reconnaissance, communications, navigation, and early warning, the ability to knock them out is a powerful way to blind and deafen an opponent. ASAT capability has turned space into a potential battleground and a growing concern for strategic stability.",
+      "ASAT weapons come in several forms: 'kinetic' interceptors that physically smash into a satellite, ground-based lasers or jammers that dazzle or disrupt sensors and links, and 'co-orbital' systems that maneuver near a target to interfere with or grab it. Kinetic attacks are especially controversial because they create clouds of high-speed debris that can threaten other satellites for years, endangering the very orbits everyone relies on.",
+    ],
+    keyFacts: [
+      { label: "Target", value: "Satellites in orbit" },
+      { label: "Why", value: "Blind enemy space systems" },
+      { label: "Types", value: "Kinetic, laser/jam, co-orbital" },
+      { label: "Big problem", value: "Debris from kinetic kills" },
+    ],
+    examples: [
+      {
+        title: "Kinetic ASAT tests",
+        description:
+          "Several nations have destroyed satellites in tests, creating debris clouds that drew international criticism.",
+      },
+      {
+        title: "Jamming and dazzling",
+        description:
+          "Non-destructive ASAT methods disrupt satellite links and sensors without creating debris.",
+      },
+    ],
+    related: ["military-satellite", "cyberwarfare", "gps", "deterrence-conventional"],
+    wiki: "Anti-satellite weapon",
+    imageAlt: "An anti-satellite weapon concept",
+  },
+  {
+    slug: "drone-swarm",
+    term: "Drone Swarm",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "Many cheap drones acting together as one coordinated mass — overwhelming defenses that can't shoot them all down.",
+    summary:
+      "A large group of drones operating together, often autonomously, to overwhelm defenses through sheer numbers.",
+    definition: [
+      "A drone swarm is a large group of unmanned systems operating together, ideally coordinating with each other to act as a single mass rather than as separate aircraft. The core idea is overwhelming through numbers: even if defenses can destroy some drones, they may not be able to stop dozens or hundreds attacking at once, and the cost of the interceptors can vastly exceed the cost of the cheap drones.",
+      "Swarms can saturate air defenses, spread out to scout wide areas, or combine sensing and attack roles, with future versions using artificial intelligence to self-organize. They represent a shift toward cheap, attritable mass that challenges expensive, high-end platforms. Defending against them is a major driver of counter-UAS efforts, including jammers, guns, and directed-energy weapons able to engage many targets cheaply.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Many drones acting as one mass" },
+      { label: "Logic", value: "Overwhelm via cheap numbers" },
+      { label: "Roles", value: "Saturate defenses, scout, attack" },
+      { label: "Countered by", value: "Jammers, guns, directed energy" },
+    ],
+    examples: [
+      {
+        title: "Saturation attacks",
+        description:
+          "Launching many cheap drones at once can overwhelm defenses designed for a few high-end threats.",
+      },
+      {
+        title: "Counter-swarm weapons",
+        description:
+          "Lasers and microwaves are pursued precisely because they can engage many drones at low cost.",
+      },
+    ],
+    related: ["loitering-munition", "counter-uas", "ucav", "directed-energy-weapon"],
+    wiki: "Drone swarm",
+    imageAlt: "A swarm of drones",
+  },
+  {
+    slug: "blitzkrieg",
+    term: "Blitzkrieg",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "A 'lightning war' tactic: hit fast and hard with concentrated tanks, aircraft and infantry to punch through and collapse the enemy before they can react.",
+    summary:
+      "A fast, concentrated offensive using combined armor, air power, and mobility to break through and paralyze the enemy.",
+    definition: [
+      "Blitzkrieg — German for 'lightning war' — describes a style of fast, concentrated offensive made famous early in World War II. Instead of slowly grinding along a broad front, attackers mass tanks, motorized infantry, and air power at a narrow point, punch through the enemy line, and drive deep into the rear before the defender can react, encircling and paralyzing them through sheer speed and shock.",
+      "The key ideas — concentration of force, speed, combined arms, and disrupting the enemy's ability to decide and respond — remain influential in modern maneuver warfare, even though the term itself is historical and was applied loosely at the time. Studying blitzkrieg is a way to understand why tempo, combined arms, and attacking an enemy's cohesion (not just their forces) are central to offensive doctrine.",
+    ],
+    keyFacts: [
+      { label: "Means", value: "'Lightning war'" },
+      { label: "Method", value: "Concentrated, fast, combined-arms thrust" },
+      { label: "Goal", value: "Break through and paralyze the enemy" },
+      { label: "Legacy", value: "Modern maneuver warfare" },
+    ],
+    examples: [
+      {
+        title: "Early WWII campaigns",
+        description:
+          "Rapid armored thrusts supported by air power overran defenders faster than they could respond.",
+      },
+      {
+        title: "Maneuver warfare today",
+        description:
+          "Modern doctrine still prizes tempo and combined arms to shatter an enemy's cohesion.",
+      },
+    ],
+    related: ["combined-arms", "main-battle-tank", "air-superiority"],
+    wiki: "Blitzkrieg",
+    imageAlt: "Armored forces conducting a fast offensive",
+  },
+  {
+    slug: "network-centric-warfare",
+    term: "Network-Centric Warfare",
+    abbreviation: "NCW",
+    category: "doctrine",
+    tldr: "Linking all your sensors, commanders and weapons into one network so the whole force fights smarter and faster than the enemy.",
+    summary:
+      "A doctrine that links sensors, decision-makers, and weapons into a network to fight faster and more effectively.",
+    definition: [
+      "Network-Centric Warfare (NCW) is the idea that a military's power comes not just from its individual platforms but from connecting them all into a single information network. By linking sensors, commanders, and shooters so they share a common, real-time picture, a networked force can decide and act faster than an opponent, concentrate effects without concentrating forces, and let any sensor cue any weapon.",
+      "The doctrine grew out of the information-technology revolution and underpins concepts like sensor-to-shooter engagement and modern 'multi-domain' operations. Its promise is dramatically better situational awareness and speed; its risks are dependence on networks that can be jammed, hacked, or saturated, which is why resilience, security, and the ability to keep fighting when the network degrades are central concerns.",
+    ],
+    keyFacts: [
+      { label: "Core idea", value: "Link sensors, deciders, shooters" },
+      { label: "Payoff", value: "Faster decisions, sensor-to-shooter" },
+      { label: "Built on", value: "Data links, C4ISR" },
+      { label: "Risk", value: "Dependence on vulnerable networks" },
+    ],
+    examples: [
+      {
+        title: "Sensor-to-shooter kill webs",
+        description:
+          "Any platform can engage a target detected by another, the practical heart of network-centric warfare.",
+      },
+      {
+        title: "Multi-domain operations",
+        description:
+          "Modern doctrine extends networking across land, sea, air, space, and cyber.",
+      },
+    ],
+    related: ["c4isr", "data-link", "situational-awareness", "cyberwarfare"],
+    wiki: "Network-centric warfare",
+    imageAlt: "A networked battlefield concept",
+  },
+  {
+    slug: "deterrence-conventional",
+    term: "Conventional Deterrence",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "Preventing an attack by making clear your normal (non-nuclear) forces would defeat it or make it too costly to be worth trying.",
+    summary:
+      "Preventing aggression through the credible threat that conventional (non-nuclear) forces would defeat or punish it.",
+    definition: [
+      "Conventional deterrence is the prevention of aggression using non-nuclear military power. Like nuclear deterrence, it works by convincing a potential aggressor that attacking would not pay — but here the threat is that ordinary armed forces would either defeat the attack outright ('deterrence by denial') or impose costs so painful they outweigh any gains ('deterrence by punishment').",
+      "Making it credible requires capable, ready, and visible forces, often forward-deployed near a potential flashpoint, plus the clear political will to use them and reliable allies. It is harder to make convincing than nuclear deterrence, because the outcome of a conventional war is less certain than the guaranteed devastation of a nuclear exchange. Much of peacetime defense posture — exercises, deployments, alliances, and arms purchases — is really about strengthening conventional deterrence so that war never starts.",
+    ],
+    keyFacts: [
+      { label: "Goal", value: "Prevent attack with non-nuclear force" },
+      { label: "By denial", value: "Make the attack fail" },
+      { label: "By punishment", value: "Make the cost too high" },
+      { label: "Needs", value: "Ready, visible, credible forces" },
+    ],
+    examples: [
+      {
+        title: "Forward-deployed forces",
+        description:
+          "Stationing capable forces near a flashpoint signals that aggression would be met and defeated.",
+      },
+      {
+        title: "Exercises and alliances",
+        description:
+          "Visible readiness and reliable allies strengthen the credibility of conventional deterrence.",
+      },
+    ],
+    related: ["nuclear-deterrence", "a2ad", "interoperability", "force-multiplier"],
+    wiki: "Deterrence theory",
+    imageAlt: "Military forces on exercise as deterrence",
+  },
+  {
+    slug: "nato",
+    term: "NATO",
+    abbreviation: "NATO",
+    category: "doctrine",
+    tldr: "A military alliance of North American and European countries that promises to defend each other — an attack on one is an attack on all.",
+    summary:
+      "The North Atlantic Treaty Organization — a collective-defense alliance of North American and European democracies.",
+    definition: [
+      "NATO, the North Atlantic Treaty Organization, is a military alliance founded in 1949 linking North American and European democracies. Its foundation is collective defense, enshrined in Article 5 of its treaty: an armed attack against one member is treated as an attack against all, so an aggressor faces the combined might of the whole alliance. This promise is designed to deter attack in the first place.",
+      "Beyond the mutual-defense pledge, NATO shapes the defense world through deep cooperation: common standards (STANAGs) that make allied forces interoperable, joint commands, shared exercises, and pressure on members to invest in defense. For the defense industry, NATO standards and the drive for interoperability heavily influence what equipment is bought and how it must work together, making the alliance a major force in the global arms market.",
+    ],
+    keyFacts: [
+      { label: "Full name", value: "North Atlantic Treaty Organization" },
+      { label: "Founded", value: "1949" },
+      { label: "Core", value: "Article 5 collective defense" },
+      { label: "Industry effect", value: "Standards & interoperability" },
+    ],
+    examples: [
+      {
+        title: "Article 5",
+        description:
+          "The mutual-defense clause — an attack on one is an attack on all — is NATO's central deterrent.",
+      },
+      {
+        title: "Standardization (STANAGs)",
+        description:
+          "Common NATO standards drive interoperability and shape members' equipment purchases.",
+      },
+    ],
+    related: ["interoperability", "deterrence-conventional", "foreign-military-sales"],
+    wiki: "NATO",
+    imageAlt: "The NATO emblem and member forces",
+  },
+
+  // ── Industry & programs ────────────────────────────────────────────────────
+  {
+    slug: "arms-race",
+    term: "Arms Race",
+    abbreviation: "",
+    category: "industry",
+    tldr: "When rival countries keep building more and better weapons to outdo each other, each buildup triggering the next.",
+    summary:
+      "A competitive spiral in which rival states continually expand or improve their military forces in response to each other.",
+    definition: [
+      "An arms race is a competition in which rival states keep building up or improving their armed forces, each side's buildup prompting the other to respond in turn. Driven by fear and the desire not to fall behind, an arms race can become a self-reinforcing spiral: one country's new weapon makes its rival feel insecure, so the rival matches or exceeds it, prompting another round.",
+      "Arms races can be quantitative (more ships, tanks, or warheads) or qualitative (better technology, like the race for stealth, hypersonics, or AI). They consume vast resources and can increase the risk of war, though some argue they can also stabilize a balance of power. Arms-control treaties are the main tool used to slow or cap them, and the dynamic is a central concept for understanding defense spending and strategic competition.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Mutual military buildup spiral" },
+      { label: "Driven by", value: "Fear, insecurity, competition" },
+      { label: "Forms", value: "Quantitative & qualitative" },
+      { label: "Slowed by", value: "Arms-control treaties" },
+    ],
+    examples: [
+      {
+        title: "Cold War nuclear buildup",
+        description:
+          "Superpowers amassed huge nuclear arsenals in a decades-long race, later curbed by arms-control treaties.",
+      },
+      {
+        title: "Emerging-tech races",
+        description:
+          "Competition now focuses on hypersonics, AI, and space — qualitative arms racing.",
+      },
+    ],
+    related: ["nuclear-deterrence", "military-budget", "hypersonic-weapon"],
+    wiki: "Arms race",
+    imageAlt: "Symbols of an arms race buildup",
+  },
+  {
+    slug: "military-budget",
+    term: "Military Budget",
+    abbreviation: "Defense Spending",
+    category: "industry",
+    tldr: "How much money a government spends on its armed forces — the fuel that drives the whole defense industry.",
+    summary:
+      "The funding a government allocates to its armed forces, shaping force size, modernization, and the defense industry.",
+    definition: [
+      "A military (or defense) budget is the amount of money a government dedicates to its armed forces in a given period. It pays for everything military: personnel salaries, operations and training, maintenance, and the purchase and development of new equipment. As the single biggest driver of demand in the defense world, the size and shape of military budgets determine what gets built, bought, and fielded.",
+      "Budgets are often compared in absolute terms (total dollars) and as a share of a country's economy (percentage of GDP), with figures like NATO's 2% guideline used as benchmarks. How money is split matters as much as the total — between people, readiness, and new equipment ('modernization'). Defense companies, analysts, and allies watch budget trends closely, because shifts in spending ripple through procurement programs, industrial planning, and the strategic balance.",
+    ],
+    keyFacts: [
+      { label: "Pays for", value: "People, operations, maintenance, kit" },
+      { label: "Measured as", value: "Total spend & % of GDP" },
+      { label: "Benchmark", value: "NATO 2% of GDP guideline" },
+      { label: "Drives", value: "Demand across the defense industry" },
+    ],
+    examples: [
+      {
+        title: "% of GDP targets",
+        description:
+          "NATO members aim to spend at least 2% of GDP on defense, a closely watched political benchmark.",
+      },
+      {
+        title: "Modernization vs. readiness",
+        description:
+          "How a budget splits between new equipment, training, and personnel shapes a force's future capability.",
+      },
+    ],
+    related: ["defense-procurement", "defense-industrial-base", "arms-race", "life-cycle-cost"],
+    wiki: "Military budget",
+    imageAlt: "Defense spending and budget concept",
   },
 ];
 
