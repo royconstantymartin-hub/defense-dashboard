@@ -1885,6 +1885,42 @@ def _normalise_article(a: dict) -> dict:
     return a
 
 
+def _dedupe_near_duplicates(articles: list, threshold: float = 0.6) -> list:
+    """
+    Read-time safeguard: collapse near-duplicate articles that cover the SAME story.
+
+    Scrape-time clustering (`cluster_articles`) only compares articles inside a
+    single scrape batch, so the same event re-scraped across several batches
+    (with different URLs) — or covered by many outlets with slightly different
+    headlines — accumulates in the DB and floods the feed (e.g. a single "Gaza
+    journalist killed" story appearing many times).
+
+    This keeps the FIRST occurrence of each story (the list is pre-sorted by
+    relevance then recency) and drops later headlines whose content-word overlap
+    with an already-kept headline is >= `threshold` (Jaccard on words, stop-words
+    removed — same logic and threshold as the scrape-time clustering).
+    """
+    from services.news_scraper import _content_words
+
+    kept: list = []
+    kept_word_sets: list = []
+    for art in articles:
+        words = _content_words(art.get("title", ""))
+        is_duplicate = False
+        if words:
+            for prev_words in kept_word_sets:
+                if not prev_words:
+                    continue
+                overlap = len(words & prev_words) / len(words | prev_words)
+                if overlap >= threshold:
+                    is_duplicate = True
+                    break
+        if not is_duplicate:
+            kept.append(art)
+            kept_word_sets.append(words)
+    return kept
+
+
 @api_router.get("/news")
 async def get_news(
     language: Optional[str] = None,
@@ -1909,19 +1945,29 @@ async def get_news(
     else:
         cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
 
-    query = _build_news_query(language, region, cutoff)
-    articles = await db.news_articles.find(
-        query, {"_id": 0}
-    ).sort([("relevanceScore", -1), ("publishedAt", -1)]).skip(offset).limit(limit).to_list(limit)
+    # Over-fetch a larger pool so the de-duplication safeguard has the
+    # near-duplicate headlines available to collapse BEFORE we slice the
+    # requested page. Skipping at the DB level (the old behaviour) would hide
+    # duplicates inside the page instead of removing them.
+    pool_size = min(300, (offset + limit) * 2 + 60)
 
-    if not articles and offset == 0:
+    query = _build_news_query(language, region, cutoff)
+    pool = await db.news_articles.find(
+        query, {"_id": 0}
+    ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(pool_size).to_list(pool_size)
+
+    if not pool and offset == 0:
         # Fallback: ignore time window but keep lang/region filters
         fb_query = _build_news_query(language, region, "1970-01-01T00:00:00+00:00")
-        articles = await db.news_articles.find(
+        pool = await db.news_articles.find(
             fb_query, {"_id": 0}
-        ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(limit).to_list(limit)
+        ).sort([("relevanceScore", -1), ("publishedAt", -1)]).limit(pool_size).to_list(pool_size)
 
-    normalised = [_normalise_article(a) for a in articles]
+    # Collapse near-duplicate stories, then slice the requested page.
+    deduped = _dedupe_near_duplicates(pool)
+    page = deduped[offset:offset + limit]
+
+    normalised = [_normalise_article(a) for a in page]
     return _interleave_sources(normalised)
 
 
