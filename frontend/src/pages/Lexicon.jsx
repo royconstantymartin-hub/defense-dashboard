@@ -1,6 +1,6 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getWikiImage } from "@/lib/wikiImage";
+import { getWikiImagesBatch } from "@/lib/wikiImage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -38,48 +38,15 @@ const CATEGORY_STYLE = {
 const categoryStyle = (category) =>
   CATEGORY_STYLE[category] || { Icon: BookOpen, cls: "text-slate-600", bg: "bg-slate-100 border-slate-200" };
 
-// Mini thumbnail for a card: lazily fetches the term's Wikipedia photo (the same
-// image used as the detail-page hero) and shows it in place of the icon. Only
-// loads once the card scrolls near the viewport, and falls back to the category
-// icon when the term has no image.
-function CardThumb({ wiki, alt, Icon, cls, bg }) {
-  const ref = useRef(null);
-  const [src, setSrc] = useState(null);
+// Mini thumbnail for a card: shows the term's pre-fetched Wikipedia photo (the
+// same image used as the detail-page hero) in place of the icon, falling back
+// to the category icon when there's no image (yet).
+function CardThumb({ src, alt, Icon, cls, bg }) {
   const [failed, setFailed] = useState(false);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "300px" }
-    );
-    io.observe(node);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!visible || !wiki) return;
-    let active = true;
-    getWikiImage(wiki, 200).then((url) => {
-      if (!active) return;
-      if (url) setSrc(url);
-      else setFailed(true);
-    });
-    return () => { active = false; };
-  }, [visible, wiki]);
-
   const showImage = src && !failed;
 
   return (
     <div
-      ref={ref}
       className={`w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border ${showImage ? "border-slate-200" : bg}`}
     >
       {showImage ? (
@@ -101,6 +68,17 @@ function CardThumb({ wiki, alt, Icon, cls, bg }) {
 export default function Lexicon() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [thumbs, setThumbs] = useState({});
+
+  // Fetch every term's thumbnail in a couple of batched requests on mount.
+  useEffect(() => {
+    let active = true;
+    const titles = LEXICON.map((e) => e.wiki).filter(Boolean);
+    getWikiImagesBatch(titles, 240).then((map) => {
+      if (active) setThumbs(map);
+    });
+    return () => { active = false; };
+  }, []);
 
   const filtered = useMemo(() => {
     let list = LEXICON;
@@ -194,7 +172,7 @@ export default function Lexicon() {
                   <CardContent className="p-5 flex flex-col h-full">
                     <div className="flex items-start gap-3 mb-3">
                       <CardThumb
-                        wiki={entry.wiki}
+                        src={entry.wiki ? thumbs[entry.wiki] : null}
                         alt={entry.imageAlt || entry.term}
                         Icon={Icon}
                         cls={cls}
