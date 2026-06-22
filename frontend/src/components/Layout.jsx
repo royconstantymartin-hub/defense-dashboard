@@ -17,7 +17,8 @@ import {
   Bookmark,
   Lock,
   Radar,
-  BookOpen
+  BookOpen,
+  GraduationCap
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ const navItems = [
   { path: "/follow", icon: Rss, label: "Sources" },
   { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
   { path: "/lexicon", icon: BookOpen, label: "Lexicon" },
+  { path: "/quiz", icon: GraduationCap, label: "Quiz" },
   { path: "/world-monitor", icon: Radar, label: "World Monitor", inProgress: true },
 ];
 

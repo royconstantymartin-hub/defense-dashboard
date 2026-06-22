@@ -19,6 +19,7 @@ import PrivatePlayers from "@/pages/PrivatePlayers";
 import WorldMonitor from "@/pages/WorldMonitor";
 import Lexicon from "@/pages/Lexicon";
 import LexiconTerm from "@/pages/LexiconTerm";
+import Quiz from "@/pages/Quiz";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -130,6 +131,7 @@ function App() {
             <Route path="world-monitor" element={<WorldMonitor />} />
             <Route path="lexicon" element={<Lexicon />} />
             <Route path="lexicon/:slug" element={<LexiconTerm />} />
+            <Route path="quiz" element={<Quiz />} />
             <Route path="admin" element={<Admin />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
