@@ -2921,15 +2921,36 @@ async def _purge_scraper_junk():
             "target": {"$regex": _HALLUC_RE, "$options": "i"},
         })
 
+        # ── Pass 2b: delete junk acquirer/target (numbers, quantities, descriptors)
+        # Catches scraper garbage like "over 10 nations", "10,000 units",
+        # "Carmaker Renault", "defense firms", "Pentagon", etc.
+        _JUNK_PARTY_RE = (
+            r"(^|\b)("
+            r"\d[\d,\.]*\s*(units?|nations?|countries|companies|firms?|systems?|vehicles?)?"
+            r"|over\s+\d|more\s+than\s+\d|up\s+to\s+\d|about\s+\d|around\s+\d"
+            r"|carmaker|automaker|truckmaker|defen[cs]e\s+firms?|pentagon|ministry|"
+            r"government|armed\s+forces|several\s+(companies|firms)|multiple\s+(companies|firms)"
+            r")(\b|$)"
+        )
+        r2b = await db.ma_activities.delete_many({
+            "scraped_at": {"$exists": True},
+            "$or": [
+                {"acquirer": {"$regex": _JUNK_PARTY_RE, "$options": "i"}},
+                {"target":   {"$regex": _JUNK_PARTY_RE, "$options": "i"}},
+            ],
+        })
+
         # ── Pass 3: cross-reference against seeded (acquirer, target) pairs ───
-        from data.seed_data import MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10
+        from data.seed_data import (
+            MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10, MA_EUROSATORY_2026,
+        )
 
         def _norm(s: str) -> str:
             return _re.sub(r"\s+", " ", s.lower().strip())
 
         # Build lookup: (first word of acquirer, first word of target) pairs
         seed_pairs: set = set()
-        for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10:
+        for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026:
             aw = _norm(m["acquirer"]).split()
             tw = _norm(m["target"]).split()
             if aw and tw:
@@ -2951,8 +2972,9 @@ async def _purge_scraper_junk():
                 await db.ma_activities.delete_one({"id": e["id"]}); r3 += 1
 
         logger.info(
-            "M&A scraper junk purge: %d no-source, %d hallucinated target, %d duplicates removed",
-            r1.deleted_count, r2.deleted_count, r3,
+            "M&A scraper junk purge: %d no-source, %d hallucinated target, "
+            "%d junk party, %d duplicates removed",
+            r1.deleted_count, r2.deleted_count, r2b.deleted_count, r3,
         )
     except Exception as exc:
         logger.warning("M&A scraper junk purge failed (non-fatal): %s", exc)

@@ -9792,4 +9792,165 @@ MA_EUROSATORY_2026 = [
         "sector": "land_systems",
         "confidence": "medium",
     },
+    {
+        "acquirer": "Safran Electronics & Defense",
+        "target": "THEON",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Safran Electronics & Defense and THEON sign MoU at Eurosatory 2026 to form an electro-optics JV for drones",
+        "rationale": (
+            "France's Safran Electronics & Defense and Greek night-vision and optronics specialist "
+            "THEON sign a memorandum of understanding at Eurosatory 2026 to establish a joint "
+            "venture focused on electro-optical and infrared (EO/IR) systems for unmanned aerial "
+            "vehicles. The partnership combines Safran's optronics and inertial-navigation expertise "
+            "with THEON's high-volume night-vision production. Financial terms were not disclosed."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "GR",
+        "acquirer_logo_domain": "safran-group.com",
+        "target_logo_domain": "theon.com",
+        "source_url": "https://www.shephardmedia.com/news/defence-notes/eurosatory-2026-partnership-deals-surge-as-industry-prepares-for-defence-spending-growth/",
+        "announced_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "c2_electronics",
+        "notes": "MoU to establish a joint venture.",
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Renault Group",
+        "target": "Thales",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Renault Group and Thales enter a strategic partnership at Eurosatory 2026 — 4 TROOP vehicle and Toutatis loitering munition",
+        "rationale": (
+            "Renault Group and Thales announce a strategic partnership at Eurosatory 2026 spanning "
+            "two programmes: the 4 TROOP tactical vehicle (integrating drones, sensors, secure "
+            "communications and AI decision-support) and industrial-scale production of the Toutatis "
+            "loitering munition, targeting roughly 10,000 units a year from 2027. Renault contributes "
+            "automotive mass-production capability while Thales provides defence systems and guided-"
+            "weapons expertise, illustrating European carmakers' move into sovereign defence "
+            "production. Financial terms were not disclosed."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "FR",
+        "acquirer_logo_domain": "renaultgroup.com",
+        "target_logo_domain": "thalesgroup.com",
+        "source_url": "https://euro-sd.com/2026/06/news/land/51513/renault-group-and-thales-enter-into-a-strategic-partnership/",
+        "announced_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "land_systems",
+        "notes": "Strategic partnership (4 TROOP vehicle + Toutatis loitering munition).",
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Thales",
+        "target": "Hanwha",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Thales and Hanwha sign MoU at Eurosatory 2026 to integrate Chunmoo missiles with the X-Fire launcher",
+        "rationale": (
+            "France's Thales and South Korea's Hanwha Aerospace sign a memorandum of understanding on "
+            "17 June 2026 at Eurosatory 2026 to pursue technical cooperation ensuring compatibility of "
+            "weapons from Hanwha's Chunmoo guided-rocket family with Thales's X-Fire launcher platform. "
+            "The agreement opens European launcher integration for Korean precision rockets amid "
+            "surging demand for long-range fires. Financial terms were not disclosed."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "KR",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "hanwha.com",
+        "source_url": "https://www.asdnews.com/news/defense/2026/06/18/thales-hanwha-sign-mou-ensure-compatibility-hanwha-chunmoo-guided-missiles-with-thales-launcher-xfire",
+        "announced_date": datetime(2026, 6, 17, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "missiles_munitions",
+        "notes": "Technical cooperation MoU.",
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Rheinmetall",
+        "target": "General Atomics",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Rheinmetall and General Atomics sign MoU at Eurosatory 2026 to explore Vektrex 155mm precision munition co-production",
+        "rationale": (
+            "Germany's Rheinmetall and General Atomics Electromagnetic Systems (US) sign a memorandum "
+            "of understanding at Eurosatory 2026 to explore cooperative production of Vektrex, a "
+            "manoeuvring 155 mm precision-guided artillery munition, supporting allied long-range "
+            "artillery modernisation. Financial terms were not disclosed."
+        ),
+        "acquirer_country": "DE",
+        "target_country": "US",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "ga.com",
+        "source_url": "https://defence-industry.eu/rheinmetall-and-general-atomics-explore-vektrex-co-production-to-support-allied-long-range-artillery-modernisation/",
+        "announced_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "missiles_munitions",
+        "notes": "Co-production MoU.",
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Thales",
+        "target": "Arquus",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Thales and Arquus sign MoU at Eurosatory 2026 for vehicle-mounted SpinFire mortar systems",
+        "rationale": (
+            "Thales and French military-vehicle manufacturer Arquus sign a memorandum of understanding "
+            "at Eurosatory 2026 to integrate the SpinFire mortar family onto tactical vehicles, "
+            "developing mobile fire-support systems that bridge the gap between towed mortars and heavy "
+            "mortar carriers. Financial terms were not disclosed."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "FR",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "arquus-defense.com",
+        "source_url": "https://militaeraktuell.at/en/thales-and-arquus-are-developing-new-vehicle-mounted-mortar-systems/",
+        "announced_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "land_systems",
+        "notes": "Cooperation MoU (SpinFire mortar on tactical vehicles).",
+        "confidence": "medium",
+    },
+    {
+        "acquirer": "Hensoldt",
+        "target": "ST Engineering",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Hensoldt and ST Engineering deepen partnership at Eurosatory 2026 with a cyber / software-defined defence MoU",
+        "rationale": (
+            "German sensor and defence-electronics specialist Hensoldt and the cybersecurity division "
+            "of Singapore's ST Engineering sign a memorandum of understanding at Eurosatory 2026, "
+            "laying the foundation for collaboration on defence and cybersecurity capabilities for "
+            "software-defined defence solutions. Financial terms were not disclosed."
+        ),
+        "acquirer_country": "DE",
+        "target_country": "SG",
+        "acquirer_logo_domain": "hensoldt.net",
+        "target_logo_domain": "stengg.com",
+        "source_url": "https://militaeraktuell.at/en/eurosatory-2026-hensoldt-and-st-engineering-strengthen-their-partnership/",
+        "announced_date": datetime(2026, 6, 17, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "c2_electronics",
+        "notes": "Cybersecurity / software-defined defence MoU.",
+        "confidence": "medium",
+    },
 ]
