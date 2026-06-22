@@ -29,11 +29,11 @@ import {
 } from "lucide-react";
 import {
   QUIZ_QUESTIONS,
-  QUIZ_THEMES,
+  QUIZ_CATEGORIES,
   QUIZ_LEVELS,
-  THEME_LABEL,
+  CATEGORY_LABEL,
   LEVEL_LABEL,
-  THEME_COUNTS,
+  CATEGORY_COUNTS,
 } from "@/data/quiz";
 
 // How many questions a single game contains (drawn at random from the bank).
@@ -49,18 +49,23 @@ function shuffle(arr) {
   return a;
 }
 
-// Builds a single game run: filters by theme/level ("all" = no filter), draws a
-// random subset, and shuffles each question's four options so the correct answer
-// isn't always in the same spot. The original answer index is remapped.
-function buildRun(theme, level) {
+// Filters the bank by category, the chosen sub-filters and difficulty.
+// "all" category = no category filter; empty subs = every sub in the category;
+// a question matches the subs if it carries at least one of the selected tags.
+function filterPool(category, subs, level) {
   let pool = QUIZ_QUESTIONS;
-  if (theme !== "all") pool = pool.filter((q) => q.theme === theme);
+  if (category !== "all") pool = pool.filter((q) => q.category === category);
+  if (subs.length > 0) pool = pool.filter((q) => q.sub.some((s) => subs.includes(s)));
   if (level !== "all") pool = pool.filter((q) => q.level === level);
+  return pool;
+}
 
-  return shuffle(pool)
+// Builds a single game run: draws a random subset and shuffles each question's
+// four options so the correct answer isn't always in the same spot.
+function buildRun(category, subs, level) {
+  return shuffle(filterPool(category, subs, level))
     .slice(0, QUESTIONS_PER_GAME)
     .map((q) => {
-      // Pair each option with whether it is the correct one, then shuffle.
       const paired = q.options.map((text, i) => ({ text, correct: i === q.answer }));
       const shuffledOpts = shuffle(paired);
       return {
@@ -71,26 +76,19 @@ function buildRun(theme, level) {
     });
 }
 
-// How many questions match the current filters (before drawing the 20).
-function countAvailable(theme, level) {
-  let pool = QUIZ_QUESTIONS;
-  if (theme !== "all") pool = pool.filter((q) => q.theme === theme);
-  if (level !== "all") pool = pool.filter((q) => q.level === level);
-  return pool.length;
-}
-
 // Turns a score percentage into a colored verdict.
 function verdict(pct) {
   if (pct >= 80) return { label: "Excellent", cls: "text-emerald-600" };
-  if (pct >= 60) return { label: "Good", cls: "text-blue-700" };
-  if (pct >= 40) return { label: "Fair", cls: "text-amber-600" };
-  return { label: "Needs work", cls: "text-rose-600" };
+  if (pct >= 60) return { label: "Bien", cls: "text-blue-700" };
+  if (pct >= 40) return { label: "Passable", cls: "text-amber-600" };
+  return { label: "À retravailler", cls: "text-rose-600" };
 }
 
 export default function Quiz() {
   // phase: "setup" → "playing" → "results"
   const [phase, setPhase] = useState("setup");
-  const [theme, setTheme] = useState("all");
+  const [category, setCategory] = useState("history");
+  const [subs, setSubs] = useState([]); // selected sub-filter values
   const [level, setLevel] = useState("all");
 
   const [questions, setQuestions] = useState([]);
@@ -98,13 +96,32 @@ export default function Quiz() {
   const [selected, setSelected] = useState(null); // index picked for the current question
   const [answers, setAnswers] = useState([]); // { question, picked, correct }
 
-  const available = useMemo(() => countAvailable(theme, level), [theme, level]);
-  const drawn = Math.min(available, QUESTIONS_PER_GAME);
+  // The currently selected category object (with its sub-filter definitions).
+  const catObj = useMemo(
+    () => QUIZ_CATEGORIES.find((c) => c.value === category),
+    [category]
+  );
 
+  const available = useMemo(
+    () => filterPool(category, subs, level).length,
+    [category, subs, level]
+  );
+  const drawn = Math.min(available, QUESTIONS_PER_GAME);
   const totalInBank = QUIZ_QUESTIONS.length;
 
+  const changeCategory = (value) => {
+    setCategory(value);
+    setSubs([]); // sub-filters are category-specific, so reset them
+  };
+
+  const toggleSub = (value) => {
+    setSubs((prev) =>
+      prev.includes(value) ? prev.filter((s) => s !== value) : [...prev, value]
+    );
+  };
+
   const startQuiz = () => {
-    setQuestions(buildRun(theme, level));
+    setQuestions(buildRun(category, subs, level));
     setCurrent(0);
     setSelected(null);
     setAnswers([]);
@@ -143,63 +160,110 @@ export default function Quiz() {
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6 space-y-6">
             <p className="text-sm text-slate-600">
-              Test your knowledge of the global defense world. Pick a theme and a difficulty
-              level, or leave both on "All" for a full mix. Each game draws {QUESTIONS_PER_GAME}{" "}
-              random questions and shuffles the answers, so two runs are rarely the same. You'll
-              get a score broken down by theme and by level at the end.
+              Testez vos connaissances du monde de la défense. Choisissez une catégorie, affinez
+              avec un ou plusieurs sous-filtres, puis une difficulté. Chaque partie tire{" "}
+              {QUESTIONS_PER_GAME} questions au hasard et mélange les réponses : deux parties se
+              ressemblent rarement.
             </p>
 
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Theme
-                </label>
-                <Select value={theme} onValueChange={setTheme}>
-                  <SelectTrigger className="bg-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Themes</SelectItem>
-                    {QUIZ_THEMES.map((t) => (
-                      <SelectItem key={t.value} value={t.value}>
-                        {t.label} ({THEME_COUNTS[t.value]})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            {/* Step 1 — Category */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                1 · Catégorie
+              </label>
+              <Select value={category} onValueChange={changeCategory}>
+                <SelectTrigger className="bg-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">🎲 Toutes catégories (mix complet)</SelectItem>
+                  {QUIZ_CATEGORIES.map((c) => (
+                    <SelectItem key={c.value} value={c.value}>
+                      {c.emoji} {c.label} ({CATEGORY_COUNTS[c.value]})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div className="space-y-1.5">
+            {/* Step 2 — Sub-filters (chips), hidden for the "all categories" mix */}
+            {category !== "all" && catObj && (
+              <div className="space-y-2">
                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Difficulty
+                  2 · Sous-filtre{" "}
+                  <span className="font-normal normal-case text-slate-400">
+                    (aucun = toute la catégorie)
+                  </span>
                 </label>
-                <Select value={level} onValueChange={setLevel}>
-                  <SelectTrigger className="bg-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Levels</SelectItem>
-                    {QUIZ_LEVELS.map((l) => (
-                      <SelectItem key={l.value} value={l.value}>
-                        {l.label}
-                      </SelectItem>
+
+                {catObj.groups ? (
+                  // Grouped chips (e.g. History: Country vs Era)
+                  <div className="space-y-3">
+                    {catObj.groups.map((g) => (
+                      <div key={g.label}>
+                        <p className="text-[11px] font-semibold text-slate-400 mb-1.5">{g.label}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {g.values.map((v) => {
+                            const sub = catObj.subs.find((s) => s.value === v);
+                            return (
+                              <SubChip
+                                key={v}
+                                label={sub.label}
+                                active={subs.includes(v)}
+                                onClick={() => toggleSub(v)}
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {catObj.subs.map((s) => (
+                      <SubChip
+                        key={s.value}
+                        label={s.label}
+                        active={subs.includes(s.value)}
+                        onClick={() => toggleSub(s.value)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
+            )}
+
+            {/* Step 3 — Difficulty */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                3 · Difficulté
+              </label>
+              <Select value={level} onValueChange={setLevel}>
+                <SelectTrigger className="bg-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous niveaux</SelectItem>
+                  {QUIZ_LEVELS.map((l) => (
+                    <SelectItem key={l.value} value={l.value}>
+                      {l.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex items-center justify-between pt-2">
               <span className="text-sm text-slate-500 font-mono">
-                {drawn} question{drawn !== 1 ? "s" : ""} this game · {available} match your filters
-                · {totalInBank} in bank
+                {drawn} question{drawn !== 1 ? "s" : ""} cette partie · {available} disponible
+                {available !== 1 ? "s" : ""} · {totalInBank} en banque
               </span>
               <Button
                 onClick={startQuiz}
                 disabled={available === 0}
                 className="bg-blue-800 hover:bg-blue-900 text-white"
               >
-                Start Quiz
+                Commencer
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
@@ -227,7 +291,7 @@ export default function Quiz() {
             </span>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="border-slate-200 text-slate-600">
-                {THEME_LABEL[q.theme]}
+                {CATEGORY_LABEL[q.category]}
               </Badge>
               <Badge variant="outline" className="border-slate-200 text-slate-600">
                 {LEVEL_LABEL[q.level]}
@@ -246,7 +310,6 @@ export default function Quiz() {
                 const isCorrect = idx === q.answer;
                 const isPicked = idx === selected;
 
-                // Default (unanswered) styling
                 let cls = "border-slate-200 hover:border-blue-300 hover:bg-blue-50/50";
                 let Icon = null;
                 if (answered) {
@@ -286,7 +349,7 @@ export default function Quiz() {
               <div className="mt-5 p-4 rounded-lg bg-slate-50 border border-slate-200">
                 <p className="text-sm text-slate-700">
                   <span className="font-semibold">
-                    {selected === q.answer ? "Correct. " : "Not quite. "}
+                    {selected === q.answer ? "Correct. " : "Pas tout à fait. "}
                   </span>
                   {q.explanation}
                 </p>
@@ -296,7 +359,7 @@ export default function Quiz() {
             {answered && (
               <div className="flex justify-end mt-5">
                 <Button onClick={next} className="bg-blue-800 hover:bg-blue-900 text-white">
-                  {current + 1 >= questions.length ? "See Results" : "Next Question"}
+                  {current + 1 >= questions.length ? "Voir les résultats" : "Question suivante"}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -313,7 +376,7 @@ export default function Quiz() {
   const overallPct = total ? Math.round((correct / total) * 100) : 0;
   const overall = verdict(overallPct);
 
-  // Build per-theme and per-level breakdowns from the answers given.
+  // Build per-category and per-level breakdowns from the answers given.
   const breakdown = (key, defs) =>
     defs
       .map((d) => {
@@ -329,11 +392,11 @@ export default function Quiz() {
       })
       .filter((d) => d.total > 0);
 
-  const byTheme = breakdown("theme", QUIZ_THEMES);
+  const byCategory = breakdown("category", QUIZ_CATEGORIES);
   const byLevel = breakdown("level", QUIZ_LEVELS);
 
   // Radar needs at least 3 axes to look meaningful.
-  const radarData = byTheme.map((c) => ({ subject: c.label, score: c.pct }));
+  const radarData = byCategory.map((c) => ({ subject: c.label, score: c.pct }));
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -344,24 +407,24 @@ export default function Quiz() {
         <CardContent className="p-6 flex flex-col items-center text-center">
           <Trophy className="w-10 h-10 text-blue-800 mb-3" />
           <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">
-            Overall Score
+            Score global
           </p>
           <p className="font-heading text-5xl font-bold text-slate-900 my-2">{overallPct}%</p>
           <p className={`text-sm font-semibold ${overall.cls}`}>{overall.label}</p>
           <p className="text-sm text-slate-500 mt-1 font-mono">
-            {correct} / {total} correct
+            {correct} / {total} correctes
           </p>
         </CardContent>
       </Card>
 
       <div className="grid md:grid-cols-2 gap-5">
-        {/* Per-theme radar (only when 3+ themes were tested) */}
+        {/* Per-category radar (only when 3+ categories were tested) */}
         {radarData.length >= 3 && (
           <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
             <CardContent className="p-6">
               <h3 className="font-heading font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <Target className="w-4 h-4 text-blue-800" />
-                Score by Theme
+                Score par catégorie
               </h3>
               <ResponsiveContainer width="100%" height={260}>
                 <RadarChart data={radarData} outerRadius="70%">
@@ -375,12 +438,12 @@ export default function Quiz() {
           </Card>
         )}
 
-        {/* Per-theme bars (always shown) */}
+        {/* Per-category bars (always shown) */}
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6">
-            <h3 className="font-heading font-bold text-slate-900 mb-4">By Theme</h3>
+            <h3 className="font-heading font-bold text-slate-900 mb-4">Par catégorie</h3>
             <div className="space-y-3">
-              {byTheme.map((c) => (
+              {byCategory.map((c) => (
                 <ScoreBar key={c.value} label={c.label} correct={c.correct} total={c.total} pct={c.pct} />
               ))}
             </div>
@@ -390,7 +453,7 @@ export default function Quiz() {
         {/* Per-level bars */}
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6">
-            <h3 className="font-heading font-bold text-slate-900 mb-4">By Difficulty</h3>
+            <h3 className="font-heading font-bold text-slate-900 mb-4">Par difficulté</h3>
             <div className="space-y-3">
               {byLevel.map((l) => (
                 <ScoreBar key={l.value} label={l.label} correct={l.correct} total={l.total} pct={l.pct} />
@@ -403,7 +466,7 @@ export default function Quiz() {
       <div className="flex justify-center mt-6">
         <Button onClick={resetQuiz} className="bg-blue-800 hover:bg-blue-900 text-white">
           <RotateCcw className="w-4 h-4 mr-2" />
-          Play Again
+          Rejouer
         </Button>
       </div>
     </div>
@@ -420,13 +483,30 @@ function PageHeader() {
           <GraduationCap className="w-5 h-5 text-blue-800" />
         </div>
         <div>
-          <h1 className="font-heading text-2xl font-bold text-slate-900">Knowledge Quiz</h1>
+          <h1 className="font-heading text-2xl font-bold text-slate-900">Quiz de connaissances</h1>
           <p className="text-sm text-slate-500">
-            Test your defense-world knowledge by theme and level
+            Testez vos connaissances de la défense par catégorie, sous-filtre et niveau
           </p>
         </div>
       </div>
     </div>
+  );
+}
+
+// A toggleable sub-filter chip/pill.
+function SubChip({ label, active, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
+        active
+          ? "bg-blue-800 border-blue-800 text-white"
+          : "bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50/50"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
 
