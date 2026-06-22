@@ -77,6 +77,15 @@ function filterPool(category, subs, level) {
   return pool;
 }
 
+// Would picking this sub-filter (on top of the current selection) leave any
+// questions? Used to disable impossible combinations — e.g. selecting "Germany"
+// greys out eras with no German battles in the bank. Already-selected chips stay
+// enabled so they can be toggled off.
+function subHasResults(category, subs, level, value) {
+  if (subs.includes(value)) return true;
+  return filterPool(category, [...subs, value], level).length > 0;
+}
+
 // Builds a single game run: draws a random subset and shuffles each question's
 // four options so the correct answer isn't always in the same spot.
 function buildRun(category, subs, level) {
@@ -96,9 +105,9 @@ function buildRun(category, subs, level) {
 // Turns a score percentage into a colored verdict.
 function verdict(pct) {
   if (pct >= 80) return { label: "Excellent", cls: "text-emerald-600" };
-  if (pct >= 60) return { label: "Bien", cls: "text-blue-700" };
-  if (pct >= 40) return { label: "Passable", cls: "text-amber-600" };
-  return { label: "À retravailler", cls: "text-rose-600" };
+  if (pct >= 60) return { label: "Good", cls: "text-blue-700" };
+  if (pct >= 40) return { label: "Fair", cls: "text-amber-600" };
+  return { label: "Needs work", cls: "text-rose-600" };
 }
 
 export default function Quiz() {
@@ -177,26 +186,25 @@ export default function Quiz() {
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6 space-y-6">
             <p className="text-sm text-slate-600">
-              Testez vos connaissances du monde de la défense. Choisissez une catégorie, affinez
-              avec un ou plusieurs sous-filtres, puis une difficulté. Chaque partie tire{" "}
-              {QUESTIONS_PER_GAME} questions au hasard et mélange les réponses : deux parties se
-              ressemblent rarement.
+              Test your knowledge of the defense world. Pick a category, refine it with one or
+              more sub-filters, then a difficulty. Each game draws {QUESTIONS_PER_GAME} random
+              questions and shuffles the answers, so two runs are rarely the same.
             </p>
 
             {/* Step 1 — Category */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                1 · Catégorie
+                1 · Category
               </label>
               <Select value={category} onValueChange={changeCategory}>
                 <SelectTrigger className="bg-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">🎲 Toutes catégories (mix complet)</SelectItem>
+                  <SelectItem value="all">All categories (full mix)</SelectItem>
                   {QUIZ_CATEGORIES.map((c) => (
                     <SelectItem key={c.value} value={c.value}>
-                      {c.emoji} {c.label} ({CATEGORY_COUNTS[c.value]})
+                      {c.label} ({CATEGORY_COUNTS[c.value]})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -207,9 +215,9 @@ export default function Quiz() {
             {category !== "all" && catObj && (
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  2 · Sous-filtre{" "}
+                  2 · Sub-filter{" "}
                   <span className="font-normal normal-case text-slate-400">
-                    (aucun = toute la catégorie)
+                    (none = whole category)
                   </span>
                 </label>
 
@@ -218,8 +226,8 @@ export default function Quiz() {
                   // Within a group the chips are OR'd; across groups they are AND'd.
                   <div className="space-y-3">
                     <p className="text-[11px] text-slate-400 -mb-1">
-                      Astuce : un filtre de chaque groupe se croise (ex. France + 2de GM = batailles
-                      françaises de la 2de Guerre mondiale).
+                      Tip: one filter from each group is combined (e.g. France + WWII = French
+                      battles of World War II).
                     </p>
                     {catObj.groups.map((g) => (
                       <div key={g.label}>
@@ -232,6 +240,7 @@ export default function Quiz() {
                                 key={v}
                                 label={sub.label}
                                 active={subs.includes(v)}
+                                disabled={!subHasResults(category, subs, level, v)}
                                 onClick={() => toggleSub(v)}
                               />
                             );
@@ -247,6 +256,7 @@ export default function Quiz() {
                         key={s.value}
                         label={s.label}
                         active={subs.includes(s.value)}
+                        disabled={!subHasResults(category, subs, level, s.value)}
                         onClick={() => toggleSub(s.value)}
                       />
                     ))}
@@ -258,14 +268,14 @@ export default function Quiz() {
             {/* Step 3 — Difficulty */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                3 · Difficulté
+                3 · Difficulty
               </label>
               <Select value={level} onValueChange={setLevel}>
                 <SelectTrigger className="bg-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tous niveaux</SelectItem>
+                  <SelectItem value="all">All levels</SelectItem>
                   {QUIZ_LEVELS.map((l) => (
                     <SelectItem key={l.value} value={l.value}>
                       {l.label}
@@ -277,15 +287,15 @@ export default function Quiz() {
 
             <div className="flex items-center justify-between pt-2">
               <span className="text-sm text-slate-500 font-mono">
-                {drawn} question{drawn !== 1 ? "s" : ""} cette partie · {available} disponible
-                {available !== 1 ? "s" : ""} · {totalInBank} en banque
+                {drawn} question{drawn !== 1 ? "s" : ""} this game · {available} match your filters
+                · {totalInBank} in bank
               </span>
               <Button
                 onClick={startQuiz}
                 disabled={available === 0}
                 className="bg-blue-800 hover:bg-blue-900 text-white"
               >
-                Commencer
+                Start Quiz
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
@@ -371,7 +381,7 @@ export default function Quiz() {
               <div className="mt-5 p-4 rounded-lg bg-slate-50 border border-slate-200">
                 <p className="text-sm text-slate-700">
                   <span className="font-semibold">
-                    {selected === q.answer ? "Correct. " : "Pas tout à fait. "}
+                    {selected === q.answer ? "Correct. " : "Not quite. "}
                   </span>
                   {q.explanation}
                 </p>
@@ -381,7 +391,7 @@ export default function Quiz() {
             {answered && (
               <div className="flex justify-end mt-5">
                 <Button onClick={next} className="bg-blue-800 hover:bg-blue-900 text-white">
-                  {current + 1 >= questions.length ? "Voir les résultats" : "Question suivante"}
+                  {current + 1 >= questions.length ? "See Results" : "Next Question"}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -429,12 +439,12 @@ export default function Quiz() {
         <CardContent className="p-6 flex flex-col items-center text-center">
           <Trophy className="w-10 h-10 text-blue-800 mb-3" />
           <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold">
-            Score global
+            Overall Score
           </p>
           <p className="font-heading text-5xl font-bold text-slate-900 my-2">{overallPct}%</p>
           <p className={`text-sm font-semibold ${overall.cls}`}>{overall.label}</p>
           <p className="text-sm text-slate-500 mt-1 font-mono">
-            {correct} / {total} correctes
+            {correct} / {total} correct
           </p>
         </CardContent>
       </Card>
@@ -446,7 +456,7 @@ export default function Quiz() {
             <CardContent className="p-6">
               <h3 className="font-heading font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <Target className="w-4 h-4 text-blue-800" />
-                Score par catégorie
+                Score by Category
               </h3>
               <ResponsiveContainer width="100%" height={260}>
                 <RadarChart data={radarData} outerRadius="70%">
@@ -463,7 +473,7 @@ export default function Quiz() {
         {/* Per-category bars (always shown) */}
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6">
-            <h3 className="font-heading font-bold text-slate-900 mb-4">Par catégorie</h3>
+            <h3 className="font-heading font-bold text-slate-900 mb-4">By Category</h3>
             <div className="space-y-3">
               {byCategory.map((c) => (
                 <ScoreBar key={c.value} label={c.label} correct={c.correct} total={c.total} pct={c.pct} />
@@ -475,7 +485,7 @@ export default function Quiz() {
         {/* Per-level bars */}
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6">
-            <h3 className="font-heading font-bold text-slate-900 mb-4">Par difficulté</h3>
+            <h3 className="font-heading font-bold text-slate-900 mb-4">By Difficulty</h3>
             <div className="space-y-3">
               {byLevel.map((l) => (
                 <ScoreBar key={l.value} label={l.label} correct={l.correct} total={l.total} pct={l.pct} />
@@ -488,7 +498,7 @@ export default function Quiz() {
       <div className="flex justify-center mt-6">
         <Button onClick={resetQuiz} className="bg-blue-800 hover:bg-blue-900 text-white">
           <RotateCcw className="w-4 h-4 mr-2" />
-          Rejouer
+          Play Again
         </Button>
       </div>
     </div>
@@ -505,9 +515,9 @@ function PageHeader() {
           <GraduationCap className="w-5 h-5 text-blue-800" />
         </div>
         <div>
-          <h1 className="font-heading text-2xl font-bold text-slate-900">Quiz de connaissances</h1>
+          <h1 className="font-heading text-2xl font-bold text-slate-900">Knowledge Quiz</h1>
           <p className="text-sm text-slate-500">
-            Testez vos connaissances de la défense par catégorie, sous-filtre et niveau
+            Test your defense knowledge by category, sub-filter and level
           </p>
         </div>
       </div>
@@ -515,15 +525,20 @@ function PageHeader() {
   );
 }
 
-// A toggleable sub-filter chip/pill.
-function SubChip({ label, active, onClick }) {
+// A toggleable sub-filter chip/pill. Disabled chips would yield no questions
+// given the current selection, so they are greyed out and not clickable.
+function SubChip({ label, active, disabled, onClick }) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      title={disabled ? "No questions for this combination" : undefined}
       className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
         active
           ? "bg-blue-800 border-blue-800 text-white"
+          : disabled
+          ? "bg-slate-50 border-slate-200 text-slate-300 cursor-not-allowed"
           : "bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50/50"
       }`}
     >
