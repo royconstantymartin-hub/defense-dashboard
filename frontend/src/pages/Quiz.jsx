@@ -49,13 +49,30 @@ function shuffle(arr) {
   return a;
 }
 
+// Does a question match the chosen sub-filters?
+//  • Within one axis/group (e.g. several countries) the tags are OR'd.
+//  • Across different groups (e.g. Country AND Era) they are AND'd — so picking
+//    "France" + "WWII" keeps only French WWII battles.
+//  • A category with no groups is a single OR set.
+function subMatch(catObj, subs, q) {
+  if (subs.length === 0) return true;
+  if (catObj && catObj.groups) {
+    return catObj.groups.every((g) => {
+      const selectedInGroup = g.values.filter((v) => subs.includes(v));
+      if (selectedInGroup.length === 0) return true; // no constraint from this axis
+      return selectedInGroup.some((v) => q.sub.includes(v));
+    });
+  }
+  return q.sub.some((s) => subs.includes(s));
+}
+
 // Filters the bank by category, the chosen sub-filters and difficulty.
-// "all" category = no category filter; empty subs = every sub in the category;
-// a question matches the subs if it carries at least one of the selected tags.
+// "all" category = no category filter; empty subs = every sub in the category.
 function filterPool(category, subs, level) {
+  const catObj = QUIZ_CATEGORIES.find((c) => c.value === category);
   let pool = QUIZ_QUESTIONS;
   if (category !== "all") pool = pool.filter((q) => q.category === category);
-  if (subs.length > 0) pool = pool.filter((q) => q.sub.some((s) => subs.includes(s)));
+  if (subs.length > 0) pool = pool.filter((q) => subMatch(catObj, subs, q));
   if (level !== "all") pool = pool.filter((q) => q.level === level);
   return pool;
 }
@@ -197,8 +214,13 @@ export default function Quiz() {
                 </label>
 
                 {catObj.groups ? (
-                  // Grouped chips (e.g. History: Country vs Era)
+                  // Grouped chips (e.g. History: Country vs Era).
+                  // Within a group the chips are OR'd; across groups they are AND'd.
                   <div className="space-y-3">
+                    <p className="text-[11px] text-slate-400 -mb-1">
+                      Astuce : un filtre de chaque groupe se croise (ex. France + 2de GM = batailles
+                      françaises de la 2de Guerre mondiale).
+                    </p>
                     {catObj.groups.map((g) => (
                       <div key={g.label}>
                         <p className="text-[11px] font-semibold text-slate-400 mb-1.5">{g.label}</p>
