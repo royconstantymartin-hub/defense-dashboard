@@ -1940,6 +1940,12 @@ async def get_news(
     hours = max(0, min(hours, 8760))  # cap at 1 year
     offset = max(0, offset)
 
+    # The public feed is English-only by default. French articles are kept in
+    # the DB (and still surface on company pages / an explicit ?language=fr
+    # request) but are no longer mixed into the main feed, which looked untidy.
+    if language is None:
+        language = "en"
+
     if hours == 0:
         cutoff = "1970-01-01T00:00:00+00:00"
     else:
