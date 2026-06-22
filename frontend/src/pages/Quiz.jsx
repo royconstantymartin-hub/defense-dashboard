@@ -29,11 +29,15 @@ import {
 } from "lucide-react";
 import {
   QUIZ_QUESTIONS,
-  QUIZ_CATEGORIES,
+  QUIZ_THEMES,
   QUIZ_LEVELS,
-  CATEGORY_LABEL,
+  THEME_LABEL,
   LEVEL_LABEL,
+  THEME_COUNTS,
 } from "@/data/quiz";
+
+// How many questions a single game contains (drawn at random from the bank).
+const QUESTIONS_PER_GAME = 20;
 
 // Fisher–Yates shuffle — returns a new array so we never mutate the source bank.
 function shuffle(arr) {
@@ -45,12 +49,34 @@ function shuffle(arr) {
   return a;
 }
 
-// Picks the questions for a run, filtered by the chosen category/level ("all" = no filter).
-function pickQuestions(category, level) {
+// Builds a single game run: filters by theme/level ("all" = no filter), draws a
+// random subset, and shuffles each question's four options so the correct answer
+// isn't always in the same spot. The original answer index is remapped.
+function buildRun(theme, level) {
   let pool = QUIZ_QUESTIONS;
-  if (category !== "all") pool = pool.filter((q) => q.category === category);
+  if (theme !== "all") pool = pool.filter((q) => q.theme === theme);
   if (level !== "all") pool = pool.filter((q) => q.level === level);
-  return shuffle(pool);
+
+  return shuffle(pool)
+    .slice(0, QUESTIONS_PER_GAME)
+    .map((q) => {
+      // Pair each option with whether it is the correct one, then shuffle.
+      const paired = q.options.map((text, i) => ({ text, correct: i === q.answer }));
+      const shuffledOpts = shuffle(paired);
+      return {
+        ...q,
+        options: shuffledOpts.map((o) => o.text),
+        answer: shuffledOpts.findIndex((o) => o.correct),
+      };
+    });
+}
+
+// How many questions match the current filters (before drawing the 20).
+function countAvailable(theme, level) {
+  let pool = QUIZ_QUESTIONS;
+  if (theme !== "all") pool = pool.filter((q) => q.theme === theme);
+  if (level !== "all") pool = pool.filter((q) => q.level === level);
+  return pool.length;
 }
 
 // Turns a score percentage into a colored verdict.
@@ -64,7 +90,7 @@ function verdict(pct) {
 export default function Quiz() {
   // phase: "setup" → "playing" → "results"
   const [phase, setPhase] = useState("setup");
-  const [category, setCategory] = useState("all");
+  const [theme, setTheme] = useState("all");
   const [level, setLevel] = useState("all");
 
   const [questions, setQuestions] = useState([]);
@@ -72,15 +98,13 @@ export default function Quiz() {
   const [selected, setSelected] = useState(null); // index picked for the current question
   const [answers, setAnswers] = useState([]); // { question, picked, correct }
 
-  // How many questions match the current filters (shown on the setup screen).
-  const availableCount = useMemo(
-    () => pickQuestions(category, level).length,
-    [category, level]
-  );
+  const available = useMemo(() => countAvailable(theme, level), [theme, level]);
+  const drawn = Math.min(available, QUESTIONS_PER_GAME);
+
+  const totalInBank = QUIZ_QUESTIONS.length;
 
   const startQuiz = () => {
-    const qs = pickQuestions(category, level);
-    setQuestions(qs);
+    setQuestions(buildRun(theme, level));
     setCurrent(0);
     setSelected(null);
     setAnswers([]);
@@ -119,25 +143,26 @@ export default function Quiz() {
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6 space-y-6">
             <p className="text-sm text-slate-600">
-              Test your knowledge of the global defense sector. Choose a category and a
-              difficulty level, or leave both on "All" to get a full mix. You'll get a score
-              broken down by category and by level at the end.
+              Test your knowledge of the global defense world. Pick a theme and a difficulty
+              level, or leave both on "All" for a full mix. Each game draws {QUESTIONS_PER_GAME}{" "}
+              random questions and shuffles the answers, so two runs are rarely the same. You'll
+              get a score broken down by theme and by level at the end.
             </p>
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  Category
+                  Theme
                 </label>
-                <Select value={category} onValueChange={setCategory}>
+                <Select value={theme} onValueChange={setTheme}>
                   <SelectTrigger className="bg-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {QUIZ_CATEGORIES.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
+                    <SelectItem value="all">All Themes</SelectItem>
+                    {QUIZ_THEMES.map((t) => (
+                      <SelectItem key={t.value} value={t.value}>
+                        {t.label} ({THEME_COUNTS[t.value]})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -166,11 +191,12 @@ export default function Quiz() {
 
             <div className="flex items-center justify-between pt-2">
               <span className="text-sm text-slate-500 font-mono">
-                {availableCount} question{availableCount !== 1 ? "s" : ""} available
+                {drawn} question{drawn !== 1 ? "s" : ""} this game · {available} match your filters
+                · {totalInBank} in bank
               </span>
               <Button
                 onClick={startQuiz}
-                disabled={availableCount === 0}
+                disabled={available === 0}
                 className="bg-blue-800 hover:bg-blue-900 text-white"
               >
                 Start Quiz
@@ -201,7 +227,7 @@ export default function Quiz() {
             </span>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="border-slate-200 text-slate-600">
-                {CATEGORY_LABEL[q.category]}
+                {THEME_LABEL[q.theme]}
               </Badge>
               <Badge variant="outline" className="border-slate-200 text-slate-600">
                 {LEVEL_LABEL[q.level]}
@@ -213,9 +239,7 @@ export default function Quiz() {
 
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6">
-            <h2 className="font-heading text-lg font-bold text-slate-900 mb-5">
-              {q.question}
-            </h2>
+            <h2 className="font-heading text-lg font-bold text-slate-900 mb-5">{q.question}</h2>
 
             <div className="space-y-3">
               {q.options.map((opt, idx) => {
@@ -289,7 +313,7 @@ export default function Quiz() {
   const overallPct = total ? Math.round((correct / total) * 100) : 0;
   const overall = verdict(overallPct);
 
-  // Build per-category and per-level breakdowns from the answers given.
+  // Build per-theme and per-level breakdowns from the answers given.
   const breakdown = (key, defs) =>
     defs
       .map((d) => {
@@ -305,11 +329,11 @@ export default function Quiz() {
       })
       .filter((d) => d.total > 0);
 
-  const byCategory = breakdown("category", QUIZ_CATEGORIES);
+  const byTheme = breakdown("theme", QUIZ_THEMES);
   const byLevel = breakdown("level", QUIZ_LEVELS);
 
   // Radar needs at least 3 axes to look meaningful.
-  const radarData = byCategory.map((c) => ({ subject: c.label, score: c.pct }));
+  const radarData = byTheme.map((c) => ({ subject: c.label, score: c.pct }));
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -331,40 +355,32 @@ export default function Quiz() {
       </Card>
 
       <div className="grid md:grid-cols-2 gap-5">
-        {/* Per-category radar (only when 3+ categories were tested) */}
+        {/* Per-theme radar (only when 3+ themes were tested) */}
         {radarData.length >= 3 && (
           <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
             <CardContent className="p-6">
               <h3 className="font-heading font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <Target className="w-4 h-4 text-blue-800" />
-                Score by Category
+                Score by Theme
               </h3>
               <ResponsiveContainer width="100%" height={260}>
                 <RadarChart data={radarData} outerRadius="70%">
                   <PolarGrid stroke="#e2e8f0" />
-                  <PolarAngleAxis
-                    dataKey="subject"
-                    tick={{ fontSize: 11, fill: "#475569" }}
-                  />
+                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "#475569" }} />
                   <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 10, fill: "#94a3b8" }} />
-                  <Radar
-                    dataKey="score"
-                    stroke="#1e40af"
-                    fill="#1e40af"
-                    fillOpacity={0.25}
-                  />
+                  <Radar dataKey="score" stroke="#1e40af" fill="#1e40af" fillOpacity={0.25} />
                 </RadarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         )}
 
-        {/* Per-category bars (always shown) */}
+        {/* Per-theme bars (always shown) */}
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6">
-            <h3 className="font-heading font-bold text-slate-900 mb-4">By Category</h3>
+            <h3 className="font-heading font-bold text-slate-900 mb-4">By Theme</h3>
             <div className="space-y-3">
-              {byCategory.map((c) => (
+              {byTheme.map((c) => (
                 <ScoreBar key={c.value} label={c.label} correct={c.correct} total={c.total} pct={c.pct} />
               ))}
             </div>
@@ -406,7 +422,7 @@ function PageHeader() {
         <div>
           <h1 className="font-heading text-2xl font-bold text-slate-900">Knowledge Quiz</h1>
           <p className="text-sm text-slate-500">
-            Test your defense-sector knowledge by category and level
+            Test your defense-world knowledge by theme and level
           </p>
         </div>
       </div>
