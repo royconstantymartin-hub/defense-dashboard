@@ -9,12 +9,12 @@ import {
   Lightbulb,
   Sparkles,
   Link as LinkIcon,
-  ImageOff,
 } from "lucide-react";
 import { LEXICON_BY_SLUG, CATEGORY_LABEL } from "@/data/lexicon";
+import { getWikiImage } from "@/lib/wikiImage";
 
-// Fetch a representative image for the term from the public Wikipedia REST API.
-// This keeps images correct without hardcoding (and easily broken) file names.
+// Fetch a representative image for the term from Wikipedia (shared, cached
+// helper — so an image already loaded by a list card appears instantly here).
 function useWikipediaImage(wikiTitle) {
   const [src, setSrc] = useState(null);
   const [failed, setFailed] = useState(false);
@@ -27,21 +27,11 @@ function useWikipediaImage(wikiTitle) {
       setFailed(true);
       return;
     }
-    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`;
-    fetch(url)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("not ok"))))
-      .then((data) => {
-        if (!active) return;
-        // Prefer the thumbnail (smaller) but bump its width for a crisp hero.
-        const thumb = data?.thumbnail?.source;
-        const original = data?.originalimage?.source;
-        const chosen = thumb
-          ? thumb.replace(/\/\d+px-/, "/960px-")
-          : original;
-        if (chosen) setSrc(chosen);
-        else setFailed(true);
-      })
-      .catch(() => active && setFailed(true));
+    getWikiImage(wikiTitle, 960).then((url) => {
+      if (!active) return;
+      if (url) setSrc(url);
+      else setFailed(true);
+    });
     return () => {
       active = false;
     };
@@ -60,6 +50,11 @@ export default function LexiconTerm() {
     return <Navigate to="/lexicon" replace />;
   }
 
+  // Terms without a `wiki` source don't need an image — we show a clean
+  // colored header band instead of a photo (no icon/logo required).
+  const hasImage = imgSrc && !imgFailed;
+  const showSpinner = entry.wiki && !imgSrc && !imgFailed;
+
   return (
     <div data-testid="lexicon-term-page" className="space-y-6 animate-fade-in max-w-4xl">
       {/* Breadcrumb / back */}
@@ -71,25 +66,26 @@ export default function LexiconTerm() {
         Back to Lexicon
       </Link>
 
-      {/* Hero image */}
-      <div className="relative w-full h-56 sm:h-72 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-        {imgSrc && !imgFailed ? (
+      {/* Header — photo when available, otherwise a clean colored band */}
+      <div className={`relative w-full ${hasImage || showSpinner ? "h-56 sm:h-72" : "h-40 sm:h-48"} rounded-xl overflow-hidden border ${hasImage || showSpinner ? "border-slate-200 bg-slate-100" : "border-blue-900 bg-blue-900"}`}>
+        {hasImage && (
           <img
             src={imgSrc}
             alt={entry.imageAlt || entry.term}
             onError={() => setFailed(true)}
             className="w-full h-full object-cover"
           />
-        ) : (
+        )}
+        {showSpinner && (
           <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-300">
-            {imgFailed ? <ImageOff className="w-8 h-8" /> : (
-              <div className="animate-spin w-7 h-7 border-2 border-slate-200 border-t-slate-400 rounded-full" />
-            )}
-            <span className="text-xs">{imgFailed ? "Image unavailable" : "Loading image…"}</span>
+            <div className="animate-spin w-7 h-7 border-2 border-slate-200 border-t-slate-400 rounded-full" />
+            <span className="text-xs">Loading image…</span>
           </div>
         )}
-        {/* Title overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+        {/* Title overlay — dark gradient over photos, flat over the color band */}
+        {(hasImage || showSpinner) && (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+        )}
         <div className="absolute bottom-0 left-0 p-5">
           <span className="inline-block text-[10px] font-medium uppercase tracking-wider text-white/80 bg-white/15 backdrop-blur-sm rounded-full px-2.5 py-0.5 mb-2">
             {CATEGORY_LABEL[entry.category]}
