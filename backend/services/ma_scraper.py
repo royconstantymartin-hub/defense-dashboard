@@ -174,7 +174,6 @@ KNOWN_COMPANIES: Dict[str, Tuple[str, str]] = {
     "electro optic systems":     ("AU", "eos-aus.com"),
     "marss":                     ("GB", "marss.com"),
     "roshel":                    ("CA", "roshel.com"),
-    "daimler truck":             ("DE", "daimlertruck.com"),
     "patria":                    ("FI", "patriagroup.com"),
     "nexter":                    ("FR", "knds.com"),
     # ── Canada ───────────────────────────────────────────────────────────────
@@ -291,7 +290,8 @@ def _infer_stake_percentage(text: str) -> Optional[float]:
 
 # ── Company name extraction ───────────────────────────────────────────────────
 
-# Patterns for "Company acquires Target" style titles
+# STRICT patterns — reliable verbs ("acquires", "merges"). One party being a
+# known defense company is enough, because the verb itself is unambiguous.
 _ACQ_PATTERNS = [
     re.compile(
         r"(?P<acquirer>[\w][\w\s\-&']+?)\s+"
@@ -305,9 +305,14 @@ _ACQ_PATTERNS = [
         r"(?P<target>[\w][\w\s\-&']+?)\s+(?:merger|merge|to merge|combines?)",
         re.IGNORECASE,
     ),
+]
+
+# LOOSE patterns — "X and Y form a joint venture / partnership / MoU". These verbs
+# are weak (lots of false positives), so callers require BOTH parties to be known
+# defense companies before trusting the match. Catches the JV/teaming/MoU deals
+# that dominate trade shows like Eurosatory.
+_LOOSE_PATTERNS = [
     # "X and Y form/sign/create ... joint venture | teaming agreement | partnership | MoU"
-    # Catches the deal types that dominate trade shows like Eurosatory, where most
-    # announcements are JVs, teaming agreements and MoUs rather than outright buyouts.
     re.compile(
         r"(?P<acquirer>[\w][\w\s\-&']+?)\s+(?:and|&|,)\s+"
         r"(?P<target>[\w][\w\s\-&']+?)\s+"
@@ -340,24 +345,77 @@ _ACQ_PATTERNS = [
     ),
 ]
 
+# ── Junk-name guard ───────────────────────────────────────────────────────────
+# Rejects extracted "company" names that are obviously not companies: bare
+# quantities ("over 10", "10,000 units"), descriptive nouns from headlines
+# ("carmaker Renault" → the word "carmaker"), or generic placeholders.
+_JUNK_NAME_RE = re.compile(
+    r"^\s*(?:"
+    r"\d[\d,\.]*"                                  # starts with a number ("10,000 units")
+    r"|(?:over|under|about|around|nearly|up to|more than|at least|some)\b.*"
+    r"|(?:the\s+)?(?:carmaker|automaker|car maker|truckmaker|truck maker|startup|"
+    r"company|firm|group|maker|manufacturer|giant|specialist|supplier|venture|"
+    r"consortium|alliance|partnership|government|ministry|army|navy|air force|"
+    r"pentagon|nation|country|defense firms?|defence firms?)\b.*"
+    r")\s*$",
+    re.IGNORECASE,
+)
+# Descriptive prefixes to strip from a name before validating ("Carmaker Renault"
+# → "Renault"), so a real company hidden behind a label is still recognised.
+_DESCRIPTOR_PREFIX_RE = re.compile(
+    r"^(?:the\s+)?(?:carmaker|automaker|car\s*maker|truckmaker|truck\s*maker|startup|"
+    r"defen[cs]e\s+(?:firm|group|company|giant|champion)|french|german|british|italian|"
+    r"american|us|uk|european|spanish|polish|swedish|israeli|korean|turkish|dutch)\s+",
+    re.IGNORECASE,
+)
+
+def _clean_name(name: str) -> str:
+    """Strip leading descriptors so 'Carmaker Renault' validates as 'Renault'."""
+    prev = None
+    out = name.strip()
+    while prev != out:
+        prev = out
+        out = _DESCRIPTOR_PREFIX_RE.sub("", out).strip()
+    return out
+
+def _is_junk_name(name: str) -> bool:
+    return bool(_JUNK_NAME_RE.match(name.strip()))
+
+def _both_known(acq_l: str, tgt_l: str) -> bool:
+    return (any(k in acq_l for k in KNOWN_COMPANIES)
+            and any(k in tgt_l for k in KNOWN_COMPANIES))
+
+def _one_known(acq_l: str, tgt_l: str) -> bool:
+    return (any(k in acq_l for k in KNOWN_COMPANIES)
+            or any(k in tgt_l for k in KNOWN_COMPANIES))
+
 def _extract_companies(title: str, summary: str) -> Tuple[Optional[str], Optional[str]]:
     """
     Try to extract (acquirer, target) from title then summary.
     Returns (None, None) if extraction fails — callers must discard such signals.
+
+    Strict patterns need only ONE known company; loose JV/partnership patterns
+    need BOTH parties known to avoid the trade-show false positives that polluted
+    the dataset (e.g. "Carmaker Renault teams with …", "… over 10 nations").
     """
     for text in (title, summary):
-        for pat in _ACQ_PATTERNS:
+        for pat, need_both in ([(p, False) for p in _ACQ_PATTERNS]
+                               + [(p, True) for p in _LOOSE_PATTERNS]):
             m = pat.search(text)
-            if m:
-                acquirer = m.group("acquirer").strip()
-                target = m.group("target").strip()
-                # Basic sanity: both names should be > 2 chars and not stop words
-                if len(acquirer) > 2 and len(target) > 2:
-                    # Verify at least one is a known defense company
-                    acq_l = acquirer.lower()
-                    tgt_l = target.lower()
-                    if any(k in acq_l for k in KNOWN_COMPANIES) or any(k in tgt_l for k in KNOWN_COMPANIES):
-                        return acquirer, target
+            if not m:
+                continue
+            acquirer = _clean_name(m.group("acquirer"))
+            target = _clean_name(m.group("target"))
+            # Basic sanity: both names should be > 2 chars and not junk
+            if len(acquirer) <= 2 or len(target) <= 2:
+                continue
+            if _is_junk_name(acquirer) or _is_junk_name(target):
+                continue
+            acq_l = acquirer.lower()
+            tgt_l = target.lower()
+            ok = _both_known(acq_l, tgt_l) if need_both else _one_known(acq_l, tgt_l)
+            if ok:
+                return acquirer, target
     return None, None
 
 # ── Non-M&A guard ─────────────────────────────────────────────────────────────

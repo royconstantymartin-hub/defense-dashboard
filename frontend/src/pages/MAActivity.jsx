@@ -1807,7 +1807,20 @@ function PartyLogoSmall({ name, iso }) {
   );
 }
 
-function JVProgramsView() {
+// Short product/sector labels for M&A joint-venture deals shown in this tab.
+const JV_SECTOR_LABELS = {
+  uas_drones:         "Drones / C-UAS",
+  missiles_munitions: "Missiles / munitions",
+  land_systems:       "Land systems",
+  naval:              "Naval",
+  aircraft:           "Aircraft",
+  space:              "Space",
+  cyber:              "Cyber",
+  c2_electronics:     "C2 / electronics",
+  services_it:        "Services / IT",
+};
+
+function JVProgramsView({ activities = [] }) {
   const [sortYear, setSortYear] = useState("desc");
   const [filterYear, setFilterYear] = useState("all");
   const [search, setSearch] = useState("");
@@ -1821,16 +1834,46 @@ function JVProgramsView() {
       .catch(() => { /* keep fallback */ });
   }, []);
 
+  // Joint-venture deals from the M&A collection (e.g. Eurosatory) mapped into the
+  // JV-programme row shape so they appear in this tab next to the curated JV list.
+  const maJvRows = useMemo(() => {
+    return (activities || [])
+      .filter(a => a.deal_type === "joint_venture" && a.acquirer && a.target)
+      .map(a => ({
+        id: `ma-${a.id}`,
+        party1: a.acquirer, p1_iso: a.acquirer_country,
+        party2: a.target,   p2_iso: a.target_country,
+        products: JV_SECTOR_LABELS[a.sector] || "Joint venture",
+        year: a.announced_date ? new Date(a.announced_date).getFullYear() : null,
+        description: a.rationale || a.description,
+        source_url: a.source_url,
+      }));
+  }, [activities]);
+
+  // Merge M&A JV rows in front of the curated programmes, de-duplicating on the
+  // (party1, party2) pair so a deal is never listed twice.
+  const mergedData = useMemo(() => {
+    const seen = new Set();
+    const out = [];
+    for (const r of [...maJvRows, ...jvData]) {
+      const key = `${(r.party1 || "").toLowerCase()}|${(r.party2 || "").toLowerCase()}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(r);
+    }
+    return out;
+  }, [maJvRows, jvData]);
+
   const jvDataAsOf = useMemo(() => {
-    const max = Math.max(...jvData.map(r => r.year || 0));
+    const max = Math.max(...mergedData.map(r => r.year || 0));
     if (!max || max === -Infinity) return null;
     return `Data as of ${max}`;
-  }, [jvData]);
+  }, [mergedData]);
 
-  const years = [...new Set(jvData.map(r => r.year))].sort((a, b) => b - a);
+  const years = [...new Set(mergedData.map(r => r.year))].sort((a, b) => b - a);
 
   const rows = useMemo(() => {
-    let list = jvData.filter(r => {
+    let list = mergedData.filter(r => {
       if (filterYear !== "all" && String(r.year) !== filterYear) return false;
       if (search) {
         const q = search.toLowerCase();
@@ -1844,7 +1887,7 @@ function JVProgramsView() {
     });
     list = [...list].sort((a, b) => sortYear === "desc" ? b.year - a.year : a.year - b.year);
     return list;
-  }, [jvData, filterYear, search, sortYear]);
+  }, [mergedData, filterYear, search, sortYear]);
 
   function yearColor(y) {
     return y >= 2025 ? "text-slate-900 font-semibold" : "text-slate-500";
@@ -3305,7 +3348,11 @@ export default function MAActivity() {
       {/* ── Recent Deals Spotlight ── */}
       {!loading && activities.length > 0 && (
         <RecentDealsSpotlight
-          activities={activities.filter(a => !isStateOrProcurement(a))}
+          activities={activities.filter(a =>
+            !isStateOrProcurement(a) &&
+            isValidCompanyName(a.acquirer) &&
+            isValidCompanyName(a.target)
+          )}
           sourceFilter={dealSource}
           onSourceFilter={setDealSource}
           sourceCounts={sourceCounts}
@@ -3328,7 +3375,9 @@ export default function MAActivity() {
             <span className={`ml-1.5 text-[10px] font-mono px-1.5 py-0.5 rounded-full ${
               dealTypeTab === t.value ? "bg-slate-200 text-slate-900" : "bg-slate-100 text-slate-500"
             }`}>
-              {t.value === "jv" ? JV_EU_PROGRAMS_FALLBACK.length : (tabCounts[t.value] || 0)}
+              {t.value === "jv"
+                ? JV_EU_PROGRAMS_FALLBACK.length + allDeals.filter(a => a.deal_type === "joint_venture").length
+                : (tabCounts[t.value] || 0)}
             </span>
           </button>
         ))}
@@ -3562,7 +3611,7 @@ export default function MAActivity() {
           </>)}
 
           {/* ── JV Programs table ── */}
-          {dealTypeTab === "jv" && <JVProgramsView />}
+          {dealTypeTab === "jv" && <JVProgramsView activities={allDeals} />}
 
           {/* ── Normal deal table (Acquisitions, Mergers) ── */}
           {!["investments", "jv"].includes(dealTypeTab) && <>
