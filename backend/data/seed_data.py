@@ -5911,6 +5911,192 @@ PRODUCTS_DATA = [
      "description": "Germany donated 37 Gepard self-propelled anti-aircraft guns to Ukraine from Bundeswehr reserve stocks in 2022–2023, initially considered obsolete but proving devastatingly effective against low-flying Russian drones (Shahed-136, Lancet, Orlan-10). The Gepard's twin 35 mm cannon fires 1,100 rounds/minute — a cost-effective interceptor at ~$100 per round vs $20–50k per Shahed drone. Ukraine crews call it 'the best air defense we have against drones.' The Gepard revealed a strategic gap: NATO had retired gun-based short-range air defense (SHORAD) in favor of missiles, leaving them without cheap intercept options against mass drone attacks. Multiple NATO nations have resumed interest in gun-based SHORAD as a result.",
      "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Gepard_1A2_Flugabwehrkanonenpanzer.jpg"},
 
+    # ════════════════════════════════════════════════════════════════════════
+    # === EUROSATORY 2026 — Flagship reveals (Paris-Nord Villepinte, 15–19 June 2026) ===
+    # The largest edition in the show's 59-year history: 2,600+ exhibitors, 68 nations.
+    # Dominant themes: land deep-strike, mass/attritable drones, and counter-UAS (C-UAS).
+    # ════════════════════════════════════════════════════════════════════════
+
+    {"name": "Fenris 6x6", "manufacturer": "John Cockerill / Arquus", "category": "land", "product_type": "armored_vehicle",
+     "specifications": {"configuration": "6x6 wheeled fire-support vehicle", "weight": "26 t", "main_gun": "105 mm CT-CV 105HP rifled, two-axis stabilised + autoloader (12 ready rounds + 2x12 in hull)", "engine": "500 hp (quiet, high-torque)", "protection": "STANAG 4569 Level 4 (12.7 mm + 155 mm fragments at 30 m)", "c_uas": "Hornet-S sight with radar + 7.62 mm MAG 58", "transport": "Fits inside an A400M"},
+     "materials": ["Jaguar AFV Chassis", "Cockerill 3105 Turret", "Active Suspension", "Steel Armour"],
+     "status": "development",
+     "description": "Star of Eurosatory 2026 and the first joint armoured vehicle from Belgium's John Cockerill and France's Arquus, unveiled on 15 June 2026. The Fenris mates the Cockerill 3105 turret with its 105 mm NATO gun to the 6x6 Jaguar chassis, producing the only 26-tonne wheeled vehicle on the market able to carry a 105 mm gun while still fitting inside an A400M. Developed in just over a year, it is pitched as the spiritual heir to the French Army's retired AMX-10 RC: a fast, discreet, air-transportable direct fire-support and reconnaissance platform for armies that cannot afford a heavy main battle tank. Its survivability relies on mobility and low signature rather than heavy armour, and a Hornet-S C-UAS sight gives it organic anti-drone defence."},
+
+    {"name": "CaPINT (New MBT Generation)", "manufacturer": "KNDS", "category": "land", "product_type": "tank",
+     "specifications": {"role": "Next-generation main battle tank / Leclerc replacement", "chassis": "Upgraded Leopard 2 A8-derived hull", "turret": "Unmanned Ascalon turret", "main_gun": "120 mm (Ascalon, growth to 140 mm)", "features": "Counter-drone systems, open digital architecture, robotic 'wingman' connectivity", "target_service": "~2037 (Leclerc retirement)"},
+     "materials": ["Leopard 2 A8 Chassis", "Composite Armour", "Unmanned Turret", "Digital Vetronics"],
+     "status": "development",
+     "description": "KNDS's headline reveal at Eurosatory 2026: a new generation of main battle tank pitched as a gap-filler to replace France's ageing Leclerc fleet (due to retire around 2037) while the Franco-German MGCS programme stalls. CaPINT pairs an upgraded Leopard 2 A8-derived chassis from KNDS Deutschland with an unmanned Ascalon turret carrying a 120 mm gun. KNDS emphasised baked-in counter-drone protection, an open digital architecture, and connectivity with robotised 'wingmen' (unmanned ground and aerial systems) — a direct response to the drone-saturated battlefields seen in Ukraine."},
+
+    {"name": "NMBT (New Main Battle Tank, Italy)", "manufacturer": "Leonardo Rheinmetall Military Vehicles", "category": "land", "product_type": "tank",
+     "specifications": {"role": "Next-gen MBT for the Italian Army", "armament": "120 mm main gun + 30 mm remote chain gun (anti-drone, 85° elevation)", "joint_venture": "Leonardo Rheinmetall Military Vehicles (LRMV)", "based_on": "Rheinmetall Panther KF51 lineage"},
+     "materials": ["Composite Armour", "Active Protection System", "Remote Weapon Station"],
+     "status": "development",
+     "description": "The New Main Battle Tank developed by Leonardo Rheinmetall Military Vehicles (LRMV) for the Italian Army, shown at Eurosatory 2026. Drawing on Rheinmetall's Panther KF51 design, the vehicle was displayed with a 30 mm remote-operated chain gun able to elevate to 85 degrees specifically to defeat high-angle drone attacks — a feature the company called central to protecting the tank from top-attack loitering munitions. It anchors Italy's land-forces modernisation alongside a new family of tracked and wheeled vehicles."},
+
+    {"name": "Caracal 6x6", "manufacturer": "Rheinmetall", "category": "land", "product_type": "armored_vehicle",
+     "specifications": {"configuration": "6x6 air-mobile vehicle", "role": "Airborne / rapid-deployment with greater payload", "transport": "Carried inside A400M, CH-47F Chinook, CH-53; external helicopter sling-load", "payload": "Increased capacity for weapons, ammunition, sensors and mission kits", "c_uas": "Counter-drone role variant"},
+     "materials": ["Lightweight Steel", "Modular Mission Kits"],
+     "status": "active",
+     "description": "Heavier 6x6 addition to Rheinmetall's Caracal air-mobile family (already selected by Germany and the Netherlands in 4x4 form), launched at Eurosatory 2026. The 6x6 adds capacity for weapons, ammunition, sensors and mission kits, including a counter-drone role, while remaining air-transportable inside an A400M, CH-47F Chinook or CH-53 and supporting external helicopter lift for rapid deployment of airborne forces."},
+
+    {"name": "LORAS (Long Range Artillery System)", "manufacturer": "KNDS", "category": "land", "product_type": "artillery",
+     "specifications": {"caliber": "155 mm / 58-calibre gun", "range": "60 km standard HE / 80–100 km precision & special ammunition", "rate_of_fire": "8+ rounds/min", "platform": "Boxer RCH 155 tracked chassis with AGM unmanned turret", "interoperability": "Full NATO 155 mm ammunition compatibility"},
+     "materials": ["58-Calibre 155 mm Barrel", "Expanded Chamber", "AGM Unmanned Turret"],
+     "status": "development",
+     "description": "KNDS's deep-strike artillery demonstrator unveiled at Eurosatory 2026. LORAS introduces a longer 58-calibre 155 mm barrel with an expanded chamber, extending tube artillery range to 80–100 km with precision and special ammunition while keeping full interoperability with existing NATO 155 mm stocks. Mounted on a tracked Boxer RCH 155 with the AGM unmanned turret, it is designed to push standard cannon artillery into the deep-strike zone traditionally reserved for rocket artillery — a key NATO capability gap exposed by the war in Ukraine."},
+
+    {"name": "Rheinmetall L60 155mm", "manufacturer": "Rheinmetall", "category": "land", "product_type": "artillery",
+     "specifications": {"caliber": "155 mm", "barrel": "L60 (60-calibre)", "range": "~30% greater than the conventional L52 gun", "application": "Wheeled and self-propelled howitzers"},
+     "materials": ["60-Calibre 155 mm Barrel", "High-Strength Steel"],
+     "status": "development",
+     "description": "New 155 mm L60 artillery weapon system unveiled by Rheinmetall at Eurosatory 2026, designed to extend the effective range of wheeled and self-propelled howitzers. The longer 60-calibre barrel delivers roughly 30% more range than the current L52 gun, part of the broader European push for longer-reaching tube artillery to counter the deep-strike advantage demonstrated in Ukraine."},
+
+    {"name": "VBM 155", "manufacturer": "CIO (Consorzio Iveco Oto Melara)", "category": "land", "product_type": "artillery",
+     "specifications": {"caliber": "155 mm self-propelled howitzer", "consortium": "Iveco Defence Vehicles + Leonardo (CIO)", "role": "Wheeled SPH for the Italian Army"},
+     "materials": ["Wheeled Chassis", "155 mm Gun System"],
+     "status": "development",
+     "description": "The CIO consortium's (Iveco Defence Vehicles and Leonardo) entry into the self-propelled howitzer domain, the VBM 155, revealed at Eurosatory 2026. It supports the Italian Army's artillery modernisation and broadens Europe's growing field of wheeled 155 mm gun platforms competing for surging rearmament orders."},
+
+    {"name": "THeMIS C-UAS", "manufacturer": "Milrem Robotics", "category": "land", "product_type": "ugv",
+     "specifications": {"type": "Tracked unmanned ground vehicle (UGV)", "c_uas_payload": "30 mm cannon with specialised anti-drone ammunition (engages drones beyond 1,000 m)", "role": "Counter-drone, logistics, reconnaissance, fire support", "ecosystem": "Integrates Frankenburg Mark I C-UAS missile"},
+     "materials": ["Tracked Hybrid-Electric Chassis", "Remote Weapon Station"],
+     "status": "active",
+     "description": "Milrem Robotics showcased its combat-proven tracked THeMIS UGV at Eurosatory 2026 in a counter-drone configuration, fitting a 30 mm cannon with specialised ammunition to defeat drones beyond 1,000 m. Part of a multi-layered robotic ecosystem for NATO's eastern flank, the platform was also shown integrating Frankenburg Technologies' Mark I C-UAS missile, reflecting the show's central theme of cheap, scalable defences against mass drone attacks."},
+
+    {"name": "HAVOC 8x8 RCV", "manufacturer": "Milrem Robotics", "category": "land", "product_type": "ugv",
+     "specifications": {"configuration": "8x8 robotic combat vehicle (RCV)", "payloads": "Cannons, short-range air-defence missiles, electronic warfare gear", "role": "Heavy unmanned combat and support"},
+     "materials": ["8x8 Wheeled Chassis", "Modular Mission Payloads"],
+     "status": "development",
+     "description": "The larger wheeled member of Milrem Robotics' robotic ground ecosystem presented at Eurosatory 2026. The HAVOC 8x8 robotic combat vehicle can carry cannons, short-range air-defence missiles and electronic-warfare payloads, complementing the smaller tracked THeMIS as Milrem positions a layered unmanned defence concept for NATO's eastern flank."},
+
+    {"name": "TRACKX UGV", "manufacturer": "Patria", "category": "land", "product_type": "ugv",
+     "specifications": {"type": "Next-generation heavy unmanned ground vehicle (concept)", "platform": "Patria modular TRACKX tracked vehicle", "drivetrain": "RENK HSWL 076 transmission + drive-by-wire mobility", "partners": "Patria + RENK"},
+     "materials": ["Modular Tracked Platform", "Drive-by-Wire Architecture"],
+     "status": "development",
+     "description": "A heavy unmanned ground vehicle concept mock-up jointly presented by Patria and RENK at Eurosatory 2026. It combines Patria's modular TRACKX tracked platform with RENK's HSWL 076 transmission and a drive-by-wire mobility architecture, aimed at a future generation of autonomous heavy land systems for high-intensity warfare."},
+
+    {"name": "FP-5 Flamingo", "manufacturer": "Fire Point", "category": "missile", "product_type": "cruise_missile",
+     "specifications": {"type": "Ground-launched cruise missile", "range": "3,000 km", "warhead": "1,150 kg", "launch_weight": "~6,000 kg", "wingspan": "~6 m", "speed": "~950 km/h", "engine": "Ivchenko AI-25 turbofan", "guidance": "Jam-resistant satellite navigation (CRPA) + ArduPilot autopilot", "unit_cost": "~$500,000"},
+     "materials": ["Aluminium Airframe", "Ballistic Missile-Derived Body", "Turbofan Engine"],
+     "status": "active",
+     "description": "Ukraine's long-range answer to deep strike, presented internationally at Eurosatory 2026 as Ukrainian exhibitors surged eightfold to 80 firms. Built by the Ukrainian firm Fire Point and revealed in August 2025, the FP-5 Flamingo is a heavy ground-launched cruise missile with a 3,000 km range and a 1,150 kg warhead — enough to strike deep inside Russia. At roughly $500,000 a unit it costs about a quarter of a US Tomahawk, and Fire Point put it into serial production within weeks of unveiling, targeting 210 missiles a month. It symbolises Ukraine's shift from aid recipient to indigenous deep-strike producer and future defence exporter."},
+
+    {"name": "Land Cruise Missile (LCM)", "manufacturer": "MBDA", "category": "missile", "product_type": "cruise_missile",
+     "specifications": {"type": "Ground-launched cruise missile system", "range": ">1,000 km", "basis": "Naval Cruise Missile MK2 (NCM MK2) / MdCN derivative", "ground_launch": "New dedicated Ground Launch System", "initial_capability": "~2029, full system ~2030", "pairing": "Combined with Deluge one-way effector for smart mass"},
+     "materials": ["Stealth Composites", "Turbofan Engine"],
+     "status": "development",
+     "description": "MBDA presented the complete Land Cruise Missile (LCM) system for the first time at Eurosatory 2026, pairing a new ground launch system with the new-generation Naval Cruise Missile MK2. With a range exceeding 1,000 km, the LCM positions the European group for the deep-strike market that has expanded sharply since Russia's invasion of Ukraine. MBDA aims for an initial capability around 2029, with the full Mk II offering improved range, survivability and lethality by 2030."},
+
+    {"name": "AQUILA", "manufacturer": "MBDA", "category": "missile", "product_type": "sam",
+     "specifications": {"type": "New-generation endo-atmospheric air-defence interceptor", "role": "Complements the ASTER family within NATO integrated air & missile defence", "domain": "Multi-layered air defence against current and future threats"},
+     "materials": ["Composite Airframe", "Advanced Seeker"],
+     "status": "development",
+     "description": "AQUILA, a new generation of endo-atmospheric air-defence missile unveiled by MBDA at Eurosatory 2026 as part of its vision for multi-layered air defence. It is designed to complement the existing ASTER missile family and reinforce NATO's integrated air- and missile-defence architecture, adding an extra protective layer against current and emerging aerial threats."},
+
+    {"name": "Toutatis", "manufacturer": "Thales", "category": "missile", "product_type": "loitering_munition",
+     "specifications": {"type": "Loitering munition", "industrialisation": "Thales + Renault partnership for French production", "production_start": "Targeted 2027", "rate": "Up to 1,000 units/month in first year"},
+     "materials": ["Composite Airframe", "Electric Propulsion"],
+     "status": "development",
+     "description": "Loitering munition that Thales announced it will mass-produce in France through a partnership with carmaker Renault, presented at Eurosatory 2026. Manufacturing is targeted to start in 2027 at up to 1,000 units a month in the first year — a flagship example of the show's 'smart mass' theme, drawing on automotive industry methods to scale low-cost precision strike."},
+
+    {"name": "Helsing HX-2", "manufacturer": "Helsing", "category": "missile", "product_type": "loitering_munition",
+     "specifications": {"type": "AI-enabled loitering strike drone", "weight": "12 kg", "max_speed": "220 km/h", "range": "up to 100 km", "integration": "Launched from KNDS containerised launcher alongside interceptor drones"},
+     "materials": ["Composite Airframe", "AI Targeting Electronics"],
+     "status": "active",
+     "description": "AI-enabled loitering strike drone from German defence-tech firm Helsing, featured at Eurosatory 2026 inside KNDS's containerised drone launcher concept. Weighing 12 kg with a top speed of 220 km/h and a range up to 100 km, the HX-2 represents the attritable, software-defined strike mass that European militaries are racing to field after lessons from Ukraine."},
+
+    {"name": "Frankenburg Mark I", "manufacturer": "Frankenburg Technologies", "category": "missile", "product_type": "shorad",
+     "specifications": {"type": "Low-cost counter-UAS interceptor missile", "role": "Short-range air defence against drones", "integration": "Mounted on Milrem Robotics unmanned ground platforms"},
+     "materials": ["Composite Airframe", "Solid Propellant"],
+     "status": "development",
+     "description": "A low-cost counter-UAS interceptor missile from Estonia's Frankenburg Technologies, highlighted at Eurosatory 2026 via a memorandum with Milrem Robotics to integrate the Mark I onto unmanned ground platforms. It targets the urgent need for affordable, scalable short-range air defence able to trade favourably against mass cheap drones."},
+
+    {"name": "KNDS Containerized Drone Launcher", "manufacturer": "KNDS", "category": "missile", "product_type": "loitering_munition",
+     "specifications": {"type": "Containerised drone launch system", "payloads": "Helsing HX-2 loitering strike drones + Tytan TI-1 METIS interceptor drones", "function": "Combines offensive strike and local air defence in one container", "inspiration": "Echoes Ukraine's Operation Spiderweb concealed-launch raid"},
+     "materials": ["ISO Container", "Multi-Cell Launch Tubes"],
+     "status": "development",
+     "description": "A containerised drone-launcher concept unveiled by KNDS at Eurosatory 2026, roughly a year after Ukraine's Operation Spiderweb demonstrated the power of concealed, container-launched drone raids. The launcher integrates both Helsing HX-2 loitering strike drones and Tytan TI-1 METIS interceptor drones, fusing offensive strike and local air defence into a single deployable container."},
+
+    {"name": "RapidStriker", "manufacturer": "Thales", "category": "cyber", "product_type": "c_uas",
+     "specifications": {"type": "Mobile air-defence / counter-drone system", "detection": "360° radar detection + automated fire control", "effectors": "68 mm & 70 mm guided/unguided rockets, small-calibre cannon, remotely operated munitions", "role": "Protects manoeuvre forces against drones and helicopters; also ground fire support"},
+     "materials": ["Vehicle-Mounted Turret", "Multi-Effector Launchers"],
+     "status": "development",
+     "description": "Mobile counter-drone and short-range air-defence system unveiled by Thales on 15 June 2026 at Eurosatory. RapidStriker combines 360-degree radar detection and automated fire control with a mix of effectors — 68 mm and 70 mm guided and unguided rockets, a small-calibre cannon and remotely operated munitions — to protect manoeuvre forces against drones and helicopters while doubling as ground fire support."},
+
+    {"name": "Interceptor MR", "manufacturer": "Electro Optic Systems", "category": "cyber", "product_type": "c_uas",
+     "specifications": {"type": "Counter-drone interceptor system", "target_set": "Shahed-type drones and loitering munitions", "engagement_range": ">5 km", "origin": "Electro Optic Systems (EOS), Australia"},
+     "materials": ["EO/IR Sensors", "Interceptor Effector"],
+     "status": "development",
+     "description": "Counter-drone system unveiled at Eurosatory 2026 by Australian defence company Electro Optic Systems (EOS), designed to intercept and destroy Shahed-type drones at ranges beyond five kilometres. It targets the loitering-munition threat that has dominated recent conflicts, extending engagement reach well outside the danger zone of terminal-dive attack drones."},
+
+    {"name": "DroneHive", "manufacturer": "DefSecIntel", "category": "cyber", "product_type": "c_uas",
+     "specifications": {"type": "Automated interceptor-drone launcher", "c2": "Paired with EIRSHIELD sensor and command-and-control suite", "function": "Detect, track and engage hostile UAVs with minimal response time", "origin": "DefSecIntel (Estonia)"},
+     "materials": ["Automated Launch Cells", "Sensor Network"],
+     "status": "development",
+     "description": "Automated interceptor-drone launcher unveiled by Estonia's DefSecIntel at Eurosatory 2026 on 15 June. Paired with the company's EIRSHIELD sensor and command-and-control suite, DroneHive forms a mobile counter-UAS network that detects, tracks and engages hostile drones with sharply reduced response times — addressing the saturation problem posed by mass drone raids on NATO's eastern flank."},
+
+    {"name": "MODUS", "manufacturer": "Ondas Holdings", "category": "cyber", "product_type": "c_uas",
+     "specifications": {"type": "Autonomous sensor-to-shooter counter-UAS platform", "layers": "Cyber detection, GNSS disruption, radar, AI-driven EO sensing, autonomous interceptors, layered effectors", "control": "Man-above-the-loop autonomy"},
+     "materials": ["Multi-Sensor Suite", "Autonomous Interceptors"],
+     "status": "development",
+     "description": "An integrated counter-UAS platform from Ondas Holdings shown at Eurosatory 2026. MODUS fuses cyber detection, GNSS disruption, radar, AI-driven electro-optical sensing, autonomous interceptors and layered effectors into a single sensor-to-shooter system under man-above-the-loop control, reflecting the move toward fully autonomous drone defence."},
+
+    {"name": "Sky Warden", "manufacturer": "MBDA", "category": "cyber", "product_type": "c_uas",
+     "specifications": {"type": "Modular counter-UAS system", "role": "Anti-drone layer within MBDA's multi-layered air defence", "family_context": "Complements MISTRAL, FULGUR, VL MICA, CAMM, ASTER and AQUILA"},
+     "materials": ["Modular Sensor/Effector Suite"],
+     "status": "active",
+     "description": "MBDA's modular counter-drone system, presented at Eurosatory 2026 as the low end of its multi-layered air-defence vision spanning anti-drone up to high-end interceptors. Sky Warden anchors the C-UAS layer alongside MBDA's MISTRAL, FULGUR, VL MICA, CAMM, ASTER and the new AQUILA missile, offering an adaptable answer to the full spectrum of aerial threats."},
+
+    {"name": "Tytan TI-1 METIS", "manufacturer": "Tytan Technology", "category": "cyber", "product_type": "c_uas",
+     "specifications": {"type": "Interceptor drone for counter-UAS", "integration": "Launched from KNDS containerised launcher alongside Helsing HX-2", "role": "Local air defence / drone-on-drone interception"},
+     "materials": ["Lightweight Airframe", "Interceptor Electronics"],
+     "status": "development",
+     "description": "Interceptor drone shown at Eurosatory 2026 as part of KNDS's containerised drone launcher, where the Tytan TI-1 METIS provides the defensive, drone-on-drone interception layer alongside Helsing's HX-2 strike drones. It embodies the emerging concept of cheap interceptor drones countering cheap attack drones."},
+
+    {"name": "Indra Tethered Drone EW", "manufacturer": "Indra", "category": "cyber", "product_type": "electronic_warfare",
+     "specifications": {"type": "Tethered drone electronic-warfare system", "role": "Light, persistent electronic warfare from an elevated tethered platform", "origin": "Indra (Spain)"},
+     "materials": ["Tethered UAV", "EW Payload", "Ground Power Tether"],
+     "status": "development",
+     "description": "Tethered-drone electronic-warfare system that Indra presented at Eurosatory 2026 to bring light, persistent EW to manoeuvre forces. By keeping a payload aloft on a power tether, the system delivers continuous elevated electronic-warfare coverage — jamming, sensing and signal interception — without the endurance limits of free-flying drones."},
+
+    {"name": "Skyranger 30", "manufacturer": "Rheinmetall", "category": "cyber", "product_type": "c_uas",
+     "specifications": {"type": "Mobile short-range air-defence / C-UAS turret", "main_armament": "30 mm KCE revolver cannon with airburst ammunition", "missiles": "Optional Stinger / short-range air-defence missiles", "sensors": "Integrated AESA radar + EO/IR", "host_platforms": "Boxer, Leopard chassis and other 8x8/tracked vehicles"},
+     "materials": ["30 mm Revolver Cannon", "AESA Radar", "Programmable Airburst Ammunition"],
+     "status": "active",
+     "description": "Rheinmetall's Skyranger 30 mobile air-defence turret, a centrepiece of the company's counter-drone offering at Eurosatory 2026. Combining a 30 mm revolver cannon firing programmable airburst ammunition with an integrated AESA radar, EO/IR sensors and optional short-range missiles, Skyranger gives armoured formations an organic shield against drones, loitering munitions and helicopters — the gun-based SHORAD capability NATO retired and is now urgently rebuilding."},
+
+    {"name": "Drone Squad Fury", "manufacturer": "OM Defense Systems", "category": "aircraft", "product_type": "uav",
+     "specifications": {"type": "Modular multi-payload UAV", "payloads": "Suspended assault-rifle system OR mortar ammunition up to 15 kg", "role": "Armed reconnaissance and direct attack", "origin": "OM Defense Systems (Ukraine)"},
+     "materials": ["Multirotor Airframe", "Modular Payload Mount"],
+     "status": "active",
+     "description": "Modular armed drone unveiled by Ukraine's OM Defense Systems at Eurosatory 2026, where it drew attention for carrying a suspended assault-rifle system or up to 15 kg of mortar ammunition. It typifies the wartime-iterated Ukrainian drones that crowded the show — battlefield-proven, rapidly evolving systems that position Ukraine as a future UAV exporter."},
+
+    {"name": "Sea Trident", "manufacturer": "Global Mark", "category": "naval", "product_type": "uuv",
+     "specifications": {"type": "Heavy autonomous underwater vehicle (AUV/UUV)", "payload": "up to 1,000 kg", "max_speed": "10 knots (18.5 km/h)", "cruise_speed": "6 knots (11 km/h)", "role": "Long-range maritime missions / heavy payload delivery", "origin": "Global Mark (Ukraine)"},
+     "materials": ["Pressure Hull", "Autonomous Navigation Suite"],
+     "status": "development",
+     "description": "Heavy autonomous underwater drone unveiled by Ukrainian company Global Mark at Eurosatory 2026. Sea Trident can carry payloads of up to 1,000 kg over long-range maritime missions at a 6-knot cruise (10-knot dash), extending Ukraine's pioneering naval-drone warfare from the surface into the undersea domain."},
+
+    {"name": "Patria Passive Radar", "manufacturer": "Patria", "category": "radar", "product_type": "radar",
+     "specifications": {"type": "Passive radar surveillance system", "principle": "Detects targets using existing ambient RF emissions — emits no signal of its own", "advantage": "Hard to detect/jam; covert air surveillance", "origin": "Patria (Finland)"},
+     "materials": ["Passive RF Receiver Array", "Signal-Processing Suite"],
+     "status": "active",
+     "description": "Revolutionary passive-radar product introduced by Finland's Patria at Eurosatory 2026. Rather than emitting its own signal, the system detects aircraft and drones by exploiting ambient RF emissions already in the environment, making it extremely difficult to detect or jam. It offers covert, survivable air surveillance — increasingly valuable as electronic warfare and anti-radiation threats grow."},
+
+    {"name": "Galvion Cortex EVO HALO", "manufacturer": "Galvion", "category": "cyber", "product_type": "communications",
+     "specifications": {"type": "Soldier headborne power & data architecture", "configuration": "HALO — externally mounted Cortex EVO implementation", "role": "Brings advanced headborne C2, power and sensor management to new and fielded helmets", "origin": "Galvion"},
+     "materials": ["Helmet-Mounted Power Hub", "Data Management Electronics"],
+     "status": "active",
+     "description": "Galvion's expansion of its Cortex EVO soldier power-and-data architecture, shown at Eurosatory 2026 in the externally mounted HALO configuration. HALO brings advanced headborne capabilities — centralised power, data and sensor management for night vision, displays and communications — to both new and already-fielded helmet platforms, supporting the show's strong focus on next-generation connected soldier systems."},
+
+    {"name": "MBDA Deluge One-Way Effector", "manufacturer": "MBDA", "category": "missile", "product_type": "loitering_munition",
+     "specifications": {"type": "One-way effector (attritable strike munition)", "concept": "'Smart mass' — pairs with the Land Cruise Missile Mk II for layered deep strike", "role": "Affordable saturation strike complementing high-end cruise missiles"},
+     "materials": ["Low-Cost Airframe", "Modular Warhead"],
+     "status": "development",
+     "description": "MBDA's Deluge one-way effector, revealed at Eurosatory 2026 and presented in combination with the Land Cruise Missile Mk II. Deluge embodies the 'smart mass' concept — affordable, attritable saturation strike munitions that work alongside high-end cruise missiles to overwhelm and exhaust enemy air defences, a direct lesson from the mass-strike dynamics of the war in Ukraine."},
+
 ]
 
 # ── Company profile enrichments (Crunchbase-style) ────────────────────────
