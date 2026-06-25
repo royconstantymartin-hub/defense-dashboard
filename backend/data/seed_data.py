@@ -9705,6 +9705,7 @@ MA_EUROSATORY_2026 = [
         "target_country": "GB",
         "acquirer_logo_domain": "eos-aus.com",
         "target_logo_domain": "marss.com",
+        "featured": True,
         "source_url": "https://www.janes.com/defence-intelligence-insights/defence-news/weapons/eurosatory-2026-marss-now-part-of-eos-sees-middle-east-air-defence-success",
         "announced_date": datetime(2026, 6, 15, tzinfo=timezone.utc),
         "stake_percentage": None,
@@ -9732,6 +9733,7 @@ MA_EUROSATORY_2026 = [
         "target_country": "FR",
         "acquirer_logo_domain": "edgegroup.ae",
         "target_logo_domain": "safran-group.com",
+        "featured": True,
         "source_url": "https://www.safran-group.com/pressroom/edge-and-safran-sign-joint-venture-term-sheet-next-generation-missile-development-2026-06-16",
         "announced_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
         "stake_percentage": None,
@@ -9982,6 +9984,160 @@ MA_EUROSATORY_2026 = [
         "is_disclosed": False,
         "sector": "c2_electronics",
         "notes": "Cybersecurity / software-defined defence MoU.",
+        "confidence": "medium",
+    },
+]
+
+# ── ILA Berlin 2026 (10–14 June 2026) ───────────────────────────────────────
+# Company-to-company deals (partnerships / MoUs / JVs) announced at the ILA
+# Berlin Air Show 2026. STRICTLY corporate deals — no state procurement, no
+# capability/programme announcements (e.g. "FCAS cancelled", "Sky Shield"),
+# and no government parties. Each entry is sourced to a primary press release.
+MA_ILA_BERLIN_2026 = [
+    {
+        "acquirer": "Airbus Defence and Space",
+        "target": "Diehl Defence",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Airbus Defence and Space and Diehl Defence sign an MoU at ILA Berlin 2026 to deepen integrated air & missile defence cooperation",
+        "rationale": (
+            "Airbus Defence and Space and Germany's Diehl Defence sign a memorandum of "
+            "understanding on 10 June 2026 at the ILA Berlin Air Show to intensify their "
+            "cooperation in integrated air and missile defence (IAMD). The two long-time "
+            "partners on the IRIS-T SLM ground-based air-defence system will set up a jointly "
+            "used 'battle lab' development environment and pair Airbus's command-and-control "
+            "(C2) solutions with Diehl's field-proven effectors and launchers, supporting NATO "
+            "and European Sky Shield Initiative (ESSI) requirements. Financial terms were not "
+            "disclosed."
+        ),
+        "acquirer_country": "DE",
+        "target_country": "DE",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "diehl.com",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2026-06-airbus-and-diehl-defence-sign-agreement-on-intensifying-their-cooperation-in-integrated-air-and",
+        "announced_date": datetime(2026, 6, 10, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "missiles_munitions",
+        "featured": True,
+        "notes": "MoU — jointly-used 'battle lab' + IRIS-T SLM enhancements.",
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Airbus Helicopters",
+        "target": "Quantum Systems",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Airbus Helicopters and Quantum Systems agree at ILA Berlin 2026 to integrate counter-drone interceptors on the H145M",
+        "rationale": (
+            "Airbus Helicopters and German drone-maker Quantum Systems sign a cooperation "
+            "agreement on 10 June 2026 at ILA Berlin 2026 to explore integrating Quantum's "
+            "counter-unmanned-aerial-system (C-UAS) interceptors onto Airbus military "
+            "helicopters, starting with the multi-role H145M. The partnership adds an organic "
+            "drone-hunting capability to rotorcraft amid lessons learned in Ukraine. Financial "
+            "terms were not disclosed."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "DE",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "quantum-systems.com",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2026-06-airbus-and-quantum-systems-to-cooperate-on-integration-of-counter-uas-interceptors-on-military",
+        "announced_date": datetime(2026, 6, 10, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "uas_drones",
+        "notes": "Cooperation agreement (C-UAS interceptors on H145M).",
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Airbus Defence and Space",
+        "target": "Alta Ares",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Airbus Defence and Space and Alta Ares sign an MoU at ILA Berlin 2026 to co-develop European counter-drone interceptors",
+        "rationale": (
+            "Airbus Defence and Space and Alta Ares — a French defence-technology start-up "
+            "specialising in counter-drone systems and on-board artificial intelligence — sign "
+            "a memorandum of understanding on 11 June 2026 at ILA Berlin 2026 to jointly develop "
+            "and integrate European counter-UAS solutions. The cooperation continues development "
+            "of the Black Bird medium-range (30 km) interceptor and the X-Lock short-range "
+            "(15 km) system. Financial terms were not disclosed."
+        ),
+        "acquirer_country": "DE",
+        "target_country": "FR",
+        "acquirer_logo_domain": "airbus.com",
+        "target_logo_domain": "altaares.com",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2026-06-airbus-and-alta-ares-sign-partnership-to-develop-europes-air-defence-solutions",
+        "announced_date": datetime(2026, 6, 11, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "uas_drones",
+        "notes": "MoU (Black Bird + X-Lock counter-drone interceptors).",
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Rafael",
+        "target": "Reflex Aerospace",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Rafael and Reflex Aerospace announce a strategic co-development partnership at ILA Berlin 2026 for a VHR²C satellite constellation",
+        "rationale": (
+            "Israel's Rafael Advanced Defense Systems and German satellite manufacturer Reflex "
+            "Aerospace announce a strategic co-development partnership on 11 June 2026 at ILA "
+            "Berlin 2026, introducing a new class of Very High Resolution & Very High Revisit "
+            "Constellation (VHR²C). The two companies co-fund and co-develop the system, pairing "
+            "Rafael's in-orbit-proven up-to-30 cm electro-optical payload with Reflex's agile "
+            "satellite platforms; a first satellite is targeted for launch as early as Q4 2027. "
+            "Financial terms were not disclosed."
+        ),
+        "acquirer_country": "IL",
+        "target_country": "DE",
+        "acquirer_logo_domain": "rafael.co.il",
+        "target_logo_domain": "reflexaerospace.com",
+        "source_url": "https://www.reflexaerospace.com/press-releases/rafael-and-reflex-aerospace-announce-strategic-partnership",
+        "announced_date": datetime(2026, 6, 11, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "space",
+        "featured": True,
+        "notes": "Co-funded / co-developed VHR²C satellite constellation.",
+        "confidence": "high",
+    },
+    {
+        "acquirer": "Rheinmetall",
+        "target": "ERC System",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "joint_venture",
+        "description": "Rheinmetall and ERC System sign an MoU at ILA Berlin 2026 to produce the Victor U250 heavy-lift cargo drone in Germany",
+        "rationale": (
+            "Germany's Rheinmetall and drone start-up ERC System sign a memorandum of "
+            "understanding on 10 June 2026 at ILA Berlin 2026 to establish series production of "
+            "the Victor U250 heavy-lift cargo drone in North Rhine-Westphalia. Rheinmetall "
+            "contributes aviation-certification and unmanned-systems expertise while ERC System "
+            "continues developing the hybrid-electric VTOL platform, which carries up to 250 kg "
+            "over 300 km. The initiative is expected to create hundreds of jobs by 2029. "
+            "Financial terms were not disclosed."
+        ),
+        "acquirer_country": "DE",
+        "target_country": "DE",
+        "acquirer_logo_domain": "rheinmetall.com",
+        "target_logo_domain": "erc-system.com",
+        "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2026/06/2026-06-10-rheinmetall-erc-system-and-nrw-sign-mou-for-heavy-lift-drones",
+        "announced_date": datetime(2026, 6, 10, tzinfo=timezone.utc),
+        "stake_percentage": None,
+        "round_type": None,
+        "is_disclosed": False,
+        "sector": "uas_drones",
+        "notes": "MoU with ERC System (Victor U250 production in NRW); state of NRW also signed.",
         "confidence": "medium",
     },
 ]
