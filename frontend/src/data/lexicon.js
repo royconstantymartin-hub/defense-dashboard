@@ -3416,6 +3416,681 @@ export const LEXICON = [
   },
 
   // ── Industry & programs ────────────────────────────────────────────────────
+  // ── New entries — additional trade & policy ───────────────────────────────
+  {
+    slug: "arms-embargo",
+    term: "Arms Embargo",
+    abbreviation: "",
+    category: "trade",
+    tldr: "An official ban that stops a country from buying or receiving weapons — usually as punishment or to prevent escalation.",
+    summary:
+      "An official prohibition on the sale or transfer of arms to a specific country, group, or region, imposed by one nation or an international body.",
+    definition: [
+      "An arms embargo is an official measure that bans the sale, delivery, or transfer of weapons and military equipment to a targeted country, non-state actor, or conflict zone. It can be imposed unilaterally by a single exporting nation, agreed by a bloc like the European Union, or mandated by the United Nations Security Council — the most binding form, requiring all member states to comply.",
+      "Embargoes serve several purposes: punishing a government for human-rights violations, trying to reduce violence in a conflict, pressuring a regime to change behavior, or preventing a weapons buildup that could threaten regional stability. Enforcing them is the hard part — porous borders, third-country transshipment, and private brokers allow weapons to flow around them, so effectiveness varies enormously.",
+      "For the defense industry, an embargo immediately removes a customer from the market and can freeze outstanding contracts. For targeted states, it can create serious capability gaps — or drive them to develop domestic production and new supplier relationships, as Iran and North Korea have demonstrated.",
+    ],
+    keyFacts: [
+      { label: "Imposed by", value: "UN, regional bodies, or single states" },
+      { label: "Strongest form", value: "UN Security Council mandatory embargo" },
+      { label: "Challenge", value: "Enforcement & smuggling routes" },
+      { label: "Effect", value: "Cuts off military supply chains" },
+    ],
+    examples: [
+      {
+        title: "UN arms embargo on North Korea",
+        description:
+          "A comprehensive UN embargo bans virtually all arms transfers to North Korea, though illicit networks continue to supply components.",
+      },
+      {
+        title: "EU embargo on Russia (2014/2022)",
+        description:
+          "The EU imposed arms embargoes following Russia's actions in Ukraine, cutting off European defense exports and technology transfers.",
+      },
+    ],
+    related: ["export-control", "end-user-certificate", "sanctions", "foreign-military-sales"],
+    wiki: "Arms embargo",
+    imageAlt: "A cargo ship subject to arms embargo inspections",
+  },
+  {
+    slug: "sanctions",
+    term: "Defense Sanctions",
+    abbreviation: "",
+    category: "trade",
+    tldr: "Economic penalties that freeze a country's access to money, technology, or trade — used as a weapon short of war.",
+    summary:
+      "Restrictions on financial transactions, trade, and technology access imposed on a country or entity to change its behavior.",
+    definition: [
+      "Sanctions are economic and financial measures that governments impose on a country, organization, or individual to force a change in behavior without resorting to military action. In the defense context, they can block arms purchases, freeze the assets of defense companies or officials, deny access to financial systems, and cut off technology and components needed to build weapons.",
+      "The United States uses sanctions extensively, through the Office of Foreign Assets Control (OFAC), to restrict adversaries' access to the global financial system and to advanced technology. Entities on the 'Specially Designated Nationals' list cannot deal with U.S. persons or use the U.S. dollar, a powerful lever in a dollar-dominated world. The EU, UK, and other powers have their own regimes, and coordinated 'multilateral' sanctions are much harder to evade than unilateral ones.",
+      "Sanctions matter to the defense industry because any company anywhere that does business with a sanctioned entity risks losing its own access to U.S. markets and banking. This 'secondary sanctions' risk extends their reach far beyond U.S. borders and forces defense firms worldwide to screen their customers and supply chains carefully.",
+    ],
+    keyFacts: [
+      { label: "Tool of", value: "Economic statecraft, short of war" },
+      { label: "US body", value: "OFAC (Treasury)" },
+      { label: "Lever", value: "Dollar access, tech cutoffs" },
+      { label: "Extended reach", value: "Secondary sanctions on third parties" },
+    ],
+    examples: [
+      {
+        title: "CAATSA (USA)",
+        description:
+          "Countering America's Adversaries Through Sanctions Act threatens sanctions on any country buying major Russian, Iranian, or North Korean arms.",
+      },
+      {
+        title: "Russia sanctions packages",
+        description:
+          "Post-2022 Western sanctions targeted Russian defense firms and technology imports, aiming to slow its military production.",
+      },
+    ],
+    related: ["arms-embargo", "export-control", "dual-use"],
+    wiki: "Economic sanctions",
+    imageAlt: "Sanctions measures affecting defense trade",
+  },
+  {
+    slug: "technology-transfer",
+    term: "Technology Transfer",
+    abbreviation: "ToT",
+    category: "trade",
+    tldr: "When the seller of a weapon shares its know-how so the buyer can eventually build or maintain that weapon themselves.",
+    summary:
+      "The process by which a defense supplier shares technical knowledge, manufacturing rights, or production processes with a purchasing country.",
+    definition: [
+      "Technology transfer (ToT) occurs when a defense contractor or government shares technical knowledge, manufacturing processes, software, or intellectual property with another country or company as part of — or alongside — an arms deal. Rather than simply buying finished hardware, the recipient gains some ability to understand, produce, or modify the system themselves.",
+      "ToT is a powerful tool of industrial development. For buyers, it is often a demand: a country may agree to purchase fighters or frigates only if the seller helps them build a domestic production line, train engineers, or license components for local manufacture. This is closely related to 'direct offsets', and is central to countries trying to build up sovereign defense industries rather than depending permanently on imports.",
+      "For sellers, ToT involves real risks — sharing proprietary designs risks losing competitive advantage or seeing the technology spread to unintended recipients. Governments therefore regulate ToT alongside arms exports, requiring licenses and imposing limits on what can be transferred and to whom. The most sensitive technologies (stealth coatings, missile seekers, encryption) are kept tightly controlled even when the platform itself is sold.",
+    ],
+    keyFacts: [
+      { label: "What transfers", value: "Know-how, licenses, production rights" },
+      { label: "Buyer goal", value: "Industrial sovereignty, self-sufficiency" },
+      { label: "Seller risk", value: "Loss of competitive advantage" },
+      { label: "Regulated by", value: "Export-control licenses" },
+    ],
+    examples: [
+      {
+        title: "India 'Make in India' demands",
+        description:
+          "India routinely requires technology transfer as part of major arms deals, building domestic manufacturing capacity for fighters, helicopters, and submarines.",
+      },
+      {
+        title: "Licensed production of F-16s",
+        description:
+          "Several countries have produced F-16 components or assembled aircraft under license, receiving partial ToT from Lockheed Martin.",
+      },
+    ],
+    related: ["offset", "defense-industrial-base", "export-control", "foreign-military-sales"],
+    wiki: "Technology transfer",
+    imageAlt: "Engineers working on licensed defense production",
+  },
+
+  // ── New entries — additional platforms ────────────────────────────────────
+  {
+    slug: "stealth-bomber",
+    term: "Stealth Bomber",
+    abbreviation: "",
+    category: "platforms",
+    tldr: "A large aircraft designed to fly deep into enemy territory undetected and drop bombs on the most heavily defended targets.",
+    summary:
+      "A long-range strategic bomber combining stealth technology with heavy payload to strike targets inside the most defended airspace.",
+    definition: [
+      "A stealth bomber is a large aircraft built to penetrate the densest air defenses undetected and deliver a heavy payload — conventional or nuclear — against strategic targets deep in enemy territory. Unlike a tactical fighter, which briefly darts through defenses, a bomber must carry a large bomb load over intercontinental distances, making its stealth engineering far more demanding.",
+      "The flying-wing shape — a smooth, curved body with no vertical tail and no separate fuselage — is the signature of the most advanced stealth bombers. All radar-reflective sharp edges and protrusions are eliminated; engines are buried inside and exhaust is cooled to mask the heat signature; weapons are carried in internal bays. The result is an aircraft with a radar cross-section reportedly the size of a large bird.",
+      "Stealth bombers occupy a unique role: they are the delivery platform for the most difficult, highest-value strikes in wartime, and their existence is an instrument of deterrence. Because they are extraordinarily expensive and complex to operate, very few nations can field them, and programs like the U.S. B-21 Raider and China's H-20 are watched closely as measures of strategic capability.",
+    ],
+    keyFacts: [
+      { label: "Role", value: "Deep-penetration strategic strike" },
+      { label: "Shape", value: "Flying wing — minimal radar return" },
+      { label: "Payload", value: "Conventional & nuclear bombs/missiles" },
+      { label: "Examples", value: "B-2 Spirit, B-21 Raider (USA)" },
+    ],
+    examples: [
+      {
+        title: "B-2 Spirit (USA)",
+        description:
+          "The world's first operational stealth bomber, used for precision strikes on heavily defended targets since the 1990s.",
+      },
+      {
+        title: "B-21 Raider (USA)",
+        description:
+          "Successor to the B-2, designed to penetrate next-generation air defenses and carry conventional and nuclear weapons deep into adversary territory.",
+      },
+    ],
+    related: ["stealth", "nuclear-deterrence", "strategic-bomber", "cruise-missile"],
+    wiki: "Northrop Grumman B-2 Spirit",
+    imageAlt: "A flying-wing stealth bomber in flight",
+  },
+  {
+    slug: "ground-based-interceptor",
+    term: "Ground-Based Interceptor",
+    abbreviation: "GBI",
+    category: "platforms",
+    tldr: "A missile launched from the ground specifically to shoot down an incoming nuclear ICBM in space, before it can reach its target.",
+    summary:
+      "A ground-launched missile designed to intercept and destroy incoming ballistic missiles during their flight through space.",
+    definition: [
+      "A ground-based interceptor (GBI) is a defensive missile system launched from silos in the ground to destroy incoming ballistic missiles — particularly intercontinental ones — while they are still flying through space, in the 'midcourse' phase of flight. It is the centerpiece of a country's homeland missile defense against long-range nuclear attack.",
+      "Intercepting a warhead in space is one of the hardest engineering problems in defense: the target is very small, traveling at several kilometers per second, and may be accompanied by decoys that look identical on radar. The interceptor carries a 'kill vehicle' that guides itself to the target and destroys it by direct impact — 'hit-to-kill' — without an explosive warhead, relying purely on the kinetic energy of the collision.",
+      "The technology is enormously costly and remains controversial: critics argue it cannot reliably work in a real attack, while proponents say even imperfect defense changes the calculus of nuclear deterrence. The U.S. Ground-Based Midcourse Defense (GMD) system with interceptors in Alaska and California is the primary deployed example.",
+    ],
+    keyFacts: [
+      { label: "Intercepts during", value: "Midcourse (space) phase" },
+      { label: "Kill method", value: "Direct hit-to-kill impact" },
+      { label: "Target", value: "ICBMs & warheads in space" },
+      { label: "U.S. system", value: "Ground-Based Midcourse Defense (GMD)" },
+    ],
+    examples: [
+      {
+        title: "U.S. GMD system",
+        description:
+          "Interceptors based in Alaska and California defend the U.S. homeland against limited ICBM attacks from North Korea or Iran.",
+      },
+      {
+        title: "Decoy problem",
+        description:
+          "Adversaries can deploy decoys alongside warheads in space, making reliable interception extremely difficult and driving continued investment in discrimination sensors.",
+      },
+    ],
+    related: ["ballistic-missile", "nuclear-deterrence", "integrated-air-defense-system", "surface-to-air-missile"],
+    wiki: "Ground-Based Midcourse Defense",
+    imageAlt: "A ground-based interceptor missile launching",
+  },
+
+  // ── New entries — additional systems & sensors ─────────────────────────────
+  {
+    slug: "space-based-sensor",
+    term: "Space-Based Sensor",
+    abbreviation: "",
+    category: "systems",
+    tldr: "Satellites that watch the Earth for missile launches, troop movements, or enemy signals — giving commanders a view from space.",
+    summary:
+      "Orbiting satellites equipped with sensors that monitor the Earth for military threats, providing early warning, intelligence, and targeting data.",
+    definition: [
+      "Space-based sensors are satellites equipped with cameras, infrared detectors, radar, or signals-collection equipment that watch the surface and atmosphere of the Earth for military purposes. They provide things ground-based sensors cannot: a global view, coverage over denied territory, and persistence — circling the Earth every few hours or hovering in geostationary orbit to watch a fixed region continuously.",
+      "The main military applications are diverse. Infrared early-warning satellites detect the intense heat plume of a ballistic missile seconds after launch, providing critical warning minutes before impact. Optical and radar imagery satellites photograph military facilities, troop deployments, and naval movements at high resolution, feeding intelligence analysts. Signals-intelligence satellites intercept radar emissions and communications. Together these systems give commanders a 'big picture' that was simply impossible before the space age.",
+      "As their value became clear, satellites became targets. Anti-satellite (ASAT) weapons, ground-based lasers, jammers, and cyber intrusions can blind or disable them. This drives a shift toward resilient 'constellations' of many smaller satellites — if several are destroyed, enough remain — and toward hardened, jam-resistant designs.",
+    ],
+    keyFacts: [
+      { label: "Orbit types", value: "LEO, MEO, geostationary (GEO)" },
+      { label: "Sensors", value: "Infrared, optical, radar, SIGINT" },
+      { label: "Key role", value: "Missile launch warning & ISR" },
+      { label: "Threats", value: "ASAT, jamming, cyber, lasers" },
+    ],
+    examples: [
+      {
+        title: "U.S. SBIRS / Next Gen OPIR",
+        description:
+          "Infrared satellites in geostationary orbit detect ballistic-missile launches worldwide within seconds, a cornerstone of U.S. nuclear warning.",
+      },
+      {
+        title: "Commercial imagery constellations",
+        description:
+          "Commercial operators now provide near-daily satellite imagery used by governments and open-source analysts to track military activity.",
+      },
+    ],
+    related: ["military-satellite", "anti-satellite-weapon", "c4isr", "ballistic-missile"],
+    wiki: "Reconnaissance satellite",
+    imageAlt: "A military early-warning satellite in orbit",
+  },
+  {
+    slug: "signals-intelligence",
+    term: "Signals Intelligence",
+    abbreviation: "SIGINT",
+    category: "systems",
+    tldr: "Spying by listening — intercepting an enemy's radio, radar, and phone signals to learn what they're doing.",
+    summary:
+      "Intelligence gathered by intercepting electronic signals — communications, radar emissions, and telemetry — from an adversary.",
+    definition: [
+      "Signals intelligence (SIGINT) is intelligence gathered by intercepting and analyzing the electromagnetic signals an adversary emits — their radio communications, radar pulses, data transmissions, mobile phones, and the telemetry from missiles during testing. It is one of the most valuable sources of military and strategic intelligence, because it can reveal intentions, capabilities, and plans that no satellite photograph can capture.",
+      "SIGINT divides into sub-categories. COMINT (communications intelligence) intercepts voice and data communications between people and organizations. ELINT (electronic intelligence) collects and analyzes radar and weapons-system emissions — identifying where enemy radars are, what type they are, and how they behave, which is essential for jamming and targeting. MASINT (measurement and signature intelligence) captures unique signatures from weapons and systems.",
+      "Dedicated SIGINT platforms include aircraft that fly along borders to sweep up radar and communications signals, satellites that intercept global communications, and ground stations. The intelligence produced shapes targeting, air-defense suppression, and arms-control verification, and SIGINT agencies — like the U.S. NSA or the UK's GCHQ — are among the most important in any intelligence community.",
+    ],
+    keyFacts: [
+      { label: "Branches", value: "COMINT, ELINT, MASINT" },
+      { label: "Platforms", value: "Aircraft, satellites, ground stations" },
+      { label: "Products", value: "Enemy locations, plans, radar data" },
+      { label: "Key agencies", value: "NSA (USA), GCHQ (UK)" },
+    ],
+    examples: [
+      {
+        title: "ELINT for SEAD",
+        description:
+          "Recording enemy radar emissions lets planners build jamming programs and targeting data for Suppression of Enemy Air Defenses missions.",
+      },
+      {
+        title: "RC-135 Rivet Joint",
+        description:
+          "A dedicated U.S. SIGINT aircraft that flies missions collecting communications and electronic intelligence in crisis regions.",
+      },
+    ],
+    related: ["c4isr", "electronic-warfare", "military-satellite", "sead"],
+    wiki: "Signals intelligence",
+    imageAlt: "An airborne signals-intelligence collection aircraft",
+  },
+  {
+    slug: "uav-swarm",
+    term: "UAV Swarm",
+    abbreviation: "",
+    category: "systems",
+    tldr: "Many small drones acting together like a flock, overwhelming defenses through sheer numbers and coordination.",
+    summary:
+      "A coordinated group of unmanned aerial vehicles that operates collectively, using numbers and distributed logic to overwhelm defenses.",
+    definition: [
+      "A UAV swarm is a group of unmanned aerial vehicles that operate in a coordinated, collective manner — sharing information and adapting behavior as a group rather than each being individually piloted. Inspired by the behavior of flocks of birds or swarms of insects, the concept exploits numbers: a swarm can saturate a defense, confuse targeting sensors, and accept the loss of individual members without failing as a whole.",
+      "Swarming tactics are particularly powerful against air-defense systems designed to track and engage one or a few targets at a time. A swarm of dozens or hundreds of small drones can approach from multiple directions simultaneously, each too small and cheap for an expensive interceptor missile to be fired at every one. Some can jam radars, others carry warheads, and others serve as decoys — the defense cannot tell which is which until too late.",
+      "The technology is advancing rapidly, moving from centrally controlled formations toward genuinely autonomous swarms with onboard AI that allows collective decision-making without a continuous link to a human operator. This raises new challenges for counter-drone systems and new ethical questions about lethal autonomy.",
+    ],
+    keyFacts: [
+      { label: "Key advantage", value: "Saturates defenses through numbers" },
+      { label: "Tactics", value: "Multi-axis attack, decoys, jammers mixed in" },
+      { label: "Trend", value: "Moving toward onboard AI autonomy" },
+      { label: "Counter", value: "Directed energy, EW, networked CIWS" },
+    ],
+    examples: [
+      {
+        title: "Atacama drone attacks",
+        description:
+          "Coordinated drone swarm attacks on energy infrastructure and military bases have demonstrated real-world saturation of defenses.",
+      },
+      {
+        title: "U.S. Perdix micro-UAVs",
+        description:
+          "An early U.S. demonstration of 103 small drones launched from a fighter that self-organized into a swarm without central control.",
+      },
+    ],
+    related: ["counter-uas", "loitering-munition", "drone-swarm", "directed-energy-weapon"],
+    wiki: "Unmanned combat aerial vehicle",
+    imageAlt: "A swarm of small unmanned aerial vehicles in formation",
+  },
+  {
+    slug: "autonomous-weapon",
+    term: "Autonomous Weapon System",
+    abbreviation: "AWS",
+    category: "systems",
+    tldr: "A weapon that can find and attack targets on its own, without a human deciding each individual shot — raising deep ethical questions.",
+    summary:
+      "A weapon system capable of selecting and engaging targets without direct human authorization for each individual attack.",
+    definition: [
+      "An autonomous weapon system (AWS) is a weapon that can detect, identify, select, and engage targets using its own sensors and onboard algorithms, without a human operator deciding to pull the trigger for each individual attack. The degree of autonomy is a spectrum: at one end a human approves every engagement; at the other, a system operates entirely independently once released.",
+      "The distinction between semi-autonomous and fully autonomous matters enormously for law and ethics. Most current 'automatic' systems — like a close-in weapon system that shoots down incoming missiles — are pre-authorized by humans but react faster than any human could. Truly autonomous 'lethal autonomous weapon systems' (LAWS) that choose human targets entirely by machine logic are the subject of intense international debate, with critics calling for a treaty ban.",
+      "Proponents argue autonomy speeds response time, removes risk to soldiers, and can enable persistent operations. Critics warn that machines cannot reliably apply the laws of war, that accountability disappears when no human pulls the trigger, and that lowering the cost of lethal force could make conflict more frequent. This debate is shaping arms-control discussions, military doctrine, and the design of AI-equipped weapons worldwide.",
+    ],
+    keyFacts: [
+      { label: "Spectrum", value: "Human-in-loop → fully autonomous" },
+      { label: "Controversy", value: "LAWS — 'killer robot' debate" },
+      { label: "Legal issue", value: "Accountability, laws-of-war compliance" },
+      { label: "Current form", value: "CIWS, active protection, loitering munitions" },
+    ],
+    examples: [
+      {
+        title: "CIWS auto-engagement",
+        description:
+          "Phalanx CIWS can detect and engage incoming missiles without human authorization — pre-approved but fully automatic engagement.",
+      },
+      {
+        title: "International ban efforts",
+        description:
+          "UN discussions on LAWS aim to set red lines against weapons that select and kill humans without meaningful human control.",
+      },
+    ],
+    related: ["counter-uas", "loitering-munition", "uav-swarm", "drone-swarm"],
+    wiki: "Lethal autonomous weapon",
+    imageAlt: "An autonomous weapon system concept",
+  },
+
+  // ── New entries — additional doctrine & concepts ───────────────────────────
+  {
+    slug: "escalation-dominance",
+    term: "Escalation Dominance",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "The ability to always have a more powerful response ready than your opponent at every level of a conflict — so they back down first.",
+    summary:
+      "A strategic posture in which a state maintains a credible and superior military option at every rung of the escalation ladder.",
+    definition: [
+      "Escalation dominance is the idea that a state should be able to match or exceed an adversary at every level of conflict intensity, from low-level skirmishes all the way up to nuclear exchange, so that at no rung of the 'escalation ladder' does the adversary believe it can gain an advantage by raising the stakes. If you can credibly counter any escalation step, you deny your opponent a reason to escalate further.",
+      "The concept rests on the 'escalation ladder' — a metaphor for the rising levels of conflict severity. Each rung represents a more intense form of violence. Escalation dominance requires credible, ready capabilities at each rung: conventional superiority for mid-level conventional war, theater nuclear options, and strategic nuclear deterrence at the top.",
+      "In practice, escalation dominance is difficult and expensive to achieve across the full spectrum. Modern discussions focus on whether nuclear-armed states can fight and win conventional or 'gray zone' conflicts without triggering nuclear escalation — a problem with no easy answer and one that drives both weapons development and arms-control negotiations.",
+    ],
+    keyFacts: [
+      { label: "Goal", value: "Superior option at every conflict level" },
+      { label: "Tool", value: "The escalation ladder concept" },
+      { label: "Challenge", value: "Credible across conventional & nuclear" },
+      { label: "Links to", value: "Deterrence, proportional response" },
+    ],
+    examples: [
+      {
+        title: "NATO conventional + nuclear posture",
+        description:
+          "NATO combines conventional forces, theater nuclear sharing, and strategic deterrence to maintain credible options across the escalation spectrum against Russia.",
+      },
+      {
+        title: "Gray zone competition",
+        description:
+          "Adversaries probe below the threshold of open conflict, betting that democracies lack escalation-dominance tools for low-intensity coercion.",
+      },
+    ],
+    related: ["nuclear-deterrence", "deterrence-conventional", "a2ad", "asymmetric-warfare"],
+    wiki: "Escalation dominance",
+    imageAlt: "A strategic escalation ladder concept diagram",
+  },
+  {
+    slug: "gray-zone",
+    term: "Gray Zone Conflict",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "Coercive actions — like cyberattacks or disinformation — that stay below the level of open war, making them hard to respond to.",
+    summary:
+      "Hostile activities — coercion, cyber operations, disinformation, proxy forces — that fall between peace and open armed conflict.",
+    definition: [
+      "Gray zone conflict refers to hostile activities that a state or non-state actor conducts in the ambiguous space between normal peacetime competition and open armed conflict. The activities are designed to achieve strategic goals — seizing territory, weakening an opponent, influencing elections, or undermining alliances — while staying below the threshold that would trigger a conventional military response.",
+      "Gray zone tools are diverse: cyberattacks on infrastructure, disinformation campaigns, economic coercion, proxy warfare, provocative but deniable paramilitary operations, or the slow, incremental seizure of contested territory. The 'deniability' is key — the aggressor can claim the actions were not state-sponsored or not hostile enough to justify retaliation.",
+      "Responding to gray zone aggression is difficult because conventional military responses seem disproportionate, exposing a gap in strategy. Deterrence built for open war may not deter below-the-threshold harassment. This has pushed militaries and governments to develop counter-gray-zone strategies involving cyber capability, resilience, counter-influence operations, and legal tools alongside military readiness.",
+    ],
+    keyFacts: [
+      { label: "Below the line of", value: "Open armed conflict" },
+      { label: "Tools", value: "Cyber, disinformation, proxies, coercion" },
+      { label: "Key feature", value: "Deniability and ambiguity" },
+      { label: "Challenge", value: "Hard to deter or respond to" },
+    ],
+    examples: [
+      {
+        title: "South China Sea island-building",
+        description:
+          "Incremental construction on disputed reefs expanded territorial control without crossing into open war — a textbook gray zone operation.",
+      },
+      {
+        title: "Election interference",
+        description:
+          "State-sponsored disinformation and hacking targeting foreign elections are gray zone operations aimed at weakening adversaries from within.",
+      },
+    ],
+    related: ["cyberwarfare", "asymmetric-warfare", "escalation-dominance", "deterrence-conventional"],
+    wiki: "Hybrid warfare",
+    imageAlt: "Ambiguous state-sponsored covert operations",
+  },
+  {
+    slug: "doctrine-power-projection",
+    term: "Power Projection",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "The ability to send and use military force far from your own country — the ultimate measure of a great power's military reach.",
+    summary:
+      "The ability of a state to deploy and sustain military force in distant regions to achieve strategic objectives.",
+    definition: [
+      "Power projection is the capacity of a state to deploy effective military force far from its own territory and sustain it long enough to achieve strategic goals. It is one of the defining attributes that separates great powers from regional ones: a country that can only defend its own borders has far less strategic influence than one that can intervene anywhere on the globe.",
+      "Power projection requires more than just capable weapons — it needs the 'enablers' to get them there and keep them fighting: strategic airlift (large cargo aircraft), sealift (transport ships), aerial refueling tankers, forward bases or carrier strike groups, and secure, long-range logistics chains. Without these, even the most capable army is a homeland force.",
+      "Aircraft carriers are the most visible symbol of power projection — a sovereign airfield that can appear off any coastline. Expeditionary land forces, long-range bombers, and naval task groups are other tools. Adversaries counter power projection with A2/AD strategies designed to raise the cost of deploying forces into their region.",
+    ],
+    keyFacts: [
+      { label: "Requires", value: "Airlift, sealift, tankers, bases" },
+      { label: "Symbol", value: "Aircraft carrier strike group" },
+      { label: "Countered by", value: "A2/AD strategies" },
+      { label: "Defines", value: "Great-power vs. regional military" },
+    ],
+    examples: [
+      {
+        title: "U.S. carrier strike groups",
+        description:
+          "Constant global deployment of carrier groups lets the U.S. threaten military action anywhere on short notice.",
+      },
+      {
+        title: "Strategic airlift (C-17)",
+        description:
+          "Large transport aircraft enable rapid deployment of troops and equipment to distant theaters, the logistical backbone of power projection.",
+      },
+    ],
+    related: ["aircraft-carrier", "a2ad", "logistics", "strategic-bomber"],
+    wiki: "Power projection",
+    imageAlt: "A carrier strike group projecting naval power",
+  },
+  {
+    slug: "joint-operations",
+    term: "Joint Operations",
+    abbreviation: "",
+    category: "doctrine",
+    tldr: "Army, Navy, Air Force and Marines working together in one coordinated campaign — combining all military branches as a team.",
+    summary:
+      "Military operations that integrate forces from two or more services — army, navy, air force, and marines — under unified command.",
+    definition: [
+      "Joint operations are military campaigns or actions that combine forces from two or more services — typically army, navy, air force, and marines — under a single, unified command. The goal is to exploit the strengths of each service in a coordinated way: air power to win the skies and strike deep, naval forces to control the sea and deliver logistics, land forces to seize and hold ground, and special operations for precision actions.",
+      "Modern warfare is almost always joint, because the advantages of combining services outweigh the complexity of coordinating them. Air support for ground forces, naval gunfire on coastal targets, and amphibious landings are classic examples of joint operations in practice. The challenge is 'jointness' — getting services that have different cultures, communications systems, and doctrines to actually mesh in the heat of battle.",
+      "Joint doctrine, common communications standards, and dedicated joint commands (like U.S. combatant commands, each responsible for a region) are how modern militaries institutionalize jointness. The concept extends to 'combined joint' operations when allied nations' forces are included alongside multiple services.",
+    ],
+    keyFacts: [
+      { label: "Who", value: "Two or more military services" },
+      { label: "Enabled by", value: "Common comms, joint doctrine" },
+      { label: "Extended", value: "Combined joint = allied + multi-service" },
+      { label: "Challenge", value: "Culture, coordination, interoperability" },
+    ],
+    examples: [
+      {
+        title: "D-Day (1944)",
+        description:
+          "The largest joint amphibious operation in history combined naval, air, and land forces across many allied nations.",
+      },
+      {
+        title: "U.S. Combatant Commands",
+        description:
+          "Regional commands like CENTCOM and INDOPACOM integrate all U.S. services plus allies for operations in their areas of responsibility.",
+      },
+    ],
+    related: ["combined-arms", "interoperability", "c4isr", "amphibious-assault-ship"],
+    wiki: "Joint warfare",
+    imageAlt: "Multi-service joint military forces in an operation",
+  },
+
+  // ── New entries — additional industry & programs ───────────────────────────
+  {
+    slug: "sovereign-defense-industry",
+    term: "Sovereign Defense Industry",
+    abbreviation: "",
+    category: "industry",
+    tldr: "A country's own domestic ability to design and build weapons — seen as a strategic necessity so it doesn't depend on foreign suppliers.",
+    summary:
+      "A state's domestic capacity to design, develop, and manufacture its own defense equipment without relying on foreign suppliers.",
+    definition: [
+      "A sovereign defense industry refers to a country's domestic capability to design, develop, manufacture, and sustain its own military equipment, from rifles and ammunition up to warships, fighters, and missiles. Governments treat this as a strategic imperative: a nation that depends entirely on imports for its weapons is vulnerable — supplies can be cut off by an embargo, political decision, or war precisely when they are most needed.",
+      "Building a sovereign industrial base requires sustained investment in engineering talent, manufacturing infrastructure, and research facilities. Smaller countries often cannot afford a full-spectrum capability and focus sovereignty efforts on the systems most critical to their specific strategy: Norway prioritizes naval missiles, Israel autonomous systems, Sweden stealth fighters. The rest is bought abroad under carefully managed dependency.",
+      "The tension in sovereign defense industry is cost versus capability. Domestic programs are almost always more expensive per unit than buying proven foreign designs in quantity, because development costs are amortized over a small fleet. Governments justify the premium through job creation, technology spillover into civilian industry, long-term strategic independence, and the export potential of systems developed domestically.",
+    ],
+    keyFacts: [
+      { label: "Why it matters", value: "Immunity from foreign supply cutoffs" },
+      { label: "Challenge", value: "High development cost vs. small domestic market" },
+      { label: "Trade-off", value: "Strategic independence vs. efficiency" },
+      { label: "Examples", value: "Israel, Sweden, India, France" },
+    ],
+    examples: [
+      {
+        title: "France's full-spectrum industry",
+        description:
+          "France maintains domestic capability for nuclear weapons, carriers, fighters, missiles, and satellites — one of the most complete sovereign industries outside the U.S.",
+      },
+      {
+        title: "Israel's niche depth",
+        description:
+          "Israel has built world-leading capability in specific areas — UAVs, active protection, cyber — to meet its unique threat environment without trying to build everything.",
+      },
+    ],
+    related: ["defense-industrial-base", "technology-transfer", "offset", "arms-race"],
+    wiki: "Arms industry",
+    imageAlt: "A domestic defense manufacturing facility",
+  },
+  {
+    slug: "foreign-direct-investment-defense",
+    term: "Defense FDI Screening",
+    abbreviation: "CFIUS / FIRB",
+    category: "industry",
+    tldr: "Government review of foreign companies buying into defense firms, to block takeovers that could threaten national security.",
+    summary:
+      "Government processes that review and can block foreign investment in defense and critical technology companies on national-security grounds.",
+    definition: [
+      "Defense Foreign Direct Investment (FDI) screening is the process by which governments review — and can block or impose conditions on — acquisitions of domestic defense and critical-technology companies by foreign investors. Because a foreign entity controlling a missile manufacturer, a chipmaker, or an AI company could gain access to classified designs, sensitive technology, or strategic supply chains, governments have set up dedicated review bodies.",
+      "In the United States, the Committee on Foreign Investment in the United States (CFIUS) reviews deals and can recommend the President block them. The UK, EU, Australia (FIRB), and many other nations have equivalent bodies. After years of gap-filling, most allied nations dramatically strengthened their screening regimes in the late 2010s in response to concerns about Chinese acquisitions of Western technology companies.",
+      "For the defense industry, FDI screening shapes M&A activity: some cross-border deals that make commercial sense are blocked on security grounds, and foreign investors must often accept conditions — divestiture of sensitive contracts, restrictions on data access, government 'golden shares' — as the price of approval.",
+    ],
+    keyFacts: [
+      { label: "U.S. body", value: "CFIUS (Treasury-led)" },
+      { label: "Can", value: "Block, condition, or unwind deals" },
+      { label: "Trigger", value: "Control of sensitive tech or supply chain" },
+      { label: "Trend", value: "Expanded globally post-2018" },
+    ],
+    examples: [
+      {
+        title: "CFIUS blocking a chip acquisition",
+        description:
+          "CFIUS has blocked several Chinese bids for U.S. semiconductor companies on the grounds that control of chip technology threatens national security.",
+      },
+      {
+        title: "EU FDI screening regulation",
+        description:
+          "The 2019 EU regulation created a framework for member states to share information on deals and coordinate screening of sensitive acquisitions.",
+      },
+    ],
+    related: ["defense-industrial-base", "prime-contractor", "dual-use", "sanctions"],
+    wiki: "Committee on Foreign Investment in the United States",
+    imageAlt: "Government review of a defense industry acquisition",
+  },
+  {
+    slug: "non-proliferation",
+    term: "Non-Proliferation",
+    abbreviation: "NPT",
+    category: "trade",
+    tldr: "The global effort to stop more countries from getting nuclear, chemical, or biological weapons of mass destruction.",
+    summary:
+      "International agreements and norms designed to prevent the spread of nuclear, chemical, and biological weapons to more states or non-state actors.",
+    definition: [
+      "Non-proliferation refers to the body of international law, treaties, organizations, and norms designed to prevent weapons of mass destruction — primarily nuclear, but also chemical and biological — from spreading to additional states or to non-state actors. The cornerstone is the 1968 Treaty on the Non-Proliferation of Nuclear Weapons (NPT), under which the five recognized nuclear states agreed not to help others acquire nuclear weapons, while non-nuclear signatories agreed not to seek them.",
+      "The regime extends beyond the NPT. The Chemical Weapons Convention (CWC) bans the production and use of chemical weapons. The Biological Weapons Convention (BWC) does the same for biological agents. Export controls, intelligence operations, sanctions, and occasionally military action (as with Iraq and Syria's chemical programs) are the tools used to enforce these norms when treaty mechanisms fail.",
+      "Non-proliferation is perpetually under stress. North Korea withdrew from the NPT and tested nuclear weapons. Iran's program has remained a source of crisis for decades. The spread of dual-use technology — enrichment equipment, missile motors, biological research — makes policing the line between peaceful and weapons use a permanent challenge.",
+    ],
+    keyFacts: [
+      { label: "Nuclear cornerstone", value: "NPT (1968)" },
+      { label: "Chemical", value: "Chemical Weapons Convention (CWC)" },
+      { label: "Biological", value: "Biological Weapons Convention (BWC)" },
+      { label: "Tools", value: "Inspections, sanctions, export controls" },
+    ],
+    examples: [
+      {
+        title: "IAEA safeguards",
+        description:
+          "The International Atomic Energy Agency inspects nuclear facilities worldwide to verify that civilian programs are not diverted to weapons use.",
+      },
+      {
+        title: "Iran nuclear deal (JCPOA)",
+        description:
+          "Diplomacy that constrained Iran's enrichment in exchange for sanctions relief — a contested but concrete non-proliferation instrument.",
+      },
+    ],
+    related: ["nuclear-deterrence", "export-control", "sanctions", "arms-embargo"],
+    wiki: "Treaty on the Non-Proliferation of Nuclear Weapons",
+    imageAlt: "IAEA inspectors at a nuclear facility",
+  },
+  {
+    slug: "multidomain-operations",
+    term: "Multi-Domain Operations",
+    abbreviation: "MDO",
+    category: "doctrine",
+    tldr: "Modern war fought simultaneously across land, sea, air, space, and cyber — all five domains linked together.",
+    summary:
+      "A military concept that integrates operations across all warfighting domains — land, sea, air, space, and cyber — simultaneously.",
+    definition: [
+      "Multi-Domain Operations (MDO) is the current U.S. Army and broader Western military concept for how to fight and win against a peer adversary who contests all warfighting domains simultaneously — land, sea, air, space, and cyberspace. Where older joint doctrine coordinated across domains sequentially, MDO demands that forces create and exploit fleeting windows of advantage across all domains at once.",
+      "The concept emerged from the recognition that adversaries had developed the means to contest or deny access in every domain: long-range missiles threatening airbases, anti-satellite weapons degrading ISR, electronic warfare jamming data links, cyber intrusions disrupting command networks, and A2/AD bubbles limiting sea and air maneuver. MDO answers by attacking those systems simultaneously across all domains to create exploitable gaps.",
+      "In practice, MDO requires unprecedented integration: cyber and space capabilities plugged into tactical operations, space-based sensors cueing land fires, electronic warfare supporting air maneuver, and special forces enabling all of it. This demands new doctrine, new equipment investments in cross-domain connectivity, and new training — and it elevates non-traditional domains like space and cyber to the same priority as traditional military branches.",
+    ],
+    keyFacts: [
+      { label: "Domains", value: "Land, sea, air, space, cyber" },
+      { label: "Goal", value: "Simultaneous multi-domain exploitation" },
+      { label: "Against", value: "Peer adversaries contesting all domains" },
+      { label: "Requires", value: "Deep C4ISR integration across domains" },
+    ],
+    examples: [
+      {
+        title: "Space-enabled land fires",
+        description:
+          "MDO envisions satellites cueing long-range artillery or missiles to strike time-sensitive targets detected from orbit.",
+      },
+      {
+        title: "Cyber + EW + kinetic strikes",
+        description:
+          "Coordinated cyber attacks that degrade air defenses combined with electronic jamming and precision strikes open corridors for air operations.",
+      },
+    ],
+    related: ["joint-operations", "c4isr", "network-centric-warfare", "anti-satellite-weapon"],
+    wiki: "Multi-domain operations",
+    imageAlt: "Graphic illustrating simultaneous operations across land, sea, air, space, and cyber",
+  },
+  {
+    slug: "theater-missile-defense",
+    term: "Theater Missile Defense",
+    abbreviation: "TMD",
+    category: "systems",
+    tldr: "Missile defense for a specific region or combat zone — protecting troops and allies from ballistic and cruise missile attacks during a war.",
+    summary:
+      "Layered missile defense systems deployed in a combat theater to protect forces, allies, and territory from ballistic and cruise missile attack.",
+    definition: [
+      "Theater missile defense (TMD) covers the missile-defense systems deployed in a specific geographic theater — a region of military operations — to protect deployed forces, allied territory, and critical infrastructure from attack by ballistic and cruise missiles. It is distinct from homeland missile defense, which protects a nation's own cities from intercontinental attack.",
+      "A TMD system is built in layers, each covering a different altitude and range band. The lowest tier intercepts missiles in the final seconds, close to the target (terminal defense). Higher tiers engage missiles earlier in flight at greater altitude (upper-tier defense), before they can disperse submunitions or overwhelm point defenses. Systems like the Patriot, THAAD, and Israel's Arrow form these layers.",
+      "TMD has become increasingly important as ballistic and cruise missile arsenals spread to more states and non-state actors. Protecting a carrier strike group, a main operating base, or a capital city in wartime requires a functioning layered defense that can handle saturation attacks, decoys, and the short flight times of short-range missiles that may give only seconds of warning.",
+    ],
+    keyFacts: [
+      { label: "Covers", value: "A regional theater, not homeland" },
+      { label: "Layers", value: "Terminal + upper-tier defense" },
+      { label: "Examples", value: "Patriot PAC-3, THAAD, Arrow" },
+      { label: "Challenge", value: "Saturation, short warning times, decoys" },
+    ],
+    examples: [
+      {
+        title: "THAAD in South Korea",
+        description:
+          "THAAD batteries deployed to South Korea provide upper-tier defense against North Korean ballistic missiles threatening U.S. forces and Korean cities.",
+      },
+      {
+        title: "Israel's multi-layer defense",
+        description:
+          "Iron Dome (short-range rockets), David's Sling (medium), and Arrow (ballistic) form a complete layered TMD architecture.",
+      },
+    ],
+    related: ["surface-to-air-missile", "integrated-air-defense-system", "ballistic-missile", "ground-based-interceptor"],
+    wiki: "Theater High Altitude Area Defense",
+    imageAlt: "A THAAD theater missile defense battery",
+  },
+  {
+    slug: "naval-task-force",
+    term: "Naval Task Force",
+    abbreviation: "",
+    category: "platforms",
+    tldr: "A group of warships assembled for a specific mission — from a single escort to a full carrier strike group.",
+    summary:
+      "A temporary grouping of naval vessels assembled from different types to accomplish a specific operational mission.",
+    definition: [
+      "A naval task force is a temporary grouping of warships from different classes assembled under a single commander to accomplish a specific mission. The task force concept allows navies to tailor forces to the job: an amphibious landing requires different ships from a submarine-hunting patrol or a carrier strike. Task forces are designated by number and organized into groups and units, allowing flexible command and control as the mission evolves.",
+      "The most powerful example is the carrier strike group (CSG), built around an aircraft carrier and typically including destroyers for air and missile defense, a cruiser, attack submarines to screen for enemy submarines, and supply ships to sustain the force at sea. The CSG can project air power, strike land targets, control sea lanes, and conduct humanitarian operations — all from a self-contained mobile force.",
+      "Naval task forces can form multinational coalitions, with allied ships operating under a common commander. This requires interoperability in communications, fuel and ammunition compatibility, and shared procedures — challenges that NATO, the Combined Maritime Forces in the Middle East, and other alliances have spent decades solving.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Mission-specific ship grouping" },
+      { label: "Largest type", value: "Carrier strike group (CSG)" },
+      { label: "Includes", value: "Carrier, destroyers, subs, supply ships" },
+      { label: "Can be", value: "Multinational coalition" },
+    ],
+    examples: [
+      {
+        title: "U.S. Carrier Strike Group",
+        description:
+          "The CSG built around a Nimitz- or Ford-class carrier is the apex naval task force, combining strike, air defense, and anti-submarine capability.",
+      },
+      {
+        title: "Combined Maritime Forces",
+        description:
+          "A multinational naval coalition in the Middle East that assembles task forces from over 30 nations to counter piracy and threats to shipping.",
+      },
+    ],
+    related: ["aircraft-carrier", "destroyer", "submarine", "anti-ship-missile"],
+    wiki: "Carrier strike group",
+    imageAlt: "A carrier strike group underway at sea",
+  },
+
   {
     slug: "arms-race",
     term: "Arms Race",
