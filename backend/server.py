@@ -104,6 +104,7 @@ class MAActivityCreate(BaseModel):
     round_type: Optional[str] = None            # seed / series_a / series_b / series_c / growth / buyout
     is_disclosed: bool = True                   # False when deal value is undisclosed
     valuation: Optional[float] = None           # Post-money valuation in millions USD
+    featured: bool = False                       # pin to the "Recent Deals Spotlight" cards
     # Regulatory fields
     regulatory_status: Optional[str] = None
     regulatory_body: Optional[str] = None
@@ -135,6 +136,7 @@ class MAActivity(BaseModel):
     round_type: Optional[str] = None
     is_disclosed: bool = True
     valuation: Optional[float] = None           # Post-money valuation in millions USD
+    featured: bool = False                       # pin to the "Recent Deals Spotlight" cards
     # Regulatory fields
     regulatory_status: Optional[str] = None    # pending_cfius, pending_eu_comp, pending_uk_cma, cleared, blocked, not_required
     regulatory_body: Optional[str] = None      # CFIUS, EU DG COMP, UK CMA, Multiple
@@ -740,6 +742,51 @@ async def seed_ma_eurosatory(current_user: dict = Depends(get_current_user)):
         "message": f"{inserted} ajoutés, {updated} mis à jour — {len(MA_EUROSATORY_2026)} deals Eurosatory 2026",
     }
 
+@api_router.post("/ma-activities/seed-ila")
+async def seed_ma_ila(current_user: dict = Depends(get_current_user)):
+    """Idempotently upsert the hand-curated ILA Berlin 2026 M&A / JV deals.
+
+    Like seed-eurosatory, this is additive — it does NOT wipe the collection.
+    Deals are matched by (acquirer_norm, target_norm) so re-running refreshes
+    the curated fields without creating duplicates.
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    from data.seed_data import MA_ILA_BERLIN_2026
+    import re as _re
+
+    def _norm(s: str) -> str:
+        return _re.sub(r"\s+", " ", s.lower().strip())
+
+    inserted, updated = 0, 0
+    for m in MA_ILA_BERLIN_2026:
+        activity = MAActivity(**m)
+        doc = activity.model_dump()
+        doc["announced_date"] = doc["announced_date"].isoformat()
+        if doc.get("closed_date"):
+            doc["closed_date"] = doc["closed_date"].isoformat()
+        doc["acquirer_norm"] = _norm(m["acquirer"])
+        doc["target_norm"] = _norm(m["target"])
+
+        key = {"acquirer_norm": doc["acquirer_norm"], "target_norm": doc["target_norm"]}
+        existing = await db.ma_activities.find_one(key, {"_id": 0, "id": 1})
+        if existing:
+            doc["id"] = existing["id"]
+            await db.ma_activities.update_one(key, {"$set": doc})
+            updated += 1
+        else:
+            await db.ma_activities.insert_one(doc)
+            inserted += 1
+
+    total = await db.ma_activities.count_documents({})
+    return {
+        "status": "ILA Berlin 2026 deals seeded",
+        "inserted": inserted,
+        "updated": updated,
+        "total": total,
+        "message": f"{inserted} ajoutés, {updated} mis à jour — {len(MA_ILA_BERLIN_2026)} deals ILA Berlin 2026",
+    }
+
 # ============= JV PROGRAMS ROUTES =============
 
 @api_router.get("/jv-programs")
@@ -1313,7 +1360,7 @@ async def data_consistency_check():
 
 async def _run_seed() -> dict:
     """Idempotent seed — safe to call on every startup."""
-    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
+    from data.seed_data import DEFENSE_COMPANIES, ANNOUNCEMENTS_DATA, MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10, MA_EUROSATORY_2026, MA_ILA_BERLIN_2026, EXPENDITURES_DATA, REGULATIONS_DATA, PRODUCTS_DATA, CONTRACTS_DATA
 
     # Remove duplicate defense players by name — keep the entry matching the seed ticker
     seed_ticker_by_name = {p['name']: p['ticker'] for p in DEFENSE_COMPANIES}
@@ -1374,7 +1421,7 @@ async def _run_seed() -> dict:
 
     # Build a set of (acq_first_word, tgt_first_word) tuples to identify scraper duplicates
     seed_acq_tgt_first: set = set()
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10:
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026:
         acq_words = _norm(m['acquirer']).split()
         tgt_words = _norm(m['target']).split()
         if acq_words and tgt_words:
@@ -1382,7 +1429,7 @@ async def _run_seed() -> dict:
 
     # Also build full set of seed target words (>3 chars) for broader matching
     seed_tgt_words: set = set()
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10:
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026:
         for w in _norm(m['target']).split():
             if len(w) > 3:
                 seed_tgt_words.add(w)
@@ -1431,7 +1478,7 @@ async def _run_seed() -> dict:
     await db.ma_activities.delete_many({"scraped_at": {"$exists": True}, "source_url": {"$in": [None, ""]}})
 
     # Seed MA_DATA + MA_EXTRA_DEALS, then MA_PILOT_10 last so its enriched fields win on conflict
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10:
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026:
         activity = MAActivity(**m)
         doc = activity.model_dump()
         doc['announced_date'] = doc['announced_date'].isoformat()
@@ -2995,6 +3042,7 @@ async def _purge_scraper_junk():
         # ── Pass 3: cross-reference against seeded (acquirer, target) pairs ───
         from data.seed_data import (
             MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10, MA_EUROSATORY_2026,
+            MA_ILA_BERLIN_2026,
         )
 
         def _norm(s: str) -> str:
@@ -3002,7 +3050,7 @@ async def _purge_scraper_junk():
 
         # Build lookup: (first word of acquirer, first word of target) pairs
         seed_pairs: set = set()
-        for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026:
+        for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026:
             aw = _norm(m["acquirer"]).split()
             tw = _norm(m["target"]).split()
             if aw and tw:

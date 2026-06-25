@@ -968,13 +968,18 @@ const SPOTLIGHT_TABS = [
 
 function RecentDealsSpotlight({ activities, sourceFilter, onSourceFilter, sourceCounts }) {
   const spots = useMemo(() => {
-    // Spotlight always shows the LATEST company-level deals: acquisitions,
-    // mergers and joint ventures (trade-show announcements like Eurosatory are
-    // mostly JVs). The Defense/Fund toggle below filters the TABLE, not these
-    // cards ("news").
+    // Spotlight shows company-level deals: acquisitions, mergers and joint
+    // ventures (trade-show announcements like ILA Berlin & Eurosatory are mostly
+    // JVs). "Featured" deals are hand-picked as the most notable and always come
+    // first; the rest fall back to most-recent-first. This guarantees a balanced
+    // mix (e.g. ILA Berlin + Eurosatory) instead of just the latest-dated ones.
+    // The Defense/Fund toggle below filters the TABLE, not these cards ("news").
     return [...activities]
       .filter(a => ["acquisition", "merger", "joint_venture"].includes(a.deal_type))
-      .sort((a, b) => new Date(b.announced_date) - new Date(a.announced_date))
+      .sort((a, b) =>
+        (Number(Boolean(b.featured)) - Number(Boolean(a.featured))) ||
+        (new Date(b.announced_date) - new Date(a.announced_date))
+      )
       .slice(0, 4);
   }, [activities]);
 
