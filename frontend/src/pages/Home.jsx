@@ -58,17 +58,70 @@ function getFlag(country) {
   return code ? `https://flagcdn.com/w40/${code}.png` : null;
 }
 
-function relativeTime(isoStr) {
-  if (!isoStr) return "recent";
-  const diff = Date.now() - new Date(isoStr).getTime();
-  const h = Math.floor(diff / 3600000);
+// Hours since a date (used for "NEW" badge + relative time).
+function hoursSince(dateStr) {
+  if (!dateStr) return Infinity;
+  return (Date.now() - new Date(dateStr).getTime()) / 3600000;
+}
+function relativeTime(dateStr) {
+  const h = hoursSince(dateStr);
+  if (!isFinite(h)) return "recent";
   if (h < 1) return "< 1h ago";
-  if (h < 24) return `${h}h ago`;
+  if (h < 24) return `${Math.floor(h)}h ago`;
+  if (h < 48) return "Yesterday";
   return `${Math.floor(h / 24)}d ago`;
 }
 
 function initials(name = "") {
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
+
+// ── Article card visual helpers (ported from the Announcements page) ──────────
+const CATEGORY_STOCK_PHOTOS = {
+  TECHNOLOGY: [
+    "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1612529784443-40a86b856d14?auto=format&fit=crop&w=800&q=80",
+  ],
+  CONTRACT: [
+    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1521791055366-0d553872125f?auto=format&fit=crop&w=800&q=80",
+  ],
+  CONFLICT: [
+    "https://images.unsplash.com/photo-1668724982255-1a3e0c72b814?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1578241030078-01b38ededda4?auto=format&fit=crop&w=800&q=80",
+  ],
+  INDUSTRY: [
+    "https://images.unsplash.com/photo-1720036236855-9a1a2e4d3f26?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1720036236697-018370867320?auto=format&fit=crop&w=800&q=80",
+  ],
+};
+
+function getCategoryStyle(category) {
+  switch (category) {
+    case "CONTRACT": return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    case "CONFLICT": return "bg-red-50     text-red-700     border-red-200";
+    default:         return "bg-slate-100  text-slate-600   border-slate-200"; // INDUSTRY
+  }
+}
+
+const ZONE_STYLES = {
+  "US":                 "bg-blue-50    text-blue-700    border-blue-200",
+  "Europe":             "bg-indigo-50  text-indigo-700  border-indigo-200",
+  "Ukraine-Russia War": "bg-amber-50   text-amber-700   border-amber-200",
+  "Iran-Israel War":    "bg-rose-50    text-rose-700    border-rose-200",
+  "Middle East":        "bg-orange-50  text-orange-700  border-orange-200",
+  "China":              "bg-red-50     text-red-700     border-red-200",
+  "APAC":               "bg-teal-50    text-teal-700    border-teal-200",
+  "Africa":             "bg-lime-50    text-lime-700    border-lime-200",
+};
+function getZoneStyle(zone) {
+  return ZONE_STYLES[zone] || "bg-slate-50 text-slate-500 border-slate-200";
+}
+
+function getFallbackImage(article) {
+  const pool = CATEGORY_STOCK_PHOTOS[article.category] || CATEGORY_STOCK_PHOTOS.INDUSTRY;
+  const idx = Math.abs((article.title?.charCodeAt(0) || 65) + (article.title?.length || 0)) % pool.length;
+  return pool[idx];
 }
 
 // Company logo with graceful fallback to coloured initials.
@@ -89,6 +142,69 @@ function CompanyLogo({ name }) {
       className="w-7 h-7 rounded-md object-contain bg-white border border-slate-100 shrink-0"
       onError={() => setIdx((i) => i + 1)}
     />
+  );
+}
+
+// News card with image on top — same format as the Announcements page.
+function ArticleCard({ article }) {
+  const [imgError, setImgError] = useState(false);
+  const displayImage = (!imgError && article.image) || getFallbackImage(article);
+  const isNew = hoursSince(article.publishedAt) < 4;
+
+  return (
+    <a
+      href={article.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200 group flex flex-col"
+    >
+      {/* Image */}
+      <div className="relative overflow-hidden bg-slate-100" style={{ aspectRatio: "16/9" }}>
+        <img
+          src={displayImage}
+          alt={article.title}
+          loading="lazy"
+          onError={() => setImgError(true)}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        {isNew && (
+          <span className="absolute top-2 left-2 bg-slate-900 text-white text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wider">
+            NEW
+          </span>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col gap-2 p-4 flex-1">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider w-fit ${getCategoryStyle(article.category)}`}>
+            {article.category || "INDUSTRY"}
+          </span>
+          {article.zone && article.zone !== "Global" && (
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider w-fit ${getZoneStyle(article.zone)}`}>
+              {article.zone}
+            </span>
+          )}
+        </div>
+
+        <h3 className="font-bold text-[14px] leading-snug line-clamp-2 text-slate-800 group-hover:text-blue-800 transition-colors flex-1">
+          {article.title}
+        </h3>
+
+        {article.summary && (
+          <p className="text-[12px] text-slate-400 leading-snug line-clamp-2">{article.summary}</p>
+        )}
+
+        <div className="flex items-center justify-between mt-auto pt-2 gap-2 border-t border-slate-50">
+          <span className="text-[11px] text-slate-500 font-medium truncate">
+            {article.realSource || article.source}
+          </span>
+          <span className="text-[11px] text-slate-400 flex-shrink-0">
+            {relativeTime(article.publishedAt)}
+          </span>
+        </div>
+      </div>
+    </a>
   );
 }
 
@@ -118,10 +234,10 @@ export default function Home() {
       .catch(() => setPlayers([]));
   }, []);
 
-  // 2) Latest intel — generic news feed (with images), independent of players.
+  // 2) Latest intel — 8 most recent articles (with images).
   useEffect(() => {
-    axios.get(`${API}/news?limit=5&hours=48`)
-      .then((res) => setNews(res.data || []))
+    axios.get(`${API}/news?limit=8&hours=168`)
+      .then((res) => setNews((res.data || []).slice(0, 8)))
       .catch(() => setNews([]))
       .finally(() => setNewsLoading(false));
   }, []);
@@ -294,7 +410,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 3. Latest intel — with article images */}
+      {/* 3. Latest intel — 8 article cards (image-top format) */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-heading text-lg font-bold text-slate-900">Latest intel</h2>
@@ -302,64 +418,18 @@ export default function Home() {
             View all <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-0">
-            {news.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-sm flex flex-col items-center gap-2">
-                <Newspaper className="w-6 h-6 text-slate-300" />
-                {newsLoading ? "Loading latest news…" : "No recent news available."}
-              </div>
-            ) : (
-              <div className="divide-y divide-slate-100">
-                {news.map((item, idx) => (
-                  <a
-                    key={item.url || idx}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start gap-4 p-4 hover:bg-slate-50 transition-colors group"
-                  >
-                    {/* Thumbnail */}
-                    <div className="w-20 h-16 rounded-lg overflow-hidden shrink-0 bg-slate-100 flex items-center justify-center">
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt=""
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            e.target.style.display = "none";
-                            e.target.nextSibling && (e.target.nextSibling.style.display = "flex");
-                          }}
-                        />
-                      ) : null}
-                      <div
-                        className="w-full h-full items-center justify-center"
-                        style={{ display: item.image ? "none" : "flex" }}
-                      >
-                        <Newspaper className="w-5 h-5 text-slate-300" />
-                      </div>
-                    </div>
-                    {/* Text */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-800 line-clamp-2 leading-snug group-hover:text-slate-900 transition-colors">
-                        {item.title}
-                      </p>
-                      <p className="text-xs text-slate-400 mt-1.5 flex items-center gap-1.5">
-                        <span>{item.source || "—"}</span>
-                        {item.publishedAt && (
-                          <>
-                            <span className="text-slate-200">·</span>
-                            <span>{relativeTime(item.publishedAt)}</span>
-                          </>
-                        )}
-                      </p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {news.length === 0 ? (
+          <div className="p-10 text-center text-slate-500 text-sm flex flex-col items-center gap-2 bg-white rounded-xl border border-slate-200">
+            <Newspaper className="w-6 h-6 text-slate-300" />
+            {newsLoading ? "Loading latest news…" : "No recent news available."}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {news.map((item, idx) => (
+              <ArticleCard key={item.url || idx} article={item} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
