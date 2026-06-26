@@ -915,12 +915,19 @@ const GOV_BUYER_RE = /\b(ministry of defen[cs]e|department of defen[cs]e|\bdod\b
 // A target that reads like a QUANTITY of military hardware (e.g. "six A330 MRTT
 // tankers", "12 F-35 jets") is a procurement order, not a company being bought.
 const PROCUREMENT_RE = /\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|dozens?|fleet|squadron)\b.*\b(tankers?|fighters?|jets?|aircraft|helicopters?|drones?|uavs?|missiles?|frigates?|destroyers?|submarines?|corvettes?|warships?|vehicles?|tanks?|howitzers?|radars?|satellites?|units?)\b/i;
+// Geopolitical / policy-initiative phrases that are NOT companies — scraper noise
+// like "NATO's eastern flank", "Eastern Flank Watch" or "European Sky Shield".
+// These read like a deal party but no legal entity exists, so they must never
+// appear as an acquirer or target in any table or the spotlight.
+const NON_CORPORATE_RE = /\b(eastern flank|flank watch|eastern sentry|sky shield)\b/i;
 
 function isStateOrProcurement(activity) {
   const acq = (activity?.acquirer || "").trim().toLowerCase().replace(/^the\s+/, "");
   if (STATE_BUYERS.has(acq)) return true;
   if (GOV_BUYER_RE.test(activity?.acquirer || "")) return true;
   if (PROCUREMENT_RE.test(activity?.target || "")) return true;
+  if (NON_CORPORATE_RE.test(activity?.acquirer || "") ||
+      NON_CORPORATE_RE.test(activity?.target || "")) return true;
   return false;
 }
 

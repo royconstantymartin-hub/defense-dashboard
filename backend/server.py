@@ -2733,6 +2733,10 @@ _STALE_MA_DEALS = [
     {"acquirer": "L3Harris Technologies", "target": "L3 Technologies"},
     # Stale short-name variant of the Hanwha/DSME deal (superseded by "Hanwha Group" entry)
     {"acquirer": "Hanwha", "target": "Daewoo Shipbuilding"},
+    # Geopolitical / policy-initiative scraper junk — not a company-to-company deal.
+    # e.g. "NATO's eastern flank", "Eastern Flank Watch", "European Sky Shield".
+    {"acquirer": {"$regex": "eastern flank|flank watch|eastern sentry|sky shield", "$options": "i"}},
+    {"target":   {"$regex": "eastern flank|flank watch|eastern sentry|sky shield", "$options": "i"}},
 ]
 
 _HIGH_CONF_URL_RE = re.compile(
