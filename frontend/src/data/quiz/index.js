@@ -128,6 +128,9 @@ export const QUIZ_QUESTIONS = Object.entries(RAW_BANKS).flatMap(([category, bank
     options: item.o,
     answer: item.a,
     explanation: item.e,
+    // Optional illustration: set `img: "https://..."` on a question to show a
+    // picture above it. Left null when absent — rendering is fully optional.
+    image: item.img || null,
   }))
 );
 

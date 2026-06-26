@@ -89,7 +89,7 @@ export const SYSTEMS_QUESTIONS = [
     e: "A CIWS (Close-In Weapon System) like Phalanx is a rapid-fire gun that destroys threats that get close to a ship." },
   { level: "intermediate", sub: ["missiles"],
     q: "MANPADS refers to what?",
-    o: ["A man-portable air-defense (shoulder-fired SAM) system", "A mine-clearing vehicle", "A naval radar", "A type of body armor"], a: 0,
+    o: ["A man-portable air-defense (shoulder-fired SAM) system", "A vehicle-mounted anti-tank gun", "A long-range coastal-defense missile", "A guided artillery shell"], a: 0,
     e: "MANPADS are shoulder-launched surface-to-air missiles such as the Stinger." },
   { level: "intermediate", sub: ["missiles"],
     q: "The Tomahawk is what type of weapon?",

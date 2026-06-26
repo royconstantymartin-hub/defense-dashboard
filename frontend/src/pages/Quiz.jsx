@@ -335,6 +335,17 @@ export default function Quiz() {
 
         <Card className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
           <CardContent className="p-6">
+            {q.image && (
+              <img
+                src={q.image}
+                alt=""
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+                className="w-full h-44 object-cover rounded-lg mb-5 border border-slate-200 bg-slate-50"
+              />
+            )}
             <h2 className="font-heading text-lg font-bold text-slate-900 mb-5">{q.question}</h2>
 
             <div className="space-y-3">
