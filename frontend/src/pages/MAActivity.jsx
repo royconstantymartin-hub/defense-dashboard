@@ -2080,6 +2080,7 @@ function JVProgramsView({ activities = [] }) {
 // ── Deal-type tabs ─────────────────────────────────────────────────────────
 
 const DEAL_TYPE_TABS = [
+  { value: "all",           label: "All deals",             types: null },
   { value: "acquisitions",  label: "Acquisitions",          types: ["acquisition"] },
   { value: "mergers",       label: "Mergers",               types: ["merger"] },
   { value: "investments",   label: "Investments & Funding", types: INVEST_TYPES },
@@ -3093,7 +3094,7 @@ export default function MAActivity() {
   const [loading,        setLoading]           = useState(true);
   const [histLoading,    setHistLoading]       = useState(false);
   const [error,          setError]             = useState(null);
-  const [dealTypeTab,    setDealTypeTab]       = useState("acquisitions");
+  const [dealTypeTab,    setDealTypeTab]       = useState("all");
   const [page,           setPage]              = useState(0);
   const [searchTerm,     setSearchTerm]        = useState("");
   const [selectedStatus, setSelectedStatus]    = useState("all");
@@ -3199,6 +3200,7 @@ export default function MAActivity() {
     for (const a of allDeals) raw[a.deal_type] = (raw[a.deal_type] || 0) + 1;
     const fundingRounds = (raw.strategic_investment || 0) + (raw.minority_stake || 0) + (raw.funding_round || 0) + (raw.investment || 0);
     return {
+      all:                  allDeals.length,
       acquisitions:         (raw.acquisition || 0) + (raw.asset_acquisition || 0),
       mergers:              raw.merger || 0,
       investments:          fundingRounds,
