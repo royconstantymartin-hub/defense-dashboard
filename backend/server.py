@@ -1381,9 +1381,12 @@ async def _run_seed() -> dict:
 
     # Seed Defense Players — check by name OR ticker to prevent duplicates
     for p in DEFENSE_COMPANIES:
-        existing = await db.defense_players.find_one(
-            {"$or": [{"ticker": p['ticker']}, {"name": p['name']}]}
-        )
+        ticker = p.get('ticker', '')
+        if ticker and ticker not in ('PRIVATE', 'PRIVATE-PRIV', ''):
+            query = {"$or": [{"ticker": ticker}, {"name": p['name']}]}
+        else:
+            query = {"name": p['name']}
+        existing = await db.defense_players.find_one(query)
         if not existing:
             player = DefensePlayer(**p)
             doc = player.model_dump()
