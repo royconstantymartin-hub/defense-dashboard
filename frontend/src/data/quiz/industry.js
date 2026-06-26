@@ -139,7 +139,7 @@ export const INDUSTRY_QUESTIONS = [
     e: "Subcontractors (or 'tier' suppliers) provide components and services to the prime that holds the main contract." },
   { level: "beginner", sub: ["usa"],
     q: "Oshkosh Defense is best known for producing what?",
-    o: ["Military trucks and tactical vehicles", "Fighter jets", "Submarines", "Air-to-air missiles"], a: 0,
+    o: ["Military trucks and tactical vehicles", "Main battle tanks", "Self-propelled howitzers", "Infantry fighting vehicles"], a: 0,
     e: "Oshkosh makes heavy military trucks and the JLTV light tactical vehicle." },
 
   // ── Intermediate ──────────────────────────────────────────────────────────────
@@ -172,8 +172,8 @@ export const INDUSTRY_QUESTIONS = [
     o: ["Orbital ATK", "Aerojet Rocketdyne", "Scaled Composites", "Vought"], a: 0,
     e: "Northrop Grumman bought Orbital ATK in 2018, forming its Innovation Systems sector." },
   { level: "intermediate", sub: ["usa"],
-    q: "Which of these is primarily a defense IT/services company rather than a weapons manufacturer?",
-    o: ["Leidos", "Rheinmetall", "Saab", "Dassault Aviation"], a: 0,
+    q: "Which of these large U.S. contractors is primarily a defense IT/services company rather than a weapons manufacturer?",
+    o: ["Leidos", "Northrop Grumman", "General Dynamics", "L3Harris"], a: 0,
     e: "Leidos is a major U.S. defense and government IT-services contractor." },
   { level: "intermediate", sub: ["europe"],
     q: "The French state and which aerospace company are the main shareholders of Thales?",

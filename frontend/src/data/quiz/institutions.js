@@ -74,7 +74,7 @@ export const INSTITUTIONS_QUESTIONS = [
     e: "OCCAR manages collaborative European defense procurement programs such as the A400M and Boxer." },
   { level: "intermediate", sub: ["eu"],
     q: "The European Defence Agency (EDA) exists to do what?",
-    o: ["Support EU members in developing defense capabilities together", "Command NATO troops", "Sell weapons for profit", "Run the EU's nuclear arsenal"], a: 0,
+    o: ["Support EU members in developing defense capabilities together", "Command EU military operations in the field", "Approve members' arms-export licences", "Operate a shared EU nuclear deterrent"], a: 0,
     e: "The EDA promotes cooperation, research and capability development among EU member states." },
   { level: "intermediate", sub: ["usa"],
     q: "The Chairman of the Joint Chiefs of Staff serves primarily as what?",
@@ -106,7 +106,7 @@ export const INSTITUTIONS_QUESTIONS = [
     e: "The GRU is Russia's military-intelligence service; the SVR handles foreign intelligence and the FSB domestic security." },
   { level: "intermediate", sub: ["general"],
     q: "The Geneva Conventions primarily govern what?",
-    o: ["The humane treatment of the wounded, prisoners and civilians in war", "Arms-export licensing", "Defense budgets", "Military pay scales"], a: 0,
+    o: ["The humane treatment of the wounded, prisoners and civilians in war", "The legal procedure for formally declaring war", "Which weapons may be sold between states", "The rights and duties of neutral nations"], a: 0,
     e: "The Geneva Conventions are the core of international humanitarian law (the laws of armed conflict)." },
 
   // ── Expert ──────────────────────────────────────────────────────────────────
@@ -289,7 +289,7 @@ export const INSTITUTIONS_QUESTIONS = [
     e: "The Russian Aerospace Forces (VKS) merged the air force with air- and space-defense troops in 2015." },
   { level: "intermediate", sub: ["russia"],
     q: "The Wagner Group became infamous as what?",
-    o: ["A Russian private military company (mercenaries)", "a Russian space agency", "a NATO task force", "a Ukrainian brigade"], a: 0,
+    o: ["A Russian private military company (mercenaries)", "A Russian air-defense regiment", "A Ukrainian volunteer battalion", "A Russian state-run arms exporter"], a: 0,
     e: "Wagner was a Kremlin-linked private military company active in Ukraine, Syria and Africa." },
   { level: "intermediate", sub: ["general"],
     q: "The principle of 'deterrence' aims to do what?",

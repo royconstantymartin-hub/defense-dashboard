@@ -45,7 +45,7 @@ export const STRATEGY_QUESTIONS = [
   // ── Intermediate ──────────────────────────────────────────────────────────────
   { level: "intermediate", sub: ["trade"],
     q: "Which country has been the world's single largest arms importer in recent years (per SIPRI)?",
-    o: ["India", "Brazil", "Canada", "Mexico"], a: 0,
+    o: ["India", "Saudi Arabia", "Qatar", "Egypt"], a: 0,
     e: "India has topped SIPRI's list of major arms importers in recent periods." },
   { level: "intermediate", sub: ["trade"],
     q: "The phrase 'military-industrial complex' was famously warned about by which U.S. president?",
