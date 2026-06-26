@@ -18,7 +18,8 @@ import {
   Lock,
   Radar,
   BookOpen,
-  GraduationCap
+  GraduationCap,
+  Home
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const navItems = [
+  { path: "/home", icon: Home, label: "Home" },
   { path: "/", icon: TrendingUp, label: "Market Activity" },
   { path: "/announcements", icon: Activity, label: "Announcements" },
   { path: "/ma-activity", icon: Handshake, label: "M&A Activity", inProgress: true },
