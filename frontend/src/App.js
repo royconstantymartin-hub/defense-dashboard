@@ -13,7 +13,6 @@ import MarketData from "@/pages/MarketData";
 import Expenditures from "@/pages/Expenditures";
 import Products from "@/pages/Products";
 import Follow from "@/pages/Follow";
-import Bookmarks from "@/pages/Bookmarks";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 import PrivatePlayers from "@/pages/PrivatePlayers";
@@ -128,7 +127,6 @@ function App() {
             <Route path="expenditures" element={<Expenditures />} />
             <Route path="products" element={<Products />} />
             <Route path="follow" element={<Follow />} />
-            <Route path="bookmarks" element={<Bookmarks />} />
             <Route path="private-players" element={<PrivatePlayers />} />
             <Route path="world-monitor" element={<WorldMonitor />} />
             <Route path="lexicon" element={<Lexicon />} />
