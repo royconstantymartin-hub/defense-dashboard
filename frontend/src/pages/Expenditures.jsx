@@ -21,7 +21,7 @@ import {
   Target, Gauge, Download, FileCheck, Radar, ChevronDown, ChevronRight,
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
-import { CAPABILITY_DETAILS, PLATFORM_WIKI_TITLES, WKP, STATIC_PLATFORM_IMAGES, DEFENSE_CAPABILITIES, getCapabilitySummary } from "@/data/defenseCapabilities";
+import { CAPABILITY_DETAILS, PLATFORM_WIKI_TITLES, WKP, STATIC_PLATFORM_IMAGES, DEFENSE_CAPABILITIES, getCapabilitySummary, GENERIC_WIKI_DENYLIST } from "@/data/defenseCapabilities";
 import { DATA_VINTAGE, SOURCES, sourceShortLabel, citationText, buildBibliography, downloadTextFile } from "@/data/sources";
 import { getMethodology } from "@/data/metricMethodology";
 
@@ -1278,6 +1278,9 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
     if (fetchedRef.current.has(model)) return;
     fetchedRef.current.add(model);
     const wikiTitle = PLATFORM_WIKI_TITLES[model] || model;
+    // Skip generic class/company articles — their lead image is a wrong, shared
+    // photo (e.g. a Reaper for every UAV). Show the clean category icon instead.
+    if (GENERIC_WIKI_DENYLIST.has(wikiTitle)) return;
     const title = wikiTitle.replace(/ /g, '_');
     try {
       const r = await fetch(
@@ -1322,7 +1325,7 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
               {getMethodology(cat.key)?.unit || "in service"} ·{" "}
               <span
                 title={getMethodology(cat.key)
-                  ? `${getMethodology(cat.key).counts} Exclut : ${getMethodology(cat.key).excludes}`
+                  ? `${getMethodology(cat.key).counts} Excludes: ${getMethodology(cat.key).excludes}`
                   : citationText("IISS")}
                 className="cursor-help underline decoration-dotted"
               >
@@ -2909,8 +2912,8 @@ export default function Expenditures() {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => {
-                  // CSV enrichi : chaque ligne porte sa citation complète + date de
-                  // consultation (exigence de traçabilité académique).
+                  // Enriched CSV: every row carries its full citation + access
+                  // date (academic traceability requirement).
                   const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
                   const headers = ['Country', 'Code', 'NATO', 'Region', 'Expenditure ($B)', 'YoY vs 2023 (%)', 'Per Capita ($)', '% GDP', 'Year', 'Source', 'Source citation', 'Accessed'];
                   const rows = filteredExpenditures.map(e => {

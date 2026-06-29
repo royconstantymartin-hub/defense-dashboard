@@ -1,30 +1,29 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Source registry & citation helpers  (V2 — Chantier 1 « Sourcing & traçabilité »)
+// Source registry & citation helpers  (V2 — workstream C1 "Sourcing & traceability")
 //
-// Objectif : aucune donnée ne doit être affichée sans une source citable, datée
-// et exportable. Ce module centralise les références (au lieu d'étiquettes en dur
-// dispersées dans la page) et fournit les helpers d'export académique
-// (BibTeX / RIS), réutilisables par l'export du tableau et des fiches pays.
+// Goal: no figure should be displayed without a citable, dated and exportable
+// source. This module centralises references (instead of hard-coded labels
+// scattered across the page) and provides academic export helpers
+// (BibTeX / RIS), reused by the table and country-profile exports.
 //
-// Contrainte budgétaire : uniquement des sources OUVERTES et gratuites
-// (SIPRI, NATO, Global Firepower, rapports gouvernementaux) — aucun flux sous
-// licence n'est requis pour faire fonctionner cette couche.
+// Budget constraint: OPEN, free sources only (SIPRI, NATO, Global Firepower,
+// national government reports) — no licensed feed is required for this layer.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Millésime de référence unique de la page — source de vérité unique.
-// Remplace les multiples « 2024 » codés en dur (cohérence des millésimes).
+// Single reference vintage for the page — single source of truth.
+// Replaces the multiple hard-coded "2024" strings (vintage consistency).
 export const DATA_VINTAGE = {
-  // Année budgétaire de référence des dépenses affichées.
+  // Reference fiscal year of the spending figures shown.
   expenditure_fy: 2024,
-  // Édition de l'annuaire de capacités utilisée comme référence principale.
+  // Capability yearbook edition used as the primary reference.
   capability_edition: "2024",
-  // Date de dernière revue éditoriale du jeu de données (à mettre à jour à chaque
-  // rafraîchissement). Affichée comme « dernière mise à jour ».
+  // Date of the last editorial review of the dataset (update on each refresh).
+  // Displayed as "last reviewed".
   last_reviewed: "2026-06-29",
 };
 
-// Registre des sources. Chaque entrée porte une citation complète et vérifiable.
-// `accessed` = date de consultation (exigence académique).
+// Source registry. Each entry carries a complete, verifiable citation.
+// `accessed` = date the source was consulted (academic requirement).
 export const SOURCES = {
   SIPRI: {
     id: "SIPRI",
@@ -35,7 +34,7 @@ export const SOURCES = {
     accessed: DATA_VINTAGE.last_reviewed,
     type: "dataset",
     open_access: true,
-    note: "Dépenses militaires en USD constants. Données ouvertes et gratuites.",
+    note: "Military spending in constant USD. Open and free data.",
   },
   IISS: {
     id: "IISS",
@@ -46,7 +45,7 @@ export const SOURCES = {
     accessed: DATA_VINTAGE.last_reviewed,
     type: "book",
     open_access: false,
-    note: "Référence principale des inventaires d'équipement (parc en service).",
+    note: "Primary reference for equipment inventories (in-service fleet).",
   },
   NATO: {
     id: "NATO",
@@ -57,7 +56,7 @@ export const SOURCES = {
     accessed: DATA_VINTAGE.last_reviewed,
     type: "report",
     open_access: true,
-    note: "Communiqués officiels OTAN (% PIB, dépenses). Accès libre.",
+    note: "Official NATO press releases (% GDP, spending). Open access.",
   },
   GFP: {
     id: "GFP",
@@ -68,7 +67,7 @@ export const SOURCES = {
     accessed: DATA_VINTAGE.last_reviewed,
     type: "website",
     open_access: true,
-    note: "Estimations agrégées d'effectifs et d'équipements. Accès libre.",
+    note: "Aggregate estimates of personnel and equipment. Open access.",
   },
   NATIONAL: {
     id: "NATIONAL",
@@ -79,7 +78,7 @@ export const SOURCES = {
     accessed: DATA_VINTAGE.last_reviewed,
     type: "report",
     open_access: true,
-    note: "Rapports budgétaires officiels nationaux (variable par pays).",
+    note: "Official national budget reports (varies by country).",
   },
   ESTIMATE: {
     id: "ESTIMATE",
@@ -90,28 +89,28 @@ export const SOURCES = {
     accessed: DATA_VINTAGE.last_reviewed,
     type: "estimate",
     open_access: true,
-    note: "Estimation interne non vérifiée — à NE PAS citer comme source primaire.",
+    note: "Internal unverified estimate — do NOT cite as a primary source.",
   },
 };
 
-// Résout l'identifiant de source brut (tel que stocké en base / seed) vers une
-// entrée du registre. Tolérant aux variantes de casse.
+// Resolves the raw source id (as stored in DB / seed) to a registry entry.
+// Case-insensitive.
 export function resolveSource(rawId) {
   if (!rawId) return null;
   const key = String(rawId).trim().toUpperCase().replace(/\s+/g, "_");
   return SOURCES[key] || null;
 }
 
-// Étiquette courte affichable (ex. « SIPRI 2025 »).
+// Short display label (e.g. "SIPRI 2025").
 export function sourceShortLabel(rawId) {
   const s = resolveSource(rawId);
   if (!s) return rawId || "—";
   return `${s.id} ${s.year}`;
 }
 
-// Citation longue façon liste de références.
-// Ex. « SIPRI (2025). SIPRI Military Expenditure Database. Stockholm International
-//       Peace Research Institute. Consulté le 2026-06-29. https://… »
+// Long reference-list-style citation.
+// e.g. "Stockholm International Peace Research Institute (2025). SIPRI Military
+//       Expenditure Database. https://… Accessed 2026-06-29."
 export function citationText(rawId) {
   const s = resolveSource(rawId);
   if (!s) return rawId || "";
@@ -119,12 +118,12 @@ export function citationText(rawId) {
     `${s.publisher} (${s.year}).`,
     `${s.label}.`,
     s.url ? s.url : null,
-    `Consulté le ${s.accessed}.`,
+    `Accessed ${s.accessed}.`,
   ].filter(Boolean);
   return parts.join(" ");
 }
 
-// Export BibTeX d'une source (clé = id + année).
+// BibTeX export of a source (key = id + year).
 export function toBibTeX(rawId) {
   const s = resolveSource(rawId);
   if (!s) return "";
@@ -136,13 +135,13 @@ export function toBibTeX(rawId) {
     `  author = {{${s.publisher}}},`,
     `  year   = {${s.year}},`,
     s.url ? `  url    = {${s.url}},` : null,
-    `  note   = {Consulté le ${s.accessed}}`,
+    `  note   = {Accessed ${s.accessed}}`,
     `}`,
   ].filter(Boolean);
   return lines.join("\n");
 }
 
-// Export RIS d'une source (compatible Zotero / EndNote / Mendeley).
+// RIS export of a source (compatible with Zotero / EndNote / Mendeley).
 export function toRIS(rawId) {
   const s = resolveSource(rawId);
   if (!s) return "";
@@ -160,7 +159,7 @@ export function toRIS(rawId) {
   return lines.join("\n");
 }
 
-// Agrège les citations uniques d'une liste d'identifiants de sources.
+// Aggregates the unique citations from a list of source ids.
 export function buildBibliography(rawIds, format = "bibtex") {
   const seen = new Set();
   const out = [];
@@ -174,7 +173,7 @@ export function buildBibliography(rawIds, format = "bibtex") {
   return out.filter(Boolean).join("\n\n");
 }
 
-// Déclenche le téléchargement d'un fichier texte côté navigateur.
+// Triggers a client-side text file download.
 export function downloadTextFile(filename, content, mime = "text/plain") {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([content], { type: mime }));

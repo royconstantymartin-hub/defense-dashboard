@@ -1,86 +1,86 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Metric methodology dictionary  (V2 — Chantier 4 « Harmonisation méthodologique »)
+// Metric methodology dictionary  (V2 — workstream C4 "Metric harmonisation")
 //
-// Problème adressé : aujourd'hui une même colonne ne mesure pas la même chose
-// d'un pays à l'autre (ex. les drones de l'Ukraine excluent ~8M de FPV/an, mais
-// d'autres pays incluent leurs munitions rôdeuses). Ce registre documente, pour
-// chaque métrique, CE QUI EST COMPTÉ et CE QUI EST EXCLU, afin que la donnée soit
-// interprétable et comparable. Affiché en infobulle sur chaque tuile/section.
+// Problem addressed: today the same column does not measure the same thing from
+// one country to another (e.g. Ukraine's drone count excludes ~8M FPV/year while
+// other countries fold their loitering munitions in). This registry documents,
+// for each metric, WHAT IS COUNTED and WHAT IS EXCLUDED, so the figure is
+// interpretable and comparable. Surfaced as a tooltip on each tile/section.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const METRIC_METHODOLOGY = {
   fighters: {
     label: "Combat Aircraft",
-    counts: "Avions de combat à voilure fixe en service (chasse, attaque, bombardiers).",
-    excludes: "Appareils en commande, en développement, en réserve longue ou à l'entraînement.",
-    unit: "appareils en service",
+    counts: "Fixed-wing combat aircraft in service (fighters, attack, bombers).",
+    excludes: "Aircraft on order, in development, in long-term reserve or in a training role.",
+    unit: "aircraft in service",
     primary_source: "IISS",
   },
   helicopters: {
     label: "Rotary Wing",
-    counts: "Hélicoptères militaires en service (attaque, transport, naval).",
-    excludes: "Appareils civils réquisitionnés et machines stockées.",
-    unit: "appareils en service",
+    counts: "Military helicopters in service (attack, transport, naval).",
+    excludes: "Requisitioned civilian airframes and stored aircraft.",
+    unit: "aircraft in service",
     primary_source: "IISS",
   },
   drones: {
     label: "Drones & UAVs",
-    counts: "Systèmes de drones non consommables distincts (ISR, MALE/HALE, UCAV).",
-    excludes: "Munitions rôdeuses et FPV consommables (comptées à part, volumes non homogènes entre pays).",
-    unit: "modèles / systèmes",
+    counts: "Distinct non-expendable drone systems (ISR, MALE/HALE, UCAV).",
+    excludes: "Expendable loitering munitions and FPV drones (counted separately; volumes not comparable across countries).",
+    unit: "models / systems",
     primary_source: "GFP",
-    caveat: "Métrique hétérogène — privilégier la lecture qualitative au comptage brut.",
+    caveat: "Heterogeneous metric — prefer the qualitative reading over the raw count.",
   },
   tanks: {
     label: "Main Battle Tanks",
-    counts: "Chars de combat (MBT) et chars légers en service actif.",
-    excludes: "Chars en stockage / réserve mobilisable (volumes considérables pour certains pays).",
-    unit: "chars en service",
+    counts: "Main battle tanks (MBT) and light tanks in active service.",
+    excludes: "Tanks in storage / mobilisation reserve (substantial for some countries).",
+    unit: "tanks in service",
     primary_source: "IISS",
   },
   armored_vehicles: {
     label: "Armored Vehicles",
-    counts: "Véhicules blindés (IFV, APC, MRAP, reconnaissance) en service.",
-    excludes: "Véhicules logistiques non blindés et matériels stockés.",
-    unit: "véhicules en service",
+    counts: "Armoured vehicles (IFV, APC, MRAP, reconnaissance) in service.",
+    excludes: "Unarmoured logistics vehicles and stored equipment.",
+    unit: "vehicles in service",
     primary_source: "IISS",
   },
   aircraft_carriers: {
     label: "Aircraft Carriers",
-    counts: "Porte-aéronefs (CVN/CV), porte-aéronefs légers et porte-hélicoptères amphibies (LHD).",
-    excludes: "Navires en construction ou en réserve.",
-    unit: "navires en service",
+    counts: "Carriers (CVN/CV), light carriers and amphibious assault ships (LHD).",
+    excludes: "Vessels under construction or in reserve.",
+    unit: "ships in service",
     primary_source: "IISS",
   },
   surface_combatants: {
     label: "Surface Combatants",
-    counts: "Bâtiments de combat de surface principaux (frégates, destroyers, corvettes).",
-    excludes: "Patrouilleurs côtiers, navires auxiliaires et de soutien.",
-    unit: "navires en service",
+    counts: "Principal surface combatants (frigates, destroyers, corvettes).",
+    excludes: "Coastal patrol craft, auxiliaries and support vessels.",
+    unit: "ships in service",
     primary_source: "IISS",
   },
   submarines: {
     label: "Submarines",
-    counts: "Sous-marins d'attaque (SSN/SSK) et lanceurs d'engins (SSBN) en service.",
-    excludes: "Unités en désarmement ou en grand carénage prolongé.",
-    unit: "sous-marins en service",
+    counts: "Attack submarines (SSN/SSK) and ballistic-missile submarines (SSBN) in service.",
+    excludes: "Units being decommissioned or in extended refit.",
+    unit: "submarines in service",
     primary_source: "IISS",
   },
   air_defense: {
     label: "Air Defense",
-    counts: "Systèmes sol-air majeurs (batteries SAM, défense antimissile, SHORAD).",
-    excludes: "Armes antiaériennes individuelles (MANPADS) comptées séparément.",
-    unit: "systèmes / batteries",
+    counts: "Major ground-based air-defence systems (SAM batteries, BMD, SHORAD).",
+    excludes: "Man-portable air-defence systems (MANPADS), counted separately.",
+    unit: "systems / batteries",
     primary_source: "GFP",
-    caveat: "Granularité variable selon les pays — interpréter avec prudence.",
+    caveat: "Granularity varies by country — interpret with caution.",
   },
   missiles: {
     label: "Missiles",
-    counts: "Stocks de missiles de croisière, balistiques et de frappe (estimations agrégées).",
-    excludes: "Munitions guidées air-sol tactiques de courte portée.",
-    unit: "missiles (estimation)",
+    counts: "Stocks of cruise, ballistic and strike missiles (aggregate estimates).",
+    excludes: "Short-range tactical air-to-ground guided munitions.",
+    unit: "missiles (estimate)",
     primary_source: "GFP",
-    caveat: "Estimations agrégées — incertitude élevée.",
+    caveat: "Aggregate estimates — high uncertainty.",
   },
 };
 
