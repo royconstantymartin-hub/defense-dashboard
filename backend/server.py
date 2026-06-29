@@ -2355,6 +2355,94 @@ async def purge_stock_photo_images(current_user: dict = Depends(get_current_user
     return {"purged": result.modified_count}
 
 
+# Generic words that are NOT a company on their own — mirrors the frontend
+# COMPANY_STOPWORDS so backend purge and frontend display agree on "junk name".
+_MA_STOPWORDS = {
+    "the","a","an","and","or","of","with","for","in","to","its","their",
+    "defense","defence","group","company","companies","corporation","corp",
+    "systems","technologies","technology","solutions","industries","international",
+    "holdings","holding","ventures","venture","division","unit","business",
+    "ministry","government","department","agency","army","navy","air","force",
+    "startup","firm","maker","manufacturer","giant","specialist","supplier",
+    "consortium","alliance","partnership","program","programme","programs",
+    "various","multiple","undisclosed","unknown","new","other","assets","operations",
+    "target","targets","stake","minority","majority","portfolio","numerous","several",
+}
+_MA_NAME_FRAGMENT_RE = re.compile(
+    r"\b(acquires?|acquired|buys?|bought|merges?|merged|raises?|raised|invests?|"
+    r"plans?|agrees?|agreed|completes?|completed|signs?|signed|wins?|to acquire|to buy)\b",
+    re.IGNORECASE,
+)
+
+def _is_junk_party_name(name: str) -> bool:
+    """True if a party name is a scraper fragment, not a real company."""
+    if not name:
+        return True
+    n = name.strip()
+    if len(n) < 2 or len(n) > 80:
+        return True
+    if _MA_NAME_FRAGMENT_RE.search(n):
+        return True
+    tokens = [t for t in re.sub(r"[.,]", "", n.lower()).split() if t]
+    if not tokens:
+        return True
+    if all(t in _MA_STOPWORDS for t in tokens):
+        return True
+    if len(tokens) == 1 and tokens[0] in _MA_STOPWORDS:
+        return True
+    return False
+
+
+@api_router.post("/admin/purge-untrusted-ma")
+async def purge_untrusted_ma(request: Request, current_user: dict = Depends(get_current_user)):
+    """
+    One-shot cleanup mirroring the Option-A display gate, but at the DB level:
+    delete AUTO-SCRAPED M&A rows that we would never show — low/unknown
+    confidence, or a junk/fragment party name. Curated/manual rows are untouched.
+
+    Body: {"dry_run": true} to only count, without deleting.
+    Admin only.
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+
+    body = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+    dry_run = bool(body.get("dry_run"))
+
+    # Only scraped rows are eligible — never delete curated/manual entries.
+    scraped = await db.ma_activities.find(
+        {"$or": [{"scraped_at": {"$exists": True}},
+                 {"extraction_method": {"$in": ["regex", "llm"]}}]},
+        {"_id": 0, "id": 1, "acquirer": 1, "target": 1, "confidence": 1,
+         "verification_status": 1, "deal_type": 1},
+    ).to_list(10000)
+
+    to_delete, reasons = [], {"low_confidence": 0, "junk_name": 0}
+    for d in scraped:
+        if d.get("verification_status") == "human_verified":
+            continue  # promoted to curated — keep
+        junk = _is_junk_party_name(d.get("acquirer")) or _is_junk_party_name(d.get("target"))
+        low  = d.get("confidence") not in ("high", "medium")
+        if junk or low:
+            to_delete.append(d["id"])
+            reasons["junk_name" if junk else "low_confidence"] += 1
+
+    if not dry_run and to_delete:
+        await db.ma_activities.delete_many({"id": {"$in": to_delete}})
+
+    return {
+        "scraped_scanned": len(scraped),
+        "deleted": 0 if dry_run else len(to_delete),
+        "would_delete": len(to_delete) if dry_run else 0,
+        "reasons": reasons,
+        "dry_run": dry_run,
+    }
+
+
 @api_router.post("/admin/refresh-article-images")
 async def refresh_article_images(current_user: dict = Depends(get_current_user)):
     """
