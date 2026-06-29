@@ -1,3 +1,12 @@
+// Locally-bundled logos for companies whose logos are not reliably reachable
+// via Wikipedia / favicon CDNs (ad-blocked, hotlink-protected, or parked
+// domains). Bundling them as app assets guarantees they always load.
+import himeraLogo from "../assets/logos/himera.png";
+import firepointLogo from "../assets/logos/firepoint.png";
+import airlogixLogo from "../assets/logos/airlogix.png";
+import karadagLogo from "../assets/logos/karadag.png";
+import tafLogo from "../assets/logos/taf.png";
+
 // Maps company names to their logo domains.
 // Used by MarketData, CompanyProfileSheet, and Dashboard to render logos.
 export const COMPANY_LOGOS = {
@@ -886,12 +895,12 @@ export const COMPANY_WIKI_LOGOS = {
   // ── Verified direct logo URLs (curl-checked 200 + image/*, June 2026) ──────
   // These take priority over the favicon chain and are used when a company has
   // no reliable Wikipedia Commons file and no favicon at its domain.
-  // Ukraine — defense-tech startups (favicon CDNs are ad-blocked; direct URLs load reliably)
-  "Himera":                     "https://framerusercontent.com/images/ZLXjaSfNbMpLv70kBIhG5nZVchk.png",
-  "Fire Point":                 "https://firepoint.technology/wp-content/uploads/2026/05/favicon-2-300x300.png",
-  "Airlogix":                   "https://airlogix.io/favicon.png",
-  "Kara Dag Technologies":      "https://karadagtech.com/wp-content/uploads/2024/10/cropped-logo-a-black-192x192.png",
-  "TAF Industries":             "https://taf-ua.com/favicon.ico",
+  // Ukraine — defense-tech startups (bundled locally; see imports at top of file)
+  "Himera":                     himeraLogo,
+  "Fire Point":                 firepointLogo,
+  "Airlogix":                   airlogixLogo,
+  "Kara Dag Technologies":      karadagLogo,
+  "TAF Industries":             tafLogo,
   "Raphe mPhibr":               "https://cdn.prod.website-files.com/64cb501935377f51369fa3c5/650029b2207c106cc4696201_raphe.svg",
   "Kvertus":                    "https://kvertus.com/wp-content/uploads/2025/09/Kvertus.svg",
   "NewSpace Research and Technologies": "https://newspace.co.in/wp-content/uploads/2024/05/NewSpace-Logo-200x37.png",
