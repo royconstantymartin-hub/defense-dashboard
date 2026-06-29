@@ -1259,7 +1259,7 @@ export default function MarketData() {
                 <div
                   key={player.id}
                   className="flex items-center gap-3 p-3 active:bg-slate-50 transition-colors cursor-pointer"
-                  onClick={() => setSelectedPlayer(player)}
+                  onClick={() => setChartPlayer(player)}
                   data-testid={`player-card-${player.id}`}
                 >
                   <span className="text-xs font-mono text-slate-300 w-5 shrink-0 text-right">
@@ -1347,7 +1347,7 @@ export default function MarketData() {
                     <tr
                       key={player.id}
                       className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
-                      onClick={() => setSelectedPlayer(player)}
+                      onClick={() => setChartPlayer(player)}
                       data-testid={`player-row-${player.id}`}
                     >
                       {/* Pin + Watchlist */}
