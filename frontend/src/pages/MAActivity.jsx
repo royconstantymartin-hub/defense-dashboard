@@ -740,6 +740,18 @@ function isValidCompanyName(name) {
   return true;
 }
 
+// Option A — only display deals we can stand behind. An AUTO-extracted deal
+// (regex/LLM) must reach at least "medium" confidence to appear; anything
+// curated/manual (or legacy seed with no extraction_method) is always shown.
+// This deliberately trades volume for credibility: a low/unknown-confidence
+// regex extraction is hidden rather than presented as if it were verified.
+const SCRAPER_METHODS = new Set(["regex", "llm"]);
+function isTrustworthyDeal(a) {
+  if (!a) return false;
+  if (!SCRAPER_METHODS.has(a.extraction_method)) return true;  // curated / seed
+  return a.confidence === "high" || a.confidence === "medium";
+}
+
 function getStatusAccentBg(status) {
   switch (status) {
     case "completed": case "active":       return "bg-emerald-500";
@@ -3380,6 +3392,8 @@ export default function MAActivity() {
       if (!isValidCompanyName(a.acquirer) || !isValidCompanyName(a.target)) return false;
       // Drop state procurement (e.g. "Italy buys six A330 MRTT tankers") — not real M&A
       if (isStateOrProcurement(a)) return false;
+      // Option A — hide low/unknown-confidence auto-scraped deals
+      if (!isTrustworthyDeal(a)) return false;
       if (seenId.has(a.id)) return false;
       const normKey = `${(a.acquirer||'').toLowerCase().trim().split(/\s+/)[0]}|${(a.target||'').toLowerCase().trim().split(/\s+/)[0]}`;
       if (seenKey.has(normKey)) return false;
@@ -3560,7 +3574,8 @@ export default function MAActivity() {
           activities={activities.filter(a =>
             !isStateOrProcurement(a) &&
             isValidCompanyName(a.acquirer) &&
-            isValidCompanyName(a.target)
+            isValidCompanyName(a.target) &&
+            isTrustworthyDeal(a)
           )}
           sourceFilter={dealSource}
           onSourceFilter={setDealSource}
