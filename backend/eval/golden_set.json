@@ -1,0 +1,22 @@
+{
+  "_doc": "C8 — Ground-truth fixtures for the M&A extraction pipeline. Each case is a real-world-shaped headline+summary with the values a human verified. Used by tests/test_ma_extraction.py to score precision of value/basis parsing and deal_class classification. Extend this set as new failure modes are found; CI gates on it.",
+  "value_basis_cases": [
+    {"text": "Lockheed Martin to acquire Aerojet Rocketdyne for $4.4 billion in an all-cash deal", "expect_value": 4400.0, "expect_basis": "equity"},
+    {"text": "KKR buys Ultra Electronics for $2.6 billion", "expect_value": 2600.0, "expect_basis": "equity"},
+    {"text": "Anduril raises $1.5 billion in a Series F funding round led by Founders Fund", "expect_value": 1500.0, "expect_basis": "round_amount"},
+    {"text": "Helsing secures $600 million in a growth round", "expect_value": 600.0, "expect_basis": "round_amount"},
+    {"text": "Advent agrees to take Maxar private at an enterprise value of $6.4 billion including debt", "expect_value": 6400.0, "expect_basis": "enterprise"},
+    {"text": "BAE Systems reported $25 billion in revenue last year amid record orders", "expect_value": 0.0, "expect_basis": "undisclosed"},
+    {"text": "Thales and Leonardo announce a joint venture in space; the program is worth billions to Europe", "expect_value": 0.0, "expect_basis": "undisclosed"},
+    {"text": "Rheinmetall wins a $300 million contract to supply ammunition to Germany", "expect_value": 0.0, "expect_basis": "undisclosed"}
+  ],
+  "deal_class_cases": [
+    {"deal_type": "acquisition", "round_type": null, "expect": "ma"},
+    {"deal_type": "merger", "round_type": null, "expect": "ma"},
+    {"deal_type": "joint_venture", "round_type": null, "expect": "jv"},
+    {"deal_type": "funding_round", "round_type": "series_b", "expect": "vc"},
+    {"deal_type": "strategic_investment", "round_type": null, "expect": "vc"},
+    {"deal_type": "minority_stake", "round_type": null, "expect": "vc"},
+    {"deal_type": "acquisition", "round_type": "seed", "expect": "vc"}
+  ]
+}

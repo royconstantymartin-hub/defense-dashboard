@@ -736,6 +736,37 @@ function getStatusBorderL(status) {
   }
 }
 
+// ── C7 — Confidence & value-basis surfacing ─────────────────────────────────
+// Makes data quality legible: an auto-extracted, single-source, low-confidence
+// deal must never look as trustworthy as a human-verified one.
+const CONFIDENCE_STYLE = {
+  high:   { dot: "bg-emerald-500", text: "text-emerald-700", label: "High" },
+  medium: { dot: "bg-amber-400",   text: "text-amber-700",   label: "Medium" },
+  low:    { dot: "bg-slate-400",   text: "text-slate-500",   label: "Low" },
+};
+function ConfidenceBadge({ activity }) {
+  const level = activity?.confidence || (activity?.verification_status === "human_verified" ? "high" : null);
+  if (!level || !CONFIDENCE_STYLE[level]) return null;
+  const cfg = CONFIDENCE_STYLE[level];
+  const verified = activity?.verification_status === "human_verified";
+  const title = `Confidence: ${cfg.label}${verified ? " · human-verified" : " · auto-extracted"}`
+    + (activity?.confidence_score != null ? ` (${activity.confidence_score})` : "");
+  return (
+    <span title={title}
+      className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-white border border-slate-200 ${cfg.text}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+      {cfg.label}
+    </span>
+  );
+}
+// Human-readable label for value_basis (C1) — tells the reader HOW to read a number.
+const VALUE_BASIS_LABEL = {
+  equity:       "equity value",
+  enterprise:   "enterprise value",
+  round_amount: "amount raised",
+  undisclosed:  "undisclosed",
+};
+
 function getDealSizeBadge(value) {
   if (!value || value === 0) return null;
   if (value >= 5000)  return { label: "Mega deal",  cls: "bg-slate-100 text-slate-700 border-slate-300" };
@@ -1068,6 +1099,7 @@ function RecentDealsSpotlight({ activities, sourceFilter, onSourceFilter, source
                           DEFENSE
                         </span>
                       )}
+                      <ConfidenceBadge activity={deal} />
                     </div>
 
                     {/* Acquirer → Target row */}
@@ -1106,7 +1138,15 @@ function RecentDealsSpotlight({ activities, sourceFilter, onSourceFilter, source
 
                     {/* Meta row */}
                     <div className="flex items-center justify-between mt-2.5">
-                      <span className="font-mono text-[11px] font-bold text-slate-700">{value}</span>
+                      <span className="font-mono text-[11px] font-bold text-slate-700"
+                        title={deal.value_basis ? VALUE_BASIS_LABEL[deal.value_basis] : undefined}>
+                        {value}
+                        {deal.value_basis && deal.value_basis !== "undisclosed" && (
+                          <span className="ml-1 font-sans font-normal text-[9px] text-slate-400">
+                            {VALUE_BASIS_LABEL[deal.value_basis]}
+                          </span>
+                        )}
+                      </span>
                       <span className="text-[10px] text-slate-400">{dealRelativeTime(deal.announced_date)}</span>
                     </div>
 
@@ -1130,9 +1170,16 @@ function RecentDealsSpotlight({ activities, sourceFilter, onSourceFilter, source
 // ── Defense Tech Leaderboard ───────────────────────────────────────────────
 
 function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = [] }) {
+  // C4 — This is a POST-MONEY valuation ranking. It must rank on `valuation`
+  // only. The V1 bug used `valuation || deal_value`, which let an acquisition
+  // PRICE (a different, non-comparable metric) stand in for a startup's
+  // post-money valuation. We therefore consider only deals that actually carry
+  // a valuation (VC rounds), and never fall back to deal_value.
+  const valued = deals.filter((d) => (d.valuation || 0) > 0);
+
   // Deduplicate by target company — keep entry with highest valuation, then latest date
   const byCompany = new Map();
-  for (const d of deals) {
+  for (const d of valued) {
     const prev = byCompany.get(d.target);
     if (!prev) { byCompany.set(d.target, d); continue; }
     const better = (d.valuation || 0) > (prev.valuation || 0) ||
@@ -1142,8 +1189,8 @@ function DefenseTechLeaderboard({ deals, onOpenProfile, onSelectDeal, players = 
   }
 
   const rows = [...byCompany.values()].sort((a, b) => {
-    const va = a.valuation || a.deal_value || 0;
-    const vb = b.valuation || b.deal_value || 0;
+    const va = a.valuation || 0;
+    const vb = b.valuation || 0;
     return vb - va;
   });
 
@@ -1679,8 +1726,8 @@ function HistoricalRow({ activity, index, onOpenProfile }) {
 function exportCSV(data) {
   const headers = [
     "Date", "Acquirer", "Acquirer Country", "Target", "Target Country",
-    "Deal Value (M USD)", "Is Disclosed", "Stake %", "Type", "Round",
-    "Status", "Description", "Rationale", "Source URL",
+    "Deal Value (M USD)", "Value Basis", "Is Disclosed", "Stake %", "Class", "Type", "Round",
+    "Status", "Confidence", "Verification", "Source", "Description", "Rationale", "Source URL",
   ];
   const rows = data.map((a) => [
     format(new Date(a.announced_date), "yyyy-MM-dd"),
@@ -1689,11 +1736,16 @@ function exportCSV(data) {
     `"${a.target}"`,
     a.target_country || "",
     a.deal_value || 0,
+    a.value_basis || "",                 // C1 — how to read the number
     a.is_disclosed ?? true,
     a.stake_percentage ?? "",
+    a.deal_class || "",                  // C4 — ma | jv | vc
     a.deal_type,
     a.round_type || "",
     a.status,
+    a.confidence || "",                  // C1 — high | medium | low
+    a.verification_status || "",         // auto | human_verified
+    a.extraction_method || "",           // regex | llm | manual
     `"${(a.description || "").replace(/"/g, "'")}"`,
     `"${(a.rationale || "").replace(/"/g, "'")}"`,
     a.source_url || "",

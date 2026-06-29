@@ -16,13 +16,30 @@ import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 
-import feedparser
-import requests
-from bs4 import BeautifulSoup
+# NOTE: feedparser / requests / bs4 are imported lazily inside the functions that
+# need them (the network fetchers). This keeps the pure extraction/classification
+# helpers (value parsing, deal_class, confidence) importable and unit-testable
+# without the heavy/optional scraping dependencies installed.
 
 logger = logging.getLogger(__name__)
 
 REQUEST_TIMEOUT = 8
+
+# ── C6 — Source health registry ────────────────────────────────────────────────
+# In-memory health snapshot per feed, refreshed on every scrape. Lets the
+# /health/sources endpoint surface dead feeds (e.g. a 404'ing RSS) and the
+# real per-source yield, instead of trusting a static list that may be stale.
+SOURCE_HEALTH: Dict[str, Dict] = {}
+
+def _record_source_health(name: str, url: str, ok: bool, useful: int, error: Optional[str] = None) -> None:
+    SOURCE_HEALTH[name] = {
+        "name": name,
+        "url": url,
+        "ok": ok,
+        "useful_signals": useful,
+        "error": error,
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+    }
 
 HEADERS = {
     "User-Agent": (
@@ -210,15 +227,100 @@ _VALUE_RE = re.compile(
 )
 
 def _parse_deal_value(text: str) -> float:
-    """Extract deal value in millions USD from free text. Returns 0 if not found."""
-    m = _VALUE_RE.search(text)
-    if not m:
-        return 0.0
-    num = float(m.group("num").replace(",", ""))
-    unit = m.group("unit").lower()
-    if unit in ("billion", "bn"):
-        return round(num * 1000, 1)
-    return round(num, 1)
+    """Extract deal value in millions USD from free text. Returns 0 if not found.
+
+    Legacy helper kept for back-compat. New code must use
+    _parse_deal_value_with_basis, which is context-anchored (C1).
+    """
+    val, _basis = _parse_deal_value_with_basis(text)
+    return val
+
+# ── C1 — Context-anchored value extraction ────────────────────────────────────
+# The old behaviour took the FIRST "$X" in the article, which routinely captured a
+# revenue figure or an unrelated contract value rather than the deal price. V2 only
+# accepts an amount when it sits next to a transaction anchor, and reports HOW the
+# figure should be read (value_basis), so the UI never shows a "naked" number.
+
+# Keywords that, when found in the window around a "$X" amount, qualify what the
+# figure represents. Order matters: a round/EV anchor wins over a generic equity one.
+_BASIS_ANCHORS = {
+    "round_amount": (
+        "raise", "raised", "raises", "funding round", "in funding", "round",
+        "series ", "seed", "investment of", "invests", "led by", "secures",
+    ),
+    "enterprise": (
+        "enterprise value", "ev of", "including debt", "including assumed debt",
+        "incl. debt", "on a cash-free", "debt-free basis",
+    ),
+    "equity": (
+        "for $", "for an", "all-cash", "all cash", "cash deal", "valued at",
+        "deal valued", "acquire", "acquisition", "buys", "to buy", "purchase",
+        "takeover", "bid of", "offer of", "in equity", "equity value",
+    ),
+}
+
+def _amount_to_millions(num_str: str, unit: str) -> float:
+    num = float(num_str.replace(",", ""))
+    return round(num * 1000, 1) if unit.lower() in ("billion", "bn") else round(num, 1)
+
+def _parse_deal_value_with_basis(text: str) -> Tuple[float, str]:
+    """Return (value_millions_usd, value_basis).
+
+    value_basis ∈ {equity, enterprise, round_amount, undisclosed}.
+    Returns (0.0, "undisclosed") when no amount is anchored to a transaction —
+    a bare "$X" with no deal context is deliberately ignored.
+    """
+    lowered = text.lower()
+    for m in _VALUE_RE.finditer(text):
+        start, end = m.start(), m.end()
+        window = lowered[max(0, start - 45): min(len(lowered), end + 15)]
+        # round / EV anchors are more specific → test them before generic equity
+        for basis in ("round_amount", "enterprise", "equity"):
+            if any(anchor in window for anchor in _BASIS_ANCHORS[basis]):
+                return _amount_to_millions(m.group("num"), m.group("unit")), basis
+    return 0.0, "undisclosed"
+
+# ── C4 — Deal class taxonomy ───────────────────────────────────────────────────
+# Keeps M&A, joint ventures and venture funding in separate buckets so the UI can
+# split them into distinct streams and the leaderboard never mixes acquisition
+# prices with post-money valuations.
+
+def classify_deal_class(deal_type: str, round_type: Optional[str] = None) -> str:
+    """Map a granular deal_type to a high-level class: ma | jv | vc."""
+    if round_type or deal_type in ("funding_round", "strategic_investment", "minority_stake"):
+        return "vc"
+    if deal_type == "joint_venture":
+        return "jv"
+    return "ma"
+
+# ── C1 — Deterministic confidence score ────────────────────────────────────────
+# No paid model involved: the score is a transparent function of how much of the
+# signal we could anchor to known facts. Surfaced to the user as a badge so a
+# low-confidence auto-extraction is never mistaken for a verified deal.
+
+def score_confidence(
+    *,
+    acq_known: bool,
+    tgt_known: bool,
+    value_basis: str,
+    num_sources: int = 1,
+    extraction_method: str = "regex",
+) -> Tuple[float, str]:
+    """Return (confidence_score 0..1, confidence_label high|medium|low)."""
+    if extraction_method == "manual":
+        return 0.95, "high"
+    score = 0.30
+    if acq_known:
+        score += 0.20
+    if tgt_known:
+        score += 0.20
+    if value_basis and value_basis != "undisclosed":
+        score += 0.15
+    if num_sources >= 2:
+        score += 0.15
+    score = round(min(score, 1.0), 2)
+    label = "high" if score >= 0.8 else "medium" if score >= 0.55 else "low"
+    return score, label
 
 # ── Status inference ──────────────────────────────────────────────────────────
 
@@ -514,6 +616,7 @@ def _parse_entry_date(entry) -> datetime:
     return datetime.now(timezone.utc)
 
 def _extract_summary(entry) -> str:
+    from bs4 import BeautifulSoup
     for attr in ("summary", "description"):
         val = getattr(entry, attr, None)
         if val:
@@ -525,6 +628,8 @@ def _is_ma_article(title: str, summary: str) -> bool:
     return any(kw in text for kw in MA_TITLE_KEYWORDS)
 
 def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
+    import feedparser
+    import requests
     signals: List[Dict] = []
     try:
         resp = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
@@ -556,12 +661,20 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
             tgt_country, tgt_logo = _lookup_company(target)
 
             full_text = title + " " + summary
-            deal_value = _parse_deal_value(full_text)
+            deal_value, value_basis = _parse_deal_value_with_basis(full_text)
             status = _infer_status(full_text)
             deal_type = _infer_deal_type(full_text)
             round_type = _infer_round_type(full_text)
             stake_pct = _infer_stake_percentage(full_text)
             is_disclosed = deal_value > 0
+            deal_class = classify_deal_class(deal_type, round_type)
+            confidence_score, confidence = score_confidence(
+                acq_known=acq_country is not None,
+                tgt_known=tgt_country is not None,
+                value_basis=value_basis,
+                num_sources=1,
+                extraction_method="regex",
+            )
 
             # Description: first 120 chars of title (actual scraped text)
             description = title[:120]
@@ -572,13 +685,22 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
                 "acquirer_norm":        _normalize_name(acquirer),
                 "target_norm":          _normalize_name(target),
                 "deal_value":           deal_value,
+                "value_basis":          value_basis,       # C1 — how to read the number
+                "currency":             "USD",
                 "status":               status,
                 "deal_type":            deal_type,
+                "deal_class":           deal_class,        # C4 — ma | jv | vc
                 "round_type":           round_type,
                 "stake_percentage":     stake_pct,
                 "is_disclosed":         is_disclosed,
+                "confidence":           confidence,        # high | medium | low
+                "confidence_score":     confidence_score,  # 0..1
+                "extraction_method":    "regex",
+                "verification_status":  "auto",
                 "description":          description,
                 "source_url":           link,   # always present — traceability guarantee
+                "sources":              [{"url": link, "publisher": source_name,
+                                          "published_at": _parse_entry_date(entry).isoformat()}],
                 "rationale":            summary[:300] if summary else None,
                 "announced_date":       _parse_entry_date(entry),
                 "acquirer_country":     acq_country,
@@ -588,8 +710,10 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
             })
 
         logger.info("[%s] M&A signals extracted: %d", source_name, len(signals))
+        _record_source_health(source_name, url, ok=True, useful=len(signals))
     except Exception as exc:
         logger.error("[%s] RSS M&A fetch failed: %s", source_name, exc)
+        _record_source_health(source_name, url, ok=False, useful=0, error=str(exc))
     return signals
 
 # ── RSS sources ───────────────────────────────────────────────────────────────
@@ -616,8 +740,12 @@ MA_RSS_SOURCES = [
     ("Shephard Media",          "https://www.shephardmedia.com/rss/news/"),
     ("Janes",                   "https://www.janes.com/feeds/news"),
     # ── Financial / M&A generalist ───────────────────────────────────────────
-    ("Reuters Business",        "https://feeds.reuters.com/reuters/businessNews"),
-    ("Financial Times Defense", "https://www.ft.com/rss/home/uk"),
+    # NOTE (C6): the legacy Reuters feed (feeds.reuters.com/reuters/businessNews)
+    # was retired by Reuters and the FT "home/uk" feed is generalist UK news, not
+    # defense — both were removed as they yielded ~0 useful M&A signals while
+    # counting toward "17 sources". Replaced with defense-relevant deal coverage.
+    ("Defense Daily",           "https://www.defensedaily.com/feed/"),
+    ("Intelligence Online",     "https://www.intelligenceonline.com/rss"),
 ]
 
 # ── Public API ────────────────────────────────────────────────────────────────
