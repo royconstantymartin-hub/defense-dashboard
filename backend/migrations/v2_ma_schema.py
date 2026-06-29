@@ -73,11 +73,21 @@ def _build_patch(doc: dict) -> dict:
         scraped = bool(doc.get("scraped_at"))
         patch["extraction_method"] = "regex" if scraped else "manual"
         patch["verification_status"] = "auto" if scraped else "human_verified"
-        # Curated deals are trustworthy by construction; scraped get a neutral baseline.
-        if not scraped and doc.get("confidence_score") is None:
-            patch["confidence_score"] = 0.95
+        if not scraped:
+            # Curated deals are trustworthy by construction.
+            if doc.get("confidence_score") is None:
+                patch["confidence_score"] = 0.95
             if not doc.get("confidence"):
                 patch["confidence"] = "high"
+        else:
+            # Legacy regex-scraped rows were never confidence-scored. Mark them
+            # low so the Option-A display gate hides them until the V2 pipeline
+            # re-scrapes them with a real score. Honest default: don't trust
+            # an old regex extraction.
+            if doc.get("confidence_score") is None:
+                patch["confidence_score"] = 0.3
+            if not doc.get("confidence"):
+                patch["confidence"] = "low"
 
     return patch
 

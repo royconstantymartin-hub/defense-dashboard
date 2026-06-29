@@ -709,10 +709,47 @@ function formatValue(dealValue, isDisclosed = true) {
 
 // Filter out scraper artifacts: sentence fragments captured instead of company names
 const GARBAGE_NAME_RE = /\binitially\b|\breportedly\b|\bconfirmed\b|\bannounced\b|^the\s+\w+-|^over\s+\d|^up to\s+\d|^approximately\s+\d/i;
+
+// Generic words that are NOT a company on their own. A name made ONLY of these
+// (e.g. "Defense", "the Group", "Various Technologies") is a scraper fragment,
+// not a real party — the kind of junk that made the page look worthless.
+const COMPANY_STOPWORDS = new Set([
+  "the","a","an","and","or","of","with","for","in","to","its","their",
+  "defense","defence","group","company","companies","corporation","corp",
+  "systems","technologies","technology","solutions","industries","international",
+  "holdings","holding","ventures","venture","division","unit","business",
+  "ministry","government","department","agency","army","navy","air","force",
+  "startup","firm","maker","manufacturer","giant","specialist","supplier",
+  "consortium","alliance","partnership","program","programme","programs",
+  "various","multiple","undisclosed","unknown","new","other","assets","operations",
+  "target","targets","stake","minority","majority","portfolio","numerous","several",
+]);
+// A real company name does not contain a transaction verb / sentence connective.
+const NAME_FRAGMENT_RE = /\b(acquires?|acquired|buys?|bought|merges?|merged|raises?|raised|invests?|plans?|agrees?|agreed|completes?|completed|signs?|signed|wins?|to acquire|to buy)\b/i;
+
 function isValidCompanyName(name) {
   if (!name) return false;
-  if (name.length > 80) return false;
-  return !GARBAGE_NAME_RE.test(name);
+  const n = name.trim();
+  if (n.length < 2 || n.length > 80) return false;
+  if (GARBAGE_NAME_RE.test(n)) return false;
+  if (NAME_FRAGMENT_RE.test(n)) return false;            // captured a verb → it's a sentence
+  const tokens = n.toLowerCase().replace(/[.,]/g, "").split(/\s+/).filter(Boolean);
+  if (tokens.length === 0) return false;
+  if (tokens.every(t => COMPANY_STOPWORDS.has(t))) return false;  // only generic words
+  if (tokens.length === 1 && COMPANY_STOPWORDS.has(tokens[0])) return false;
+  return true;
+}
+
+// Option A — only display deals we can stand behind. An AUTO-extracted deal
+// (regex/LLM) must reach at least "medium" confidence to appear; anything
+// curated/manual (or legacy seed with no extraction_method) is always shown.
+// This deliberately trades volume for credibility: a low/unknown-confidence
+// regex extraction is hidden rather than presented as if it were verified.
+const SCRAPER_METHODS = new Set(["regex", "llm"]);
+function isTrustworthyDeal(a) {
+  if (!a) return false;
+  if (!SCRAPER_METHODS.has(a.extraction_method)) return true;  // curated / seed
+  return a.confidence === "high" || a.confidence === "medium";
 }
 
 function getStatusAccentBg(status) {
@@ -858,12 +895,40 @@ function buildLogoUrls(domain) {
   ];
 }
 
+// Guess a plausible corporate domain from a company name so that ANY company —
+// not just the ones in our curated maps — gets a real logo attempt. e.g.
+// "Renault" → renault.com, "Gooch & Housego" → goochhousego.com. The favicon
+// providers return a clean 404 for domains that don't resolve, so a wrong guess
+// simply falls through to the coloured-initials avatar. This is what makes a
+// non-defense party (a carmaker, a PE fund, a random target) still show a logo.
+function guessDomainFromName(name) {
+  if (!name) return null;
+  const cleaned = name
+    .toLowerCase()
+    .replace(/\s*\([^)]*\)/g, "")        // strip "(...)" descriptions
+    .replace(CORP_SUFFIX_RE, "")          // strip Inc / Group / Technologies / …
+    .replace(/&/g, " ")                   // "A & B" → "a  b"
+    .replace(/[^a-z0-9\s-]/g, "")         // drop punctuation/accents-leftovers
+    .replace(/\s+/g, " ")
+    .trim();
+  // Join the first up-to-3 meaningful words with no separator → "naval group" stays
+  // "navalgroup" only if suffix not stripped; most real brands are 1-2 words.
+  const slug = cleaned.split(" ").filter(Boolean).slice(0, 3).join("");
+  if (slug.length < 2) return null;
+  return `${slug}.com`;
+}
+
 // Full ordered logo source list for a company: a curated direct logo URL
 // (Wikipedia Commons / verified image, shared with the Private Players page via
-// companyLogos.js) takes priority, then the domain favicon chain, then initials.
+// companyLogos.js) takes priority, then the known-domain favicon chain, then a
+// GUESSED-domain favicon chain (so unknown companies still get a logo), then
+// the CompanyLogo component falls back to coloured initials.
 function logoUrlsFor(name, domain) {
   const curated = name ? getLogoUrl(name) : null;
-  return curated ? [curated, ...buildLogoUrls(domain)] : buildLogoUrls(domain);
+  const guessed = guessDomainFromName(name);
+  const domains = [...new Set([domain, guessed].filter(Boolean))];
+  const urls = domains.flatMap(buildLogoUrls);
+  return curated ? [curated, ...urls] : urls;
 }
 
 function CompanyLogo({ activity, side, size = "md" }) {
@@ -2820,6 +2885,105 @@ function ConfidencePill({ confidence }) {
   );
 }
 
+// ── C7 — Deal lifecycle timeline (from status_history) ───────────────────────
+// Renders the journaled status transitions so the user sees a deal *progress*
+// (announced → pending → completed), not a single frozen state. Falls back to
+// the announced date when a legacy deal has no history yet.
+function StatusTimeline({ deal }) {
+  let history = Array.isArray(deal.status_history) ? deal.status_history : [];
+  if (history.length === 0 && deal.announced_date) {
+    history = [{ status: deal.status, date: deal.announced_date, source_url: deal.source_url }];
+  }
+  if (history.length === 0) return null;
+
+  // Oldest → newest, de-duplicating consecutive identical statuses.
+  const ordered = [...history]
+    .filter((h) => h && h.date)
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .filter((h, i, arr) => i === 0 || h.status !== arr[i - 1].status);
+
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2.5">Lifecycle</p>
+      <ol className="relative border-l border-slate-200 ml-1.5 space-y-3">
+        {ordered.map((h, i) => {
+          const isLast = i === ordered.length - 1;
+          return (
+            <li key={i} className="ml-4">
+              <span className={`absolute -left-[5px] w-2.5 h-2.5 rounded-full border-2 border-white ${
+                isLast ? getStatusAccentBg(h.status) : "bg-slate-300"
+              }`} />
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${getStatusStyle(h.status)}`}>
+                  {formatStatus(h.status)}
+                </span>
+                <span className="text-[11px] text-slate-400">
+                  {format(new Date(h.date), "d MMM yyyy")}
+                </span>
+                {h.source_url && (
+                  <a href={h.source_url} target="_blank" rel="noopener noreferrer"
+                    className="text-[11px] text-blue-700 hover:underline inline-flex items-center gap-0.5">
+                    <ExternalLink className="w-2.5 h-2.5" /> source
+                  </a>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+// ── C7 — Multi-source list ───────────────────────────────────────────────────
+// V1 surfaced a single source_url. A deal can be corroborated by several
+// publishers (the basis for "high" confidence), so we list them all and keep
+// the legacy single URL as a fallback.
+function SourcesList({ deal }) {
+  const fromArray = Array.isArray(deal.sources)
+    ? deal.sources.filter((s) => s && s.url)
+    : [];
+  // De-duplicate by URL, keeping the legacy source_url if not already present.
+  const seen = new Set(fromArray.map((s) => s.url));
+  const all = [...fromArray];
+  if (deal.source_url && !seen.has(deal.source_url)) {
+    all.push({ url: deal.source_url, publisher: null });
+  }
+
+  if (all.length === 0) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-slate-400 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+        <ExternalLink className="w-4 h-4 shrink-0 opacity-40" />
+        No source URL available
+      </div>
+    );
+  }
+
+  const hostOf = (url) => { try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return url; } };
+
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
+        Sources <span className="text-slate-300 font-mono">({all.length})</span>
+      </p>
+      <div className="space-y-1.5">
+        {all.map((s, i) => (
+          <a
+            key={i}
+            href={s.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm font-medium text-blue-800 bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5 hover:bg-blue-100 transition-colors"
+          >
+            <ExternalLink className="w-4 h-4 shrink-0" />
+            <span className="truncate">{s.publisher || hostOf(s.url)}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
   if (!deal) return null;
   const labels = getDealLabels(deal.deal_type);
@@ -2903,6 +3067,9 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
               <p className="text-2xl font-mono font-bold text-slate-900 leading-none">
                 {formatValue(deal.deal_value, deal.is_disclosed ?? true)}
               </p>
+              {deal.value_basis && deal.value_basis !== "undisclosed" && (
+                <p className="text-[10px] text-slate-400 mt-1">{VALUE_BASIS_LABEL[deal.value_basis]}</p>
+              )}
               {deal.stake_percentage != null && (
                 <p className="text-xs text-emerald-600 font-mono font-semibold mt-0.5">{deal.stake_percentage}% stake</p>
               )}
@@ -2969,6 +3136,9 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
             </div>
           )}
 
+          {/* Lifecycle timeline (C7) */}
+          <StatusTimeline deal={deal} />
+
           {/* Description */}
           {deal.description && (
             <div>
@@ -2993,23 +3163,8 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
             </div>
           )}
 
-          {/* Source */}
-          {deal.source_url ? (
-            <a
-              href={deal.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-medium text-blue-800 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 hover:bg-blue-100 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4 shrink-0" />
-              View primary source
-            </a>
-          ) : (
-            <div className="flex items-center gap-2 text-sm text-slate-400 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-              <ExternalLink className="w-4 h-4 shrink-0 opacity-40" />
-              No source URL available
-            </div>
-          )}
+          {/* Sources (C7 — multi-source) */}
+          <SourcesList deal={deal} />
 
           {/* Open profiles */}
           <div className="border-t border-slate-100 pt-4 grid grid-cols-2 gap-3">
@@ -3237,6 +3392,8 @@ export default function MAActivity() {
       if (!isValidCompanyName(a.acquirer) || !isValidCompanyName(a.target)) return false;
       // Drop state procurement (e.g. "Italy buys six A330 MRTT tankers") — not real M&A
       if (isStateOrProcurement(a)) return false;
+      // Option A — hide low/unknown-confidence auto-scraped deals
+      if (!isTrustworthyDeal(a)) return false;
       if (seenId.has(a.id)) return false;
       const normKey = `${(a.acquirer||'').toLowerCase().trim().split(/\s+/)[0]}|${(a.target||'').toLowerCase().trim().split(/\s+/)[0]}`;
       if (seenKey.has(normKey)) return false;
@@ -3417,7 +3574,8 @@ export default function MAActivity() {
           activities={activities.filter(a =>
             !isStateOrProcurement(a) &&
             isValidCompanyName(a.acquirer) &&
-            isValidCompanyName(a.target)
+            isValidCompanyName(a.target) &&
+            isTrustworthyDeal(a)
           )}
           sourceFilter={dealSource}
           onSourceFilter={setDealSource}
