@@ -2820,6 +2820,105 @@ function ConfidencePill({ confidence }) {
   );
 }
 
+// ── C7 — Deal lifecycle timeline (from status_history) ───────────────────────
+// Renders the journaled status transitions so the user sees a deal *progress*
+// (announced → pending → completed), not a single frozen state. Falls back to
+// the announced date when a legacy deal has no history yet.
+function StatusTimeline({ deal }) {
+  let history = Array.isArray(deal.status_history) ? deal.status_history : [];
+  if (history.length === 0 && deal.announced_date) {
+    history = [{ status: deal.status, date: deal.announced_date, source_url: deal.source_url }];
+  }
+  if (history.length === 0) return null;
+
+  // Oldest → newest, de-duplicating consecutive identical statuses.
+  const ordered = [...history]
+    .filter((h) => h && h.date)
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .filter((h, i, arr) => i === 0 || h.status !== arr[i - 1].status);
+
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2.5">Lifecycle</p>
+      <ol className="relative border-l border-slate-200 ml-1.5 space-y-3">
+        {ordered.map((h, i) => {
+          const isLast = i === ordered.length - 1;
+          return (
+            <li key={i} className="ml-4">
+              <span className={`absolute -left-[5px] w-2.5 h-2.5 rounded-full border-2 border-white ${
+                isLast ? getStatusAccentBg(h.status) : "bg-slate-300"
+              }`} />
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${getStatusStyle(h.status)}`}>
+                  {formatStatus(h.status)}
+                </span>
+                <span className="text-[11px] text-slate-400">
+                  {format(new Date(h.date), "d MMM yyyy")}
+                </span>
+                {h.source_url && (
+                  <a href={h.source_url} target="_blank" rel="noopener noreferrer"
+                    className="text-[11px] text-blue-700 hover:underline inline-flex items-center gap-0.5">
+                    <ExternalLink className="w-2.5 h-2.5" /> source
+                  </a>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+// ── C7 — Multi-source list ───────────────────────────────────────────────────
+// V1 surfaced a single source_url. A deal can be corroborated by several
+// publishers (the basis for "high" confidence), so we list them all and keep
+// the legacy single URL as a fallback.
+function SourcesList({ deal }) {
+  const fromArray = Array.isArray(deal.sources)
+    ? deal.sources.filter((s) => s && s.url)
+    : [];
+  // De-duplicate by URL, keeping the legacy source_url if not already present.
+  const seen = new Set(fromArray.map((s) => s.url));
+  const all = [...fromArray];
+  if (deal.source_url && !seen.has(deal.source_url)) {
+    all.push({ url: deal.source_url, publisher: null });
+  }
+
+  if (all.length === 0) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-slate-400 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+        <ExternalLink className="w-4 h-4 shrink-0 opacity-40" />
+        No source URL available
+      </div>
+    );
+  }
+
+  const hostOf = (url) => { try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return url; } };
+
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
+        Sources <span className="text-slate-300 font-mono">({all.length})</span>
+      </p>
+      <div className="space-y-1.5">
+        {all.map((s, i) => (
+          <a
+            key={i}
+            href={s.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm font-medium text-blue-800 bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5 hover:bg-blue-100 transition-colors"
+          >
+            <ExternalLink className="w-4 h-4 shrink-0" />
+            <span className="truncate">{s.publisher || hostOf(s.url)}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
   if (!deal) return null;
   const labels = getDealLabels(deal.deal_type);
@@ -2903,6 +3002,9 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
               <p className="text-2xl font-mono font-bold text-slate-900 leading-none">
                 {formatValue(deal.deal_value, deal.is_disclosed ?? true)}
               </p>
+              {deal.value_basis && deal.value_basis !== "undisclosed" && (
+                <p className="text-[10px] text-slate-400 mt-1">{VALUE_BASIS_LABEL[deal.value_basis]}</p>
+              )}
               {deal.stake_percentage != null && (
                 <p className="text-xs text-emerald-600 font-mono font-semibold mt-0.5">{deal.stake_percentage}% stake</p>
               )}
@@ -2969,6 +3071,9 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
             </div>
           )}
 
+          {/* Lifecycle timeline (C7) */}
+          <StatusTimeline deal={deal} />
+
           {/* Description */}
           {deal.description && (
             <div>
@@ -2993,23 +3098,8 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
             </div>
           )}
 
-          {/* Source */}
-          {deal.source_url ? (
-            <a
-              href={deal.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-medium text-blue-800 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 hover:bg-blue-100 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4 shrink-0" />
-              View primary source
-            </a>
-          ) : (
-            <div className="flex items-center gap-2 text-sm text-slate-400 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-              <ExternalLink className="w-4 h-4 shrink-0 opacity-40" />
-              No source URL available
-            </div>
-          )}
+          {/* Sources (C7 — multi-source) */}
+          <SourcesList deal={deal} />
 
           {/* Open profiles */}
           <div className="border-t border-slate-100 pt-4 grid grid-cols-2 gap-3">

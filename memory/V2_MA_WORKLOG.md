@@ -89,9 +89,20 @@ fiabilisée (voir « Écarts au cadrage »).
    remplissage est un travail de sourcing (humain ou flux), hors périmètre code.
 3. **Cadence scrape** laissée à 6 h (suffisant pour l'objectif fraîcheur ≤12 h).
 
+## Itération 2 (post-merge PR #485) — C7 enrichi
+- **Timeline `status_history`** : nouveau composant `StatusTimeline` dans
+  `DealDetailDrawer` — affiche la progression announced → pending → completed
+  (dédupliquée, ordonnée, avec lien source par transition). Repli sur la date
+  d'annonce pour les deals legacy sans historique.
+- **Liste multi-sources** : nouveau composant `SourcesList` remplaçant le lien
+  unique — liste `sources[]` (dédupliquée, publisher ou hostname), repli sur
+  `source_url`. C'est le support visuel de la confiance « 2+ sources ».
+- **Base de valeur** affichée sous le montant dans le détail deal.
+- Vérif structurelle : accolades/crochets équilibrés, parenthèses inchangées
+  vs HEAD (l'écart −1 est pré-existant, dans une chaîne JSX).
+
 ## Reste à faire (prochaine itération)
 - Brancher la migration en post-déploiement (one-shot) puis vérifier
   `/health/data-consistency` → `coverage` à 100 %.
-- C7 : timeline `status_history` dans le détail deal + liste multi-sources cliquable.
 - C5 : pipeline de sourcing pour la profondeur historique.
 - CI : installer pytest et câbler le gate sur le golden set.
