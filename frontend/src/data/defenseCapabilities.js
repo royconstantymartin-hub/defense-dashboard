@@ -4239,7 +4239,7 @@ export const PLATFORM_WIKI_TITLES = {
   "Molniya": "Loitering munition",
   "Orlan-30": "STC Orlan-10",
   "Orlik (PGZ-19R)": "WB Group",
-  "Peklo missile-drone": "Loitering munition",
+  "Peklo missile-drone": "Peklo",
   "Phoenix Ghost": "Phoenix Ghost",
   "Privet-82": "Loitering munition",
   "Project Mosquito / LANCA": "Project Mosquito",
@@ -4279,6 +4279,22 @@ export const PLATFORM_WIKI_TITLES = {
   "Wild Hornets Sting interceptor": "First-person view (radio control)",
   "Zastava": "IAI Bird-Eye",
 };
+
+// Generic / company Wikipedia articles whose lead image is NOT a specific
+// platform photo. Several obscure drones & loitering munitions were mapped to
+// these class pages, so they all inherited the same wrong picture — e.g. the
+// "Unmanned aerial vehicle" article leads with an MQ-9 Reaper, and "Loitering
+// munition" leads with a ZALA Lancet. When a model resolves to one of these,
+// the image fetch is skipped so the card shows its clean category icon instead
+// of a misleading photo. (Image audit, 2026-06.)
+export const GENERIC_WIKI_DENYLIST = new Set([
+  "Unmanned aerial vehicle",
+  "Loitering munition",
+  "Anduril Industries",
+  "Helsing",
+  "WB Group",
+  "Turgis & Gaillard",
+]);
 
 // Static Wikimedia fallback images for capability breakdown platforms.
 // Keys are the EXACT model strings from CAPABILITY_DETAILS.
