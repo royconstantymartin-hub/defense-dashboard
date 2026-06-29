@@ -105,6 +105,16 @@ class MAActivityCreate(BaseModel):
     is_disclosed: bool = True                   # False when deal value is undisclosed
     valuation: Optional[float] = None           # Post-money valuation in millions USD
     featured: bool = False                       # pin to the "Recent Deals Spotlight" cards
+    # ── V2 data-quality & lifecycle fields (C0) ──────────────────────────────
+    deal_class: Optional[str] = None            # ma | jv | vc | procurement (C4)
+    value_basis: Optional[str] = None           # equity | enterprise | round_amount | undisclosed (C1)
+    currency: Optional[str] = "USD"
+    confidence_score: Optional[float] = None    # 0..1 deterministic score (C1)
+    extraction_method: Optional[str] = None     # regex | llm | manual
+    verification_status: Optional[str] = None   # auto | human_verified
+    last_verified_at: Optional[datetime] = None
+    sources: Optional[List[dict]] = None        # [{url, publisher, published_at}] (C1)
+    status_history: Optional[List[dict]] = None # [{status, date, source_url}] (C2)
     # Regulatory fields
     regulatory_status: Optional[str] = None
     regulatory_body: Optional[str] = None
@@ -137,6 +147,16 @@ class MAActivity(BaseModel):
     is_disclosed: bool = True
     valuation: Optional[float] = None           # Post-money valuation in millions USD
     featured: bool = False                       # pin to the "Recent Deals Spotlight" cards
+    # ── V2 data-quality & lifecycle fields (C0) ──────────────────────────────
+    deal_class: Optional[str] = None            # ma | jv | vc | procurement (C4)
+    value_basis: Optional[str] = None           # equity | enterprise | round_amount | undisclosed (C1)
+    currency: Optional[str] = "USD"
+    confidence_score: Optional[float] = None    # 0..1 deterministic score (C1)
+    extraction_method: Optional[str] = None     # regex | llm | manual
+    verification_status: Optional[str] = None   # auto | human_verified
+    last_verified_at: Optional[datetime] = None
+    sources: Optional[List[dict]] = None        # [{url, publisher, published_at}] (C1)
+    status_history: Optional[List[dict]] = None # [{status, date, source_url}] (C2)
     # Regulatory fields
     regulatory_status: Optional[str] = None    # pending_cfius, pending_eu_comp, pending_uk_cma, cleared, blocked, not_required
     regulatory_body: Optional[str] = None      # CFIUS, EU DG COMP, UK CMA, Multiple
@@ -482,6 +502,7 @@ async def delete_announcement(announcement_id: str, current_user: dict = Depends
 @api_router.get("/ma-activities", response_model=List[MAActivity])
 async def get_ma_activities(
     status: Optional[str] = None,
+    deal_class: Optional[str] = None,
     limit: int = 50,
     offset: int = 0,
     days: Optional[int] = 30,
@@ -490,11 +511,14 @@ async def get_ma_activities(
     Return M&A deals sorted by announced_date DESC.
     - days=30  (default) → last 30 days only
     - days=0             → no date filter (all recent deals)
+    - deal_class         → ma | jv | vc | procurement (C4 stream separation)
     - offset             → skip N records (for pagination)
     """
     query: dict = {}
     if status:
         query["status"] = status
+    if deal_class:
+        query["deal_class"] = deal_class
     if days and days > 0:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
         query["announced_date"] = {"$gte": cutoff}
@@ -521,6 +545,7 @@ async def get_ma_historical(
     acquirer: Optional[str] = None,
     year: Optional[int] = None,
     deal_type: Optional[str] = None,
+    deal_class: Optional[str] = None,
     limit: int = 100,
     offset: int = 0,
 ):
@@ -530,6 +555,8 @@ async def get_ma_historical(
         query["acquirer"] = {"$regex": acquirer, "$options": "i"}
     if deal_type:
         query["deal_type"] = deal_type
+    if deal_class:
+        query["deal_class"] = deal_class
     if year:
         from_dt = datetime(year, 1, 1, tzinfo=timezone.utc).isoformat()
         to_dt = datetime(year, 12, 31, 23, 59, 59, tzinfo=timezone.utc).isoformat()
@@ -1345,15 +1372,54 @@ async def data_consistency_check():
         if val > 100_000:
             blockers.append(f"{label}: deal_value ${val}M > $100B")
 
+        # V2 (C8): a disclosed value must declare its basis
+        if val and val > 0 and not doc.get("value_basis"):
+            warnings_list.append(f"{label}: deal_value set but value_basis missing")
+        # V2 (C8): every deal should be classified into a stream
+        if not doc.get("deal_class"):
+            warnings_list.append(f"{label}: deal_class missing (run V2 migration)")
+
+    # V2 coverage metrics — the KPIs the spec asked to track continuously
+    classed = sum(1 for d in docs if d.get("deal_class"))
+    with_basis = sum(1 for d in docs if (d.get("deal_value") or 0) > 0 and d.get("value_basis"))
+    disclosed = sum(1 for d in docs if (d.get("deal_value") or 0) > 0)
+
     ok = len(blockers) == 0
     return {
         "status": "ok" if ok else "error",
         "total_deals": total,
         "by_type": by_type,
         "by_status": by_status,
+        "coverage": {
+            "deal_class_set_pct":  round(100 * classed / total, 1) if total else 0,
+            "value_basis_set_pct": round(100 * with_basis / disclosed, 1) if disclosed else 0,
+        },
         "blockers": blockers,
         "warnings": warnings_list,
         "checked_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@api_router.get("/health/sources")
+async def sources_health_check():
+    """C6 — Per-feed health snapshot from the last M&A scrape run.
+
+    Surfaces dead feeds (404/timeout) and real per-source yield so a stale
+    source list can't masquerade as live coverage.
+    """
+    from services.ma_scraper import SOURCE_HEALTH, MA_RSS_SOURCES
+
+    configured = [name for name, _ in MA_RSS_SOURCES]
+    feeds = list(SOURCE_HEALTH.values())
+    dead = [f["name"] for f in feeds if not f["ok"]]
+    silent = [f["name"] for f in feeds if f["ok"] and f["useful_signals"] == 0]
+    return {
+        "configured_sources": len(configured),
+        "checked_sources": len(feeds),
+        "dead_sources": dead,
+        "zero_yield_sources": silent,
+        "feeds": sorted(feeds, key=lambda f: f["useful_signals"], reverse=True),
+        "note": "Empty until the first scrape run populates the in-memory registry.",
     }
 
 # ============= SEED DATA ENDPOINT =============
@@ -2430,6 +2496,35 @@ async def clear_breaking_intel_job():
 
 # ============= M&A SCRAPER JOB =============
 
+# C2 — Deal lifecycle ordering. A status may only move FORWARD along this rank.
+# Terminal states (completed / cancelled / dissolved / exited) never regress.
+_STATUS_RANK = {
+    "announced": 1, "pending": 2, "under_review": 2, "active": 2,
+    "completed": 3, "cancelled": 3, "dissolved": 3, "exited": 3,
+}
+
+def _advance_status(existing: dict, new_status: str, source_url, when) -> Optional[dict]:
+    """Return a Mongo $set patch that advances a deal's lifecycle, or None.
+
+    Only moves the status forward (never downgrades a curated/closed deal),
+    appends to status_history, and stamps closed_date when a deal completes.
+    Content fields (notes, rationale, value …) are deliberately left untouched.
+    """
+    cur = existing.get("status", "announced")
+    if _STATUS_RANK.get(new_status, 0) <= _STATUS_RANK.get(cur, 0):
+        return None  # same or earlier stage — nothing to journal
+    history = list(existing.get("status_history") or [])
+    history.append({"status": new_status, "date": when.isoformat(), "source_url": source_url})
+    patch = {
+        "status": new_status,
+        "status_history": history,
+        "last_verified_at": when.isoformat(),
+    }
+    if new_status == "completed":
+        patch["closed_date"] = when.isoformat()
+    return patch
+
+
 async def run_ma_scraper_job() -> dict:
     """Scrape defense M&A signals from RSS feeds, deduplicate, and upsert into MongoDB."""
     from services.ma_scraper import scrape_ma_signals, deduplicate_ma_signals
@@ -2444,6 +2539,7 @@ async def run_ma_scraper_job() -> dict:
 
         scraped_at = datetime.now(timezone.utc)
         saved = 0
+        updated = 0
         for signal in unique_signals:
             try:
                 # Upsert by (acquirer_norm, target_norm) key — never create hallucinated entries
@@ -2455,11 +2551,12 @@ async def run_ma_scraper_job() -> dict:
                     continue  # skip if extraction failed
 
                 # Build the MAActivity doc — only fields extracted from real text
+                signal_status = signal.get("status", "announced")
                 activity = MAActivity(
                     acquirer=signal["acquirer"],
                     target=signal["target"],
                     deal_value=signal.get("deal_value", 0),
-                    status=signal.get("status", "announced"),
+                    status=signal_status,
                     deal_type=signal.get("deal_type", "acquisition"),
                     description=signal.get("description", ""),
                     announced_date=signal.get("announced_date", scraped_at),
@@ -2469,15 +2566,35 @@ async def run_ma_scraper_job() -> dict:
                     target_country=signal.get("target_country"),
                     acquirer_logo_domain=signal.get("acquirer_logo_domain"),
                     target_logo_domain=signal.get("target_logo_domain"),
+                    # ── V2 fields carried from the scraper (C1/C4) ──
+                    deal_class=signal.get("deal_class"),
+                    value_basis=signal.get("value_basis"),
+                    currency=signal.get("currency", "USD"),
+                    is_disclosed=signal.get("is_disclosed", True),
+                    confidence=signal.get("confidence"),
+                    confidence_score=signal.get("confidence_score"),
+                    extraction_method=signal.get("extraction_method", "regex"),
+                    verification_status=signal.get("verification_status", "auto"),
+                    round_type=signal.get("round_type"),
+                    stake_percentage=signal.get("stake_percentage"),
+                    sources=signal.get("sources"),
                 )
                 doc = activity.model_dump()
                 doc["announced_date"] = doc["announced_date"].isoformat()
                 doc["acquirer_norm"] = key["acquirer_norm"]
                 doc["target_norm"] = key["target_norm"]
                 doc["scraped_at"] = scraped_at.isoformat()
+                # C2 — seed the lifecycle journal for a freshly inserted deal
+                doc["status_history"] = [{
+                    "status": signal_status,
+                    "date": scraped_at.isoformat(),
+                    "source_url": signal.get("source_url"),
+                }]
 
                 # 1. Exact (acquirer_norm, target_norm) match
-                existing = await db.ma_activities.find_one(key, {"_id": 0, "id": 1})
+                existing = await db.ma_activities.find_one(
+                    key, {"_id": 0, "id": 1, "status": 1, "status_history": 1, "verification_status": 1}
+                )
 
                 if not existing:
                     # 2. First-word prefix match — catches "Bombardier C Series" vs "Bombardier"
@@ -2491,7 +2608,7 @@ async def run_ma_scraper_job() -> dict:
                                 "acquirer_norm": {"$regex": f"^{re.escape(acq_first)}"},
                                 "target_norm":   {"$regex": f"^{re.escape(tgt_first)}"},
                             },
-                            {"_id": 0, "id": 1},
+                            {"_id": 0, "id": 1, "status": 1, "status_history": 1, "verification_status": 1},
                         )
                         if first_word_match:
                             existing = first_word_match
@@ -2500,7 +2617,7 @@ async def run_ma_scraper_job() -> dict:
                     # 3. Raw name match — catches entries seeded before norm fields existed
                     name_match = await db.ma_activities.find_one(
                         {"acquirer": signal["acquirer"], "target": signal["target"]},
-                        {"_id": 0, "id": 1},
+                        {"_id": 0, "id": 1, "status": 1, "status_history": 1, "verification_status": 1},
                     )
                     if name_match:
                         existing = name_match
@@ -2515,7 +2632,18 @@ async def run_ma_scraper_job() -> dict:
 
                     await db.ma_activities.insert_one(doc)
                     saved += 1
-                # Don't overwrite manually curated entries
+                else:
+                    # C2 — Deal already known: never overwrite curated content
+                    # fields, but DO let the lifecycle status move FORWARD and
+                    # journal the transition. This is what was missing in V1:
+                    # an "announced" deal could never become "completed".
+                    advanced = _advance_status(existing, signal_status,
+                                               signal.get("source_url"), scraped_at)
+                    if advanced:
+                        await db.ma_activities.update_one(
+                            {"id": existing["id"]}, {"$set": advanced}
+                        )
+                        updated += 1
             except Exception as exc:
                 logger.error("Error saving M&A signal '%s': %s", signal.get("acquirer", ""), exc)
 
@@ -2523,6 +2651,7 @@ async def run_ma_scraper_job() -> dict:
             "signals_found": signals_found,
             "duplicates_removed": duplicates_removed,
             "new_deals_saved": saved,
+            "deals_status_updated": updated,
         }
         logger.info("M&A scraper job complete: %s", stats)
         return stats
