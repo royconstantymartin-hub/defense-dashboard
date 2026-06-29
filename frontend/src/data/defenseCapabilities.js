@@ -4463,4 +4463,16 @@ export const STATIC_PLATFORM_IMAGES = {
   "Suffren-class SSN (Barracuda programme)":                  WKP + "Suffren_at_Cape_Brun_off_Toulon_on_26_July_2020.jpg",
   "Vanguard-class SSBN":                                       WKP + "HMS_Vanguard_(S28).jpg",
   "Astute-class SSN":                                          WKP + "HMS_Astute_at_HMNB_Clyde.jpg",
+  // ── Missing-image fill (image audit 2026-06): direct Commons files for
+  //    platforms whose Wikipedia article has no pageimage. Each verified HTTP 200
+  //    and visually matched to the platform. ───────────────────────────────────
+  "Type 056/056A corvette":                                    WKP + "PLANS_Huangshi_(FSG-502)_20170815.jpg",
+  "Type 052D destroyer":                                       WKP + "PLANS_Guiyang_(DDG-119)_20200428.jpg",
+  "Type 055 destroyer":                                        WKP + "PLANS_Nanchang_(DDG-101)_20210427.jpg",
+  "Murasame-class destroyer":                                  WKP + "JDS_Samidare_DD106.jpg",
+  "Arihant-class SSBN":                                        WKP + "Arihant_class.png",
+  "MAR-1 anti-radiation missile":                              WKP + "MAR-1_parts.jpg",
+  "Skydio X10D":                                               WKP + "Skydio_drone_flies_during_Dynamic_Front_25_in_Smârdan,_Romania.jpg",
+  "BZK-005":                                                   WKP + "PLA_Drone_BZK-005_2023-08-28.jpg",
+  "ASN-209":                                                   WKP + "ASN-209_operators.png",
 };
