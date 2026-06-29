@@ -1322,7 +1322,7 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
               {getMethodology(cat.key)?.unit || "in service"} ·{" "}
               <span
                 title={getMethodology(cat.key)
-                  ? `${getMethodology(cat.key).counts} Exclut : ${getMethodology(cat.key).excludes}`
+                  ? `${getMethodology(cat.key).counts} Excludes: ${getMethodology(cat.key).excludes}`
                   : citationText("IISS")}
                 className="cursor-help underline decoration-dotted"
               >
@@ -2909,8 +2909,8 @@ export default function Expenditures() {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => {
-                  // CSV enrichi : chaque ligne porte sa citation complète + date de
-                  // consultation (exigence de traçabilité académique).
+                  // Enriched CSV: every row carries its full citation + access
+                  // date (academic traceability requirement).
                   const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
                   const headers = ['Country', 'Code', 'NATO', 'Region', 'Expenditure ($B)', 'YoY vs 2023 (%)', 'Per Capita ($)', '% GDP', 'Year', 'Source', 'Source citation', 'Accessed'];
                   const rows = filteredExpenditures.map(e => {
