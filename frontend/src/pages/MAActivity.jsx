@@ -709,10 +709,35 @@ function formatValue(dealValue, isDisclosed = true) {
 
 // Filter out scraper artifacts: sentence fragments captured instead of company names
 const GARBAGE_NAME_RE = /\binitially\b|\breportedly\b|\bconfirmed\b|\bannounced\b|^the\s+\w+-|^over\s+\d|^up to\s+\d|^approximately\s+\d/i;
+
+// Generic words that are NOT a company on their own. A name made ONLY of these
+// (e.g. "Defense", "the Group", "Various Technologies") is a scraper fragment,
+// not a real party — the kind of junk that made the page look worthless.
+const COMPANY_STOPWORDS = new Set([
+  "the","a","an","and","or","of","with","for","in","to","its","their",
+  "defense","defence","group","company","companies","corporation","corp",
+  "systems","technologies","technology","solutions","industries","international",
+  "holdings","holding","ventures","venture","division","unit","business",
+  "ministry","government","department","agency","army","navy","air","force",
+  "startup","firm","maker","manufacturer","giant","specialist","supplier",
+  "consortium","alliance","partnership","program","programme","programs",
+  "various","multiple","undisclosed","unknown","new","other","assets","operations",
+  "target","targets","stake","minority","majority","portfolio","numerous","several",
+]);
+// A real company name does not contain a transaction verb / sentence connective.
+const NAME_FRAGMENT_RE = /\b(acquires?|acquired|buys?|bought|merges?|merged|raises?|raised|invests?|plans?|agrees?|agreed|completes?|completed|signs?|signed|wins?|to acquire|to buy)\b/i;
+
 function isValidCompanyName(name) {
   if (!name) return false;
-  if (name.length > 80) return false;
-  return !GARBAGE_NAME_RE.test(name);
+  const n = name.trim();
+  if (n.length < 2 || n.length > 80) return false;
+  if (GARBAGE_NAME_RE.test(n)) return false;
+  if (NAME_FRAGMENT_RE.test(n)) return false;            // captured a verb → it's a sentence
+  const tokens = n.toLowerCase().replace(/[.,]/g, "").split(/\s+/).filter(Boolean);
+  if (tokens.length === 0) return false;
+  if (tokens.every(t => COMPANY_STOPWORDS.has(t))) return false;  // only generic words
+  if (tokens.length === 1 && COMPANY_STOPWORDS.has(tokens[0])) return false;
+  return true;
 }
 
 function getStatusAccentBg(status) {
@@ -858,12 +883,40 @@ function buildLogoUrls(domain) {
   ];
 }
 
+// Guess a plausible corporate domain from a company name so that ANY company —
+// not just the ones in our curated maps — gets a real logo attempt. e.g.
+// "Renault" → renault.com, "Gooch & Housego" → goochhousego.com. The favicon
+// providers return a clean 404 for domains that don't resolve, so a wrong guess
+// simply falls through to the coloured-initials avatar. This is what makes a
+// non-defense party (a carmaker, a PE fund, a random target) still show a logo.
+function guessDomainFromName(name) {
+  if (!name) return null;
+  const cleaned = name
+    .toLowerCase()
+    .replace(/\s*\([^)]*\)/g, "")        // strip "(...)" descriptions
+    .replace(CORP_SUFFIX_RE, "")          // strip Inc / Group / Technologies / …
+    .replace(/&/g, " ")                   // "A & B" → "a  b"
+    .replace(/[^a-z0-9\s-]/g, "")         // drop punctuation/accents-leftovers
+    .replace(/\s+/g, " ")
+    .trim();
+  // Join the first up-to-3 meaningful words with no separator → "naval group" stays
+  // "navalgroup" only if suffix not stripped; most real brands are 1-2 words.
+  const slug = cleaned.split(" ").filter(Boolean).slice(0, 3).join("");
+  if (slug.length < 2) return null;
+  return `${slug}.com`;
+}
+
 // Full ordered logo source list for a company: a curated direct logo URL
 // (Wikipedia Commons / verified image, shared with the Private Players page via
-// companyLogos.js) takes priority, then the domain favicon chain, then initials.
+// companyLogos.js) takes priority, then the known-domain favicon chain, then a
+// GUESSED-domain favicon chain (so unknown companies still get a logo), then
+// the CompanyLogo component falls back to coloured initials.
 function logoUrlsFor(name, domain) {
   const curated = name ? getLogoUrl(name) : null;
-  return curated ? [curated, ...buildLogoUrls(domain)] : buildLogoUrls(domain);
+  const guessed = guessDomainFromName(name);
+  const domains = [...new Set([domain, guessed].filter(Boolean))];
+  const urls = domains.flatMap(buildLogoUrls);
+  return curated ? [curated, ...urls] : urls;
 }
 
 function CompanyLogo({ activity, side, size = "md" }) {
