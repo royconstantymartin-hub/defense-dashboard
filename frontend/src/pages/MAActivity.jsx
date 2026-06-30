@@ -723,9 +723,13 @@ const COMPANY_STOPWORDS = new Set([
   "consortium","alliance","partnership","program","programme","programs",
   "various","multiple","undisclosed","unknown","new","other","assets","operations",
   "target","targets","stake","minority","majority","portfolio","numerous","several",
+  "formation","consolidation","entities","players","businesses","firms",
 ]);
 // A real company name does not contain a transaction verb / sentence connective.
-const NAME_FRAGMENT_RE = /\b(acquires?|acquired|buys?|bought|merges?|merged|raises?|raised|invests?|plans?|agrees?|agreed|completes?|completed|signs?|signed|wins?|to acquire|to buy)\b/i;
+const NAME_FRAGMENT_RE = /\b(acquires?|acquired|buys|bought|merges|merged|raises|raised|invests|plans to|agrees? to|completes|completed|to acquire|to buy)\b/i;
+// Descriptive placeholder targets like "Multiple UAE defense companies",
+// "Several European firms", "Various defence businesses" — not a real party.
+const NON_COMPANY_DESC_RE = /\b(multiple|several|various|numerous|many|undisclosed|unnamed)\b.*\b(compan(y|ies)|firms?|entit(y|ies)|businesses|players|startups?|defen[cs]e|assets?|targets?)\b/i;
 
 function isValidCompanyName(name) {
   if (!name) return false;
@@ -733,6 +737,7 @@ function isValidCompanyName(name) {
   if (n.length < 2 || n.length > 80) return false;
   if (GARBAGE_NAME_RE.test(n)) return false;
   if (NAME_FRAGMENT_RE.test(n)) return false;            // captured a verb → it's a sentence
+  if (NON_COMPANY_DESC_RE.test(n)) return false;         // descriptive placeholder, not a company
   const tokens = n.toLowerCase().replace(/[.,]/g, "").split(/\s+/).filter(Boolean);
   if (tokens.length === 0) return false;
   if (tokens.every(t => COMPANY_STOPWORDS.has(t))) return false;  // only generic words
@@ -889,8 +894,12 @@ function getLogoDomain(activity, side) {
 //   3. Coloured initials            — deterministic last resort, no network
 function buildLogoUrls(domain) {
   if (!domain) return [];
+  // Only DuckDuckGo: it returns a clean HTTP 404 for domains it has no icon for,
+  // so onError fires and we fall through to the coloured-initials avatar.
+  // Google's s2 favicon service was REMOVED because for unknown / guessed domains
+  // it returns a generic grey globe at HTTP 200 — onError never fires, so every
+  // unmatched company got stuck showing the same grey globe (looked broken).
   return [
-    `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
     `https://icons.duckduckgo.com/ip3/${domain}.ico`,
   ];
 }

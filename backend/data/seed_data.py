@@ -2057,9 +2057,9 @@ MA_DATA = [
         "announced_date": datetime(2019, 6, 29, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "EDGE Group", "target": "Multiple UAE defense companies",
+        "acquirer": "EDGE Group", "target": "CARACAL, Halcon & SIGN4L",
         "deal_value": 800, "status": "completed", "deal_type": "merger",
-        "description": "UAE defense industrial consolidation into national champion",
+        "description": "UAE consolidates 25 state-owned defence firms (CARACAL, Halcon, SIGN4L…) into EDGE Group",
         "rationale": (
             "The UAE government creates EDGE Group by consolidating 25 state-owned "
             "and semi-state defense technology companies including CARACAL, Halcon "
@@ -2888,8 +2888,8 @@ MA_DATA = [
     {
         "acquirer": "FCDE", "target": "Hemeria",
         "deal_value": 0, "status": "announced", "deal_type": "minority_stake",
-        "description": "FCDE prend une participation majoritaire de 55% dans Hemeria — systèmes spatiaux et défense",
-        "rationale": "Le Fonds de Consolidation et de Développement des Entreprises de Défense (FCDE) prend une participation majoritaire de 55% dans le groupe Hemeria, spécialiste français des nanosatellites, drones et systèmes ISR. L'opération consolide la base industrielle défense française dans le secteur spatial.",
+        "description": "FCDE takes a 55% majority stake in Hemeria — space and defence systems",
+        "rationale": "The Fonds de Consolidation et de Développement des Entreprises de Défense (FCDE) takes a 55% majority stake in the Hemeria group, a French specialist in nanosatellites, drones and ISR systems. The deal consolidates the French defence industrial base in the space sector.",
         "acquirer_country": "FR", "target_country": "FR",
         "acquirer_logo_domain": "fcde.fr", "target_logo_domain": "hemeria.com",
         "source_url": "https://www.lalettrem.fr/actualites/un-nouvel-actionnaire-majoritaire-pour-le-groupe-hemeria",
