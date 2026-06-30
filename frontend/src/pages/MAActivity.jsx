@@ -726,7 +726,7 @@ const COMPANY_STOPWORDS = new Set([
   "formation","consolidation","entities","players","businesses","firms",
 ]);
 // A real company name does not contain a transaction verb / sentence connective.
-const NAME_FRAGMENT_RE = /\b(acquires?|acquired|buys?|bought|merges?|merged|raises?|raised|invests?|plans?|agrees?|agreed|completes?|completed|signs?|signed|wins?|to acquire|to buy)\b/i;
+const NAME_FRAGMENT_RE = /\b(acquires?|acquired|buys|bought|merges|merged|raises|raised|invests|plans to|agrees? to|completes|completed|to acquire|to buy)\b/i;
 // Descriptive placeholder targets like "Multiple UAE defense companies",
 // "Several European firms", "Various defence businesses" — not a real party.
 const NON_COMPANY_DESC_RE = /\b(multiple|several|various|numerous|many|undisclosed|unnamed)\b.*\b(compan(y|ies)|firms?|entit(y|ies)|businesses|players|startups?|defen[cs]e|assets?|targets?)\b/i;
