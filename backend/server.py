@@ -2367,10 +2367,17 @@ _MA_STOPWORDS = {
     "consortium","alliance","partnership","program","programme","programs",
     "various","multiple","undisclosed","unknown","new","other","assets","operations",
     "target","targets","stake","minority","majority","portfolio","numerous","several",
+    "formation","consolidation","entities","players","businesses","firms",
 }
 _MA_NAME_FRAGMENT_RE = re.compile(
     r"\b(acquires?|acquired|buys?|bought|merges?|merged|raises?|raised|invests?|"
     r"plans?|agrees?|agreed|completes?|completed|signs?|signed|wins?|to acquire|to buy)\b",
+    re.IGNORECASE,
+)
+# Descriptive placeholder targets like "Multiple UAE defense companies".
+_MA_NON_COMPANY_DESC_RE = re.compile(
+    r"\b(multiple|several|various|numerous|many|undisclosed|unnamed)\b.*"
+    r"\b(compan(y|ies)|firms?|entit(y|ies)|businesses|players|startups?|defen[cs]e|assets?|targets?)\b",
     re.IGNORECASE,
 )
 
@@ -2382,6 +2389,8 @@ def _is_junk_party_name(name: str) -> bool:
     if len(n) < 2 or len(n) > 80:
         return True
     if _MA_NAME_FRAGMENT_RE.search(n):
+        return True
+    if _MA_NON_COMPANY_DESC_RE.search(n):
         return True
     tokens = [t for t in re.sub(r"[.,]", "", n.lower()).split() if t]
     if not tokens:

@@ -2057,9 +2057,9 @@ MA_DATA = [
         "announced_date": datetime(2019, 6, 29, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "EDGE Group", "target": "Multiple UAE defense companies",
+        "acquirer": "EDGE Group", "target": "CARACAL, Halcon & SIGN4L",
         "deal_value": 800, "status": "completed", "deal_type": "merger",
-        "description": "UAE defense industrial consolidation into national champion",
+        "description": "UAE consolidates 25 state-owned defence firms (CARACAL, Halcon, SIGN4L…) into EDGE Group",
         "rationale": (
             "The UAE government creates EDGE Group by consolidating 25 state-owned "
             "and semi-state defense technology companies including CARACAL, Halcon "
