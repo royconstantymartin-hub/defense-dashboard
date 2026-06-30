@@ -1879,6 +1879,119 @@ MA_DATA = [
         "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
         "sector": "c2_electronics",
     },
+    # ── Landmark defense M&A (verified facts + primary sources, 2018–2023) ───────
+    {
+        "acquirer": "Northrop Grumman", "target": "Orbital ATK",
+        "deal_value": 9200, "status": "completed", "deal_type": "acquisition",
+        "value_basis": "enterprise", "deal_class": "ma",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Northrop Grumman acquires Orbital ATK for $9.2B — space launch, satellites and munitions",
+        "rationale": "Northrop Grumman acquires Orbital ATK for $9.2B ($7.8B cash + $1.4B assumed debt), forming Northrop Grumman Innovation Systems. The deal brings solid-rocket motors, launch vehicles, satellites and ammunition in-house, vertically integrating Northrop's missile and space portfolio.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "northropgrumman.com", "target_logo_domain": "northropgrumman.com",
+        "source_url": "https://spaceflightnow.com/2018/06/07/northrop-grumman-completes-orbital-atk-acquisition/",
+        "announced_date": datetime(2017, 9, 18, tzinfo=timezone.utc),
+        "closed_date": datetime(2018, 6, 6, tzinfo=timezone.utc),
+        "notes": "$7.8B cash + $1.4B assumed debt; renamed Northrop Grumman Innovation Systems.",
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "space",
+    },
+    {
+        "acquirer": "General Dynamics", "target": "CSRA",
+        "deal_value": 9700, "status": "completed", "deal_type": "acquisition",
+        "value_basis": "enterprise", "deal_class": "ma",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "General Dynamics acquires CSRA for $9.7B — creates federal IT services leader (GDIT)",
+        "rationale": "General Dynamics acquires IT-services firm CSRA for $9.7B ($41.25/share incl. ~$2.8B debt), folding it into GDIT to create the federal government's largest IT services provider. The deal expands GD's higher-margin services and intelligence-community footprint.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "gd.com", "target_logo_domain": "gd.com",
+        "source_url": "https://www.defensenews.com/industry/2018/04/03/general-dynamics-completes-csra-acquisition/",
+        "announced_date": datetime(2018, 2, 12, tzinfo=timezone.utc),
+        "closed_date": datetime(2018, 4, 3, tzinfo=timezone.utc),
+        "notes": "$41.25/share; ~$9.7B incl. $2.8B debt (~$6.9B equity).",
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "services_it",
+    },
+    {
+        "acquirer": "L3Harris Technologies", "target": "Aerojet Rocketdyne",
+        "deal_value": 4700, "status": "completed", "deal_type": "acquisition",
+        "value_basis": "equity", "deal_class": "ma",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "L3Harris acquires Aerojet Rocketdyne for $4.7B — solid-rocket-motor propulsion",
+        "rationale": "L3Harris Technologies acquires Aerojet Rocketdyne for $4.7B, securing the US's leading independent rocket-propulsion supplier after the FTC had blocked Lockheed Martin's earlier bid. The deal vertically integrates missile and hypersonic propulsion into L3Harris as a self-styled 'sixth prime'.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com", "target_logo_domain": "aerojet.com",
+        "source_url": "https://www.l3harris.com/newsroom/press-release/2023/07/l3harris-completes-aerojet-rocketdyne-acquisition",
+        "announced_date": datetime(2022, 12, 17, tzinfo=timezone.utc),
+        "closed_date": datetime(2023, 7, 28, tzinfo=timezone.utc),
+        "notes": "Completed after FTC cleared it, having blocked Lockheed Martin's 2021 bid.",
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "missiles_munitions",
+    },
+    {
+        "acquirer": "SAIC", "target": "Engility",
+        "deal_value": 2500, "status": "completed", "deal_type": "acquisition",
+        "value_basis": "equity", "deal_class": "ma",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "SAIC acquires Engility for $2.5B — government services and intelligence scale",
+        "rationale": "SAIC acquires Engility Holdings in a $2.5B all-stock deal, adding intelligence-community and engineering services and creating a ~$6.5B-revenue, 23,000-person government-services contractor.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "saic.com", "target_logo_domain": "engility.com",
+        "source_url": "https://www.defensenews.com/industry/2019/01/15/saic-completes-25b-engility-acquisition-deal/",
+        "announced_date": datetime(2018, 9, 10, tzinfo=timezone.utc),
+        "closed_date": datetime(2019, 1, 14, tzinfo=timezone.utc),
+        "notes": "All-stock; combined ~$6.5B revenue.",
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "services_it",
+    },
+    {
+        "acquirer": "Jacobs", "target": "KeyW Holding",
+        "deal_value": 815, "status": "completed", "deal_type": "acquisition",
+        "value_basis": "enterprise", "deal_class": "ma",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Jacobs acquires KeyW Holding for $815M — intelligence, cyber and ISR",
+        "rationale": "Jacobs acquires KeyW Holding for $815M enterprise value ($11.25/share), adding ISR, cyber and signals-intelligence capabilities for the US intelligence community and strengthening Jacobs' national-security business.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "jacobs.com", "target_logo_domain": "keywcorp.com",
+        "source_url": "https://www.globenewswire.com/news-release/2019/04/22/1807235/0/en/KeyW-Announces-Definitive-Merger-Agreement-with-Jacobs.html",
+        "announced_date": datetime(2019, 4, 22, tzinfo=timezone.utc),
+        "closed_date": datetime(2019, 6, 12, tzinfo=timezone.utc),
+        "notes": "$11.25/share; ~$815M EV incl. ~$272M net debt.",
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "services_it",
+    },
+    {
+        "acquirer": "Advent International", "target": "Cobham",
+        "deal_value": 5200, "status": "completed", "deal_type": "acquisition",
+        "value_basis": "equity", "deal_class": "ma",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Advent International takes Cobham private for £4B",
+        "rationale": "Private-equity firm Advent International takes UK aerospace-and-defense group Cobham private for £4B, despite UK national-security scrutiny. Advent subsequently broke Cobham up, divesting units (including CAES to Honeywell) for billions.",
+        "acquirer_country": "US", "target_country": "GB",
+        "acquirer_logo_domain": "adventinternational.com", "target_logo_domain": "cobham.com",
+        "source_url": "https://www.privateequitywire.co.uk/2020/01/22/282189/advent-completes-controversial-gbp4-billion-takeover-cobham",
+        "announced_date": datetime(2019, 7, 25, tzinfo=timezone.utc),
+        "closed_date": datetime(2020, 1, 22, tzinfo=timezone.utc),
+        "notes": "£4B (~$5.2B); cleared under UK national-security undertakings.",
+        "stake_percentage": 100.0, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "L3Harris Technologies", "target": "Viasat Link 16 Tactical Data Links Business",
+        "deal_value": 1960, "status": "completed", "deal_type": "acquisition",
+        "value_basis": "equity", "deal_class": "ma",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "L3Harris acquires Viasat's Link 16 Tactical Data Links business for $1.96B",
+        "rationale": "L3Harris acquires Viasat's Link 16 Tactical Data Links (TDL) business for $1.96B in cash, consolidating the encrypted battlefield data network used across US and NATO ships, aircraft and ground forces into L3Harris's communications portfolio.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com", "target_logo_domain": "viasat.com",
+        "source_url": "https://www.viasat.com/news/latest-news/government/2023/viasat-completes-sale-of-link-16-tactical-data-links-business-to-l3harris-technologies-for-1-96-billion/",
+        "announced_date": datetime(2022, 10, 3, tzinfo=timezone.utc),
+        "closed_date": datetime(2023, 1, 3, tzinfo=timezone.utc),
+        "notes": "Carve-out of the Link 16 TDL business; ~$400M revenue.",
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
     # ── 2026 (Jun–Mar) ───────────────────────────────────────────────────────────
     {
         "acquirer": "Motorola Solutions", "target": "D-Fend Solutions",
@@ -3391,26 +3504,6 @@ MA_EXTRA_DEALS = [
         "valuation": 400,
     },
     {
-        "acquirer": "Safran", "target": "Preligens",
-        "deal_value": 220, "status": "completed", "deal_type": "acquisition",
-        "description": "Full acquisition of French AI-powered GEOINT startup — rebranded Safran AI",
-        "rationale": (
-            "Safran acquires Preligens, a French AI startup specialising in automated satellite "
-            "image analysis and geospatial intelligence (GEOINT). Preligens's Earth and Sky "
-            "platforms use computer vision to automatically detect and classify military assets "
-            "in satellite imagery at scale. Following the acquisition, Preligens was rebranded "
-            "Safran AI, anchoring Safran's push into AI-driven defence intelligence and ISR systems."
-        ),
-        "acquirer_country": "FR", "target_country": "FR",
-        "acquirer_logo_domain": "safran-group.com",
-        "target_logo_domain": "preligens.com",
-        "source_url": "https://www.safran-group.com/en/media/press-release/safran-completes-acquisition-preligens",
-        "announced_date": datetime(2023, 10, 3, tzinfo=timezone.utc),
-        "stake_percentage": 100.0,
-        "round_type": None,
-        "is_disclosed": True,
-    },
-    {
         "acquirer": "Rheinmetall + BAE Systems", "target": "RBSL (Rheinmetall BAE Systems Land)",
         "deal_value": 0, "status": "completed", "deal_type": "joint_venture",
         "description": "50/50 JV for UK land vehicle programmes (Ajax, Boxer, OMFV)",
@@ -4719,26 +4812,6 @@ MA_EXTRA_DEALS = [
         "target_logo_domain": "inmarsat.com",
         "source_url": "https://www.viasat.com/news/press-releases/2023/viasat-completes-acquisition-of-inmarsat/",
         "announced_date": datetime(2023, 5, 30, tzinfo=timezone.utc),
-        "stake_percentage": None, "round_type": None, "is_disclosed": True,
-    },
-    {
-        "acquirer": "Safran", "target": "Orolia",
-        "deal_value": 630, "status": "completed", "deal_type": "acquisition",
-        "description": "Safran acquires Orolia ($630M) — global leader in precision timing, GPS/PNT resilience and navigation for defense",
-        "rationale": (
-            "Safran acquires Orolia, a Geneva-based precision timing and positioning company, "
-            "for approximately $630 million in March 2023. Orolia produces GPS/GNSS simulators, "
-            "resilient PNT (Position, Navigation & Timing) systems, atomic clocks, and secure "
-            "timing infrastructure used by US DoD, NATO navies, nuclear plants, and financial "
-            "exchanges. The deal extends Safran's navigation portfolio (already present in inertial "
-            "systems and GNSS receivers) into GPS-denied environments — a critical capability "
-            "following Russia's GPS jamming campaigns in Ukraine and the Baltic."
-        ),
-        "acquirer_country": "FR", "target_country": "CH",
-        "acquirer_logo_domain": "safran-group.com",
-        "target_logo_domain": "orolia.com",
-        "source_url": "https://www.safran-group.com/media/safran-completes-acquisition-orolia-20230302",
-        "announced_date": datetime(2023, 3, 2, tzinfo=timezone.utc),
         "stake_percentage": None, "round_type": None, "is_disclosed": True,
     },
     {
@@ -9299,25 +9372,6 @@ MA_PILOT_10 = [
 # Bloomberg, Reuters, Refinitiv, Calcalist, Les Echos, Globes, Breaking Defense.
 MA_EUROPE_DEALS = [
     {
-        "acquirer": "Viasat", "target": "Inmarsat",
-        "deal_value": 7300, "status": "completed", "deal_type": "acquisition",
-        "description": "Viasat acquires Inmarsat for $7.3B — creates global satellite connectivity leader",
-        "rationale": (
-            "US satellite operator Viasat closes its $7.3 billion acquisition of Inmarsat, "
-            "the British pioneer of mobile satellite services, in May 2023. The combined "
-            "entity operates one of the largest commercial satellite fleets, covering maritime, "
-            "aviation and government mobility. The deal required divestitures and extensive "
-            "regulatory clearance in the US, EU and UK. Inmarsat's GX high-throughput Ka-band "
-            "network complements Viasat's own ViaSat-3 constellation, serving NATO, the UK "
-            "Ministry of Defence and aviation customers globally."
-        ),
-        "acquirer_country": "US", "target_country": "GB",
-        "acquirer_logo_domain": "viasat.com",
-        "target_logo_domain": "inmarsat.com",
-        "source_url": "https://www.reuters.com/technology/viasat-closes-acquisition-inmarsat-2023-05-30/",
-        "announced_date": datetime(2021, 11, 8, tzinfo=timezone.utc),
-    },
-    {
         "acquirer": "Thoma Bravo", "target": "Darktrace",
         "deal_value": 5300, "status": "completed", "deal_type": "acquisition",
         "description": "Thoma Bravo takes Darktrace private for $5.3B — UK AI cybersecurity leader",
@@ -9423,25 +9477,6 @@ MA_EUROPE_DEALS = [
         "announced_date": datetime(2026, 1, 15, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "Eaton", "target": "Ultra PCS",
-        "deal_value": 1550, "status": "completed", "deal_type": "acquisition",
-        "description": "Eaton acquires Ultra PCS for $1.55B — expands into UK defence electronics",
-        "rationale": (
-            "Eaton Corporation acquires Ultra PCS (Power and Control Systems), the UK-based "
-            "defence electronics subsidiary of Ultra Electronics, for approximately $1.55 billion "
-            "in 2025. Ultra PCS specialises in power management and control systems for military "
-            "aircraft, including the F-35 Lightning II, Typhoon and maritime patrol aircraft. "
-            "The acquisition extends Eaton's aerospace power distribution capabilities into "
-            "high-reliability military electronics, complementing its existing eMobility and "
-            "power quality product lines."
-        ),
-        "acquirer_country": "US", "target_country": "GB",
-        "acquirer_logo_domain": "eaton.com",
-        "target_logo_domain": "ultra.group",
-        "source_url": "https://www.businesswire.com/news/home/20250115005200/en/Eaton-Completes-Acquisition-Ultra-PCS",
-        "announced_date": datetime(2024, 10, 14, tzinfo=timezone.utc),
-    },
-    {
         "acquirer": "TransDigm", "target": "CPI TMD",
         "deal_value": 1400, "status": "completed", "deal_type": "acquisition",
         "description": "TransDigm acquires CPI TMD (~$1.4B) — UK high-power microwave & RF defence technology",
@@ -9458,24 +9493,6 @@ MA_EUROPE_DEALS = [
         "target_logo_domain": "cpii.com",
         "source_url": "https://www.transdigm.com/news/transdigm-acquires-cpi-tmd",
         "announced_date": datetime(2024, 3, 18, tzinfo=timezone.utc),
-    },
-    {
-        "acquirer": "Thales", "target": "Cobham Aerospace Communications",
-        "deal_value": 1100, "status": "completed", "deal_type": "acquisition",
-        "description": "Thales acquires Cobham Aerospace Communications for $1.1B — SATCOM for aviation",
-        "rationale": (
-            "Thales acquires Cobham Aerospace Communications, the satellite communications and "
-            "avionics antenna business unit of Cobham (owned by Advent International), for "
-            "approximately $1.1 billion in 2024. The division provides SATCOM antennas, tracking "
-            "systems and data link equipment for commercial and military aircraft, naval vessels "
-            "and government platforms. The acquisition strengthens Thales's InFlyt Experience "
-            "in-flight connectivity product line and its military SATCOM terminal portfolio."
-        ),
-        "acquirer_country": "FR", "target_country": "GB",
-        "acquirer_logo_domain": "thalesgroup.com",
-        "target_logo_domain": "cobham.com",
-        "source_url": "https://www.thalesgroup.com/en/worldwide/newsroom/press-releases/thales-completes-acquisition-cobham-aerospace-communications",
-        "announced_date": datetime(2024, 2, 7, tzinfo=timezone.utc),
     },
     {
         "acquirer": "KKR + Fuchs family", "target": "OHB SE",
@@ -9664,25 +9681,6 @@ MA_EUROPE_DEALS = [
         "announced_date": datetime(2026, 2, 10, tzinfo=timezone.utc),
     },
     {
-        "acquirer": "Safran", "target": "Orolia",
-        "deal_value": 189, "status": "completed", "deal_type": "acquisition",
-        "description": "Safran acquires Orolia for €189M — resilient positioning, navigation and timing (PNT)",
-        "rationale": (
-            "Safran acquires Orolia, a French specialist in resilient positioning, navigation "
-            "and timing (PNT) solutions, for €189 million in 2022. Orolia develops GPS/GNSS "
-            "simulators, ruggedised atomic clocks and assured PNT systems used by military "
-            "and critical infrastructure operators to resist GPS jamming and spoofing. Following "
-            "the acquisition, Orolia is integrated into Safran Electronics & Defense, "
-            "strengthening Safran's navigation portfolio ahead of anticipated demand from "
-            "NATO forces seeking GPS-denied resilience."
-        ),
-        "acquirer_country": "FR", "target_country": "FR",
-        "acquirer_logo_domain": "safran-group.com",
-        "target_logo_domain": "orolia.com",
-        "source_url": "https://www.safran-group.com/en/newsroom",
-        "announced_date": datetime(2022, 3, 1, tzinfo=timezone.utc),
-    },
-    {
         "acquirer": "Ancala Partners", "target": "Avincis",
         "deal_value": 136, "status": "completed", "deal_type": "acquisition",
         "description": "UK infrastructure investor Ancala Partners acquires Avincis helicopter services group",
@@ -9780,27 +9778,6 @@ MA_EUROPE_DEALS = [
         "announced_date": datetime(2023, 9, 1, tzinfo=timezone.utc),
         "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
         "confidence": "medium",
-    },
-    {
-        "acquirer": "Babcock International", "target": "Frazer-Nash Consultancy",
-        "deal_value": 0, "status": "completed", "deal_type": "acquisition",
-        "description": "Babcock divests Frazer-Nash Consultancy to PE firm Inflexion",
-        "rationale": (
-            "Babcock International divests Frazer-Nash Consultancy, a UK engineering "
-            "and technology consultancy serving defence, nuclear and energy sectors, "
-            "to private equity firm Inflexion Private Equity as part of Babcock's "
-            "portfolio rationalisation strategy. The deal allows Babcock to focus on "
-            "its core naval, land and aviation services, while Frazer-Nash continues "
-            "independently with defence advisory and engineering services."
-        ),
-        "acquirer_country": "GB", "target_country": "GB",
-        "acquirer_logo_domain": "inflexion.com",
-        "target_logo_domain": "frazernash.com",
-        "source_url": "https://www.babcockinternational.com/news-and-media/",
-        "announced_date": datetime(2022, 6, 1, tzinfo=timezone.utc),
-        "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
-        "confidence": "medium",
-        "notes": "Acquirer in this deal is effectively Inflexion PE (buyer), Babcock is the seller/target-parent.",
     },
     {
         "acquirer": "Hanwha Aerospace", "target": "Austal",
