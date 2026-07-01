@@ -21,7 +21,9 @@ import {
   Target, Gauge, Download, FileCheck, Radar, ChevronDown, ChevronRight,
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
-import { CAPABILITY_DETAILS, PLATFORM_WIKI_TITLES, WKP, STATIC_PLATFORM_IMAGES, DEFENSE_CAPABILITIES, getCapabilitySummary } from "@/data/defenseCapabilities";
+import { CAPABILITY_DETAILS, PLATFORM_WIKI_TITLES, WKP, STATIC_PLATFORM_IMAGES, DEFENSE_CAPABILITIES, getCapabilitySummary, GENERIC_WIKI_DENYLIST } from "@/data/defenseCapabilities";
+import { DATA_VINTAGE, SOURCES, sourceShortLabel, citationText, buildBibliography, downloadTextFile, capabilitiesSourceLink, spendingSourceLink } from "@/data/sources";
+import { getMethodology } from "@/data/metricMethodology";
 
 // ── Custom military SVG icons ─────────────────────────────────────────────────
 function FighterJetIcon({ className }) {
@@ -83,6 +85,57 @@ function CarrierIcon({ className }) {
     </svg>
   );
 }
+// ── Drone sub-type icons (used as a meaningful fallback when a UAV has no photo) ─
+function FixedWingUAVIcon({ className }) {
+  // MALE/HALE fixed-wing silhouette (Reaper/Bayraktar style)
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M11 2h2l.5 7 7 2v2l-7-.5-.3 5 2.8 1.5v1.5l-4-1-4 1v-1.5L11 19l-.3-5-7 .5v-2l7-2Z" />
+    </svg>
+  );
+}
+function LoiteringMunitionIcon({ className }) {
+  // Loitering munition / one-way attack drone — dart with cross tail
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 2c2.5 3 3 7 3 11l-3 3-3-3c0-4 .5-8 3-11Z" />
+      <path d="M9 16l-4 4M15 16l4 4M12 17v4" />
+    </svg>
+  );
+}
+function MultirotorIcon({ className }) {
+  // Quad/multirotor (Skydio, DJI-style)
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="5" cy="6" r="2.5" /><circle cx="19" cy="6" r="2.5" />
+      <circle cx="5" cy="18" r="2.5" /><circle cx="19" cy="18" r="2.5" />
+      <path d="M6.8 7.8 10 11h4l3.2-3.2M6.8 16.2 10 13h4l3.2 3.2" />
+      <rect x="10" y="10.5" width="4" height="3" rx="0.6" />
+    </svg>
+  );
+}
+function NanoUAVIcon({ className }) {
+  // Nano/micro recon UAV (Black Hornet style)
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <ellipse cx="12" cy="13" rx="3" ry="2" />
+      <path d="M12 11V7M9 5h6M12 15v3" />
+    </svg>
+  );
+}
+// Picks the most representative icon + label for a UAV that has no photo, so the
+// card still tells the reader what KIND of drone it is (not a generic outline).
+function droneTypeFallback(item) {
+  const n = (item?.model || "").toLowerCase();
+  if (item?.is_expendable || /loiter|switchblade|kamikaze|one-way|owa|munition|suicide|scythe|lancet|shahed|geran/.test(n))
+    return { Icon: LoiteringMunitionIcon, label: "Loitering munition" };
+  if (/nano|micro|black hornet|pocket|remoeye|drone40/.test(n))
+    return { Icon: NanoUAVIcon, label: "Nano / micro UAV" };
+  if (/multicopter|multirotor|quad|copter|hexa|octo|skydio|matrice|mavic|vtol|v-bat|vbat/.test(n))
+    return { Icon: MultirotorIcon, label: "Multirotor / VTOL" };
+  return { Icon: FixedWingUAVIcon, label: "Fixed-wing UAV" };
+}
+
 import { getLogoUrls } from "@/lib/companyLogos";
 import { getCountryWikiArticle } from "@/lib/countryBanners";
 import {
@@ -1177,6 +1230,21 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={onImgError}
           />
+        ) : cat.key === "drones" ? (
+          // No photo for this UAV → show a sub-type icon + label so the reader
+          // still knows what kind of drone it is (loitering, multirotor, MALE…).
+          (() => {
+            const { Icon: DroneIcon, label } = droneTypeFallback(item);
+            return (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-1 px-2">
+                <DroneIcon className={`w-11 h-11 ${cat.iconColor} opacity-40`} />
+                <span className="text-[9px] font-semibold uppercase tracking-wide text-slate-400 text-center leading-tight">
+                  {label}
+                </span>
+                <span className="text-[8px] text-slate-300">image unavailable</span>
+              </div>
+            );
+          })()
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <cat.Icon className={`w-14 h-14 ${cat.iconColor} opacity-15`} />
@@ -1276,6 +1344,9 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
     if (fetchedRef.current.has(model)) return;
     fetchedRef.current.add(model);
     const wikiTitle = PLATFORM_WIKI_TITLES[model] || model;
+    // Skip generic class/company articles — their lead image is a wrong, shared
+    // photo (e.g. a Reaper for every UAV). Show the clean category icon instead.
+    if (GENERIC_WIKI_DENYLIST.has(wikiTitle)) return;
     const title = wikiTitle.replace(/ /g, '_');
     try {
       const r = await fetch(
@@ -1316,7 +1387,19 @@ function CapabilityDetailPanel({ cat, countryCode, onClose }) {
           <div>
             <p className={`text-sm font-bold ${cat.labelColor}`}>{cat.label} — Equipment Breakdown</p>
             <p className="text-[10px] text-slate-500">
-              {cat.sublabel} · <span className="font-semibold">{total.toLocaleString()}</span> in service · IISS Military Balance 2024
+              {cat.sublabel} · <span className="font-semibold">{total.toLocaleString()}</span>{" "}
+              {getMethodology(cat.key)?.unit || "in service"} ·{" "}
+              <span
+                title={getMethodology(cat.key)
+                  ? `${getMethodology(cat.key).counts} Excludes: ${getMethodology(cat.key).excludes}`
+                  : citationText("IISS")}
+                className="cursor-help underline decoration-dotted"
+              >
+                {sourceShortLabel(getMethodology(cat.key)?.primary_source || "IISS")}
+              </span>
+              {getMethodology(cat.key)?.caveat && (
+                <span className="text-amber-600"> · ⚠ {getMethodology(cat.key).caveat}</span>
+              )}
               {pendingCount > 0 && (
                 <span className="text-slate-400"> · +{pendingCount} on order / in development (not counted)</span>
               )}
@@ -1391,25 +1474,52 @@ function CapabilityDomainCard({ group, cap, countryCode, isOpen, onToggle }) {
   );
 }
 
-function DefenseCapabilitiesCard({ countryCode }) {
+function DefenseCapabilitiesCard({ countryCode, countryName }) {
   const cap = getCapabilitySummary(countryCode);
   const [openGroup, setOpenGroup] = useState(null);
   const [openCat, setOpenCat] = useState(null);
 
   const hasDetails = !!CAPABILITY_DETAILS[countryCode];
   const activeGroup = CAP_GROUPS.find(g => g.label === openGroup) || null;
+  const verifyUrl = capabilitiesSourceLink(countryCode);
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm">
       <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Gauge className="w-4 h-4 text-slate-600" />
             <CardTitle className="font-heading text-base text-slate-900">Military Capabilities</CardTitle>
           </div>
-          <span className="text-[10px] text-slate-400 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
-            IISS Military Balance 2024 · estimates
-          </span>
+          {cap && (
+            <div className="flex items-center gap-1.5">
+              {cap._sourced ? (
+                <span
+                  title={`Primary reference: ${citationText("IISS")}  —  NOTE: The Military Balance is a subscription publication with no free per-country link. Use the "Verify" link for an open-access equivalent.`}
+                  className="text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full cursor-help"
+                >
+                  Sourced · IISS Military Balance {DATA_VINTAGE.capability_edition}
+                </span>
+              ) : (
+                <span
+                  title={SOURCES.ESTIMATE.note}
+                  className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full cursor-help"
+                >
+                  Aggregate estimate · unverified
+                </span>
+              )}
+              {/* Direct, open-access per-country source so a reviewer can verify */}
+              <a
+                href={verifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`Open ${countryName || "this country"}'s capability data (Global Firepower, open access)`}
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700 hover:text-blue-900 bg-white border border-blue-200 hover:border-blue-400 px-2 py-0.5 rounded-full transition-colors"
+              >
+                <ExternalLink className="w-2.5 h-2.5" /> Verify source
+              </a>
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-4 space-y-3">
@@ -1840,7 +1950,7 @@ function CountryProfileSection({ country, allExpenditures, onOpenContractsSheet 
       )}
 
       {/* Defense Capabilities Infographic */}
-      <DefenseCapabilitiesCard countryCode={country.country_code} />
+      <DefenseCapabilitiesCard countryCode={country.country_code} countryName={country.country} />
 
       {/* Row 1: Military Branches + Regional Comparison */}
       <div className="grid lg:grid-cols-2 gap-5">
@@ -2498,13 +2608,14 @@ export default function Expenditures() {
         <div className="flex flex-col items-end gap-1">
           <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
             <Clock className="w-3.5 h-3.5" />
-            <span className="font-medium">Reference FY 2024</span>
+            <span className="font-medium">Reference FY {DATA_VINTAGE.expenditure_fy}</span>
             <span className="text-slate-300">|</span>
             <Database className="w-3.5 h-3.5" />
-            <span>SIPRI Military Expenditure Database · IISS Military Balance · National government reports</span>
+            <span>{SOURCES.SIPRI.label} · {SOURCES.IISS.label} · {SOURCES.NATIONAL.label}</span>
           </div>
           <p className="text-xs text-slate-400 text-right max-w-md">
             Note: reference year may vary by country based on official data availability. Figures in constant USD billions.
+            <span className="block mt-0.5">Dataset last reviewed: {DATA_VINTAGE.last_reviewed}.</span>
           </p>
         </div>
       </div>
@@ -2516,7 +2627,7 @@ export default function Expenditures() {
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL SPENDING</p>
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">${totalExpenditure.toFixed(1)}B</p>
             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-              <Database className="w-3 h-3" /> SIPRI · IISS · NATO · 2024
+              <Database className="w-3 h-3" /> SIPRI · IISS · NATO · {DATA_VINTAGE.expenditure_fy}
             </p>
           </CardContent>
         </Card>
@@ -2546,7 +2657,7 @@ export default function Expenditures() {
             <p className="text-2xl font-mono font-bold text-slate-900 mt-2">
               {filteredExpenditures[0]?.year ?? expenditures[0]?.year ?? '—'}
             </p>
-            <p className="text-xs text-slate-500 mt-1">SIPRI · IISS · NATO · 2024</p>
+            <p className="text-xs text-slate-500 mt-1">SIPRI · IISS · NATO · {DATA_VINTAGE.expenditure_fy}</p>
           </CardContent>
         </Card>
       </div>
@@ -2877,26 +2988,48 @@ export default function Expenditures() {
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               {filteredExpenditures.length} {filteredExpenditures.length === 1 ? 'country' : 'countries'}
             </p>
-            <button
-              onClick={() => {
-                const headers = ['Country', 'Code', 'NATO', 'Region', 'Expenditure ($B)', 'YoY vs 2023 (%)', 'Per Capita ($)', '% GDP', 'Year', 'Source'];
-                const rows = filteredExpenditures.map(e => {
-                  const pop = POPULATION_M[e.country_code];
-                  const pc = pop ? Math.round((e.expenditure * 1000) / pop) : '';
-                  const yoy = YOY_DELTA[e.country_code] != null ? YOY_DELTA[e.country_code].toFixed(1) : '';
-                  const nato = NATO_MEMBERS.has(e.country_code) ? 'Yes' : 'No';
-                  return [e.country, e.country_code, nato, e.region, e.expenditure, yoy, pc, e.gdp_percent, e.year, e.source || ''].join(',');
-                });
-                const csv = [headers.join(','), ...rows].join('\n');
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-                a.download = `defense-expenditures-${filteredExpenditures[0]?.year ?? 2024}.csv`;
-                a.click();
-              }}
-              className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:border-slate-300"
-            >
-              <Download className="w-3.5 h-3.5" /> Export CSV
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => {
+                  // Enriched CSV: every row carries its full citation + access
+                  // date (academic traceability requirement).
+                  const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+                  const headers = ['Country', 'Code', 'NATO', 'Region', 'Expenditure ($B)', 'YoY vs 2023 (%)', 'Per Capita ($)', '% GDP', 'Year', 'Source', 'Source citation', 'Accessed'];
+                  const rows = filteredExpenditures.map(e => {
+                    const pop = POPULATION_M[e.country_code];
+                    const pc = pop ? Math.round((e.expenditure * 1000) / pop) : '';
+                    const yoy = YOY_DELTA[e.country_code] != null ? YOY_DELTA[e.country_code].toFixed(1) : '';
+                    const nato = NATO_MEMBERS.has(e.country_code) ? 'Yes' : 'No';
+                    return [e.country, e.country_code, nato, e.region, e.expenditure, yoy, pc, e.gdp_percent, e.year, sourceShortLabel(e.source), citationText(e.source), DATA_VINTAGE.last_reviewed].map(q).join(',');
+                  });
+                  const csv = [headers.map(q).join(','), ...rows].join('\n');
+                  downloadTextFile(`defense-expenditures-${DATA_VINTAGE.expenditure_fy}.csv`, csv, 'text/csv');
+                }}
+                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:border-slate-300"
+              >
+                <Download className="w-3.5 h-3.5" /> CSV
+              </button>
+              <button
+                onClick={() => {
+                  const ids = filteredExpenditures.map(e => e.source);
+                  downloadTextFile(`defense-expenditures-${DATA_VINTAGE.expenditure_fy}.bib`, buildBibliography(ids, 'bibtex'), 'application/x-bibtex');
+                }}
+                title="Export bibliographique (Zotero, LaTeX…)"
+                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:border-slate-300"
+              >
+                <FileText className="w-3.5 h-3.5" /> BibTeX
+              </button>
+              <button
+                onClick={() => {
+                  const ids = filteredExpenditures.map(e => e.source);
+                  downloadTextFile(`defense-expenditures-${DATA_VINTAGE.expenditure_fy}.ris`, buildBibliography(ids, 'ris'), 'application/x-research-info-systems');
+                }}
+                title="Export RIS (EndNote, Mendeley…)"
+                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:border-slate-300"
+              >
+                <FileText className="w-3.5 h-3.5" /> RIS
+              </button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -3003,9 +3136,17 @@ export default function Expenditures() {
                     </td>
                     <td className="p-4 text-right">
                       {exp.source ? (
-                        <span className="inline-flex items-center text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
-                          {exp.source}
-                        </span>
+                        <a
+                          href={/sipri/i.test(exp.source) ? spendingSourceLink() : (SOURCES[String(exp.source).toUpperCase()]?.url || spendingSourceLink())}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          title={`${citationText(exp.source)}  —  Opens the source database (filter for ${exp.country}).`}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 hover:text-blue-900 bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 px-2 py-0.5 rounded-full transition-colors"
+                        >
+                          {sourceShortLabel(exp.source)}
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
                       ) : (
                         <span className="text-xs text-slate-300">—</span>
                       )}
