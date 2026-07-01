@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { CAPABILITY_DETAILS, PLATFORM_WIKI_TITLES, WKP, STATIC_PLATFORM_IMAGES, DEFENSE_CAPABILITIES, getCapabilitySummary, GENERIC_WIKI_DENYLIST } from "@/data/defenseCapabilities";
-import { DATA_VINTAGE, SOURCES, sourceShortLabel, citationText, buildBibliography, downloadTextFile } from "@/data/sources";
+import { DATA_VINTAGE, SOURCES, sourceShortLabel, citationText, buildBibliography, downloadTextFile, capabilitiesSourceLink, spendingSourceLink } from "@/data/sources";
 import { getMethodology } from "@/data/metricMethodology";
 
 // ── Custom military SVG icons ─────────────────────────────────────────────────
@@ -85,6 +85,57 @@ function CarrierIcon({ className }) {
     </svg>
   );
 }
+// ── Drone sub-type icons (used as a meaningful fallback when a UAV has no photo) ─
+function FixedWingUAVIcon({ className }) {
+  // MALE/HALE fixed-wing silhouette (Reaper/Bayraktar style)
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M11 2h2l.5 7 7 2v2l-7-.5-.3 5 2.8 1.5v1.5l-4-1-4 1v-1.5L11 19l-.3-5-7 .5v-2l7-2Z" />
+    </svg>
+  );
+}
+function LoiteringMunitionIcon({ className }) {
+  // Loitering munition / one-way attack drone — dart with cross tail
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 2c2.5 3 3 7 3 11l-3 3-3-3c0-4 .5-8 3-11Z" />
+      <path d="M9 16l-4 4M15 16l4 4M12 17v4" />
+    </svg>
+  );
+}
+function MultirotorIcon({ className }) {
+  // Quad/multirotor (Skydio, DJI-style)
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="5" cy="6" r="2.5" /><circle cx="19" cy="6" r="2.5" />
+      <circle cx="5" cy="18" r="2.5" /><circle cx="19" cy="18" r="2.5" />
+      <path d="M6.8 7.8 10 11h4l3.2-3.2M6.8 16.2 10 13h4l3.2 3.2" />
+      <rect x="10" y="10.5" width="4" height="3" rx="0.6" />
+    </svg>
+  );
+}
+function NanoUAVIcon({ className }) {
+  // Nano/micro recon UAV (Black Hornet style)
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <ellipse cx="12" cy="13" rx="3" ry="2" />
+      <path d="M12 11V7M9 5h6M12 15v3" />
+    </svg>
+  );
+}
+// Picks the most representative icon + label for a UAV that has no photo, so the
+// card still tells the reader what KIND of drone it is (not a generic outline).
+function droneTypeFallback(item) {
+  const n = (item?.model || "").toLowerCase();
+  if (item?.is_expendable || /loiter|switchblade|kamikaze|one-way|owa|munition|suicide|scythe|lancet|shahed|geran/.test(n))
+    return { Icon: LoiteringMunitionIcon, label: "Loitering munition" };
+  if (/nano|micro|black hornet|pocket|remoeye|drone40/.test(n))
+    return { Icon: NanoUAVIcon, label: "Nano / micro UAV" };
+  if (/multicopter|multirotor|quad|copter|hexa|octo|skydio|matrice|mavic|vtol|v-bat|vbat/.test(n))
+    return { Icon: MultirotorIcon, label: "Multirotor / VTOL" };
+  return { Icon: FixedWingUAVIcon, label: "Fixed-wing UAV" };
+}
+
 import { getLogoUrls } from "@/lib/companyLogos";
 import { getCountryWikiArticle } from "@/lib/countryBanners";
 import {
@@ -1179,6 +1230,21 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={onImgError}
           />
+        ) : cat.key === "drones" ? (
+          // No photo for this UAV → show a sub-type icon + label so the reader
+          // still knows what kind of drone it is (loitering, multirotor, MALE…).
+          (() => {
+            const { Icon: DroneIcon, label } = droneTypeFallback(item);
+            return (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-1 px-2">
+                <DroneIcon className={`w-11 h-11 ${cat.iconColor} opacity-40`} />
+                <span className="text-[9px] font-semibold uppercase tracking-wide text-slate-400 text-center leading-tight">
+                  {label}
+                </span>
+                <span className="text-[8px] text-slate-300">image unavailable</span>
+              </div>
+            );
+          })()
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <cat.Icon className={`w-14 h-14 ${cat.iconColor} opacity-15`} />
@@ -1408,38 +1474,51 @@ function CapabilityDomainCard({ group, cap, countryCode, isOpen, onToggle }) {
   );
 }
 
-function DefenseCapabilitiesCard({ countryCode }) {
+function DefenseCapabilitiesCard({ countryCode, countryName }) {
   const cap = getCapabilitySummary(countryCode);
   const [openGroup, setOpenGroup] = useState(null);
   const [openCat, setOpenCat] = useState(null);
 
   const hasDetails = !!CAPABILITY_DETAILS[countryCode];
   const activeGroup = CAP_GROUPS.find(g => g.label === openGroup) || null;
+  const verifyUrl = capabilitiesSourceLink(countryCode);
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm">
       <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Gauge className="w-4 h-4 text-slate-600" />
             <CardTitle className="font-heading text-base text-slate-900">Military Capabilities</CardTitle>
           </div>
           {cap && (
-            cap._sourced ? (
-              <span
-                title={citationText("IISS")}
-                className="text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full cursor-help"
+            <div className="flex items-center gap-1.5">
+              {cap._sourced ? (
+                <span
+                  title={`Primary reference: ${citationText("IISS")}  —  NOTE: The Military Balance is a subscription publication with no free per-country link. Use the "Verify" link for an open-access equivalent.`}
+                  className="text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full cursor-help"
+                >
+                  Sourced · IISS Military Balance {DATA_VINTAGE.capability_edition}
+                </span>
+              ) : (
+                <span
+                  title={SOURCES.ESTIMATE.note}
+                  className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full cursor-help"
+                >
+                  Aggregate estimate · unverified
+                </span>
+              )}
+              {/* Direct, open-access per-country source so a reviewer can verify */}
+              <a
+                href={verifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`Open ${countryName || "this country"}'s capability data (Global Firepower, open access)`}
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700 hover:text-blue-900 bg-white border border-blue-200 hover:border-blue-400 px-2 py-0.5 rounded-full transition-colors"
               >
-                Sourced · IISS Military Balance {DATA_VINTAGE.capability_edition}
-              </span>
-            ) : (
-              <span
-                title={SOURCES.ESTIMATE.note}
-                className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full cursor-help"
-              >
-                Aggregate estimate · unverified
-              </span>
-            )
+                <ExternalLink className="w-2.5 h-2.5" /> Verify source
+              </a>
+            </div>
           )}
         </div>
       </CardHeader>
@@ -1871,7 +1950,7 @@ function CountryProfileSection({ country, allExpenditures, onOpenContractsSheet 
       )}
 
       {/* Defense Capabilities Infographic */}
-      <DefenseCapabilitiesCard countryCode={country.country_code} />
+      <DefenseCapabilitiesCard countryCode={country.country_code} countryName={country.country} />
 
       {/* Row 1: Military Branches + Regional Comparison */}
       <div className="grid lg:grid-cols-2 gap-5">
@@ -3057,12 +3136,17 @@ export default function Expenditures() {
                     </td>
                     <td className="p-4 text-right">
                       {exp.source ? (
-                        <span
-                          title={citationText(exp.source)}
-                          className="inline-flex items-center text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full cursor-help"
+                        <a
+                          href={/sipri/i.test(exp.source) ? spendingSourceLink() : (SOURCES[String(exp.source).toUpperCase()]?.url || spendingSourceLink())}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          title={`${citationText(exp.source)}  —  Opens the source database (filter for ${exp.country}).`}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 hover:text-blue-900 bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 px-2 py-0.5 rounded-full transition-colors"
                         >
                           {sourceShortLabel(exp.source)}
-                        </span>
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
                       ) : (
                         <span className="text-xs text-slate-300">—</span>
                       )}
