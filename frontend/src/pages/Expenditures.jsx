@@ -85,6 +85,57 @@ function CarrierIcon({ className }) {
     </svg>
   );
 }
+// ── Drone sub-type icons (used as a meaningful fallback when a UAV has no photo) ─
+function FixedWingUAVIcon({ className }) {
+  // MALE/HALE fixed-wing silhouette (Reaper/Bayraktar style)
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M11 2h2l.5 7 7 2v2l-7-.5-.3 5 2.8 1.5v1.5l-4-1-4 1v-1.5L11 19l-.3-5-7 .5v-2l7-2Z" />
+    </svg>
+  );
+}
+function LoiteringMunitionIcon({ className }) {
+  // Loitering munition / one-way attack drone — dart with cross tail
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 2c2.5 3 3 7 3 11l-3 3-3-3c0-4 .5-8 3-11Z" />
+      <path d="M9 16l-4 4M15 16l4 4M12 17v4" />
+    </svg>
+  );
+}
+function MultirotorIcon({ className }) {
+  // Quad/multirotor (Skydio, DJI-style)
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="5" cy="6" r="2.5" /><circle cx="19" cy="6" r="2.5" />
+      <circle cx="5" cy="18" r="2.5" /><circle cx="19" cy="18" r="2.5" />
+      <path d="M6.8 7.8 10 11h4l3.2-3.2M6.8 16.2 10 13h4l3.2 3.2" />
+      <rect x="10" y="10.5" width="4" height="3" rx="0.6" />
+    </svg>
+  );
+}
+function NanoUAVIcon({ className }) {
+  // Nano/micro recon UAV (Black Hornet style)
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <ellipse cx="12" cy="13" rx="3" ry="2" />
+      <path d="M12 11V7M9 5h6M12 15v3" />
+    </svg>
+  );
+}
+// Picks the most representative icon + label for a UAV that has no photo, so the
+// card still tells the reader what KIND of drone it is (not a generic outline).
+function droneTypeFallback(item) {
+  const n = (item?.model || "").toLowerCase();
+  if (item?.is_expendable || /loiter|switchblade|kamikaze|one-way|owa|munition|suicide|scythe|lancet|shahed|geran/.test(n))
+    return { Icon: LoiteringMunitionIcon, label: "Loitering munition" };
+  if (/nano|micro|black hornet|pocket|remoeye|drone40/.test(n))
+    return { Icon: NanoUAVIcon, label: "Nano / micro UAV" };
+  if (/multicopter|multirotor|quad|copter|hexa|octo|skydio|matrice|mavic|vtol|v-bat|vbat/.test(n))
+    return { Icon: MultirotorIcon, label: "Multirotor / VTOL" };
+  return { Icon: FixedWingUAVIcon, label: "Fixed-wing UAV" };
+}
+
 import { getLogoUrls } from "@/lib/companyLogos";
 import { getCountryWikiArticle } from "@/lib/countryBanners";
 import {
@@ -1179,6 +1230,21 @@ function PlatformCard({ item, cat, imgSrc, onImgError, maxCount }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={onImgError}
           />
+        ) : cat.key === "drones" ? (
+          // No photo for this UAV → show a sub-type icon + label so the reader
+          // still knows what kind of drone it is (loitering, multirotor, MALE…).
+          (() => {
+            const { Icon: DroneIcon, label } = droneTypeFallback(item);
+            return (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-1 px-2">
+                <DroneIcon className={`w-11 h-11 ${cat.iconColor} opacity-40`} />
+                <span className="text-[9px] font-semibold uppercase tracking-wide text-slate-400 text-center leading-tight">
+                  {label}
+                </span>
+                <span className="text-[8px] text-slate-300">image unavailable</span>
+              </div>
+            );
+          })()
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <cat.Icon className={`w-14 h-14 ${cat.iconColor} opacity-15`} />

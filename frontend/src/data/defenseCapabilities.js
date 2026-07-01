@@ -71,7 +71,11 @@ export const CAPABILITY_DETAILS = {
       { model: "F-15E/EX Strike Eagle", count: 220, manufacturer: "Boeing" },
       { model: "F-22 Raptor", count: 180, manufacturer: "Lockheed Martin" },
       { model: "F-15C/D Eagle", count: 150, manufacturer: "McDonnell Douglas" },
+      { model: "B-52H Stratofortress", count: 76, manufacturer: "Boeing" },
+      { model: "B-1B Lancer", count: 45, manufacturer: "Rockwell" },
+      { model: "B-2A Spirit", count: 19, manufacturer: "Northrop Grumman" },
       { model: "F-47 (NGAD, 6th-gen fighter)", manufacturer: "Boeing", origin: "USA", is_dev: true },
+      { model: "B-21 Raider (stealth bomber, IOC 2024)", manufacturer: "Northrop Grumman", origin: "USA", is_dev: true },
     ],
     helicopters: [
       { model: "UH-60 Black Hawk", count: 2100, manufacturer: "Sikorsky" },
