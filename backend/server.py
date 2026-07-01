@@ -1367,10 +1367,12 @@ async def data_consistency_check():
         if not doc.get("source_url") and not doc.get("sources"):
             blockers.append(f"{label}: no source")
 
-        # aberrant value
+        # aberrant value — only truly impossible figures. The largest real defense
+        # mergers (e.g. RTX/United Technologies ~$121B) are legitimate, so the
+        # ceiling is $250B, not $100B, to avoid flagging genuine mega-deals.
         val = doc.get("deal_value", 0) or 0
-        if val > 100_000:
-            blockers.append(f"{label}: deal_value ${val}M > $100B")
+        if val > 250_000:
+            blockers.append(f"{label}: deal_value ${val}M > $250B")
 
         # V2 (C8): a disclosed value must declare its basis
         if val and val > 0 and not doc.get("value_basis"):
