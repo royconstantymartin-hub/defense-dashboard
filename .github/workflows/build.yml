@@ -1,0 +1,54 @@
+name: Build & QA
+
+# Mirrors the Railway Dockerfile build so a broken commit is VISIBLE here with
+# logs, instead of failing silently on Railway (which then keeps serving the
+# last good image — the "nothing changes after redeploy" trap).
+on:
+  push:
+    branches: ["Dasboard-3.0", "claude/**"]
+  pull_request:
+    branches: ["Dasboard-3.0"]
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-build:
+    name: Frontend production build (as in Dockerfile)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      # Exactly what the Dockerfile does — no lockfile, legacy peer deps
+      - run: npm install --legacy-peer-deps
+      - run: npm run build
+        env:
+          CI: "false"
+          GENERATE_SOURCEMAP: "false"
+          REACT_APP_BACKEND_URL: ""
+          NODE_OPTIONS: --max-old-space-size=2048
+
+  backend-qa:
+    name: Backend compile + M&A extraction golden set
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m py_compile server.py data/seed_data.py services/ma_scraper.py migrations/v2_ma_schema.py
+        name: Compile check
+      - run: pip install --quiet pytest
+        name: Install pytest
+      - run: PYTHONPATH=. python -m pytest tests/test_ma_extraction.py -q
+        name: Golden-set extraction tests
