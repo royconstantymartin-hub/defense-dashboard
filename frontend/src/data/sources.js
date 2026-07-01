@@ -173,6 +173,44 @@ export function buildBibliography(rawIds, format = "bibtex") {
   return out.filter(Boolean).join("\n\n");
 }
 
+// ── Per-country deep links ───────────────────────────────────────────────────
+// A source NAME ("IISS 2024") is not a citation a reader can open. These helpers
+// return a direct, openly-accessible URL to THAT country's data so a reviewer
+// can verify the figures — the gap a thesis director rightly flags.
+
+// Global Firepower publishes a free, per-country detail page (aircraft, tanks,
+// ships, budget…). Slugs keyed by ISO code for every country with a capability
+// profile in the app.
+export const GFP_COUNTRY_SLUG = {
+  US: "united-states-of-america", CN: "china", RU: "russia", IN: "india",
+  SA: "saudi-arabia", GB: "united-kingdom", DE: "germany", FR: "france",
+  JP: "japan", KR: "south-korea", TR: "turkey", IL: "israel", AU: "australia",
+  IT: "italy", CA: "canada", PL: "poland", UA: "ukraine", AE: "united-arab-emirates",
+  PK: "pakistan", ES: "spain", NL: "netherlands", TW: "taiwan", EG: "egypt",
+  GR: "greece", VN: "vietnam", ID: "indonesia", AZ: "azerbaijan", BR: "brazil",
+  SE: "sweden", NO: "norway", FI: "finland", IR: "iran", DZ: "algeria",
+  TH: "thailand", ZA: "south-africa", QA: "qatar", KW: "kuwait", MA: "morocco",
+  MY: "malaysia", PH: "philippines", NZ: "new-zealand", OM: "oman",
+};
+
+// Direct, open-access page for a country's military capabilities (Global
+// Firepower). This is the source a reviewer can actually open — IISS Military
+// Balance is the primary reference but is a subscription book with no free
+// per-country link, so we point verification at the open equivalent.
+export function capabilitiesSourceLink(countryCode) {
+  const slug = GFP_COUNTRY_SLUG[countryCode];
+  return slug
+    ? `https://www.globalfirepower.com/country-military-strength-detail.php?country_id=${slug}`
+    : "https://www.globalfirepower.com/countries-listing.php";
+}
+
+// Direct link to the SIPRI Military Expenditure database (open data — download
+// the dataset and filter the country row). SIPRI has no public per-country
+// permalink, so we link the database + name the country to filter.
+export function spendingSourceLink() {
+  return "https://www.sipri.org/databases/milex";
+}
+
 // Triggers a client-side text file download.
 export function downloadTextFile(filename, content, mime = "text/plain") {
   const a = document.createElement("a");

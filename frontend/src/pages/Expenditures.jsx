@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { CAPABILITY_DETAILS, PLATFORM_WIKI_TITLES, WKP, STATIC_PLATFORM_IMAGES, DEFENSE_CAPABILITIES, getCapabilitySummary, GENERIC_WIKI_DENYLIST } from "@/data/defenseCapabilities";
-import { DATA_VINTAGE, SOURCES, sourceShortLabel, citationText, buildBibliography, downloadTextFile } from "@/data/sources";
+import { DATA_VINTAGE, SOURCES, sourceShortLabel, citationText, buildBibliography, downloadTextFile, capabilitiesSourceLink, spendingSourceLink } from "@/data/sources";
 import { getMethodology } from "@/data/metricMethodology";
 
 // ── Custom military SVG icons ─────────────────────────────────────────────────
@@ -1474,38 +1474,51 @@ function CapabilityDomainCard({ group, cap, countryCode, isOpen, onToggle }) {
   );
 }
 
-function DefenseCapabilitiesCard({ countryCode }) {
+function DefenseCapabilitiesCard({ countryCode, countryName }) {
   const cap = getCapabilitySummary(countryCode);
   const [openGroup, setOpenGroup] = useState(null);
   const [openCat, setOpenCat] = useState(null);
 
   const hasDetails = !!CAPABILITY_DETAILS[countryCode];
   const activeGroup = CAP_GROUPS.find(g => g.label === openGroup) || null;
+  const verifyUrl = capabilitiesSourceLink(countryCode);
 
   return (
     <Card className="bg-white border-slate-200 shadow-sm">
       <CardHeader className="border-b border-slate-100 pb-3 bg-slate-50/50">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Gauge className="w-4 h-4 text-slate-600" />
             <CardTitle className="font-heading text-base text-slate-900">Military Capabilities</CardTitle>
           </div>
           {cap && (
-            cap._sourced ? (
-              <span
-                title={citationText("IISS")}
-                className="text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full cursor-help"
+            <div className="flex items-center gap-1.5">
+              {cap._sourced ? (
+                <span
+                  title={`Primary reference: ${citationText("IISS")}  —  NOTE: The Military Balance is a subscription publication with no free per-country link. Use the "Verify" link for an open-access equivalent.`}
+                  className="text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full cursor-help"
+                >
+                  Sourced · IISS Military Balance {DATA_VINTAGE.capability_edition}
+                </span>
+              ) : (
+                <span
+                  title={SOURCES.ESTIMATE.note}
+                  className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full cursor-help"
+                >
+                  Aggregate estimate · unverified
+                </span>
+              )}
+              {/* Direct, open-access per-country source so a reviewer can verify */}
+              <a
+                href={verifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`Open ${countryName || "this country"}'s capability data (Global Firepower, open access)`}
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700 hover:text-blue-900 bg-white border border-blue-200 hover:border-blue-400 px-2 py-0.5 rounded-full transition-colors"
               >
-                Sourced · IISS Military Balance {DATA_VINTAGE.capability_edition}
-              </span>
-            ) : (
-              <span
-                title={SOURCES.ESTIMATE.note}
-                className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full cursor-help"
-              >
-                Aggregate estimate · unverified
-              </span>
-            )
+                <ExternalLink className="w-2.5 h-2.5" /> Verify source
+              </a>
+            </div>
           )}
         </div>
       </CardHeader>
@@ -1937,7 +1950,7 @@ function CountryProfileSection({ country, allExpenditures, onOpenContractsSheet 
       )}
 
       {/* Defense Capabilities Infographic */}
-      <DefenseCapabilitiesCard countryCode={country.country_code} />
+      <DefenseCapabilitiesCard countryCode={country.country_code} countryName={country.country} />
 
       {/* Row 1: Military Branches + Regional Comparison */}
       <div className="grid lg:grid-cols-2 gap-5">
@@ -3123,12 +3136,17 @@ export default function Expenditures() {
                     </td>
                     <td className="p-4 text-right">
                       {exp.source ? (
-                        <span
-                          title={citationText(exp.source)}
-                          className="inline-flex items-center text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full cursor-help"
+                        <a
+                          href={/sipri/i.test(exp.source) ? spendingSourceLink() : (SOURCES[String(exp.source).toUpperCase()]?.url || spendingSourceLink())}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          title={`${citationText(exp.source)}  —  Opens the source database (filter for ${exp.country}).`}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 hover:text-blue-900 bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 px-2 py-0.5 rounded-full transition-colors"
                         >
                           {sourceShortLabel(exp.source)}
-                        </span>
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
                       ) : (
                         <span className="text-xs text-slate-300">—</span>
                       )}
