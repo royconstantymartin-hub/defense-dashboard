@@ -467,6 +467,8 @@ function NewsFeedAdmin({ authHeaders }) {
   const [search, setSearch]               = useState("");
   const [actionLoading, setActionLoading] = useState(null); // url + action being updated
   const [breakingSlots, setBreakingSlots] = useState([]);   // up to 3 pinned articles
+  const [scraping, setScraping]           = useState(false);
+  const [scrapeResult, setScrapeResult]   = useState(null);
 
   const fetchArticles = async (mod) => {
     setLoading(true);
@@ -495,6 +497,23 @@ function NewsFeedAdmin({ authHeaders }) {
     fetchArticles(filter);
     fetchBreakingSlots();
   }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleScrapeNow = async () => {
+    setScraping(true);
+    setScrapeResult(null);
+    try {
+      const res = await axios.post(`${API}/admin/scrape-news`, {}, { headers: authHeaders });
+      setScrapeResult({ ok: true, data: res.data });
+      toast.success(`${res.data.articles_saved} articles saved (${res.data.articles_found} found)`);
+      fetchArticles(filter);
+    } catch (err) {
+      const msg = err.response?.data?.detail || err.message;
+      setScrapeResult({ ok: false, msg });
+      toast.error(msg);
+    } finally {
+      setScraping(false);
+    }
+  };
 
   const moderate = async (url, action, category) => {
     setActionLoading(url + action);
@@ -570,15 +589,37 @@ function NewsFeedAdmin({ authHeaders }) {
 
       {/* Header */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-slate-100 rounded-lg">
-            <Rss className="w-5 h-5 text-slate-700" />
+        <div className="flex items-start justify-between gap-3 mb-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-slate-100 rounded-lg">
+              <Rss className="w-5 h-5 text-slate-700" />
+            </div>
+            <div>
+              <h3 className="text-slate-900 font-semibold">News Feed Moderation</h3>
+              <p className="text-slate-500 text-sm">
+                Pin articles to Breaking Intel, re-categorize or remove off-topic content.
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-slate-900 font-semibold">News Feed Moderation</h3>
-            <p className="text-slate-500 text-sm">
-              Pin articles to Breaking Intel, re-categorize or remove off-topic content.
-            </p>
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <button
+              onClick={handleScrapeNow}
+              disabled={scraping}
+              title="Runs the scraper immediately instead of waiting for the next scheduled run (01:00 / 07:00 / 13:00 / 19:00 UTC)"
+              className="flex items-center gap-2 px-3.5 py-2 bg-blue-800 hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-lg transition-colors"
+            >
+              {scraping
+                ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Refreshing feed…</>
+                : <><RefreshCw className="w-3.5 h-3.5" /> Refresh News Now</>
+              }
+            </button>
+            {scrapeResult && (
+              <span className={`text-[11px] font-medium ${scrapeResult.ok ? "text-emerald-600" : "text-rose-600"}`}>
+                {scrapeResult.ok
+                  ? `✓ ${scrapeResult.data.articles_saved} saved (${scrapeResult.data.articles_found} found)`
+                  : scrapeResult.msg}
+              </span>
+            )}
           </div>
         </div>
 
