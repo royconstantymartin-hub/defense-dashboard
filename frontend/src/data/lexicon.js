@@ -4398,6 +4398,279 @@ export const LEXICON = [
     wiki: "Amphibious vehicle",
     imageAlt: "An amphibious armored assault vehicle",
   },
+  // ── More base platforms (vehicles, submarines, support aircraft) ─────────────
+  {
+    slug: "armored-car",
+    term: "Armored Car",
+    abbreviation: "",
+    category: "platforms",
+    tldr: "A wheeled armored vehicle — fast on roads and cheap to run — used for patrol, scouting, and light combat rather than heavy battle.",
+    summary:
+      "A wheeled armored vehicle used for reconnaissance, patrol, and light combat, prized for road speed and low running cost.",
+    definition: [
+      "An armored car is a wheeled armored vehicle, as opposed to a tracked one like a tank. Riding on tires makes it fast and quiet on roads, cheap to run, and easy to maintain, which is why armored cars are favored for reconnaissance, patrol, convoy escort, and internal security. They usually carry light armor and a modest weapon — a machine gun or a small cannon — trading heavy protection for speed and mobility.",
+      "Because wheels struggle in deep mud or rough cross-country terrain where tracks excel, armored cars are less suited to a pitched armored battle. But their low cost, long road range, and lighter footprint make them extremely useful for policing, peacekeeping, border patrol, and reconnaissance. Many modern reconnaissance and infantry vehicles are essentially heavily armed armored cars built on multi-wheeled chassis.",
+    ],
+    keyFacts: [
+      { label: "Runs on", value: "Wheels, not tracks" },
+      { label: "Strengths", value: "Road speed, low cost, easy upkeep" },
+      { label: "Roles", value: "Recon, patrol, escort, security" },
+      { label: "Weakness", value: "Poorer off-road than tracked armor" },
+    ],
+    examples: [
+      {
+        title: "Patrol & security",
+        description:
+          "Armored cars are widely used for policing, peacekeeping, and border patrol thanks to their speed and low running cost.",
+      },
+      {
+        title: "Wheeled reconnaissance",
+        description:
+          "Many modern scout vehicles are heavily armed armored cars on 4x4, 6x6, or 8x8 chassis.",
+      },
+    ],
+    related: ["reconnaissance-vehicle", "apc", "mrap", "ifv"],
+    wiki: "Armoured car (military)",
+    imageAlt: "A wheeled armored car",
+  },
+  {
+    slug: "bridge-layer",
+    term: "Armored Bridge-Layer",
+    abbreviation: "AVLB",
+    category: "platforms",
+    tldr: "An armored vehicle that carries a folding bridge and drops it across a ditch or river in minutes so tanks can keep rolling.",
+    summary:
+      "An armored vehicle that transports and deploys a portable bridge, letting heavy vehicles cross gaps, ditches, and rivers under fire.",
+    definition: [
+      "An armored bridge-layer (often an Armored Vehicle-Launched Bridge, or AVLB) is a specialized engineering vehicle that carries a folded metal bridge on top of a tank chassis and lays it across an obstacle — an anti-tank ditch, a stream, a blown culvert — in a matter of minutes. Once the tanks and other vehicles have crossed, the layer can pick the bridge back up from the far side and move on to the next gap.",
+      "The point is to keep an armored advance moving. Rivers, ditches, and demolished bridges are classic ways to stop tanks, so being able to drop a ready-made bridge under fire preserves momentum. Because the bridge must carry 60-ton main battle tanks, it is built on an equally heavy, armored, tracked chassis — making the bridge-layer a close cousin of combat engineering and recovery vehicles.",
+    ],
+    keyFacts: [
+      { label: "Also called", value: "AVLB" },
+      { label: "Carries", value: "A folding portable bridge" },
+      { label: "Crosses", value: "Ditches, streams, blown gaps" },
+      { label: "Based on", value: "Armored tank chassis" },
+    ],
+    examples: [
+      {
+        title: "Keeping tanks moving",
+        description:
+          "A bridge-layer drops a span over an anti-tank ditch or stream so an armored column can cross without slowing down.",
+      },
+      {
+        title: "Recoverable bridges",
+        description:
+          "Many layers can retrieve the bridge from the far bank and reuse it at the next obstacle.",
+      },
+    ],
+    related: ["combat-engineering-vehicle", "armored-recovery-vehicle", "main-battle-tank", "logistics"],
+    wiki: "Armoured vehicle-launched bridge",
+    imageAlt: "An armored bridge-laying vehicle deploying a bridge",
+  },
+  {
+    slug: "technical",
+    term: "Technical",
+    abbreviation: "",
+    category: "platforms",
+    tldr: "An ordinary pickup truck with a heavy weapon bolted on the back — the improvised war-machine of irregular and insurgent forces.",
+    summary:
+      "An improvised fighting vehicle, typically a civilian pickup truck mounting a heavy weapon, used by irregular and lightly-equipped forces.",
+    definition: [
+      "A 'technical' is an improvised fighting vehicle: usually a civilian pickup truck or SUV with a heavy weapon — a machine gun, autocannon, recoilless rifle, or rocket launcher — bolted to the cargo bed. Cheap, fast, and everywhere, technicals give militias, insurgents, and lightly-equipped armies mobile firepower without the cost or logistics of purpose-built military vehicles.",
+      "Technicals became a defining feature of irregular and asymmetric warfare from Somalia to Libya, Syria, and beyond. They have no armor to speak of, so they rely on speed, numbers, and surprise — hit-and-run raids, mobile firing positions, and swarming tactics. Their prevalence shows how conflict adapts: when advanced armored vehicles are unavailable, a $10,000 truck and a mounted gun can still dominate a lightly-defended battlefield.",
+    ],
+    keyFacts: [
+      { label: "What it is", value: "Civilian truck + mounted weapon" },
+      { label: "Used by", value: "Militias, insurgents, irregulars" },
+      { label: "Strengths", value: "Cheap, fast, everywhere" },
+      { label: "Weakness", value: "Little or no armor" },
+    ],
+    examples: [
+      {
+        title: "Irregular warfare",
+        description:
+          "Technicals have been central to conflicts in Somalia, Libya, and Syria, giving fighters cheap mobile firepower.",
+      },
+      {
+        title: "Hit-and-run tactics",
+        description:
+          "With no armor, technicals rely on speed, surprise, and numbers rather than standing and absorbing fire.",
+      },
+    ],
+    related: ["asymmetric-warfare", "gray-zone", "apc", "ied"],
+    wiki: "Technical (vehicle)",
+    imageAlt: "A technical, an improvised armed pickup truck",
+  },
+  {
+    slug: "attack-submarine",
+    term: "Attack Submarine",
+    abbreviation: "SSN / SSK",
+    category: "platforms",
+    tldr: "A submarine built to hunt and sink other ships and submarines — the underwater predator, as opposed to the missile-carrying 'boomer'.",
+    summary:
+      "A submarine designed to hunt and destroy enemy ships and submarines, escort friendly forces, and gather intelligence.",
+    definition: [
+      "An attack submarine is the classic hunter of the undersea world. Its job is to find and sink enemy warships and other submarines, protect friendly aircraft carriers and convoys, launch cruise missiles at land targets, and gather intelligence — all while staying hidden beneath the surface. It is distinguished from the ballistic-missile submarine, whose purpose is not hunting but carrying nuclear missiles.",
+      "Attack submarines come in two broad families named by their power source. Nuclear-powered attack submarines (designated SSN) can stay submerged for months and cross oceans at high speed. Conventionally-powered ones (SSK), running on diesel-electric or air-independent propulsion, are quieter and cheaper and excel in coastal and regional waters. Both rely on stealth, sonar, and torpedoes — plus increasingly on cruise missiles — to control the sea from below.",
+    ],
+    keyFacts: [
+      { label: "Purpose", value: "Hunt ships & other submarines" },
+      { label: "SSN", value: "Nuclear-powered, long endurance" },
+      { label: "SSK", value: "Diesel-electric, quiet, coastal" },
+      { label: "Weapons", value: "Torpedoes & cruise missiles" },
+    ],
+    examples: [
+      {
+        title: "Carrier escort & sea denial",
+        description:
+          "Attack submarines screen friendly task forces and threaten enemy ships, shaping who can safely use the sea.",
+      },
+      {
+        title: "Land-attack role",
+        description:
+          "Many modern attack submarines also launch cruise missiles at targets far inland from a hidden position at sea.",
+      },
+    ],
+    related: ["submarine", "ballistic-missile-submarine", "anti-submarine-warfare", "torpedo"],
+    wiki: "Attack submarine",
+    imageAlt: "An attack submarine at sea",
+  },
+  {
+    slug: "ballistic-missile-submarine",
+    term: "Ballistic Missile Submarine",
+    abbreviation: "SSBN",
+    category: "platforms",
+    tldr: "A giant submarine that hides in the ocean carrying nuclear missiles — the hardest-to-find leg of a country's nuclear deterrent.",
+    summary:
+      "A large submarine armed with nuclear-tipped ballistic missiles, forming the survivable sea-based leg of a nuclear deterrent.",
+    definition: [
+      "A ballistic missile submarine (designated SSBN, nicknamed a 'boomer') is a large, quiet submarine whose sole mission is to carry nuclear-armed ballistic missiles and stay hidden. By patrolling silently deep in the ocean for months, it becomes almost impossible to find and destroy in a first strike — which is exactly the point. If a country's land bases and airfields were wiped out, its submarines could still retaliate, making a nuclear attack suicidal.",
+      "This is why the SSBN is considered the most survivable leg of the 'nuclear triad' (land missiles, bombers, and submarines). Its missiles are submarine-launched ballistic missiles (SLBMs), often carrying multiple warheads. Only a handful of nations operate them, and keeping at least one boat hidden at sea at all times — 'continuous at-sea deterrence' — is a cornerstone of their strategic security.",
+    ],
+    keyFacts: [
+      { label: "Nickname", value: "Boomer" },
+      { label: "Carries", value: "Nuclear-armed SLBMs" },
+      { label: "Role", value: "Survivable second-strike deterrent" },
+      { label: "Part of", value: "The nuclear triad" },
+    ],
+    examples: [
+      {
+        title: "Continuous at-sea deterrence",
+        description:
+          "Nuclear powers keep at least one missile submarine hidden and on patrol at all times to guarantee retaliation.",
+      },
+      {
+        title: "The survivable triad leg",
+        description:
+          "Because they are so hard to find, SSBNs make a disarming first strike futile, stabilizing nuclear deterrence.",
+      },
+    ],
+    related: ["submarine", "slbm", "nuclear-deterrence", "attack-submarine"],
+    wiki: "Ballistic missile submarine",
+    imageAlt: "A ballistic missile submarine on the surface",
+  },
+  {
+    slug: "mine-countermeasures",
+    term: "Mine Countermeasures Vessel",
+    abbreviation: "MCM / MHC",
+    category: "platforms",
+    tldr: "A specialized ship that finds and safely clears naval mines so other vessels can pass — the minefield 'clean-up crew' at sea.",
+    summary:
+      "A specialized ship designed to detect, clear, and neutralize naval mines, keeping shipping lanes and harbors safe to use.",
+    definition: [
+      "A mine countermeasures vessel (a minesweeper or minehunter) exists to find and get rid of naval mines. Sea mines are cheap, hidden, and can shut down a harbor or shipping lane, so navies build specialized ships to sweep and hunt them. 'Sweeping' drags gear through the water to trigger or cut loose mines; 'hunting' uses sonar and remotely operated underwater vehicles to locate each mine precisely and destroy it in place.",
+      "These ships are built with great care to avoid setting mines off themselves — many use hulls of wood, fiberglass, or non-magnetic materials and run very quietly to minimize the magnetic, acoustic, and pressure signatures that modern mines detect. Mine countermeasures is slow, painstaking, high-stakes work, and it is increasingly done with unmanned surface and underwater drones so that people and expensive ships stay away from the danger.",
+    ],
+    keyFacts: [
+      { label: "Job", value: "Detect & clear naval mines" },
+      { label: "Sweeping", value: "Trigger or cut mines loose" },
+      { label: "Hunting", value: "Sonar + drones locate & destroy" },
+      { label: "Built to", value: "Have a very low signature" },
+    ],
+    examples: [
+      {
+        title: "Keeping lanes open",
+        description:
+          "Mine countermeasures ships clear harbors and shipping channels so commercial and naval traffic can move safely.",
+      },
+      {
+        title: "Unmanned mine hunting",
+        description:
+          "Navies increasingly use underwater and surface drones to find and neutralize mines while keeping crews out of danger.",
+      },
+    ],
+    related: ["naval-mine", "sonar", "anti-submarine-warfare", "frigate"],
+    wiki: "Minesweeper",
+    imageAlt: "A naval mine countermeasures vessel",
+  },
+  {
+    slug: "maritime-patrol-aircraft",
+    term: "Maritime Patrol Aircraft",
+    abbreviation: "MPA",
+    category: "platforms",
+    tldr: "A long-range aircraft that watches the seas — hunting submarines and ships and keeping an eye on huge stretches of ocean.",
+    summary:
+      "A long-endurance aircraft that patrols the oceans to hunt submarines, track ships, and provide wide-area maritime surveillance.",
+    definition: [
+      "A maritime patrol aircraft (MPA) is a long-range, long-endurance aircraft built to watch over the sea. Fitted with radar, sonar-listening sonobuoys, magnetic anomaly detectors, and electro-optical sensors, it can search vast stretches of ocean for hours, tracking surface ships and — crucially — hunting submarines. It is the airborne backbone of anti-submarine warfare, spotting threats far faster than any ship could patrol alone.",
+      "Beyond submarine hunting, MPAs handle surveillance of shipping and coastlines, search and rescue, and enforcement against smuggling, piracy, and illegal fishing. Many carry torpedoes, depth charges, and anti-ship missiles so they can attack as well as detect. Because a single aircraft can cover an area that would take many ships, maritime patrol is a classic force multiplier for controlling the seas.",
+    ],
+    keyFacts: [
+      { label: "Main role", value: "Ocean surveillance & sub-hunting" },
+      { label: "Sensors", value: "Radar, sonobuoys, MAD, optics" },
+      { label: "Weapons", value: "Torpedoes, depth charges, missiles" },
+      { label: "Also does", value: "Search & rescue, patrol" },
+    ],
+    examples: [
+      {
+        title: "Anti-submarine patrol",
+        description:
+          "MPAs drop sonobuoys and use radar to detect and track submarines across huge areas of ocean.",
+      },
+      {
+        title: "Coastal enforcement",
+        description:
+          "The same aircraft patrol shipping lanes and coastlines against smuggling, piracy, and illegal fishing.",
+      },
+    ],
+    related: ["anti-submarine-warfare", "submarine", "awacs", "sonar"],
+    wiki: "Maritime patrol aircraft",
+    imageAlt: "A maritime patrol aircraft over the ocean",
+  },
+  {
+    slug: "transport-helicopter",
+    term: "Transport Helicopter",
+    abbreviation: "",
+    category: "platforms",
+    tldr: "A helicopter that lifts troops, vehicles, and supplies straight to where they're needed — no runway required.",
+    summary:
+      "A helicopter designed to move troops, equipment, and supplies, giving forces mobility without runways or roads.",
+    definition: [
+      "A transport (or utility) helicopter carries people and cargo rather than fighting. Its ability to take off and land vertically means it can drop troops directly onto a battlefield, resupply units cut off from roads, evacuate the wounded, and sling heavy loads — artillery pieces, vehicles, containers — beneath the aircraft. This turns helicopters into the flexible 'trucks and taxis' of modern forces, reaching places no runway or road can.",
+      "They range from small utility helicopters that move a squad to giant heavy-lift machines that carry vehicles or dozens of troops. 'Air assault' and 'air mobility' tactics are built around them: moving infantry rapidly over difficult terrain to seize objectives before an enemy can react. Because they are vulnerable to ground fire and man-portable missiles, transport helicopters often rely on speed, low flying, escorts, and defensive countermeasures to survive.",
+    ],
+    keyFacts: [
+      { label: "Carries", value: "Troops, cargo, casualties" },
+      { label: "Key advantage", value: "No runway needed — lands anywhere" },
+      { label: "Enables", value: "Air assault & air mobility" },
+      { label: "Threats", value: "Ground fire, MANPADS" },
+    ],
+    examples: [
+      {
+        title: "Air assault",
+        description:
+          "Transport helicopters land infantry directly onto objectives, moving them faster than any ground vehicle over rough terrain.",
+      },
+      {
+        title: "Heavy-lift resupply",
+        description:
+          "Large helicopters sling vehicles, guns, and supplies to units that roads cannot reach.",
+      },
+    ],
+    related: ["attack-helicopter", "military-transport-aircraft", "amphibious-assault-ship", "logistics"],
+    wiki: "Military helicopter",
+    imageAlt: "A military transport helicopter",
+  },
 ];
 
 // Quick lookup by slug for the detail page.
