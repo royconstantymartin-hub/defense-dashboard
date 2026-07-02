@@ -6,6 +6,7 @@ import firepointLogo from "../assets/logos/firepoint.png";
 import airlogixLogo from "../assets/logos/airlogix.png";
 import karadagLogo from "../assets/logos/karadag.png";
 import tafLogo from "../assets/logos/taf.png";
+import devdroidLogo from "../assets/logos/devdroid.png";
 
 // Maps company names to their logo domains.
 // Used by MarketData, CompanyProfileSheet, and Dashboard to render logos.
@@ -529,7 +530,7 @@ export const COMPANY_LOGOS = {
   "Falcon UAV": "falcon-uav.com.ua",
   // "Perun Group" removed — perun.group is a parked "for sale" domain, not the company
   "Athlon Avia": "athlonavia.com",
-  "DevDroid": "devdroid.io",
+  "DevDroid": "devdroid.tech",
   "Kara Dag Technologies": "karadagtech.com",
   "Fulltime Robotics": "fulltimerobotics.com",
   "FRDM Group": "frdm.group",
@@ -901,6 +902,7 @@ export const COMPANY_WIKI_LOGOS = {
   "Airlogix":                   airlogixLogo,
   "Kara Dag Technologies":      karadagLogo,
   "TAF Industries":             tafLogo,
+  "DevDroid":                   devdroidLogo,
   "Raphe mPhibr":               "https://cdn.prod.website-files.com/64cb501935377f51369fa3c5/650029b2207c106cc4696201_raphe.svg",
   "Kvertus":                    "https://kvertus.com/wp-content/uploads/2025/09/Kvertus.svg",
   "NewSpace Research and Technologies": "https://newspace.co.in/wp-content/uploads/2024/05/NewSpace-Logo-200x37.png",
