@@ -133,7 +133,7 @@ export const COMPANY_LOGOS = {
   // Eastern Europe
   "Polska Grupa Zbrojeniowa": "pgzsa.pl",
   "WB Electronics": "wbelectronics.pl",
-  "Czechoslovak Group": "czechoslovakgroup.cz",
+  "Czechoslovak Group": "czechoslovakgroup.com",
   "Aero Vodochody": "aero.cz",
   "Havelsan": "havelsan.com.tr",
   // Israel

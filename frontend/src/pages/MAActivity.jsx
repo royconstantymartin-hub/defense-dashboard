@@ -291,7 +291,15 @@ const LOGO_FALLBACK = {
   "Hispasat":                            "hispasat.com",
   "Hisdesat":                            "hispasat.com",
   "Fiocchi Munizioni":                   "fiocchi.com",
-  "Czechoslovak Group":                  "czechoslovakgroup.cz",
+  "Czechoslovak Group":                  "czechoslovakgroup.com",
+  "CSG":                                 "czechoslovakgroup.com",
+  "FNSS":                                "fnss.com.tr",
+  "FNSS Defence Systems":                "fnss.com.tr",
+  "General Atomics":                     "ga.com",
+  "Iridium Communications":              "iridium.com",
+  "Iridium":                             "iridium.com",
+  "Renault Group":                       "renault.com",
+  "Renault":                             "renault.com",
   "ESG Elektroniksystem":                "esg.de",
   "Colt CZ Group":                       "cz-group.eu",
   "Sellier & Bellot":                    "sellier-bellot.cz",
@@ -896,14 +904,20 @@ function getLogoDomain(activity, side) {
 //   3. Coloured initials            — deterministic last resort, no network
 function buildLogoUrls(domain) {
   if (!domain) return [];
-  // Only DuckDuckGo: it returns a clean HTTP 404 for domains it has no icon for,
-  // so onError fires and we fall through to the coloured-initials avatar.
-  // Google's s2 favicon service was REMOVED because for unknown / guessed domains
-  // it returns a generic grey globe at HTTP 200 — onError never fires, so every
-  // unmatched company got stuck showing the same grey globe (looked broken).
+  // Google first for coverage (it has favicons DDG misses, e.g. fnss.com.tr).
+  // Its no-icon response is NOT a 404 but a generic 16px grey globe at HTTP 200
+  // — detected in onLoad via naturalWidth (a real icon at sz=128 is bigger),
+  // upon which the loader advances the chain. DuckDuckGo 404s cleanly for
+  // unknown domains, finally falling through to the coloured-initials avatar.
   return [
+    `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
     `https://icons.duckduckgo.com/ip3/${domain}.ico`,
   ];
+}
+// True when the loaded image is Google's "no icon" grey-globe placeholder:
+// Google ignores sz= for unknown domains and returns the 16px default.
+function isGoogleGlobePlaceholder(url, imgEl) {
+  return url.includes("google.com/s2/favicons") && imgEl.naturalWidth <= 32;
 }
 
 // Guess a plausible corporate domain from a company name so that ANY company —
@@ -961,6 +975,7 @@ function CompanyLogo({ activity, side, size = "md" }) {
             alt={name}
             className="w-full h-full object-contain p-1"
             onError={() => setIdx(i => i + 1)}
+            onLoad={(e) => { if (isGoogleGlobePlaceholder(urls[idx], e.currentTarget)) setIdx(i => i + 1); }}
           />
         </div>
       </div>
@@ -1074,6 +1089,7 @@ function SpotlightLogo({ activity, side }) {
         alt={name}
         className="w-8 h-8 rounded-lg object-contain bg-white border border-slate-100 p-0.5 shrink-0"
         onError={() => setIdx(i => i + 1)}
+        onLoad={(e) => { if (isGoogleGlobePlaceholder(urls[idx], e.currentTarget)) setIdx(i => i + 1); }}
       />
     );
   }
