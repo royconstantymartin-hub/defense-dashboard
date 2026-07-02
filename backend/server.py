@@ -1657,7 +1657,12 @@ async def _run_seed() -> dict:
 async def seed_data(current_user: dict = Depends(get_current_user)):
     if current_user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin role required")
-    return await _run_seed()
+    result = await _run_seed()
+    # Run the V2 cleanup synchronously and return its stats, so the Admin
+    # "Seed Data" button doubles as a force-convergence trigger with visible
+    # numbers (purged/backfilled/errors) — no container logs needed.
+    result["ma_cleanup"] = await _startup_ma_v2_cleanup()
+    return result
 
 
 @api_router.post("/news/reindex-companies")
@@ -2968,6 +2973,16 @@ _STALE_MA_DEALS = [
     # e.g. "NATO's eastern flank", "Eastern Flank Watch", "European Sky Shield".
     {"acquirer": {"$regex": "eastern flank|flank watch|eastern sentry|sky shield", "$options": "i"}},
     {"target":   {"$regex": "eastern flank|flank watch|eastern sentry|sky shield", "$options": "i"}},
+    # V2 corrections — legacy rows observed live that misframe or duplicate deals.
+    # The iXBlue + ECA merger is already seeded as iXBlue → ECA Group; this legacy
+    # variant frames the FUND (Tikehau, the shareholder) as the acquirer.
+    {"acquirer": "Tikehau Capital", "target": {"$regex": "iXBlue", "$options": "i"}},
+    # Trade-show teaming headlines mis-extracted as prime-to-prime "deals".
+    {"acquirer": "Hensoldt",    "target": "ST Engineering"},
+    {"acquirer": "Thales",      "target": "Hanwha"},
+    {"acquirer": "EDGE Group",  "target": "Safran"},
+    {"acquirer": "Eurenco",     "target": "Mesko"},
+    {"acquirer": "Rheinmetall", "target": "LIG Nex1"},
 ]
 
 _HIGH_CONF_URL_RE = re.compile(
@@ -3412,21 +3427,24 @@ def _ma_seed_pair_set():
     return pairs
 
 
-async def _startup_ma_v2_cleanup():
+async def _startup_ma_v2_cleanup() -> dict:
     """
-    V2 cleanup on every startup (idempotent) — a plain redeploy fully cleans the
-    M&A collection, no manual admin call needed.
+    V2 cleanup (idempotent) — runs on startup AND on demand via /api/seed-data,
+    returning stats so convergence is observable from outside the container.
 
-    Trust is decided by EVIDENCE, not provenance flags: legacy scraper rows
-    created before `scraped_at`/`extraction_method` existed look "manual", so
-    flags cannot be trusted. A row survives only if it matches a seeded deal,
-    or carries a real source with plausible company names.
+    Trust is decided by EVIDENCE, not provenance flags. A row survives only if
+    it matches a seeded deal, or carries a real source with plausible names AND
+    was not machine-extracted without earned confidence. The scraper fingerprint
+    includes acquirer_norm/target_norm: legacy scraper rows predate `scraped_at`
+    but always carry the norm fields used as their upsert key.
 
-    Order matters: purge FIRST, then backfill — otherwise the backfill would
-    bless legacy junk as human_verified before the purge could judge it.
-    Every row is processed in its own try/except so one malformed document
-    can never abort the whole pass (the V1 failure mode).
+    All Mongo operations go through `_id` — NOT the application-level `id`
+    field, which legacy documents may lack entirely. (That was the V2.1 bug:
+    id-less rows were silently skipped by both purge and backfill, leaving
+    coverage stuck and junk immortal.)
     """
+    stats = {"purged": 0, "junk": 0, "unsourced": 0, "untrusted": 0,
+             "backfilled": 0, "skipped": 0, "errors": []}
     try:
         from migrations.v2_ma_schema import _build_patch
 
@@ -3437,52 +3455,46 @@ async def _startup_ma_v2_cleanup():
             tw = re.sub(r"\s+", " ", (d.get("target") or "").lower().strip()).split()
             return (aw[0], tw[0]) if aw and tw else None
 
-        # ── Pass 1: purge — judged on evidence ────────────────────────────────
+        def _is_scraper_row(d: dict) -> bool:
+            return (bool(d.get("scraped_at"))
+                    or d.get("extraction_method") in ("regex", "llm")
+                    or bool(d.get("acquirer_norm")) or bool(d.get("target_norm")))
+
+        # ── Pass 1: purge — judged on evidence, keyed by _id ─────────────────
         rows = await db.ma_activities.find(
-            {}, {"_id": 0, "id": 1, "acquirer": 1, "target": 1, "confidence": 1,
+            {}, {"_id": 1, "acquirer": 1, "target": 1, "confidence": 1,
                  "verification_status": 1, "scraped_at": 1, "extraction_method": 1,
-                 "source_url": 1, "sources": 1},
+                 "source_url": 1, "sources": 1, "acquirer_norm": 1, "target_norm": 1},
         ).to_list(20000)
-        junk_ids, unsourced_ids, untrusted_ids = [], [], []
+        to_del = []
         for d in rows:
             try:
-                rid = d.get("id")
-                if not rid:
-                    continue
                 in_seed = _pair_of(d) in seed_pairs
                 has_source = bool(d.get("source_url")) or bool(d.get("sources"))
-                # Junk names are deleted regardless of any flag.
                 if _is_junk_party_name(d.get("acquirer")) or _is_junk_party_name(d.get("target")):
-                    junk_ids.append(rid)
+                    to_del.append(d["_id"]); stats["junk"] += 1
                     continue
                 if in_seed:
                     continue  # seeded deals are curated by definition
-                # Not in seed: must carry a real source to survive.
                 if not has_source:
-                    unsourced_ids.append(rid)
+                    to_del.append(d["_id"]); stats["unsourced"] += 1
                     continue
-                # Sourced but auto-scraped with no earned confidence → drop.
-                scraped = bool(d.get("scraped_at")) or d.get("extraction_method") in ("regex", "llm")
-                if scraped and d.get("confidence") not in ("high", "medium"):
-                    untrusted_ids.append(rid)
+                if _is_scraper_row(d) and d.get("confidence") not in ("high", "medium"):
+                    to_del.append(d["_id"]); stats["untrusted"] += 1
             except Exception as exc:
-                logger.warning("MA cleanup: skipping malformed row: %s", exc)
+                stats["errors"].append(f"purge: {exc}")
 
-        to_del = junk_ids + unsourced_ids + untrusted_ids
-        deleted = 0
         if to_del:
-            res = await db.ma_activities.delete_many({"id": {"$in": to_del}})
-            deleted = res.deleted_count
+            res = await db.ma_activities.delete_many({"_id": {"$in": to_del}})
+            stats["purged"] = res.deleted_count
 
-        # ── Pass 2: backfill V2 fields on the survivors ───────────────────────
-        docs = await db.ma_activities.find({}, {"_id": 0}).to_list(20000)
-        patched = 0
+        # ── Pass 2: backfill V2 fields on the survivors, keyed by _id ─────────
+        docs = await db.ma_activities.find({}).to_list(20000)
         for doc in docs:
             try:
-                did = doc.get("id")
-                if not did:
-                    continue
                 patch = _build_patch(doc)
+                if not doc.get("id"):
+                    patch["id"] = str(uuid.uuid4())   # heal id-less legacy rows
                 # Only seed-matched rows earn the human_verified/high blessing;
                 # other survivors are sourced but stay "auto"/medium.
                 if patch and _pair_of(doc) not in seed_pairs \
@@ -3493,17 +3505,19 @@ async def _startup_ma_v2_cleanup():
                         patch["confidence"] = "medium"
                         patch["confidence_score"] = 0.6
                 if patch:
-                    await db.ma_activities.update_one({"id": did}, {"$set": patch})
-                    patched += 1
+                    await db.ma_activities.update_one({"_id": doc["_id"]}, {"$set": patch})
+                    stats["backfilled"] += 1
+                else:
+                    stats["skipped"] += 1
             except Exception as exc:
-                logger.warning("MA cleanup backfill: skipping row: %s", exc)
+                stats["errors"].append(f"backfill: {exc}")
 
-        logger.info(
-            "MA V2 startup cleanup: purged %d (junk=%d, unsourced=%d, untrusted=%d), backfilled %d",
-            deleted, len(junk_ids), len(unsourced_ids), len(untrusted_ids), patched,
-        )
+        stats["errors"] = stats["errors"][:10]  # cap payload
+        logger.info("MA V2 cleanup: %s", stats)
     except Exception as exc:
-        logger.error("MA V2 startup cleanup error: %s", exc)
+        stats["errors"].append(f"fatal: {exc}")
+        logger.error("MA V2 cleanup error: %s", exc)
+    return stats
 
 
 @app.on_event("startup")
