@@ -1098,10 +1098,17 @@ function RecentDealsSpotlight({ activities, sourceFilter, onSourceFilter, source
     // first; the rest fall back to most-recent-first. This guarantees a balanced
     // mix (e.g. ILA Berlin + Eurosatory) instead of just the latest-dated ones.
     // The Defense/Fund toggle below filters the TABLE, not these cards ("news").
+    // "Recent" must mean recent: a hand-pinned (featured) deal only outranks
+    // the date order while it is itself fresh (≤ 10 days old). Without this
+    // window, trade-show pins from weeks ago squatted the spotlight forever
+    // while genuinely new deals sat below the fold.
+    const FRESH_MS = 10 * 24 * 3600 * 1000;
+    const freshFeatured = (a) =>
+      Boolean(a.featured) && (Date.now() - new Date(a.announced_date).getTime()) <= FRESH_MS;
     return [...activities]
       .filter(a => ["acquisition", "merger", "joint_venture", "ipo"].includes(a.deal_type))
       .sort((a, b) =>
-        (Number(Boolean(b.featured)) - Number(Boolean(a.featured))) ||
+        (Number(freshFeatured(b)) - Number(freshFeatured(a))) ||
         (new Date(b.announced_date) - new Date(a.announced_date))
       )
       .slice(0, 4);
