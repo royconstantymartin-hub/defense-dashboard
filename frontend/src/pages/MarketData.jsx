@@ -27,6 +27,29 @@ import {
 // ─── Module-level pure helpers ────────────────────────────────────────────────
 const isPrivate = (ticker) => !ticker || ticker === "Private" || ticker.includes("PRIV");
 
+// Market-cap-weighted average of weekly % changes, like a real cap-weighted
+// stock index: a $130B prime moves the needle more than a $2B smallcap.
+// Falls back to an equal-weighted average only if no market caps are available.
+function capWeightedChange(playersList, liveData) {
+  let weightedSum = 0, totalCap = 0, plainSum = 0, count = 0;
+  for (const p of playersList) {
+    const live = liveData[p.ticker];
+    if (!live) continue;
+    const change = live.week_change_percent ?? live.change_percent;
+    if (change == null || !Number.isFinite(change)) continue;
+    plainSum += change;
+    count++;
+    const cap = Number(p.market_cap);
+    if (Number.isFinite(cap) && cap > 0) {
+      weightedSum += change * cap;
+      totalCap += cap;
+    }
+  }
+  if (totalCap > 0) return weightedSum / totalCap;
+  if (count > 0) return plainSum / count;
+  return null;
+}
+
 const CATALYST_CONFIG = {
   contract:    { label: "CONTRACT",    bg: "bg-blue-50",    text: "text-blue-800",   bar: "bg-blue-800" },
   earnings:    { label: "EARNINGS",    bg: "bg-violet-50",  text: "text-violet-700", bar: "bg-violet-600" },
@@ -577,17 +600,13 @@ export default function MarketData() {
       .finally(() => setCatalystsLoading(false));
   }, [players]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Computed: Defense Index (weekly, live only) ───────────────────────────
-  const defenseIndex = useMemo(() => {
-    const withLive = players.filter(p => liveData[p.ticker] != null);
-    if (!withLive.length) return null;
-    const changes = withLive.map(p =>
-      liveData[p.ticker].week_change_percent ?? liveData[p.ticker].change_percent
-    );
-    return changes.reduce((s, c) => s + c, 0) / changes.length;
-  }, [players, liveData]);
+  // ── Computed: Defense Index (weekly, cap-weighted, live only) ─────────────
+  const defenseIndex = useMemo(
+    () => capWeightedChange(players, liveData),
+    [players, liveData]
+  );
 
-  // ── Computed: Domain performance (weekly, live only — no stale DB fallback)
+  // ── Computed: Domain performance (weekly, cap-weighted, live only — no stale DB fallback)
   const domainPerf = useMemo(() => {
     return DOMAINS.map(domain => {
       const matching = players.filter(p =>
@@ -597,13 +616,9 @@ export default function MarketData() {
         ) &&
         liveData[p.ticker] != null
       );
-      if (!matching.length) return { ...domain, change: null, count: 0 };
-      const changes = matching.map(p =>
-        liveData[p.ticker].week_change_percent ?? liveData[p.ticker].change_percent
-      );
-      const avg = changes.reduce((s, c) => s + c, 0) / changes.length;
-      return { ...domain, change: avg, count: matching.length };
-    }).filter(d => d.count > 0);
+      const change = capWeightedChange(matching, liveData);
+      return { ...domain, change, count: matching.length };
+    }).filter(d => d.count > 0 && d.change != null);
   }, [players, liveData]);
 
   // ── Computed: Top movers (5-day, live only — no stale DB fallback) ─────────
@@ -824,7 +839,7 @@ export default function MarketData() {
               </div>
             </div>
             <p className="text-xs text-slate-400 mt-4">
-              Weekly avg. · <span className="font-mono font-medium text-slate-600">{listedCount}</span> listed companies
+              1W · cap-weighted · <span className="font-mono font-medium text-slate-600">{listedCount}</span> listed companies
             </p>
           </CardContent>
         </Card>
@@ -837,7 +852,7 @@ export default function MarketData() {
                 Performance by Capability Domain
               </p>
               <span className="text-[10px] font-mono text-slate-400 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">
-                1W · this week
+                1W · cap-weighted
               </span>
             </div>
             {domainPerf.length === 0 ? (
