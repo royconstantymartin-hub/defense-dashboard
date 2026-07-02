@@ -2057,6 +2057,125 @@ MA_DATA = [
         "stake_percentage": 100.0, "round_type": None, "is_disclosed": False,
         "sector": "c2_electronics",
     },
+    # ── Volume tranche 1: verified funding rounds & JVs 2024–2025 ─────────────────
+    {
+        "acquirer": "L3Harris + Hanwha Asset Management", "target": "Shield AI",
+        "deal_value": 240, "status": "completed", "deal_type": "funding_round",
+        "value_basis": "round_amount", "deal_class": "vc", "valuation": 5300,
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Shield AI raises $240M strategic F-1 round at a $5.3B valuation",
+        "rationale": "Shield AI closes a $240M F-1 strategic round at a $5.3B valuation with strategic investors L3Harris and Hanwha Asset Management alongside Andreessen Horowitz and US Innovative Technology, to scale Hivemind Enterprise — its AI-pilot autonomy platform for drones and aircraft.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "l3harris.com", "target_logo_domain": "shield.ai",
+        "source_url": "https://shield.ai/shield-ai-raises-240m-at-5-3b-valuation-to-scale-hivemind-enterprise-an-ai-powered-autonomy-developer-platform/",
+        "announced_date": datetime(2025, 3, 6, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": None, "is_disclosed": True,
+        "sector": "uas_drones",
+    },
+    {
+        "acquirer": "Elad Gil + General Catalyst", "target": "Saronic",
+        "deal_value": 600, "status": "completed", "deal_type": "funding_round",
+        "value_basis": "round_amount", "deal_class": "vc", "valuation": 4000,
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Saronic raises $600M Series C at $4B to build the Port Alpha autonomous shipyard",
+        "rationale": "Saronic Technologies closes a $600M Series C led by Elad Gil, with General Catalyst joining a16z, Caffeinated Capital and 8VC, at a $4B valuation — quadrupled in seven months. Proceeds fund Port Alpha, a next-generation shipyard for medium and large autonomous surface vessels for the US Navy.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "generalcatalyst.com", "target_logo_domain": "saronic.com",
+        "source_url": "https://www.prnewswire.com/news-releases/saronic-raises-600m-series-c-to-take-on-autonomous-shipbuilding-302379441.html",
+        "announced_date": datetime(2025, 2, 18, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_c", "is_disclosed": True,
+        "sector": "naval",
+    },
+    {
+        "acquirer": "Altimeter Capital + Lightspeed", "target": "Castelion",
+        "deal_value": 350, "status": "completed", "deal_type": "funding_round",
+        "value_basis": "round_amount", "deal_class": "vc",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Castelion closes $350M Series B to mass-produce Blackbeard hypersonic missiles",
+        "rationale": "Castelion, founded by SpaceX alumni, closes a $350M Series B led by Altimeter Capital and Lightspeed with a16z, General Catalyst and Lavrock participating, to industrialise the Blackbeard hypersonic strike missile — including a 1,000-acre solid-rocket-motor campus in New Mexico capable of thousands of missiles per year.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "altimeter.com", "target_logo_domain": "castelion.com",
+        "source_url": "https://www.castelion.com/news/series-b/",
+        "announced_date": datetime(2025, 7, 3, tzinfo=timezone.utc),
+        "closed_date": datetime(2025, 12, 5, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
+        "sector": "missiles_munitions",
+    },
+    {
+        "acquirer": "New Enterprise Associates + Accel", "target": "CHAOS Industries",
+        "deal_value": 275, "status": "completed", "deal_type": "funding_round",
+        "value_basis": "round_amount", "deal_class": "vc", "valuation": 2000,
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "CHAOS Industries raises $275M Series C at $2B — Vanquish multistatic radar",
+        "rationale": "CHAOS Industries closes a $275M Series C led by NEA and co-led by Accel at a $2B valuation, scaling manufacturing of Vanquish, its multistatic radar for early warning and tracking of drones, missiles and aircraft.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "nea.com", "target_logo_domain": "chaosinc.com",
+        "source_url": "https://www.businesswire.com/news/home/20250502192148/en/CHAOS-Industries-Raises-$275-Million-Series-C-to-Advance-Defense-and-National-Security-Technology-Innovation",
+        "announced_date": datetime(2025, 5, 2, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_c", "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Valor Equity Partners", "target": "CHAOS Industries",
+        "deal_value": 510, "status": "completed", "deal_type": "funding_round",
+        "value_basis": "round_amount", "deal_class": "vc", "valuation": 4500,
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "CHAOS Industries raises $510M led by Valor at ~$4.5B — four months after its Series C",
+        "rationale": "CHAOS Industries raises a further $510M led by Valor Equity Partners at a ~$4.5B valuation, only months after its $2B Series C — a marker of record counter-drone and sensing demand. Funds accelerate next-generation radar and detection systems production.",
+        "acquirer_country": "US", "target_country": "US",
+        "acquirer_logo_domain": "valorep.com", "target_logo_domain": "chaosinc.com",
+        "source_url": "https://www.chaosinc.com/news/chaos-industries-raises-510-million-led-by-valor-equity-partners-to-accelerate-next-generation-defense-systems",
+        "announced_date": datetime(2025, 11, 13, tzinfo=timezone.utc),
+        "stake_percentage": None, "round_type": "series_d", "is_disclosed": True,
+        "sector": "c2_electronics",
+    },
+    {
+        "acquirer": "Leonardo + Rheinmetall", "target": "Leonardo Rheinmetall Military Vehicles (LRMV)",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "value_basis": "undisclosed", "deal_class": "jv",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Leonardo and Rheinmetall form 50/50 JV LRMV for Italy's tanks and IFVs",
+        "rationale": "Leonardo and Rheinmetall establish Leonardo Rheinmetall Military Vehicles (LRMV), a 50/50 JV headquartered in Rome with operations in La Spezia, to deliver Italy's AICS programme (1,000+ Lynx-based combat vehicles in 16 variants) and a Panther KF51-based main battle tank replacing the Ariete — with 60% of the work carried out in Italy. First Lynx KF41 vehicles delivered to the Italian Army in January 2026.",
+        "acquirer_country": "IT", "target_country": "IT",
+        "acquirer_logo_domain": "leonardo.com", "target_logo_domain": "rheinmetall.com",
+        "source_url": "https://www.rheinmetall.com/en/media/news-watch/news/2024/10/2024-10-15-leonardo-and-rheinmetall-establish-joint-venture",
+        "announced_date": datetime(2024, 10, 15, tzinfo=timezone.utc),
+        "closed_date": datetime(2025, 1, 20, tzinfo=timezone.utc),
+        "notes": "50/50; antitrust cleared Jan 2025 (Bundeskartellamt); first Lynx deliveries Jan 2026.",
+        "stake_percentage": 50.0, "round_type": None, "is_disclosed": False,
+        "sector": "land_systems",
+    },
+    {
+        "acquirer": "Airbus + Thales + Leonardo", "target": "Project Bromo (European Space Company)",
+        "deal_value": 0, "status": "announced", "deal_type": "joint_venture",
+        "value_basis": "undisclosed", "deal_class": "jv",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Airbus, Thales and Leonardo sign MoU to merge space businesses — 'Project Bromo'",
+        "rationale": "Airbus (35%), Thales (32.5%) and Leonardo (32.5%) sign a memorandum of understanding to combine their satellite and space-systems businesses into a new Toulouse-headquartered company — ~€6.5B revenue and 25,000 employees — Europe's answer to Starlink-era competition. Subject to European Commission approval; operations targeted for 2027.",
+        "acquirer_country": "FR", "target_country": "FR",
+        "acquirer_logo_domain": "airbus.com", "target_logo_domain": "thalesgroup.com",
+        "source_url": "https://www.airbus.com/en/newsroom/press-releases/2025-10-airbus-leonardo-and-thales-sign-memorandum-of-understanding-to",
+        "announced_date": datetime(2025, 10, 23, tzinfo=timezone.utc),
+        "notes": "Airbus 35% / Leonardo 32.5% / Thales 32.5%; EC approval pending; target 2027.",
+        "stake_percentage": None, "round_type": None, "is_disclosed": False,
+        "sector": "space",
+    },
+    {
+        "acquirer": "Leonardo + Baykar", "target": "LBA Systems",
+        "deal_value": 0, "status": "active", "deal_type": "joint_venture",
+        "value_basis": "undisclosed", "deal_class": "jv",
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Leonardo and Baykar launch 50/50 JV LBA Systems to build UCAVs in Italy",
+        "rationale": "Leonardo and Türkiye's Baykar create LBA Systems, a 50/50 joint venture producing Baykar's TB2, TB3, Akinci and Kizilelma unmanned combat aircraft at three Italian sites. Italy cleared the JV in June 2026 under 'golden power' conditions restricting sales to NATO/EU-aligned states; the partners target a ~$100B unmanned-systems market over ten years.",
+        "acquirer_country": "IT", "target_country": "IT",
+        "acquirer_logo_domain": "leonardo.com", "target_logo_domain": "baykartech.com",
+        "source_url": "https://www.leonardo.com/en/business/lba-systems",
+        "announced_date": datetime(2025, 3, 6, tzinfo=timezone.utc),
+        "closed_date": datetime(2026, 6, 16, tzinfo=timezone.utc),
+        "notes": "50/50; MoU Mar 2025, launched at Paris Air Show Jun 2025; Italian golden-power clearance 16 Jun 2026.",
+        "stake_percentage": 50.0, "round_type": None, "is_disclosed": False,
+        "sector": "uas_drones",
+    },
     # ── Defense & space IPOs 2024–2025 (verified + sourced) ──────────────────────
     # Convention for IPO rows: acquirer = the listing company, target = the
     # exchange; deal_value = gross proceeds raised (value_basis round_amount);
@@ -4357,24 +4476,25 @@ MA_EXTRA_DEALS = [
     # ── Defense Tech Startup Funding Rounds ───────────────────────────────────
     {
         "acquirer": "Andreessen Horowitz / Founders Fund", "target": "Anduril Industries",
-        "deal_value": 1480, "status": "completed", "deal_type": "funding_round",
-        "description": "Series F — autonomous defense systems platform (Roadrunner-M, Fury UAV, Lattice AI)",
+        "deal_value": 2500, "status": "completed", "deal_type": "funding_round",
+        "value_basis": "round_amount", "deal_class": "vc", "valuation": 30500,
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Anduril raises $2.5B Series G led by Founders Fund at a $30.5B valuation",
         "rationale": (
-            "Anduril Industries closes a $1.48 billion Series F round co-led by Andreessen Horowitz "
-            "and Founders Fund, pushing valuation to $14 billion. Proceeds accelerate production of "
-            "the Roadrunner-M interceptor drone, Fury combat UAV, and Lattice AI command-and-control "
-            "platform. The round reflects surging US DoD demand for next-generation autonomous defense "
-            "systems and positions Anduril as a direct challenger to traditional prime contractors."
+            "Anduril Industries closes a $2.5 billion Series G led by Founders Fund (a $1B check, "
+            "the firm's largest ever) with Andreessen Horowitz participating, more than doubling "
+            "its valuation to $30.5 billion. The 8x-oversubscribed round follows revenue doubling "
+            "to ~$1B in 2024 and the takeover of the US Army's IVAS headset programme from "
+            "Microsoft, funding Arsenal-scale manufacturing of autonomous weapons systems."
         ),
         "acquirer_country": "US", "target_country": "US",
-        "acquirer_logo_domain": "a16z.com",
+        "acquirer_logo_domain": "foundersfund.com",
         "target_logo_domain": "anduril.com",
-        "source_url": "https://techcrunch.com/2024/12/17/anduril-raises-1-5b-series-f/",
-        "announced_date": datetime(2024, 12, 17, tzinfo=timezone.utc),
+        "source_url": "https://techcrunch.com/2025/06/05/anduril-raises-2-5b-at-30-5b-valuation-led-by-founders-fund/",
+        "announced_date": datetime(2025, 6, 5, tzinfo=timezone.utc),
         "stake_percentage": None,
-        "round_type": "series_f",
+        "round_type": None,
         "is_disclosed": True,
-        "valuation": 14000,
     },
     {
         "acquirer": "General Catalyst", "target": "Hermeus",
@@ -4528,23 +4648,23 @@ MA_EXTRA_DEALS = [
         "acquirer": "Prima Materia + General Catalyst + Lightspeed",
         "target": "Helsing",
         "deal_value": 648, "status": "completed", "deal_type": "funding_round",
-        "description": "Helsing €600M growth round — largest-ever European defence AI raise",
+        "value_basis": "round_amount", "deal_class": "vc", "valuation": 13000,
+        "confidence": "high", "verification_status": "human_verified",
+        "description": "Helsing raises €600M Series D at ~€12B valuation — Europe's defence AI leader",
         "rationale": (
             "Helsing, the Munich- and London-based AI-for-defence company, closes a €600M "
-            "growth round led by Swedish deep-tech investor Prima Materia alongside General "
-            "Catalyst and Lightspeed Venture Partners. The capital funds mass-deployment of "
-            "Helsing's AI sensor-fusion and electronic-warfare software across NATO air and "
-            "ground platforms, and accelerates hiring across its European engineering hubs. "
-            "The round values Helsing at approximately €5B, cementing its position as the "
-            "leading European autonomous-defence software company."
+            "Series D led by Daniel Ek's Prima Materia (doubling its stake) with General "
+            "Catalyst, Lightspeed, Accel, Plural, Saab and BDT & MSD Partners participating, "
+            "at a ~€12B valuation — among Europe's most valuable startups. The capital funds "
+            "drone mass-production for Ukraine, the HX-2 strike drone line and expansion of "
+            "AI sensor-fusion and electronic-warfare software across NATO platforms."
         ),
         "acquirer_country": "SE", "target_country": "DE",
         "acquirer_logo_domain": "primamateria.com",
         "target_logo_domain": "helsing.ai",
         "source_url": "https://helsing.ai/news/",
-        "announced_date": datetime(2025, 3, 10, tzinfo=timezone.utc),
+        "announced_date": datetime(2025, 6, 17, tzinfo=timezone.utc),
         "stake_percentage": None, "round_type": "growth", "is_disclosed": True,
-        "valuation": 5400,
     },
     {
         "acquirer": "Ventura Capital + Baillie Gifford",
