@@ -1559,6 +1559,9 @@ async def _run_seed() -> dict:
         doc['acquirer_norm'] = _norm(m['acquirer'])
         doc['target_norm'] = _norm(m['target'])
         new_id = doc.pop('id')  # preserve existing id on update; only set on insert
+        # Never $set None over backfilled V2 fields (same clobber as the
+        # enrichment migration — see _migrate_ma_enrichments).
+        doc = {k: v for k, v in doc.items() if v is not None}
         await db.ma_activities.update_one(
             {"acquirer": m['acquirer'], "target": m['target']},
             {"$set": doc, "$setOnInsert": {"id": new_id}},
@@ -3021,9 +3024,15 @@ async def _migrate_ma_enrichments():
             doc["announced_date"] = doc["announced_date"].isoformat()
             if doc.get("closed_date") and isinstance(doc["closed_date"], datetime):
                 doc["closed_date"] = doc["closed_date"].isoformat()
+            # CRITICAL: model_dump() emits None for every V2 field absent from the
+            # seed dict (deal_class, value_basis, confidence_score, …). $set-ing
+            # those Nones erased the startup backfill on every boot — coverage
+            # could never converge. Only write real values; never rewrite id.
+            new_id = doc.pop("id", None)
+            doc = {k: v for k, v in doc.items() if v is not None}
             await db.ma_activities.update_one(
                 {"acquirer": m["acquirer"], "target": m["target"]},
-                {"$set": doc},
+                {"$set": doc, "$setOnInsert": {"id": new_id or str(uuid.uuid4())}},
                 upsert=True,
             )
         logger.info("MA migration complete — %d deals upserted", len(all_deals))
@@ -3568,8 +3577,6 @@ async def startup_event():
 
     # Kick off a background scrape so articles appear immediately on first deploy
     asyncio.create_task(_initial_scrape_if_empty())
-    # Apply MA enrichments (dates, countries, logos, rationale) to any stale DB docs
-    asyncio.create_task(_migrate_ma_enrichments())
     # Apply company profile enrichments (founded_year, headquarters, website, …)
     asyncio.create_task(_apply_company_enrichments())
     # Apply image URLs to products that are missing them
@@ -3577,12 +3584,17 @@ async def startup_event():
     # Always start with a fresh stock cache so stale values never survive restarts
     invalidate_stock_cache()
     logger.info("Stock price cache cleared on startup")
-    # Auto-seed reference data on every startup (idempotent — skips existing rows)
-    asyncio.create_task(_auto_seed())
-    # Purge scraper junk immediately — no button click needed
-    asyncio.create_task(_purge_scraper_junk())
-    # V2: backfill quality fields + purge junk/untrusted M&A rows on every boot
-    asyncio.create_task(_startup_ma_v2_cleanup())
+
+    # M&A data pipeline — MUST run sequentially. When these ran as concurrent
+    # tasks the enrichment upsert raced the V2 cleanup and (with the old
+    # None-clobber) erased its backfill, so coverage never converged.
+    async def _ma_startup_pipeline():
+        await _auto_seed()
+        await _migrate_ma_enrichments()
+        await _purge_scraper_junk()
+        stats = await _startup_ma_v2_cleanup()
+        logger.info("MA startup pipeline complete: %s", stats)
+    asyncio.create_task(_ma_startup_pipeline())
     # Back-fill realSource / sourceLogo on old Google News articles (runs once)
     asyncio.create_task(_migrate_google_news_sources())
 
