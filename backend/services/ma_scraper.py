@@ -197,6 +197,23 @@ KNOWN_COMPANIES: Dict[str, Tuple[str, str]] = {
     "bombardier":                ("CA", "bombardier.com"),
 }
 
+# ── Dynamic company registry (C3-lite) ────────────────────────────────────────
+# The hardcoded KNOWN_COMPANIES (~150 names) was the extraction bottleneck: any
+# deal whose parties weren't in it was silently discarded, even though the app's
+# defense_players collection knows 400+ companies with aliases. The server
+# injects that live registry here before each scrape run.
+EXTRA_COMPANIES: Dict[str, Tuple[Optional[str], Optional[str]]] = {}
+
+def set_company_registry(extra: Dict[str, Tuple[Optional[str], Optional[str]]]) -> None:
+    """Replace the dynamic registry (name_lower -> (iso2_or_None, domain_or_None))."""
+    global EXTRA_COMPANIES
+    # Never let short/generic keys poison substring matching.
+    EXTRA_COMPANIES = {k: v for k, v in extra.items() if k and len(k) >= 4}
+    logger.info("MA scraper registry: %d dynamic companies injected", len(EXTRA_COMPANIES))
+
+def _registry_keys():
+    return list(KNOWN_COMPANIES.keys()) + list(EXTRA_COMPANIES.keys())
+
 # ── M&A keyword patterns for article filtering ────────────────────────────────
 
 MA_TITLE_KEYWORDS = [
@@ -320,6 +337,10 @@ def score_confidence(
         score += 0.15
     if num_sources >= 2:
         score += 0.15
+    # The UI promises "High = 2+ concordant primary sources". Honour it: an
+    # auto-extraction corroborated by a single source can never exceed medium.
+    if num_sources < 2:
+        score = min(score, 0.79)
     score = round(min(score, 1.0), 2)
     label = "high" if score >= 0.8 else "medium" if score >= 0.55 else "low"
     return score, label
@@ -486,12 +507,14 @@ def _is_junk_name(name: str) -> bool:
     return bool(_JUNK_NAME_RE.match(name.strip()))
 
 def _both_known(acq_l: str, tgt_l: str) -> bool:
-    return (any(k in acq_l for k in KNOWN_COMPANIES)
-            and any(k in tgt_l for k in KNOWN_COMPANIES))
+    keys = _registry_keys()
+    return (any(k in acq_l for k in keys)
+            and any(k in tgt_l for k in keys))
 
 def _one_known(acq_l: str, tgt_l: str) -> bool:
-    return (any(k in acq_l for k in KNOWN_COMPANIES)
-            or any(k in tgt_l for k in KNOWN_COMPANIES))
+    keys = _registry_keys()
+    return (any(k in acq_l for k in keys)
+            or any(k in tgt_l for k in keys))
 
 def _extract_companies(title: str, summary: str) -> Tuple[Optional[str], Optional[str]]:
     """
@@ -568,7 +591,14 @@ def _lookup_company(name: str) -> Tuple[Optional[str], Optional[str]]:
     for key, val in KNOWN_COMPANIES.items():
         if key in n:
             return val
+    for key, val in EXTRA_COMPANIES.items():
+        if key in n:
+            return val
     return None, None
+
+def _is_registered(name: str) -> bool:
+    n = name.lower()
+    return any(k in n for k in _registry_keys())
 
 def _normalize_name(name: str) -> str:
     return re.sub(r"\s+", " ", name.lower().strip())
@@ -638,7 +668,7 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
         resp.raise_for_status()
         feed = feedparser.parse(resp.content)
 
-        for entry in feed.entries[:30]:
+        for entry in feed.entries[:60]:
             title = getattr(entry, "title", "").strip()
             link = getattr(entry, "link", "").strip()
             if not title or not link:
@@ -671,8 +701,8 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
             is_disclosed = deal_value > 0
             deal_class = classify_deal_class(deal_type, round_type)
             confidence_score, confidence = score_confidence(
-                acq_known=acq_country is not None,
-                tgt_known=tgt_country is not None,
+                acq_known=_is_registered(acquirer),
+                tgt_known=_is_registered(target),
                 value_basis=value_basis,
                 num_sources=1,
                 extraction_method="regex",
@@ -721,6 +751,9 @@ def _fetch_rss_ma(source_name: str, url: str) -> List[Dict]:
 # ── RSS sources ───────────────────────────────────────────────────────────────
 
 MA_RSS_SOURCES = [
+    # ── Business/industry category feeds — highest M&A density per fetch ─────
+    ("Defense Post Business",   "https://thedefensepost.com/category/business/feed/"),
+    ("Defense News Industry",   "https://www.defensenews.com/arc/outboundfeeds/rss/category/industry/?outputType=xml"),
     # ── Core defense press ────────────────────────────────────────────────────
     ("Breaking Defense",        "https://breakingdefense.com/feed/"),
     ("Defense News",            "https://www.defensenews.com/arc/outboundfeeds/rss/"),
@@ -749,6 +782,86 @@ MA_RSS_SOURCES = [
     ("Defense Daily",           "https://www.defensedaily.com/feed/"),
     ("Intelligence Online",     "https://www.intelligenceonline.com/rss"),
 ]
+
+# ── Archive backfill (beyond RSS depth) ──────────────────────────────────────
+# RSS feeds only expose the last ~20-60 articles. WordPress category pages are
+# paginated (/category/business/page/N/), so we can walk the archive and feed
+# each headline through the SAME extraction pipeline — historical depth for free.
+
+BACKFILL_CATEGORY_PAGES = [
+    ("Defense Post Business", "https://thedefensepost.com/category/business/"),
+]
+
+def _extract_signal_from_headline(source_name: str, title: str, link: str,
+                                  published: Optional[datetime] = None) -> Optional[Dict]:
+    """Run one headline through the full extraction pipeline. None if discarded."""
+    if not _is_ma_article(title, ""):
+        return None
+    acquirer, target = _extract_companies(title, "")
+    if not acquirer or not target:
+        return None
+    if _is_state_or_procurement(acquirer, target):
+        return None
+    acq_country, acq_logo = _lookup_company(acquirer)
+    tgt_country, tgt_logo = _lookup_company(target)
+    deal_value, value_basis = _parse_deal_value_with_basis(title)
+    deal_type = _infer_deal_type(title)
+    round_type = _infer_round_type(title)
+    when = published or datetime.now(timezone.utc)
+    confidence_score, confidence = score_confidence(
+        acq_known=_is_registered(acquirer), tgt_known=_is_registered(target),
+        value_basis=value_basis, num_sources=1, extraction_method="regex",
+    )
+    return {
+        "acquirer": acquirer, "target": target,
+        "acquirer_norm": _normalize_name(acquirer), "target_norm": _normalize_name(target),
+        "deal_value": deal_value, "value_basis": value_basis, "currency": "USD",
+        "status": _infer_status(title), "deal_type": deal_type,
+        "deal_class": classify_deal_class(deal_type, round_type),
+        "round_type": round_type, "stake_percentage": _infer_stake_percentage(title),
+        "is_disclosed": deal_value > 0,
+        "confidence": confidence, "confidence_score": confidence_score,
+        "extraction_method": "regex", "verification_status": "auto",
+        "description": title[:120], "source_url": link,
+        "sources": [{"url": link, "publisher": source_name, "published_at": when.isoformat()}],
+        "rationale": None, "announced_date": when,
+        "acquirer_country": acq_country, "target_country": tgt_country,
+        "acquirer_logo_domain": acq_logo, "target_logo_domain": tgt_logo,
+    }
+
+def scrape_category_backfill(pages: int = 10) -> List[Dict]:
+    """Walk paginated WordPress category archives and extract M&A signals from
+    headlines. Dates are unknown from listing pages, so announced_date falls
+    back to now — acceptable for backfill rows, which remain confidence-capped."""
+    import requests
+    from bs4 import BeautifulSoup
+    signals: List[Dict] = []
+    for source_name, base in BACKFILL_CATEGORY_PAGES:
+        for page in range(1, max(1, pages) + 1):
+            url = base if page == 1 else f"{base.rstrip('/')}/page/{page}/"
+            try:
+                resp = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
+                if resp.status_code == 404:
+                    break  # walked past the last page
+                resp.raise_for_status()
+                soup = BeautifulSoup(resp.text, "html.parser")
+                seen_links = set()
+                for a in soup.select("article a[href], h2 a[href], h3 a[href]"):
+                    title = a.get_text(strip=True)
+                    link = a.get("href", "")
+                    if not title or len(title) < 25 or not link.startswith("http"):
+                        continue
+                    if link in seen_links:
+                        continue
+                    seen_links.add(link)
+                    sig = _extract_signal_from_headline(source_name, title, link)
+                    if sig:
+                        signals.append(sig)
+            except Exception as exc:
+                logger.warning("[%s] backfill page %d failed: %s", source_name, page, exc)
+                break
+    logger.info("Category backfill: %d signals from %d source(s)", len(signals), len(BACKFILL_CATEGORY_PAGES))
+    return signals
 
 # ── Public API ────────────────────────────────────────────────────────────────
 

@@ -2462,6 +2462,32 @@ async def purge_untrusted_ma(request: Request, current_user: dict = Depends(get_
     }
 
 
+@api_router.post("/admin/backfill-ma")
+async def backfill_ma_archives(request: Request, current_user: dict = Depends(get_current_user)):
+    """
+    Walk paginated news archives (beyond RSS depth) and ingest M&A signals
+    through the standard extraction + dedup + upsert pipeline. Admin only.
+    Body: {"pages": 10}  (max 30)
+    """
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
+    from services.ma_scraper import scrape_category_backfill, deduplicate_ma_signals, set_company_registry
+
+    body = {}
+    try:
+        body = await request.json()
+    except Exception:
+        pass
+    pages = min(int(body.get("pages", 10) or 10), 30)
+
+    set_company_registry(await _build_scraper_registry())
+    raw = await asyncio.to_thread(scrape_category_backfill, pages)
+    unique = deduplicate_ma_signals(raw)
+    saved, updated = await _ingest_ma_signals(unique, datetime.now(timezone.utc))
+    return {"pages_walked": pages, "signals_found": len(raw),
+            "unique": len(unique), "new_deals_saved": saved, "status_updated": updated}
+
+
 @api_router.post("/admin/refresh-article-images")
 async def refresh_article_images(current_user: dict = Depends(get_current_user)):
     """
@@ -2632,22 +2658,47 @@ def _advance_status(existing: dict, new_status: str, source_url, when) -> Option
     return patch
 
 
-async def run_ma_scraper_job() -> dict:
-    """Scrape defense M&A signals from RSS feeds, deduplicate, and upsert into MongoDB."""
-    from services.ma_scraper import scrape_ma_signals, deduplicate_ma_signals
+# Minimal country-name → ISO2 map for the dynamic scraper registry.
+_COUNTRY_ISO = {
+    "united states": "US", "usa": "US", "france": "FR", "germany": "DE",
+    "united kingdom": "GB", "uk": "GB", "italy": "IT", "spain": "ES",
+    "sweden": "SE", "norway": "NO", "finland": "FI", "denmark": "DK",
+    "netherlands": "NL", "belgium": "BE", "poland": "PL", "czech republic": "CZ",
+    "turkey": "TR", "israel": "IL", "south korea": "KR", "japan": "JP",
+    "india": "IN", "australia": "AU", "canada": "CA", "brazil": "BR",
+    "ukraine": "UA", "greece": "GR", "portugal": "PT", "austria": "AT",
+    "switzerland": "CH", "estonia": "EE", "latvia": "LV", "lithuania": "LT",
+    "united arab emirates": "AE", "uae": "AE", "saudi arabia": "SA",
+    "singapore": "SG", "china": "CN", "taiwan": "TW",
+}
 
-    logger.info("M&A scraper job started")
+async def _build_scraper_registry() -> dict:
+    """Build the dynamic company registry from defense_players (names + aliases).
+
+    This is what lets the scraper recognise deals involving ANY company the app
+    knows — not just the ~150 hardcoded ones. Multiplies extraction yield."""
+    registry: dict = {}
     try:
-        raw_signals = await asyncio.to_thread(scrape_ma_signals)
-        signals_found = len(raw_signals)
+        players = await db.defense_players.find(
+            {}, {"_id": 0, "name": 1, "aliases": 1, "country": 1, "website": 1}
+        ).to_list(2000)
+        for p in players:
+            iso = _COUNTRY_ISO.get((p.get("country") or "").lower().strip())
+            domain = (p.get("website") or "").replace("https://", "").replace("http://", "").strip("/") or None
+            for label in [p.get("name")] + (p.get("aliases") or []):
+                if label and len(label) >= 4:
+                    registry[label.lower().strip()] = (iso, domain)
+    except Exception as exc:
+        logger.warning("Scraper registry build failed (using static only): %s", exc)
+    return registry
 
-        unique_signals = deduplicate_ma_signals(raw_signals)
-        duplicates_removed = signals_found - len(unique_signals)
 
-        scraped_at = datetime.now(timezone.utc)
-        saved = 0
-        updated = 0
-        for signal in unique_signals:
+async def _ingest_ma_signals(unique_signals: list, scraped_at: datetime) -> tuple:
+    """Upsert deduplicated scraper signals into MongoDB. Returns (saved, updated).
+    Shared by the RSS scraper job and the archive backfill."""
+    saved = 0
+    updated = 0
+    for signal in unique_signals:
             try:
                 # Upsert by (acquirer_norm, target_norm) key — never create hallucinated entries
                 key = {
@@ -2753,6 +2804,27 @@ async def run_ma_scraper_job() -> dict:
                         updated += 1
             except Exception as exc:
                 logger.error("Error saving M&A signal '%s': %s", signal.get("acquirer", ""), exc)
+    return saved, updated
+
+
+async def run_ma_scraper_job() -> dict:
+    """Scrape defense M&A signals from RSS feeds, deduplicate, and upsert into MongoDB."""
+    from services.ma_scraper import scrape_ma_signals, deduplicate_ma_signals, set_company_registry
+
+    logger.info("M&A scraper job started")
+    try:
+        # Inject the live company registry so extraction recognises every
+        # company the app knows (400+), not just the hardcoded ~150.
+        set_company_registry(await _build_scraper_registry())
+
+        raw_signals = await asyncio.to_thread(scrape_ma_signals)
+        signals_found = len(raw_signals)
+
+        unique_signals = deduplicate_ma_signals(raw_signals)
+        duplicates_removed = signals_found - len(unique_signals)
+
+        scraped_at = datetime.now(timezone.utc)
+        saved, updated = await _ingest_ma_signals(unique_signals, scraped_at)
 
         stats = {
             "signals_found": signals_found,
@@ -3594,6 +3666,12 @@ async def startup_event():
         await _purge_scraper_junk()
         stats = await _startup_ma_v2_cleanup()
         logger.info("MA startup pipeline complete: %s", stats)
+        # Scrape immediately — the 6h interval job only fires 6h after boot,
+        # which left every fresh deploy without new deals for hours.
+        try:
+            await run_ma_scraper_job()
+        except Exception as exc:
+            logger.warning("Startup M&A scrape failed: %s", exc)
     asyncio.create_task(_ma_startup_pipeline())
     # Back-fill realSource / sourceLogo on old Google News articles (runs once)
     asyncio.create_task(_migrate_google_news_sources())
