@@ -3397,56 +3397,111 @@ async def _migrate_google_news_sources() -> None:
         logger.info("Source logo migration (all) complete: %d updated", updated2)
 
 
+def _ma_seed_pair_set():
+    """Normalized (acquirer_first_word, target_first_word) pairs of all seeded deals."""
+    from data.seed_data import (
+        MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10,
+        MA_EUROSATORY_2026, MA_ILA_BERLIN_2026,
+    )
+    pairs = set()
+    for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026:
+        aw = re.sub(r"\s+", " ", m.get("acquirer", "").lower().strip()).split()
+        tw = re.sub(r"\s+", " ", m.get("target", "").lower().strip()).split()
+        if aw and tw:
+            pairs.add((aw[0], tw[0]))
+    return pairs
+
+
 async def _startup_ma_v2_cleanup():
     """
-    V2 cleanup on every startup (idempotent) — so a plain redeploy is enough to
-    clean the M&A page, no manual admin call needed. Two passes:
-      1. Backfill data-quality/lifecycle fields (deal_class, value_basis,
-         confidence, sources, status_history) and mark legacy regex-scraped
-         rows confidence=low.
-      2. Purge rows we would never display: junk/placeholder party names
-         (ANY row — this removes old seeded placeholders like "Multiple UAE
-         defense companies"), plus low/unknown-confidence auto-scraped rows.
-    Curated/manual (human_verified) rows are never deleted.
+    V2 cleanup on every startup (idempotent) — a plain redeploy fully cleans the
+    M&A collection, no manual admin call needed.
+
+    Trust is decided by EVIDENCE, not provenance flags: legacy scraper rows
+    created before `scraped_at`/`extraction_method` existed look "manual", so
+    flags cannot be trusted. A row survives only if it matches a seeded deal,
+    or carries a real source with plausible company names.
+
+    Order matters: purge FIRST, then backfill — otherwise the backfill would
+    bless legacy junk as human_verified before the purge could judge it.
+    Every row is processed in its own try/except so one malformed document
+    can never abort the whole pass (the V1 failure mode).
     """
     try:
         from migrations.v2_ma_schema import _build_patch
 
-        # Pass 1 — backfill V2 fields
-        docs = await db.ma_activities.find({}, {"_id": 0}).to_list(20000)
-        patched = 0
-        for doc in docs:
-            patch = _build_patch(doc)
-            if patch:
-                await db.ma_activities.update_one({"id": doc["id"]}, {"$set": patch})
-                patched += 1
+        seed_pairs = _ma_seed_pair_set()
 
-        # Pass 2 — purge junk + untrusted
+        def _pair_of(d: dict):
+            aw = re.sub(r"\s+", " ", (d.get("acquirer") or "").lower().strip()).split()
+            tw = re.sub(r"\s+", " ", (d.get("target") or "").lower().strip()).split()
+            return (aw[0], tw[0]) if aw and tw else None
+
+        # ── Pass 1: purge — judged on evidence ────────────────────────────────
         rows = await db.ma_activities.find(
             {}, {"_id": 0, "id": 1, "acquirer": 1, "target": 1, "confidence": 1,
-                 "verification_status": 1, "scraped_at": 1, "extraction_method": 1},
+                 "verification_status": 1, "scraped_at": 1, "extraction_method": 1,
+                 "source_url": 1, "sources": 1},
         ).to_list(20000)
-        junk_ids, untrusted_ids = [], []
+        junk_ids, unsourced_ids, untrusted_ids = [], [], []
         for d in rows:
-            if d.get("verification_status") == "human_verified":
-                # still allow junk-name deletion for safety, but keep otherwise
+            try:
+                rid = d.get("id")
+                if not rid:
+                    continue
+                in_seed = _pair_of(d) in seed_pairs
+                has_source = bool(d.get("source_url")) or bool(d.get("sources"))
+                # Junk names are deleted regardless of any flag.
                 if _is_junk_party_name(d.get("acquirer")) or _is_junk_party_name(d.get("target")):
-                    junk_ids.append(d["id"])
-                continue
-            if _is_junk_party_name(d.get("acquirer")) or _is_junk_party_name(d.get("target")):
-                junk_ids.append(d["id"])
-                continue
-            scraped = bool(d.get("scraped_at")) or d.get("extraction_method") in ("regex", "llm")
-            if scraped and d.get("confidence") not in ("high", "medium"):
-                untrusted_ids.append(d["id"])
+                    junk_ids.append(rid)
+                    continue
+                if in_seed:
+                    continue  # seeded deals are curated by definition
+                # Not in seed: must carry a real source to survive.
+                if not has_source:
+                    unsourced_ids.append(rid)
+                    continue
+                # Sourced but auto-scraped with no earned confidence → drop.
+                scraped = bool(d.get("scraped_at")) or d.get("extraction_method") in ("regex", "llm")
+                if scraped and d.get("confidence") not in ("high", "medium"):
+                    untrusted_ids.append(rid)
+            except Exception as exc:
+                logger.warning("MA cleanup: skipping malformed row: %s", exc)
 
-        to_del = junk_ids + untrusted_ids
+        to_del = junk_ids + unsourced_ids + untrusted_ids
         deleted = 0
         if to_del:
             res = await db.ma_activities.delete_many({"id": {"$in": to_del}})
             deleted = res.deleted_count
-        logger.info("MA V2 startup cleanup: backfilled %d, purged %d (junk=%d, untrusted=%d)",
-                    patched, deleted, len(junk_ids), len(untrusted_ids))
+
+        # ── Pass 2: backfill V2 fields on the survivors ───────────────────────
+        docs = await db.ma_activities.find({}, {"_id": 0}).to_list(20000)
+        patched = 0
+        for doc in docs:
+            try:
+                did = doc.get("id")
+                if not did:
+                    continue
+                patch = _build_patch(doc)
+                # Only seed-matched rows earn the human_verified/high blessing;
+                # other survivors are sourced but stay "auto"/medium.
+                if patch and _pair_of(doc) not in seed_pairs \
+                        and doc.get("verification_status") != "human_verified":
+                    if patch.get("verification_status") == "human_verified":
+                        patch["verification_status"] = "auto"
+                    if patch.get("confidence") == "high":
+                        patch["confidence"] = "medium"
+                        patch["confidence_score"] = 0.6
+                if patch:
+                    await db.ma_activities.update_one({"id": did}, {"$set": patch})
+                    patched += 1
+            except Exception as exc:
+                logger.warning("MA cleanup backfill: skipping row: %s", exc)
+
+        logger.info(
+            "MA V2 startup cleanup: purged %d (junk=%d, unsourced=%d, untrusted=%d), backfilled %d",
+            deleted, len(junk_ids), len(unsourced_ids), len(untrusted_ids), patched,
+        )
     except Exception as exc:
         logger.error("MA V2 startup cleanup error: %s", exc)
 

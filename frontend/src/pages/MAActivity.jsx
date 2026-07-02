@@ -824,6 +824,7 @@ function getDealLabels(dealType) {
     case "minority_stake":       return { left: "INVESTOR",   right: "PORTFOLIO CO.", sep: "invest" };
     case "strategic_investment": return { left: "INVESTOR",   right: "PORTFOLIO CO.", sep: "invest" };
     case "funding_round":        return { left: "LEAD INVESTOR", right: "STARTUP",    sep: "invest" };
+    case "ipo":                  return { left: "COMPANY",    right: "LISTING",       sep: "ipo" };
     default:                     return { left: "ACQUIRER",   right: "TARGET",        sep: "arrow" };
   }
 }
@@ -833,6 +834,7 @@ function DealSep({ type }) {
   if (type === "merger")  return <div className="w-12 flex justify-center shrink-0"><div className={base}><ArrowLeftRight className="w-3.5 h-3.5 text-slate-500" /></div></div>;
   if (type === "jv")      return <div className="w-12 flex justify-center shrink-0"><div className={base}><Plus className="w-3.5 h-3.5 text-slate-500" /></div></div>;
   if (type === "invest")  return <div className="w-12 flex justify-center shrink-0"><div className={base}><CircleDot className="w-3.5 h-3.5 text-slate-500" /></div></div>;
+  if (type === "ipo")     return <div className="w-12 flex justify-center shrink-0"><div className={base}><TrendingUp className="w-3.5 h-3.5 text-slate-500" /></div></div>;
   return <div className="w-12 flex justify-center shrink-0"><div className={base}><ArrowRight className="w-3.5 h-3.5 text-slate-500" /></div></div>;
 }
 
@@ -985,6 +987,7 @@ const DEAL_TYPE_CFG = {
   minority_stake:       { label: "INVESTMENT",    bg: "bg-blue-50",    text: "text-blue-800",   bar: "bg-blue-800" },
   strategic_investment: { label: "INVESTMENT",    bg: "bg-blue-50",    text: "text-blue-800",   bar: "bg-blue-800" },
   funding_round:        { label: "FUNDING",       bg: "bg-violet-50",  text: "text-violet-700", bar: "bg-violet-600" },
+  ipo:                  { label: "IPO",           bg: "bg-amber-50",   text: "text-amber-700",  bar: "bg-amber-500" },
 };
 
 // PE / financial firms — acquirer is a fund, not an operating defense company
@@ -1001,6 +1004,15 @@ const PE_FUND_KEYWORDS = [
 function isFundAcquirer(name = "") {
   const n = name.toLowerCase();
   return PE_FUND_KEYWORDS.some(k => n.includes(k));
+}
+
+// P1/P2 prioritisation — corporate defense-to-defense M&A and IPOs are the
+// first-class content of the page (tier 1); fund/VC investments, JVs and
+// everything else rank second (tier 2). Drives the default table ordering.
+function dealTier(a) {
+  if (a.deal_type === "ipo") return 1;
+  const corporate = ["acquisition", "merger", "asset_acquisition"].includes(a.deal_type);
+  return corporate && !isFundAcquirer(a.acquirer) ? 1 : 2;
 }
 
 // ── Non-M&A guard ─────────────────────────────────────────────────────────────
@@ -1087,7 +1099,7 @@ function RecentDealsSpotlight({ activities, sourceFilter, onSourceFilter, source
     // mix (e.g. ILA Berlin + Eurosatory) instead of just the latest-dated ones.
     // The Defense/Fund toggle below filters the TABLE, not these cards ("news").
     return [...activities]
-      .filter(a => ["acquisition", "merger", "joint_venture"].includes(a.deal_type))
+      .filter(a => ["acquisition", "merger", "joint_venture", "ipo"].includes(a.deal_type))
       .sort((a, b) =>
         (Number(Boolean(b.featured)) - Number(Boolean(a.featured))) ||
         (new Date(b.announced_date) - new Date(a.announced_date))
@@ -3462,6 +3474,12 @@ export default function MAActivity() {
       );
     }
     return [...list].sort((a, b) => {
+      // Default view only: tier-1 first (corporate M&A + IPOs), tier-2 after
+      // (fund/VC/JV). Explicit column sorts bypass the tiering.
+      if (sortField === "announced_date" && sortDir === "desc") {
+        const t = dealTier(a) - dealTier(b);
+        if (t !== 0) return t;
+      }
       const va = sortField === "deal_value" ? (a.deal_value || 0) : new Date(a.announced_date).getTime();
       const vb = sortField === "deal_value" ? (b.deal_value || 0) : new Date(b.announced_date).getTime();
       return sortDir === "asc" ? va - vb : vb - va;
