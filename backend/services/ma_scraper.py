@@ -286,7 +286,9 @@ def _parse_deal_value_with_basis(text: str) -> Tuple[float, str]:
 # prices with post-money valuations.
 
 def classify_deal_class(deal_type: str, round_type: Optional[str] = None) -> str:
-    """Map a granular deal_type to a high-level class: ma | jv | vc."""
+    """Map a granular deal_type to a high-level class: ma | jv | vc | ipo."""
+    if deal_type == "ipo":
+        return "ipo"
     if round_type or deal_type in ("funding_round", "strategic_investment", "minority_stake"):
         return "vc"
     if deal_type == "joint_venture":
