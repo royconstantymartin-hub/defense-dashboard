@@ -757,30 +757,27 @@ MA_RSS_SOURCES = [
     # ── Core defense press ────────────────────────────────────────────────────
     ("Breaking Defense",        "https://breakingdefense.com/feed/"),
     ("Defense News",            "https://www.defensenews.com/arc/outboundfeeds/rss/"),
-    ("Defense Industry Daily",  "https://www.defenseindustrydaily.com/feed/"),
     ("Defense Post",            "https://thedefensepost.com/feed/"),
     ("C4ISRNET",                "https://www.c4isrnet.com/arc/outboundfeeds/rss/"),
     ("Defense One",             "https://www.defenseone.com/rss/all/"),
     ("The War Zone",            "https://www.thedrive.com/the-war-zone/feed"),
+    ("DefenseScoop",            "https://defensescoop.com/feed/"),
     # ── Naval & maritime ─────────────────────────────────────────────────────
     ("USNI News",               "https://news.usni.org/feed"),
+    ("Naval News",              "https://www.navalnews.com/feed/"),
     # ── Air & space ──────────────────────────────────────────────────────────
     ("SpaceNews",               "https://spacenews.com/feed/"),
     ("Air Force Magazine",      "https://www.airforcemag.com/feed/"),
     ("Aviation Week",           "https://aviationweek.com/rss.xml"),
-    # ── Land systems ─────────────────────────────────────────────────────────
-    ("Army Recognition",        "https://www.armyrecognition.com/rss.xml"),
-    ("Army Technology",         "https://www.army-technology.com/feed/"),
     # ── European defense ─────────────────────────────────────────────────────
-    ("Shephard Media",          "https://www.shephardmedia.com/rss/news/"),
-    ("Janes",                   "https://www.janes.com/feeds/news"),
+    ("Defence Industry Europe", "https://defence-industry.eu/feed/"),
+    ("EDR Magazine",            "https://www.edrmagazine.eu/feed"),
     # ── Financial / M&A generalist ───────────────────────────────────────────
-    # NOTE (C6): the legacy Reuters feed (feeds.reuters.com/reuters/businessNews)
-    # was retired by Reuters and the FT "home/uk" feed is generalist UK news, not
-    # defense — both were removed as they yielded ~0 useful M&A signals while
-    # counting toward "17 sources". Replaced with defense-relevant deal coverage.
+    # NOTE (C6): dead feeds are pruned based on /health/sources evidence, not
+    # guesswork. Removed as confirmed dead by the live monitor: Reuters legacy,
+    # FT home/uk, Defense Industry Daily, Army Recognition, Army Technology,
+    # Shephard Media, Janes (paywalled), Intelligence Online (paywalled).
     ("Defense Daily",           "https://www.defensedaily.com/feed/"),
-    ("Intelligence Online",     "https://www.intelligenceonline.com/rss"),
 ]
 
 # ── Archive backfill (beyond RSS depth) ──────────────────────────────────────
