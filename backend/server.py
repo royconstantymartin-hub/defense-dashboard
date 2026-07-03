@@ -2896,16 +2896,29 @@ async def root():
 @api_router.get("/world-monitor/incidents")
 async def get_world_monitor_incidents():
     """
-    Returns geolocated conflict incidents from GDELT + ReliefWeb.
-    Cached for 15 minutes in memory.
+    Returns geolocated conflict incidents from GDELT.
+    Always answers instantly from the in-memory cache, which is refreshed
+    in the background by the scheduler. On a cold start the response has
+    status "warming" while the first collection runs.
     """
-    from services.world_monitor_service import fetch_incidents
+    from services.world_monitor_service import get_snapshot
     try:
-        incidents = await asyncio.get_event_loop().run_in_executor(None, fetch_incidents)
-        return {"incidents": incidents, "count": len(incidents)}
+        return get_snapshot()
     except Exception as e:
         logger.error("World Monitor fetch error: %s", e)
         raise HTTPException(status_code=503, detail="Could not fetch incident data")
+
+
+async def run_world_monitor_refresh_job():
+    """Background refresh so users always hit a warm World Monitor cache."""
+    from services.world_monitor_service import fetch_incidents
+    try:
+        incidents = await asyncio.get_event_loop().run_in_executor(
+            None, lambda: fetch_incidents(force=True)
+        )
+        logger.info("World Monitor background refresh: %d incidents", len(incidents))
+    except Exception as e:
+        logger.error("World Monitor background refresh failed: %s", e)
 
 @app.get("/health")
 async def health():
@@ -3571,6 +3584,14 @@ async def startup_event():
         id="company_news_scraper",
         # First run 10 minutes after startup — avoids hammering APIs at boot
         next_run_time=datetime.now(timezone.utc) + timedelta(minutes=10),
+    )
+    scheduler.add_job(
+        run_world_monitor_refresh_job,
+        "interval",
+        minutes=15,
+        id="world_monitor_refresh",
+        # Warm the cache right away so the page has data on first visit
+        next_run_time=datetime.now(timezone.utc) + timedelta(seconds=5),
     )
     scheduler.start()
     logger.info("Schedulers started — news at 01:00/07:00/13:00/19:00 UTC, Breaking Intel clear +5 min, M&A every 6 h, company news every 6 h (first run +10 min)")

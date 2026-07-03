@@ -1,13 +1,24 @@
 """
-Fetches real-time conflict incidents from:
-  - GDELT DOC 2.0 API (free, no key) — recent articles per conflict zone
-  - ReliefWeb API (free, no key) — humanitarian alerts with country data
+Fetches real-time conflict & crisis incidents from the GDELT DOC 2.0 API
+(free, no API key) — recent press coverage per monitored zone.
 
-Results are cached in memory for 15 minutes to avoid hammering the APIs.
+ReliefWeb was dropped: its v1 API was decommissioned and v2 requires an
+approved appname, so GDELT now also covers the humanitarian angle via
+dedicated queries.
+
+Reliability:
+  - GDELT rate-limits per IP (~1 query / 5 s), so zone queries run
+    SEQUENTIALLY with a politeness delay — never in parallel.
+  - A refresh can therefore take a few minutes; it only ever runs in the
+    background (scheduler job in server.py + on-demand warm-up thread).
+    The API endpoint reads the cache without blocking.
+  - A lock prevents concurrent refresh stampedes.
+  - If a refresh comes back empty (API down), the previous snapshot is
+    served instead of an empty page.
 """
 
-import asyncio
 import logging
+import threading
 import time
 from datetime import datetime, timezone
 from typing import Any
@@ -18,44 +29,17 @@ logger = logging.getLogger(__name__)
 
 # ── In-memory cache ───────────────────────────────────────────────────────────
 _cache: dict[str, Any] = {"data": [], "ts": 0}
+_refresh_lock = threading.Lock()
 CACHE_TTL = 900  # 15 minutes
+REQUEST_TIMEOUT = 25  # seconds — GDELT can be slow to answer
+REQUEST_DELAY = 6  # seconds between zone queries (GDELT rate limit)
+RATE_LIMIT_BACKOFF = 20  # seconds to wait before the single retry after a 429
 
-# ── Country centroids (ISO2 → lat/lng) ────────────────────────────────────────
-COUNTRY_CENTROIDS: dict[str, tuple[float, float]] = {
-    "UA": (48.37, 31.17),
-    "RU": (61.52, 105.32),
-    "IL": (31.05, 34.85),
-    "PS": (31.90, 35.20),
-    "LB": (33.85, 35.86),
-    "YE": (15.55, 48.52),
-    "SD": (12.86, 30.22),
-    "SS": (6.87, 31.31),
-    "ET": (9.15, 40.49),
-    "SO": (5.15, 46.20),
-    "CD": (-4.03, 21.76),
-    "ML": (17.57, -3.99),
-    "BF": (12.36, -1.56),
-    "NE": (17.61, 8.08),
-    "NG": (9.08, 8.68),
-    "MM": (21.91, 95.96),
-    "AF": (33.93, 67.71),
-    "SY": (34.80, 38.99),
-    "IQ": (33.22, 43.68),
-    "IR": (32.43, 53.69),
-    "PK": (30.37, 69.35),
-    "IN": (20.59, 78.96),
-    "CN": (35.86, 104.19),
-    "TW": (23.69, 120.96),
-    "KP": (40.34, 127.51),
-    "LY": (26.34, 17.23),
-    "MZ": (-18.66, 35.53),
-    "HT": (18.97, -72.29),
-    "MX": (23.63, -102.55),
-    "VE": (6.42, -66.59),
-}
-
-# ── Conflict zones for GDELT queries ─────────────────────────────────────────
-CONFLICT_ZONES = [
+# ── Monitored zones for GDELT queries ─────────────────────────────────────────
+# type: combat = ground fighting · strike = air/missile/drone campaigns
+#       political = tensions/posturing · humanitarian = crisis & displacement
+MONITORED_ZONES = [
+    # ── Active hostilities ──
     {
         "region": "Ukraine",
         "lat": 48.37, "lng": 31.17,
@@ -76,6 +60,13 @@ CONFLICT_ZONES = [
         "query": "lebanon hezbollah israel border",
         "type": "strike",
         "country": "LB",
+    },
+    {
+        "region": "Syria",
+        "lat": 35.02, "lng": 38.50,
+        "query": "syria military clashes strikes",
+        "type": "combat",
+        "country": "SY",
     },
     {
         "region": "Sudan",
@@ -120,16 +111,75 @@ CONFLICT_ZONES = [
         "country": "SO",
     },
     {
+        "region": "Haiti",
+        "lat": 18.97, "lng": -72.29,
+        "query": "haiti gang violence port-au-prince",
+        "type": "combat",
+        "country": "HT",
+    },
+    # ── Political / strategic tension ──
+    {
         "region": "Taiwan Strait",
         "lat": 24.00, "lng": 120.96,
         "query": "taiwan china military PLA strait",
         "type": "political",
         "country": "TW",
     },
+    {
+        "region": "Korean Peninsula",
+        "lat": 39.50, "lng": 127.00,
+        "query": "north korea missile launch military",
+        "type": "political",
+        "country": "KP",
+    },
+    # ── Humanitarian crises ──
+    {
+        "region": "Sudan",
+        "lat": 14.60, "lng": 30.80,
+        "query": "sudan humanitarian famine displacement refugees",
+        "type": "humanitarian",
+        "country": "SD",
+    },
+    {
+        "region": "Gaza Strip",
+        "lat": 31.30, "lng": 34.30,
+        "query": "gaza humanitarian aid crisis civilians",
+        "type": "humanitarian",
+        "country": "PS",
+    },
+    {
+        "region": "Haiti",
+        "lat": 19.30, "lng": -72.60,
+        "query": "haiti humanitarian crisis displacement",
+        "type": "humanitarian",
+        "country": "HT",
+    },
+    {
+        "region": "Afghanistan",
+        "lat": 33.93, "lng": 67.71,
+        "query": "afghanistan humanitarian crisis aid",
+        "type": "humanitarian",
+        "country": "AF",
+    },
+    {
+        "region": "DR Congo",
+        "lat": -2.60, "lng": 28.00,
+        "query": "congo humanitarian displacement refugees",
+        "type": "humanitarian",
+        "country": "CD",
+    },
 ]
 
 GDELT_DOC_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
-RELIEFWEB_URL = "https://api.reliefweb.int/v1/reports"
+
+# Intensity ladder per type: [lead article, 2nd, 3rd].
+# Hostility zones with heavy press coverage get bumped to critical (8).
+INTENSITY_LADDER = {
+    "combat": [7, 6, 5],
+    "strike": [7, 6, 5],
+    "political": [6, 5, 4],
+    "humanitarian": [6, 5, 4],
+}
 
 
 def _is_latin(text: str) -> bool:
@@ -140,8 +190,8 @@ def _is_latin(text: str) -> bool:
     return latin / len(text) > 0.85
 
 
-def _gdelt_fetch_zone(zone: dict) -> list[dict]:
-    """Fetch recent GDELT articles for one conflict zone."""
+def _gdelt_fetch_zone(zone: dict, retried: bool = False) -> list[dict]:
+    """Fetch recent GDELT articles for one monitored zone."""
     try:
         resp = requests.get(
             GDELT_DOC_URL,
@@ -153,11 +203,18 @@ def _gdelt_fetch_zone(zone: dict) -> list[dict]:
                 "format": "JSON",
                 "sourcelang": "english",
             },
-            timeout=8,
+            timeout=REQUEST_TIMEOUT,
         )
+        if resp.status_code == 429 and not retried:
+            time.sleep(RATE_LIMIT_BACKOFF)
+            return _gdelt_fetch_zone(zone, retried=True)
         resp.raise_for_status()
         data = resp.json()
         articles = data.get("articles", [])
+        ladder = list(INTENSITY_LADDER.get(zone["type"], [6, 5, 4]))
+        # Heavy press coverage in the 3-day window = hotter zone
+        if zone["type"] in ("combat", "strike") and len(articles) >= 8:
+            ladder[0] = 8
         incidents = []
         kept = 0
         for art in articles:
@@ -166,15 +223,14 @@ def _gdelt_fetch_zone(zone: dict) -> list[dict]:
             title = art.get("title", "").strip()
             if not title or not _is_latin(title):
                 continue
-            intensity = 6 + (kept == 0)
             incidents.append({
-                "id": f"gdelt-{zone['country']}-{kept}",
+                "id": f"gdelt-{zone['country']}-{zone['type']}-{kept}",
                 "lat": zone["lat"] + (kept * 0.15),
                 "lng": zone["lng"] + (kept * 0.15),
                 "type": zone["type"],
                 "label": title[:120],
                 "region": zone["region"],
-                "intensity": intensity,
+                "intensity": ladder[kept],
                 "date": _parse_gdelt_date(art.get("seendate", "")),
                 "source": art.get("domain", "GDELT"),
                 "url": art.get("url", ""),
@@ -182,7 +238,7 @@ def _gdelt_fetch_zone(zone: dict) -> list[dict]:
             kept += 1
         return incidents
     except Exception as e:
-        logger.warning("GDELT fetch failed for %s: %s", zone["region"], e)
+        logger.warning("GDELT fetch failed for %s (%s): %s", zone["region"], zone["type"], e)
         return []
 
 
@@ -194,84 +250,80 @@ def _parse_gdelt_date(raw: str) -> str:
         return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 
-def _reliefweb_fetch() -> list[dict]:
-    """Fetch humanitarian alerts from ReliefWeb."""
-    try:
-        resp = requests.post(
-            RELIEFWEB_URL,
-            json={
-                "appname": "defense-intelligence-hub",
-                "limit": 20,
-                "sort": ["date:desc"],
-                "fields": {
-                    "include": ["title", "date.created", "country", "primary_country"]
-                },
-                "filter": {
-                    "operator": "AND",
-                    "conditions": [
-                        {"field": "type.name", "value": "Situation Report"},
-                    ],
-                },
-            },
-            timeout=8,
-        )
-        resp.raise_for_status()
-        items = resp.json().get("data", [])
-        incidents = []
-        for item in items:
-            fields = item.get("fields", {})
-            title = fields.get("title", "").strip()
-            countries = fields.get("country", [])
-            if not title or not countries:
-                continue
-            iso2 = countries[0].get("iso3", "")[:2].upper() if countries else ""
-            centroid = COUNTRY_CENTROIDS.get(iso2)
-            if not centroid:
-                continue
-            date_raw = fields.get("date", {}).get("created", "")
-            date_str = date_raw[:10] if date_raw else datetime.now(timezone.utc).strftime("%Y-%m-%d")
-            incidents.append({
-                "id": f"rw-{item.get('id', '')}",
-                "lat": centroid[0],
-                "lng": centroid[1],
-                "type": "humanitarian",
-                "label": title[:120],
-                "region": countries[0].get("name", iso2),
-                "intensity": 5,
-                "date": date_str,
-                "source": "ReliefWeb",
-                "url": "",
-            })
-        return incidents
-    except Exception as e:
-        logger.warning("ReliefWeb fetch failed: %s", e)
-        return []
+def last_updated_iso() -> str | None:
+    """ISO timestamp of the last successful refresh, or None."""
+    if not _cache["ts"]:
+        return None
+    return datetime.fromtimestamp(_cache["ts"], tz=timezone.utc).isoformat()
 
 
-def fetch_incidents() -> list[dict]:
+def get_snapshot() -> dict:
     """
-    Return merged incidents from GDELT + ReliefWeb.
-    Uses a 15-minute in-memory cache.
+    Non-blocking read used by the API endpoint: returns whatever the cache
+    holds right now. If the cache is empty (cold start), a background
+    refresh is kicked off and status "warming" is returned so the frontend
+    can show a "collecting data" state and retry shortly.
+    """
+    if _cache["data"]:
+        return {
+            "incidents": _cache["data"],
+            "count": len(_cache["data"]),
+            "updated": last_updated_iso(),
+            "status": "ok",
+        }
+    start_background_refresh()
+    return {"incidents": [], "count": 0, "updated": None, "status": "warming"}
+
+
+def start_background_refresh() -> None:
+    """Kick a refresh in a daemon thread unless one is already running."""
+    if _refresh_lock.locked():
+        return
+    threading.Thread(target=lambda: fetch_incidents(force=True), daemon=True).start()
+
+
+def fetch_incidents(force: bool = False) -> list[dict]:
+    """
+    Refresh + return merged incidents from all monitored zones.
+    BLOCKING (several minutes worst case) — only call from background
+    threads/jobs, never from the request path. `force=True` bypasses the
+    TTL (used by the scheduler job).
     """
     now = time.time()
-    if _cache["data"] and (now - _cache["ts"]) < CACHE_TTL:
+    if not force and _cache["data"] and (now - _cache["ts"]) < CACHE_TTL:
         return _cache["data"]
 
-    logger.info("Refreshing World Monitor incident data...")
-    all_incidents: list[dict] = []
+    with _refresh_lock:
+        # Another thread may have refreshed while we waited for the lock —
+        # if the data is fresher than a minute, don't hit GDELT again.
+        if _cache["data"] and (time.time() - _cache["ts"]) < 60:
+            return _cache["data"]
 
-    # GDELT: one request per conflict zone (sequential to be polite)
-    for zone in CONFLICT_ZONES:
-        all_incidents.extend(_gdelt_fetch_zone(zone))
+        logger.info("Refreshing World Monitor incident data (%d zones)...", len(MONITORED_ZONES))
+        # Previous snapshot grouped by zone — reused for zones whose refresh
+        # fails, so a partial outage never blanks part of the map.
+        previous: dict[tuple, list[dict]] = {}
+        for inc in _cache["data"]:
+            previous.setdefault((inc["region"], inc["type"]), []).append(inc)
 
-    # ReliefWeb: single batch request
-    all_incidents.extend(_reliefweb_fetch())
+        all_incidents: list[dict] = []
+        for i, zone in enumerate(MONITORED_ZONES):
+            if i > 0:
+                time.sleep(REQUEST_DELAY)  # respect GDELT's per-IP rate limit
+            zone_incidents = _gdelt_fetch_zone(zone)
+            if not zone_incidents:
+                zone_incidents = previous.get((zone["region"], zone["type"]), [])
+            all_incidents.extend(zone_incidents)
 
-    # Assign sequential numeric IDs for the frontend
-    for idx, inc in enumerate(all_incidents):
-        inc["id"] = idx + 1
+        if not all_incidents and _cache["data"]:
+            logger.warning("World Monitor refresh empty — serving previous snapshot")
+            return _cache["data"]
 
-    _cache["data"] = all_incidents
-    _cache["ts"] = now
-    logger.info("World Monitor: %d incidents loaded", len(all_incidents))
-    return all_incidents
+        # Assign sequential numeric IDs for the frontend
+        for idx, inc in enumerate(all_incidents):
+            inc["id"] = idx + 1
+
+        _cache["data"] = all_incidents
+        _cache["ts"] = time.time()
+        logger.info("World Monitor: %d incidents loaded", len(all_incidents))
+        return all_incidents

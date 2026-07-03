@@ -40,7 +40,7 @@ const navItems = [
   { path: "/follow", icon: Rss, label: "Sources" },
   { path: "/lexicon", icon: BookOpen, label: "Lexicon" },
   { path: "/quiz", icon: GraduationCap, label: "Quiz" },
-  { path: "/world-monitor", icon: Radar, label: "World Monitor", inProgress: true },
+  { path: "/world-monitor", icon: Radar, label: "World Monitor" },
 ];
 
 export default function Layout() {
