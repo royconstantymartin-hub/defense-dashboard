@@ -21,6 +21,7 @@ import {
   Target, Gauge, Download, FileCheck, Radar, ChevronDown, ChevronRight,
 } from "lucide-react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
+import { getCachedWorldGeo, loadWorldGeo } from "@/lib/geo";
 import { CAPABILITY_DETAILS, PLATFORM_WIKI_TITLES, WKP, STATIC_PLATFORM_IMAGES, DEFENSE_CAPABILITIES, getCapabilitySummary, GENERIC_WIKI_DENYLIST } from "@/data/defenseCapabilities";
 import { DATA_VINTAGE, SOURCES, sourceShortLabel, citationText, buildBibliography, downloadTextFile, capabilitiesSourceLink, spendingSourceLink } from "@/data/sources";
 import { getMethodology } from "@/data/metricMethodology";
@@ -1032,10 +1033,6 @@ function CapabilityTile({ cat, count, rank, maxCount, onClick, isSelected, isCli
   );
 }
 
-// Pre-fetch GeoJSON once at module level — avoids a re-fetch on every map re-render
-const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
-let _cachedGeoData = null;
-const _geoFetch = fetch(GEO_URL).then(r => r.json()).then(d => { _cachedGeoData = d; return d; }).catch(() => null);
 
 // Color tiers for the choropleth — both modes share the same 5-step palette
 // so the legend is easy to read at a glance.
@@ -1091,13 +1088,13 @@ const GeographyLayer = memo(function GeographyLayer({
 
 function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }) {
   const [tooltip, setTooltip] = useState(null);
-  const [geoData, setGeoData] = useState(_cachedGeoData);
+  const [geoData, setGeoData] = useState(getCachedWorldGeo);
 
   useEffect(() => { setTooltip(null); }, [mode]);
 
   useEffect(() => {
-    if (!_cachedGeoData) {
-      _geoFetch.then(d => { if (d) setGeoData(d); });
+    if (!getCachedWorldGeo()) {
+      loadWorldGeo().then(d => { if (d) setGeoData(d); });
     }
   }, []);
 
