@@ -892,23 +892,29 @@ async def get_stock_history_route(ticker: str, period: str = "1d"):
 async def get_stock_prices(tickers: str = ""):
     """Return current price data for a comma-separated list of tickers.
     Public tickers are fetched live from Yahoo Finance (via stock_service, 5-min cache).
-    Private companies (stock_price <= 0 or ticker contains PRIV) fall back to DB seed data.
+    Private companies (ticker is a PRIV/PRIVATE marker) fall back to DB seed data.
     """
     ticker_list = [t.strip() for t in tickers.split(",") if t.strip()]
     if not ticker_list:
         return {}
 
-    # Load DB records to identify private companies
+    # Load DB records to back up any ticker yfinance can't resolve
     players = await db.defense_players.find(
         {"ticker": {"$in": ticker_list}}, {"_id": 0, "ticker": 1, "stock_price": 1, "change_percent": 1}
     ).to_list(len(ticker_list))
     db_map = {p["ticker"]: p for p in players}
 
-    public_tickers = [
-        t for t in ticker_list
-        if "PRIV" not in t.upper() and float((db_map.get(t) or {}).get("stock_price", 0) or 0) > 0
-    ]
-    private_tickers = [t for t in ticker_list if t not in public_tickers]
+    # A ticker is "public" when it is a real market symbol, not a private/placeholder
+    # marker. This must NOT depend on the seeded stock_price: several genuinely-listed
+    # companies (e.g. Honeywell/HON, Oshkosh/OSK) were seeded with a 0 placeholder
+    # price, and gating on price > 0 wrongly hid their live market activity. Mirror the
+    # frontend isPrivate() rule so both ends agree on who is listed.
+    def _is_private_ticker(t: str) -> bool:
+        tu = (t or "").upper()
+        return (not tu) or tu == "PRIVATE" or "PRIV" in tu
+
+    public_tickers = [t for t in ticker_list if not _is_private_ticker(t)]
+    private_tickers = [t for t in ticker_list if _is_private_ticker(t)]
 
     # Fetch live prices for public tickers
     live_data = await get_bulk_prices(public_tickers) if public_tickers else {}
@@ -1447,6 +1453,38 @@ async def _run_seed() -> dict:
         else:
             seen_player_names[name] = player
 
+    # Remove duplicate defense players that share the same *public* ticker — two
+    # different names cannot be the same listed stock (e.g. "SERCO Group" vs
+    # "Serco Group", or a subsidiary that wrongly inherited the parent's symbol).
+    # Keep the entry whose name matches the seed for that ticker so the index does
+    # not double-count one company's market cap.
+    def _is_private_symbol(t: str) -> bool:
+        tu = (t or "").upper()
+        return (not tu) or tu == "PRIVATE" or "PRIV" in tu
+
+    seed_names_by_ticker: dict = {}
+    for p in DEFENSE_COMPANIES:
+        tk = p.get('ticker', '')
+        if not _is_private_symbol(tk):
+            seed_names_by_ticker.setdefault(tk, set()).add(p['name'])
+
+    all_players = await db.defense_players.find({}, {"_id": 0, "id": 1, "name": 1, "ticker": 1}).to_list(None)
+    seen_player_tickers: dict = {}
+    for player in all_players:
+        tk = player.get('ticker', '')
+        if _is_private_symbol(tk):
+            continue
+        if tk in seen_player_tickers:
+            prev = seen_player_tickers[tk]
+            valid_names = seed_names_by_ticker.get(tk, set())
+            if player.get('name') in valid_names:
+                await db.defense_players.delete_one({"id": prev['id']})
+                seen_player_tickers[tk] = player
+            else:
+                await db.defense_players.delete_one({"id": player['id']})
+        else:
+            seen_player_tickers[tk] = player
+
     # Seed Defense Players — check by name OR ticker to prevent duplicates
     for p in DEFENSE_COMPANIES:
         ticker = p.get('ticker', '')
@@ -1468,6 +1506,10 @@ async def _run_seed() -> dict:
                 patch['multinational_for'] = p['multinational_for']
             if 'company_type' in p:
                 patch['company_type'] = p['company_type']
+            # Converge the ticker so seed-data symbol corrections (e.g. moving a
+            # subsidiary off its parent's ticker) propagate without a full drop.
+            if existing.get('name') == p['name'] and existing.get('ticker') != p.get('ticker'):
+                patch['ticker'] = p.get('ticker')
             if patch:
                 await db.defense_players.update_one({"name": p['name']}, {"$set": patch})
 
