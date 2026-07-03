@@ -45,6 +45,13 @@ export const METRIC_METHODOLOGY = {
     unit: "vehicles in service",
     primary_source: "IISS",
   },
+  support_aircraft: {
+    label: "Support Aircraft",
+    counts: "Force-multiplier aircraft in service: AEW&C/AWACS, aerial-refuelling tankers, strategic & tactical transport, maritime patrol (MPA) and SIGINT platforms.",
+    excludes: "VIP/government transport, trainer aircraft and light liaison types.",
+    unit: "aircraft in service",
+    primary_source: "IISS",
+  },
   aircraft_carriers: {
     label: "Aircraft Carriers",
     counts: "Carriers (CVN/CV), light carriers and amphibious assault ships (LHD).",

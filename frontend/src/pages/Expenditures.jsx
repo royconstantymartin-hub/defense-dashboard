@@ -74,6 +74,16 @@ function ArmoredVehicleIcon({ className }) {
     </svg>
   );
 }
+// AEW&C / support aircraft — airliner silhouette with rotodome (AWACS style)
+function AWACSIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <ellipse cx="12" cy="5" rx="5.5" ry="1.8" />
+      <rect x="11" y="6.5" width="2" height="2.5" rx="0.5" />
+      <path d="M11 9 L13 9 L13.6 13 L21 15 L21 16.8 L13.4 15.6 L13 19 L15.5 20.4 L15.5 21.8 L12 20.8 L8.5 21.8 L8.5 20.4 L11 19 L10.6 15.6 L3 16.8 L3 15 L10.4 13 Z" />
+    </svg>
+  );
+}
 // Aircraft carrier — flat-top flight deck with island
 function CarrierIcon({ className }) {
   return (
@@ -704,6 +714,22 @@ const CAP_CATEGORIES = [
     iconColor: "text-slate-500",
   },
   {
+    key: "support_aircraft",
+    label: "Support Aircraft",
+    sublabel: "AEW&C, Tankers, Transport & MPA",
+    Icon: AWACSIcon,
+    scale: 50,
+    scaleLabel: "50 aircraft",
+    bg: "bg-white",
+    border: "border-slate-200",
+    labelColor: "text-slate-500",
+    countColor: "text-slate-700",
+    dotColor: "text-slate-400",
+    progressColor: "bg-slate-700",
+    iconBadgeBg: "bg-slate-50",
+    iconColor: "text-slate-500",
+  },
+  {
     key: "drones",
     label: "Drones & UAVs",
     sublabel: "MALE, HALE, Loitering Munitions",
@@ -872,8 +898,8 @@ CAP_CATEGORIES.forEach(({ key }) => {
 // Group categories into macro sections for display
 const CAP_GROUPS = [
   {
-    label: "Air Power", Icon: Plane, categoryKeys: ["fighters", "helicopters", "drones"],
-    accent: "blue", headlineKeys: ["fighters", "helicopters", "drones"], headlineLabel: "aircraft & UAVs",
+    label: "Air Power", Icon: Plane, categoryKeys: ["fighters", "helicopters", "support_aircraft", "drones"],
+    accent: "blue", headlineKeys: ["fighters", "helicopters", "support_aircraft", "drones"], headlineLabel: "aircraft & UAVs",
   },
   {
     label: "Land Forces", Icon: TankIcon, categoryKeys: ["tanks", "armored_vehicles"],
