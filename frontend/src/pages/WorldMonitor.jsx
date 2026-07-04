@@ -31,11 +31,35 @@ const severityColor = (v) => (v >= 8 ? "#e11d48" : v >= 6 ? "#d97706" : "#64748b
 const fmtTime = (d) => (d ? d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "");
 const flag = (cc) => `https://flagcdn.com/w40/${cc}.png`;
 
-// Free CARTO Voyager basemap — real cartography (countries, cities, rivers,
-// roads that reveal themselves as you zoom), light style, no API key.
-const TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
-const TILE_ATTR =
+// Basemaps — all free, no API key. Each entry lists the tile layer(s) to
+// stack (a base + an optional labels/reference overlay). Zoom goes to
+// street/city level (maxZoom 18).
+const ESRI = (svc) => `https://server.arcgisonline.com/ArcGIS/rest/services/${svc}/MapServer/tile/{z}/{y}/{x}`;
+const ESRI_ATTR = "Tiles &copy; Esri";
+const CARTO_ATTR =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
+
+const BASEMAPS = {
+  terrain: {
+    label: "Terrain",
+    layers: [
+      { url: ESRI("World_Topo_Map"), attr: ESRI_ATTR },
+    ],
+  },
+  satellite: {
+    label: "Satellite",
+    layers: [
+      { url: ESRI("World_Imagery"), attr: ESRI_ATTR },
+      { url: ESRI("Reference/World_Boundaries_and_Places"), attr: "", overlay: true },
+    ],
+  },
+  light: {
+    label: "Light",
+    layers: [
+      { url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", attr: CARTO_ATTR, subdomains: "abcd" },
+    ],
+  },
+};
 
 // ── Leaflet marker icon builders ──────────────────────────────────────────────
 function incidentIcon(inc) {
@@ -115,13 +139,15 @@ export default function WorldMonitor() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
-  const [zoom, setZoom] = useState(2);
+  const [zoom, setZoom] = useState(3);
+  const [basemap, setBasemap] = useState("terrain");
   const [ready, setReady] = useState(false);
 
   const mapDivRef = useRef(null);
   const mapRef = useRef(null);
   const groupsRef = useRef({});
   const highlightRef = useRef(null);
+  const baseLayersRef = useRef([]);
 
   const q = query.trim().toLowerCase();
 
@@ -154,14 +180,13 @@ export default function WorldMonitor() {
     if (mapRef.current || !mapDivRef.current) return;
     const map = L.map(mapDivRef.current, {
       center: [25, 15],
-      zoom: 2,
+      zoom: 3,
       minZoom: 2,
-      maxZoom: 12,
+      maxZoom: 18,
       zoomControl: false,
       worldCopyJump: true,
       attributionControl: true,
     });
-    L.tileLayer(TILE_URL, { subdomains: "abcd", maxZoom: 20, attribution: TILE_ATTR }).addTo(map);
     map.on("zoomend", () => setZoom(map.getZoom()));
     // Create one layer group per layer key
     Object.keys(LAYER_DEFS).forEach((k) => { groupsRef.current[k] = L.layerGroup(); });
@@ -170,6 +195,24 @@ export default function WorldMonitor() {
     setTimeout(() => map.invalidateSize(), 150);
     return () => { map.remove(); mapRef.current = null; };
   }, []);
+
+  // ── Swap base tile layers when the basemap choice changes ──
+  useEffect(() => {
+    if (!ready) return;
+    const map = mapRef.current;
+    baseLayersRef.current.forEach((l) => map.removeLayer(l));
+    const conf = BASEMAPS[basemap] || BASEMAPS.terrain;
+    baseLayersRef.current = conf.layers.map((l) => {
+      const tl = L.tileLayer(l.url, {
+        subdomains: l.subdomains || "abc",
+        maxZoom: 18,
+        attribution: l.attr,
+      });
+      tl.addTo(map);
+      tl.bringToBack(); // keep tiles under all marker/vector layers
+      return tl;
+    });
+  }, [ready, basemap]);
 
   const flyTo = useCallback((lat, lng, z = 6) => {
     const map = mapRef.current;
@@ -396,11 +439,27 @@ export default function WorldMonitor() {
                 className="w-8 h-8 flex items-center justify-center bg-white/95 border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:text-blue-800 hover:border-blue-300 transition-colors"><Plus size={15} /></button>
               <button onClick={() => mapRef.current?.zoomOut()} title="Zoom out"
                 className="w-8 h-8 flex items-center justify-center bg-white/95 border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:text-blue-800 hover:border-blue-300 transition-colors"><Minus size={15} /></button>
-              <button onClick={() => mapRef.current?.setView([25, 15], 2)} title="Reset view"
+              <button onClick={() => mapRef.current?.setView([25, 15], 3)} title="Reset view"
                 className="w-8 h-8 flex items-center justify-center bg-white/95 border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:text-blue-800 hover:border-blue-300 transition-colors"><Locate size={14} /></button>
             </div>
-            <div className="absolute top-3 left-3 z-[500] bg-white/85 rounded px-1.5 py-0.5 text-[10px] font-mono text-slate-500">
-              zoom {zoom} · scroll or drag to explore
+            <div className="absolute top-3 left-3 z-[500] flex flex-col gap-1 items-start">
+              <span className="bg-white/85 rounded px-1.5 py-0.5 text-[10px] font-mono text-slate-500">
+                zoom {zoom} · scroll or drag to explore
+              </span>
+              <span className="bg-white/80 rounded px-1.5 py-0.5 text-[9px] text-slate-500">
+                Incidents: GDELT · Sites: OSINT (public)
+              </span>
+            </div>
+
+            {/* Basemap switcher */}
+            <div className="absolute bottom-3 left-3 z-[500] flex items-center bg-white/95 border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+              {Object.entries(BASEMAPS).map(([key, conf]) => (
+                <button key={key} onClick={() => setBasemap(key)}
+                  className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                    basemap === key ? "bg-blue-800 text-white" : "text-slate-600 hover:bg-slate-100"}`}>
+                  {conf.label}
+                </button>
+              ))}
             </div>
 
             {/* Overlay states */}
@@ -420,11 +479,6 @@ export default function WorldMonitor() {
                 </div>
               </div>
             )}
-
-            {/* Source note */}
-            <div className="absolute bottom-1 left-1 z-[500] text-[9px] text-slate-500 bg-white/80 rounded px-1.5 py-0.5">
-              Incidents: GDELT · Sites: OSINT (public)
-            </div>
           </div>
 
           {/* Layer toggles — grouped by family */}
