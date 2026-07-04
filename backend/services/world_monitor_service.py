@@ -182,12 +182,31 @@ INTENSITY_LADDER = {
 }
 
 
-def _is_latin(text: str) -> bool:
-    """Return True if the text is predominantly Latin-script (English, French, etc.)."""
+# Common English words used as a fallback language signal when GDELT does
+# not tag an article's language. Multi-letter only (no bare "a"), to avoid
+# matching French/Spanish/Portuguese articles.
+_EN_WORDS = frozenset(
+    "the and of in on to for with as at by from is are was were has have had "
+    "after over amid its into near new says said talks kills killed dead wounded "
+    "strike strikes war forces troops border clashes fighting attack".split()
+)
+
+
+def _looks_english(text: str) -> bool:
+    """
+    Return True if the text looks like readable English: almost entirely
+    ASCII (rejects accented French/Spanish and non-Latin scripts) AND
+    containing at least one common English word (rejects all-ASCII
+    Portuguese/Italian/… headlines). Used only when GDELT gives no language
+    tag; the article's language field is the primary filter.
+    """
     if not text:
         return False
-    latin = sum(1 for c in text if ord(c) < 0x500)
-    return latin / len(text) > 0.85
+    ascii_ratio = sum(1 for c in text if ord(c) < 0x80) / len(text)
+    if ascii_ratio < 0.92:
+        return False
+    words = {w.strip(".,:;!?'\"()").lower() for w in text.split()}
+    return bool(words & _EN_WORDS)
 
 
 def _gdelt_fetch_zone(zone: dict, retried: bool = False) -> list[dict]:
@@ -201,7 +220,6 @@ def _gdelt_fetch_zone(zone: dict, retried: bool = False) -> list[dict]:
                 "maxrecords": "10",
                 "timespan": "3d",
                 "format": "JSON",
-                "sourcelang": "english",
             },
             timeout=REQUEST_TIMEOUT,
         )
@@ -221,7 +239,13 @@ def _gdelt_fetch_zone(zone: dict, retried: bool = False) -> list[dict]:
             if kept >= 3:
                 break
             title = art.get("title", "").strip()
-            if not title or not _is_latin(title):
+            # English-only: GDELT tags each article's language; keep English
+            # (and reject anything with non-ASCII / accented text) so the feed
+            # is always readable.
+            lang = (art.get("language") or "").strip().lower()
+            if lang and lang not in ("english", "eng"):
+                continue
+            if not title or not _looks_english(title):
                 continue
             incidents.append({
                 "id": f"gdelt-{zone['country']}-{zone['type']}-{kept}",

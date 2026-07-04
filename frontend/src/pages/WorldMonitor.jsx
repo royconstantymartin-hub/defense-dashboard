@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
-import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import {
   Activity,
   Crosshair,
@@ -10,17 +11,15 @@ import {
   Minus,
   Plus,
   RefreshCw,
-  Rss,
   Satellite,
   Search,
   TriangleAlert,
   X,
 } from "lucide-react";
 import { API } from "@/App";
-import { getCachedWorldGeo, loadWorldGeo } from "@/lib/geo";
-import { LAYER_DEFS, POI_LAYERS } from "@/data/mapLayers";
+import { LAYER_DEFS, LAYER_GROUPS, POI_LAYERS } from "@/data/mapLayers";
 
-// Incident sub-types (the "live actu" layer) keep their own colours
+// Incident sub-types (the live "actu" layer)
 const INCIDENT_TYPES = {
   combat:       { color: "#e11d48", label: "Combat" },
   strike:       { color: "#ea580c", label: "Strike" },
@@ -29,47 +28,66 @@ const INCIDENT_TYPES = {
 };
 
 const severityColor = (v) => (v >= 8 ? "#e11d48" : v >= 6 ? "#d97706" : "#64748b");
-const fmtTime = (d) =>
-  d ? d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "";
+const fmtTime = (d) => (d ? d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "");
+const flag = (cc) => `https://flagcdn.com/w40/${cc}.png`;
 
-const MIN_ZOOM = 1;
-const MAX_ZOOM = 8;
-const LABEL_ZOOM = 2.6; // show POI name labels once zoomed past this
+// Basemaps — all free, no API key. Each entry lists the tile layer(s) to
+// stack (a base + an optional labels/reference overlay). Zoom goes to
+// street/city level (maxZoom 18).
+const ESRI = (svc) => `https://server.arcgisonline.com/ArcGIS/rest/services/${svc}/MapServer/tile/{z}/{y}/{x}`;
+const ESRI_ATTR = "Tiles &copy; Esri";
+const CARTO_ATTR =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
-// ── SVG marker shape for a given layer, drawn at radius r, colour c ──────────
-function ShapeMark({ shape, r, color, dimmed }) {
-  const common = {
-    fill: color,
-    fillOpacity: dimmed ? 0.35 : 0.9,
-    stroke: "#ffffff",
-    strokeWidth: 1.1,
-    style: { cursor: "pointer" },
-  };
-  switch (shape) {
-    case "square":
-      return <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={r * 0.25} {...common} />;
-    case "diamond":
-      return <rect x={-r} y={-r} width={r * 2} height={r * 2} transform="rotate(45)" {...common} />;
-    case "triangle": {
-      const h = r * 1.5;
-      return <polygon points={`0,${-h} ${r * 1.15},${h * 0.7} ${-r * 1.15},${h * 0.7}`} {...common} />;
-    }
-    case "hexagon": {
-      const pts = Array.from({ length: 6 }, (_, i) => {
-        const a = (Math.PI / 3) * i - Math.PI / 6;
-        return `${(r * Math.cos(a)).toFixed(2)},${(r * Math.sin(a)).toFixed(2)}`;
-      }).join(" ");
-      return <polygon points={pts} {...common} />;
-    }
-    case "ring":
-      return (
-        <circle r={r} fill={color} fillOpacity={dimmed ? 0.1 : 0.18} stroke={color}
-          strokeWidth={1.4} strokeOpacity={dimmed ? 0.4 : 0.9} style={{ cursor: "pointer" }} />
-      );
-    case "circle":
-    default:
-      return <circle r={r} {...common} />;
-  }
+const BASEMAPS = {
+  terrain: {
+    label: "Terrain",
+    layers: [
+      { url: ESRI("World_Topo_Map"), attr: ESRI_ATTR },
+    ],
+  },
+  satellite: {
+    label: "Satellite",
+    layers: [
+      { url: ESRI("World_Imagery"), attr: ESRI_ATTR },
+      { url: ESRI("Reference/World_Boundaries_and_Places"), attr: "", overlay: true },
+    ],
+  },
+  light: {
+    label: "Light",
+    layers: [
+      { url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", attr: CARTO_ATTR, subdomains: "abcd" },
+    ],
+  },
+};
+
+// ── Leaflet marker icon builders ──────────────────────────────────────────────
+function incidentIcon(inc) {
+  const cfg = INCIDENT_TYPES[inc.type] || {};
+  const d = Math.round(11 + inc.intensity * 1.3);
+  const critical = inc.intensity >= 8 ? "wm-pulse" : "";
+  return L.divIcon({
+    className: "wm-icon",
+    html: `<span class="wm-dot ${critical}" style="--c:${cfg.color};width:${d}px;height:${d}px"></span>`,
+    iconSize: [d, d],
+    iconAnchor: [d / 2, d / 2],
+  });
+}
+function flagIcon(cc, color) {
+  return L.divIcon({
+    className: "wm-icon",
+    html: `<span class="wm-flag" style="--ring:${color}"><img src="${flag(cc)}" alt="" onerror="this.style.display='none'"/></span>`,
+    iconSize: [24, 18],
+    iconAnchor: [12, 9],
+  });
+}
+function badgeIcon(glyph, color) {
+  return L.divIcon({
+    className: "wm-icon",
+    html: `<span class="wm-badge" style="--bg:${color}">${glyph}</span>`,
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+  });
 }
 
 function StatTile({ icon: Icon, label, value, sub, tone }) {
@@ -93,7 +111,16 @@ function StatTile({ icon: Icon, label, value, sub, tone }) {
   );
 }
 
-const flag = (cc) => (cc ? `https://flagcdn.com/w20/${cc}.png` : null);
+// Small SVG swatch for the legend chips (matches each layer's on-map style)
+function LayerSwatch({ def }) {
+  if (def.kind === "flag")
+    return <span className="inline-block w-3.5 h-2.5 rounded-[2px] border" style={{ borderColor: def.color, background: `${def.color}22` }} />;
+  if (def.kind === "area")
+    return <span className="inline-block w-3 h-3 rounded-full border-2" style={{ borderColor: def.color, background: `${def.color}22` }} />;
+  if (def.kind === "badge")
+    return <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-[8px] text-white" style={{ background: def.color }}>{def.glyph}</span>;
+  return <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: def.color }} />;
+}
 
 export default function WorldMonitor() {
   const [incidents, setIncidents] = useState([]);
@@ -103,29 +130,33 @@ export default function WorldMonitor() {
   const [refreshing, setRefreshing] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
 
-  // Layer visibility: all on except the four base layers off by default,
-  // so first paint stays focused on the live conflict picture.
-  const [layers, setLayers] = useState({
-    incidents: true, theaters: true, nuclear: false, nato: false, us: false, france: false,
+  // Start with all layers off except the live conflict picture
+  const [layers, setLayers] = useState(() => {
+    const init = {};
+    Object.keys(LAYER_DEFS).forEach((k) => { init[k] = k === "incidents" || k === "theaters"; });
+    return init;
   });
   const [typeFilter, setTypeFilter] = useState("all");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
-  const [tooltip, setTooltip] = useState(null);
-  const [geoData, setGeoData] = useState(getCachedWorldGeo);
-  const [position, setPosition] = useState({ coordinates: [12, 20], zoom: 1 });
-  const feedRef = useRef(null);
+  const [zoom, setZoom] = useState(3);
+  const [basemap, setBasemap] = useState("terrain");
+  const [ready, setReady] = useState(false);
 
-  useEffect(() => {
-    if (!getCachedWorldGeo()) loadWorldGeo().then((d) => d && setGeoData(d));
-  }, []);
+  const mapDivRef = useRef(null);
+  const mapRef = useRef(null);
+  const groupsRef = useRef({});
+  const highlightRef = useRef(null);
+  const baseLayersRef = useRef([]);
 
+  const q = query.trim().toLowerCase();
+
+  // ── Load incidents ──
   const load = useCallback(async () => {
     setRefreshing(true);
     try {
       const { data } = await axios.get(`${API}/world-monitor/incidents`, { timeout: 30000 });
-      const list = data.incidents ?? [];
-      setIncidents(list);
+      setIncidents(data.incidents ?? []);
       setUpdated(data.updated ? new Date(data.updated) : null);
       setServerWarming(data.status === "warming");
       setFetchFailed(false);
@@ -138,109 +169,210 @@ export default function WorldMonitor() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
-
   useEffect(() => {
     const delay = (serverWarming || fetchFailed) && incidents.length === 0 ? 20000 : 5 * 60 * 1000;
     const t = setTimeout(load, delay);
     return () => clearTimeout(t);
   }, [load, serverWarming, fetchFailed, incidents.length, updated]);
 
-  const phase = incidents.length > 0
-    ? "ok"
-    : !firstLoadDone || serverWarming ? "warming"
-    : fetchFailed ? "error" : "warming";
-
-  // ── Zoom controls ──
-  const clampZoom = (z) => Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
-  const zoomBy = (f) => setPosition((p) => ({ ...p, zoom: clampZoom(p.zoom * f) }));
-  const resetView = () => setPosition({ coordinates: [12, 20], zoom: 1 });
-  const flyTo = (lng, lat, zoom = 4) =>
-    setPosition({ coordinates: [lng, lat], zoom: clampZoom(zoom) });
-
-  const q = query.trim().toLowerCase();
-
-  // ── Visible incident points ──
-  const visibleIncidents = useMemo(
-    () =>
-      layers.incidents
-        ? incidents.filter(
-            (i) =>
-              (typeFilter === "all" || i.type === typeFilter) &&
-              (!q || i.region.toLowerCase().includes(q) || i.label.toLowerCase().includes(q))
-          )
-        : [],
-    [incidents, layers.incidents, typeFilter, q]
-  );
-
-  // ── Visible POIs per active base/site layer ──
-  const visiblePOIs = useMemo(() => {
-    const out = [];
-    Object.keys(POI_LAYERS).forEach((key) => {
-      if (!layers[key]) return;
-      POI_LAYERS[key].forEach((poi) => {
-        if (!q || poi.name.toLowerCase().includes(q) || poi.country.toLowerCase().includes(q))
-          out.push({ ...poi, layer: key });
-      });
+  // ── Init Leaflet map once ──
+  useEffect(() => {
+    if (mapRef.current || !mapDivRef.current) return;
+    const map = L.map(mapDivRef.current, {
+      center: [25, 15],
+      zoom: 3,
+      minZoom: 2,
+      maxZoom: 18,
+      zoomControl: false,
+      worldCopyJump: true,
+      attributionControl: true,
     });
-    return out;
-  }, [layers, q]);
+    map.on("zoomend", () => setZoom(map.getZoom()));
+    // Create one layer group per layer key
+    Object.keys(LAYER_DEFS).forEach((k) => { groupsRef.current[k] = L.layerGroup(); });
+    mapRef.current = map;
+    setReady(true);
+    setTimeout(() => map.invalidateSize(), 150);
+    return () => { map.remove(); mapRef.current = null; };
+  }, []);
 
-  const stats = useMemo(
-    () => ({
-      total: incidents.length,
-      critical: incidents.filter((i) => i.intensity >= 8).length,
-      zones: new Set(incidents.map((i) => i.region)).size,
-      sites: Object.keys(POI_LAYERS).reduce((n, k) => n + (layers[k] ? POI_LAYERS[k].length : 0), 0),
-    }),
-    [incidents, layers]
+  // ── Swap base tile layers when the basemap choice changes ──
+  useEffect(() => {
+    if (!ready) return;
+    const map = mapRef.current;
+    baseLayersRef.current.forEach((l) => map.removeLayer(l));
+    const conf = BASEMAPS[basemap] || BASEMAPS.terrain;
+    baseLayersRef.current = conf.layers.map((l) => {
+      const tl = L.tileLayer(l.url, {
+        subdomains: l.subdomains || "abc",
+        maxZoom: 18,
+        attribution: l.attr,
+      });
+      tl.addTo(map);
+      tl.bringToBack(); // keep tiles under all marker/vector layers
+      return tl;
+    });
+  }, [ready, basemap]);
+
+  const flyTo = useCallback((lat, lng, z = 6) => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.flyTo([lat, lng], Math.max(map.getZoom(), z), { duration: 0.8 });
+  }, []);
+
+  const selectIncident = useCallback((inc) => {
+    setSelected({ kind: "incident", data: inc });
+    flyTo(inc.lat, inc.lng, 6);
+  }, [flyTo]);
+  const selectPOI = useCallback((poi, layer) => {
+    setSelected({ kind: "poi", data: { ...poi, layer } });
+    flyTo(poi.lat, poi.lng, 6);
+  }, [flyTo]);
+
+  // ── Build incident markers ──
+  useEffect(() => {
+    if (!ready) return;
+    const g = groupsRef.current.incidents;
+    g.clearLayers();
+    incidents
+      .filter((i) => (typeFilter === "all" || i.type === typeFilter) &&
+        (!q || i.region.toLowerCase().includes(q) || i.label.toLowerCase().includes(q)))
+      .forEach((inc) => {
+        const m = L.marker([inc.lat, inc.lng], { icon: incidentIcon(inc) });
+        m.bindTooltip(
+          `<b>${inc.region}</b> · ${inc.intensity}/10<br>${inc.label.slice(0, 90)}`,
+          { direction: "top", offset: [0, -6], className: "wm-tip" }
+        );
+        m.on("click", () => selectIncident(inc));
+        g.addLayer(m);
+      });
+  }, [ready, incidents, typeFilter, q, selectIncident]);
+
+  // ── Build POI markers (per layer) ──
+  useEffect(() => {
+    if (!ready) return;
+    Object.entries(POI_LAYERS).forEach(([key, items]) => {
+      const def = LAYER_DEFS[key];
+      const g = groupsRef.current[key];
+      g.clearLayers();
+      items
+        .filter((p) => !q || p.name.toLowerCase().includes(q) || p.country.toLowerCase().includes(q))
+        .forEach((poi) => {
+          if (def.kind === "area") {
+            const circle = L.circle([poi.lat, poi.lng], {
+              radius: (poi.r || 300) * 1000,
+              color: def.color, weight: 1.5, opacity: 0.7,
+              fillColor: def.color, fillOpacity: 0.1,
+            });
+            circle.bindTooltip(`<b>${poi.name}</b><br>${poi.note}`, { direction: "top", className: "wm-tip", sticky: true });
+            circle.on("click", () => selectPOI(poi, key));
+            g.addLayer(circle);
+          } else {
+            const icon = def.kind === "flag" ? flagIcon(poi.cc, def.color) : badgeIcon(def.glyph, def.color);
+            const m = L.marker([poi.lat, poi.lng], { icon });
+            m.bindTooltip(`<b>${poi.name}</b> · ${poi.country}<br>${poi.note}`, { direction: "top", offset: [0, -8], className: "wm-tip" });
+            m.on("click", () => selectPOI(poi, key));
+            g.addLayer(m);
+          }
+        });
+    });
+  }, [ready, q, selectPOI]);
+
+  // ── Toggle layer groups on/off ──
+  useEffect(() => {
+    if (!ready) return;
+    const map = mapRef.current;
+    Object.keys(LAYER_DEFS).forEach((k) => {
+      const g = groupsRef.current[k];
+      if (layers[k]) { if (!map.hasLayer(g)) g.addTo(map); }
+      else if (map.hasLayer(g)) map.removeLayer(g);
+    });
+  }, [ready, layers]);
+
+  // ── Highlight the selected point ──
+  useEffect(() => {
+    if (!ready) return;
+    const map = mapRef.current;
+    if (highlightRef.current) { map.removeLayer(highlightRef.current); highlightRef.current = null; }
+    if (selected) {
+      const { lat, lng } = selected.data;
+      highlightRef.current = L.circleMarker([lat, lng], {
+        radius: 16, color: "#1e40af", weight: 2, fill: false, dashArray: "4 3",
+        interactive: false,
+      }).addTo(map);
+    }
+  }, [ready, selected]);
+
+  // ── Derived data for panels ──
+  const filteredIncidents = useMemo(
+    () => incidents.filter((i) =>
+      (typeFilter === "all" || i.type === typeFilter) &&
+      (!q || i.region.toLowerCase().includes(q) || i.label.toLowerCase().includes(q))),
+    [incidents, typeFilter, q]
   );
-
+  const feed = useMemo(
+    () => [...filteredIncidents].sort((a, b) => b.intensity - a.intensity || (b.date > a.date ? 1 : -1)),
+    [filteredIncidents]
+  );
+  const stats = useMemo(() => ({
+    total: incidents.length,
+    critical: incidents.filter((i) => i.intensity >= 8).length,
+    zones: new Set(incidents.map((i) => i.region)).size,
+    sites: Object.keys(POI_LAYERS).reduce((n, k) => n + (layers[k] ? POI_LAYERS[k].length : 0), 0),
+  }), [incidents, layers]);
   const typeCounts = useMemo(() => {
     const c = { all: incidents.length };
     incidents.forEach((i) => { c[i.type] = (c[i.type] ?? 0) + 1; });
     return c;
   }, [incidents]);
 
-  const feed = useMemo(
-    () => [...visibleIncidents].sort((a, b) => b.intensity - a.intensity || (b.date > a.date ? 1 : -1)),
-    [visibleIncidents]
-  );
-
-  const layerCount = (key) =>
-    key === "incidents" ? incidents.length : POI_LAYERS[key]?.length ?? 0;
-
+  const layerCount = (key) => (key === "incidents" ? incidents.length : POI_LAYERS[key]?.length ?? 0);
   const toggleLayer = (key) => setLayers((l) => ({ ...l, [key]: !l[key] }));
+  const setAllLayers = (on) => setLayers(() => {
+    const next = {};
+    Object.keys(LAYER_DEFS).forEach((k) => { next[k] = on; });
+    return next;
+  });
 
-  const selectIncident = (inc) => {
-    setSelected({ kind: "incident", data: inc });
-    flyTo(inc.lng, inc.lat, Math.max(position.zoom, 4));
-  };
-  const selectPOI = (poi) => {
-    setSelected({ kind: "poi", data: poi });
-    flyTo(poi.lng, poi.lat, Math.max(position.zoom, 4));
-  };
+  const phase = incidents.length > 0 ? "ok"
+    : !firstLoadDone || serverWarming ? "warming"
+    : fetchFailed ? "error" : "warming";
 
-  // Inverse marker scale so shapes keep a stable pixel size while zooming
-  const mScale = 1 / position.zoom;
-  const showLabels = position.zoom >= LABEL_ZOOM;
-
-  const statusBadge =
-    phase === "ok" ? (
-      <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-mono font-bold">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> LIVE
-      </span>
-    ) : phase === "warming" ? (
-      <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-mono font-bold">
-        <Satellite size={10} className="animate-pulse" /> COLLECTING
-      </span>
-    ) : (
-      <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-600 text-[10px] font-mono font-bold">
-        <span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> OFFLINE
-      </span>
-    );
+  const statusBadge = phase === "ok" ? (
+    <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-mono font-bold">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> LIVE
+    </span>
+  ) : phase === "warming" ? (
+    <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-mono font-bold">
+      <Satellite size={10} className="animate-pulse" /> COLLECTING
+    </span>
+  ) : (
+    <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-600 text-[10px] font-mono font-bold">
+      <span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> OFFLINE
+    </span>
+  );
 
   return (
     <div className="space-y-4 max-w-[1500px] mx-auto">
+      {/* Leaflet custom marker styles */}
+      <style>{`
+        .wm-icon { background: none; border: none; }
+        .wm-dot { display:block; border-radius:9999px; background:var(--c); border:2px solid #fff;
+          box-shadow:0 0 0 1px rgba(15,23,42,.25); }
+        .wm-pulse { animation: wmPulse 1.6s ease-out infinite; }
+        @keyframes wmPulse { 0%{box-shadow:0 0 0 0 var(--c),0 0 0 1px rgba(15,23,42,.25);}
+          70%{box-shadow:0 0 0 10px transparent,0 0 0 1px rgba(15,23,42,.15);}
+          100%{box-shadow:0 0 0 0 transparent,0 0 0 1px rgba(15,23,42,.25);} }
+        .wm-flag { display:flex; width:24px; height:18px; border-radius:3px; overflow:hidden;
+          border:2px solid var(--ring); box-shadow:0 1px 3px rgba(0,0,0,.3); background:#fff; }
+        .wm-flag img { width:100%; height:100%; object-fit:cover; }
+        .wm-badge { display:flex; align-items:center; justify-content:center; width:22px; height:22px;
+          border-radius:9999px; background:var(--bg); color:#fff; font-size:12px; line-height:1;
+          border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+        .wm-tip { font-size:11px !important; max-width:230px; }
+        .leaflet-container { font-family: inherit; background:#eef2f7; }
+      `}</style>
+
       {/* ── Header ── */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -250,7 +382,7 @@ export default function WorldMonitor() {
             <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 border border-amber-300 text-[9px] font-mono font-semibold tracking-wider rounded">WIP</span>
           </div>
           <p className="text-sm text-slate-500 mt-0.5">
-            OSINT situation map — live incidents plus nuclear sites, theaters, NATO / US / French bases
+            OSINT situation map — 16 layers: live incidents, theaters, chokepoints, nuclear & strategic sites, spaceports, SIGINT & military bases
           </p>
         </div>
         <div className="flex items-center gap-2.5">
@@ -258,11 +390,8 @@ export default function WorldMonitor() {
           {fetchFailed && incidents.length > 0 && (
             <span className="text-[11px] text-amber-600 font-medium">refresh failed — last snapshot</span>
           )}
-          <button
-            onClick={load}
-            disabled={refreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:border-blue-300 hover:text-blue-800 transition-colors shadow-sm disabled:opacity-50"
-          >
+          <button onClick={load} disabled={refreshing}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:border-blue-300 hover:text-blue-800 transition-colors shadow-sm disabled:opacity-50">
             <RefreshCw size={12} className={refreshing ? "animate-spin" : ""} /> Refresh
           </button>
         </div>
@@ -270,272 +399,129 @@ export default function WorldMonitor() {
 
       {/* ── Stat tiles ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatTile icon={Activity} tone="blue" label="Active incidents" sub="last 72 h coverage"
-          value={phase === "ok" ? stats.total : "—"} />
-        <StatTile icon={TriangleAlert} tone="rose" label="Critical alerts" sub="intensity 8+"
-          value={phase === "ok" ? stats.critical : "—"} />
-        <StatTile icon={Crosshair} tone="amber" label="Zones affected" sub="active regions"
-          value={phase === "ok" ? stats.zones : "—"} />
-        <StatTile icon={Layers} tone="teal" label="Sites shown" sub="from active layers"
-          value={stats.sites} />
+        <StatTile icon={Activity} tone="blue" label="Active incidents" sub="last 72 h coverage" value={phase === "ok" ? stats.total : "—"} />
+        <StatTile icon={TriangleAlert} tone="rose" label="Critical alerts" sub="intensity 8+" value={phase === "ok" ? stats.critical : "—"} />
+        <StatTile icon={Crosshair} tone="amber" label="Zones affected" sub="active regions" value={phase === "ok" ? stats.zones : "—"} />
+        <StatTile icon={Layers} tone="teal" label="Sites shown" sub="from active layers" value={stats.sites} />
       </div>
 
       {/* ── Main grid ── */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 items-start">
-        {/* ── Map card ── */}
+        {/* Map card */}
         <div className="xl:col-span-2 bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
-          {/* Toolbar: search + incident type filter */}
+          {/* Toolbar */}
           <div className="flex flex-wrap items-center gap-2 px-4 pt-4 pb-3 border-b border-slate-100">
             <div className="relative">
               <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search region, base, country…"
-                className="pl-8 pr-3 py-1.5 w-56 max-w-full text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300"
-              />
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search region, base, country…"
+                className="pl-8 pr-3 py-1.5 w-56 max-w-full text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300" />
             </div>
             <div className="flex flex-wrap items-center gap-1.5 ml-auto">
-              {[{ key: "all", label: "All" }, ...Object.entries(INCIDENT_TYPES).map(([k, v]) => ({ key: k, ...v }))].map(
-                ({ key, label, color }) => (
-                  <button
-                    key={key}
-                    onClick={() => setTypeFilter(key)}
-                    disabled={!layers.incidents}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors disabled:opacity-40 ${
-                      typeFilter === key
-                        ? "bg-blue-800 border-blue-800 text-white"
-                        : "bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-800"
-                    }`}
-                  >
-                    {color && <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />}
-                    {label}
-                    <span className={`font-mono ${typeFilter === key ? "text-blue-200" : "text-slate-400"}`}>
-                      {typeCounts[key] ?? 0}
-                    </span>
-                  </button>
-                )
-              )}
+              {[{ key: "all", label: "All" }, ...Object.entries(INCIDENT_TYPES).map(([k, v]) => ({ key: k, ...v }))].map(({ key, label, color }) => (
+                <button key={key} onClick={() => setTypeFilter(key)} disabled={!layers.incidents}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors disabled:opacity-40 ${
+                    typeFilter === key ? "bg-blue-800 border-blue-800 text-white" : "bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-800"}`}>
+                  {color && <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />}
+                  {label}
+                  <span className={`font-mono ${typeFilter === key ? "text-blue-200" : "text-slate-400"}`}>{typeCounts[key] ?? 0}</span>
+                </button>
+              ))}
             </div>
           </div>
 
           {/* Map */}
-          <div className="relative bg-slate-50">
-            {geoData ? (
-              <ComposableMap
-                projection="geoEqualEarth"
-                projectionConfig={{ scale: 165 }}
-                width={800}
-                height={420}
-                style={{ width: "100%", height: "auto" }}
-              >
-                <ZoomableGroup
-                  zoom={position.zoom}
-                  center={position.coordinates}
-                  minZoom={MIN_ZOOM}
-                  maxZoom={MAX_ZOOM}
-                  onMoveEnd={(pos) => setPosition(pos)}
-                >
-                  <Geographies geography={geoData}>
-                    {({ geographies }) =>
-                      geographies.map((geo) => (
-                        <Geography
-                          key={geo.rsmKey}
-                          geography={geo}
-                          fill="#e2e8f0"
-                          stroke="#ffffff"
-                          strokeWidth={0.4}
-                          style={{
-                            default: { outline: "none" },
-                            hover: { outline: "none", fill: "#dbe3ec" },
-                            pressed: { outline: "none" },
-                          }}
-                        />
-                      ))
-                    }
-                  </Geographies>
-
-                  {/* POI markers (bases / nuclear / theaters) */}
-                  {visiblePOIs.map((poi) => {
-                    const def = LAYER_DEFS[poi.layer];
-                    const isTheater = poi.layer === "theaters";
-                    const baseR = isTheater ? 9 : 5;
-                    const r = baseR * mScale;
-                    const isSel = selected?.kind === "poi" && selected.data.id === poi.id;
-                    return (
-                      <Marker
-                        key={poi.id}
-                        coordinates={[poi.lng, poi.lat]}
-                        onClick={() => selectPOI(poi)}
-                        onMouseEnter={(e) => setTooltip({ x: e.clientX, y: e.clientY, poi })}
-                        onMouseLeave={() => setTooltip(null)}
-                      >
-                        {isSel && (
-                          <circle r={(baseR + 4) * mScale} fill="none" stroke={def.color}
-                            strokeWidth={1.4 * mScale} />
-                        )}
-                        <ShapeMark shape={def.shape} r={r} color={def.color} />
-                        {showLabels && !isTheater && (
-                          <text
-                            textAnchor="middle"
-                            y={-(r + 3)}
-                            style={{ fontFamily: "monospace", pointerEvents: "none" }}
-                            fontSize={7 * mScale}
-                            fill="#0f172a"
-                            stroke="#ffffff"
-                            strokeWidth={2.2 * mScale}
-                            paintOrder="stroke"
-                          >
-                            {poi.name}
-                          </text>
-                        )}
-                      </Marker>
-                    );
-                  })}
-
-                  {/* Live incident markers on top */}
-                  {visibleIncidents.map((inc) => {
-                    const cfg = INCIDENT_TYPES[inc.type];
-                    const r = (2.5 + inc.intensity * 0.4) * mScale;
-                    const isSel = selected?.kind === "incident" && selected.data.id === inc.id;
-                    return (
-                      <Marker
-                        key={`inc-${inc.id}`}
-                        coordinates={[inc.lng, inc.lat]}
-                        onClick={() => selectIncident(inc)}
-                        onMouseEnter={(e) => setTooltip({ x: e.clientX, y: e.clientY, inc })}
-                        onMouseLeave={() => setTooltip(null)}
-                      >
-                        {inc.intensity >= 8 && (
-                          <circle r={r} fill={cfg?.color} opacity="0.35" pointerEvents="none">
-                            <animate attributeName="r" values={`${r};${r * 2.8}`} dur="1.6s" repeatCount="indefinite" />
-                            <animate attributeName="opacity" values="0.4;0" dur="1.6s" repeatCount="indefinite" />
-                          </circle>
-                        )}
-                        {isSel && (
-                          <circle r={r + 3.5 * mScale} fill="none" stroke={cfg?.color} strokeWidth={1.4 * mScale} />
-                        )}
-                        <circle r={r} fill={cfg?.color ?? "#64748b"} fillOpacity={0.9}
-                          stroke="#ffffff" strokeWidth={1.1 * mScale} style={{ cursor: "pointer" }} />
-                        {showLabels && (
-                          <text
-                            textAnchor="middle"
-                            y={-(r + 3)}
-                            style={{ fontFamily: "monospace", pointerEvents: "none" }}
-                            fontSize={7 * mScale}
-                            fill="#0f172a"
-                            stroke="#ffffff"
-                            strokeWidth={2.2 * mScale}
-                            paintOrder="stroke"
-                          >
-                            {inc.region}
-                          </text>
-                        )}
-                      </Marker>
-                    );
-                  })}
-                </ZoomableGroup>
-              </ComposableMap>
-            ) : (
-              <div className="flex items-center justify-center" style={{ minHeight: 400 }}>
-                <span className="text-xs text-slate-400 animate-pulse">Loading world map…</span>
-              </div>
-            )}
+          <div className="relative">
+            <div ref={mapDivRef} className="w-full h-[460px] lg:h-[580px] bg-slate-100" />
 
             {/* Zoom controls */}
-            <div className="absolute top-3 right-3 flex flex-col gap-1">
-              <button onClick={() => zoomBy(1.5)} title="Zoom in"
-                className="w-8 h-8 flex items-center justify-center bg-white/95 border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:text-blue-800 hover:border-blue-300 transition-colors">
-                <Plus size={15} />
-              </button>
-              <button onClick={() => zoomBy(1 / 1.5)} title="Zoom out"
-                className="w-8 h-8 flex items-center justify-center bg-white/95 border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:text-blue-800 hover:border-blue-300 transition-colors">
-                <Minus size={15} />
-              </button>
-              <button onClick={resetView} title="Reset view"
-                className="w-8 h-8 flex items-center justify-center bg-white/95 border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:text-blue-800 hover:border-blue-300 transition-colors">
-                <Locate size={14} />
-              </button>
+            <div className="absolute top-3 right-3 z-[500] flex flex-col gap-1">
+              <button onClick={() => mapRef.current?.zoomIn()} title="Zoom in"
+                className="w-8 h-8 flex items-center justify-center bg-white/95 border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:text-blue-800 hover:border-blue-300 transition-colors"><Plus size={15} /></button>
+              <button onClick={() => mapRef.current?.zoomOut()} title="Zoom out"
+                className="w-8 h-8 flex items-center justify-center bg-white/95 border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:text-blue-800 hover:border-blue-300 transition-colors"><Minus size={15} /></button>
+              <button onClick={() => mapRef.current?.setView([25, 15], 3)} title="Reset view"
+                className="w-8 h-8 flex items-center justify-center bg-white/95 border border-slate-200 rounded-lg shadow-sm text-slate-600 hover:text-blue-800 hover:border-blue-300 transition-colors"><Locate size={14} /></button>
             </div>
-            <div className="absolute top-3 left-3 bg-white/85 rounded px-1.5 py-0.5 text-[10px] font-mono text-slate-500">
-              {position.zoom.toFixed(1)}× · scroll or drag to explore
+            <div className="absolute top-3 left-3 z-[500] flex flex-col gap-1 items-start">
+              <span className="bg-white/85 rounded px-1.5 py-0.5 text-[10px] font-mono text-slate-500">
+                zoom {zoom} · scroll or drag to explore
+              </span>
+              <span className="bg-white/80 rounded px-1.5 py-0.5 text-[9px] text-slate-500">
+                Incidents: GDELT · Sites: OSINT (public)
+              </span>
+            </div>
+
+            {/* Basemap switcher */}
+            <div className="absolute bottom-3 left-3 z-[500] flex items-center bg-white/95 border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+              {Object.entries(BASEMAPS).map(([key, conf]) => (
+                <button key={key} onClick={() => setBasemap(key)}
+                  className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                    basemap === key ? "bg-blue-800 text-white" : "text-slate-600 hover:bg-slate-100"}`}>
+                  {conf.label}
+                </button>
+              ))}
             </div>
 
             {/* Overlay states */}
-            {phase !== "ok" && geoData && layers.incidents && visiblePOIs.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-[1px]">
-                <div className="text-center px-6">
+            {phase !== "ok" && layers.incidents && (
+              <div className="absolute inset-x-0 top-3 z-[500] flex justify-center pointer-events-none">
+                <div className="pointer-events-auto bg-white/95 border border-slate-200 rounded-lg shadow-sm px-4 py-2 text-center max-w-sm">
                   {phase === "warming" ? (
-                    <>
-                      <Satellite size={26} className="mx-auto text-blue-800 animate-pulse" />
-                      <p className="text-sm font-semibold text-slate-700 mt-2">Collecting live intelligence…</p>
-                      <p className="text-xs text-slate-500 mt-1 max-w-xs">
-                        First collection takes a couple of minutes. Base layers are available meanwhile.
-                      </p>
-                    </>
+                    <p className="text-xs text-slate-600 flex items-center gap-1.5 justify-center">
+                      <Satellite size={13} className="text-blue-800 animate-pulse" /> Collecting live incidents… base layers work meanwhile.
+                    </p>
                   ) : (
-                    <>
-                      <TriangleAlert size={26} className="mx-auto text-rose-500" />
-                      <p className="text-sm font-semibold text-slate-700 mt-2">Live feed unavailable</p>
-                      <button onClick={load}
-                        className="mt-3 px-3 py-1.5 bg-blue-800 hover:bg-blue-900 text-white text-xs font-medium rounded-lg">
-                        Retry now
-                      </button>
-                    </>
+                    <p className="text-xs text-slate-600 flex items-center gap-2 justify-center">
+                      <TriangleAlert size={13} className="text-rose-500" /> Live feed unavailable.
+                      <button onClick={load} className="text-blue-800 font-medium hover:underline">Retry</button>
+                    </p>
                   )}
                 </div>
               </div>
             )}
-
-            {/* Attribution */}
-            <div className="absolute bottom-3 right-3 text-[10px] text-slate-400 bg-white/80 rounded px-1.5 py-0.5">
-              Incidents: GDELT · Sites: OSINT (public)
-            </div>
           </div>
 
-          {/* ── Layer legend / toggles ── */}
-          <div className="flex flex-wrap items-center gap-1.5 px-4 py-3 border-t border-slate-100">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1">
-              <Layers size={12} /> Layers
-            </span>
-            {Object.entries(LAYER_DEFS).map(([key, def]) => {
-              const on = layers[key];
-              return (
-                <button
-                  key={key}
-                  onClick={() => toggleLayer(key)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors ${
-                    on
-                      ? "bg-white border-slate-300 text-slate-700 shadow-sm"
-                      : "bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-600"
-                  }`}
-                >
-                  <svg width="12" height="12" viewBox="-6 -6 12 12" className={on ? "" : "opacity-40"}>
-                    <ShapeMark shape={def.shape} r={4.5} color={def.color} />
-                  </svg>
-                  {def.label}
-                  <span className="font-mono text-slate-400">{layerCount(key)}</span>
-                </button>
-              );
-            })}
+          {/* Layer toggles — grouped by family */}
+          <div className="px-4 py-3 border-t border-slate-100 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1"><Layers size={12} /> Layers</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setAllLayers(true)} className="text-[10px] font-medium text-slate-400 hover:text-blue-800">Show all</button>
+                <span className="text-slate-200">·</span>
+                <button onClick={() => setAllLayers(false)} className="text-[10px] font-medium text-slate-400 hover:text-blue-800">Hide all</button>
+              </div>
+            </div>
+            {LAYER_GROUPS.map((group) => (
+              <div key={group} className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[9px] font-mono uppercase tracking-wider text-slate-300 w-16 shrink-0">{group}</span>
+                {Object.entries(LAYER_DEFS).filter(([, d]) => d.group === group).map(([key, def]) => {
+                  const on = layers[key];
+                  return (
+                    <button key={key} onClick={() => toggleLayer(key)}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors ${
+                        on ? "bg-white border-slate-300 text-slate-700 shadow-sm" : "bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-600"}`}>
+                      <span className={on ? "" : "opacity-40"}><LayerSwatch def={def} /></span>
+                      {def.label}
+                      <span className="font-mono text-slate-400">{layerCount(key)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── Right panel ── */}
+        {/* Right panel */}
         <div className="bg-white border border-slate-200 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
           <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-slate-100">
-            <h2 className="font-heading font-bold text-slate-900 text-sm">
-              {selected ? "Selection" : "Incident Feed"}
-            </h2>
+            <h2 className="font-heading font-bold text-slate-900 text-sm">{selected ? "Selection" : "Incident Feed"}</h2>
             <span className="text-[11px] font-mono text-slate-400">{feed.length} incidents</span>
           </div>
 
-          {/* Selected detail */}
           {selected && selected.kind === "incident" && (
             <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider"
-                  style={{ color: INCIDENT_TYPES[selected.data.type]?.color }}>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider" style={{ color: INCIDENT_TYPES[selected.data.type]?.color }}>
                   {INCIDENT_TYPES[selected.data.type]?.label} · {selected.data.intensity}/10
                 </span>
                 <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600"><X size={13} /></button>
@@ -545,8 +531,7 @@ export default function WorldMonitor() {
               <div className="flex items-center justify-between mt-2">
                 <span className="text-[10px] text-slate-400 font-mono">{selected.data.source} · {selected.data.date}</span>
                 {selected.data.url && (
-                  <a href={selected.data.url} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-[11px] font-medium text-blue-800 hover:text-blue-600">
+                  <a href={selected.data.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[11px] font-medium text-blue-800 hover:text-blue-600">
                     Read source <ExternalLink size={11} />
                   </a>
                 )}
@@ -557,12 +542,8 @@ export default function WorldMonitor() {
           {selected && selected.kind === "poi" && (
             <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
               <div className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider"
-                  style={{ color: LAYER_DEFS[selected.data.layer]?.color }}>
-                  <svg width="11" height="11" viewBox="-6 -6 12 12">
-                    <ShapeMark shape={LAYER_DEFS[selected.data.layer]?.shape} r={4.5} color={LAYER_DEFS[selected.data.layer]?.color} />
-                  </svg>
-                  {LAYER_DEFS[selected.data.layer]?.label}
+                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider" style={{ color: LAYER_DEFS[selected.data.layer]?.color }}>
+                  <LayerSwatch def={LAYER_DEFS[selected.data.layer]} /> {LAYER_DEFS[selected.data.layer]?.label}
                 </span>
                 <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600"><X size={13} /></button>
               </div>
@@ -575,16 +556,11 @@ export default function WorldMonitor() {
             </div>
           )}
 
-          {/* Feed list */}
-          <div ref={feedRef} className="max-h-[540px] overflow-y-auto">
+          <div className="max-h-[560px] overflow-y-auto">
             {!layers.incidents ? (
-              <div className="px-4 py-10 text-center text-xs text-slate-400">
-                Live incidents layer is off. Turn it on to see the feed.
-              </div>
+              <div className="px-4 py-10 text-center text-xs text-slate-400">Live incidents layer is off. Turn it on to see the feed.</div>
             ) : phase !== "ok" ? (
-              <div className="px-4 py-10 text-center text-xs text-slate-400">
-                {phase === "warming" ? "Waiting for first data collection…" : "No data available."}
-              </div>
+              <div className="px-4 py-10 text-center text-xs text-slate-400">{phase === "warming" ? "Waiting for first data collection…" : "No data available."}</div>
             ) : feed.length === 0 ? (
               <div className="px-4 py-10 text-center text-xs text-slate-400">No incidents match the current filters.</div>
             ) : (
@@ -592,13 +568,8 @@ export default function WorldMonitor() {
                 const cfg = INCIDENT_TYPES[inc.type];
                 const isActive = selected?.kind === "incident" && selected.data.id === inc.id;
                 return (
-                  <button
-                    key={inc.id}
-                    onClick={() => selectIncident(inc)}
-                    className={`w-full text-left px-4 py-2.5 border-b border-slate-100 transition-colors ${
-                      isActive ? "bg-blue-50/60" : "hover:bg-slate-50"
-                    }`}
-                  >
+                  <button key={inc.id} onClick={() => selectIncident(inc)}
+                    className={`w-full text-left px-4 py-2.5 border-b border-slate-100 transition-colors ${isActive ? "bg-blue-50/60" : "hover:bg-slate-50"}`}>
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: cfg?.color }} />
                       <span className="text-xs font-semibold text-slate-900 truncate flex-1">{inc.region}</span>
@@ -613,37 +584,6 @@ export default function WorldMonitor() {
           </div>
         </div>
       </div>
-
-      {/* Hover tooltip */}
-      {tooltip && (
-        <div
-          className="fixed z-50 bg-white border border-slate-200 rounded-lg shadow-xl px-3 py-2 pointer-events-none max-w-[240px]"
-          style={{ left: tooltip.x + 14, top: tooltip.y - 60 }}
-        >
-          {tooltip.inc ? (
-            <>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: INCIDENT_TYPES[tooltip.inc.type]?.color }} />
-                <span className="text-xs font-semibold text-slate-900">{tooltip.inc.region}</span>
-                <span className="text-[10px] font-mono ml-auto" style={{ color: severityColor(tooltip.inc.intensity) }}>{tooltip.inc.intensity}/10</span>
-              </div>
-              <p className="text-[11px] text-slate-600 mt-1 leading-snug line-clamp-2">{tooltip.inc.label}</p>
-              <p className="text-[9px] text-slate-400 mt-1 font-mono">{INCIDENT_TYPES[tooltip.inc.type]?.label} · {tooltip.inc.source}</p>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center gap-1.5">
-                <svg width="11" height="11" viewBox="-6 -6 12 12">
-                  <ShapeMark shape={LAYER_DEFS[tooltip.poi.layer]?.shape} r={4.5} color={LAYER_DEFS[tooltip.poi.layer]?.color} />
-                </svg>
-                <span className="text-xs font-semibold text-slate-900">{tooltip.poi.name}</span>
-              </div>
-              <p className="text-[10px] text-slate-500 mt-0.5">{tooltip.poi.country}</p>
-              <p className="text-[11px] text-slate-600 mt-1 leading-snug line-clamp-2">{tooltip.poi.note}</p>
-            </>
-          )}
-        </div>
-      )}
     </div>
   );
 }
