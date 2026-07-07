@@ -18,6 +18,7 @@ Reliability:
 """
 
 import logging
+import re
 import threading
 import time
 from datetime import datetime, timezone
@@ -40,12 +41,31 @@ RATE_LIMIT_BACKOFF = 20  # seconds to wait before the single retry after a 429
 #       political = tensions/posturing · humanitarian = crisis & displacement
 MONITORED_ZONES = [
     # ── Active hostilities ──
+    # Ukraine is the largest active war — covered by several sub-fronts so it
+    # gets more of the feed (deduplicated below).
     {
         "region": "Ukraine",
         "lat": 48.37, "lng": 31.17,
-        "query": "ukraine war russia military attack",
+        "query": "ukraine war russia military offensive",
         "type": "combat",
         "country": "UA",
+        "max": 5,
+    },
+    {
+        "region": "Ukraine",
+        "lat": 48.02, "lng": 37.80,
+        "query": "ukraine donetsk pokrovsk frontline russian advance",
+        "type": "combat",
+        "country": "UA",
+        "max": 3,
+    },
+    {
+        "region": "Ukraine",
+        "lat": 50.45, "lng": 30.52,
+        "query": "ukraine drone missile strike russia energy",
+        "type": "strike",
+        "country": "UA",
+        "max": 3,
     },
     {
         "region": "Gaza Strip",
@@ -172,14 +192,82 @@ MONITORED_ZONES = [
 
 GDELT_DOC_URL = "https://api.gdeltproject.org/api/v2/doc/doc"
 
-# Intensity ladder per type: [lead article, 2nd, 3rd].
-# Hostility zones with heavy press coverage get bumped to critical (8).
-INTENSITY_LADDER = {
-    "combat": [7, 6, 5],
-    "strike": [7, 6, 5],
-    "political": [6, 5, 4],
-    "humanitarian": [6, 5, 4],
-}
+# Lead intensity per type (given to the top article of a zone); each further
+# article drops by one, floored at 4. Hostility zones with heavy press
+# coverage get their lead bumped to critical (8).
+INTENSITY_LEAD = {"combat": 7, "strike": 7, "political": 6, "humanitarian": 6}
+
+
+def _intensity(zone_type: str, rank: int, hot: bool) -> int:
+    lead = INTENSITY_LEAD.get(zone_type, 6)
+    if hot and zone_type in ("combat", "strike"):
+        lead = 8
+    return max(lead - rank, 4)
+
+
+# Stopwords stripped before comparing headlines for near-duplicate detection
+# (kept small: only glue words, so "kills", "strike", "war" stay meaningful).
+_STOP = frozenset(
+    "the and of in on to for with as at by from is are was were has have had "
+    "its into a an after over amid that this new".split()
+)
+
+
+def _stem(w: str) -> str:
+    """Very light singularisation so drone/drones, strike/strikes, etc. match."""
+    if len(w) > 3 and w.endswith("s") and not w.endswith("ss"):
+        return w[:-1]
+    return w
+
+
+# Drop a trailing " - Outlet" / " | Outlet" suffix before tokenising, so the
+# same headline from two outlets compares equal.
+_SUFFIX_RE = re.compile(r"\s+[-|–—]\s+.{1,40}$")
+
+
+def _content_tokens(title: str) -> frozenset:
+    """Significant, lightly-stemmed word tokens of a headline (for dedup)."""
+    title = _SUFFIX_RE.sub("", title)
+    return frozenset(
+        _stem(w) for w in re.findall(r"[a-z0-9]+", title.lower())
+        if w not in _STOP and len(w) > 1
+    )
+
+
+def _is_dup(a: frozenset, b: frozenset, same_region: bool) -> bool:
+    """
+    Decide whether two headline token sets describe the same story.
+    Same region: fuzzy match (Jaccard, or high overlap with ≥3 shared words —
+    robust to leftover outlet words). Cross region: only near-identical, so
+    distinct events in different places are never merged.
+    """
+    if not a or not b:
+        return False
+    inter = len(a & b)
+    if not inter:
+        return False
+    jaccard = inter / len(a | b)
+    if not same_region:
+        return jaccard >= 0.82
+    overlap = inter / min(len(a), len(b))
+    return jaccard >= 0.5 or (overlap >= 0.7 and inter >= 4)
+
+
+def _dedup(incidents: list[dict]) -> list[dict]:
+    """
+    Drop near-duplicate headlines (the same wire story rerun by many outlets).
+    Keeps the highest-intensity copy of each story.
+    """
+    kept: list[dict] = []
+    tokens: list[frozenset] = []
+    for inc in sorted(incidents, key=lambda x: (-x["intensity"], x["date"])):
+        toks = _content_tokens(inc["label"])
+        if any(_is_dup(toks, tokens[j], kept[j]["region"] == inc["region"])
+               for j in range(len(kept))):
+            continue
+        kept.append(inc)
+        tokens.append(toks)
+    return kept
 
 
 # Common English words used as a fallback language signal when GDELT does
@@ -229,14 +317,13 @@ def _gdelt_fetch_zone(zone: dict, retried: bool = False) -> list[dict]:
         resp.raise_for_status()
         data = resp.json()
         articles = data.get("articles", [])
-        ladder = list(INTENSITY_LADDER.get(zone["type"], [6, 5, 4]))
+        max_keep = zone.get("max", 3)
         # Heavy press coverage in the 3-day window = hotter zone
-        if zone["type"] in ("combat", "strike") and len(articles) >= 8:
-            ladder[0] = 8
+        hot = zone["type"] in ("combat", "strike") and len(articles) >= 8
         incidents = []
-        kept = 0
+        seen_tokens: list[frozenset] = []
         for art in articles:
-            if kept >= 3:
+            if len(incidents) >= max_keep:
                 break
             title = art.get("title", "").strip()
             # English-only: GDELT tags each article's language; keep English
@@ -247,19 +334,24 @@ def _gdelt_fetch_zone(zone: dict, retried: bool = False) -> list[dict]:
                 continue
             if not title or not _looks_english(title):
                 continue
+            # Skip the same story rerun by another outlet within this zone
+            toks = _content_tokens(title)
+            if any(_is_dup(toks, s, True) for s in seen_tokens):
+                continue
+            rank = len(incidents)
             incidents.append({
-                "id": f"gdelt-{zone['country']}-{zone['type']}-{kept}",
-                "lat": zone["lat"] + (kept * 0.15),
-                "lng": zone["lng"] + (kept * 0.15),
+                "id": f"gdelt-{zone['country']}-{zone['type']}-{rank}",
+                "lat": zone["lat"] + (rank * 0.15),
+                "lng": zone["lng"] + (rank * 0.15),
                 "type": zone["type"],
                 "label": title[:120],
                 "region": zone["region"],
-                "intensity": ladder[kept],
+                "intensity": _intensity(zone["type"], rank, hot),
                 "date": _parse_gdelt_date(art.get("seendate", "")),
                 "source": art.get("domain", "GDELT"),
                 "url": art.get("url", ""),
             })
-            kept += 1
+            seen_tokens.append(toks)
         return incidents
     except Exception as e:
         logger.warning("GDELT fetch failed for %s (%s): %s", zone["region"], zone["type"], e)
@@ -342,6 +434,11 @@ def fetch_incidents(force: bool = False) -> list[dict]:
         if not all_incidents and _cache["data"]:
             logger.warning("World Monitor refresh empty — serving previous snapshot")
             return _cache["data"]
+
+        # Drop near-duplicate headlines that surfaced across zones
+        before = len(all_incidents)
+        all_incidents = _dedup(all_incidents)
+        logger.info("World Monitor: %d → %d after dedup", before, len(all_incidents))
 
         # Assign sequential numeric IDs for the frontend
         for idx, inc in enumerate(all_incidents):

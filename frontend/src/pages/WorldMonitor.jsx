@@ -32,22 +32,25 @@ const fmtTime = (d) => (d ? d.toLocaleTimeString("en-GB", { hour: "2-digit", min
 const flag = (cc) => `https://flagcdn.com/w40/${cc}.png`;
 
 // Basemaps — all free, no API key. Each entry lists the tile layer(s) to
-// stack (a base + an optional labels/reference overlay). Zoom goes to
-// street/city level (maxZoom 18).
+// stack. Default is a dark OSINT-style basemap with clean (non-italic)
+// labels and street-level detail when zoomed. Zoom goes to maxZoom 19.
 const ESRI = (svc) => `https://server.arcgisonline.com/ArcGIS/rest/services/${svc}/MapServer/tile/{z}/{y}/{x}`;
+const CARTO = (style) => `https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`;
 const ESRI_ATTR = "Tiles &copy; Esri";
 const CARTO_ATTR =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
 const BASEMAPS = {
-  terrain: {
-    label: "Terrain",
+  dark: {
+    label: "Dark",
+    dark: true,
     layers: [
-      { url: ESRI("World_Topo_Map"), attr: ESRI_ATTR },
+      { url: CARTO("dark_all"), attr: CARTO_ATTR, subdomains: "abcd" },
     ],
   },
   satellite: {
     label: "Satellite",
+    dark: true,
     layers: [
       { url: ESRI("World_Imagery"), attr: ESRI_ATTR },
       { url: ESRI("Reference/World_Boundaries_and_Places"), attr: "", overlay: true },
@@ -56,7 +59,7 @@ const BASEMAPS = {
   light: {
     label: "Light",
     layers: [
-      { url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", attr: CARTO_ATTR, subdomains: "abcd" },
+      { url: CARTO("rastertiles/voyager"), attr: CARTO_ATTR, subdomains: "abcd" },
     ],
   },
 };
@@ -140,7 +143,7 @@ export default function WorldMonitor() {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
   const [zoom, setZoom] = useState(3);
-  const [basemap, setBasemap] = useState("terrain");
+  const [basemap, setBasemap] = useState("dark");
   const [ready, setReady] = useState(false);
 
   const mapDivRef = useRef(null);
@@ -182,7 +185,7 @@ export default function WorldMonitor() {
       center: [25, 15],
       zoom: 3,
       minZoom: 2,
-      maxZoom: 18,
+      maxZoom: 19,
       zoomControl: false,
       worldCopyJump: true,
       attributionControl: true,
@@ -205,7 +208,7 @@ export default function WorldMonitor() {
     baseLayersRef.current = conf.layers.map((l) => {
       const tl = L.tileLayer(l.url, {
         subdomains: l.subdomains || "abc",
-        maxZoom: 18,
+        maxZoom: 19,
         attribution: l.attr,
       });
       tl.addTo(map);
@@ -370,7 +373,9 @@ export default function WorldMonitor() {
           border-radius:9999px; background:var(--bg); color:#fff; font-size:12px; line-height:1;
           border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.3); }
         .wm-tip { font-size:11px !important; max-width:230px; }
-        .leaflet-container { font-family: inherit; background:#eef2f7; }
+        .leaflet-container { font-family: inherit; background:#0b1220; }
+        .leaflet-container .leaflet-control-attribution { background:rgba(15,23,42,.7); color:#94a3b8; }
+        .leaflet-container .leaflet-control-attribution a { color:#cbd5e1; }
       `}</style>
 
       {/* ── Header ── */}
@@ -431,7 +436,7 @@ export default function WorldMonitor() {
 
           {/* Map */}
           <div className="relative">
-            <div ref={mapDivRef} className="w-full h-[460px] lg:h-[580px] bg-slate-100" />
+            <div ref={mapDivRef} className="w-full h-[460px] lg:h-[580px] bg-[#0b1220]" />
 
             {/* Zoom controls */}
             <div className="absolute top-3 right-3 z-[500] flex flex-col gap-1">
