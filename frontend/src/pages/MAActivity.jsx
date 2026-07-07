@@ -2316,6 +2316,11 @@ const PROFILE_NAME_MAP = {
   "Dassault Aviation": "Dassault Aviation",
   // Naval Group
   "Naval Group": "Naval Group",
+  // Exail (born from the iXBlue + ECA Group merger in 2022)
+  "Exail": "Exail Technologies",
+  "Exail Technologies": "Exail Technologies",
+  "iXBlue": "Exail Technologies",
+  "ECA Group": "Exail Technologies",
   // MBDA
   "MBDA": "MBDA",
   // Elbit
