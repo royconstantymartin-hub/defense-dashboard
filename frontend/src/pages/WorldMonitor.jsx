@@ -67,7 +67,7 @@ const BASEMAPS = {
 // ── Leaflet marker icon builders ──────────────────────────────────────────────
 function incidentIcon(inc) {
   const cfg = INCIDENT_TYPES[inc.type] || {};
-  const d = Math.round(11 + inc.intensity * 1.3);
+  const d = Math.round(14 + inc.intensity * 1.6);
   const critical = inc.intensity >= 8 ? "wm-pulse" : "";
   return L.divIcon({
     className: "wm-icon",
@@ -191,6 +191,9 @@ export default function WorldMonitor() {
       attributionControl: true,
     });
     map.on("zoomend", () => setZoom(map.getZoom()));
+    // Dedicated top pane so live-incident markers always sit above bases/sites
+    map.createPane("wmIncidents");
+    map.getPane("wmIncidents").style.zIndex = 650;
     // Create one layer group per layer key
     Object.keys(LAYER_DEFS).forEach((k) => { groupsRef.current[k] = L.layerGroup(); });
     mapRef.current = map;
@@ -241,7 +244,7 @@ export default function WorldMonitor() {
       .filter((i) => (typeFilter === "all" || i.type === typeFilter) &&
         (!q || i.region.toLowerCase().includes(q) || i.label.toLowerCase().includes(q)))
       .forEach((inc) => {
-        const m = L.marker([inc.lat, inc.lng], { icon: incidentIcon(inc) });
+        const m = L.marker([inc.lat, inc.lng], { icon: incidentIcon(inc), pane: "wmIncidents" });
         m.bindTooltip(
           `<b>${inc.region}</b> · ${inc.intensity}/10<br>${inc.label.slice(0, 90)}`,
           { direction: "top", offset: [0, -6], className: "wm-tip" }
@@ -360,22 +363,34 @@ export default function WorldMonitor() {
       {/* Leaflet custom marker styles */}
       <style>{`
         .wm-icon { background: none; border: none; }
-        .wm-dot { display:block; border-radius:9999px; background:var(--c); border:2px solid #fff;
-          box-shadow:0 0 0 1px rgba(15,23,42,.25); }
-        .wm-pulse { animation: wmPulse 1.6s ease-out infinite; }
-        @keyframes wmPulse { 0%{box-shadow:0 0 0 0 var(--c),0 0 0 1px rgba(15,23,42,.25);}
-          70%{box-shadow:0 0 0 10px transparent,0 0 0 1px rgba(15,23,42,.15);}
-          100%{box-shadow:0 0 0 0 transparent,0 0 0 1px rgba(15,23,42,.25);} }
+        /* Live-incident marker: bright dot with a coloured glow so it pops on
+           the dark basemap, plus a white ring for definition. */
+        .wm-dot { display:block; position:relative; border-radius:9999px; background:var(--c);
+          border:2px solid #fff;
+          box-shadow:0 0 0 1px rgba(0,0,0,.55), 0 0 9px 2px var(--c); }
+        .wm-pulse::after { content:""; position:absolute; left:50%; top:50%;
+          width:100%; height:100%; border-radius:9999px; border:2px solid var(--c);
+          transform:translate(-50%,-50%); animation:wmPulse 1.6s ease-out infinite; }
+        @keyframes wmPulse { 0%{width:100%;height:100%;opacity:.9;}
+          100%{width:340%;height:340%;opacity:0;} }
         .wm-flag { display:flex; width:24px; height:18px; border-radius:3px; overflow:hidden;
-          border:2px solid var(--ring); box-shadow:0 1px 3px rgba(0,0,0,.3); background:#fff; }
+          border:2px solid var(--ring); box-shadow:0 0 0 1px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.5); background:#fff; }
         .wm-flag img { width:100%; height:100%; object-fit:cover; }
         .wm-badge { display:flex; align-items:center; justify-content:center; width:22px; height:22px;
           border-radius:9999px; background:var(--bg); color:#fff; font-size:12px; line-height:1;
-          border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.3); }
-        .wm-tip { font-size:11px !important; max-width:230px; }
+          border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.5); }
+        /* Dark, high-contrast tooltips (readable on the dark map) */
+        .wm-tip.leaflet-tooltip { font-size:11px !important; max-width:240px;
+          background:#0f172a; color:#f1f5f9; border:1px solid #475569;
+          box-shadow:0 2px 10px rgba(0,0,0,.5); }
+        .wm-tip.leaflet-tooltip b { color:#fff; }
+        .wm-tip.leaflet-tooltip-top:before { border-top-color:#475569; }
+        .wm-tip.leaflet-tooltip-bottom:before { border-bottom-color:#475569; }
+        .wm-tip.leaflet-tooltip-left:before { border-left-color:#475569; }
+        .wm-tip.leaflet-tooltip-right:before { border-right-color:#475569; }
         .leaflet-container { font-family: inherit; background:#0b1220; }
-        .leaflet-container .leaflet-control-attribution { background:rgba(15,23,42,.7); color:#94a3b8; }
-        .leaflet-container .leaflet-control-attribution a { color:#cbd5e1; }
+        .leaflet-container .leaflet-control-attribution { background:rgba(15,23,42,.85); color:#cbd5e1; }
+        .leaflet-container .leaflet-control-attribution a { color:#e2e8f0; }
       `}</style>
 
       {/* ── Header ── */}
