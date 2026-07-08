@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import "cesium/Build/Cesium/Widgets/widgets.css";
 import {
   Activity,
   Crosshair,
   ExternalLink,
+  Globe2,
   Layers,
   Locate,
   Minus,
@@ -44,62 +44,30 @@ const flag = (cc) => `https://flagcdn.com/w40/${cc}.png`;
 // USGS live earthquake feed — free, keyless, CORS-enabled
 const USGS_URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson";
 
-// Basemaps — all free, no API key. Default: dark OSINT style with clean
-// labels and street-level detail (maxZoom 19).
-const ESRI = (svc) => `https://server.arcgisonline.com/ArcGIS/rest/services/${svc}/MapServer/tile/{z}/{y}/{x}`;
-const CARTO = (style) => `https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`;
-const ESRI_ATTR = "Tiles &copy; Esri";
-const CARTO_ATTR =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
-
+// Imagery draped on the globe — all free, no API key
 const BASEMAPS = {
   dark: {
     label: "Dark",
-    layers: [{ url: CARTO("dark_all"), attr: CARTO_ATTR, subdomains: "abcd" }],
+    layers: [{ url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png", subdomains: ["a", "b", "c", "d"], credit: "© OpenStreetMap © CARTO" }],
   },
   satellite: {
     label: "Satellite",
     layers: [
-      { url: ESRI("World_Imagery"), attr: ESRI_ATTR },
-      { url: ESRI("Reference/World_Boundaries_and_Places"), attr: "" },
+      { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", credit: "Tiles © Esri" },
+      { url: "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", credit: "" },
     ],
   },
   light: {
     label: "Light",
-    layers: [{ url: CARTO("rastertiles/voyager"), attr: CARTO_ATTR, subdomains: "abcd" }],
+    layers: [{ url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", subdomains: ["a", "b", "c", "d"], credit: "© OpenStreetMap © CARTO" }],
   },
 };
 
-// ── Leaflet marker icon builders ──────────────────────────────────────────────
-function incidentIcon(inc) {
-  const cfg = INCIDENT_TYPES[inc.type] || {};
-  const d = Math.round(14 + inc.intensity * 1.6);
-  const critical = inc.intensity >= 8 ? "wm-pulse" : "";
-  return L.divIcon({
-    className: "wm-icon",
-    html: `<span class="wm-dot ${critical}" style="--c:${cfg.color};width:${d}px;height:${d}px"></span>`,
-    iconSize: [d, d],
-    iconAnchor: [d / 2, d / 2],
-  });
-}
-function flagIcon(cc, color) {
-  return L.divIcon({
-    className: "wm-icon",
-    html: `<span class="wm-flag" style="--ring:${color}"><img src="${flag(cc)}" alt="" onerror="this.style.display='none'"/></span>`,
-    iconSize: [24, 18],
-    iconAnchor: [12, 9],
-  });
-}
-function badgeIcon(glyph, color) {
-  return L.divIcon({
-    className: "wm-icon",
-    html: `<span class="wm-badge" style="--bg:${color}">${glyph}</span>`,
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
-  });
-}
+const HOME_VIEW = { lng: 15, lat: 22, height: 22_000_000 };
+const FOCUS_HEIGHT = 1_200_000; // camera height when flying to a selection (m)
+const LABEL_MAX_DIST = 3_000_000; // POI name labels appear below this camera distance (m)
 
-// Small swatch matching each layer's on-map style (used in the layer rail)
+// Small swatch matching each layer's on-globe style (used in the layer rail)
 function LayerSwatch({ def }) {
   if (def.kind === "flag")
     return <span className="inline-block w-3.5 h-2.5 rounded-[2px] border" style={{ borderColor: def.color, background: `${def.color}33` }} />;
@@ -130,15 +98,17 @@ export default function WorldMonitor() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
-  const [zoom, setZoom] = useState(3);
+  const [altKm, setAltKm] = useState(Math.round(HOME_VIEW.height / 1000));
   const [basemap, setBasemap] = useState("dark");
   const [ready, setReady] = useState(false);
+  const [globeError, setGlobeError] = useState(false);
+  const [tooltip, setTooltip] = useState(null);
 
-  const mapDivRef = useRef(null);
-  const mapRef = useRef(null);
-  const groupsRef = useRef({});
+  const globeDivRef = useRef(null);
+  const viewerRef = useRef(null);
+  const cesiumRef = useRef(null); // the dynamically-imported Cesium module
+  const sourcesRef = useRef({}); // layer key -> CustomDataSource
   const highlightRef = useRef(null);
-  const baseLayersRef = useRef([]);
 
   const q = query.trim().toLowerCase();
 
@@ -187,7 +157,7 @@ export default function WorldMonitor() {
           }))
         );
       } catch {
-        /* keep previous quakes; layer simply doesn't update */
+        /* keep previous quakes */
       }
       timer = setTimeout(loadQuakes, 15 * 60 * 1000);
     };
@@ -195,161 +165,275 @@ export default function WorldMonitor() {
     return () => { alive = false; clearTimeout(timer); };
   }, []);
 
-  // ── Init Leaflet map once ──
+  // ── Init the Cesium globe once (dynamic import keeps it off other pages) ──
   useEffect(() => {
-    if (mapRef.current || !mapDivRef.current) return;
-    const map = L.map(mapDivRef.current, {
-      center: [25, 15],
-      zoom: 3,
-      minZoom: 2,
-      maxZoom: 19,
-      zoomControl: false,
-      worldCopyJump: true,
-      attributionControl: true,
-    });
-    map.on("zoomend", () => setZoom(map.getZoom()));
-    // Dedicated top pane so live-incident markers always sit above bases/sites
-    map.createPane("wmIncidents");
-    map.getPane("wmIncidents").style.zIndex = 650;
-    Object.keys(LAYER_DEFS).forEach((k) => { groupsRef.current[k] = L.layerGroup(); });
-    mapRef.current = map;
-    setReady(true);
-    setTimeout(() => map.invalidateSize(), 150);
-    return () => { map.remove(); mapRef.current = null; };
+    let cancelled = false;
+    (async () => {
+      try {
+        const Cesium = await import("cesium");
+        if (cancelled || !globeDivRef.current || viewerRef.current) return;
+        cesiumRef.current = Cesium;
+
+        const viewer = new Cesium.Viewer(globeDivRef.current, {
+          baseLayer: false,
+          baseLayerPicker: false,
+          geocoder: false,
+          homeButton: false,
+          sceneModePicker: true, // 3D / 2D / Columbus, like the reference console
+          navigationHelpButton: false,
+          timeline: false,
+          animation: false,
+          fullscreenButton: false,
+          infoBox: false,
+          selectionIndicator: false,
+          requestRenderMode: true,
+          maximumRenderTimeChange: Infinity,
+        });
+        viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#0b1220");
+        viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#020617");
+        viewer.camera.setView({
+          destination: Cesium.Cartesian3.fromDegrees(HOME_VIEW.lng, HOME_VIEW.lat, HOME_VIEW.height),
+        });
+
+        // One entity collection per layer, toggled via .show
+        Object.keys(LAYER_DEFS).forEach((k) => {
+          const ds = new Cesium.CustomDataSource(k);
+          viewer.dataSources.add(ds);
+          sourcesRef.current[k] = ds;
+        });
+
+        // Altitude readout
+        viewer.camera.changed.addEventListener(() => {
+          setAltKm(Math.max(1, Math.round(viewer.camera.positionCartographic.height / 1000)));
+        });
+        viewer.camera.percentageChanged = 0.1;
+
+        // Picking: click → dossier, hover → tooltip
+        const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        handler.setInputAction((movement) => {
+          const picked = viewer.scene.pick(movement.position);
+          const payload = picked?.id?._wm;
+          if (payload) setSelected(payload);
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        handler.setInputAction((movement) => {
+          const picked = viewer.scene.pick(movement.endPosition);
+          const payload = picked?.id?._wm;
+          setTooltip(payload ? { x: movement.endPosition.x, y: movement.endPosition.y, ...payload } : null);
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+        viewerRef.current = viewer;
+        setReady(true);
+      } catch (e) {
+        console.error("Cesium init failed:", e);
+        setGlobeError(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+      if (viewerRef.current) { viewerRef.current.destroy(); viewerRef.current = null; }
+      setReady(false);
+    };
   }, []);
 
-  // ── Swap base tile layers when the basemap choice changes ──
+  // ── Swap draped imagery when the basemap choice changes ──
   useEffect(() => {
     if (!ready) return;
-    const map = mapRef.current;
-    baseLayersRef.current.forEach((l) => map.removeLayer(l));
-    const conf = BASEMAPS[basemap] || BASEMAPS.dark;
-    baseLayersRef.current = conf.layers.map((l) => {
-      const tl = L.tileLayer(l.url, {
-        subdomains: l.subdomains || "abc",
-        maxZoom: 19,
-        attribution: l.attr,
-      });
-      tl.addTo(map);
-      tl.bringToBack();
-      return tl;
+    const Cesium = cesiumRef.current;
+    const viewer = viewerRef.current;
+    viewer.imageryLayers.removeAll();
+    (BASEMAPS[basemap] || BASEMAPS.dark).layers.forEach((l) => {
+      viewer.imageryLayers.addImageryProvider(
+        new Cesium.UrlTemplateImageryProvider({
+          url: l.url,
+          subdomains: l.subdomains,
+          credit: l.credit,
+          maximumLevel: 19,
+        })
+      );
     });
+    viewer.scene.requestRender();
   }, [ready, basemap]);
 
-  const flyTo = useCallback((lat, lng, z = 6) => {
-    const map = mapRef.current;
-    if (!map) return;
-    map.flyTo([lat, lng], Math.max(map.getZoom(), z), { duration: 0.8 });
+  const flyTo = useCallback((lat, lng) => {
+    const Cesium = cesiumRef.current;
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+    const h = Math.min(viewer.camera.positionCartographic.height, FOCUS_HEIGHT);
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(lng, lat, h),
+      duration: 1.2,
+    });
   }, []);
 
   const selectIncident = useCallback((inc) => {
     setSelected({ kind: "incident", data: inc });
-    flyTo(inc.lat, inc.lng, 6);
-  }, [flyTo]);
-  const selectPOI = useCallback((poi, layer) => {
-    setSelected({ kind: "poi", data: { ...poi, layer } });
-    flyTo(poi.lat, poi.lng, 6);
-  }, [flyTo]);
-  const selectQuake = useCallback((qk) => {
-    setSelected({ kind: "quake", data: qk });
-    flyTo(qk.lat, qk.lng, 6);
+    flyTo(inc.lat, inc.lng);
   }, [flyTo]);
 
-  // ── Build incident markers ──
+  // ── Build incident entities ──
   useEffect(() => {
     if (!ready) return;
-    const g = groupsRef.current.incidents;
-    g.clearLayers();
+    const Cesium = cesiumRef.current;
+    const ds = sourcesRef.current.incidents;
+    ds.entities.removeAll();
     incidents
       .filter((i) => (typeFilter === "all" || i.type === typeFilter) &&
         (!q || i.region.toLowerCase().includes(q) || i.label.toLowerCase().includes(q)))
       .forEach((inc) => {
-        const m = L.marker([inc.lat, inc.lng], { icon: incidentIcon(inc), pane: "wmIncidents" });
-        m.bindTooltip(
-          `<b>${inc.region}</b> · ${inc.intensity}/10<br>${inc.label.slice(0, 90)}`,
-          { direction: "top", offset: [0, -6], className: "wm-tip" }
-        );
-        m.on("click", () => selectIncident(inc));
-        g.addLayer(m);
+        const color = Cesium.Color.fromCssColorString(INCIDENT_TYPES[inc.type]?.color ?? "#e11d48");
+        const pos = Cesium.Cartesian3.fromDegrees(inc.lng, inc.lat);
+        if (inc.intensity >= 8) {
+          const halo = ds.entities.add({
+            position: pos,
+            point: { pixelSize: 26 + inc.intensity, color: color.withAlpha(0.25), disableDepthTestDistance: Number.POSITIVE_INFINITY },
+          });
+          halo._wm = { kind: "incident", data: inc };
+        }
+        const e = ds.entities.add({
+          position: pos,
+          point: {
+            pixelSize: 8 + inc.intensity * 1.1,
+            color,
+            outlineColor: Cesium.Color.WHITE,
+            outlineWidth: 2,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          },
+        });
+        e._wm = { kind: "incident", data: inc };
       });
-  }, [ready, incidents, typeFilter, q, selectIncident]);
+    viewerRef.current.scene.requestRender();
+  }, [ready, incidents, typeFilter, q]);
 
-  // ── Build POI markers (per layer) ──
+  // ── Build POI entities (per layer) ──
   useEffect(() => {
     if (!ready) return;
+    const Cesium = cesiumRef.current;
     Object.entries(POI_LAYERS).forEach(([key, items]) => {
       const def = LAYER_DEFS[key];
-      const g = groupsRef.current[key];
-      g.clearLayers();
+      const ds = sourcesRef.current[key];
+      ds.entities.removeAll();
+      const color = Cesium.Color.fromCssColorString(def.color);
       items
         .filter((p) => !q || p.name.toLowerCase().includes(q) || p.country.toLowerCase().includes(q))
         .forEach((poi) => {
+          const pos = Cesium.Cartesian3.fromDegrees(poi.lng, poi.lat);
+          let e;
           if (def.kind === "area") {
-            const circle = L.circle([poi.lat, poi.lng], {
-              radius: (poi.r || 300) * 1000,
-              color: def.color, weight: 1.5, opacity: 0.75,
-              fillColor: def.color, fillOpacity: 0.12,
+            e = ds.entities.add({
+              position: pos,
+              ellipse: {
+                semiMajorAxis: (poi.r || 300) * 1000,
+                semiMinorAxis: (poi.r || 300) * 1000,
+                material: color.withAlpha(0.12),
+                outline: true,
+                outlineColor: color.withAlpha(0.8),
+              },
             });
-            circle.bindTooltip(`<b>${poi.name}</b><br>${poi.note}`, { direction: "top", className: "wm-tip", sticky: true });
-            circle.on("click", () => selectPOI(poi, key));
-            g.addLayer(circle);
+          } else if (def.kind === "flag") {
+            e = ds.entities.add({
+              position: pos,
+              billboard: {
+                image: flag(poi.cc),
+                width: 24,
+                height: 18,
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              },
+            });
           } else {
-            const icon = def.kind === "flag" ? flagIcon(poi.cc, def.color) : badgeIcon(def.glyph, def.color);
-            const m = L.marker([poi.lat, poi.lng], { icon });
-            m.bindTooltip(`<b>${poi.name}</b> · ${poi.country}<br>${poi.note}`, { direction: "top", offset: [0, -8], className: "wm-tip" });
-            m.on("click", () => selectPOI(poi, key));
-            g.addLayer(m);
+            e = ds.entities.add({
+              position: pos,
+              point: {
+                pixelSize: 9,
+                color,
+                outlineColor: Cesium.Color.WHITE,
+                outlineWidth: 1.5,
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              },
+              label: {
+                text: def.glyph,
+                font: "10px sans-serif",
+                pixelOffset: new Cesium.Cartesian2(0, -1),
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              },
+            });
           }
+          // Name label revealed when the camera is close (OSINT detail zoom)
+          e.label = e.label ?? new Cesium.LabelGraphics({});
+          e.label.text = e.label.text || poi.name;
+          if (def.kind !== "badge") {
+            e.label = new Cesium.LabelGraphics({
+              text: poi.name,
+              font: "11px 'JetBrains Mono', monospace",
+              fillColor: Cesium.Color.fromCssColorString("#e2e8f0"),
+              outlineColor: Cesium.Color.fromCssColorString("#020617"),
+              outlineWidth: 3,
+              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+              pixelOffset: new Cesium.Cartesian2(0, -16),
+              distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, LABEL_MAX_DIST),
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            });
+          }
+          e._wm = { kind: "poi", data: { ...poi, layer: key } };
         });
     });
-  }, [ready, q, selectPOI]);
+    viewerRef.current.scene.requestRender();
+  }, [ready, q]);
 
-  // ── Build earthquake markers ──
+  // ── Build earthquake entities ──
   useEffect(() => {
     if (!ready) return;
-    const g = groupsRef.current.quakes;
-    if (!g) return;
-    g.clearLayers();
+    const Cesium = cesiumRef.current;
+    const ds = sourcesRef.current.quakes;
+    if (!ds) return;
+    ds.entities.removeAll();
+    const amber = Cesium.Color.fromCssColorString("#f59e0b");
     quakes
       .filter((k) => !q || k.place.toLowerCase().includes(q))
       .forEach((k) => {
-        const m = L.circleMarker([k.lat, k.lng], {
-          radius: 2 + (k.mag || 2.5) * 1.6,
-          color: "#f59e0b", weight: 1.5, opacity: 0.9,
-          fillColor: "#f59e0b", fillOpacity: 0.35,
+        const e = ds.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(k.lng, k.lat),
+          point: {
+            pixelSize: 4 + (k.mag || 2.5) * 2,
+            color: amber.withAlpha(0.5),
+            outlineColor: amber,
+            outlineWidth: 1.5,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          },
         });
-        m.bindTooltip(
-          `<b>M${(k.mag ?? 0).toFixed(1)}</b> · ${k.place}<br>${timeAgo(k.time)} · depth ${Math.round(k.depth)} km`,
-          { direction: "top", className: "wm-tip" }
-        );
-        m.on("click", () => selectQuake(k));
-        g.addLayer(m);
+        e._wm = { kind: "quake", data: k };
       });
-  }, [ready, quakes, q, selectQuake]);
+    viewerRef.current.scene.requestRender();
+  }, [ready, quakes, q]);
 
-  // ── Toggle layer groups on/off ──
+  // ── Toggle layer visibility ──
   useEffect(() => {
     if (!ready) return;
-    const map = mapRef.current;
     Object.keys(LAYER_DEFS).forEach((k) => {
-      const g = groupsRef.current[k];
-      if (layers[k]) { if (!map.hasLayer(g)) g.addTo(map); }
-      else if (map.hasLayer(g)) map.removeLayer(g);
+      const ds = sourcesRef.current[k];
+      if (ds) ds.show = !!layers[k];
     });
+    viewerRef.current.scene.requestRender();
   }, [ready, layers]);
 
   // ── Magenta highlight ring on the selected entity ──
   useEffect(() => {
     if (!ready) return;
-    const map = mapRef.current;
-    if (highlightRef.current) { map.removeLayer(highlightRef.current); highlightRef.current = null; }
+    const Cesium = cesiumRef.current;
+    const viewer = viewerRef.current;
+    if (highlightRef.current) { viewer.entities.remove(highlightRef.current); highlightRef.current = null; }
     if (selected) {
-      const { lat, lng } = selected.data;
-      highlightRef.current = L.circleMarker([lat, lng], {
-        radius: 17, color: SELECT_COLOR, weight: 2, fill: false, dashArray: "4 3",
-        interactive: false, pane: "wmIncidents",
-      }).addTo(map);
+      highlightRef.current = viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(selected.data.lng, selected.data.lat),
+        point: {
+          pixelSize: 30,
+          color: Cesium.Color.TRANSPARENT,
+          outlineColor: Cesium.Color.fromCssColorString(SELECT_COLOR),
+          outlineWidth: 2.5,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+      });
     }
+    viewer.scene.requestRender();
   }, [ready, selected]);
 
   // ── Derived data ──
@@ -381,11 +465,26 @@ export default function WorldMonitor() {
     : key === "quakes" ? quakes.length
     : POI_LAYERS[key]?.length ?? 0;
   const toggleLayer = (key) => setLayers((l) => ({ ...l, [key]: !l[key] }));
-  const setAllLayers = (on) => setLayers((l) => {
+  const setAllLayers = (on) => setLayers(() => {
     const next = {};
     Object.keys(LAYER_DEFS).forEach((k) => { next[k] = on; });
     return next;
   });
+
+  const zoomBy = (factor) => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+    const h = viewer.camera.positionCartographic.height;
+    if (factor < 1) viewer.camera.zoomIn(h * (1 - factor));
+    else viewer.camera.zoomOut(h * (factor - 1));
+  };
+  const resetView = () => {
+    const Cesium = cesiumRef.current;
+    viewerRef.current?.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(HOME_VIEW.lng, HOME_VIEW.lat, HOME_VIEW.height),
+      duration: 1.2,
+    });
+  };
 
   const phase = incidents.length > 0 ? "ok"
     : !firstLoadDone || serverWarming ? "warming"
@@ -471,39 +570,18 @@ export default function WorldMonitor() {
 
   return (
     <div className="-m-4 lg:-m-6 flex flex-col bg-slate-950 text-slate-200 lg:h-[calc(100vh-64px)] min-h-[calc(100vh-64px)]">
-      {/* Leaflet custom marker styles */}
+      {/* Cesium widget chrome adjustments */}
       <style>{`
-        .wm-icon { background: none; border: none; }
-        .wm-dot { display:block; position:relative; border-radius:9999px; background:var(--c);
-          border:2px solid #fff;
-          box-shadow:0 0 0 1px rgba(0,0,0,.55), 0 0 9px 2px var(--c); }
-        .wm-pulse::after { content:""; position:absolute; left:50%; top:50%;
-          width:100%; height:100%; border-radius:9999px; border:2px solid var(--c);
-          transform:translate(-50%,-50%); animation:wmPulse 1.6s ease-out infinite; }
-        @keyframes wmPulse { 0%{width:100%;height:100%;opacity:.9;}
-          100%{width:340%;height:340%;opacity:0;} }
-        .wm-flag { display:flex; width:24px; height:18px; border-radius:3px; overflow:hidden;
-          border:2px solid var(--ring); box-shadow:0 0 0 1px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.5); background:#fff; }
-        .wm-flag img { width:100%; height:100%; object-fit:cover; }
-        .wm-badge { display:flex; align-items:center; justify-content:center; width:22px; height:22px;
-          border-radius:9999px; background:var(--bg); color:#fff; font-size:12px; line-height:1;
-          border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.5); }
-        .wm-tip.leaflet-tooltip { font-size:11px !important; max-width:240px;
-          background:#0f172a; color:#f1f5f9; border:1px solid #475569;
-          box-shadow:0 2px 10px rgba(0,0,0,.5); }
-        .wm-tip.leaflet-tooltip b { color:#fff; }
-        .wm-tip.leaflet-tooltip-top:before { border-top-color:#475569; }
-        .wm-tip.leaflet-tooltip-bottom:before { border-bottom-color:#475569; }
-        .wm-tip.leaflet-tooltip-left:before { border-left-color:#475569; }
-        .wm-tip.leaflet-tooltip-right:before { border-right-color:#475569; }
-        .leaflet-container { font-family: inherit; background:#0b1220; }
-        .leaflet-container .leaflet-control-attribution { background:rgba(15,23,42,.85); color:#cbd5e1; }
-        .leaflet-container .leaflet-control-attribution a { color:#e2e8f0; }
+        .cesium-viewer-bottom { font-size: 9px; opacity: .75; }
+        .cesium-viewer .cesium-widget-credits { display: block !important; }
+        .cesium-sceneModePicker-wrapper { background: rgba(15,23,42,.9); border-radius: 8px; }
       `}</style>
 
       {/* ── Console top bar ── */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 border-b border-slate-800 bg-slate-950 shrink-0">
-        <h1 className="font-heading text-base font-bold tracking-wide text-slate-100">WORLD MONITOR</h1>
+        <h1 className="font-heading text-base font-bold tracking-wide text-slate-100 flex items-center gap-2">
+          <Globe2 size={15} className="text-sky-400" /> WORLD MONITOR
+        </h1>
         {statusBadge}
         <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[9px] font-mono font-semibold tracking-wider rounded">WIP</span>
 
@@ -532,7 +610,7 @@ export default function WorldMonitor() {
         </div>
       </div>
 
-      {/* ── Console body: layer rail · map · dossier ── */}
+      {/* ── Console body: layer rail · globe · dossier ── */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
 
         {/* Layer rail (left) */}
@@ -560,7 +638,6 @@ export default function WorldMonitor() {
                       <span className="font-mono text-[10px] text-slate-500">{layerCount(key)}</span>
                       <span className={`w-1.5 h-1.5 rounded-full ${on ? "bg-emerald-400" : "bg-slate-700"}`} />
                     </button>
-                    {/* Incident type sub-filter under the incidents layer */}
                     {key === "incidents" && on && (
                       <div className="flex flex-wrap gap-1 px-2 pt-1 pb-1.5">
                         {[{ key: "all", label: "All" }, ...Object.entries(INCIDENT_TYPES).map(([k, v]) => ({ key: k, ...v }))].map(({ key: tk, label, color }) => (
@@ -585,26 +662,38 @@ export default function WorldMonitor() {
           </p>
         </aside>
 
-        {/* Map (center) */}
-        <div className="order-1 lg:order-none relative flex-1 min-h-[440px]">
-          <div ref={mapDivRef} className="absolute inset-0 bg-[#0b1220]" />
+        {/* Globe (center) */}
+        <div className="order-1 lg:order-none relative flex-1 min-h-[440px] bg-[#020617]">
+          {globeError ? (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center px-6 max-w-sm">
+                <TriangleAlert size={26} className="mx-auto text-rose-400" />
+                <p className="text-sm font-semibold text-slate-200 mt-2">3D globe unavailable</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Your browser blocked WebGL, which the globe needs. The incident feed on the right still works.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div ref={globeDivRef} className="absolute inset-0" />
+          )}
 
           {/* Zoom controls */}
           <div className="absolute top-3 right-3 z-[500] flex flex-col gap-1">
-            <button onClick={() => mapRef.current?.zoomIn()} title="Zoom in"
+            <button onClick={() => zoomBy(0.5)} title="Zoom in"
               className="w-8 h-8 flex items-center justify-center bg-slate-900/95 border border-slate-700 rounded-lg shadow text-slate-300 hover:text-sky-400 hover:border-sky-600 transition-colors"><Plus size={15} /></button>
-            <button onClick={() => mapRef.current?.zoomOut()} title="Zoom out"
+            <button onClick={() => zoomBy(2)} title="Zoom out"
               className="w-8 h-8 flex items-center justify-center bg-slate-900/95 border border-slate-700 rounded-lg shadow text-slate-300 hover:text-sky-400 hover:border-sky-600 transition-colors"><Minus size={15} /></button>
-            <button onClick={() => mapRef.current?.setView([25, 15], 3)} title="Reset view"
+            <button onClick={resetView} title="Reset view"
               className="w-8 h-8 flex items-center justify-center bg-slate-900/95 border border-slate-700 rounded-lg shadow text-slate-300 hover:text-sky-400 hover:border-sky-600 transition-colors"><Locate size={14} /></button>
           </div>
 
           <div className="absolute top-3 left-3 z-[500] bg-slate-900/85 border border-slate-800 rounded px-1.5 py-0.5 text-[10px] font-mono text-slate-400">
-            z{zoom} · scroll or drag
+            alt {altKm.toLocaleString()} km · drag to orbit
           </div>
 
           {/* Basemap switcher */}
-          <div className="absolute bottom-6 left-3 z-[500] flex items-center bg-slate-900/95 border border-slate-700 rounded-lg shadow overflow-hidden">
+          <div className="absolute bottom-8 left-3 z-[500] flex items-center bg-slate-900/95 border border-slate-700 rounded-lg shadow overflow-hidden">
             {Object.entries(BASEMAPS).map(([key, conf]) => (
               <button key={key} onClick={() => setBasemap(key)}
                 className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
@@ -614,8 +703,34 @@ export default function WorldMonitor() {
             ))}
           </div>
 
+          {/* Hover tooltip */}
+          {tooltip && (
+            <div
+              className="absolute z-[600] pointer-events-none bg-slate-900 border border-slate-600 rounded-lg shadow-xl px-3 py-2 max-w-[240px]"
+              style={{ left: tooltip.x + 14, top: Math.max(4, tooltip.y - 64) }}
+            >
+              {tooltip.kind === "incident" ? (
+                <>
+                  <p className="text-xs font-semibold text-white">{tooltip.data.region} · <span style={{ color: severityColor(tooltip.data.intensity) }}>{tooltip.data.intensity}/10</span></p>
+                  <p className="text-[11px] text-slate-300 mt-0.5 leading-snug line-clamp-2">{tooltip.data.label}</p>
+                </>
+              ) : tooltip.kind === "poi" ? (
+                <>
+                  <p className="text-xs font-semibold text-white">{tooltip.data.name}</p>
+                  <p className="text-[10px] text-slate-400">{tooltip.data.country}</p>
+                  <p className="text-[11px] text-slate-300 mt-0.5 leading-snug line-clamp-2">{tooltip.data.note}</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-xs font-semibold text-white">M{(tooltip.data.mag ?? 0).toFixed(1)} · {tooltip.data.place}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">{timeAgo(tooltip.data.time)} · depth {Math.round(tooltip.data.depth)} km</p>
+                </>
+              )}
+            </div>
+          )}
+
           {/* Overlay states */}
-          {phase !== "ok" && layers.incidents && (
+          {phase !== "ok" && layers.incidents && !globeError && (
             <div className="absolute inset-x-0 top-3 z-[500] flex justify-center pointer-events-none">
               <div className="pointer-events-auto bg-slate-900/95 border border-slate-700 rounded-lg shadow px-4 py-2 text-center max-w-sm">
                 {phase === "warming" ? (

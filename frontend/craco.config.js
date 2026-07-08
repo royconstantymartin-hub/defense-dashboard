@@ -1,6 +1,15 @@
 // craco.config.js
 const path = require("path");
+const webpack = require("webpack");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 require("dotenv").config();
+
+// CesiumJS needs its static assets (web workers, widget CSS, textures)
+// served from a known base URL — we copy them to /cesium at build time.
+const cesiumSource = path.join(
+  path.dirname(require.resolve("cesium/package.json")),
+  "Build/Cesium"
+);
 
 // Check if we're in development/preview mode (not production build)
 // Craco sets NODE_ENV=development for start, NODE_ENV=production for build
@@ -55,6 +64,22 @@ let webpackConfig = {
       if (config.enableHealthCheck && healthPluginInstance) {
         webpackConfig.plugins.push(healthPluginInstance);
       }
+
+      // CesiumJS: copy static assets + tell Cesium where to find them
+      webpackConfig.plugins.push(
+        new CopyWebpackPlugin({
+          patterns: [
+            { from: path.join(cesiumSource, "Workers"), to: "cesium/Workers" },
+            { from: path.join(cesiumSource, "ThirdParty"), to: "cesium/ThirdParty" },
+            { from: path.join(cesiumSource, "Assets"), to: "cesium/Assets" },
+            { from: path.join(cesiumSource, "Widgets"), to: "cesium/Widgets" },
+          ],
+        }),
+        new webpack.DefinePlugin({
+          CESIUM_BASE_URL: JSON.stringify("/cesium"),
+        })
+      );
+
       return webpackConfig;
     },
   },
