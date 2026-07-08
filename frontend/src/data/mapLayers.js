@@ -33,9 +33,11 @@ export const LAYER_DEFS = {
   uk:          { group: "Bases",      label: "UK bases",              color: "#9333ea", kind: "flag" },
   russia:      { group: "Bases",      label: "Russian bases",         color: "#dc2626", kind: "flag" },
   china:       { group: "Bases",      label: "Chinese bases",         color: "#ea580c", kind: "flag" },
+  // ── Live environment feeds (fetched client-side, free & keyless) ──
+  quakes:      { group: "Live feeds", label: "Earthquakes M2.5+ (24h)", color: "#f59e0b", kind: "quake" },
 };
 
-export const LAYER_GROUPS = ["Conflict", "Strategic", "Bases"];
+export const LAYER_GROUPS = ["Conflict", "Strategic", "Bases", "Live feeds"];
 
 // ── Theaters of operation (translucent area circles; r ≈ radius in km) ────────
 export const THEATERS = [
