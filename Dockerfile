@@ -1,5 +1,5 @@
 # Stage 1: Build React frontend
-FROM node:18-slim AS frontend-build
+FROM node:22-slim AS frontend-build
 
 WORKDIR /frontend
 
