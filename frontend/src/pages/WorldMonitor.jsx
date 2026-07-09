@@ -290,6 +290,30 @@ export default function WorldMonitor() {
         viewer.scene.globe.maximumScreenSpaceError = 1.6; // sharper imagery
         viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#0b1220");
         viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#020617");
+
+        // Trackpad-friendly zoom. Cesium's built-in wheel zoom is tuned for
+        // notched mouse wheels; trackpads emit many tiny deltas and the zoom
+        // feels dead. Handle the wheel ourselves with a height-proportional
+        // step, and keep only pinch for Cesium's own zoom handling.
+        const ssc = viewer.scene.screenSpaceCameraController;
+        ssc.zoomEventTypes = [Cesium.CameraEventType.PINCH];
+        ssc.minimumZoomDistance = 400;
+        ssc.maximumZoomDistance = 45_000_000;
+        const MIN_H = 500, MAX_H = 45_000_000;
+        viewer.scene.canvas.addEventListener(
+          "wheel",
+          (e) => {
+            e.preventDefault();
+            const dy = e.deltaY * (e.deltaMode === 1 ? 33 : 1); // lines → px
+            if (!dy) return;
+            const h = viewer.camera.positionCartographic.height;
+            // ~20% of altitude per 100px of scroll, capped per event
+            const amount = Math.min(Math.abs(dy) / 100, 4) * 0.2 * h;
+            if (dy < 0) viewer.camera.zoomIn(Math.min(amount, Math.max(h - MIN_H, 0)));
+            else viewer.camera.zoomOut(Math.min(amount, Math.max(MAX_H - h, 0)));
+          },
+          { passive: false }
+        );
         viewer.camera.setView({
           destination: Cesium.Cartesian3.fromDegrees(HOME_VIEW.lng, HOME_VIEW.lat, HOME_VIEW.height),
         });
@@ -384,7 +408,6 @@ export default function WorldMonitor() {
         if (inc.intensity >= 8) {
           const halo = ds.entities.add({
             position: pos,
-            point: { pixelSize: 26 + inc.intensity, color: color.withAlpha(0.25), disableDepthTestDistance: Number.POSITIVE_INFINITY },
           });
           halo._wm = { kind: "incident", data: inc };
         }
@@ -395,7 +418,6 @@ export default function WorldMonitor() {
             color,
             outlineColor: Cesium.Color.WHITE,
             outlineWidth: 2,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
           },
         });
         e._wm = { kind: "incident", data: inc };
@@ -435,7 +457,6 @@ export default function WorldMonitor() {
                 image: flag(poi.cc),
                 width: 24,
                 height: 18,
-                disableDepthTestDistance: Number.POSITIVE_INFINITY,
               },
             });
           } else {
@@ -446,13 +467,11 @@ export default function WorldMonitor() {
                 color,
                 outlineColor: Cesium.Color.WHITE,
                 outlineWidth: 1.5,
-                disableDepthTestDistance: Number.POSITIVE_INFINITY,
               },
               label: {
                 text: def.glyph,
                 font: "10px sans-serif",
                 pixelOffset: new Cesium.Cartesian2(0, -1),
-                disableDepthTestDistance: Number.POSITIVE_INFINITY,
               },
             });
           }
@@ -469,7 +488,6 @@ export default function WorldMonitor() {
               style: Cesium.LabelStyle.FILL_AND_OUTLINE,
               pixelOffset: new Cesium.Cartesian2(0, -16),
               distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, LABEL_MAX_DIST),
-              disableDepthTestDistance: Number.POSITIVE_INFINITY,
             });
           }
           e._wm = { kind: "poi", data: { ...poi, layer: key } };
@@ -496,7 +514,6 @@ export default function WorldMonitor() {
             color: amber.withAlpha(0.5),
             outlineColor: amber,
             outlineWidth: 1.5,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
           },
         });
         e._wm = { kind: "quake", data: k };
@@ -527,7 +544,6 @@ export default function WorldMonitor() {
           rotation: track != null ? -Cesium.Math.toRadians(track) : 0,
           color: ground ? grounded : airborne,
           scaleByDistance: new Cesium.NearFarScalar(5e5, 0.9, 2.2e7, 0.4),
-          disableDepthTestDistance: Number.POSITIVE_INFINITY,
           id: { _wm: { kind: "aircraft", data: { icao, callsign, country, lon, lat, alt, vel, track, ground } } },
         });
       });
@@ -556,7 +572,6 @@ export default function WorldMonitor() {
           color: green.withAlpha(0.9),
           outlineColor: Cesium.Color.BLACK.withAlpha(0.6),
           outlineWidth: 1,
-          disableDepthTestDistance: Number.POSITIVE_INFINITY,
           id: { _wm: { kind: "vessel", data: v } },
         });
       });
@@ -662,7 +677,6 @@ export default function WorldMonitor() {
           color: Cesium.Color.TRANSPARENT,
           outlineColor: Cesium.Color.fromCssColorString(SELECT_COLOR),
           outlineWidth: 2.5,
-          disableDepthTestDistance: Number.POSITIVE_INFINITY,
         },
       });
     }
