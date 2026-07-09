@@ -2909,6 +2909,30 @@ async def get_world_monitor_incidents():
         raise HTTPException(status_code=503, detail="Could not fetch incident data")
 
 
+@api_router.get("/world-monitor/aircraft")
+async def get_world_monitor_aircraft():
+    """Live ADS-B aircraft snapshot (OpenSky, server-side cache)."""
+    from services.osint_feeds import get_aircraft
+    try:
+        return await asyncio.get_event_loop().run_in_executor(None, get_aircraft)
+    except Exception as e:
+        logger.error("Aircraft feed error: %s", e)
+        raise HTTPException(status_code=503, detail="Aircraft feed unavailable")
+
+
+@api_router.get("/world-monitor/satellites")
+async def get_world_monitor_satellites():
+    """Active-satellite TLE catalogue (CelesTrak, server-side cache)."""
+    from fastapi.responses import PlainTextResponse
+    from services.osint_feeds import get_satellites_tle
+    try:
+        text = await asyncio.get_event_loop().run_in_executor(None, get_satellites_tle)
+        return PlainTextResponse(text)
+    except Exception as e:
+        logger.error("Satellite feed error: %s", e)
+        raise HTTPException(status_code=503, detail="Satellite feed unavailable")
+
+
 async def run_world_monitor_refresh_job():
     """Background refresh so users always hit a warm World Monitor cache."""
     from services.world_monitor_service import fetch_incidents

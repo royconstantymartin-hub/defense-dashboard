@@ -9594,6 +9594,11 @@ sass-loader@^12.3.0:
     klona "^2.0.4"
     neo-async "^2.6.2"
 
+satellite.js@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/satellite.js/-/satellite.js-5.0.0.tgz#9db39c7c6f202d3486fb7b9da072d023d8ec0a63"
+  integrity sha512-ie3yiJ2LJAJIhVUKdYhgp7V0btXKAMImDjRnuaNfJGl8rjwP2HwVIh4HLFcpiXYEiYwXc5fqh5+yZqCe6KIwWw==
+
 sax@^1.5.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.6.0.tgz#da59637629307b97e7c4cb28e080a7bc38560d5b"
