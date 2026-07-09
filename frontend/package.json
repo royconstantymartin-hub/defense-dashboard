@@ -84,7 +84,7 @@
     "ajv": "^8.12.0",
     "ajv-keywords": "^5.1.0",
     "autoprefixer": "^10.4.20",
-    "copy-webpack-plugin": "^14.0.0",
+    "copy-webpack-plugin": "^12.0.2",
     "eslint": "9.23.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
