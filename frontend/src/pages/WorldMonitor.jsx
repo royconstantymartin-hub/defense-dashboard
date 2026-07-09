@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
+import * as satellite from "satellite.js";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import {
   Activity,
@@ -41,14 +42,26 @@ const timeAgo = (ts) => {
 };
 const flag = (cc) => `https://flagcdn.com/w40/${cc}.png`;
 
-// USGS live earthquake feed — free, keyless, CORS-enabled
+// Live feeds — all free & keyless (aircraft/satellites proxied through our
+// backend to share one cached upstream call between users)
 const USGS_URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson";
+const AIS_URL = "https://meri.digitraffic.fi/api/ais/v1/locations";
+const CABLES_URL = `${process.env.PUBLIC_URL || ""}/data/cable-geo.json`;
+
+// Tiny white plane glyph, tinted per-billboard and rotated to the track
+const PLANE_ICON =
+  "data:image/svg+xml;base64," +
+  btoa(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>` +
+    `<path d='M12 1.5 L14.2 9 L22 12 L14.2 13.6 L13.4 21 L12 18.4 L10.6 21 L9.8 13.6 L2 12 L9.8 9 Z' ` +
+    `fill='#ffffff' stroke='#0f172a' stroke-width='0.7'/></svg>`
+  );
 
 // Imagery draped on the globe — all free, no API key
 const BASEMAPS = {
   dark: {
     label: "Dark",
-    layers: [{ url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png", subdomains: ["a", "b", "c", "d"], credit: "© OpenStreetMap © CARTO" }],
+    layers: [{ url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png", subdomains: ["a", "b", "c", "d"], credit: "© OpenStreetMap © CARTO" }],
   },
   satellite: {
     label: "Satellite",
@@ -59,7 +72,7 @@ const BASEMAPS = {
   },
   light: {
     label: "Light",
-    layers: [{ url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", subdomains: ["a", "b", "c", "d"], credit: "© OpenStreetMap © CARTO" }],
+    layers: [{ url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png", subdomains: ["a", "b", "c", "d"], credit: "© OpenStreetMap © CARTO" }],
   },
 };
 
@@ -77,12 +90,24 @@ function LayerSwatch({ def }) {
     return <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-[8px]" style={{ background: def.color }}>{def.glyph}</span>;
   if (def.kind === "quake")
     return <span className="inline-block w-3 h-3 rounded-full border-2" style={{ borderColor: def.color, background: `${def.color}55` }} />;
+  if (def.kind === "aircraft")
+    return <span className="text-[11px] leading-none" style={{ color: def.color }}>✈</span>;
+  if (def.kind === "vessel")
+    return <span className="text-[10px] leading-none" style={{ color: def.color }}>▲</span>;
+  if (def.kind === "sat")
+    return <span className="text-[10px] leading-none" style={{ color: def.color }}>✦</span>;
+  if (def.kind === "cable")
+    return <span className="inline-block w-3.5 h-[2px] rounded" style={{ background: def.color }} />;
   return <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: def.color, boxShadow: `0 0 6px ${def.color}` }} />;
 }
 
 export default function WorldMonitor() {
   const [incidents, setIncidents] = useState([]);
   const [quakes, setQuakes] = useState([]);
+  const [aircraft, setAircraft] = useState([]);
+  const [vessels, setVessels] = useState([]);
+  const [satCount, setSatCount] = useState(0);
+  const [cableCount, setCableCount] = useState(0);
   const [updated, setUpdated] = useState(null);
   const [serverWarming, setServerWarming] = useState(false);
   const [fetchFailed, setFetchFailed] = useState(false);
@@ -109,6 +134,11 @@ export default function WorldMonitor() {
   const cesiumRef = useRef(null); // the dynamically-imported Cesium module
   const sourcesRef = useRef({}); // layer key -> CustomDataSource
   const highlightRef = useRef(null);
+  const aircraftCollRef = useRef(null); // BillboardCollection (7k+ planes)
+  const vesselCollRef = useRef(null);   // PointPrimitiveCollection
+  const satCollRef = useRef(null);      // PointPrimitiveCollection (~16k sats)
+  const satRecsRef = useRef(null);      // parsed satellite.js satrecs
+  const cableDsRef = useRef(null);      // GeoJsonDataSource
 
   const q = query.trim().toLowerCase();
 
@@ -165,6 +195,70 @@ export default function WorldMonitor() {
     return () => { alive = false; clearTimeout(timer); };
   }, []);
 
+  // ── Load live aircraft while the layer is on (backend-cached OpenSky) ──
+  useEffect(() => {
+    if (!layers.aircraft) return;
+    let alive = true;
+    let timer;
+    const go = async () => {
+      try {
+        const { data } = await axios.get(`${API}/world-monitor/aircraft`, { timeout: 45000 });
+        if (alive) setAircraft(data.aircraft ?? []);
+      } catch { /* keep previous snapshot */ }
+      timer = setTimeout(go, 5 * 60 * 1000);
+    };
+    go();
+    return () => { alive = false; clearTimeout(timer); };
+  }, [layers.aircraft]);
+
+  // ── Load live vessels while the layer is on (digitraffic AIS, Baltic) ──
+  useEffect(() => {
+    if (!layers.vessels) return;
+    let alive = true;
+    let timer;
+    const go = async () => {
+      try {
+        const { data } = await axios.get(AIS_URL, { timeout: 30000 });
+        if (alive) {
+          setVessels((data.features ?? []).map((f) => ({
+            mmsi: f.mmsi,
+            lon: f.geometry.coordinates[0],
+            lat: f.geometry.coordinates[1],
+            sog: f.properties?.sog,
+            cog: f.properties?.cog,
+          })));
+        }
+      } catch { /* keep previous snapshot */ }
+      timer = setTimeout(go, 3 * 60 * 1000);
+    };
+    go();
+    return () => { alive = false; clearTimeout(timer); };
+  }, [layers.vessels]);
+
+  // ── Load the TLE catalogue once when satellites are first enabled ──
+  useEffect(() => {
+    if (!layers.satellites || satRecsRef.current) return;
+    let alive = true;
+    (async () => {
+      try {
+        const { data: text } = await axios.get(`${API}/world-monitor/satellites`, { timeout: 60000, responseType: "text" });
+        const lines = text.split(/\r?\n/);
+        const recs = [];
+        for (let i = 0; i + 2 < lines.length; ) {
+          const l1 = lines[i + 1], l2 = lines[i + 2];
+          if (l1?.startsWith("1 ") && l2?.startsWith("2 ")) {
+            try {
+              recs.push({ name: lines[i].trim(), satrec: satellite.twoline2satrec(l1, l2) });
+            } catch { /* skip malformed TLE */ }
+            i += 3;
+          } else i += 1;
+        }
+        if (alive) { satRecsRef.current = recs; setSatCount(recs.length); }
+      } catch { /* endpoint down — counter stays 0 */ }
+    })();
+    return () => { alive = false; };
+  }, [layers.satellites]);
+
   // ── Init the Cesium globe once (dynamic import keeps it off other pages) ──
   useEffect(() => {
     let cancelled = false;
@@ -188,7 +282,12 @@ export default function WorldMonitor() {
           selectionIndicator: false,
           requestRenderMode: true,
           maximumRenderTimeChange: Infinity,
+          // Render at the device's native pixel ratio — the default CSS-pixel
+          // rendering looks blurry on any HiDPI screen
+          useBrowserRecommendedResolution: false,
         });
+        viewer.scene.postProcessStages.fxaa.enabled = true;
+        viewer.scene.globe.maximumScreenSpaceError = 1.6; // sharper imagery
         viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#0b1220");
         viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#020617");
         viewer.camera.setView({
@@ -405,6 +504,135 @@ export default function WorldMonitor() {
     viewerRef.current.scene.requestRender();
   }, [ready, quakes, q]);
 
+  // ── Build aircraft billboards (rotated to their track, at true altitude) ──
+  useEffect(() => {
+    if (!ready) return;
+    const Cesium = cesiumRef.current;
+    const viewer = viewerRef.current;
+    if (!aircraftCollRef.current) {
+      aircraftCollRef.current = viewer.scene.primitives.add(new Cesium.BillboardCollection());
+    }
+    const coll = aircraftCollRef.current;
+    coll.removeAll();
+    const airborne = Cesium.Color.fromCssColorString(LAYER_DEFS.aircraft.color);
+    const grounded = Cesium.Color.fromCssColorString("#64748b");
+    aircraft
+      .filter((a) => !q || (a[1] || a[0]).toLowerCase().includes(q) || (a[2] || "").toLowerCase().includes(q))
+      .forEach((a) => {
+        const [icao, callsign, country, lon, lat, alt, vel, track, ground] = a;
+        coll.add({
+          position: Cesium.Cartesian3.fromDegrees(lon, lat, Math.max(alt ?? 0, 0)),
+          image: PLANE_ICON,
+          scale: 0.55,
+          rotation: track != null ? -Cesium.Math.toRadians(track) : 0,
+          color: ground ? grounded : airborne,
+          scaleByDistance: new Cesium.NearFarScalar(5e5, 0.9, 2.2e7, 0.4),
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          id: { _wm: { kind: "aircraft", data: { icao, callsign, country, lon, lat, alt, vel, track, ground } } },
+        });
+      });
+    coll.show = !!layers.aircraft;
+    viewer.scene.requestRender();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, aircraft, q]);
+
+  // ── Build vessel points ──
+  useEffect(() => {
+    if (!ready) return;
+    const Cesium = cesiumRef.current;
+    const viewer = viewerRef.current;
+    if (!vesselCollRef.current) {
+      vesselCollRef.current = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
+    }
+    const coll = vesselCollRef.current;
+    coll.removeAll();
+    const green = Cesium.Color.fromCssColorString(LAYER_DEFS.vessels.color);
+    vessels
+      .filter((v) => !q || String(v.mmsi).includes(q))
+      .forEach((v) => {
+        coll.add({
+          position: Cesium.Cartesian3.fromDegrees(v.lon, v.lat),
+          pixelSize: 4,
+          color: green.withAlpha(0.9),
+          outlineColor: Cesium.Color.BLACK.withAlpha(0.6),
+          outlineWidth: 1,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          id: { _wm: { kind: "vessel", data: v } },
+        });
+      });
+    coll.show = !!layers.vessels;
+    viewer.scene.requestRender();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, vessels, q]);
+
+  // ── Propagate satellites (SGP4) every minute while the layer is on ──
+  useEffect(() => {
+    if (!ready || !layers.satellites || satCount === 0) return;
+    const Cesium = cesiumRef.current;
+    const viewer = viewerRef.current;
+    if (!satCollRef.current) {
+      satCollRef.current = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
+    }
+    const coll = satCollRef.current;
+    const violet = Cesium.Color.fromCssColorString(LAYER_DEFS.satellites.color);
+    const recs = satRecsRef.current ?? [];
+    if (coll.length !== recs.length) {
+      coll.removeAll();
+      recs.forEach((r) => coll.add({
+        position: Cesium.Cartesian3.ZERO,
+        pixelSize: 1.7,
+        color: violet.withAlpha(0.85),
+        show: false,
+        id: { _wm: { kind: "sat", data: { name: r.name, norad: r.satrec.satnum } } },
+      }));
+    }
+    const tick = () => {
+      const now = new Date();
+      const gmst = satellite.gstime(now);
+      for (let i = 0; i < recs.length; i++) {
+        const pv = satellite.propagate(recs[i].satrec, now);
+        const p = pv?.position;
+        const pt = coll.get(i);
+        if (p) {
+          const ecf = satellite.eciToEcf(p, gmst);
+          pt.position = new Cesium.Cartesian3(ecf.x * 1000, ecf.y * 1000, ecf.z * 1000);
+          pt.show = true;
+        } else pt.show = false;
+      }
+      coll.show = true;
+      viewer.scene.requestRender();
+    };
+    tick();
+    const iv = setInterval(tick, 60 * 1000);
+    return () => clearInterval(iv);
+  }, [ready, layers.satellites, satCount]);
+
+  // ── Load submarine cables once when first enabled (bundled GeoJSON) ──
+  useEffect(() => {
+    if (!ready || !layers.cables || cableDsRef.current) return;
+    const Cesium = cesiumRef.current;
+    const viewer = viewerRef.current;
+    let alive = true;
+    Cesium.GeoJsonDataSource.load(CABLES_URL)
+      .then((ds) => {
+        if (!alive) return;
+        ds.entities.values.forEach((e) => {
+          const color = e.properties?.color?.getValue?.() || LAYER_DEFS.cables.color;
+          if (e.polyline) {
+            e.polyline.material = Cesium.Color.fromCssColorString(color).withAlpha(0.55);
+            e.polyline.width = 1.3;
+          }
+          e._wm = { kind: "cable", data: { name: e.properties?.name?.getValue?.() ?? "Submarine cable" } };
+        });
+        viewer.dataSources.add(ds);
+        cableDsRef.current = ds;
+        setCableCount(new Set(ds.entities.values.map((e) => e._wm.data.name)).size);
+        viewer.scene.requestRender();
+      })
+      .catch(() => { /* file missing — layer stays empty */ });
+    return () => { alive = false; };
+  }, [ready, layers.cables]);
+
   // ── Toggle layer visibility ──
   useEffect(() => {
     if (!ready) return;
@@ -412,6 +640,10 @@ export default function WorldMonitor() {
       const ds = sourcesRef.current[k];
       if (ds) ds.show = !!layers[k];
     });
+    if (aircraftCollRef.current) aircraftCollRef.current.show = !!layers.aircraft;
+    if (vesselCollRef.current) vesselCollRef.current.show = !!layers.vessels;
+    if (satCollRef.current) satCollRef.current.show = !!layers.satellites;
+    if (cableDsRef.current) cableDsRef.current.show = !!layers.cables;
     viewerRef.current.scene.requestRender();
   }, [ready, layers]);
 
@@ -421,9 +653,10 @@ export default function WorldMonitor() {
     const Cesium = cesiumRef.current;
     const viewer = viewerRef.current;
     if (highlightRef.current) { viewer.entities.remove(highlightRef.current); highlightRef.current = null; }
-    if (selected) {
+    const hlLng = selected?.data?.lng ?? selected?.data?.lon;
+    if (selected && selected.kind !== "sat" && selected.kind !== "cable" && hlLng != null) {
       highlightRef.current = viewer.entities.add({
-        position: Cesium.Cartesian3.fromDegrees(selected.data.lng, selected.data.lat),
+        position: Cesium.Cartesian3.fromDegrees(hlLng, selected.data.lat),
         point: {
           pixelSize: 30,
           color: Cesium.Color.TRANSPARENT,
@@ -452,8 +685,12 @@ export default function WorldMonitor() {
     critical: incidents.filter((i) => i.intensity >= 8).length,
     zones: new Set(incidents.map((i) => i.region)).size,
     sites: Object.keys(POI_LAYERS).reduce((n, k) => n + (layers[k] ? POI_LAYERS[k].length : 0), 0)
-      + (layers.quakes ? quakes.length : 0),
-  }), [incidents, layers, quakes]);
+      + (layers.quakes ? quakes.length : 0)
+      + (layers.aircraft ? aircraft.length : 0)
+      + (layers.vessels ? vessels.length : 0)
+      + (layers.satellites ? satCount : 0)
+      + (layers.cables ? cableCount : 0),
+  }), [incidents, layers, quakes, aircraft, vessels, satCount, cableCount]);
   const typeCounts = useMemo(() => {
     const c = { all: incidents.length };
     incidents.forEach((i) => { c[i.type] = (c[i.type] ?? 0) + 1; });
@@ -463,6 +700,10 @@ export default function WorldMonitor() {
   const layerCount = (key) =>
     key === "incidents" ? incidents.length
     : key === "quakes" ? quakes.length
+    : key === "aircraft" ? aircraft.length
+    : key === "vessels" ? vessels.length
+    : key === "satellites" ? satCount
+    : key === "cables" ? cableCount
     : POI_LAYERS[key]?.length ?? 0;
   const toggleLayer = (key) => setLayers((l) => ({ ...l, [key]: !l[key] }));
   const setAllLayers = (on) => setLayers(() => {
@@ -515,9 +756,25 @@ export default function WorldMonitor() {
           <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider" style={{ color: LAYER_DEFS[selected.data.layer]?.color }}>
             <LayerSwatch def={LAYER_DEFS[selected.data.layer]} /> {LAYER_DEFS[selected.data.layer]?.label}
           </span>
-        ) : (
+        ) : selected.kind === "quake" ? (
           <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400">
             EARTHQUAKE · M{(selected.data.mag ?? 0).toFixed(1)}
+          </span>
+        ) : selected.kind === "aircraft" ? (
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider" style={{ color: LAYER_DEFS.aircraft.color }}>
+            ✈ AIRCRAFT · ADS-B
+          </span>
+        ) : selected.kind === "vessel" ? (
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider" style={{ color: LAYER_DEFS.vessels.color }}>
+            ▲ VESSEL · AIS
+          </span>
+        ) : selected.kind === "sat" ? (
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider" style={{ color: LAYER_DEFS.satellites.color }}>
+            ✦ SATELLITE · NORAD {selected.data.norad}
+          </span>
+        ) : (
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider" style={{ color: LAYER_DEFS.cables.color }}>
+            SUBMARINE CABLE
           </span>
         )}
         <button onClick={() => setSelected(null)} className="text-slate-500 hover:text-slate-300"><X size={13} /></button>
@@ -564,6 +821,41 @@ export default function WorldMonitor() {
             </a>
           )}
         </>
+      )}
+
+      {selected.kind === "aircraft" && (
+        <>
+          <p className="text-sm font-semibold text-slate-100 mt-1.5 font-mono">
+            {selected.data.callsign || selected.data.icao.toUpperCase()}
+          </p>
+          <p className="text-[11px] text-slate-400 mt-0.5">{selected.data.country} · {selected.data.ground ? "on ground" : "airborne"}</p>
+          <p className="text-[10px] text-slate-500 mt-2 font-mono">
+            {fmtCoord(selected.data.lat, selected.data.lon)}
+            {selected.data.alt != null && <> · {Math.round(selected.data.alt * 3.281).toLocaleString()} ft</>}
+            {selected.data.vel != null && <> · {Math.round(selected.data.vel * 1.944)} kt</>}
+            {selected.data.track != null && <> · trk {Math.round(selected.data.track)}°</>}
+          </p>
+          <p className="text-[10px] text-slate-600 mt-1 font-mono">ICAO24 {selected.data.icao}</p>
+        </>
+      )}
+
+      {selected.kind === "vessel" && (
+        <>
+          <p className="text-sm font-semibold text-slate-100 mt-1.5 font-mono">MMSI {selected.data.mmsi}</p>
+          <p className="text-[10px] text-slate-500 mt-2 font-mono">
+            {fmtCoord(selected.data.lat, selected.data.lon)}
+            {selected.data.sog != null && <> · {selected.data.sog.toFixed(1)} kn</>}
+            {selected.data.cog != null && <> · cog {Math.round(selected.data.cog)}°</>}
+          </p>
+        </>
+      )}
+
+      {selected.kind === "sat" && (
+        <p className="text-sm font-semibold text-slate-100 mt-1.5 font-mono">{selected.data.name}</p>
+      )}
+
+      {selected.kind === "cable" && (
+        <p className="text-sm font-semibold text-slate-100 mt-1.5">{selected.data.name}</p>
       )}
     </div>
   );
@@ -657,8 +949,8 @@ export default function WorldMonitor() {
               })}
             </div>
           ))}
-          <p className="px-3 py-2 text-[9px] text-slate-600 border-t border-slate-900">
-            Incidents: GDELT · Quakes: USGS · Sites: public OSINT
+          <p className="px-3 py-2 text-[9px] text-slate-600 border-t border-slate-900 leading-relaxed">
+            Incidents: GDELT · Aircraft: OpenSky · AIS: digitraffic.fi · Sats: CelesTrak · Quakes: USGS · Cables: TeleGeography · Sites: public OSINT
           </p>
         </aside>
 
@@ -720,11 +1012,32 @@ export default function WorldMonitor() {
                   <p className="text-[10px] text-slate-400">{tooltip.data.country}</p>
                   <p className="text-[11px] text-slate-300 mt-0.5 leading-snug line-clamp-2">{tooltip.data.note}</p>
                 </>
-              ) : (
+              ) : tooltip.kind === "quake" ? (
                 <>
                   <p className="text-xs font-semibold text-white">M{(tooltip.data.mag ?? 0).toFixed(1)} · {tooltip.data.place}</p>
                   <p className="text-[10px] text-slate-400 mt-0.5">{timeAgo(tooltip.data.time)} · depth {Math.round(tooltip.data.depth)} km</p>
                 </>
+              ) : tooltip.kind === "aircraft" ? (
+                <>
+                  <p className="text-xs font-semibold text-white font-mono">{tooltip.data.callsign || tooltip.data.icao.toUpperCase()}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">
+                    {tooltip.data.country}
+                    {tooltip.data.alt != null && <> · {Math.round(tooltip.data.alt * 3.281).toLocaleString()} ft</>}
+                    {tooltip.data.vel != null && <> · {Math.round(tooltip.data.vel * 1.944)} kt</>}
+                  </p>
+                </>
+              ) : tooltip.kind === "vessel" ? (
+                <>
+                  <p className="text-xs font-semibold text-white font-mono">MMSI {tooltip.data.mmsi}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">
+                    {tooltip.data.sog != null && <>{tooltip.data.sog.toFixed(1)} kn · </>}
+                    {tooltip.data.cog != null && <>cog {Math.round(tooltip.data.cog)}°</>}
+                  </p>
+                </>
+              ) : tooltip.kind === "sat" ? (
+                <p className="text-xs font-semibold text-white font-mono">{tooltip.data.name}</p>
+              ) : (
+                <p className="text-xs font-semibold text-white">{tooltip.data.name}</p>
               )}
             </div>
           )}
