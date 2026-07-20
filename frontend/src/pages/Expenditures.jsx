@@ -1057,7 +1057,7 @@ const GeographyLayer = memo(function GeographyLayer({
   geoData, spendingByCode, getColor, selectedCode, onCountryClick, onMouseEnter, onMouseLeave
 }) {
   return (
-    <Geographies geography={geoData || GEO_URL}>
+    <Geographies geography={geoData}>
       {({ geographies }) =>
         geographies.map((geo) => {
           const code = ISO_NUM_TO_CODE[String(geo.id).padStart(3, '0')];
@@ -1118,22 +1118,35 @@ function WorldChoroplethMap({ expenditures, mode, onCountryClick, selectedCode }
 
   return (
     <div className="relative">
-      {/* Map */}
-      <ComposableMap
-        projection="geoMercator"
-        projectionConfig={{ scale: 118, center: [15, 15] }}
-        style={{ width: '100%', height: '340px' }}
-      >
-        <GeographyLayer
-          geoData={geoData}
-          spendingByCode={spendingByCode}
-          getColor={getColor}
-          selectedCode={selectedCode}
-          onCountryClick={onCountryClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        />
-      </ComposableMap>
+      {/* Map — only rendered once the world topology has loaded, so we never
+          pass a null geography to react-simple-maps. */}
+      {geoData ? (
+        <ComposableMap
+          projection="geoMercator"
+          projectionConfig={{ scale: 118, center: [15, 15] }}
+          style={{ width: '100%', height: '340px' }}
+        >
+          <GeographyLayer
+            geoData={geoData}
+            spendingByCode={spendingByCode}
+            getColor={getColor}
+            selectedCode={selectedCode}
+            onCountryClick={onCountryClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          />
+        </ComposableMap>
+      ) : (
+        <div
+          className="w-full flex items-center justify-center text-slate-400 text-sm"
+          style={{ height: '340px' }}
+        >
+          <div className="flex items-center gap-2">
+            <Globe2 className="w-4 h-4 animate-pulse" />
+            <span>Loading world map…</span>
+          </div>
+        </div>
+      )}
 
       {/* Hover tooltip */}
       {tooltip && (
