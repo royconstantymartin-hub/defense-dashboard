@@ -51,10 +51,11 @@ const NAVAL_SUBTYPES = [
 
 const LAND_SUBTYPES = [
   { value: "all", label: "All Land", icon: Target },
-  { value: "tank", label: "Tanks", icon: Target, types: ["tank"] },
-  { value: "ifv_apc", label: "IFV & APC", icon: Shield, types: ["ifv", "apc", "armored_vehicle", "active_protection"] },
+  { value: "tank", label: "Tanks", icon: Target, types: ["tank", "mbt"] },
+  { value: "ifv_apc", label: "IFV & APC", icon: Shield, types: ["ifv", "apc", "armored_vehicle", "active_protection", "autocannon"] },
   { value: "artillery", label: "Artillery & MLRS", icon: Rocket, types: ["artillery", "mlrs"] },
-  { value: "autonomous", label: "Autonomous Systems", icon: Cpu, types: ["ugv", "reconnaissance", "tactical_vehicle", "autocannon"] },
+  { value: "recon", label: "Reconnaissance", icon: Eye, types: ["reconnaissance", "tactical_vehicle"] },
+  { value: "autonomous", label: "Autonomous (UGV)", icon: Cpu, types: ["ugv"] },
 ];
 
 const MISSILE_SUBTYPES = [
@@ -810,6 +811,56 @@ const WIKI_TITLES = {
   "Bushmaster PMV (Protected Mobility Vehicle)": "Bushmaster Protected Mobility Vehicle",
   "CENTAURO II B2 (VBC-120)": "Centauro (tank destroyer)",
   "VCC-80 Dardo IFV": "Dardo (infantry fighting vehicle)",
+  // ── Corrected image mappings ─────────────────────────────────────────────
+  // These products previously showed the illustrated placeholder because their
+  // name (or old mapping) matched no English Wikipedia article with a lead image.
+  // Each title below was verified to return a real photo via the pageimages API.
+  // (Duplicate keys are intentional here — JS keeps the last value, so these win.)
+  "E-7A Wedgetail": "Boeing E-7 Wedgetail",
+  "Piranha V": "Mowag Piranha",
+  "SPYDER-MR": "SPYDER",
+  "Pleiades Neo": "Pléiades (satellite)",
+  "Tempest / GCAP": "Global Combat Air Programme",
+  "Isaac Peral-class Submarine": "S-80 Plus-class submarine",
+  "AMV35 IFV": "Patria AMV",
+  "Mistral SHORAD": "Mistral (missile)",
+  "ELM-2084 MMR": "EL/M-2084",
+  "Puma AE UAS": "AeroVironment RQ-20 Puma",
+  "VBL (Véhicule Blindé Léger)": "Panhard VBL",
+  "PVP (Petit Véhicule Protégé)": "Panhard PVP",
+  "Z-10 Fierce Thunderbolt": "CAIC Z-10",
+  "Z-20 Medium Transport": "Harbin Z-20",
+  "Surion KUH-1": "KAI KUH-1 Surion",
+  "Luna NG Tactical UAS": "EMT Luna X-2000",
+  "Rubis-class SSN": "Rubis-class submarine",
+  "Trafalgar-class SSN": "Trafalgar-class submarine",
+  "Challenger 2 / 2 LEP MBT": "Challenger 2",
+  "F-2 Viper Zero": "Mitsubishi F-2",
+  "Oyashio-class SSK": "Oyashio-class submarine",
+  "Type 90 MBT": "Type 90 tank",
+  "Jangbogo-I (Type 209/1200) SSK": "Chang Bogo-class submarine",
+  "Jangbogo-II (Type 214) SSK": "Son Won-il-class submarine",
+  "Su-27S / Su-30SM Flanker": "Sukhoi Su-30SM",
+  "Su-25SM Frogfoot": "Sukhoi Su-25",
+  "Su-34M Fullback": "Sukhoi Su-34",
+  "MiG-31BM Foxhound": "Mikoyan MiG-31",
+  "T-72B3 / T-72B3M MBT": "T-72",
+  "T-80BVM / T-80U MBT": "T-80",
+  "T-90A / T-90M Proryv MBT": "T-90",
+  "Kilo / Improved Kilo SSK": "Kilo-class submarine",
+  "Varshavyanka SSK (Pr.636.3)": "Kilo-class submarine",
+  "Delta IV SSBN (Pr.667BDRM)": "Delta-class submarine",
+  "Akula SSN (Pr.971)": "Akula-class submarine",
+  "Oscar II SSGN (Pr.949A)": "Oscar-class submarine",
+  "J-10C Firebird": "Chengdu J-10",
+  "J-11/J-11B Flanker-L": "Shenyang J-11",
+  "J-16 Strike Flanker": "Shenyang J-16",
+  "H-6K/N Badger": "Xian H-6",
+  "Type 039/A/B Yuan-class SSK": "Type 039A submarine",
+  "Bayraktar Kizilelma": "Bayraktar Kızılelma",
+  "Syracuse IV": "Communications satellite",
+  "DG100 Autonomous USV": "Unmanned surface vehicle",
+  "IDEFX Autonomous UUV": "Autonomous underwater vehicle",
 };
 
 // YouTube presentation video IDs — verified directly from official manufacturer websites
