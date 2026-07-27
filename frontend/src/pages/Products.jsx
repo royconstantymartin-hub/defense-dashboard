@@ -13,12 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play, Eye, Wind, Zap, Anchor, Waves, Shield, Globe } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play, Eye, Wind, Zap, Anchor, Waves, Shield, Globe, Layers, LayoutGrid } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import FlagshipProductDetail from "@/components/FlagshipProductDetail";
 import { FLAGSHIP_PRODUCTS } from "@/data/flagship-products/index.js";
 import { getLogoUrls } from "@/lib/companyLogos";
 import ProductIllustration from "@/components/ProductIllustration";
+import BattlespaceOverview from "@/components/BattlespaceOverview";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -912,6 +913,9 @@ export default function Products() {
   const [showComparison, setShowComparison]= useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 24;
+  // Which "vision" is shown: "overview" = command / battlespace process view,
+  // "catalog" = the classic filterable grid. Overview is the default landing view.
+  const [view, setView] = useState("overview");
 
   // YouTube video availability: track which product names have a broken/deleted video
   const [brokenVideos, setBrokenVideos] = useState(new Set());
@@ -1158,6 +1162,41 @@ export default function Products() {
         </div>
       </div>
 
+      {/* Vision toggle — Vision 1 (command / battlespace process) ⇆ Vision 2 (catalog) */}
+      <div className="inline-flex bg-slate-100 border border-slate-200 rounded-lg p-1 gap-1" data-testid="products-view-toggle">
+        {[
+          { id: "overview", label: "Vision 1 · Command View", Icon: Layers },
+          { id: "catalog", label: "Vision 2 · Catalog", Icon: LayoutGrid },
+        ].map((t) => {
+          const TabIcon = t.Icon;
+          const active = view === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setView(t.id)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                active ? "bg-white text-blue-800 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              }`}
+              data-testid={`view-tab-${t.id}`}
+            >
+              <TabIcon className="w-4 h-4" />
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Vision 1: command / battlespace process ─────────────────────── */}
+      {view === "overview" && (
+        <BattlespaceOverview
+          products={products}
+          onSelectDomain={(cat) => { setSelectedCategory(cat); setSelectedSubType("all"); setView("catalog"); }}
+          onExploreAll={() => { setSelectedCategory("all"); setSelectedSubType("all"); setView("catalog"); }}
+        />
+      )}
+
+      {/* ── Vision 2: filterable catalog ────────────────────────────────── */}
+      {view === "catalog" && (<>
       {/* Compare Mode Bar */}
       {compareMode && (
         <Card className="bg-slate-100 border-slate-300 shadow-sm">
@@ -1520,6 +1559,7 @@ export default function Products() {
           </div>
         );
       })()}
+      </>)}
 
       {/* Comparison Modal – portaled to body to escape CSS transform containing block */}
       {showComparison && createPortal(
