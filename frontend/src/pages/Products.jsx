@@ -19,7 +19,7 @@ import FlagshipProductDetail from "@/components/FlagshipProductDetail";
 import { FLAGSHIP_PRODUCTS } from "@/data/flagship-products/index.js";
 import { getLogoUrls } from "@/lib/companyLogos";
 import ProductIllustration from "@/components/ProductIllustration";
-import BattlespaceOverview from "@/components/BattlespaceOverview";
+import BattlespaceTheater from "@/components/BattlespaceTheater";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -1188,10 +1188,14 @@ export default function Products() {
 
       {/* ── Vision 1: command / battlespace process ─────────────────────── */}
       {view === "overview" && (
-        <BattlespaceOverview
+        <BattlespaceTheater
           products={products}
-          onSelectDomain={(cat) => { setSelectedCategory(cat); setSelectedSubType("all"); setView("catalog"); }}
-          onExploreAll={() => { setSelectedCategory("all"); setSelectedSubType("all"); setView("catalog"); }}
+          onOpenProduct={(product) => {
+            const detail = FLAGSHIP_PRODUCTS[product.name];
+            if (detail) { setFlagshipEntry({ product, detail }); setFlagshipOpen(true); }
+            else { setSelectedProduct(product); }
+          }}
+          onExploreCatalog={(cat) => { setSelectedCategory(cat || "all"); setSelectedSubType("all"); setView("catalog"); }}
         />
       )}
 
