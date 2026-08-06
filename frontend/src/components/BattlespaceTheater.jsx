@@ -20,12 +20,24 @@ import { ArrowRight, X } from "lucide-react";
 // Domain metadata. `categories` maps each macro domain to the product
 // categories it owns, so every product stays reachable (radar folds into Cyber).
 const DOMAIN_META = [
-  { key: "space",  name: "Space",       color: "#8b90ff", categories: ["space"],           model: "sat",   pos: [-6, 4.8, 1.5],  role: "Orbital reconnaissance, navigation, early-warning and secure communications — the backbone every other domain relies on." },
-  { key: "air",    name: "Air Power",   color: "#5aa2ff", categories: ["aircraft"],        model: "jet",   pos: [2.5, 4.4, -3],  role: "Air superiority, deep strike, mobility and airborne ISR — speed and reach across the whole theater." },
-  { key: "naval",  name: "Maritime",    color: "#33d6c8", categories: ["naval"],           model: "ship",  pos: [7.5, 0, 4.5], onSea: true,  role: "Sea control and power projection — a mobile base carrying air power, missiles and sensors anywhere." },
-  { key: "land",   name: "Land",        color: "#f2a44e", categories: ["land"],            model: "tank",  pos: [-3.2, 0, 2.2], onLand: true, role: "Seize and hold terrain — armour, artillery and air-defence that ultimately decide the outcome." },
-  { key: "missile",name: "Strike",      color: "#ff6b6b", categories: ["missile"],         model: "arty",  pos: [1.6, 0, 3.6], onLand: true, role: "Precision effects at range — air-defence, cruise, ballistic and anti-ship missiles fired from every platform." },
-  { key: "cyber",  name: "Cyber & C2",  color: "#c9d4e0", categories: ["cyber", "radar"],  model: "c2",    pos: [0.4, 0, -0.4], onLand: true, hub: true, role: "The connective tissue: command & control, networks, electronic warfare and the sensors that fuse the picture." },
+  { key: "space", name: "Space", color: "#8b90ff", categories: ["space"], model: "sat", pos: [-6, 4.8, 1.5],
+    about: "The constellation of military satellites and launch systems operating in orbit. Space doesn't fight directly, but almost every modern capability — navigation, communications, early-warning and reconnaissance — depends on it, which is why it's called the ultimate high ground.",
+    interfaces: "Feeds GPS, secure comms, imagery and missile-launch warning to every other domain; protected by ground control and cyber." },
+  { key: "air", name: "Air Power", color: "#5aa2ff", categories: ["aircraft"], model: "jet", pos: [2.5, 4.4, -3],
+    about: "The use of aircraft to win control of the sky, strike targets deep in enemy territory, move forces and watch the battlefield from above. Whoever controls the air can operate freely on the ground and at sea; whoever loses it is exposed everywhere.",
+    interfaces: "Cued by satellites and AWACS, shielded from enemy air-defence by electronic warfare, delivers the missiles that sensors have targeted." },
+  { key: "naval", name: "Maritime", color: "#33d6c8", categories: ["naval"], model: "ship", pos: [7.5, 0, 4.5], onSea: true,
+    about: "Surface ships and submarines that control the seas and the trade routes crossing them. A carrier or amphibious group is a sovereign, mobile base able to carry air power, missiles and sensors anywhere in the world without asking permission to land.",
+    interfaces: "Projects air power and long-range strike from international waters, using over-the-horizon targeting from space, air and submarines." },
+  { key: "land", name: "Land", color: "#f2a44e", categories: ["land"], model: "tank", pos: [-3.2, 0, 2.2], onLand: true,
+    about: "The forces that seize and hold ground — the only way to truly control territory and populations. Armour, artillery and air-defence combine to break through enemy lines and defend what has been taken. Wars are ultimately decided here.",
+    interfaces: "Holds the ground the other domains fight for; cued by ISR, shielded overhead by air-defence, moved and resupplied by air and sea." },
+  { key: "missile", name: "Strike", color: "#ff6b6b", categories: ["missile"], model: "arty", pos: [1.6, 0, 3.6], onLand: true,
+    about: "Guided missiles are the 'reach' of every domain — the effect at the end of the kill chain. They turn a detected target into a destroyed one, whether that's an aircraft overhead, a warship 300 km away or a bunker across a border.",
+    interfaces: "Fired from land, air and sea platforms against tracks handed over by radar and space sensors." },
+  { key: "cyber", name: "Cyber & C2", color: "#c9d4e0", categories: ["cyber", "radar"], model: "c2", pos: [0.4, 0, -0.4], onLand: true, hub: true,
+    about: "The connective tissue of modern war: command systems, networks, sensors and the fight for the electromagnetic spectrum. Winning here lets a force see first, decide faster and act as one — losing it blinds and scatters everything else.",
+    interfaces: "Links every sensor to every shooter, blinds the enemy's, and rides on space communications." },
 ];
 
 // Curated sub-types per domain — clean names + a mapping to the raw
@@ -33,50 +45,50 @@ const DOMAIN_META = [
 // filters the real catalogue. Anything unmatched falls into "Other Systems".
 const SUBTYPES = {
   space: [
-    { label: "Reconnaissance / ISR", icon: "satellite", types: ["reconnaissance_satellite", "sigint"], role: "Optical & signals intelligence from orbit." },
-    { label: "Communications Sats", icon: "antenna", types: ["communications_satellite"], role: "Secure global connectivity for the force." },
-    { label: "Navigation (GNSS)", icon: "satellite", types: ["navigation_satellite"], role: "Positioning & timing that guide precision weapons." },
-    { label: "Early-Warning", icon: "radar", types: ["early_warning_satellite"], role: "Infrared eyes that spot missile launches." },
-    { label: "Space Vehicles", icon: "missile", types: ["spaceplane"], role: "Reusable spaceplanes & orbital platforms." },
+    { label: "Reconnaissance / ISR", icon: "satellite", types: ["reconnaissance_satellite", "sigint"], role: "Optical & signals intelligence from orbit.", def: "Satellites that photograph the Earth (optical or radar imaging) or intercept enemy signals (SIGINT). They give commanders intelligence on any point of the globe, day or night, without overflying with an aircraft." },
+    { label: "Communications Sats", icon: "antenna", types: ["communications_satellite"], role: "Secure global connectivity for the force.", def: "Satellites that relay secure voice and data between headquarters and forces anywhere on Earth, including beyond line-of-sight and in remote theatres where no ground network exists." },
+    { label: "Navigation (GNSS)", icon: "satellite", types: ["navigation_satellite"], role: "Positioning & timing that guide precision weapons.", def: "Constellations such as GPS and Galileo that broadcast precise position and timing. Everything from an infantry squad's map to a guided missile's terminal accuracy relies on them." },
+    { label: "Early-Warning", icon: "radar", types: ["early_warning_satellite"], role: "Infrared eyes that spot missile launches.", def: "Satellites carrying infrared sensors that detect the hot exhaust plume of a missile launch within seconds of lift-off — the first, earliest warning a nation gets of an attack." },
+    { label: "Space Vehicles", icon: "missile", types: ["spaceplane"], role: "Reusable spaceplanes & orbital platforms.", def: "Reusable spaceplanes and manoeuvring orbital platforms — the newest and still-emerging class of military space hardware, used to test payloads and operate flexibly in orbit." },
   ],
   air: [
-    { label: "Fixed-Wing", icon: "fighter", types: ["fighter", "bomber", "attack", "gunship"], role: "Fighters & bombers for air superiority and deep strike." },
-    { label: "Rotary-Wing", icon: "heli", types: ["helicopter", "tiltrotor"], role: "Assault, transport & close support without runways." },
-    { label: "UAVs / Drones", icon: "uav", types: ["uav", "loitering_munition"], role: "Persistent surveillance & strike, no pilot at risk." },
-    { label: "Support & ISR", icon: "transport", types: ["transport", "tanker", "awacs", "patrol", "reconnaissance"], role: "Tankers, transports & flying radars behind the campaign." },
+    { label: "Fixed-Wing", icon: "fighter", types: ["fighter", "bomber", "attack", "gunship"], role: "Fighters & bombers for air superiority and deep strike.", def: "Jet aircraft with fixed wings: fighters that win air-to-air combat and bombers/attack jets that hit ground targets. They secure control of the sky and carry the heaviest, longest-range strike loads." },
+    { label: "Rotary-Wing", icon: "heli", types: ["helicopter", "tiltrotor"], role: "Assault, transport & close support without runways.", def: "Helicopters and tiltrotors. Flying low and slow and landing without a runway, they carry out air-assault, transport, medical evacuation and anti-tank / close air support close to the troops." },
+    { label: "UAVs / Drones", icon: "uav", types: ["uav", "loitering_munition"], role: "Persistent surveillance & strike, no pilot at risk.", def: "Uncrewed aircraft, flown remotely or autonomously, from hand-launched minis to large armed drones. They provide hours of persistent surveillance and precision strike without risking a pilot." },
+    { label: "Support & ISR", icon: "transport", types: ["transport", "tanker", "awacs", "patrol", "reconnaissance"], role: "Tankers, transports & flying radars behind the campaign.", def: "The enablers that make an air campaign possible: tankers that refuel other aircraft in flight, transports that move troops and cargo, and flying radars (AWACS) that see and coordinate the whole air picture." },
   ],
   naval: [
-    { label: "Aircraft Carriers", icon: "carrier", types: ["aircraft_carrier"], role: "Floating airbases projecting air power worldwide." },
-    { label: "Destroyers", icon: "destroyer", types: ["destroyer"], role: "Heavily-armed multi-mission air-defence & strike ships." },
-    { label: "Frigates", icon: "frigate", types: ["frigate"], role: "Versatile escorts — the workhorses of the fleet." },
-    { label: "Corvettes", icon: "corvette", types: ["corvette"], role: "Small, agile combatants for coastal & littoral waters." },
-    { label: "Submarines", icon: "submarine", types: ["submarine"], role: "Silent undersea strike, ISR and deterrence." },
-    { label: "Amphibious", icon: "amphibious", types: ["amphibious", "littoral_combat_ship"], role: "Put troops ashore and operate in the littorals." },
-    { label: "Naval Drones (USV/UUV)", icon: "navaldrone", types: ["usv", "uuv"], role: "Uncrewed surface & underwater vehicles extending the fleet." },
+    { label: "Aircraft Carriers", icon: "carrier", types: ["aircraft_carrier"], role: "Floating airbases projecting air power worldwide.", def: "A warship with a full-length flight deck that operates fixed-wing aircraft at sea. It projects air power thousands of kilometres from home without needing access to a friendly airbase — a nation's most visible symbol of reach." },
+    { label: "Destroyers", icon: "destroyer", types: ["destroyer"], role: "Heavily-armed multi-mission air-defence & strike ships.", def: "Large, fast, heavily-armed surface combatants. Modern destroyers are the fleet's main air-defence and land-attack platforms, carrying powerful radars and dozens of missiles in vertical launch cells." },
+    { label: "Frigates", icon: "frigate", types: ["frigate"], role: "Versatile escorts — the workhorses of the fleet.", def: "Mid-sized multi-role escorts, smaller than destroyers. They screen the fleet against submarines, aircraft and small craft and handle patrol and presence missions — the everyday workhorse of most navies." },
+    { label: "Corvettes", icon: "corvette", types: ["corvette"], role: "Small, agile combatants for coastal & littoral waters.", def: "The smallest ocean-going warships, optimised for coastal and littoral waters. Cheap and agile, they patrol economic zones and defend the shore against fast attack craft and submarines." },
+    { label: "Submarines", icon: "submarine", types: ["submarine"], role: "Silent undersea strike, ISR and deterrence.", def: "Vessels that operate hidden underwater. They conduct stealthy reconnaissance, sink ships, launch land-attack missiles and — for nuclear-armed states — form the survivable leg of nuclear deterrence." },
+    { label: "Amphibious", icon: "amphibious", types: ["amphibious", "littoral_combat_ship"], role: "Put troops ashore and operate in the littorals.", def: "Ships that carry troops, vehicles and helicopters to put a landing force ashore, often through a flooded internal well-deck. They let a nation project ground power directly onto a hostile coast." },
+    { label: "Naval Drones (USV/UUV)", icon: "navaldrone", types: ["usv", "uuv"], role: "Uncrewed surface & underwater vehicles extending the fleet.", def: "Uncrewed surface (USV) and underwater (UUV) vehicles. They extend the fleet's reach for mine-hunting, surveillance and strike while keeping crews out of the most dangerous waters." },
   ],
   land: [
-    { label: "Main Battle Tanks", icon: "tank", types: ["tank", "mbt"], role: "The armoured fist — firepower, protection and shock." },
-    { label: "IFV & APC", icon: "ifv", types: ["ifv", "apc", "armored_vehicle", "active_protection", "autocannon"], role: "Carry and support infantry under armour." },
-    { label: "Artillery & MLRS", icon: "artillery", types: ["artillery", "mlrs"], role: "Massed and precision fires that shape the battle." },
-    { label: "Reconnaissance", icon: "recon", types: ["reconnaissance", "tactical_vehicle"], role: "Fast, light vehicles that find the enemy first." },
-    { label: "Autonomous (UGV)", icon: "ugv", types: ["ugv"], role: "Ground robots for recon, logistics & dangerous work." },
+    { label: "Main Battle Tanks", icon: "tank", types: ["tank", "mbt"], role: "The armoured fist — firepower, protection and shock.", def: "Heavily armoured tracked vehicles with a large-calibre gun. The tank delivers direct firepower, protection and shock action, leading the assault and breaking through prepared enemy defences." },
+    { label: "IFV & APC", icon: "ifv", types: ["ifv", "apc", "armored_vehicle", "active_protection", "autocannon"], role: "Carry and support infantry under armour.", def: "Armoured vehicles that carry infantry into battle. APCs are protected 'battle taxis'; IFVs (infantry fighting vehicles) add a cannon and missiles so they can fight alongside the soldiers they carry." },
+    { label: "Artillery & MLRS", icon: "artillery", types: ["artillery", "mlrs"], role: "Massed and precision fires that shape the battle.", def: "Guns and rocket launchers that deliver fires from far behind the front line — from towed howitzers to precision rocket systems like HIMARS. Artillery causes the majority of casualties in high-intensity war." },
+    { label: "Reconnaissance", icon: "recon", types: ["reconnaissance", "tactical_vehicle"], role: "Fast, light vehicles that find the enemy first.", def: "Fast, light vehicles that scout ahead of the main force to find the enemy, identify targets and report back before commanders commit their heavier units." },
+    { label: "Autonomous (UGV)", icon: "ugv", types: ["ugv"], role: "Ground robots for recon, logistics & dangerous work.", def: "Uncrewed ground vehicles — robots used for reconnaissance, logistics resupply and dangerous tasks such as mine clearance, keeping soldiers out of the line of fire." },
   ],
   missile: [
-    { label: "Air Defence (SAM)", icon: "sam", types: ["sam", "shorad", "manpads", "anti_ballistic"], role: "The shield that denies the sky to aircraft & missiles." },
-    { label: "Cruise & Ballistic", icon: "missile", types: ["cruise_missile", "precision_strike", "hypersonic", "ballistic_missile"], role: "Long-range precision, from cruise to hypersonic." },
-    { label: "Anti-Ship", icon: "missile", types: ["anti_ship", "air_to_ship"], role: "Ship-killers launched from sea, air or coast." },
-    { label: "Air-to-Air", icon: "airair", types: ["air_to_air"], role: "The fighter's teeth — kill other aircraft." },
-    { label: "Air-to-Ground", icon: "missile", types: ["air_to_ground", "anti_tank", "atgm", "anti_radiation"], role: "Precision munitions vs tanks, bunkers & radars." },
-    { label: "Loitering Munitions", icon: "uav", types: ["loitering_munition"], role: "'Kamikaze' drones that hunt then dive on the target." },
+    { label: "Air Defence (SAM)", icon: "sam", types: ["sam", "shorad", "manpads", "anti_ballistic"], role: "The shield that denies the sky to aircraft & missiles.", def: "Surface-to-air missiles that detect and destroy aircraft, drones and incoming missiles. Layered from short-range to long-range, they form the 'shield' that denies an enemy the use of the sky." },
+    { label: "Cruise & Ballistic", icon: "missile", types: ["cruise_missile", "precision_strike", "hypersonic", "ballistic_missile"], role: "Long-range precision, from cruise to hypersonic.", def: "Long-range strike missiles. Cruise missiles fly low and precise like a small aircraft; ballistic missiles arc through the upper atmosphere at high speed. Both hit high-value targets deep in enemy territory." },
+    { label: "Anti-Ship", icon: "missile", types: ["anti_ship", "air_to_ship"], role: "Ship-killers launched from sea, air or coast.", def: "Missiles designed to cripple or sink warships, launched from ships, aircraft, submarines or coastal batteries — the primary means of contesting control of the sea." },
+    { label: "Air-to-Air", icon: "airair", types: ["air_to_air"], role: "The fighter's teeth — kill other aircraft.", def: "Missiles carried by fighters to destroy other aircraft — either beyond visual range with radar guidance, or in a close dogfight with heat-seeking infrared guidance." },
+    { label: "Air-to-Ground", icon: "missile", types: ["air_to_ground", "anti_tank", "atgm", "anti_radiation"], role: "Precision munitions vs tanks, bunkers & radars.", def: "Precision munitions dropped or fired from aircraft and vehicles to destroy tanks, bunkers, vehicles and — with anti-radiation seekers — enemy air-defence radars." },
+    { label: "Loitering Munitions", icon: "uav", types: ["loitering_munition"], role: "'Kamikaze' drones that hunt then dive on the target.", def: "'Kamikaze drones' that fly over an area searching for a target, then dive into it and detonate. They blur the line between a reconnaissance drone and a guided missile." },
   ],
   cyber: [
-    { label: "Command & Control", icon: "software", types: ["software"], role: "Battle-management that fuses every sensor & shooter." },
-    { label: "Electronic Warfare", icon: "ew", types: ["electronic_warfare"], role: "Jam, deceive and blind enemy radars & comms." },
-    { label: "Directed Energy", icon: "laser", types: ["directed_energy", "c_uas"], role: "Lasers & microwaves that swat drones at light speed." },
-    { label: "Communications", icon: "antenna", types: ["communications", "surveillance"], role: "Resilient links carrying orders across the force." },
-    { label: "Airborne Radar", icon: "radar", types: ["airborne_radar", "multimode_radar"], role: "Flying sensors that see over the horizon." },
-    { label: "Naval Radar", icon: "radar", types: ["naval_radar"], role: "A warship's eyes in every direction at once." },
-    { label: "Ground-Based Radar", icon: "radar", types: ["air_surveillance", "radar", "ballistic_missile_radar"], role: "Fixed & mobile radars guarding the airspace." },
+    { label: "Command & Control", icon: "software", types: ["software"], role: "Battle-management that fuses every sensor & shooter.", def: "The software and battle-management systems that fuse data from every sensor into a single common picture and help commanders decide and direct forces in real time." },
+    { label: "Electronic Warfare", icon: "ew", types: ["electronic_warfare"], role: "Jam, deceive and blind enemy radars & comms.", def: "Systems that attack and defend across the radio spectrum — jamming enemy radars and communications, deceiving their sensors, and protecting friendly signals from the same." },
+    { label: "Directed Energy", icon: "laser", types: ["directed_energy", "c_uas"], role: "Lasers & microwaves that swat drones at light speed.", def: "Lasers and high-power microwaves that destroy or disable targets at the speed of light. They are increasingly used to shoot down drones and rockets cheaply, shot after shot." },
+    { label: "Communications", icon: "antenna", types: ["communications", "surveillance"], role: "Resilient links carrying orders across the force.", def: "The resilient, secure radio and data links that carry orders and sensor data across a dispersed force — the nervous system that lets separate units act as one." },
+    { label: "Airborne Radar", icon: "radar", types: ["airborne_radar", "multimode_radar"], role: "Flying sensors that see over the horizon.", def: "Radars mounted on aircraft. Flying high, they see far further than ground radar and can track low-flying targets hidden from the surface by the horizon or terrain." },
+    { label: "Naval Radar", icon: "radar", types: ["naval_radar"], role: "A warship's eyes in every direction at once.", def: "A warship's primary sensors, scanning in every direction for aircraft, missiles and ships, and cueing the ship's air-defence and strike weapons." },
+    { label: "Ground-Based Radar", icon: "radar", types: ["air_surveillance", "radar", "ballistic_missile_radar"], role: "Fixed & mobile radars guarding the airspace.", def: "Fixed and mobile radars that guard national airspace and cue air-defence, including specialised long-range radars that detect and track incoming ballistic missiles." },
   ],
 };
 
@@ -389,7 +401,8 @@ export default function BattlespaceTheater({ products = [], onOpenProduct, onExp
                   <div className="bt-badge"><span className="bt-bdot" style={{ background: activeDomain.color }} /> DOMAIN</div>
                   <h3 className="bt-h3">{activeDomain.name}</h3>
                   <div className="bt-count">{counts[activeDomain.key] || 0} systems · {domainSubtypes.length} types</div>
-                  <p className="bt-role">{activeDomain.role}</p>
+                  <p className="bt-role">{activeDomain.about}</p>
+                  <p className="bt-works"><span className="bt-workslabel">Works with</span>{activeDomain.interfaces}</p>
                   <div className="bt-k">Explore by type</div>
                   <div className="bt-cards">
                     {domainSubtypes.map((st) => (
@@ -416,6 +429,7 @@ export default function BattlespaceTheater({ products = [], onOpenProduct, onExp
                   <div className="bt-bc">Theater › {activeDomain.name} › <b>{activeTypeGroup.label}</b></div>
                   <h3 className="bt-h3">{activeTypeGroup.label}</h3>
                   <div className="bt-count">{activeTypeGroup.items.length} products</div>
+                  {activeTypeGroup.def && <p className="bt-def">{activeTypeGroup.def}</p>}
                   <div className="bt-k">Products</div>
                   <div className="bt-items">
                     {activeTypeGroup.items.map((p) => (
@@ -467,7 +481,10 @@ const BT_CSS = `
 .bt-bdot{width:10px;height:10px;border-radius:50%}
 .bt-h3{font-size:20px;font-weight:800;margin:2px 0 0}
 .bt-count{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#7fe6db;margin-top:3px}
-.bt-role{font-size:13px;color:#a9bccb;line-height:1.55;margin:14px 0 4px}
+.bt-role{font-size:13px;color:#a9bccb;line-height:1.6;margin:14px 0 4px}
+.bt-works{font-size:12px;color:#8ba0b5;line-height:1.5;margin:10px 0 4px;border-left:2px solid rgba(51,214,200,.4);padding-left:11px}
+.bt-workslabel{color:#7fe6db;font-weight:700;text-transform:uppercase;font-size:9.5px;letter-spacing:.08em;margin-right:6px}
+.bt-def{font-size:13px;color:#c4d2de;line-height:1.65;margin:12px 0 4px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .bt-k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#6f8496;margin:18px 0 8px}
 .bt-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .bt-card{display:flex;align-items:center;gap:12px;text-align:left;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:11px 13px;cursor:pointer;font:inherit;color:#e6edf5;transition:.15s}
