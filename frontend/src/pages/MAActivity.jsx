@@ -993,6 +993,72 @@ function CompanyLogo({ activity, side, size = "md" }) {
   );
 }
 
+// ── Investor logo + stack ────────────────────────────────────────────────────
+// A single investor's logo, resolved through the SAME chain as a company logo
+// (curated URL → known-domain favicon → guessed-domain favicon → coloured
+// initials). Used to render the "Lead(s)" / "Investors" columns of backer logos.
+function InvestorLogo({ name, size = 24 }) {
+  const domain = getLogoDomain({ acquirer: name }, "acquirer");
+  const urls   = logoUrlsFor(name, domain);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => { setIdx(0); }, [name]);
+  const dim = { width: size, height: size };
+
+  if (idx < urls.length) {
+    return (
+      <div title={name}
+        className="rounded-md bg-white border border-slate-200 overflow-hidden flex items-center justify-center"
+        style={dim}>
+        <img
+          src={urls[idx]}
+          alt={name}
+          className="w-full h-full object-contain p-0.5"
+          onError={() => setIdx(i => i + 1)}
+          onLoad={(e) => { if (isGoogleGlobePlaceholder(urls[idx], e.currentTarget)) setIdx(i => i + 1); }}
+        />
+      </div>
+    );
+  }
+  return (
+    <div title={name}
+      className={`rounded-md flex items-center justify-center border border-slate-200/60 ${avatarColor(name)}`}
+      style={dim}>
+      <span className="font-bold text-white leading-none select-none" style={{ fontSize: Math.round(size * 0.34) }}>
+        {initials(name)}
+      </span>
+    </div>
+  );
+}
+
+// A horizontal, slightly-overlapping stack of investor logos with a "+N" overflow.
+// `lead` gives the logos a blue ring to mark them as the round's lead investor(s).
+function InvestorStack({ investors, lead = false, max = 4, size = 24 }) {
+  const list = (investors || []).filter(Boolean);
+  if (list.length === 0) return <span className="text-slate-300 text-xs">—</span>;
+  const shown = list.slice(0, max);
+  const extra = list.length - shown.length;
+  return (
+    <div className="flex items-center">
+      <div className="flex items-center -space-x-1.5">
+        {shown.map((n, i) => (
+          <div
+            key={`${n}-${i}`}
+            className={`rounded-md ${lead ? "ring-1 ring-blue-400" : "ring-1 ring-white"}`}
+            style={{ zIndex: shown.length - i }}
+          >
+            <InvestorLogo name={n} size={size} />
+          </div>
+        ))}
+      </div>
+      {extra > 0 && (
+        <span className="ml-1.5 text-[10px] font-mono text-slate-400" title={list.slice(max).join(", ")}>
+          +{extra}
+        </span>
+      )}
+    </div>
+  );
+}
+
 // ── Recent Deals Spotlight — same visual pattern as MarketCatalysts ───────────
 
 const DEAL_TYPE_CFG = {
@@ -2610,6 +2676,16 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
         )}
       </td>
 
+      {/* Lead investor(s) — logo stack, populated for funding rounds */}
+      <td className="px-3 py-2">
+        <InvestorStack investors={activity.lead_investors} lead size={26} />
+      </td>
+
+      {/* Other participating investors */}
+      <td className="px-3 py-2">
+        <InvestorStack investors={activity.investors} size={22} />
+      </td>
+
       {/* Status */}
       <td className="px-3 py-2">
         <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap ${getStatusStyle(activity.status)}`}>
@@ -2794,6 +2870,7 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
                       <th className="px-5 pl-16 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-left">Investor</th>
                       <th className="px-3 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-left">Round</th>
                       <th className="px-3 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-right">Amount</th>
+                      <th className="px-3 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400 text-left">Investors</th>
                       <th className="px-3 py-2 text-[9px] font-semibold uppercase tracking-wider text-slate-400">Date</th>
                       <th className="px-3 py-2 w-8" />
                     </tr>
@@ -2817,6 +2894,9 @@ function InvestmentConsolidatedView({ deals, onOpenProfile, onSelectDeal }) {
                         </td>
                         <td className="px-3 py-2.5 text-right font-mono font-semibold text-slate-900 whitespace-nowrap">
                           {formatValue(r.deal_value, r.is_disclosed ?? true)}
+                        </td>
+                        <td className="px-3 py-2.5">
+                          <InvestorStack investors={[...(r.lead_investors || []), ...(r.investors || [])]} size={20} />
                         </td>
                         <td className="px-3 py-2.5 text-slate-500 whitespace-nowrap">
                           {format(new Date(r.announced_date), "MMM yyyy")}
@@ -4034,6 +4114,8 @@ export default function MAActivity() {
                       >
                         Value {sortField === "deal_value" ? (sortDir === "asc" ? "↑" : "↓") : <span className="text-slate-300">↕</span>}
                       </th>
+                      <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap">Lead(s)</th>
+                      <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Investors</th>
                       <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Status</th>
                       <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Reg.</th>
                       <th

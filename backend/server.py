@@ -104,6 +104,8 @@ class MAActivityCreate(BaseModel):
     round_type: Optional[str] = None            # seed / series_a / series_b / series_c / growth / buyout
     is_disclosed: bool = True                   # False when deal value is undisclosed
     valuation: Optional[float] = None           # Post-money valuation in millions USD
+    lead_investors: Optional[List[str]] = None  # lead investor(s) heading a funding round
+    investors: Optional[List[str]] = None       # other participating (non-lead) investors
     featured: bool = False                       # pin to the "Recent Deals Spotlight" cards
     # ── V2 data-quality & lifecycle fields (C0) ──────────────────────────────
     deal_class: Optional[str] = None            # ma | jv | vc | procurement (C4)
@@ -146,6 +148,8 @@ class MAActivity(BaseModel):
     round_type: Optional[str] = None
     is_disclosed: bool = True
     valuation: Optional[float] = None           # Post-money valuation in millions USD
+    lead_investors: Optional[List[str]] = None  # lead investor(s) heading a funding round
+    investors: Optional[List[str]] = None       # other participating (non-lead) investors
     featured: bool = False                       # pin to the "Recent Deals Spotlight" cards
     # ── V2 data-quality & lifecycle fields (C0) ──────────────────────────────
     deal_class: Optional[str] = None            # ma | jv | vc | procurement (C4)
