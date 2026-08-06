@@ -28,7 +28,92 @@ const DOMAIN_META = [
   { key: "cyber",  name: "Cyber & C2",  color: "#c9d4e0", categories: ["cyber", "radar"],  model: "c2",    pos: [0.4, 0, -0.4], onLand: true, hub: true, role: "The connective tissue: command & control, networks, electronic warfare and the sensors that fuse the picture." },
 ];
 
-const prettyType = (t) => (t || "other").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+// Curated sub-types per domain — clean names + a mapping to the raw
+// product_type values, so the intermediate "type" level reads well and still
+// filters the real catalogue. Anything unmatched falls into "Other Systems".
+const SUBTYPES = {
+  space: [
+    { label: "Reconnaissance / ISR", icon: "satellite", types: ["reconnaissance_satellite", "sigint"], role: "Optical & signals intelligence from orbit." },
+    { label: "Communications Sats", icon: "antenna", types: ["communications_satellite"], role: "Secure global connectivity for the force." },
+    { label: "Navigation (GNSS)", icon: "satellite", types: ["navigation_satellite"], role: "Positioning & timing that guide precision weapons." },
+    { label: "Early-Warning", icon: "radar", types: ["early_warning_satellite"], role: "Infrared eyes that spot missile launches." },
+    { label: "Space Vehicles", icon: "missile", types: ["spaceplane"], role: "Reusable spaceplanes & orbital platforms." },
+  ],
+  air: [
+    { label: "Fixed-Wing", icon: "fighter", types: ["fighter", "bomber", "attack", "gunship"], role: "Fighters & bombers for air superiority and deep strike." },
+    { label: "Rotary-Wing", icon: "heli", types: ["helicopter", "tiltrotor"], role: "Assault, transport & close support without runways." },
+    { label: "UAVs / Drones", icon: "uav", types: ["uav", "loitering_munition"], role: "Persistent surveillance & strike, no pilot at risk." },
+    { label: "Support & ISR", icon: "transport", types: ["transport", "tanker", "awacs", "patrol", "reconnaissance"], role: "Tankers, transports & flying radars behind the campaign." },
+  ],
+  naval: [
+    { label: "Aircraft Carriers", icon: "carrier", types: ["aircraft_carrier"], role: "Floating airbases projecting air power worldwide." },
+    { label: "Destroyers", icon: "destroyer", types: ["destroyer"], role: "Heavily-armed multi-mission air-defence & strike ships." },
+    { label: "Frigates", icon: "frigate", types: ["frigate"], role: "Versatile escorts — the workhorses of the fleet." },
+    { label: "Corvettes", icon: "corvette", types: ["corvette"], role: "Small, agile combatants for coastal & littoral waters." },
+    { label: "Submarines", icon: "submarine", types: ["submarine"], role: "Silent undersea strike, ISR and deterrence." },
+    { label: "Amphibious", icon: "amphibious", types: ["amphibious", "littoral_combat_ship"], role: "Put troops ashore and operate in the littorals." },
+    { label: "Naval Drones (USV/UUV)", icon: "navaldrone", types: ["usv", "uuv"], role: "Uncrewed surface & underwater vehicles extending the fleet." },
+  ],
+  land: [
+    { label: "Main Battle Tanks", icon: "tank", types: ["tank", "mbt"], role: "The armoured fist — firepower, protection and shock." },
+    { label: "IFV & APC", icon: "ifv", types: ["ifv", "apc", "armored_vehicle", "active_protection", "autocannon"], role: "Carry and support infantry under armour." },
+    { label: "Artillery & MLRS", icon: "artillery", types: ["artillery", "mlrs"], role: "Massed and precision fires that shape the battle." },
+    { label: "Reconnaissance", icon: "recon", types: ["reconnaissance", "tactical_vehicle"], role: "Fast, light vehicles that find the enemy first." },
+    { label: "Autonomous (UGV)", icon: "ugv", types: ["ugv"], role: "Ground robots for recon, logistics & dangerous work." },
+  ],
+  missile: [
+    { label: "Air Defence (SAM)", icon: "sam", types: ["sam", "shorad", "manpads", "anti_ballistic"], role: "The shield that denies the sky to aircraft & missiles." },
+    { label: "Cruise & Ballistic", icon: "missile", types: ["cruise_missile", "precision_strike", "hypersonic", "ballistic_missile"], role: "Long-range precision, from cruise to hypersonic." },
+    { label: "Anti-Ship", icon: "missile", types: ["anti_ship", "air_to_ship"], role: "Ship-killers launched from sea, air or coast." },
+    { label: "Air-to-Air", icon: "airair", types: ["air_to_air"], role: "The fighter's teeth — kill other aircraft." },
+    { label: "Air-to-Ground", icon: "missile", types: ["air_to_ground", "anti_tank", "atgm", "anti_radiation"], role: "Precision munitions vs tanks, bunkers & radars." },
+    { label: "Loitering Munitions", icon: "uav", types: ["loitering_munition"], role: "'Kamikaze' drones that hunt then dive on the target." },
+  ],
+  cyber: [
+    { label: "Command & Control", icon: "software", types: ["software"], role: "Battle-management that fuses every sensor & shooter." },
+    { label: "Electronic Warfare", icon: "ew", types: ["electronic_warfare"], role: "Jam, deceive and blind enemy radars & comms." },
+    { label: "Directed Energy", icon: "laser", types: ["directed_energy", "c_uas"], role: "Lasers & microwaves that swat drones at light speed." },
+    { label: "Communications", icon: "antenna", types: ["communications", "surveillance"], role: "Resilient links carrying orders across the force." },
+    { label: "Airborne Radar", icon: "radar", types: ["airborne_radar", "multimode_radar"], role: "Flying sensors that see over the horizon." },
+    { label: "Naval Radar", icon: "radar", types: ["naval_radar"], role: "A warship's eyes in every direction at once." },
+    { label: "Ground-Based Radar", icon: "radar", types: ["air_surveillance", "radar", "ballistic_missile_radar"], role: "Fixed & mobile radars guarding the airspace." },
+  ],
+};
+
+// Compact 2D silhouettes for the sub-type cards (viewBox 0 0 48 30).
+const SILH = {
+  carrier: '<path d="M4 20 H44 L40 26 H8 Z"/><rect x="6" y="16" width="34" height="3"/><rect x="30" y="8" width="5" height="8"/><path d="M13 16 l3 -4 h4 l2 4"/>',
+  destroyer: '<path d="M4 18 H43 L37 25 H9 Z"/><path d="M25 18 l2 -12 h6 l2 12"/><line x1="29" y1="6" x2="29" y2="2"/><rect x="8" y="14" width="6" height="4"/>',
+  frigate: '<path d="M5 19 H42 L37 25 H10 Z"/><path d="M22 19 l2 -9 h8 l2 9"/><line x1="27" y1="10" x2="27" y2="5"/>',
+  corvette: '<path d="M11 20 H37 L33 25 H15 Z"/><path d="M22 20 l2 -6 h6 l1 6"/><line x1="26" y1="14" x2="26" y2="9"/>',
+  submarine: '<path d="M6 16 Q6 11 24 11 Q42 11 42 16 Q42 21 24 21 Q6 21 6 16 Z"/><path d="M20 11 v-5 h7 v5"/><line x1="23" y1="6" x2="23" y2="2"/>',
+  amphibious: '<path d="M5 18 H43 L40 25 H8 Z"/><rect x="12" y="10" width="20" height="8"/><path d="M43 18 l3 -3"/>',
+  navaldrone: '<path d="M8 18 Q8 15 26 15 L40 15 L36 22 H12 Z"/><rect x="20" y="10" width="4" height="5"/><path d="M40 15 a6 6 0 0 1 5 4"/>',
+  fighter: '<path d="M4 15 L30 12 L44 9 L44 13 L32 17 L22 17 L16 26 L12 26 L16 17 L4 19 Z"/>',
+  heli: '<line x1="8" y1="8" x2="40" y2="8"/><path d="M16 12 q0 -3 12 -3 q14 0 16 4 q0 5 -14 5 q-16 0 -16 -4 Z"/><path d="M44 14 l3 -3"/><line x1="24" y1="8" x2="24" y2="12"/>',
+  uav: '<line x1="6" y1="13" x2="42" y2="13"/><line x1="24" y1="6" x2="24" y2="24"/><circle cx="24" cy="9" r="2.5"/><path d="M24 24 l-4 4 M24 24 l4 4"/>',
+  transport: '<ellipse cx="22" cy="14" rx="20" ry="3"/><line x1="12" y1="8" x2="30" y2="12"/><line x1="12" y1="20" x2="30" y2="16"/>',
+  tank: '<rect x="5" y="18" width="34" height="7" rx="3.5"/><path d="M9 18 v-5 h24 v5"/><path d="M16 13 v-5 h10 l1 5"/><line x1="26" y1="9" x2="45" y2="9"/>',
+  ifv: '<rect x="6" y="18" width="30" height="7" rx="2"/><path d="M8 18 v-7 h22 l4 7"/><line x1="24" y1="11" x2="40" y2="8"/>',
+  artillery: '<rect x="6" y="18" width="30" height="7" rx="2"/><rect x="8" y="12" width="12" height="6"/><line x1="18" y1="14" x2="43" y2="4"/>',
+  recon: '<rect x="8" y="15" width="26" height="7" rx="3"/><path d="M12 15 v-5 h14 l3 5"/><circle cx="14" cy="24" r="2"/><circle cx="30" cy="24" r="2"/>',
+  ugv: '<rect x="12" y="17" width="20" height="6" rx="3"/><rect x="16" y="12" width="10" height="5"/><line x1="26" y1="9" x2="26" y2="12"/>',
+  missile: '<path d="M22 27 V11 Q24 4 26 11 V27 Z"/><path d="M22 21 l-4 5 h4 M26 21 l4 5 h-4"/>',
+  sam: '<rect x="6" y="20" width="24" height="5" rx="2"/><g transform="rotate(-38 20 20)"><rect x="17" y="6" width="6" height="15"/><path d="M17 6 l3 -4 l3 4"/></g>',
+  airair: '<path d="M6 15 H36 L44 15 L36 18 H6 Z"/><path d="M10 15 l-3 -4 M10 18 l-3 4"/>',
+  radar: '<line x1="20" y1="26" x2="20" y2="16"/><path d="M12 28 H28"/><ellipse cx="19" cy="12" rx="4" ry="9" transform="rotate(-35 19 12)"/><path d="M28 4 a10 10 0 0 1 5 8"/>',
+  antenna: '<path d="M24 26 V8"/><path d="M18 14 a8 8 0 0 1 12 0"/><path d="M15 11 a13 13 0 0 1 18 0"/><circle cx="24" cy="8" r="2"/>',
+  ew: '<path d="M12 22 l8 -14 l8 14 Z"/><path d="M31 10 a8 8 0 0 1 0 12 M35 6 a14 14 0 0 1 0 20"/>',
+  laser: '<circle cx="15" cy="15" r="6"/><line x1="21" y1="15" x2="45" y2="15" stroke-width="3"/>',
+  software: '<rect x="14" y="8" width="20" height="16" rx="2"/><rect x="20" y="14" width="8" height="4"/><path d="M14 12 h-4 M14 20 h-4 M34 12 h4 M34 20 h4 M18 8 v-4 M30 8 v-4"/>',
+  satellite: '<rect x="20" y="10" width="8" height="10" rx="1"/><rect x="6" y="12" width="12" height="6"/><rect x="30" y="12" width="12" height="6"/><path d="M24 10 v-4"/>',
+  default: '<circle cx="24" cy="15" r="8"/>',
+};
+function Silh({ name }) {
+  return (
+    <svg viewBox="0 0 48 30" width="30" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" dangerouslySetInnerHTML={{ __html: SILH[name] || SILH.default }} />
+  );
+}
 
 export default function BattlespaceTheater({ products = [], onOpenProduct, onExploreCatalog }) {
   const mountRef = useRef(null);
@@ -51,19 +136,23 @@ export default function BattlespaceTheater({ products = [], onOpenProduct, onExp
 
   const activeDomain = nav.domainKey ? DOMAIN_META.find((d) => d.key === nav.domainKey) : null;
 
-  // products of the active domain, grouped into "types" by product_type
-  const domainTypes = useMemo(() => {
+  // products of the active domain, grouped into curated sub-types
+  const domainSubtypes = useMemo(() => {
     if (!activeDomain) return [];
     const inDomain = products.filter((p) => activeDomain.categories.includes(p.category));
-    const groups = {};
-    for (const p of inDomain) {
-      const key = p.product_type || "other";
-      (groups[key] = groups[key] || { type: key, label: prettyType(key), items: [] }).items.push(p);
-    }
-    return Object.values(groups).sort((a, b) => b.items.length - a.items.length);
+    const defs = SUBTYPES[activeDomain.key] || [];
+    const used = new Set();
+    const cards = defs.map((st) => {
+      const items = inDomain.filter((p) => st.types.includes(p.product_type));
+      items.forEach((p) => used.add(p.id));
+      return { ...st, items };
+    }).filter((c) => c.items.length > 0);
+    const others = inDomain.filter((p) => !used.has(p.id));
+    if (others.length) cards.push({ label: "Other Systems", icon: "default", role: "Additional systems in this domain.", items: others });
+    return cards;
   }, [activeDomain, products]);
 
-  const activeTypeGroup = nav.type ? domainTypes.find((g) => g.type === nav.type) : null;
+  const activeTypeGroup = nav.type ? domainSubtypes.find((g) => g.label === nav.type) : null;
 
   clickRef.current = (key) => setNav({ level: 1, domainKey: key, type: null });
 
@@ -299,13 +388,21 @@ export default function BattlespaceTheater({ products = [], onOpenProduct, onExp
                   <div className="bt-bc">Theater › <b>{activeDomain.name}</b></div>
                   <div className="bt-badge"><span className="bt-bdot" style={{ background: activeDomain.color }} /> DOMAIN</div>
                   <h3 className="bt-h3">{activeDomain.name}</h3>
-                  <div className="bt-count">{counts[activeDomain.key] || 0} systems · {domainTypes.length} types</div>
+                  <div className="bt-count">{counts[activeDomain.key] || 0} systems · {domainSubtypes.length} types</div>
                   <p className="bt-role">{activeDomain.role}</p>
-                  <div className="bt-k">Systems inside {activeDomain.name}</div>
-                  <div className="bt-types">
-                    {domainTypes.map((g) => (
-                      <button key={g.type} onClick={() => setNav((n) => ({ ...n, type: g.type }))}>
-                        {g.label}<span className="bt-tcount">{g.items.length}</span>
+                  <div className="bt-k">Explore by type</div>
+                  <div className="bt-cards">
+                    {domainSubtypes.map((st) => (
+                      <button key={st.label} className="bt-card" onClick={() => setNav((n) => ({ ...n, type: st.label }))}>
+                        <span className="bt-cardic" style={{ color: activeDomain.color }}><Silh name={st.icon} /></span>
+                        <span className="bt-cardbody">
+                          <span className="bt-cardtop">
+                            <span className="bt-cardlabel">{st.label}</span>
+                            <span className="bt-cardcount">{st.items.length}</span>
+                          </span>
+                          <span className="bt-cardrole">{st.role}</span>
+                        </span>
+                        <ArrowRight size={15} className="bt-cardarw" />
                       </button>
                     ))}
                   </div>
@@ -372,6 +469,17 @@ const BT_CSS = `
 .bt-count{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#7fe6db;margin-top:3px}
 .bt-role{font-size:13px;color:#a9bccb;line-height:1.55;margin:14px 0 4px}
 .bt-k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#6f8496;margin:18px 0 8px}
+.bt-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.bt-card{display:flex;align-items:center;gap:12px;text-align:left;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:11px 13px;cursor:pointer;font:inherit;color:#e6edf5;transition:.15s}
+.bt-card:hover{border-color:var(--teal);background:rgba(51,214,200,.07);transform:translateY(-1px)}
+.bt-cardic{width:46px;height:36px;flex:0 0 46px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px}
+.bt-cardbody{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.bt-cardtop{display:flex;align-items:center;gap:8px}
+.bt-cardlabel{font-size:13.5px;font-weight:600;color:#eef4fa}
+.bt-cardcount{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#7fe6db;background:rgba(51,214,200,.1);border-radius:999px;padding:1px 7px}
+.bt-cardrole{font-size:11.5px;color:#8ba0b5;line-height:1.4}
+.bt-cardarw{color:#5a6b7a;flex:0 0 auto}
+.bt-card:hover .bt-cardarw{color:var(--teal)}
 .bt-types{display:flex;flex-wrap:wrap;gap:7px}
 .bt-types button{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#dbe7f2;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;font:inherit;transition:.15s}
 .bt-types button:hover{border-color:var(--teal);color:#fff}
