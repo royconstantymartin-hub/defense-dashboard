@@ -1559,6 +1559,14 @@ async def _run_seed() -> dict:
             # subsidiary off its parent's ticker) propagate without a full drop.
             if existing.get('name') == p['name'] and existing.get('ticker') != p.get('ticker'):
                 patch['ticker'] = p.get('ticker')
+            # Converge base fundamentals from the seed so refreshed figures
+            # (market cap, revenue, headcount, base price) propagate on re-seed.
+            # Live prices still come from the stock service; stock_price here is
+            # only the fallback used when Yahoo data is unavailable.
+            if existing.get('name') == p['name']:
+                for fld in ('market_cap', 'stock_price', 'revenue', 'employees'):
+                    if fld in p and existing.get(fld) != p[fld]:
+                        patch[fld] = p[fld]
             if patch:
                 await db.defense_players.update_one({"name": p['name']}, {"$set": patch})
 
