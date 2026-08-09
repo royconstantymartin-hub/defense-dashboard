@@ -1001,6 +1001,8 @@ function MAAdmin({ authHeaders }) {
   const [euroResult,  setEuroResult]  = useState(null);
   const [ilaSeeding,  setIlaSeeding]  = useState(false);
   const [ilaResult,   setIlaResult]   = useState(null);
+  const [dtSeeding,   setDtSeeding]   = useState(false);
+  const [dtResult,    setDtResult]    = useState(null);
   const [form,        setForm]        = useState(EMPTY_FORM);
 
   // ── AI extraction state ──────────────────────────────────────────────────
@@ -1141,6 +1143,23 @@ function MAAdmin({ authHeaders }) {
     }
   };
 
+  // ── Defense-tech funding brief seed (additive — does NOT wipe the collection) ──
+  const handleDefensetechSeed = async () => {
+    setDtSeeding(true); setDtResult(null);
+    try {
+      const res = await axios.post(`${API}/ma-activities/seed-defensetech`, {}, { headers: authHeaders });
+      setDtResult({ ok: true, data: res.data });
+      toast.success(`Defense-tech — ${res.data.inserted} ajoutés, ${res.data.updated} mis à jour`);
+      fetchItems();
+    } catch (err) {
+      const msg = err.response?.data?.detail || err.message;
+      setDtResult({ ok: false, msg });
+      toast.error(msg);
+    } finally {
+      setDtSeeding(false);
+    }
+  };
+
   // ── Submit ─────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -1246,6 +1265,33 @@ function MAAdmin({ authHeaders }) {
             <button onClick={handleIlaSeed} disabled={ilaSeeding}
               className="shrink-0 flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors">
               {ilaSeeding ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading…</> : <><Database className="w-4 h-4" /> Seed ILA Berlin 2026</>}
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── Defense-tech Funding Brief Seed (additive) ── */}
+      <Card className="bg-white border-violet-200">
+        <CardContent className="pt-4 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex-1">
+              <p className="text-slate-900 font-semibold text-sm">Defense-tech brief — 8 deals</p>
+              <p className="text-slate-500 text-xs mt-0.5">
+                Ajoute les deals du brief financement defense-tech de juillet 2026
+                (Space-Eyes/SPAC, Leonardo DRS/Raft, CHAOS/Atropos, K2 Space, Cathedral,
+                Twenty, Agon, Array Labs). N'efface rien.
+              </p>
+              {dtResult && (
+                <p className={`text-xs mt-1 font-medium ${dtResult.ok ? "text-emerald-600" : "text-rose-600"}`}>
+                  {dtResult.ok
+                    ? `✓ ${dtResult.data.inserted} ajoutés, ${dtResult.data.updated} mis à jour`
+                    : dtResult.msg}
+                </p>
+              )}
+            </div>
+            <button onClick={handleDefensetechSeed} disabled={dtSeeding}
+              className="shrink-0 flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors">
+              {dtSeeding ? <><RefreshCw className="w-4 h-4 animate-spin" /> Loading…</> : <><Database className="w-4 h-4" /> Seed Defense-tech</>}
             </button>
           </div>
         </CardContent>

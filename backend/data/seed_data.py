@@ -11327,3 +11327,238 @@ MA_ILA_BERLIN_2026 = [
         "confidence": "medium",
     },
 ]
+
+# ==============================================================================
+# DEFENSE-TECH FUNDING & DEALS BRIEF — late July 2026
+# ==============================================================================
+# Hand-curated from a defense-tech funding roundup (US/UK/Japan defense-tech
+# venture + M&A activity, ~28 July 2026). Covers a SPAC going-public, two
+# acquisitions, and five venture funding rounds.
+#
+# These are seeded via POST /api/ma-activities/seed-defensetech (idempotent
+# upsert, matched by (acquirer_norm, target_norm) — same pattern as the
+# Eurosatory / ILA Berlin lists). confidence="medium" because the source is a
+# newsletter roundup rather than a primary press release.
+MA_DEFENSETECH_2026 = [
+    # ── Going public ─────────────────────────────────────────────────────────
+    {
+        "acquirer": "McKinley Acquisition Corp",
+        "target": "Space-Eyes",
+        "deal_value": 638,
+        "status": "announced",
+        "deal_type": "merger",
+        "deal_class": "ma",
+        "value_basis": "enterprise",
+        "description": "Space-Eyes to go public in a $638M SPAC merger with McKinley Acquisition Corp",
+        "rationale": (
+            "Space-Eyes, a defense-technology R&D company backed by Eric Trump, agrees to go "
+            "public through a $638M SPAC merger with McKinley Acquisition Corp. The listing gives "
+            "the firm a public-market currency and fresh capital as investor appetite for "
+            "defense-tech ventures accelerates."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": None,
+        "target_logo_domain": None,
+        "is_disclosed": True,
+        "sector": "space",
+        "featured": True,
+        "announced_date": datetime(2026, 7, 28, tzinfo=timezone.utc),
+        "confidence": "medium",
+        "verification_status": "auto",
+        "extraction_method": "manual",
+        "notes": "Going public via SPAC — defense-tech R&D firm backed by Eric Trump.",
+    },
+    # ── Acquisitions ─────────────────────────────────────────────────────────
+    {
+        "acquirer": "Leonardo DRS",
+        "target": "Raft",
+        "deal_value": 450,
+        "status": "announced",
+        "deal_type": "acquisition",
+        "deal_class": "ma",
+        "value_basis": "equity",
+        "description": "Leonardo DRS acquires defense-software maker Raft in a $450M all-cash deal",
+        "rationale": (
+            "Leonardo DRS acquires Raft, a Virginia-based maker of AI, data-fusion and mission "
+            "software for defense, in an all-cash deal valued at $450M — extending Leonardo's "
+            "push into American defense software. Raft separately won a $99M IDIQ contract from "
+            "the US Army for its data-integration software platform."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "leonardodrs.com",
+        "target_logo_domain": "teamraft.com",
+        "is_disclosed": True,
+        "sector": "services_it",
+        "featured": True,
+        "announced_date": datetime(2026, 7, 28, tzinfo=timezone.utc),
+        "confidence": "medium",
+        "verification_status": "auto",
+        "extraction_method": "manual",
+        "notes": "All-cash. Raft also won a $99M US Army IDIQ for its data-integration platform.",
+    },
+    {
+        "acquirer": "CHAOS Industries",
+        "target": "Atropos Group",
+        "deal_value": 0,
+        "status": "announced",
+        "deal_type": "acquisition",
+        "deal_class": "ma",
+        "value_basis": "undisclosed",
+        "description": "CHAOS Industries acquires autonomous-aircraft maker Atropos Group for an undisclosed sum",
+        "rationale": (
+            "CHAOS Industries acquires Atropos Group, a maker of autonomous airborne platforms, "
+            "for an undisclosed sum — a deal six months in the making that extends CHAOS's line "
+            "from radars and interceptors into autonomous aircraft."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "chaosinc.com",
+        "target_logo_domain": None,
+        "is_disclosed": False,
+        "sector": "uas_drones",
+        "announced_date": datetime(2026, 7, 28, tzinfo=timezone.utc),
+        "confidence": "medium",
+        "verification_status": "auto",
+        "extraction_method": "manual",
+    },
+    # ── Fundraises ───────────────────────────────────────────────────────────
+    {
+        "acquirer": "Kleiner Perkins + ICONIQ",
+        "target": "K2 Space",
+        "deal_value": 500,
+        "status": "completed",
+        "deal_type": "funding_round",
+        "deal_class": "vc",
+        "value_basis": "round_amount",
+        "valuation": 6800,
+        "round_type": "series_d",
+        "description": "K2 Space raises a $500M Series D at a $6.8B valuation",
+        "rationale": (
+            "K2 Space, which builds large, high-power satellites for commercial and "
+            "national-security payloads, raises a $500M Series D co-led by Kleiner Perkins and "
+            "ICONIQ at a $6.8B valuation."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "kleinerperkins.com",
+        "target_logo_domain": "k2space.com",
+        "is_disclosed": True,
+        "sector": "space",
+        "featured": True,
+        "lead_investors": ["Kleiner Perkins", "ICONIQ"],
+        "announced_date": datetime(2026, 7, 28, tzinfo=timezone.utc),
+        "confidence": "medium",
+        "verification_status": "auto",
+        "extraction_method": "manual",
+    },
+    {
+        "acquirer": "Andreessen Horowitz + Sequoia Capital",
+        "target": "Cathedral",
+        "deal_value": 160,
+        "status": "completed",
+        "deal_type": "funding_round",
+        "deal_class": "vc",
+        "value_basis": "round_amount",
+        "valuation": 1400,
+        "description": "Cathedral raises $160M at a $1.4B post-money valuation",
+        "rationale": (
+            "Cathedral, a New York startup founded by former DOGE staffers to expand US military "
+            "cyber operations with AI, raises a $160M round co-led by Andreessen Horowitz and "
+            "Sequoia Capital at a $1.4B post-money valuation."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "a16z.com",
+        "target_logo_domain": None,
+        "is_disclosed": True,
+        "sector": "cyber",
+        "featured": True,
+        "lead_investors": ["Andreessen Horowitz", "Sequoia Capital"],
+        "announced_date": datetime(2026, 7, 28, tzinfo=timezone.utc),
+        "confidence": "medium",
+        "verification_status": "auto",
+        "extraction_method": "manual",
+    },
+    {
+        "acquirer": "Khosla Ventures",
+        "target": "Twenty",
+        "deal_value": 30,
+        "status": "completed",
+        "deal_type": "funding_round",
+        "deal_class": "vc",
+        "value_basis": "round_amount",
+        "valuation": 1200,
+        "description": "Twenty raises an additional $30M from Khosla Ventures at a $1.2B valuation",
+        "rationale": (
+            "Twenty, whose AI automates offensive cyber operations for the Pentagon, raises an "
+            "additional $30M from Khosla Ventures at a $1.2B valuation — a month after closing "
+            "its $100M Series B."
+        ),
+        "acquirer_country": "US",
+        "target_country": "US",
+        "acquirer_logo_domain": "khoslaventures.com",
+        "target_logo_domain": None,
+        "is_disclosed": True,
+        "sector": "cyber",
+        "lead_investors": ["Khosla Ventures"],
+        "announced_date": datetime(2026, 7, 28, tzinfo=timezone.utc),
+        "confidence": "medium",
+        "verification_status": "auto",
+        "extraction_method": "manual",
+        "notes": "Top-up a month after a $100M Series B.",
+    },
+    {
+        "acquirer": "XYZ Venture Capital + Lux Capital",
+        "target": "Agon",
+        "deal_value": 23,
+        "status": "completed",
+        "deal_type": "funding_round",
+        "deal_class": "vc",
+        "value_basis": "round_amount",
+        "round_type": "seed",
+        "description": "Agon raises a $23M seed for secure defense-AI training-data infrastructure",
+        "rationale": (
+            "Agon, a London startup building secure training-data infrastructure for defense AI, "
+            "raises a $23M seed round led by XYZ Venture Capital, Lux Capital and Sisyphus."
+        ),
+        "acquirer_country": "US",
+        "target_country": "GB",
+        "acquirer_logo_domain": "luxcapital.com",
+        "target_logo_domain": None,
+        "is_disclosed": True,
+        "sector": "services_it",
+        "lead_investors": ["XYZ Venture Capital", "Lux Capital", "Sisyphus"],
+        "announced_date": datetime(2026, 7, 28, tzinfo=timezone.utc),
+        "confidence": "medium",
+        "verification_status": "auto",
+        "extraction_method": "manual",
+    },
+    {
+        "acquirer": "Mitsubishi Electric",
+        "target": "Array Labs",
+        "deal_value": 21,
+        "status": "completed",
+        "deal_type": "funding_round",
+        "deal_class": "vc",
+        "value_basis": "round_amount",
+        "description": "Array Labs raises a $21M round anchored by Mitsubishi Electric",
+        "rationale": (
+            "Array Labs, which is building radar-satellite fleets that map the Earth and track "
+            "aircraft and ships, raises a $21M round anchored by a strategic investment from "
+            "Mitsubishi Electric."
+        ),
+        "acquirer_country": "JP",
+        "target_country": "US",
+        "acquirer_logo_domain": "mitsubishielectric.com",
+        "target_logo_domain": None,
+        "is_disclosed": True,
+        "sector": "space",
+        "lead_investors": ["Mitsubishi Electric"],
+        "announced_date": datetime(2026, 7, 28, tzinfo=timezone.utc),
+        "confidence": "medium",
+        "verification_status": "auto",
+        "extraction_method": "manual",
+    },
+]
