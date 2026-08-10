@@ -11375,6 +11375,49 @@ MA_DEFENSETECH_2026 = [
     },
     # ── Acquisitions ─────────────────────────────────────────────────────────
     {
+        "acquirer": "Thales",
+        "target": "Exail Technologies",
+        "deal_value": 4500,
+        "status": "pending",
+        "deal_type": "acquisition",
+        "deal_class": "ma",
+        "value_basis": "enterprise",
+        "currency": "USD",
+        "description": "Thales to acquire French underwater-drone and naval-autonomy group Exail Technologies (€3.9B enterprise value)",
+        "rationale": (
+            "Thales agrees to acquire Exail Technologies, the French leader in naval autonomy — "
+            "underwater drones (AUVs/UUVs) for mine-hunting, unmanned surface vessels and "
+            "high-precision inertial navigation. The deal values Exail at an enterprise value of "
+            "€3.9 billion (about $4.5 billion), a 44% premium to its 25 June 2026 close. Thales "
+            "first buys the founding Gorgé family's 35.5% stake at €134 per share, then launches "
+            "a mandatory tender offer for the remaining shares, with completion expected by early "
+            "2028. Exail generated €479M of 2025 revenue with a €1.1B order book; the acquisition "
+            "scales Thales in underwater warfare, seabed security and inertial navigation and "
+            "reinforces France's sovereign unmanned mine-warfare chain."
+        ),
+        "acquirer_country": "FR",
+        "target_country": "FR",
+        "acquirer_logo_domain": "thalesgroup.com",
+        "target_logo_domain": "exail.com",
+        "is_disclosed": True,
+        "sector": "naval",
+        "featured": True,
+        "stake_percentage": 35.5,
+        "announced_date": datetime(2026, 7, 6, tzinfo=timezone.utc),
+        "source_url": "https://www.defensenews.com/global/europe/2026/07/06/thales-to-buy-french-underwater-drone-maker-exail-in-45-billion-deal/",
+        "sources": [
+            {"url": "https://www.defensenews.com/global/europe/2026/07/06/thales-to-buy-french-underwater-drone-maker-exail-in-45-billion-deal/", "publisher": "Defense News", "published_at": "2026-07-06"},
+            {"url": "https://www.navaltoday.com/2026/07/06/thales-signs-agreement-to-buy-stake-in-exail/", "publisher": "Naval Today", "published_at": "2026-07-06"},
+        ],
+        "regulatory_status": "pending_eu_comp",
+        "regulatory_body": "EU DG COMP",
+        "regulatory_notes": "Subject to antitrust/regulatory clearances; mandatory tender offer to follow the initial 35.5% stake transfer.",
+        "confidence": "high",
+        "verification_status": "human_verified",
+        "extraction_method": "manual",
+        "notes": "€3.9B enterprise value (~$4.5B). €134/share, 44% premium. Tender-offer agreement signed end of July 2026; completion expected by early 2028.",
+    },
+    {
         "acquirer": "Leonardo DRS",
         "target": "Raft",
         "deal_value": 450,
