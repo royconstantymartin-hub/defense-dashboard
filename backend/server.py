@@ -3506,6 +3506,26 @@ async def _purge_scraper_junk():
             ],
         })
 
+        # ── Pass 2c: delete descriptive noun-phrases mis-extracted as a party ──
+        # The scraper sometimes lifts a description from a headline instead of the
+        # company name, e.g. "Thales → underwater-drone maker" (should be Exail),
+        # "chipmaker", "AI startup", "drone manufacturer". Real company names are
+        # not built from these role words, so any scraped party containing one is
+        # junk. Only scraped rows are touched — curated seed deals never match.
+        _DESC_ROLE_RE = (
+            r"(^|\b|-)("
+            r"makers?|manufacturers?|developers?|specialists?|providers?|"
+            r"producers?|suppliers?|start-?ups?|vendors?|integrators?"
+            r")(\b|$)"
+        )
+        r2c = await db.ma_activities.delete_many({
+            "scraped_at": {"$exists": True},
+            "$or": [
+                {"acquirer": {"$regex": _DESC_ROLE_RE, "$options": "i"}},
+                {"target":   {"$regex": _DESC_ROLE_RE, "$options": "i"}},
+            ],
+        })
+
         # ── Pass 3: cross-reference against seeded (acquirer, target) pairs ───
         from data.seed_data import (
             MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10, MA_EUROSATORY_2026,
@@ -3540,8 +3560,9 @@ async def _purge_scraper_junk():
 
         logger.info(
             "M&A scraper junk purge: %d no-source, %d hallucinated target, "
-            "%d junk party, %d duplicates removed",
-            r1.deleted_count, r2.deleted_count, r2b.deleted_count, r3,
+            "%d junk party, %d descriptive party, %d duplicates removed",
+            r1.deleted_count, r2.deleted_count, r2b.deleted_count,
+            r2c.deleted_count, r3,
         )
     except Exception as exc:
         logger.warning("M&A scraper junk purge failed (non-fatal): %s", exc)
