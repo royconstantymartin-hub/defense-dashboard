@@ -5,6 +5,7 @@ Price cache: 5 minutes. History cache: 5 min (1d), 15 min (others).
 """
 import asyncio
 import logging
+import time
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
@@ -15,6 +16,11 @@ logger = logging.getLogger(__name__)
 PRICE_CACHE_TTL_SECONDS = 300      # 5 minutes
 HISTORY_CACHE_TTL_1D_SECONDS = 300  # 5 minutes for intraday
 HISTORY_CACHE_TTL_SECONDS = 900    # 15 minutes for weekly/monthly/yearly
+
+# Yahoo Finance throttles bursts of requests, so we cap how many tickers are
+# fetched at the same time and retry each one a couple of times on failure.
+MAX_CONCURRENT_FETCHES = 8
+FETCH_RETRIES = 3
 
 # In-memory caches
 _price_cache: Dict[str, dict] = {}
@@ -48,40 +54,53 @@ def _fetch_price_sync(ticker: str) -> Optional[dict]:
     exactly what Yahoo Finance and Google Finance display.
     Using intraday (5m) candle closes for this calculation produced gaps
     because candle closes differ from the closing-auction price.
+
+    Yahoo often answers a throttled request with an empty frame or an error
+    instead of data, so we retry a few times with a short backoff before
+    giving up — that is what turns "sometimes it doesn't load" into "it loads".
     """
-    try:
-        t = yf.Ticker(ticker)
-        hist = t.history(period="5d", interval="1d")
-        if hist is None or hist.empty:
+    for attempt in range(FETCH_RETRIES):
+        try:
+            t = yf.Ticker(ticker)
+            hist = t.history(period="5d", interval="1d")
+            if hist is None or hist.empty:
+                # Empty frame is usually a transient throttle: back off and retry.
+                if attempt < FETCH_RETRIES - 1:
+                    time.sleep(0.6 * (attempt + 1))
+                    continue
+                return None
+
+            # Normalize index to UTC
+            if hist.index.tz is None:
+                hist.index = hist.index.tz_localize("UTC")
+            else:
+                hist.index = hist.index.tz_convert("UTC")
+
+            price = round(float(hist["Close"].iloc[-1]), 2)
+            prev_close = round(float(hist["Close"].iloc[-2]), 2) if len(hist) >= 2 else price
+            change_pct = round(((price - prev_close) / prev_close) * 100, 2) if prev_close > 0 else 0.0
+            open_price = round(float(hist["Open"].iloc[-1]), 2)
+            change_since_open = round(((price - open_price) / open_price) * 100, 2) if open_price > 0 else 0.0
+            # Weekly change: close 5 trading days ago → today (same 5d history already loaded)
+            week_open = round(float(hist["Close"].iloc[0]), 2)
+            week_change_pct = round(((price - week_open) / week_open) * 100, 2) if week_open > 0 else 0.0
+
+            return {
+                "ticker": ticker,
+                "price": price,
+                "change_percent": change_pct,
+                "prev_close": prev_close,
+                "open_price": open_price,
+                "change_since_open": change_since_open,
+                "week_change_percent": week_change_pct,
+            }
+        except Exception as exc:
+            if attempt < FETCH_RETRIES - 1:
+                time.sleep(0.6 * (attempt + 1))
+                continue
+            logger.warning("Price fetch failed for %s: %s", ticker, exc)
             return None
-
-        # Normalize index to UTC
-        if hist.index.tz is None:
-            hist.index = hist.index.tz_localize("UTC")
-        else:
-            hist.index = hist.index.tz_convert("UTC")
-
-        price = round(float(hist["Close"].iloc[-1]), 2)
-        prev_close = round(float(hist["Close"].iloc[-2]), 2) if len(hist) >= 2 else price
-        change_pct = round(((price - prev_close) / prev_close) * 100, 2) if prev_close > 0 else 0.0
-        open_price = round(float(hist["Open"].iloc[-1]), 2)
-        change_since_open = round(((price - open_price) / open_price) * 100, 2) if open_price > 0 else 0.0
-        # Weekly change: close 5 trading days ago → today (same 5d history already loaded)
-        week_open = round(float(hist["Close"].iloc[0]), 2)
-        week_change_pct = round(((price - week_open) / week_open) * 100, 2) if week_open > 0 else 0.0
-
-        return {
-            "ticker": ticker,
-            "price": price,
-            "change_percent": change_pct,
-            "prev_close": prev_close,
-            "open_price": open_price,
-            "change_since_open": change_since_open,
-            "week_change_percent": week_change_pct,
-        }
-    except Exception as exc:
-        logger.warning("Price fetch failed for %s: %s", ticker, exc)
-        return None
+    return None
 
 
 def _fetch_history_sync(ticker: str, period: str) -> Optional[List[dict]]:
@@ -133,8 +152,21 @@ async def get_stock_price(ticker: str) -> Optional[dict]:
 
 
 async def get_bulk_prices(tickers: List[str]) -> Dict[str, dict]:
-    """Async: fetch prices for multiple tickers concurrently."""
-    tasks = [get_stock_price(t) for t in tickers]
+    """Async: fetch prices for multiple tickers with bounded concurrency.
+
+    Firing 100+ requests at Yahoo Finance at once gets the whole batch
+    throttled (empty responses). A semaphore caps how many tickers are
+    fetched simultaneously so the batch stays under Yahoo's rate limit.
+    Cached tickers pass through instantly and don't count against the limit
+    in any meaningful way.
+    """
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT_FETCHES)
+
+    async def _guarded(ticker: str):
+        async with semaphore:
+            return await get_stock_price(ticker)
+
+    tasks = [_guarded(t) for t in tickers]
     results = await asyncio.gather(*tasks, return_exceptions=True)
     output: Dict[str, dict] = {}
     for ticker, result in zip(tickers, results):
