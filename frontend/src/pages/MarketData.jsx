@@ -517,21 +517,29 @@ export default function MarketData() {
     if (!publicTickers.length) return;
 
     setLiveLoading(true);
-    try {
-      const chunkSize = 30;
-      const combined = {};
-      for (let i = 0; i < publicTickers.length; i += chunkSize) {
-        const chunk = publicTickers.slice(i, i + chunkSize);
+    const chunkSize = 30;
+    const combined = {};
+    let anySuccess = false;
+    // Fetch each batch independently: if one batch fails (network hiccup or a
+    // Yahoo throttle), the others still arrive instead of the whole page going
+    // blank. We only overwrite the live data when at least one batch succeeded.
+    for (let i = 0; i < publicTickers.length; i += chunkSize) {
+      const chunk = publicTickers.slice(i, i + chunkSize);
+      try {
         const res = await axios.get(`${API}/stock-prices?tickers=${chunk.join(",")}`);
         Object.assign(combined, res.data);
+        anySuccess = true;
+      } catch (err) {
+        console.error("Live price batch failed:", chunk[0], err);
       }
-      setLiveData(combined);
-      setLastUpdated(new Date());
-    } catch (err) {
-      console.error("Live price fetch error:", err);
-    } finally {
-      setLiveLoading(false);
     }
+    if (anySuccess) {
+      // Merge over the previous snapshot so a partial refresh never blanks rows
+      // that were showing a live price a moment ago.
+      setLiveData((prev) => ({ ...prev, ...combined }));
+      setLastUpdated(new Date());
+    }
+    setLiveLoading(false);
   }, []);
 
   useEffect(() => {
