@@ -503,8 +503,20 @@ def _clean_name(name: str) -> str:
         out = _DESCRIPTOR_PREFIX_RE.sub("", out).strip()
     return out
 
+# Descriptor role words that appear at the END of a mis-extracted headline
+# phrase, e.g. "underwater-drone maker" (real target: Exail), "AI startup",
+# "radar manufacturer". Real company names are not built from these, so a name
+# ending in one is a description the extractor grabbed instead of the name.
+_TRAILING_DESC_RE = re.compile(
+    r"[\s-](?:maker|makers|manufacturer|manufacturers|developer|developers|"
+    r"specialist|specialists|producer|producers|supplier|suppliers|"
+    r"start-?up|start-?ups|vendor|vendors|integrator|integrators)\s*$",
+    re.IGNORECASE,
+)
+
 def _is_junk_name(name: str) -> bool:
-    return bool(_JUNK_NAME_RE.match(name.strip()))
+    n = name.strip()
+    return bool(_JUNK_NAME_RE.match(n)) or bool(_TRAILING_DESC_RE.search(n))
 
 def _both_known(acq_l: str, tgt_l: str) -> bool:
     keys = _registry_keys()
