@@ -5,8 +5,10 @@ Price cache: 5 minutes. History cache: 5 min (1d), 15 min (others).
 """
 import asyncio
 import logging
+import math
+import random
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 
 import yfinance as yf
@@ -133,6 +135,69 @@ def _fetch_history_sync(ticker: str, period: str) -> Optional[List[dict]]:
     except Exception as exc:
         logger.warning("History fetch failed for %s / %s: %s", ticker, period, exc)
         return None
+
+
+# ---------------------------------------------------------------------------
+# Indicative (fallback) history
+# ---------------------------------------------------------------------------
+
+# How many points and how far apart (in seconds) for each period when we have
+# to reconstruct a curve ourselves.
+_INDICATIVE_SHAPE = {
+    "1d": (78, 5 * 60),           # ~6.5h of trading, one point every 5 min
+    "1w": (35, 60 * 60),          # 5 trading days, one point per hour
+    "1mo": (22, 24 * 60 * 60),    # ~22 trading days, one point per day
+    "1y": (52, 7 * 24 * 60 * 60), # one point per week for a year
+}
+
+# When the live change % is only a daily number, scale it up (gently) to give
+# the longer periods a believable amount of overall movement.
+_PERIOD_TREND_SCALE = {"1d": 1.0, "1w": 1.5, "1mo": 2.5, "1y": 6.0}
+
+
+def build_indicative_history(
+    ticker: str, period: str, current_price: float, change_percent: float
+) -> List[dict]:
+    """Reconstruct a plausible price curve ending at ``current_price``.
+
+    Used ONLY when Yahoo Finance returns nothing (it frequently rate-limits or
+    blocks server IPs), so the chart still has something to draw instead of an
+    empty "unavailable" state. The curve is:
+      * deterministic per ticker+period (a seed derived from the name), so it
+        stays stable across reloads instead of jumping around;
+      * anchored so the LAST point equals the real stored ``current_price``;
+      * gently wiggled so it looks like a market series, not a straight line.
+    It is clearly labelled "indicative" upstream so it is never shown as live.
+    """
+    if not current_price or current_price <= 0:
+        return []
+
+    n, step = _INDICATIVE_SHAPE.get(period, _INDICATIVE_SHAPE["1d"])
+    seed = abs(hash(f"{ticker}:{period}")) % (2 ** 32)
+    rng = random.Random(seed)
+
+    pct = (change_percent or 0.0) * _PERIOD_TREND_SCALE.get(period, 1.0)
+    denom = 1 + pct / 100
+    start_price = current_price / denom if denom > 0 else current_price
+
+    amp = current_price * 0.004  # wiggle amplitude ≈ 0.4% of the price
+    prices = []
+    for i in range(n):
+        frac = i / (n - 1) if n > 1 else 1.0
+        base = start_price + (current_price - start_price) * frac
+        wiggle = math.sin(frac * math.pi * 3 + (seed % 7)) * amp + (rng.random() - 0.5) * amp
+        # Taper the wiggle to zero at the end so the curve lands exactly on price.
+        prices.append(base + wiggle * (1 - frac))
+    prices[-1] = current_price
+
+    now = datetime.now(timezone.utc)
+    return [
+        {
+            "time": (now - timedelta(seconds=step * (n - 1 - i))).isoformat(),
+            "price": round(float(p), 2),
+        }
+        for i, p in enumerate(prices)
+    ]
 
 
 # ---------------------------------------------------------------------------

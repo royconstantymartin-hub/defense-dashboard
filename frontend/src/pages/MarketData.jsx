@@ -399,6 +399,14 @@ function StockChartModal({ player, liveData, onClose }) {
             <span className="text-xs text-slate-400">Source: Yahoo Finance · Real-time data</span>
           </div>
         )}
+        {dataSource === "indicative" && (
+          <div className="px-4 pb-3">
+            <span className="text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
+              Courbe indicative — cours en direct indisponible, reconstruit à partir du dernier prix connu
+            </span>
+          </div>
+        )}
         {(dataSource === "unavailable" || (dataSource !== "private" && chartData.length === 0)) && (
           <div className="px-4 pb-3">
             <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">⚠ Price unavailable — check ticker or exchange listing</span>
