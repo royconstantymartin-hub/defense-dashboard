@@ -16,7 +16,7 @@ import re
 import jwt
 import bcrypt
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history, invalidate_cache as invalidate_stock_cache
+from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history, invalidate_cache as invalidate_stock_cache, build_indicative_history
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -926,7 +926,17 @@ async def get_stock_history_route(ticker: str, period: str = "1d"):
 
     data = await fetch_stock_history(ticker, period)
 
-    if not data:
+    if data:
+        return {"ticker": ticker, "period": period, "data": data, "data_source": "live"}
+
+    # Yahoo Finance returned nothing (it frequently rate-limits or blocks server
+    # IPs). Rather than showing an empty "unavailable" chart, reconstruct an
+    # indicative curve from the price + daily change we already store in the DB,
+    # so the chart always renders. Clearly flagged so the UI never shows it as live.
+    change_percent = float(player["change_percent"]) if player and player.get("change_percent") is not None else 0.0
+    indicative = build_indicative_history(ticker, period, base_price, change_percent)
+
+    if not indicative:
         return {
             "ticker": ticker,
             "period": period,
@@ -935,7 +945,13 @@ async def get_stock_history_route(ticker: str, period: str = "1d"):
             "message": "Données de marché indisponibles pour ce ticker. Vérifiez que la valeur est cotée sur Yahoo Finance."
         }
 
-    return {"ticker": ticker, "period": period, "data": data, "data_source": "live"}
+    return {
+        "ticker": ticker,
+        "period": period,
+        "data": indicative,
+        "data_source": "indicative",
+        "message": "Cours en direct indisponible — courbe indicative reconstruite à partir du dernier prix connu."
+    }
 
 @api_router.get("/stock-prices")
 async def get_stock_prices(tickers: str = ""):
