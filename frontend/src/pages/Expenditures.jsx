@@ -217,18 +217,21 @@ const QUAD_MEMBERS   = new Set(['US', 'IN', 'JP', 'AU']);
 const FIVEEYES_MEMBERS = new Set(['US', 'GB', 'CA', 'AU', 'NZ']);
 const SCO_MEMBERS    = new Set(['CN', 'RU', 'IN', 'PK', 'KZ', 'KG', 'TJ', 'UZ', 'IR']);
 
-// YoY spending change 2023 → 2024 (SIPRI 2025 report, % change rounded to 1dp)
+// YoY spending change 2023 → 2024, in REAL terms (constant 2023 US$).
+// Source: SIPRI "Trends in World Military Expenditure, 2024" fact sheet
+// (April 2025), Table 1 — exact published figures for the top-40 spenders.
+// Only the 40 countries SIPRI publishes a verified real-terms change for are
+// listed; the UI guards every lookup with `!= null`, so a country without a
+// verified figure simply shows no YoY badge (rather than an invented one).
 const YOY_DELTA = {
-  US: +5.7,  CN: +7.0,  RU: +38.0, IN: +5.0,  SA: -1.1,
-  GB: +2.2,  UA: +50.5, DE: +28.0, FR: +7.4,  JP: +14.8,
-  KR: +4.1,  AU: +6.2,  IT: +4.9,  PL: +21.9, CA: +8.1,
-  IL: +79.8, AE: +2.3,  TR: +6.1,  BR: +4.2,  TW: +10.0,
-  ES: +15.2, NL: +25.0, SG: +3.1,  PK: +6.0,  DK: +18.3,
-  NO: +12.4, ID: +4.0,  DZ: +5.8,  SE: +34.9, MX: +3.2,
-  GR: +7.2,  FI: +27.4, RO: +24.8, PT: +17.2, CZ: +35.8,
-  HU: +22.1, BE: +14.5, AL: +9.0,  BG: +47.7, HR: +13.3,
-  EE: +16.8, IS: +21.4, LV: +32.7, LT: +19.2, LU: +8.1,
-  ME: +16.1, MK: +27.4, SK: +11.9, SI: +51.7,
+  US: +5.7,  CN: +7.0,  RU: +38.0, DE: +28.0, IN: +1.6,
+  GB: +2.8,  SA: +1.5,  UA: +2.9,  FR: +6.1,  JP: +21.0,
+  KR: +1.4,  IL: +65.0, PL: +31.0, IT: +1.4,  AU: +1.9,
+  CA: +6.8,  TR: +12.0, ES: +0.4,  NL: +35.0, DZ: +12.0,
+  BR: -0.4,  MX: +39.0, TW: +1.8,  CO: +14.0, SG: +3.0,
+  SE: +34.0, ID: -0.4,  NO: +17.0, PK: -5.1,  DK: +20.0,
+  RO: +43.0, BE: +7.4,  GR: +11.0, IR: -10.0, KW: -2.6,
+  FI: +16.0, CH: +3.1,  CZ: +32.0, IQ: +4.4,  PH: +19.0,
 };
 
 const COLORS = ['#0F172A', '#1e40af', '#3B82F6', '#64748B', '#94A3B8', '#CBD5E1'];

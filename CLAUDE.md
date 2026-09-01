@@ -34,7 +34,7 @@ defense-dashboard/
 │   ├── requirements.txt
 │   ├── data/
 │   │   ├── companies.py       # Static company data
-│   │   └── seed_data.py       # Database seed: 118 companies, 140 products, etc.
+│   │   └── seed_data.py       # Database seed: 457 companies, 443 products, etc.
 │   ├── services/
 │   │   ├── stock_service.py   # yfinance live prices + 1-hour in-memory cache
 │   │   ├── news_scraper.py    # RSS/web scraping for announcements
@@ -232,9 +232,9 @@ The canonical design spec lives in `design_guidelines.json`. Key rules:
 ## Known Limitations & Pending Work
 
 - **Social media feed (`Follow` page):** Uses mock data — real Twitter/X API keys not configured
-- **Company logos:** Some Clearbit CDN URLs fail — fallback shield icons are shown
-- **250-company target:** Currently 118 companies in the dataset
-- **Interactive map (Expenditures):** Not yet implemented (bento grid placeholder)
+- **Company logos:** Clearbit shut down end-2025; logos now resolve via Google/DuckDuckGo favicons with a coloured-initials fallback
+- **Dataset size:** 457 companies and 443 products currently seeded
+- **Expenditures data vintage:** SIPRI FY2024 (fact sheet Apr-2025), verified 2026-09-01; refreshing to FY2025 is pending
 - **User watchlist / export / email alerts:** Backlog (P2)
 
 ---

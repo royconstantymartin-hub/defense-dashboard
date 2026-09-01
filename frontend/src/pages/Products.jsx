@@ -864,6 +864,18 @@ const WIKI_TITLES = {
   "IDEFX Autonomous UUV": "Autonomous underwater vehicle",
 };
 
+// Builds a Wikipedia (EN) source link for a product. Reuses the WIKI_TITLES
+// override map (product name → exact article title) that already drives the
+// product photos, falling back to the product name itself. Wikipedia is used
+// here as an INTERMEDIATE, openly-verifiable reference — the encyclopaedia
+// itself cites primary sources (manufacturer specs, Jane's, government docs)
+// at the bottom of each article, which is where a reader should ultimately go.
+function wikipediaSourceUrl(name) {
+  if (!name) return null;
+  const title = (WIKI_TITLES[name] || name).replace(/ /g, "_");
+  return `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
+}
+
 // YouTube presentation video IDs — verified directly from official manufacturer websites
 // Format: product name (must match seed data exactly) → YouTube video ID
 const YOUTUBE_VIDEOS = {
@@ -1854,6 +1866,26 @@ export default function Products() {
                     </span>
                   ))}
                 </div>
+              </div>
+
+              {/* Sources & references */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Sources & references</p>
+                <a
+                  href={selectedProduct.source_url || wikipediaSourceUrl(selectedProduct.name)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-blue-800 hover:text-blue-900 hover:underline"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  {selectedProduct.source_url ? "Primary source" : "Reference article (Wikipedia)"}
+                </a>
+                <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+                  Specifications are indicative and compiled from open sources (manufacturer
+                  data, Jane's, Wikipedia). Photos are illustrative — for a few systems (notably
+                  software / AI products and not-yet-fielded programmes) the image shown is a
+                  visually representative equivalent, not the exact item.
+                </p>
               </div>
             </div>
           </div>

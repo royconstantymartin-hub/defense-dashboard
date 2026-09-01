@@ -19,7 +19,7 @@ export const DATA_VINTAGE = {
   capability_edition: "2024",
   // Date of the last editorial review of the dataset (update on each refresh).
   // Displayed as "last reviewed".
-  last_reviewed: "2026-06-29",
+  last_reviewed: "2026-09-01",
 };
 
 // Source registry. Each entry carries a complete, verifiable citation.
