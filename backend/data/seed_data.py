@@ -465,11 +465,11 @@ DEFENSE_COMPANIES = [
     },
     {
         "name": "Neros Technologies", "ticker": "NROS-PRIV", "country": "USA",
-        "market_cap": 0.04, "stock_price": 0, "change_percent": 0,
+        "market_cap": 2.5, "stock_price": 0, "change_percent": 0,
         "revenue": 0.003, "employees": 30,
         "specializations": ["UAV", "FPV Drones", "Autonomous", "Attritable"],
         "founded_year": 2023, "headquarters": "Los Angeles, CA, USA", "website": "neros.tech",
-        "funding_stage": "Seed — $10M+",
+        "funding_stage": "Series C — $250M (2026)",
         "is_public": False,
         "description": (
             "Neros Technologies produces low-cost, attritable FPV combat drones inspired by "
