@@ -15,7 +15,6 @@ import {
   Rss,
   Bell,
   Lock,
-  Radar,
   BookOpen,
   GraduationCap,
   Home
@@ -40,7 +39,6 @@ const navItems = [
   { path: "/follow", icon: Rss, label: "Sources" },
   { path: "/lexicon", icon: BookOpen, label: "Lexicon" },
   { path: "/quiz", icon: GraduationCap, label: "Quiz" },
-  { path: "/world-monitor", icon: Radar, label: "World Monitor", inProgress: true },
 ];
 
 export default function Layout() {

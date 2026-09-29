@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { API, useAuth } from "@/App";
 import { getLogoUrl } from "@/lib/companyLogos";
+import { mergeDealHistory, historyYears, loadHistoryPages } from "@/lib/dealHistory";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -52,12 +53,6 @@ const STATUS_OPTIONS = [
 
 const INVEST_TYPES = ["strategic_investment", "minority_stake", "funding_round"];
 
-const YEAR_OPTIONS = [
-  { value: "all", label: "All Years" },
-  ...[2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018].map((y) => ({
-    value: String(y), label: String(y),
-  })),
-];
 
 const PERIOD_OPTIONS = [
   { value: "7",  label: "7D" },
@@ -3008,7 +3003,8 @@ function ConfidencePill({ confidence }) {
         </span>
       </TooltipTrigger>
       <TooltipContent className="text-xs max-w-xs">
-        High = 2+ concordant primary sources. Medium = 1 primary source. Low = unverified / estimated.
+        Legacy completeness/extraction indicator, not a probability of accuracy.
+        Open the cited sources to assess the evidence; manual entry alone is not verification.
       </TooltipContent>
     </UITooltip>
   );
@@ -3021,7 +3017,8 @@ function ConfidencePill({ confidence }) {
 function StatusTimeline({ deal }) {
   let history = Array.isArray(deal.status_history) ? deal.status_history : [];
   if (history.length === 0 && deal.announced_date) {
-    history = [{ status: deal.status, date: deal.announced_date, source_url: deal.source_url }];
+    history = [{ status: "announced", date: deal.announced_date, source_url: deal.source_url }];
+    if (deal.closed_date) history.push({ status: "completed", date: deal.closed_date, source_url: deal.source_url });
   }
   if (history.length === 0) return null;
 
@@ -3428,6 +3425,7 @@ export default function MAActivity() {
   const [historical,     setHistorical]        = useState([]);
   const [players,        setPlayers]           = useState([]);
   const [loading,        setLoading]           = useState(true);
+  const [historyError, setHistoryError] = useState(null);
   const [histLoading,    setHistLoading]       = useState(false);
   const [error,          setError]             = useState(null);
   const [dealTypeTab,    setDealTypeTab]       = useState("all");
@@ -3464,10 +3462,16 @@ export default function MAActivity() {
 
   const fetchHist = async () => {
     setHistLoading(true);
+    setHistoryError(null);
     try {
-      const res = await axios.get(`${API}/ma-activities/historical`, { params: { limit: 500, offset: 0 } });
-      setHistorical(res.data);
-    } catch { /* silent */ } finally {
+      const rows = await loadHistoryPages(async params => {
+        const res = await axios.get(`${API}/ma-activities/historical`, { params });
+        return res.data;
+      });
+      setHistorical(rows);
+    } catch {
+      setHistoryError("Historical coverage could not be refreshed. Displayed results may be incomplete.");
+    } finally {
       setHistLoading(false);
     }
   };
@@ -3510,27 +3514,14 @@ export default function MAActivity() {
     return () => { clearInterval(timer); document.removeEventListener("visibilitychange", onVisible); };
   }, []);
 
-  // Merge + deduplicate recent and historical.
-  // Dedup by id first; also dedup by (acquirer_first_word, target_first_word) to catch
-  // near-duplicate scraper entries like "Bombardier" vs "Bombardier C Series".
-  const allDeals = useMemo(() => {
-    const seenId  = new Set();
-    const seenKey = new Set();
-    return [...activities, ...historical].filter(a => {
-      // Drop scraper artifacts before dedup so they don't consume a seen-key slot
-      if (!isValidCompanyName(a.acquirer) || !isValidCompanyName(a.target)) return false;
-      // Drop state procurement (e.g. "Italy buys six A330 MRTT tankers") — not real M&A
-      if (isStateOrProcurement(a)) return false;
-      // Option A — hide low/unknown-confidence auto-scraped deals
-      if (!isTrustworthyDeal(a)) return false;
-      if (seenId.has(a.id)) return false;
-      const normKey = `${(a.acquirer||'').toLowerCase().trim().split(/\s+/)[0]}|${(a.target||'').toLowerCase().trim().split(/\s+/)[0]}`;
-      if (seenKey.has(normKey)) return false;
-      seenId.add(a.id);
-      seenKey.add(normKey);
-      return true;
-    });
-  }, [activities, historical]);
+  const allDeals = useMemo(() => mergeDealHistory(activities, historical).filter(a =>
+    isValidCompanyName(a.acquirer) && isValidCompanyName(a.target) &&
+    !isStateOrProcurement(a) && isTrustworthyDeal(a)
+  ), [activities, historical]);
+  const yearOptions = useMemo(() => [
+    { value: "all", label: "All years" },
+    ...historyYears(allDeals).map(year => ({ value: String(year), label: String(year) })),
+  ], [allDeals]);
 
   // Tab counts
   const tabCounts = useMemo(() => {
@@ -3582,12 +3573,6 @@ export default function MAActivity() {
       );
     }
     return [...list].sort((a, b) => {
-      // Default view only: tier-1 first (corporate M&A + IPOs), tier-2 after
-      // (fund/VC/JV). Explicit column sorts bypass the tiering.
-      if (sortField === "announced_date" && sortDir === "desc") {
-        const t = dealTier(a) - dealTier(b);
-        if (t !== 0) return t;
-      }
       const va = sortField === "deal_value" ? (a.deal_value || 0) : new Date(a.announced_date).getTime();
       const vb = sortField === "deal_value" ? (b.deal_value || 0) : new Date(b.announced_date).getTime();
       return sortDir === "asc" ? va - vb : vb - va;
@@ -3607,7 +3592,7 @@ export default function MAActivity() {
     const max = Math.max(...allDeals.map(a => new Date(a.announced_date).getTime()));
     if (!isFinite(max)) return null;
     const d = new Date(max);
-    return `Data as of ${d.toLocaleString("en-US", { month: "short", year: "numeric" })}`;
+    return `Latest recorded announcement: ${d.toLocaleString("en-US", { month: "short", year: "numeric" })}`;
   }, [allDeals]);
 
   // Reset page on filter change
@@ -3703,6 +3688,14 @@ export default function MAActivity() {
         </div>
       )}
 
+      <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-950">
+        <strong>Historical coverage</strong>
+        <p>{histLoading ? "Loading historical records…" : `${allDeals.length} recorded operations across ${yearOptions.length - 1} years.`}
+          {" "}This is a documented selection, not an exhaustive market census. Missing amounts are not zero-value transactions.</p>
+      </div>
+      {historyError && <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        {historyError} <button onClick={fetchHist} className="underline">Retry history</button>
+      </div>}
       {/* ── Recent Deals Spotlight ── */}
       {!loading && activities.length > 0 && (
         <RecentDealsSpotlight
@@ -3894,7 +3887,7 @@ export default function MAActivity() {
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Year</p>
               <div className="flex flex-wrap gap-1">
-                {YEAR_OPTIONS.map(o => (
+                {yearOptions.map(o => (
                   <button
                     key={o.value}
                     onClick={() => setSelectedYear(o.value)}

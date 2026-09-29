@@ -53,7 +53,7 @@ def test_confidence_thresholds():
     # Nothing anchored → low
     score, label = score_confidence(acq_known=False, tgt_known=False, value_basis="undisclosed")
     assert label == "low"
-    # Manual curation is always trusted
+    # Manual entry alone is not verification.
     score, label = score_confidence(acq_known=False, tgt_known=False, value_basis="undisclosed",
                                     extraction_method="manual")
-    assert label == "high" and score >= 0.9
+    assert label == "low"

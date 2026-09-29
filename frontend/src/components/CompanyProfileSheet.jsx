@@ -589,6 +589,17 @@ export default function CompanyProfileSheet({ name, onClose }) {
               </div>
             )}
 
+            <div className="px-6 py-4 bg-slate-50 border-y border-slate-100">
+              <p className="text-xs font-semibold text-slate-700">Sources &amp; review</p>
+              {p.sources?.length ? p.sources.map((source, i) => (
+                <a key={i} href={source.url} target="_blank" rel="noopener noreferrer"
+                  className="block text-xs text-blue-700 underline mt-2">
+                  {source.publisher || "Source"}{source.published_at ? ` · ${source.published_at}` : ""}
+                </a>
+              )) : <p className="text-xs text-amber-800 mt-2">Profile-level sources have not yet been documented.</p>}
+              {p.source_reviewed_at && <p className="text-xs text-slate-500 mt-2">Sources reviewed: {p.source_reviewed_at}</p>}
+              {p.data_notes && <p className="text-xs text-slate-600 mt-2">{p.data_notes}</p>}
+            </div>
             {/* ── Specializations ── */}
             {p.specializations?.length > 0 && (
               <div className="px-6 py-5">

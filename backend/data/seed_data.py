@@ -1,6 +1,7 @@
 # Expanded seed data for Defense Dashboard
 from datetime import datetime, timezone, timedelta
 import random
+from data.researched_additions import COMPANIES as RESEARCHED_COMPANIES, DEALS as RESEARCHED_DEALS
 
 # 250+ Defense Companies
 DEFENSE_COMPANIES = [
@@ -5592,26 +5593,6 @@ MA_EXTRA_DEALS = [
         "announced_date": datetime(2025, 1, 15, tzinfo=timezone.utc),
         "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
         "valuation": 250,
-    },
-    {
-        "acquirer": "NATO Innovation Fund + Lakestar",
-        "target": "Isembard",
-        "deal_value": 50, "status": "completed", "deal_type": "funding_round",
-        "description": "Isembard $50M Series B — autonomous underwater vehicle systems",
-        "rationale": (
-            "Isembard, a UK developer of long-endurance autonomous underwater vehicles (AUVs) "
-            "for mine countermeasures and seabed warfare, raises $50M in a Series B backed by "
-            "the NATO Innovation Fund and Lakestar. The investment accelerates qualification "
-            "for UK Royal Navy programmes and expands Isembard's AUV fleet for allied navies "
-            "in the Baltic and North Atlantic."
-        ),
-        "acquirer_country": "BE", "target_country": "GB",
-        "acquirer_logo_domain": "natoinnovationfund.nato.int",
-        "target_logo_domain": "isembard.com",
-        "source_url": "https://isembard.com/news/",
-        "announced_date": datetime(2025, 2, 25, tzinfo=timezone.utc),
-        "stake_percentage": None, "round_type": "series_b", "is_disclosed": True,
-        "valuation": 200,
     },
     {
         "acquirer": "Hadean Ventures + Plural",
@@ -12329,3 +12310,6 @@ MA_DEFENSETECH_2026 = [
         "extraction_method": "manual",
     },
 ]
+
+DEFENSE_COMPANIES.extend(RESEARCHED_COMPANIES)
+MA_DATA.extend(RESEARCHED_DEALS)

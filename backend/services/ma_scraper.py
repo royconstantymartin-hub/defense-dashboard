@@ -326,8 +326,7 @@ def score_confidence(
     extraction_method: str = "regex",
 ) -> Tuple[float, str]:
     """Return (confidence_score 0..1, confidence_label high|medium|low)."""
-    if extraction_method == "manual":
-        return 0.95, "high"
+    # Manual entry is a method, not evidence of correctness.
     score = 0.30
     if acq_known:
         score += 0.20
@@ -631,18 +630,15 @@ def deduplicate_ma_signals(signals: List[Dict]) -> List[Dict]:
       2. Jaccard similarity > 0.75 on acquirer+target concatenated string
     """
     seen_pairs: set = set()
-    seen_labels: List[str] = []
     unique: List[Dict] = []
 
     for sig in signals:
-        pair = (sig.get("acquirer_norm", ""), sig.get("target_norm", ""))
+        pair = (sig.get("acquirer_norm", ""), sig.get("target_norm", ""),
+                str(sig.get("announced_date", ""))[:10],
+                sig.get("deal_type"), sig.get("round_type"), sig.get("source_url"))
         if pair in seen_pairs:
             continue
-        label = f"{pair[0]} {pair[1]}"
-        if any(_jaccard(label, l) > 0.75 for l in seen_labels):
-            continue
         seen_pairs.add(pair)
-        seen_labels.append(label)
         unique.append(sig)
 
     return unique

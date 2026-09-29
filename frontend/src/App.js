@@ -16,7 +16,6 @@ import Follow from "@/pages/Follow";
 import Admin from "@/pages/Admin";
 import Login from "@/pages/Login";
 import PrivatePlayers from "@/pages/PrivatePlayers";
-import WorldMonitor from "@/pages/WorldMonitor";
 import Lexicon from "@/pages/Lexicon";
 import LexiconTerm from "@/pages/LexiconTerm";
 import Quiz from "@/pages/Quiz";
@@ -128,7 +127,7 @@ function App() {
             <Route path="products" element={<Products />} />
             <Route path="follow" element={<Follow />} />
             <Route path="private-players" element={<PrivatePlayers />} />
-            <Route path="world-monitor" element={<WorldMonitor />} />
+            <Route path="world-monitor" element={<Navigate to="/home" replace />} />
             <Route path="lexicon" element={<Lexicon />} />
             <Route path="lexicon/:slug" element={<LexiconTerm />} />
             <Route path="quiz" element={<Quiz />} />
