@@ -90,42 +90,46 @@ def _label(doc: dict) -> str:
 # ── Audit checks ─────────────────────────────────────────────────────────────
 
 def check_duplicates(docs: list[dict]) -> list[dict]:
-    """Probable duplicates: same (acquirer_norm, target_norm) within 90 days OR identical value."""
+    """Detect duplicate lifecycle rows without merging legitimate funding rounds."""
     issues = []
     seen: dict[tuple, list] = {}
+    repeatable_types = {"funding_round", "minority_stake", "strategic_investment"}
 
     for doc in docs:
         a = _norm(doc.get("acquirer", ""))
         t = _norm(doc.get("target", ""))
-        key = (a.split()[0] if a else "", t.split()[0] if t else "")
+        key = (a, t, doc.get("deal_type", ""))
         seen.setdefault(key, []).append(doc)
 
     for key, group in seen.items():
         if len(group) < 2:
             continue
+        # An acquisition, merger, IPO or JV is one transaction. Its announced
+        # and closed dates belong on the same record, regardless of how many
+        # sources refer to its lifecycle.
+        if key[2] not in repeatable_types:
+            issues.append({
+                "severity": "blocker",
+                "check": "duplicate",
+                "label": " / ".join(_label(d) for d in group),
+                "detail": f"{len(group)} records for one {key[2]} transaction; merge lifecycle dates into one record",
+            })
+            continue
+
+        # A company can legitimately raise several rounds. Flag only a true
+        # repeat of both date and disclosed amount for those deal types.
         for i, d1 in enumerate(group):
             for d2 in group[i + 1:]:
                 date1 = _parse_date(d1.get("announced_date"))
                 date2 = _parse_date(d2.get("announced_date"))
                 val1 = d1.get("deal_value", 0) or 0
                 val2 = d2.get("deal_value", 0) or 0
-
-                dates_close = (
-                    date1 and date2 and abs((date1 - date2).days) <= 90
-                )
-                values_identical = val1 and val2 and val1 == val2
-
-                if dates_close or values_identical:
+                if date1 and date2 and date1.date() == date2.date() and val1 and val1 == val2:
                     issues.append({
                         "severity": "blocker",
                         "check": "duplicate",
                         "label": f"{_label(d1)} / {_label(d2)}",
-                        "detail": (
-                            f"dates within 90d ({date1.date() if date1 else '?'} vs "
-                            f"{date2.date() if date2 else '?'})"
-                            if dates_close else
-                            f"identical value ${val1}M"
-                        ),
+                        "detail": f"same funding date ({date1.date()}) and value ${val1}M",
                     })
     return issues
 

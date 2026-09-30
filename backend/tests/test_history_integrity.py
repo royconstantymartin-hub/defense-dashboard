@@ -3,6 +3,10 @@ from datetime import datetime, timezone
 from services.deal_identity import deal_identity
 from services.ma_scraper import deduplicate_ma_signals, score_confidence
 from data.researched_additions import COMPANIES, DEALS
+from data.seed_data import (
+    MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10,
+    MA_EUROSATORY_2026, MA_ILA_BERLIN_2026, MA_DEFENSETECH_2026,
+)
 
 class HistoryIntegrityTests(unittest.TestCase):
     def test_separate_rounds_survive(self):
@@ -50,6 +54,30 @@ class HistoryIntegrityTests(unittest.TestCase):
         for deal in DEALS:
             self.assertIsInstance(deal["announced_date"], datetime)
             self.assertTrue(deal.get("source_url"))
+
+    def test_seeded_corporate_transactions_are_unique(self):
+        """One acquisition/JV/IPO must not be split into an announcement row and a closing row."""
+        repeatable_types = {"funding_round", "minority_stake", "strategic_investment"}
+        seen = {}
+        curated_lists = (
+            MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10,
+            MA_EUROSATORY_2026, MA_ILA_BERLIN_2026, MA_DEFENSETECH_2026,
+        )
+        for deal in (d for deals in curated_lists for d in deals):
+            if deal["deal_type"] in repeatable_types:
+                continue
+            key = (
+                " ".join(deal["acquirer"].lower().split()),
+                " ".join(deal["target"].lower().split()),
+                deal["deal_type"],
+            )
+            self.assertNotIn(
+                key,
+                seen,
+                f"Duplicate corporate transaction: {deal['acquirer']} → {deal['target']} "
+                f"({seen.get(key)} and {deal['announced_date'].date()})",
+            )
+            seen[key] = deal["announced_date"].date()
 
 if __name__ == "__main__":
     unittest.main()

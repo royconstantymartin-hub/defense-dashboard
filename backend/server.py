@@ -3050,6 +3050,16 @@ async def _apply_company_enrichments():
 # Known-incorrect M&A entries that must be purged from the DB.
 # These crept in via old seeds or scraper hallucinations and have the wrong acquirer.
 _STALE_MA_DEALS = [
+    # Lifecycle duplicates: one transaction must carry its announcement and
+    # closing dates on the same record, never appear twice in the timeline.
+    {"acquirer": "Thales", "target": "Imperva", "deal_type": "acquisition",
+     "announced_date": {"$regex": "^2022-12-08"}},
+    {"acquirer": "Safran", "target": "Preligens", "deal_type": "acquisition",
+     "announced_date": {"$regex": "^2024-09-20"}},
+    {"acquirer": "Boeing", "target": "Spirit AeroSystems", "deal_type": "acquisition",
+     "announced_date": {"$regex": "^2025-12-05"}},
+    {"acquirer": "Electro Optic Systems", "target": "MARSS", "deal_type": "acquisition",
+     "announced_date": {"$regex": "^2026-06-15"}},
     {"acquirer": "Thales", "target": "Preligens"},         # acquired by Safran, not Thales
     {"acquirer": "Dassault Aviation", "target": "Harmattan.ai"},   # renamed target to "Harmattan AI"
     # phase1.1 corrections:
