@@ -40,5 +40,16 @@ class HistoryIntegrityTests(unittest.TestCase):
         self.assertEqual(deal["deal_value"], 50)
         self.assertIsNone(deal["valuation"])
 
+    def test_reviewed_private_profiles_do_not_present_valuations_as_market_caps(self):
+        by_name = {company["name"]: company for company in COMPANIES}
+        for name in ("Helsing", "Quantum Systems", "ARX Robotics", "TEKEVER"):
+            self.assertIsNone(by_name[name]["market_cap"], name)
+            self.assertTrue(by_name[name]["sources"], name)
+
+    def test_every_researched_deal_has_a_real_date(self):
+        for deal in DEALS:
+            self.assertIsInstance(deal["announced_date"], datetime)
+            self.assertTrue(deal.get("source_url"))
+
 if __name__ == "__main__":
     unittest.main()

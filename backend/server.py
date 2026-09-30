@@ -1562,7 +1562,11 @@ async def _run_seed() -> dict:
             # Patch newly-introduced fields onto existing records so a re-seed
             # propagates multinational_for and company_type without a full drop.
             patch = {}
-            for field in ("sources", "source_reviewed_at", "data_notes", "description", "aliases", "funding_stage"):
+            # Curated profiles are authoritative for their published identity,
+            # capabilities and sourced reference fields.  This lets a reviewed
+            # profile correct an older seed instead of merely appending a note.
+            for field in ("sources", "source_reviewed_at", "data_notes", "description", "aliases", "funding_stage",
+                          "specializations", "founded_year", "headquarters", "website", "is_public"):
                 if field in p:
                     patch[field] = p[field]
             if 'multinational_for' in p:
