@@ -326,8 +326,7 @@ def score_confidence(
     extraction_method: str = "regex",
 ) -> Tuple[float, str]:
     """Return (confidence_score 0..1, confidence_label high|medium|low)."""
-    if extraction_method == "manual":
-        return 0.95, "high"
+    # Manual entry is a method, not evidence of correctness.
     score = 0.30
     if acq_known:
         score += 0.20
@@ -631,25 +630,22 @@ def deduplicate_ma_signals(signals: List[Dict]) -> List[Dict]:
       2. Jaccard similarity > 0.75 on acquirer+target concatenated string
     """
     seen_pairs: set = set()
-    seen_labels: List[str] = []
     unique: List[Dict] = []
 
     for sig in signals:
-        pair = (sig.get("acquirer_norm", ""), sig.get("target_norm", ""))
+        pair = (sig.get("acquirer_norm", ""), sig.get("target_norm", ""),
+                str(sig.get("announced_date", ""))[:10],
+                sig.get("deal_type"), sig.get("round_type"), sig.get("source_url"))
         if pair in seen_pairs:
             continue
-        label = f"{pair[0]} {pair[1]}"
-        if any(_jaccard(label, l) > 0.75 for l in seen_labels):
-            continue
         seen_pairs.add(pair)
-        seen_labels.append(label)
         unique.append(sig)
 
     return unique
 
 # ── RSS fetcher ───────────────────────────────────────────────────────────────
 
-def _parse_entry_date(entry) -> datetime:
+def _parse_entry_date(entry) -> Optional[datetime]:
     for attr in ("published_parsed", "updated_parsed"):
         t = getattr(entry, attr, None)
         if t:
@@ -657,7 +653,7 @@ def _parse_entry_date(entry) -> datetime:
                 return datetime(*t[:6], tzinfo=timezone.utc)
             except Exception:
                 pass
-    return datetime.now(timezone.utc)
+    return None
 
 def _extract_summary(entry) -> str:
     from bs4 import BeautifulSoup
@@ -816,7 +812,11 @@ def _extract_signal_from_headline(source_name: str, title: str, link: str,
     deal_value, value_basis = _parse_deal_value_with_basis(title)
     deal_type = _infer_deal_type(title)
     round_type = _infer_round_type(title)
-    when = published or datetime.now(timezone.utc)
+    # Archive-listing pages without a date cannot establish an event chronology.
+    # Do not turn their crawl time into a fictional announcement date.
+    if not published:
+        return None
+    when = published
     confidence_score, confidence = score_confidence(
         acq_known=_is_registered(acquirer), tgt_known=_is_registered(target),
         value_basis=value_basis, num_sources=1, extraction_method="regex",
@@ -840,8 +840,8 @@ def _extract_signal_from_headline(source_name: str, title: str, link: str,
 
 def scrape_category_backfill(pages: int = 10) -> List[Dict]:
     """Walk paginated WordPress category archives and extract M&A signals from
-    headlines. Dates are unknown from listing pages, so announced_date falls
-    back to now — acceptable for backfill rows, which remain confidence-capped."""
+    headlines. Listing-only pages without a published date are deliberately
+    skipped; a chronology cannot use crawl time as a proxy for deal date."""
     import requests
     from bs4 import BeautifulSoup
     signals: List[Dict] = []

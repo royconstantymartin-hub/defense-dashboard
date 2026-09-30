@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
       # Exactly what the Dockerfile does — no lockfile, legacy peer deps
       - run: npm install --legacy-peer-deps
       - run: npm run build
@@ -34,6 +34,8 @@ jobs:
           GENERATE_SOURCEMAP: "false"
           REACT_APP_BACKEND_URL: ""
           NODE_OPTIONS: --max-old-space-size=2048
+      - run: node --test tests/dealHistory.test.mjs
+        name: Historical pagination and identity regression tests
 
   backend-qa:
     name: Backend compile + M&A extraction golden set
@@ -52,3 +54,5 @@ jobs:
         name: Install pytest
       - run: PYTHONPATH=. python -m pytest tests/test_ma_extraction.py -q
         name: Golden-set extraction tests
+      - run: PYTHONPATH=. python -m unittest discover -s tests -p test_history_integrity.py -v
+        name: History integrity and researched data checks

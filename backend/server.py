@@ -10,13 +10,14 @@ from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 import uuid
+from services.deal_identity import deal_identity
 from datetime import datetime, timezone, timedelta
 import asyncio
 import re
 import jwt
 import bcrypt
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history, invalidate_cache as invalidate_stock_cache, build_indicative_history
+from services.stock_service import get_bulk_prices, get_stock_history as fetch_stock_history, invalidate_cache as invalidate_stock_cache
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -27,7 +28,9 @@ client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=5000)
 db = client[os.environ['DB_NAME']]
 
 # JWT Configuration
-JWT_SECRET = os.environ.get('JWT_SECRET', 'defense-dashboard-secret-key-2024')
+JWT_SECRET = os.environ.get('JWT_SECRET', '')
+if len(JWT_SECRET) < 32 or JWT_SECRET == 'defense-dashboard-secret-key-2024':
+    raise RuntimeError("Set JWT_SECRET to a unique secret of at least 32 characters.")
 JWT_ALGORITHM = "HS256"
 
 # Create the main app
@@ -158,6 +161,8 @@ class MAActivity(BaseModel):
     confidence_score: Optional[float] = None    # 0..1 deterministic score (C1)
     extraction_method: Optional[str] = None     # regex | llm | manual
     verification_status: Optional[str] = None   # auto | human_verified
+    review_status: Optional[str] = None         # published | needs_review
+    review_reason: Optional[str] = None         # why an item was withheld
     last_verified_at: Optional[datetime] = None
     sources: Optional[List[dict]] = None        # [{url, publisher, published_at}] (C1)
     status_history: Optional[List[dict]] = None # [{status, date, source_url}] (C2)
@@ -191,7 +196,7 @@ class DefensePlayerCreate(BaseModel):
     stock_price: float
     change_percent: float
     revenue: float  # in billions USD
-    employees: int
+    employees: Optional[int] = None
     specializations: List[str]
 
 class DefensePlayer(BaseModel):
@@ -200,13 +205,16 @@ class DefensePlayer(BaseModel):
     name: str
     ticker: str
     country: str
-    market_cap: float
+    market_cap: Optional[float] = None
     stock_price: float
     change_percent: float
-    revenue: float
-    employees: int
+    revenue: Optional[float] = None
+    employees: Optional[int] = None
     specializations: List[str]
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    sources: Optional[List[dict]] = None
+    source_reviewed_at: Optional[str] = None
+    data_notes: Optional[str] = None
     # Enrichment fields (Crunchbase-style profile)
     founded_year: Optional[int] = None
     headquarters: Optional[str] = None
@@ -458,10 +466,12 @@ class AdminSetupBody(BaseModel):
 @api_router.post("/auth/promote-admin", response_model=TokenResponse)
 async def promote_admin(body: AdminSetupBody, current_user: dict = Depends(get_current_user)):
     """Promotes the current logged-in user to admin role.
-    Requires the ADMIN_SETUP_KEY env var (falls back to JWT_SECRET).
+    Requires a separately configured ADMIN_SETUP_KEY environment variable.
     One-time setup for dashboard owners.
     """
-    expected_key = os.environ.get("ADMIN_SETUP_KEY", JWT_SECRET)
+    expected_key = os.environ.get("ADMIN_SETUP_KEY")
+    if not expected_key:
+        raise HTTPException(status_code=403, detail="Admin setup is disabled")
     if body.setup_key != expected_key:
         raise HTTPException(status_code=403, detail="Invalid setup key")
     user_id = current_user.get("sub")
@@ -518,7 +528,10 @@ async def get_ma_activities(
     - deal_class         → ma | jv | vc | procurement (C4 stream separation)
     - offset             → skip N records (for pagination)
     """
-    query: dict = {}
+    # Records preserved for an analyst review are intentionally withheld from
+    # the public intelligence stream. They are not deleted: an admin can still
+    # inspect, correct and publish them later.
+    query: dict = {"review_status": {"$ne": "needs_review"}}
     if status:
         query["status"] = status
     if deal_class:
@@ -526,7 +539,7 @@ async def get_ma_activities(
     if days and days > 0:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
         query["announced_date"] = {"$gte": cutoff}
-    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).skip(offset).limit(limit).to_list(limit)
+    activities = await db.ma_activities.find(query, {"_id": 0}).sort([("announced_date", -1), ("id", 1)]).skip(offset).limit(limit).to_list(limit)
     for a in activities:
         if isinstance(a['announced_date'], str):
             a['announced_date'] = datetime.fromisoformat(a['announced_date'])
@@ -554,7 +567,7 @@ async def get_ma_historical(
     offset: int = 0,
 ):
     """Return M&A activities for the historical table view, with pagination."""
-    query: dict = {}
+    query: dict = {"review_status": {"$ne": "needs_review"}}
     if acquirer:
         query["acquirer"] = {"$regex": acquirer, "$options": "i"}
     if deal_type:
@@ -565,7 +578,7 @@ async def get_ma_historical(
         from_dt = datetime(year, 1, 1, tzinfo=timezone.utc).isoformat()
         to_dt = datetime(year, 12, 31, 23, 59, 59, tzinfo=timezone.utc).isoformat()
         query["announced_date"] = {"$gte": from_dt, "$lte": to_dt}
-    activities = await db.ma_activities.find(query, {"_id": 0}).sort("announced_date", -1).skip(offset).limit(limit).to_list(limit)
+    activities = await db.ma_activities.find(query, {"_id": 0}).sort([("announced_date", -1), ("id", 1)]).skip(offset).limit(limit).to_list(limit)
     for a in activities:
         if isinstance(a['announced_date'], str):
             a['announced_date'] = datetime.fromisoformat(a['announced_date'])
@@ -753,7 +766,7 @@ async def seed_ma_eurosatory(current_user: dict = Depends(get_current_user)):
         doc["acquirer_norm"] = _norm(m["acquirer"])
         doc["target_norm"] = _norm(m["target"])
 
-        key = {"acquirer_norm": doc["acquirer_norm"], "target_norm": doc["target_norm"]}
+        key = deal_identity(doc)
         existing = await db.ma_activities.find_one(key, {"_id": 0, "id": 1})
         if existing:
             # Preserve the existing id; refresh the curated fields.
@@ -799,7 +812,7 @@ async def seed_ma_ila(current_user: dict = Depends(get_current_user)):
         doc["acquirer_norm"] = _norm(m["acquirer"])
         doc["target_norm"] = _norm(m["target"])
 
-        key = {"acquirer_norm": doc["acquirer_norm"], "target_norm": doc["target_norm"]}
+        key = deal_identity(doc)
         existing = await db.ma_activities.find_one(key, {"_id": 0, "id": 1})
         if existing:
             doc["id"] = existing["id"]
@@ -844,7 +857,7 @@ async def seed_ma_defensetech(current_user: dict = Depends(get_current_user)):
         doc["acquirer_norm"] = _norm(m["acquirer"])
         doc["target_norm"] = _norm(m["target"])
 
-        key = {"acquirer_norm": doc["acquirer_norm"], "target_norm": doc["target_norm"]}
+        key = deal_identity(doc)
         existing = await db.ma_activities.find_one(key, {"_id": 0, "id": 1})
         if existing:
             doc["id"] = existing["id"]
@@ -929,28 +942,10 @@ async def get_stock_history_route(ticker: str, period: str = "1d"):
     if data:
         return {"ticker": ticker, "period": period, "data": data, "data_source": "live"}
 
-    # Yahoo Finance returned nothing (it frequently rate-limits or blocks server
-    # IPs). Rather than showing an empty "unavailable" chart, reconstruct an
-    # indicative curve from the price + daily change we already store in the DB,
-    # so the chart always renders. Clearly flagged so the UI never shows it as live.
-    change_percent = float(player["change_percent"]) if player and player.get("change_percent") is not None else 0.0
-    indicative = build_indicative_history(ticker, period, base_price, change_percent)
-
-    if not indicative:
-        return {
-            "ticker": ticker,
-            "period": period,
-            "data": [],
-            "data_source": "unavailable",
-            "message": "Données de marché indisponibles pour ce ticker. Vérifiez que la valeur est cotée sur Yahoo Finance."
-        }
-
     return {
-        "ticker": ticker,
-        "period": period,
-        "data": indicative,
-        "data_source": "indicative",
-        "message": "Cours en direct indisponible — courbe indicative reconstruite à partir du dernier prix connu."
+        "ticker": ticker, "period": period, "data": [],
+        "data_source": "unavailable",
+        "message": "Historical prices unavailable. No synthetic prices are displayed."
     }
 
 @api_router.get("/stock-prices")
@@ -1567,6 +1562,13 @@ async def _run_seed() -> dict:
             # Patch newly-introduced fields onto existing records so a re-seed
             # propagates multinational_for and company_type without a full drop.
             patch = {}
+            # Curated profiles are authoritative for their published identity,
+            # capabilities and sourced reference fields.  This lets a reviewed
+            # profile correct an older seed instead of merely appending a note.
+            for field in ("sources", "source_reviewed_at", "data_notes", "description", "aliases", "funding_stage",
+                          "specializations", "founded_year", "headquarters", "website", "is_public"):
+                if field in p:
+                    patch[field] = p[field]
             if 'multinational_for' in p:
                 patch['multinational_for'] = p['multinational_for']
             if 'company_type' in p:
@@ -1605,63 +1607,15 @@ async def _run_seed() -> dict:
     def _norm(s: str) -> str:
         return _re.sub(r"\s+", " ", s.lower().strip())
 
-    # Build a set of (acq_first_word, tgt_first_word) tuples to identify scraper duplicates
-    seed_acq_tgt_first: set = set()
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026 + MA_DEFENSETECH_2026:
-        acq_words = _norm(m['acquirer']).split()
-        tgt_words = _norm(m['target']).split()
-        if acq_words and tgt_words:
-            seed_acq_tgt_first.add((acq_words[0], tgt_words[0]))
-
-    # Also build full set of seed target words (>3 chars) for broader matching
-    seed_tgt_words: set = set()
-    for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026 + MA_DEFENSETECH_2026:
-        for w in _norm(m['target']).split():
-            if len(w) > 3:
-                seed_tgt_words.add(w)
-
-    # Also build full set of seed acquirer first words for looser matching
-    seed_acq_first_words: set = {p[0] for p in seed_acq_tgt_first}
-
-    # Generic words that indicate a hallucinated/misextracted scraper target
-    _HALLUCINATION_TARGETS = frozenset({
-        "formation", "multiple", "various", "new", "combined",
-        "subsidiary", "unit", "division", "program", "programme",
-        "targets", "companies", "businesses", "assets", "operations",
-        "group", "consortium", "venture", "unit", "holdings",
-        "international", "technologies", "systems", "solutions",
-    })
-
-    # Delete ALL scraper-created entries that duplicate or corrupt seeded deals.
-    # A scraper entry is removed when it has scraped_at AND any of:
-    #   1. Exact (acq_first, tgt_first) pair matches a seed entry
-    #   2. Acquirer matches a seed acquirer AND target contains a hallucination word
-    #   3. Acquirer matches a seed acquirer AND any target word overlaps known seed targets
-    #   4. No source_url at all (unsourced scraper noise)
-    all_scraped = await db.ma_activities.find(
-        {"scraped_at": {"$exists": True}},
-        {"_id": 0, "id": 1, "acquirer": 1, "target": 1, "source_url": 1}
-    ).to_list(2000)
-
-    for entry in all_scraped:
-        acq_words = _norm(entry.get("acquirer", "")).split()
-        tgt_words = _norm(entry.get("target", "")).split()
-        if not acq_words or not tgt_words:
-            await db.ma_activities.delete_one({"id": entry["id"]})
-            continue
-
-        exact_match = (acq_words[0], tgt_words[0]) in seed_acq_tgt_first
-        acq_matches_any_seed = acq_words[0] in seed_acq_first_words
-        tgt_is_generic = any(w in _HALLUCINATION_TARGETS for w in tgt_words)
-        tgt_overlaps_seed = any(w in seed_tgt_words for w in tgt_words if len(w) > 3)
-        no_source = not entry.get("source_url")
-
-        if exact_match or (acq_matches_any_seed and (tgt_is_generic or tgt_overlaps_seed or no_source)):
-            await db.ma_activities.delete_one({"id": entry["id"]})
-
-    # Also purge ALL scraper entries with no source URL regardless of acquirer match —
-    # unsourced scraper noise has no place in the curated dataset.
-    await db.ma_activities.delete_many({"scraped_at": {"$exists": True}, "source_url": {"$in": [None, ""]}})
+    # Archive the specifically identified incorrect Isembard record before removal.
+    incorrect = {"acquirer": "NATO Innovation Fund + Lakestar", "target": "Isembard",
+                 "description": "Isembard $50M Series B — autonomous underwater vehicle systems"}
+    for old in await db.ma_activities.find(incorrect).to_list(None):
+        await db.ma_corrections.update_one({"original_id": old["_id"]},
+            {"$setOnInsert": {"original_id": old["_id"], "record": old,
+             "reason": "Incorrect company activity and funding attribution",
+             "corrected_at": datetime.now(timezone.utc).isoformat()}}, upsert=True)
+        await db.ma_activities.delete_one({"_id": old["_id"]})
 
     # Seed MA_DATA + MA_EXTRA_DEALS, then MA_PILOT_10 last so its enriched fields win on conflict
     for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026 + MA_DEFENSETECH_2026:
@@ -1678,26 +1632,10 @@ async def _run_seed() -> dict:
         # enrichment migration — see _migrate_ma_enrichments).
         doc = {k: v for k, v in doc.items() if v is not None}
         await db.ma_activities.update_one(
-            {"acquirer": m['acquirer'], "target": m['target']},
+            deal_identity(doc),
             {"$set": doc, "$setOnInsert": {"id": new_id}},
             upsert=True,
         )
-
-    # After upserting seeds, purge any scraper entries whose first words match a seed pair.
-    # Scraper runs can create near-duplicate entries (e.g. "Bombardier" vs "Bombardier C Series")
-    # between seed runs; this pass cleans them up immediately after every seed.
-    all_scraped_post = await db.ma_activities.find(
-        {"scraped_at": {"$exists": True}},
-        {"_id": 0, "id": 1, "acquirer": 1, "target": 1, "source_url": 1}
-    ).to_list(2000)
-    for entry in all_scraped_post:
-        acq_words = _norm(entry.get("acquirer", "")).split()
-        tgt_words = _norm(entry.get("target", "")).split()
-        if not acq_words or not tgt_words:
-            await db.ma_activities.delete_one({"id": entry["id"]})
-            continue
-        if (acq_words[0], tgt_words[0]) in seed_acq_tgt_first:
-            await db.ma_activities.delete_one({"id": entry["id"]})
 
     # Seed Expenditures
     for e in EXPENDITURES_DATA:
@@ -2530,9 +2468,9 @@ def _is_junk_party_name(name: str) -> bool:
 @api_router.post("/admin/purge-untrusted-ma")
 async def purge_untrusted_ma(request: Request, current_user: dict = Depends(get_current_user)):
     """
-    One-shot cleanup mirroring the Option-A display gate, but at the DB level:
-    delete AUTO-SCRAPED M&A rows that we would never show — low/unknown
-    confidence, or a junk/fragment party name. Curated/manual rows are untouched.
+    Legacy endpoint name retained for compatibility. It moves AUTO-SCRAPED M&A
+    rows below the publication threshold into the analyst review queue instead
+    of deleting them. Curated/manual rows are untouched.
 
     Body: {"dry_run": true} to only count, without deleting.
     Admin only.
@@ -2555,23 +2493,26 @@ async def purge_untrusted_ma(request: Request, current_user: dict = Depends(get_
          "verification_status": 1, "deal_type": 1},
     ).to_list(10000)
 
-    to_delete, reasons = [], {"low_confidence": 0, "junk_name": 0}
+    to_review, reasons = [], {"low_confidence": 0, "junk_name": 0}
     for d in scraped:
         if d.get("verification_status") == "human_verified":
             continue  # promoted to curated — keep
         junk = _is_junk_party_name(d.get("acquirer")) or _is_junk_party_name(d.get("target"))
         low  = d.get("confidence") not in ("high", "medium")
         if junk or low:
-            to_delete.append(d["id"])
+            to_review.append((d["id"], "Plausibility check on party name" if junk else "Automated extraction below publication threshold"))
             reasons["junk_name" if junk else "low_confidence"] += 1
 
-    if not dry_run and to_delete:
-        await db.ma_activities.delete_many({"id": {"$in": to_delete}})
+    if not dry_run:
+        for activity_id, reason in to_review:
+            await db.ma_activities.update_one({"id": activity_id}, {"$set": {
+                "review_status": "needs_review", "review_reason": reason,
+            }})
 
     return {
         "scraped_scanned": len(scraped),
-        "deleted": 0 if dry_run else len(to_delete),
-        "would_delete": len(to_delete) if dry_run else 0,
+        "flagged": 0 if dry_run else len(to_review),
+        "would_flag": len(to_review) if dry_run else 0,
         "reasons": reasons,
         "dry_run": dry_run,
     }
@@ -2815,6 +2756,12 @@ async def _ingest_ma_signals(unique_signals: list, scraped_at: datetime) -> tupl
     updated = 0
     for signal in unique_signals:
             try:
+                # A feed publication date is the minimum usable temporal
+                # evidence. Never manufacture an event date from the scrape
+                # time: that corrupts the historical timeline on every rerun.
+                if not signal.get("announced_date"):
+                    logger.warning("Skipping M&A signal without an explicit source date: %s", signal.get("source_url", ""))
+                    continue
                 # Upsert by (acquirer_norm, target_norm) key — never create hallucinated entries
                 key = {
                     "acquirer_norm": signal.get("acquirer_norm", ""),
@@ -2832,7 +2779,7 @@ async def _ingest_ma_signals(unique_signals: list, scraped_at: datetime) -> tupl
                     status=signal_status,
                     deal_type=signal.get("deal_type", "acquisition"),
                     description=signal.get("description", ""),
-                    announced_date=signal.get("announced_date", scraped_at),
+                    announced_date=signal["announced_date"],
                     source_url=signal.get("source_url"),
                     rationale=signal.get("rationale"),
                     acquirer_country=signal.get("acquirer_country"),
@@ -2864,36 +2811,11 @@ async def _ingest_ma_signals(unique_signals: list, scraped_at: datetime) -> tupl
                     "source_url": signal.get("source_url"),
                 }]
 
-                # 1. Exact (acquirer_norm, target_norm) match
+                # Preserve distinct rounds/acquisitions; do not merge on party prefixes.
                 existing = await db.ma_activities.find_one(
-                    key, {"_id": 0, "id": 1, "status": 1, "status_history": 1, "verification_status": 1}
+                    deal_identity(doc),
+                    {"_id": 0, "id": 1, "status": 1, "status_history": 1, "verification_status": 1}
                 )
-
-                if not existing:
-                    # 2. First-word prefix match — catches "Bombardier C Series" vs "Bombardier"
-                    acq_words = key["acquirer_norm"].split()
-                    tgt_words = key["target_norm"].split()
-                    acq_first = acq_words[0] if acq_words else ""
-                    tgt_first = tgt_words[0] if tgt_words else ""
-                    if acq_first and tgt_first:
-                        first_word_match = await db.ma_activities.find_one(
-                            {
-                                "acquirer_norm": {"$regex": f"^{re.escape(acq_first)}"},
-                                "target_norm":   {"$regex": f"^{re.escape(tgt_first)}"},
-                            },
-                            {"_id": 0, "id": 1, "status": 1, "status_history": 1, "verification_status": 1},
-                        )
-                        if first_word_match:
-                            existing = first_word_match
-
-                if not existing:
-                    # 3. Raw name match — catches entries seeded before norm fields existed
-                    name_match = await db.ma_activities.find_one(
-                        {"acquirer": signal["acquirer"], "target": signal["target"]},
-                        {"_id": 0, "id": 1, "status": 1, "status_history": 1, "verification_status": 1},
-                    )
-                    if name_match:
-                        existing = name_match
 
                 if not existing:
                     # 4. Guard against generic/low-quality targets (e.g. "Formation", "Multiple targets")
@@ -3080,57 +3002,6 @@ async def trigger_company_news_scraper(current_user: dict = Depends(get_current_
 async def root():
     return {"message": "Defense Dashboard API"}
 
-@api_router.get("/world-monitor/incidents")
-async def get_world_monitor_incidents():
-    """
-    Returns geolocated conflict incidents from GDELT.
-    Always answers instantly from the in-memory cache, which is refreshed
-    in the background by the scheduler. On a cold start the response has
-    status "warming" while the first collection runs.
-    """
-    from services.world_monitor_service import get_snapshot
-    try:
-        return get_snapshot()
-    except Exception as e:
-        logger.error("World Monitor fetch error: %s", e)
-        raise HTTPException(status_code=503, detail="Could not fetch incident data")
-
-
-@api_router.get("/world-monitor/aircraft")
-async def get_world_monitor_aircraft():
-    """Live ADS-B aircraft snapshot (OpenSky, server-side cache)."""
-    from services.osint_feeds import get_aircraft
-    try:
-        return await asyncio.get_event_loop().run_in_executor(None, get_aircraft)
-    except Exception as e:
-        logger.error("Aircraft feed error: %s", e)
-        raise HTTPException(status_code=503, detail="Aircraft feed unavailable")
-
-
-@api_router.get("/world-monitor/satellites")
-async def get_world_monitor_satellites():
-    """Active-satellite TLE catalogue (CelesTrak, server-side cache)."""
-    from fastapi.responses import PlainTextResponse
-    from services.osint_feeds import get_satellites_tle
-    try:
-        text = await asyncio.get_event_loop().run_in_executor(None, get_satellites_tle)
-        return PlainTextResponse(text)
-    except Exception as e:
-        logger.error("Satellite feed error: %s", e)
-        raise HTTPException(status_code=503, detail="Satellite feed unavailable")
-
-
-async def run_world_monitor_refresh_job():
-    """Background refresh so users always hit a warm World Monitor cache."""
-    from services.world_monitor_service import fetch_incidents
-    try:
-        incidents = await asyncio.get_event_loop().run_in_executor(
-            None, lambda: fetch_incidents(force=True)
-        )
-        logger.info("World Monitor background refresh: %d incidents", len(incidents))
-    except Exception as e:
-        logger.error("World Monitor background refresh failed: %s", e)
-
 @app.get("/health")
 async def health():
     return {"status": "ok"}
@@ -3255,7 +3126,7 @@ async def _migrate_ma_enrichments():
             new_id = doc.pop("id", None)
             doc = {k: v for k, v in doc.items() if v is not None}
             await db.ma_activities.update_one(
-                {"acquirer": m["acquirer"], "target": m["target"]},
+                deal_identity(doc),
                 {"$set": doc, "$setOnInsert": {"id": new_id or str(uuid.uuid4())}},
                 upsert=True,
             )
@@ -3477,18 +3348,18 @@ async def _apply_product_images():
 
 async def _purge_scraper_junk():
     """
-    Run on every startup — remove hallucinated / duplicate scraper M&A entries.
-    Uses direct MongoDB queries so no Python-side iteration needed for the
-    most obvious cases. Then does a cross-reference pass against seed data.
+    Run on every startup — quarantine implausible scraper entries for analyst
+    review. This is deliberately non-destructive: false positives in a
+    heuristic must not erase a real transaction from the audit trail.
     """
     try:
         import re as _re
 
         # ── Pass 1: delete scraper entries with no source URL ─────────────────
-        r1 = await db.ma_activities.delete_many({
+        r1 = await db.ma_activities.update_many({
             "scraped_at": {"$exists": True},
             "$or": [{"source_url": None}, {"source_url": ""}],
-        })
+        }, {"$set": {"review_status": "needs_review", "review_reason": "Missing source URL"}})
 
         # ── Pass 2: delete entries whose target is a known hallucination ──────
         _HALLUC_RE = (
@@ -3498,10 +3369,10 @@ async def _purge_scraper_junk():
             r"aerospace\s+assets?|target\s+company|several\s+companies?|"
             r"multiple|various\s+companies?)$"
         )
-        r2 = await db.ma_activities.delete_many({
+        r2 = await db.ma_activities.update_many({
             "scraped_at": {"$exists": True},
             "target": {"$regex": _HALLUC_RE, "$options": "i"},
-        })
+        }, {"$set": {"review_status": "needs_review", "review_reason": "Generic or unidentified target"}})
 
         # ── Pass 2b: delete junk acquirer/target (numbers, quantities, descriptors)
         # Catches scraper garbage like "over 10 nations", "10,000 units",
@@ -3514,13 +3385,13 @@ async def _purge_scraper_junk():
             r"government|armed\s+forces|several\s+(companies|firms)|multiple\s+(companies|firms)"
             r")(\b|$)"
         )
-        r2b = await db.ma_activities.delete_many({
+        r2b = await db.ma_activities.update_many({
             "scraped_at": {"$exists": True},
             "$or": [
                 {"acquirer": {"$regex": _JUNK_PARTY_RE, "$options": "i"}},
                 {"target":   {"$regex": _JUNK_PARTY_RE, "$options": "i"}},
             ],
-        })
+        }, {"$set": {"review_status": "needs_review", "review_reason": "Plausibility check on party name"}})
 
         # ── Pass 2c: delete descriptive noun-phrases mis-extracted as a party ──
         # The scraper sometimes lifts a description from a headline instead of the
@@ -3534,51 +3405,22 @@ async def _purge_scraper_junk():
             r"producers?|suppliers?|start-?ups?|vendors?|integrators?"
             r")(\b|$)"
         )
-        r2c = await db.ma_activities.delete_many({
+        r2c = await db.ma_activities.update_many({
             "scraped_at": {"$exists": True},
             "$or": [
                 {"acquirer": {"$regex": _DESC_ROLE_RE, "$options": "i"}},
                 {"target":   {"$regex": _DESC_ROLE_RE, "$options": "i"}},
             ],
-        })
+        }, {"$set": {"review_status": "needs_review", "review_reason": "Descriptive phrase extracted as a party"}})
 
-        # ── Pass 3: cross-reference against seeded (acquirer, target) pairs ───
-        from data.seed_data import (
-            MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10, MA_EUROSATORY_2026,
-            MA_ILA_BERLIN_2026, MA_DEFENSETECH_2026,
-        )
-
-        def _norm(s: str) -> str:
-            return _re.sub(r"\s+", " ", s.lower().strip())
-
-        # Build lookup: (first word of acquirer, first word of target) pairs
-        seed_pairs: set = set()
-        for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026 + MA_DEFENSETECH_2026:
-            aw = _norm(m["acquirer"]).split()
-            tw = _norm(m["target"]).split()
-            if aw and tw:
-                seed_pairs.add((aw[0], tw[0]))
-
-        scraped = await db.ma_activities.find(
-            {"scraped_at": {"$exists": True}},
-            {"_id": 0, "id": 1, "acquirer": 1, "target": 1},
-        ).to_list(5000)
-
+        # Different transactions between the same parties must survive.
         r3 = 0
-        for e in scraped:
-            aw = _norm(e.get("acquirer", "")).split()
-            tw = _norm(e.get("target", "")).split()
-            if not aw or not tw:
-                await db.ma_activities.delete_one({"id": e["id"]}); r3 += 1; continue
-            exact = (aw[0], tw[0]) in seed_pairs
-            if exact:
-                await db.ma_activities.delete_one({"id": e["id"]}); r3 += 1
 
         logger.info(
-            "M&A scraper junk purge: %d no-source, %d hallucinated target, "
-            "%d junk party, %d descriptive party, %d duplicates removed",
-            r1.deleted_count, r2.deleted_count, r2b.deleted_count,
-            r2c.deleted_count, r3,
+            "M&A scraper review queue: %d no-source, %d generic target, "
+            "%d implausible party, %d descriptive party, %d duplicates removed",
+            r1.modified_count, r2.modified_count, r2b.modified_count,
+            r2c.modified_count, r3,
         )
     except Exception as exc:
         logger.warning("M&A scraper junk purge failed (non-fatal): %s", exc)
@@ -3666,19 +3508,21 @@ async def _migrate_google_news_sources() -> None:
         logger.info("Source logo migration (all) complete: %d updated", updated2)
 
 
-def _ma_seed_pair_set():
-    """Normalized (acquirer_first_word, target_first_word) pairs of all seeded deals."""
+def _ma_seed_identity_set():
+    """Exact, normalized identities of curated deals; never use name prefixes."""
     from data.seed_data import (
         MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10,
         MA_EUROSATORY_2026, MA_ILA_BERLIN_2026, MA_DEFENSETECH_2026,
     )
-    pairs = set()
+    identities = set()
     for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026 + MA_DEFENSETECH_2026:
-        aw = re.sub(r"\s+", " ", m.get("acquirer", "").lower().strip()).split()
-        tw = re.sub(r"\s+", " ", m.get("target", "").lower().strip()).split()
-        if aw and tw:
-            pairs.add((aw[0], tw[0]))
-    return pairs
+        acquirer = re.sub(r"\s+", " ", m.get("acquirer", "").lower().strip())
+        target = re.sub(r"\s+", " ", m.get("target", "").lower().strip())
+        date = str(m.get("announced_date", ""))[:10]
+        deal_type = m.get("deal_type", "")
+        if acquirer and target and date and deal_type:
+            identities.add((acquirer, target, date, deal_type))
+    return identities
 
 
 async def _startup_ma_v2_cleanup() -> dict:
@@ -3686,61 +3530,61 @@ async def _startup_ma_v2_cleanup() -> dict:
     V2 cleanup (idempotent) — runs on startup AND on demand via /api/seed-data,
     returning stats so convergence is observable from outside the container.
 
-    Trust is decided by EVIDENCE, not provenance flags. A row survives only if
-    it matches a seeded deal, or carries a real source with plausible names AND
-    was not machine-extracted without earned confidence. The scraper fingerprint
-    includes acquirer_norm/target_norm: legacy scraper rows predate `scraped_at`
-    but always carry the norm fields used as their upsert key.
+    Trust is decided by EVIDENCE, not provenance flags. Implausible rows are
+    moved into a review queue rather than deleted, so the record remains
+    auditable and can be rehabilitated with a source.
 
     All Mongo operations go through `_id` — NOT the application-level `id`
     field, which legacy documents may lack entirely. (That was the V2.1 bug:
     id-less rows were silently skipped by both purge and backfill, leaving
     coverage stuck and junk immortal.)
     """
-    stats = {"purged": 0, "junk": 0, "unsourced": 0, "untrusted": 0,
+    stats = {"flagged": 0, "junk": 0, "unsourced": 0, "untrusted": 0,
              "backfilled": 0, "skipped": 0, "errors": []}
     try:
         from migrations.v2_ma_schema import _build_patch
 
-        seed_pairs = _ma_seed_pair_set()
+        seed_identities = _ma_seed_identity_set()
 
-        def _pair_of(d: dict):
-            aw = re.sub(r"\s+", " ", (d.get("acquirer") or "").lower().strip()).split()
-            tw = re.sub(r"\s+", " ", (d.get("target") or "").lower().strip()).split()
-            return (aw[0], tw[0]) if aw and tw else None
+        def _identity_of(d: dict):
+            acquirer = re.sub(r"\s+", " ", (d.get("acquirer") or "").lower().strip())
+            target = re.sub(r"\s+", " ", (d.get("target") or "").lower().strip())
+            return (acquirer, target, str(d.get("announced_date", ""))[:10], d.get("deal_type", ""))
 
         def _is_scraper_row(d: dict) -> bool:
             return (bool(d.get("scraped_at"))
                     or d.get("extraction_method") in ("regex", "llm")
                     or bool(d.get("acquirer_norm")) or bool(d.get("target_norm")))
 
-        # ── Pass 1: purge — judged on evidence, keyed by _id ─────────────────
+        # ── Pass 1: flag for review — judged on evidence, keyed by _id ───────
         rows = await db.ma_activities.find(
             {}, {"_id": 1, "acquirer": 1, "target": 1, "confidence": 1,
                  "verification_status": 1, "scraped_at": 1, "extraction_method": 1,
                  "source_url": 1, "sources": 1, "acquirer_norm": 1, "target_norm": 1},
         ).to_list(20000)
-        to_del = []
+        to_review = []
         for d in rows:
             try:
-                in_seed = _pair_of(d) in seed_pairs
+                in_seed = _identity_of(d) in seed_identities
                 has_source = bool(d.get("source_url")) or bool(d.get("sources"))
                 if _is_junk_party_name(d.get("acquirer")) or _is_junk_party_name(d.get("target")):
-                    to_del.append(d["_id"]); stats["junk"] += 1
+                    to_review.append((d["_id"], "Plausibility check on party name")); stats["junk"] += 1
                     continue
                 if in_seed:
                     continue  # seeded deals are curated by definition
                 if not has_source:
-                    to_del.append(d["_id"]); stats["unsourced"] += 1
+                    to_review.append((d["_id"], "Missing source URL or citation")); stats["unsourced"] += 1
                     continue
                 if _is_scraper_row(d) and d.get("confidence") not in ("high", "medium"):
-                    to_del.append(d["_id"]); stats["untrusted"] += 1
+                    to_review.append((d["_id"], "Automated extraction below publication threshold")); stats["untrusted"] += 1
             except Exception as exc:
-                stats["errors"].append(f"purge: {exc}")
+                stats["errors"].append(f"review: {exc}")
 
-        if to_del:
-            res = await db.ma_activities.delete_many({"_id": {"$in": to_del}})
-            stats["purged"] = res.deleted_count
+        for doc_id, reason in to_review:
+            res = await db.ma_activities.update_one({"_id": doc_id}, {"$set": {
+                "review_status": "needs_review", "review_reason": reason,
+            }})
+            stats["flagged"] += res.modified_count
 
         # ── Pass 2: backfill V2 fields on the survivors, keyed by _id ─────────
         docs = await db.ma_activities.find({}).to_list(20000)
@@ -3751,7 +3595,7 @@ async def _startup_ma_v2_cleanup() -> dict:
                     patch["id"] = str(uuid.uuid4())   # heal id-less legacy rows
                 # Only seed-matched rows earn the human_verified/high blessing;
                 # other survivors are sourced but stay "auto"/medium.
-                if patch and _pair_of(doc) not in seed_pairs \
+                if patch and _identity_of(doc) not in seed_identities \
                         and doc.get("verification_status") != "human_verified":
                     if patch.get("verification_status") == "human_verified":
                         patch["verification_status"] = "auto"
@@ -3816,14 +3660,6 @@ async def startup_event():
         id="company_news_scraper",
         # First run 10 minutes after startup — avoids hammering APIs at boot
         next_run_time=datetime.now(timezone.utc) + timedelta(minutes=10),
-    )
-    scheduler.add_job(
-        run_world_monitor_refresh_job,
-        "interval",
-        minutes=15,
-        id="world_monitor_refresh",
-        # Warm the cache right away so the page has data on first visit
-        next_run_time=datetime.now(timezone.utc) + timedelta(seconds=5),
     )
     scheduler.start()
     logger.info("Schedulers started — news at 01:00/07:00/13:00/19:00 UTC, Breaking Intel clear +5 min, M&A every 6 h, company news every 6 h (first run +10 min)")
