@@ -2645,8 +2645,6 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
       className={`${rowBg} hover:bg-slate-50 transition-colors cursor-pointer border-b border-slate-100 group`}
       onClick={() => onSelectDeal(activity)}
     >
-      <td className="px-3 py-2 text-[11px] text-slate-400 font-mono w-10 select-none">{index + 1}</td>
-
       {/* Acquirer */}
       <td className="px-3 py-2">
         <CompanyCell activity={activity} side="acquirer" onOpenProfile={onOpenProfile} />
@@ -2663,6 +2661,12 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
         }
       </td>
 
+      <td className="px-3 py-2 whitespace-nowrap">
+        <span className="text-[10px] font-medium text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full capitalize">
+          {(activity.deal_type || "—").replaceAll("_", " ")}
+        </span>
+      </td>
+
       {/* Value */}
       <td className="px-3 py-2 text-sm font-mono font-semibold text-slate-900 whitespace-nowrap">
         {formatValue(activity.deal_value, activity.is_disclosed ?? true)}
@@ -2671,34 +2675,11 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
         )}
       </td>
 
-      {/* Lead investor(s) — logo stack, populated for funding rounds */}
-      <td className="px-3 py-2">
-        <InvestorStack investors={activity.lead_investors} lead size={26} />
-      </td>
-
-      {/* Other participating investors */}
-      <td className="px-3 py-2">
-        <InvestorStack investors={activity.investors} size={22} />
-      </td>
-
       {/* Status */}
       <td className="px-3 py-2">
         <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap ${getStatusStyle(activity.status)}`}>
           {formatStatus(activity.status)}
         </span>
-      </td>
-
-      {/* Reg. */}
-      <td className="px-3 py-2">
-        {activity.regulatory_status && activity.regulatory_status !== "not_required" && (
-          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border whitespace-nowrap ${
-            activity.regulatory_status === "cleared" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
-            activity.regulatory_status === "blocked" ? "bg-rose-50 text-rose-700 border-rose-200" :
-            "bg-amber-50 text-amber-700 border-amber-200"
-          }`}>
-            {activity.regulatory_status === "cleared" ? "Reg. Cleared" : activity.regulatory_status === "blocked" ? "Reg. Blocked" : "Reg. Review"}
-          </span>
-        )}
       </td>
 
       {/* Date */}
@@ -2714,7 +2695,7 @@ function TableRow({ activity, index, onOpenProfile, onSelectDeal }) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={e => e.stopPropagation()}
-            className="text-slate-300 hover:text-blue-600 transition-colors inline-flex opacity-0 group-hover:opacity-100"
+            className="text-slate-400 hover:text-blue-700 transition-colors inline-flex"
             title="Source"
           >
             <ExternalLink className="w-3 h-3" />
@@ -3640,9 +3621,9 @@ export default function MAActivity() {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">M&amp;A Activity</h1>
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">M&amp;A &amp; strategic capital</h1>
           <p className="text-slate-500 text-sm mt-1">
-            Mergers, acquisitions &amp; strategic investments
+            Documented transactions, with amounts shown only when disclosed and each record linked to its source.
             {metaTotal != null && (
             <TooltipProvider>
               <UITooltip>
@@ -3688,29 +3669,13 @@ export default function MAActivity() {
         </div>
       )}
 
-      <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-950">
-        <strong>Historical coverage</strong>
-        <p>{histLoading ? "Loading historical records…" : `${allDeals.length} recorded operations across ${yearOptions.length - 1} years.`}
-          {" "}This is a documented selection, not an exhaustive market census. Missing amounts are not zero-value transactions.</p>
-      </div>
+      <p className="text-xs text-slate-400">
+        {histLoading ? "Loading historical records…" : `${allDeals.length} documented operations across ${yearOptions.length - 1} years.`}
+        {" "}Coverage is selective; an undisclosed amount is not a zero-value transaction.
+      </p>
       {historyError && <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
         {historyError} <button onClick={fetchHist} className="underline">Retry history</button>
       </div>}
-      {/* ── Recent Deals Spotlight ── */}
-      {!loading && activities.length > 0 && (
-        <RecentDealsSpotlight
-          activities={activities.filter(a =>
-            !isStateOrProcurement(a) &&
-            isValidCompanyName(a.acquirer) &&
-            isValidCompanyName(a.target) &&
-            isTrustworthyDeal(a)
-          )}
-          sourceFilter={dealSource}
-          onSourceFilter={setDealSource}
-          sourceCounts={sourceCounts}
-        />
-      )}
-
       {/* ── Deal-type tabs ── */}
       <div className="border-b border-slate-200 flex items-center overflow-x-auto" data-testid="deal-type-tabs">
         {DEAL_TYPE_TABS.map(t => (
@@ -3734,91 +3699,6 @@ export default function MAActivity() {
           </button>
         ))}
       </div>
-
-      {/* ── Stats ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" data-testid="kpi-strip">
-        {[
-            { label: "TOTAL DEALS", value: filteredDeals.length, sub: DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label, color: "text-slate-900", testid: "kpi-total-deals" },
-          { label: "TOTAL VALUE",  value: formatValue(totalValue), sub: "Disclosed only",       color: "text-slate-900",  testid: "kpi-total-value" },
-          { label: "IN PROGRESS",  value: filteredDeals.filter(a => ["announced","pending","under_review"].includes(a.status)).length, sub: "Announced + Pending", color: "text-slate-900",  testid: "kpi-in-progress" },
-          { label: "CLOSED",       value: filteredDeals.filter(a => ["completed","active"].includes(a.status)).length,                sub: "Completed + Active", color: "text-slate-900", testid: "kpi-closed" },
-        ].map(s => (
-          <Card key={s.label} className="bg-white border-slate-200 shadow-sm" data-testid={s.testid}>
-            <CardContent className="p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">{s.label}</p>
-              <p className={`text-2xl font-mono font-bold mt-1.5 ${s.color}`}>{s.value}</p>
-              <p className="text-xs text-slate-400 mt-0.5">{s.sub}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* ── Chart ── */}
-      {quarterlyData.length > 1 && (
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-sm font-semibold text-slate-800">Quarterly Activity</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  {DEAL_TYPE_TABS.find(t => t.value === dealTypeTab)?.label ?? "All deals"}
-                </p>
-              </div>
-              <div className="flex items-center gap-3 text-[10px] text-slate-400">
-                <span className="flex items-center gap-1"><span className="inline-block w-3 h-2.5 rounded-sm bg-slate-400" /> Deal count</span>
-                <span className="flex items-center gap-1"><span className="inline-block w-6 border-t-2 border-dashed border-slate-400" /> Value ($B)</span>
-                <span className="bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">Last 8 quarters</span>
-              </div>
-            </div>
-            <ResponsiveContainer width="100%" height={110}>
-              <ComposedChart data={quarterlyData} margin={{ top: 4, right: 36, left: 0, bottom: 0 }}>
-                <XAxis dataKey="quarter" tick={{ fill: "#94A3B8", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis
-                  yAxisId="count"
-                  allowDecimals={false}
-                  tick={{ fill: "#94A3B8", fontSize: 10 }}
-                  axisLine={false} tickLine={false} width={22}
-                />
-                <YAxis
-                  yAxisId="value"
-                  orientation="right"
-                  tickFormatter={v => v >= 1000 ? `$${(v/1000).toFixed(0)}B` : v > 0 ? `$${v}M` : ""}
-                  tick={{ fill: "#94A3B8", fontSize: 10 }}
-                  axisLine={false} tickLine={false} width={36}
-                />
-                <Tooltip content={({ active, payload }) => {
-                  if (active && payload?.length) {
-                    const d = payload[0].payload;
-                    return (
-                      <div className="bg-white border border-slate-200 rounded-lg px-3 py-2 shadow text-xs">
-                        <p className="font-semibold text-slate-700 mb-1">{d.quarter}</p>
-                        <p className="text-slate-900 font-mono">{d.count} deal{d.count !== 1 ? "s" : ""}</p>
-                        {d.value > 0 && <p className="text-slate-600 font-mono">{d.value >= 1000 ? `$${(d.value/1000).toFixed(1)}B` : `$${d.value}M`} disclosed</p>}
-                      </div>
-                    );
-                  }
-                  return null;
-                }} />
-                <Bar yAxisId="count" dataKey="count" radius={[3, 3, 0, 0]}>
-                  {quarterlyData.map((_, i) => (
-                    <Cell key={i} fill={i === quarterlyData.length - 1 ? "#1e40af" : "#cbd5e1"} />
-                  ))}
-                </Bar>
-                <Line
-                  yAxisId="value"
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#94A3B8"
-                  strokeWidth={1.5}
-                  strokeDasharray="4 2"
-                  dot={false}
-                  activeDot={{ r: 3, fill: "#1e40af" }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      )}
 
       {/* ── Two-column layout ── */}
       <div className="flex flex-col lg:flex-row gap-5 items-start">
@@ -4097,20 +3977,17 @@ export default function MAActivity() {
                 <table className="w-full text-left">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 w-10">#</th>
                       <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Acquirer / Investor</th>
                       <th className="px-1 py-2.5 w-4" />
                       <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Target / Portfolio Co.</th>
+                      <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Type</th>
                       <th
                         onClick={() => handleSort("deal_value")}
                         className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 select-none whitespace-nowrap"
                       >
                         Value {sortField === "deal_value" ? (sortDir === "asc" ? "↑" : "↓") : <span className="text-slate-300">↕</span>}
                       </th>
-                      <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap">Lead(s)</th>
-                      <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Investors</th>
                       <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                      <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Reg.</th>
                       <th
                         onClick={() => handleSort("announced_date")}
                         className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 select-none whitespace-nowrap"

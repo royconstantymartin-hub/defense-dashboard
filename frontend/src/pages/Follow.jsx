@@ -493,8 +493,8 @@ export default function Follow() {
       {/* ── Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">Reference Sources</h1>
-          <p className="text-slate-500 text-sm mt-1">Curated catalogue — specialty press, institutions, think tanks &amp; market data</p>
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">Sources &amp; methodology</h1>
+          <p className="text-slate-500 text-sm mt-1">Open sources used for the platform: specialist press, institutions, think tanks and market data.</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 max-w-xs">
           <span className="text-amber-500">ℹ</span>

@@ -772,8 +772,8 @@ export default function MarketData() {
       {/* ── Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">Market Data</h1>
-          <p className="text-slate-500 text-sm mt-1">Live prices, market catalysts and performance across the defense universe</p>
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">Public markets</h1>
+          <p className="text-slate-500 text-sm mt-1">Listed defence companies, price performance and source-linked market catalysts.</p>
         </div>
         <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
           {liveLoading ? (

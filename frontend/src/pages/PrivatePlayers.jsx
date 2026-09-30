@@ -571,9 +571,9 @@ export default function DefensePlayers() {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">Defense Players</h1>
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">Companies</h1>
           <p className="text-slate-500 text-sm mt-1">
-            Complete intelligence directory — {baseCompanies.length} companies · listed &amp; private
+            Defence company directory — {baseCompanies.length} companies · listed &amp; private
           </p>
         </div>
       </div>

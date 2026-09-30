@@ -13,13 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Clock, Database, Filter, ExternalLink, Radio, Youtube, Play, Eye, Wind, Zap, Anchor, Waves, Shield, Globe, Layers, LayoutGrid } from "lucide-react";
+import { Search, Package, Building2, Plane, Ship, Target, Cpu, Rocket, Satellite, GitCompare, X, Check, Database, ExternalLink, Radio, Youtube, Play, Eye, Wind, Zap, Anchor, Waves, Shield, Globe } from "lucide-react";
 import CompanyProfileSheet from "@/components/CompanyProfileSheet";
 import FlagshipProductDetail from "@/components/FlagshipProductDetail";
 import { FLAGSHIP_PRODUCTS } from "@/data/flagship-products/index.js";
 import { getLogoUrls } from "@/lib/companyLogos";
 import ProductIllustration from "@/components/ProductIllustration";
-import BattlespaceTheater from "@/components/BattlespaceTheater";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories", icon: Package },
@@ -925,9 +924,6 @@ export default function Products() {
   const [showComparison, setShowComparison]= useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 24;
-  // Which "vision" is shown: "overview" = command / battlespace process view,
-  // "catalog" = the classic filterable grid. Overview is the default landing view.
-  const [view, setView] = useState("overview");
 
   // YouTube video availability: track which product names have a broken/deleted video
   const [brokenVideos, setBrokenVideos] = useState(new Set());
@@ -1134,16 +1130,7 @@ export default function Products() {
   };
 
   const getCategoryColor = (category) => {
-    switch (category) {
-      case 'aircraft': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'naval': return 'bg-cyan-50 text-cyan-700 border-cyan-200';
-      case 'land': return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'missile': return 'bg-rose-50 text-rose-700 border-rose-200';
-      case 'radar': return 'bg-teal-50 text-teal-700 border-teal-200';
-      case 'cyber': return 'bg-slate-100 text-slate-700 border-slate-200';
-      case 'space': return 'bg-indigo-50 text-indigo-700 border-indigo-200';
-      default: return 'bg-slate-50 text-slate-600 border-slate-200';
-    }
+    return 'bg-slate-50 text-slate-700 border-slate-200';
   };
 
   if (loading) {
@@ -1161,58 +1148,17 @@ export default function Products() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
-            Product Portfolio
+            Systems catalogue
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Defense Systems & Equipment Catalog</p>
+          <p className="text-slate-500 text-sm mt-1">Browse systems by domain, supplier and operational status. Compare up to three platforms.</p>
         </div>
-        <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
-          <Clock className="w-3.5 h-3.5" />
-          <span>Last updated: {new Date().toLocaleDateString()}</span>
-          <span className="text-slate-300">|</span>
-          <Database className="w-3.5 h-3.5" />
-          <span>Source: Manufacturers, Jane's</span>
+        <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+          <span className="font-mono text-slate-900">{filteredProducts.length}</span>
+          <span>systems matching the current selection</span>
         </div>
       </div>
 
-      {/* Vision toggle — Vision 1 (command / battlespace process) ⇆ Vision 2 (catalog) */}
-      <div className="inline-flex bg-slate-100 border border-slate-200 rounded-lg p-1 gap-1" data-testid="products-view-toggle">
-        {[
-          { id: "overview", label: "Vision 1 · Command View", Icon: Layers },
-          { id: "catalog", label: "Vision 2 · Catalog", Icon: LayoutGrid },
-        ].map((t) => {
-          const TabIcon = t.Icon;
-          const active = view === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setView(t.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                active ? "bg-white text-blue-800 shadow-sm" : "text-slate-500 hover:text-slate-800"
-              }`}
-              data-testid={`view-tab-${t.id}`}
-            >
-              <TabIcon className="w-4 h-4" />
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* ── Vision 1: command / battlespace process ─────────────────────── */}
-      {view === "overview" && (
-        <BattlespaceTheater
-          products={products}
-          onOpenProduct={(product) => {
-            const detail = FLAGSHIP_PRODUCTS[product.name];
-            if (detail) { setFlagshipEntry({ product, detail }); setFlagshipOpen(true); }
-            else { setSelectedProduct(product); }
-          }}
-          onExploreCatalog={(cat) => { setSelectedCategory(cat || "all"); setSelectedSubType("all"); setView("catalog"); }}
-        />
-      )}
-
-      {/* ── Vision 2: filterable catalog ────────────────────────────────── */}
-      {view === "catalog" && (<>
+      <>
       {/* Compare Mode Bar */}
       {compareMode && (
         <Card className="bg-slate-100 border-slate-300 shadow-sm">
@@ -1268,56 +1214,6 @@ export default function Products() {
           ))}
         </div>
       )}
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">TOTAL</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-1">{products.length}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">AIRCRAFT</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-1">
-              {products.filter(p => p.category === 'aircraft').length}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">MISSILES</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-1">
-              {products.filter(p => p.category === 'missile').length}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">LAND</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-1">
-              {products.filter(p => p.category === 'land').length}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">RADAR</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-1">
-              {products.filter(p => p.category === 'radar').length}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white border-slate-200 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">ACTIVE</p>
-            <p className="text-2xl font-mono font-bold text-slate-900 mt-1">
-              {products.filter(p => p.status === 'active').length}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Filters */}
       <div className="flex flex-col gap-3">
@@ -1575,7 +1471,7 @@ export default function Products() {
           </div>
         );
       })()}
-      </>)}
+      </>
 
       {/* Comparison Modal – portaled to body to escape CSS transform containing block */}
       {showComparison && createPortal(

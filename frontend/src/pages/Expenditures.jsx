@@ -630,10 +630,7 @@ const CATEGORY_LABEL = {
 
 // ── Logo helpers (mirrors MarketData.jsx) ────────────────────────────────────
 const AVATAR_COLORS = [
-  "bg-blue-800", "bg-blue-700",
-  "bg-emerald-700", "bg-amber-600",
-  "bg-rose-700", "bg-indigo-700",
-  "bg-teal-700", "bg-orange-600",
+  "bg-slate-800", "bg-slate-700", "bg-slate-600",
 ];
 function avatarColor(name = "") {
   let h = 0;
@@ -2640,9 +2637,9 @@ export default function Expenditures() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">
-            Countries & Defense Spending
+            Countries & programmes
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Military budgets, capabilities & defense profiles by country</p>
+          <p className="text-slate-500 text-sm mt-1">Budgets, capabilities, programmes and national industrial profiles.</p>
         </div>
         <div className="flex flex-col items-end gap-1">
           <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 bg-white border border-slate-200 rounded-lg px-3 py-2">
