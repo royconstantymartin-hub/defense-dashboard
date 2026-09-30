@@ -2999,11 +2999,11 @@ function ConfidencePill({ confidence }) {
     <UITooltip>
       <TooltipTrigger asChild>
         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border cursor-default ${cls}`}>
-          {label} confidence
+          Evidence: {label}
         </span>
       </TooltipTrigger>
       <TooltipContent className="text-xs max-w-xs">
-        Legacy completeness/extraction indicator, not a probability of accuracy.
+        Evidence completeness/extraction indicator, not a probability of accuracy.
         Open the cited sources to assess the evidence; manual entry alone is not verification.
       </TooltipContent>
     </UITooltip>
@@ -3217,7 +3217,7 @@ function DealDetailDrawer({ deal, onClose, onOpenProfile }) {
             </div>
 
             <div>
-              <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">Data Quality</p>
+                <p className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">Evidence</p>
               <TooltipProvider>
                 <ConfidencePill confidence={deal.confidence} />
               </TooltipProvider>

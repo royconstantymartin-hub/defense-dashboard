@@ -17,6 +17,13 @@ class HistoryIntegrityTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             deal_identity(dict(acquirer="A", target="B", deal_type="merger"))
 
+    def test_same_parties_need_their_own_source_or_date(self):
+        first = dict(acquirer="Fund", target="Company", acquirer_norm="fund",
+                     target_norm="company", deal_type="funding_round",
+                     announced_date=datetime(2025, 2, 1, tzinfo=timezone.utc), source_url="https://one.example")
+        second = {**first, "source_url": "https://two.example"}
+        self.assertEqual(len(deduplicate_ma_signals([first, first, second])), 2)
+
     def test_manual_entry_is_not_verification(self):
         score, label = score_confidence(acq_known=False, tgt_known=False,
                                       value_basis="undisclosed", extraction_method="manual")

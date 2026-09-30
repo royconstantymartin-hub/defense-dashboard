@@ -645,7 +645,7 @@ def deduplicate_ma_signals(signals: List[Dict]) -> List[Dict]:
 
 # ── RSS fetcher ───────────────────────────────────────────────────────────────
 
-def _parse_entry_date(entry) -> datetime:
+def _parse_entry_date(entry) -> Optional[datetime]:
     for attr in ("published_parsed", "updated_parsed"):
         t = getattr(entry, attr, None)
         if t:
@@ -653,7 +653,7 @@ def _parse_entry_date(entry) -> datetime:
                 return datetime(*t[:6], tzinfo=timezone.utc)
             except Exception:
                 pass
-    return datetime.now(timezone.utc)
+    return None
 
 def _extract_summary(entry) -> str:
     from bs4 import BeautifulSoup
@@ -812,7 +812,11 @@ def _extract_signal_from_headline(source_name: str, title: str, link: str,
     deal_value, value_basis = _parse_deal_value_with_basis(title)
     deal_type = _infer_deal_type(title)
     round_type = _infer_round_type(title)
-    when = published or datetime.now(timezone.utc)
+    # Archive-listing pages without a date cannot establish an event chronology.
+    # Do not turn their crawl time into a fictional announcement date.
+    if not published:
+        return None
+    when = published
     confidence_score, confidence = score_confidence(
         acq_known=_is_registered(acquirer), tgt_known=_is_registered(target),
         value_basis=value_basis, num_sources=1, extraction_method="regex",
@@ -836,8 +840,8 @@ def _extract_signal_from_headline(source_name: str, title: str, link: str,
 
 def scrape_category_backfill(pages: int = 10) -> List[Dict]:
     """Walk paginated WordPress category archives and extract M&A signals from
-    headlines. Dates are unknown from listing pages, so announced_date falls
-    back to now — acceptable for backfill rows, which remain confidence-capped."""
+    headlines. Listing-only pages without a published date are deliberately
+    skipped; a chronology cannot use crawl time as a proxy for deal date."""
     import requests
     from bs4 import BeautifulSoup
     signals: List[Dict] = []

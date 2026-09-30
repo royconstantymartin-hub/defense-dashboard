@@ -161,6 +161,8 @@ class MAActivity(BaseModel):
     confidence_score: Optional[float] = None    # 0..1 deterministic score (C1)
     extraction_method: Optional[str] = None     # regex | llm | manual
     verification_status: Optional[str] = None   # auto | human_verified
+    review_status: Optional[str] = None         # published | needs_review
+    review_reason: Optional[str] = None         # why an item was withheld
     last_verified_at: Optional[datetime] = None
     sources: Optional[List[dict]] = None        # [{url, publisher, published_at}] (C1)
     status_history: Optional[List[dict]] = None # [{status, date, source_url}] (C2)
@@ -526,7 +528,10 @@ async def get_ma_activities(
     - deal_class         → ma | jv | vc | procurement (C4 stream separation)
     - offset             → skip N records (for pagination)
     """
-    query: dict = {}
+    # Records preserved for an analyst review are intentionally withheld from
+    # the public intelligence stream. They are not deleted: an admin can still
+    # inspect, correct and publish them later.
+    query: dict = {"review_status": {"$ne": "needs_review"}}
     if status:
         query["status"] = status
     if deal_class:
@@ -562,7 +567,7 @@ async def get_ma_historical(
     offset: int = 0,
 ):
     """Return M&A activities for the historical table view, with pagination."""
-    query: dict = {}
+    query: dict = {"review_status": {"$ne": "needs_review"}}
     if acquirer:
         query["acquirer"] = {"$regex": acquirer, "$options": "i"}
     if deal_type:
@@ -2459,9 +2464,9 @@ def _is_junk_party_name(name: str) -> bool:
 @api_router.post("/admin/purge-untrusted-ma")
 async def purge_untrusted_ma(request: Request, current_user: dict = Depends(get_current_user)):
     """
-    One-shot cleanup mirroring the Option-A display gate, but at the DB level:
-    delete AUTO-SCRAPED M&A rows that we would never show — low/unknown
-    confidence, or a junk/fragment party name. Curated/manual rows are untouched.
+    Legacy endpoint name retained for compatibility. It moves AUTO-SCRAPED M&A
+    rows below the publication threshold into the analyst review queue instead
+    of deleting them. Curated/manual rows are untouched.
 
     Body: {"dry_run": true} to only count, without deleting.
     Admin only.
@@ -2484,23 +2489,26 @@ async def purge_untrusted_ma(request: Request, current_user: dict = Depends(get_
          "verification_status": 1, "deal_type": 1},
     ).to_list(10000)
 
-    to_delete, reasons = [], {"low_confidence": 0, "junk_name": 0}
+    to_review, reasons = [], {"low_confidence": 0, "junk_name": 0}
     for d in scraped:
         if d.get("verification_status") == "human_verified":
             continue  # promoted to curated — keep
         junk = _is_junk_party_name(d.get("acquirer")) or _is_junk_party_name(d.get("target"))
         low  = d.get("confidence") not in ("high", "medium")
         if junk or low:
-            to_delete.append(d["id"])
+            to_review.append((d["id"], "Plausibility check on party name" if junk else "Automated extraction below publication threshold"))
             reasons["junk_name" if junk else "low_confidence"] += 1
 
-    if not dry_run and to_delete:
-        await db.ma_activities.delete_many({"id": {"$in": to_delete}})
+    if not dry_run:
+        for activity_id, reason in to_review:
+            await db.ma_activities.update_one({"id": activity_id}, {"$set": {
+                "review_status": "needs_review", "review_reason": reason,
+            }})
 
     return {
         "scraped_scanned": len(scraped),
-        "deleted": 0 if dry_run else len(to_delete),
-        "would_delete": len(to_delete) if dry_run else 0,
+        "flagged": 0 if dry_run else len(to_review),
+        "would_flag": len(to_review) if dry_run else 0,
         "reasons": reasons,
         "dry_run": dry_run,
     }
@@ -2744,6 +2752,12 @@ async def _ingest_ma_signals(unique_signals: list, scraped_at: datetime) -> tupl
     updated = 0
     for signal in unique_signals:
             try:
+                # A feed publication date is the minimum usable temporal
+                # evidence. Never manufacture an event date from the scrape
+                # time: that corrupts the historical timeline on every rerun.
+                if not signal.get("announced_date"):
+                    logger.warning("Skipping M&A signal without an explicit source date: %s", signal.get("source_url", ""))
+                    continue
                 # Upsert by (acquirer_norm, target_norm) key — never create hallucinated entries
                 key = {
                     "acquirer_norm": signal.get("acquirer_norm", ""),
@@ -2761,7 +2775,7 @@ async def _ingest_ma_signals(unique_signals: list, scraped_at: datetime) -> tupl
                     status=signal_status,
                     deal_type=signal.get("deal_type", "acquisition"),
                     description=signal.get("description", ""),
-                    announced_date=signal.get("announced_date", scraped_at),
+                    announced_date=signal["announced_date"],
                     source_url=signal.get("source_url"),
                     rationale=signal.get("rationale"),
                     acquirer_country=signal.get("acquirer_country"),
@@ -3330,18 +3344,18 @@ async def _apply_product_images():
 
 async def _purge_scraper_junk():
     """
-    Run on every startup — remove hallucinated / duplicate scraper M&A entries.
-    Uses direct MongoDB queries so no Python-side iteration needed for the
-    most obvious cases. Then does a cross-reference pass against seed data.
+    Run on every startup — quarantine implausible scraper entries for analyst
+    review. This is deliberately non-destructive: false positives in a
+    heuristic must not erase a real transaction from the audit trail.
     """
     try:
         import re as _re
 
         # ── Pass 1: delete scraper entries with no source URL ─────────────────
-        r1 = await db.ma_activities.delete_many({
+        r1 = await db.ma_activities.update_many({
             "scraped_at": {"$exists": True},
             "$or": [{"source_url": None}, {"source_url": ""}],
-        })
+        }, {"$set": {"review_status": "needs_review", "review_reason": "Missing source URL"}})
 
         # ── Pass 2: delete entries whose target is a known hallucination ──────
         _HALLUC_RE = (
@@ -3351,10 +3365,10 @@ async def _purge_scraper_junk():
             r"aerospace\s+assets?|target\s+company|several\s+companies?|"
             r"multiple|various\s+companies?)$"
         )
-        r2 = await db.ma_activities.delete_many({
+        r2 = await db.ma_activities.update_many({
             "scraped_at": {"$exists": True},
             "target": {"$regex": _HALLUC_RE, "$options": "i"},
-        })
+        }, {"$set": {"review_status": "needs_review", "review_reason": "Generic or unidentified target"}})
 
         # ── Pass 2b: delete junk acquirer/target (numbers, quantities, descriptors)
         # Catches scraper garbage like "over 10 nations", "10,000 units",
@@ -3367,13 +3381,13 @@ async def _purge_scraper_junk():
             r"government|armed\s+forces|several\s+(companies|firms)|multiple\s+(companies|firms)"
             r")(\b|$)"
         )
-        r2b = await db.ma_activities.delete_many({
+        r2b = await db.ma_activities.update_many({
             "scraped_at": {"$exists": True},
             "$or": [
                 {"acquirer": {"$regex": _JUNK_PARTY_RE, "$options": "i"}},
                 {"target":   {"$regex": _JUNK_PARTY_RE, "$options": "i"}},
             ],
-        })
+        }, {"$set": {"review_status": "needs_review", "review_reason": "Plausibility check on party name"}})
 
         # ── Pass 2c: delete descriptive noun-phrases mis-extracted as a party ──
         # The scraper sometimes lifts a description from a headline instead of the
@@ -3387,22 +3401,22 @@ async def _purge_scraper_junk():
             r"producers?|suppliers?|start-?ups?|vendors?|integrators?"
             r")(\b|$)"
         )
-        r2c = await db.ma_activities.delete_many({
+        r2c = await db.ma_activities.update_many({
             "scraped_at": {"$exists": True},
             "$or": [
                 {"acquirer": {"$regex": _DESC_ROLE_RE, "$options": "i"}},
                 {"target":   {"$regex": _DESC_ROLE_RE, "$options": "i"}},
             ],
-        })
+        }, {"$set": {"review_status": "needs_review", "review_reason": "Descriptive phrase extracted as a party"}})
 
         # Different transactions between the same parties must survive.
         r3 = 0
 
         logger.info(
-            "M&A scraper junk purge: %d no-source, %d hallucinated target, "
-            "%d junk party, %d descriptive party, %d duplicates removed",
-            r1.deleted_count, r2.deleted_count, r2b.deleted_count,
-            r2c.deleted_count, r3,
+            "M&A scraper review queue: %d no-source, %d generic target, "
+            "%d implausible party, %d descriptive party, %d duplicates removed",
+            r1.modified_count, r2.modified_count, r2b.modified_count,
+            r2c.modified_count, r3,
         )
     except Exception as exc:
         logger.warning("M&A scraper junk purge failed (non-fatal): %s", exc)
@@ -3490,19 +3504,21 @@ async def _migrate_google_news_sources() -> None:
         logger.info("Source logo migration (all) complete: %d updated", updated2)
 
 
-def _ma_seed_pair_set():
-    """Normalized (acquirer_first_word, target_first_word) pairs of all seeded deals."""
+def _ma_seed_identity_set():
+    """Exact, normalized identities of curated deals; never use name prefixes."""
     from data.seed_data import (
         MA_DATA, MA_EXTRA_DEALS, MA_EUROPE_DEALS, MA_PILOT_10,
         MA_EUROSATORY_2026, MA_ILA_BERLIN_2026, MA_DEFENSETECH_2026,
     )
-    pairs = set()
+    identities = set()
     for m in MA_DATA + MA_EXTRA_DEALS + MA_EUROPE_DEALS + MA_PILOT_10 + MA_EUROSATORY_2026 + MA_ILA_BERLIN_2026 + MA_DEFENSETECH_2026:
-        aw = re.sub(r"\s+", " ", m.get("acquirer", "").lower().strip()).split()
-        tw = re.sub(r"\s+", " ", m.get("target", "").lower().strip()).split()
-        if aw and tw:
-            pairs.add((aw[0], tw[0]))
-    return pairs
+        acquirer = re.sub(r"\s+", " ", m.get("acquirer", "").lower().strip())
+        target = re.sub(r"\s+", " ", m.get("target", "").lower().strip())
+        date = str(m.get("announced_date", ""))[:10]
+        deal_type = m.get("deal_type", "")
+        if acquirer and target and date and deal_type:
+            identities.add((acquirer, target, date, deal_type))
+    return identities
 
 
 async def _startup_ma_v2_cleanup() -> dict:
@@ -3510,61 +3526,61 @@ async def _startup_ma_v2_cleanup() -> dict:
     V2 cleanup (idempotent) — runs on startup AND on demand via /api/seed-data,
     returning stats so convergence is observable from outside the container.
 
-    Trust is decided by EVIDENCE, not provenance flags. A row survives only if
-    it matches a seeded deal, or carries a real source with plausible names AND
-    was not machine-extracted without earned confidence. The scraper fingerprint
-    includes acquirer_norm/target_norm: legacy scraper rows predate `scraped_at`
-    but always carry the norm fields used as their upsert key.
+    Trust is decided by EVIDENCE, not provenance flags. Implausible rows are
+    moved into a review queue rather than deleted, so the record remains
+    auditable and can be rehabilitated with a source.
 
     All Mongo operations go through `_id` — NOT the application-level `id`
     field, which legacy documents may lack entirely. (That was the V2.1 bug:
     id-less rows were silently skipped by both purge and backfill, leaving
     coverage stuck and junk immortal.)
     """
-    stats = {"purged": 0, "junk": 0, "unsourced": 0, "untrusted": 0,
+    stats = {"flagged": 0, "junk": 0, "unsourced": 0, "untrusted": 0,
              "backfilled": 0, "skipped": 0, "errors": []}
     try:
         from migrations.v2_ma_schema import _build_patch
 
-        seed_pairs = _ma_seed_pair_set()
+        seed_identities = _ma_seed_identity_set()
 
-        def _pair_of(d: dict):
-            aw = re.sub(r"\s+", " ", (d.get("acquirer") or "").lower().strip()).split()
-            tw = re.sub(r"\s+", " ", (d.get("target") or "").lower().strip()).split()
-            return (aw[0], tw[0]) if aw and tw else None
+        def _identity_of(d: dict):
+            acquirer = re.sub(r"\s+", " ", (d.get("acquirer") or "").lower().strip())
+            target = re.sub(r"\s+", " ", (d.get("target") or "").lower().strip())
+            return (acquirer, target, str(d.get("announced_date", ""))[:10], d.get("deal_type", ""))
 
         def _is_scraper_row(d: dict) -> bool:
             return (bool(d.get("scraped_at"))
                     or d.get("extraction_method") in ("regex", "llm")
                     or bool(d.get("acquirer_norm")) or bool(d.get("target_norm")))
 
-        # ── Pass 1: purge — judged on evidence, keyed by _id ─────────────────
+        # ── Pass 1: flag for review — judged on evidence, keyed by _id ───────
         rows = await db.ma_activities.find(
             {}, {"_id": 1, "acquirer": 1, "target": 1, "confidence": 1,
                  "verification_status": 1, "scraped_at": 1, "extraction_method": 1,
                  "source_url": 1, "sources": 1, "acquirer_norm": 1, "target_norm": 1},
         ).to_list(20000)
-        to_del = []
+        to_review = []
         for d in rows:
             try:
-                in_seed = _pair_of(d) in seed_pairs
+                in_seed = _identity_of(d) in seed_identities
                 has_source = bool(d.get("source_url")) or bool(d.get("sources"))
                 if _is_junk_party_name(d.get("acquirer")) or _is_junk_party_name(d.get("target")):
-                    to_del.append(d["_id"]); stats["junk"] += 1
+                    to_review.append((d["_id"], "Plausibility check on party name")); stats["junk"] += 1
                     continue
                 if in_seed:
                     continue  # seeded deals are curated by definition
                 if not has_source:
-                    to_del.append(d["_id"]); stats["unsourced"] += 1
+                    to_review.append((d["_id"], "Missing source URL or citation")); stats["unsourced"] += 1
                     continue
                 if _is_scraper_row(d) and d.get("confidence") not in ("high", "medium"):
-                    to_del.append(d["_id"]); stats["untrusted"] += 1
+                    to_review.append((d["_id"], "Automated extraction below publication threshold")); stats["untrusted"] += 1
             except Exception as exc:
-                stats["errors"].append(f"purge: {exc}")
+                stats["errors"].append(f"review: {exc}")
 
-        if to_del:
-            res = await db.ma_activities.delete_many({"_id": {"$in": to_del}})
-            stats["purged"] = res.deleted_count
+        for doc_id, reason in to_review:
+            res = await db.ma_activities.update_one({"_id": doc_id}, {"$set": {
+                "review_status": "needs_review", "review_reason": reason,
+            }})
+            stats["flagged"] += res.modified_count
 
         # ── Pass 2: backfill V2 fields on the survivors, keyed by _id ─────────
         docs = await db.ma_activities.find({}).to_list(20000)
@@ -3575,7 +3591,7 @@ async def _startup_ma_v2_cleanup() -> dict:
                     patch["id"] = str(uuid.uuid4())   # heal id-less legacy rows
                 # Only seed-matched rows earn the human_verified/high blessing;
                 # other survivors are sourced but stay "auto"/medium.
-                if patch and _pair_of(doc) not in seed_pairs \
+                if patch and _identity_of(doc) not in seed_identities \
                         and doc.get("verification_status") != "human_verified":
                     if patch.get("verification_status") == "human_verified":
                         patch["verification_status"] = "auto"
