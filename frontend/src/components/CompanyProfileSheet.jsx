@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "@/App";
-import { getLogoUrls, COMPANY_LOGOS, FAVICON_SKIP_TLDS } from "@/lib/companyLogos";
+import { getLogoUrls, getLogoDomain, FAVICON_SKIP_TLDS } from "@/lib/companyLogos";
 import {
   Sheet, SheetContent,
 } from "@/components/ui/sheet";
@@ -76,13 +76,8 @@ const COUNTRY_NAMES = {
 
 const AVATAR_COLORS = [
   "from-slate-700 to-slate-900",
-  "from-blue-600 to-blue-800",
-  "from-emerald-600 to-emerald-800",
-  "from-amber-600 to-amber-800",
-  "from-rose-600 to-rose-800",
-  "from-indigo-600 to-indigo-800",
-  "from-teal-600 to-teal-800",
-  "from-orange-600 to-orange-800",
+  "from-slate-600 to-slate-800",
+  "from-slate-500 to-slate-700",
 ];
 
 const STOCK_PHOTO_DOMAINS = [
@@ -464,7 +459,7 @@ export default function CompanyProfileSheet({ name, onClose }) {
           {(() => {
             const websiteUrl = p?.website
               ? (p.website.startsWith("http") ? p.website : `https://${p.website}`)
-              : COMPANY_LOGOS[name] ? `https://${COMPANY_LOGOS[name]}` : null;
+              : getLogoDomain(name) ? `https://${getLogoDomain(name)}` : null;
             const linkedinSlug = (name || "")
               .toLowerCase()
               .replace(/&/g, "and")

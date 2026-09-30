@@ -29,14 +29,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const navItems = [
-  { path: "/home", icon: Home, label: "Home" },
-  { path: "/", icon: TrendingUp, label: "Market Activity" },
-  { path: "/announcements", icon: Activity, label: "Announcements" },
-  { path: "/ma-activity", icon: Handshake, label: "M&A Activity", inProgress: true },
-  { path: "/private-players", icon: Lock, label: "Defense Players" },
-  { path: "/expenditures", icon: Globe, label: "Countries", inProgress: true },
-  { path: "/products", icon: Package, label: "Products", inProgress: true },
-  { path: "/follow", icon: Rss, label: "Sources" },
+  { path: "/home", icon: Home, label: "Overview" },
+  { path: "/", icon: TrendingUp, label: "Markets" },
+  { path: "/announcements", icon: Activity, label: "Events" },
+  { path: "/ma-activity", icon: Handshake, label: "M&A & investment" },
+  { path: "/private-players", icon: Lock, label: "Companies" },
+  { path: "/expenditures", icon: Globe, label: "Countries & programmes" },
+  { path: "/products", icon: Package, label: "Systems catalogue" },
+  { path: "/follow", icon: Rss, label: "Sources & methodology" },
   { path: "/lexicon", icon: BookOpen, label: "Lexicon" },
   { path: "/quiz", icon: GraduationCap, label: "Quiz" },
 ];
@@ -45,22 +45,10 @@ export default function Layout() {
   const location = useLocation();
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [systemStatus, setSystemStatus] = useState("checking");
-
-  useEffect(() => {
-    const check = () => {
-      axios.get(`${API}/`, { timeout: 5000 })
-        .then(() => setSystemStatus("ok"))
-        .catch(() => setSystemStatus("degraded"));
-    };
-    check();
-    const id = setInterval(check, 60000);
-    return () => clearInterval(id);
-  }, []);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notifLoading, setNotifLoading] = useState(false);
-  const [hasNew, setHasNew] = useState(true);
+  const [hasNew, setHasNew] = useState(false);
   const notifRef = useRef(null);
 
   useEffect(() => {
@@ -132,11 +120,6 @@ export default function Layout() {
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-blue-800' : ''}`} />
                   <span className="flex-1">{item.label}</span>
-                  {item.inProgress && (
-                    <span className="text-[9px] font-mono font-semibold tracking-wider bg-amber-100 text-amber-700 border border-amber-300 rounded px-1 py-0.5 leading-none">
-                      WIP
-                    </span>
-                  )}
                 </Link>
               );
             })}
@@ -211,27 +194,9 @@ export default function Layout() {
               <Menu className="w-5 h-5" />
             </button>
 
-            <div className="hidden lg:flex items-center gap-2">
-              <span className="text-xs font-medium text-slate-500">SYSTEM STATUS:</span>
-              {systemStatus === "ok" && (
-                <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                  <span className="text-xs font-medium">OPERATIONAL</span>
-                </span>
-              )}
-              {systemStatus === "degraded" && (
-                <span className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full">
-                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
-                  <span className="text-xs font-medium">DEGRADED</span>
-                </span>
-              )}
-              {systemStatus === "checking" && (
-                <span className="flex items-center gap-1.5 bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full">
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-pulse" />
-                  <span className="text-xs font-medium">CHECKING</span>
-                </span>
-              )}
-            </div>
+            <p className="hidden lg:block text-xs font-medium uppercase tracking-[0.14em] text-slate-400">
+              Defence market intelligence
+            </p>
           </div>
 
           <div className="flex items-center gap-4">

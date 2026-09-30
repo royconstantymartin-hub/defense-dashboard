@@ -3640,7 +3640,7 @@ export default function MAActivity() {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">M&amp;A Activity</h1>
+          <h1 className="font-heading text-3xl font-bold text-slate-900 tracking-tight">M&amp;A &amp; strategic capital</h1>
           <p className="text-slate-500 text-sm mt-1">
             Mergers, acquisitions &amp; strategic investments
             {metaTotal != null && (

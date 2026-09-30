@@ -935,8 +935,34 @@ export const COMPANY_WIKI_LOGOS = {
   "Pakistan Aeronautical Complex": "https://upload.wikimedia.org/wikipedia/en/c/c4/Pakistan_Aeronautical_Complex_%28emblem%29.png",
 };
 
+// Names originate from several sources (company profiles, deals, product cards)
+// and casing is not consistent between them. Resolve them once, here, rather
+// than making each screen maintain a slightly different logo fallback.
+function normaliseLogoName(name = "") {
+  return String(name)
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function buildLogoIndex(entries) {
+  return Object.entries(entries).reduce((index, [name, value]) => {
+    index[normaliseLogoName(name)] = value;
+    return index;
+  }, {});
+}
+
+const COMPANY_LOGO_INDEX = buildLogoIndex(COMPANY_LOGOS);
+const COMPANY_WIKI_LOGO_INDEX = buildLogoIndex(COMPANY_WIKI_LOGOS);
+
+function lookupLogo(entries, index, name) {
+  return entries[name] ?? index[normaliseLogoName(name)] ?? null;
+}
+
 export function getLogoDomain(name) {
-  return COMPANY_LOGOS[name] ?? null;
+  return lookupLogo(COMPANY_LOGOS, COMPANY_LOGO_INDEX, name);
 }
 
 /**
@@ -945,7 +971,7 @@ export function getLogoDomain(name) {
  * 2. null (caller shows letter avatar)
  */
 export function getLogoUrl(name) {
-  return COMPANY_WIKI_LOGOS[name] ?? null;
+  return lookupLogo(COMPANY_WIKI_LOGOS, COMPANY_WIKI_LOGO_INDEX, name);
 }
 
 // Returns Wikipedia logo if available, then a live favicon source, then null.
@@ -953,8 +979,9 @@ export function getLogoUrl(name) {
 // generic grey placeholder image at HTTP 200 — it never triggers onError, so it
 // would mask every real logo behind it. We no longer use it anywhere.
 export function getClearbitUrl(name) {
-  if (COMPANY_WIKI_LOGOS[name]) return COMPANY_WIKI_LOGOS[name];
-  const domain = COMPANY_LOGOS[name];
+  const curatedLogo = getLogoUrl(name);
+  if (curatedLogo) return curatedLogo;
+  const domain = getLogoDomain(name);
   if (domain) return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
   return null;
 }
@@ -970,8 +997,9 @@ export const FAVICON_SKIP_TLDS = [".cn", ".ru", ".gov.in", ".co.in", "-india.in"
 // stuck (HTTP 200) and hid the real logo underneath.
 export function getLogoUrls(name) {
   const urls = [];
-  if (COMPANY_WIKI_LOGOS[name]) urls.push(COMPANY_WIKI_LOGOS[name]);
-  const domain = COMPANY_LOGOS[name];
+  const curatedLogo = getLogoUrl(name);
+  if (curatedLogo) urls.push(curatedLogo);
+  const domain = getLogoDomain(name);
   if (domain) {
     const skipFavicon = FAVICON_SKIP_TLDS.some((tld) => domain.endsWith(tld));
     if (!skipFavicon) {
