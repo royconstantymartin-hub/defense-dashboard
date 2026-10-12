@@ -1,0 +1,35 @@
+{
+  "id": "general-cherry-ua",
+  "name": "General Cherry",
+  "native_name": "Генерал Черешня",
+  "country": "Ukraine",
+  "ownership": "private",
+  "sectors": [
+    "Uncrewed aerial systems",
+    "FPV drones",
+    "Counter-UAS"
+  ],
+  "website": "https://gencherry.com/en",
+  "description": "Ukrainian defense technology company developing unmanned aerial systems, including FPV and interceptor drones.",
+  "products": [
+    {
+      "name": "Bullet",
+      "category": "interceptor drone",
+      "verification": "requires primary source validation"
+    }
+  ],
+  "relationships": [],
+  "transactions": [],
+  "financials": {
+    "market_cap": null,
+    "valuation": null
+  },
+  "sources": [
+    {
+      "type": "official_company_website",
+      "url": "https://gencherry.com/en"
+    }
+  ],
+  "review_status": "pending_editorial_verification",
+  "note": "Do not infer acquisitions or funding rounds from partnerships. Verify any proposed Patria cooperation against an official press release before publication."
+}
